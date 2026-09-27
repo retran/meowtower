@@ -32,7 +32,15 @@ TSK-0010, because Caddy's authority and the served page must exist.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac, with the names ADR-0200 sets. Criteria 1 and 2 are open: they need the parent and a real iPad.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 4 test files, 14 tests passed.
+- REQ-2514, the profile, checked first against a script without `ipad-setup`, where `tests/smoke/ipad-setup.test.ts` failed: it now passes. The profile is a `Configuration` profile with a `com.apple.security.root` payload holding exactly Caddy's root certificate, and a missing certificate prints `root_certificate_missing`. `plutil -lint` reported the served profile `OK`; `curl` of `https://code-swirl.local/setup/meowtower.mobileconfig` returned HTTP 200 as `application/x-apple-aspen-config`.
+- REQ-2514, the trust chain: `curl --cacert data/caddy/caddy/pki/authorities/local/root.crt https://code-swirl.local/` returned HTTP 200 with `ssl_verify_result=0`; without the root it failed with `ssl_verify_result=20` (unknown issuer), which is what the profile fixes on the iPad.
+- REQ-2500, the web app: `tests/unit/shell.test.ts` passes. `/` links `/manifest.webmanifest` and `/icon-512.png` and sets `apple-mobile-web-app-capable`; the manifest has `display: standalone` and the name «Мяубашня» from `content/i18n/ru.json`; the icon is a 512 by 512 PNG.
+- Criterion 3: Playwright 1.63 WebKit on the Mac loaded `https://code-swirl.local/` and rendered «Башня просыпается…» from the server (screenshot taken; certificate checks skipped in this run, because the Mac doesn't trust Caddy's authority, and the trust chain is proven by `curl` above).
+- Changed on the way: the profile is served by `proxy` from `data/setup/` over the existing HTTPS listener, because a separate HTTP server on the Mac met the macOS firewall; `./meowtower up` restarts `proxy` so a changed `Caddyfile` applies; the host variable is `MEOWTOWER_HOST`.
+- Open, for the parent with a real iPad (criteria 1 and 2): run `./meowtower ipad-setup` and follow its five steps, then confirm Safari opens `https://<mac-name>.local` with no warning and the home-screen icon opens standalone, with a screenshot of each.
 
 ## Left alone
 

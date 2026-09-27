@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; this one has up, down and status.
+# subcommands it needs; these are up, down, status and ipad-setup.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -11,13 +11,85 @@ mac_time_zone() { readlink /etc/localtime | sed 's#.*/zoneinfo/##'; }
 docker_running() { docker info >/dev/null 2>&1; }
 
 compose() {
-  TOWER_HOST="$(host_name)" TZ="$(mac_time_zone)" docker compose "$@"
+  MEOWTOWER_HOST="$(host_name)" TZ="$(mac_time_zone)" docker compose "$@"
+}
+
+ROOT_CERT="${MEOWTOWER_ROOT_CERT:-data/caddy/caddy/pki/authorities/local/root.crt}"
+
+# A configuration profile that installs Caddy's root certificate, so the
+# iPad trusts https://<mac-name>.local after this one-time setup (REQ-2514).
+profile() {
+  if [[ ! -f $ROOT_CERT ]]; then
+    echo "root_certificate_missing: run ./meowtower up once so Caddy creates its authority."
+    return 1
+  fi
+  local der uuid1 uuid2
+  der="$(openssl x509 -in "$ROOT_CERT" -outform DER | base64 | fold -w 52)"
+  uuid1="$(uuidgen)"; uuid2="$(uuidgen)"
+  cat <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadCertificateFileName</key>
+			<string>meowtower-root.cer</string>
+			<key>PayloadContent</key>
+			<data>
+$der
+			</data>
+			<key>PayloadDisplayName</key>
+			<string>Meowtower local authority</string>
+			<key>PayloadIdentifier</key>
+			<string>local.meowtower.root.$uuid1</string>
+			<key>PayloadType</key>
+			<string>com.apple.security.root</string>
+			<key>PayloadUUID</key>
+			<string>$uuid1</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>PayloadDisplayName</key>
+	<string>Meowtower</string>
+	<key>PayloadIdentifier</key>
+	<string>local.meowtower.profile</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>$uuid2</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
+PLIST
+}
+
+cmd_ipad_setup() {
+  if [[ ${1:-} == --print-profile ]]; then profile; return; fi
+  mkdir -p data/setup
+  profile > data/setup/meowtower.mobileconfig.new \
+    || { cat data/setup/meowtower.mobileconfig.new; rm -f data/setup/meowtower.mobileconfig.new; exit 1; }
+  mv data/setup/meowtower.mobileconfig.new data/setup/meowtower.mobileconfig
+  local url="https://$(host_name)/setup/meowtower.mobileconfig"
+  echo "On the iPad, once per device:"
+  echo "  1. Open $url in Safari. It warns once that the connection isn't private:"
+  echo "     tap Show Details, then visit the website, and allow the download."
+  echo "  2. Settings > Profile Downloaded > Install."
+  echo "  3. Settings > General > About > Certificate Trust Settings > turn on Meowtower local authority."
+  echo "  4. Open https://$(host_name) in Safari: no warning now. Share > Add to Home Screen."
+  echo "  5. Open the home-screen app and pair inside it, because it keeps its own storage."
+  if command -v qrencode >/dev/null; then qrencode -t ansiutf8 "$url"; fi
 }
 
 cmd_up() {
   if ! docker_running; then echo "Docker Desktop is not running."; exit 1; fi
-  mkdir -p data/blobs data/snapshots data/exports data/caddy
+  mkdir -p data/blobs data/snapshots data/exports data/caddy data/setup
   compose up -d --build
+  # Caddy reads its bind-mounted Caddyfile only at start, so apply any change.
+  compose restart proxy >/dev/null
   # Keep the Mac awake while the server runs.
   if [[ ! -f $CAFFEINATE_PID ]] || ! kill -0 "$(cat $CAFFEINATE_PID)" 2>/dev/null; then
     # Detach it fully, or the script waits on its output and never returns.
@@ -52,5 +124,6 @@ case "${1:-}" in
   up) cmd_up ;;
   down) cmd_down ;;
   status) cmd_status ;;
-  *) echo "usage: ./meowtower up|down|status" >&2; exit 2 ;;
+  ipad-setup) shift; cmd_ipad_setup "$@" ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup" >&2; exit 2 ;;
 esac

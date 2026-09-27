@@ -14,7 +14,7 @@ interface Service {
 const config = JSON.parse(
   execFileSync("docker", ["compose", "config", "--format", "json"], {
     encoding: "utf8",
-    env: { ...process.env, TOWER_HOST: "meowtower.local", TZ: "UTC" },
+    env: { ...process.env, MEOWTOWER_HOST: "meowtower.local", TZ: "UTC" },
   }),
 ) as { services: Record<string, Service>; volumes?: Record<string, unknown> };
 

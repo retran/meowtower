@@ -6,7 +6,13 @@
 	admin off
 }
 
-https://{$TOWER_HOST}, https://localhost {
+https://{$MEOWTOWER_HOST}, https://localhost {
 	tls internal
+	# The one-time iPad profile (./meowtower ipad-setup); it holds only the public root certificate.
+	handle_path /setup/* {
+		root * /srv/setup
+		header Content-Type application/x-apple-aspen-config
+		file_server
+	}
 	reverse_proxy meowtower:3000
 }

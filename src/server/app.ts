@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { isOpen, type Db } from "./database.js";
+import { mountShell } from "./shell.js";
 
 export function createApp({ db }: { db: Db }): Hono {
   const app = new Hono();
@@ -8,5 +9,6 @@ export function createApp({ db }: { db: Db }): Hono {
       ? c.json({ status: "ok", database: "ok" })
       : c.json({ status: "unavailable", database: "closed" }, 503),
   );
+  mountShell(app);
   return app;
 }

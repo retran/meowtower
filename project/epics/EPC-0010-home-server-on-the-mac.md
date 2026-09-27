@@ -45,7 +45,7 @@ A task is marked in the commit that advances it, never in a later pass.
       evidence: meow-verbs run format lint check test build exit 0, 7 tests; ./meowtower up serves /health HTTP 200 (TSK-0010 Evidence)
       closes: REQ-2502, REQ-2512
       depends: none
-- [ ] T-002 TSK-0020 The iPad trusts HTTPS through `./tower ipad-setup` and installs the home-screen app
+- [>] T-002 TSK-0020 The iPad trusts HTTPS through `./tower ipad-setup` and installs the home-screen app
       closes: REQ-2500, REQ-2514
       depends: TSK-0010 - Caddy's authority and the served page must exist
 - [ ] T-003 TSK-0030 The server commits each write before it replies, proven by the crash test

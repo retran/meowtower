@@ -30,7 +30,7 @@ services:
     user: "1000:1000"
     environment:
       TZ: ${TZ:-UTC}
-      TOWER_HOST: ${TOWER_HOST:-localhost}
+      MEOWTOWER_HOST: ${MEOWTOWER_HOST:-localhost}
       XDG_CONFIG_HOME: /data/config
       XDG_DATA_HOME: /data
     ports:
@@ -38,6 +38,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./data/caddy:/data
+      - ./data/setup:/srv/setup:ro
     depends_on:
       - meowtower
 

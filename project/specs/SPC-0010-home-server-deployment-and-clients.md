@@ -30,7 +30,7 @@ The system consists of two containers and one command. The container `meowtower`
 | `./meowtower status` | Reports in one line each whether Docker and both containers run, the last snapshot and how long it took, and any open `backup_failed` or `storage_ceiling` notice. |
 | `./meowtower pair` | Prints a new 6-digit pairing code. |
 | `./meowtower set-pin` | Sets the Parent Room PIN. |
-| `./meowtower ipad-setup` | Serves the profile that installs Caddy's root certificate on the iPad. |
+| `./meowtower ipad-setup` | Writes the configuration profile that installs Caddy's root certificate into `data/setup/`, where `proxy` serves it at `https://<mac-name>.local/setup/meowtower.mobileconfig` as `application/x-apple-aspen-config`, and prints the iPad's steps. `--print-profile` prints the profile instead. With no root certificate yet it prints `root_certificate_missing` and exits 1. |
 | `./meowtower db-snapshot` | Takes one snapshot on demand. |
 | `./meowtower restore` | Loads the newest snapshot as the live database. |
 | `./meowtower export` and `./meowtower recompute` | Run the export and the recompute ADR-0020 defines, inside `meowtower`. |
@@ -39,6 +39,7 @@ The system consists of two containers and one command. The container `meowtower`
 | `data/snapshots/meowtower-<UTC timestamp>.sqlite` | Snapshots. |
 | `data/exports/` | Exports, written by ADR-0020's export. |
 | `data/caddy/` | Caddy's certificate authority and state. |
+| `data/setup/` | The iPad profile, which holds only the public root certificate. |
 | `.env` | Holds the OpenRouter key on the Mac. |
 | Device cookie | A random 256-bit token in an `HttpOnly`, `Secure`, `SameSite=Strict` cookie with no expiry date. |
 | Table `devices` | One row per paired device: the token's SHA-256 hash, whether it is revoked, and the device's interface choice. |
@@ -70,7 +71,7 @@ When `meowtower` receives an answer, it commits the transaction that stores it b
 
 The Mac forwards no router port, and every request except pairing needs a device token (REQ-2510). `./meowtower up` compares the Mac's default gateway with the one recorded at setup and starts nothing when they differ (REQ-2510). The loopback listener refuses every connection that doesn't come from the Mac itself (REQ-2510).
 
-The iPad trusts Caddy's certificate authority through the profile `./meowtower ipad-setup` installs, done once per iPad, so `https://<mac-name>.local` opens with no certificate warning (REQ-2514).
+The iPad trusts Caddy's certificate authority through the profile `./meowtower ipad-setup` installs, done once per iPad, so `https://<mac-name>.local` opens with no certificate warning (REQ-2514). Downloading the profile is the one time Safari shows the warning, because the iPad doesn't yet trust the authority that signed the page. The page links a web app manifest and a 512-pixel icon, so Safari's Add to Home Screen installs the game as a standalone app (REQ-2500); its name comes from the language file (ADR-0160). `./meowtower up` restarts `proxy` so a changed `Caddyfile` applies.
 
 ### Devices, PIN and lockout
 
