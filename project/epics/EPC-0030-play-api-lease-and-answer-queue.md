@@ -51,7 +51,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-002 [P] TSK-0310 No packet carries the task's design or its answer early, and no reply says «верно» or «неверно» (`src/shared/api.ts`, `tests/e2e/fixtures.ts`, `tools/static-checks.ts`)
       closes: REQ-2414, REQ-2420, REQ-2428
       depends: TSK-0300 - it checks the packets and replies that task sends
-- [ ] T-003 [P] TSK-0320 Repeated answers, hints, explanations and second attempts are recorded and charged once, and the SSE stream delivers the explanation
+- [x] T-003 [P] TSK-0320 Repeated answers, hints, explanations and second attempts are recorded and charged once, and the SSE stream delivers the explanation
       closes: REQ-2422, REQ-2424, REQ-2426, REQ-2432
       depends: TSK-0300 - it keys the routes that task opens
 - [ ] T-004 [P] TSK-0330 The adventure and session lifecycle, the leave route, the break route and the guard against reopening

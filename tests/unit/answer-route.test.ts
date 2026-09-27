@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Database from "better-sqlite3";
 import { afterAll, describe, expect, it } from "vitest";
-import { appendEvents } from "../../src/engine/events/append.js";
 import { createApp } from "../../src/server/app.js";
 import { openDatabase } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
@@ -14,7 +13,10 @@ import { AnswerOut, Room } from "../../src/shared/api.js";
 const dir = mkdtempSync(join(tmpdir(), "meowtower-answer-"));
 const path = join(dir, "meowtower.sqlite");
 const db = openDatabase(path);
-const app = createApp({ db });
+// A clock that moves 100 ms a request keeps the long runs under the rate cap.
+let clock = 0;
+const app = createApp({ db, now: () => (clock += 100) });
+let seq = 0;
 const token = registerDevice(db, "tablet");
 const cookie = { cookie: `meowtower_device=${token}` };
 const second = new Database(path, { readonly: true });
@@ -38,7 +40,7 @@ async function start(): Promise<string> {
   const res = await app.request("/api/session/start", {
     method: "POST",
     headers: { ...cookie, "content-type": "application/json" },
-    body: JSON.stringify({ mode: "daily" }),
+    body: JSON.stringify({ mode: "daily", clientSeq: ++seq }),
   });
   expect(res.status).toBe(200);
   return ((await res.json()) as { sessionId: string }).sessionId;
@@ -56,7 +58,7 @@ async function answer(sessionId: string, body: object): Promise<Response> {
   return app.request(`/api/session/${sessionId}/answer`, {
     method: "POST",
     headers: { ...cookie, "content-type": "application/json" },
-    body: JSON.stringify({ dontKnow: false, input, clientSeq: 1, ...body }),
+    body: JSON.stringify({ dontKnow: false, input, clientSeq: ++seq, ...body }),
   });
 }
 
@@ -111,37 +113,17 @@ describe("REQ-2416, REQ-2418: what the reply carries", () => {
     const sessionId = await start();
     const first = await next(sessionId);
     await answer(sessionId, { itemId: first.itemId, raw: "5" });
-    // Until TSK-0320's second-attempt route, the test logs the twin itself.
-    const twinId = "twin-of-" + first.itemId;
-    appendEvents(db, [
-      {
-        type: "item_shown",
-        v: 1,
-        sessionId,
-        origin: "server",
-        payload: {
-          itemId: twinId,
-          view: {
-            locale: "ru",
-            text: "2 + 6",
-            svg: null,
-            options: null,
-            terms: [],
-          },
-          templateId: "standin",
-          templateVersion: 1,
-          seed: "twin",
-          params: { a: 2, b: 6 },
-          node: "standin",
-          subtype: "sum",
-          purpose: "second_attempt",
-          attemptNo: 2,
-          parentItemId: first.itemId,
-          correctAnswer: "8",
-          shortSolution: ["2 + 6 = 8"],
-        },
-      },
-    ]);
+    const twin = Room.parse(
+      await (
+        await app.request(`/api/item/${first.itemId}/second-attempt`, {
+          method: "POST",
+          headers: { ...cookie, "content-type": "application/json" },
+          body: JSON.stringify({ clientSeq: ++seq }),
+        })
+      ).json(),
+    );
+    const twinId = twin.itemId;
+    expect(twin.attemptNo).toBe(2);
     const out = AnswerOut.parse(
       await (await answer(sessionId, { itemId: twinId, raw: "8" })).json(),
     );

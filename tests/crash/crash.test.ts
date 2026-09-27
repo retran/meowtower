@@ -113,7 +113,7 @@ describe("REQ-2508: no answer whose reply was sent is lost when the process dies
           await fetch("http://127.0.0.1:3917/api/session/start", {
             method: "POST",
             headers,
-            body: JSON.stringify({ mode: "daily" }),
+            body: JSON.stringify({ mode: "daily", clientSeq: i }),
           })
         ).json()) as { sessionId: string };
         const { itemId } = (await (

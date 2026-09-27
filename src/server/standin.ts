@@ -7,21 +7,53 @@ export interface StandinTask {
   n: number;
   params: { a: number; b: number };
   answer: string;
+  /** The parallel task of the second attempt, until ADR-0080's epic. */
+  twin: { params: { a: number; b: number }; answer: string };
 }
 
 export const STANDIN_TASKS: readonly StandinTask[] = [
-  { n: 1, params: { a: 3, b: 4 }, answer: "7" },
-  { n: 2, params: { a: 5, b: 2 }, answer: "3" },
-  { n: 3, params: { a: 2, b: 6 }, answer: "12" },
+  {
+    n: 1,
+    params: { a: 3, b: 4 },
+    answer: "7",
+    twin: { params: { a: 2, b: 6 }, answer: "8" },
+  },
+  {
+    n: 2,
+    params: { a: 5, b: 2 },
+    answer: "3",
+    twin: { params: { a: 6, b: 4 }, answer: "2" },
+  },
+  {
+    n: 3,
+    params: { a: 2, b: 6 },
+    answer: "12",
+    twin: { params: { a: 3, b: 5 }, answer: "15" },
+  },
 ];
 
 export const ROOM_LENGTH = STANDIN_TASKS.length;
 
-export const taskText = (task: StandinTask): string =>
-  t(`standin.task.${task.n}.text`);
-export const taskSolution = (task: StandinTask): string[] => [
-  t(`standin.task.${task.n}.solution`),
+/** The guiding threads a session starts with, until ADR-0080's epic. */
+export const STANDIN_THREADS = 5;
+
+const key = (task: StandinTask, twin: boolean): string =>
+  `standin.task.${task.n}${twin ? ".twin" : ""}`;
+export const taskText = (task: StandinTask, twin = false): string =>
+  t(`${key(task, twin)}.text`);
+export const taskSolution = (task: StandinTask, twin = false): string[] => [
+  t(`${key(task, twin)}.solution`),
 ];
+// A task and its twin share the hint rungs and the template explanation,
+// which name no number.
+export const taskHint = (task: StandinTask, level: number): string =>
+  t(`standin.task.${task.n}.hint.${level}`);
+export const taskExplanation = (task: StandinTask): string =>
+  t(`standin.task.${task.n}.explanation`);
+
+/** The stand-in task an item_shown's subtype names. */
+export const taskOf = (subtype: string): StandinTask | undefined =>
+  STANDIN_TASKS.find((task) => subtype === `task-${task.n}`);
 
 const normalise = (raw: string): string => raw.replace(/\s+/g, "");
 

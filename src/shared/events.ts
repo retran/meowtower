@@ -262,6 +262,8 @@ const threadSpentV1 = z
   })
   .strict();
 
+const explanationBoughtV1 = z.object({ itemId, attemptNo }).strict();
+
 const solutionShownV1 = z
   .object({
     itemId,
@@ -605,6 +607,7 @@ export const EVENT_DEFS: readonly EventDef[] = [
   { type: "verdict", v: 1, schema: verdictV1 },
   { type: "hint_shown", v: 1, schema: hintShownV1 },
   { type: "thread_spent", v: 1, schema: threadSpentV1 },
+  { type: "explanation_bought", v: 1, schema: explanationBoughtV1 },
   { type: "solution_shown", v: 1, schema: solutionShownV1 },
   { type: "explanation_shown", v: 1, schema: explanationShownV1 },
   { type: "glossary_opened", v: 1, schema: glossaryOpenedV1 },

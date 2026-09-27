@@ -4,13 +4,18 @@ import { mountPairing } from "./pairing.js";
 import { mountPlay } from "./play.js";
 import { mountShell } from "./shell.js";
 import { mountStage0 } from "./stage0.js";
+import { createStream, type Stream } from "./stream.js";
 
 export function createApp({
   db,
   now = Date.now,
+  stream = createStream(),
+  explainer,
 }: {
   db: Db;
   now?: () => number;
+  stream?: Stream;
+  explainer?: (itemId: string) => Promise<string>;
 }): Hono {
   const app = new Hono();
   mountPairing(app, db, now);
@@ -21,6 +26,6 @@ export function createApp({
   );
   mountShell(app);
   mountStage0(app, db);
-  mountPlay(app, db);
+  mountPlay(app, db, { now, stream, ...(explainer ? { explainer } : {}) });
   return app;
 }

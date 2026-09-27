@@ -2,8 +2,12 @@
 // schema before it leaves the server, so an unlisted field can't leak.
 import { z } from "zod";
 
+// Every request that changes state carries clientSeq, the device's own counter:
+// a repeat with the same value appends nothing and gets the first reply.
+const clientSeq = z.number().int().nonnegative();
+
 export const SessionStartIn = z
-  .object({ mode: z.enum(["zero", "daily"]) })
+  .object({ mode: z.enum(["zero", "daily"]), clientSeq })
   .strict();
 export const SessionStartOut = z.object({ sessionId: z.string() }).strict();
 
@@ -56,7 +60,7 @@ export const AnswerIn = z
         method: z.enum(["keypad", "keyboard", "choice", "voice"]),
       })
       .strict(),
-    clientSeq: z.number().int().nonnegative(),
+    clientSeq,
   })
   .strict();
 export type AnswerIn = z.infer<typeof AnswerIn>;
@@ -76,3 +80,41 @@ export const AnswerOut = z
   })
   .strict();
 export type AnswerOut = z.infer<typeof AnswerOut>;
+
+/** A hint request names the rung it buys, so a repeat can't buy the next one. */
+export const HintIn = z
+  .object({ level: z.number().int().min(1).max(3), clientSeq })
+  .strict();
+export const HintOut = z
+  .object({
+    level: z.number().int().min(1).max(3),
+    text: z.string().min(1),
+    threads: z.number().int().nonnegative(),
+  })
+  .strict();
+
+/** The body of the explain and second-attempt requests. */
+export const ItemActionIn = z.object({ clientSeq }).strict();
+
+export const ExplainOut = z
+  .object({
+    status: z.literal("pending"),
+    threads: z.number().int().nonnegative(),
+  })
+  .strict();
+
+// The stream's messages (SPC-0030), each carrying the seq of the event it
+// reports. This part sends explanation_ready; later parts add the others.
+export const ExplanationReady = z
+  .object({
+    type: z.literal("explanation_ready"),
+    seq: z.number().int().positive(),
+    itemId: z.string(),
+    source: z.enum(["model", "template"]),
+    text: z.string().min(1),
+  })
+  .strict();
+export const StreamMessage = ExplanationReady;
+export type StreamMessage = z.infer<typeof StreamMessage>;
+
+export const PollOut = z.object({ messages: z.array(StreamMessage) }).strict();

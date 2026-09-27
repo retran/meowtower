@@ -54,6 +54,20 @@ export function eventByIdemKey(
   return row && toEvent(row);
 }
 
+/**
+ * The events one request logged: the first carries the request's key, the
+ * rest the key and `#1`, `#2` and so on, because idem_key is unique per event.
+ */
+export function requestEvents(db: Db, idemKey: string): StoredEvent[] {
+  return (
+    db
+      .prepare(
+        "SELECT * FROM events WHERE idem_key = ? OR (idem_key >= ? AND idem_key < ?) ORDER BY seq",
+      )
+      .all(idemKey, `${idemKey}#`, `${idemKey}$`) as Row[]
+  ).map(toEvent);
+}
+
 /** Each distinct type and payload version in the log, for the start-up schema check. */
 export function storedTypeVersions(db: Db): { type: string; v: number }[] {
   return db.prepare("SELECT DISTINCT type, v FROM events").all() as {

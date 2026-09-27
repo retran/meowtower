@@ -83,6 +83,11 @@ describe("REQ-2516: pairing by a 6-digit code that lives 5 minutes", () => {
       ["POST", "/api/session/start"],
       ["GET", "/api/session/x/next"],
       ["POST", "/api/session/x/answer"],
+      ["POST", "/api/item/x/hint"],
+      ["POST", "/api/item/x/explain"],
+      ["POST", "/api/item/x/second-attempt"],
+      ["GET", "/api/session/x/events"],
+      ["GET", "/api/session/x/poll"],
       ["POST", "/api/stage0/write"],
       ["GET", "/api/stage0/write/x"],
     ] as const) {
@@ -118,7 +123,7 @@ describe("REQ-2516: pairing by a 6-digit code that lives 5 minutes", () => {
       {
         method: "POST",
         headers: { cookie, "content-type": "application/json" },
-        body: JSON.stringify({ mode: "daily" }),
+        body: JSON.stringify({ mode: "daily", clientSeq: 1 }),
       },
     );
     expect(res.status).toBe(200);
