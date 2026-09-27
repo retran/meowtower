@@ -1,5 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import Database from "better-sqlite3";
+import { storedTypeVersions } from "../engine/events/read.js";
+import { events } from "../shared/events.js";
 
 export type Db = Database.Database;
 
@@ -33,6 +35,7 @@ export function openDatabase(
   try {
     migrate(db, migrations);
     checkGuard(db);
+    checkSchemas(db);
   } catch (err) {
     db.close();
     throw err;
@@ -47,6 +50,17 @@ function triggerSql(db: Db): Map<string, string> {
     )
     .all() as { name: string; tbl: string; sql: string }[];
   return new Map(rows.map((r) => [r.name, `${r.tbl}\n${r.sql}`]));
+}
+
+/** Every type and version in the log must have a schema (ADR-0020). */
+function checkSchemas(db: Db): void {
+  const unknown = storedTypeVersions(db).filter(
+    (e) => !events.has(e.type, e.v),
+  );
+  if (unknown.length) {
+    const list = unknown.map((e) => `${e.type} v${e.v}`).join(", ");
+    throw new Error(`event_schema_unknown: ${list}`);
+  }
 }
 
 function checkGuard(db: Db): void {

@@ -1,5 +1,8 @@
 import type Database from "better-sqlite3";
+import { EventInvalid, events as registry } from "../../shared/events.js";
 import { ulid } from "./ulid.js";
+
+export { EventInvalid };
 
 type Db = Database.Database;
 
@@ -40,8 +43,10 @@ export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
        (id, ts, client_ms, device_id, session_id, adventure_id, type, v, payload, idem_key)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
-  const write = db.transaction((batch: readonly NewEvent[]) =>
-    batch.map((e) => {
+  const write = db.transaction((batch: readonly NewEvent[]) => {
+    // Every event of the batch is checked before any is written (ADR-0020).
+    for (const e of batch) registry.validate(e.type, e.v, e.payload);
+    return batch.map((e) => {
       const now = Date.now();
       const id = ulid(now);
       const [deviceId, clientMs] =
@@ -61,11 +66,12 @@ export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
         e.idemKey ?? null,
       );
       return { seq: Number(lastInsertRowid), id };
-    }),
-  );
+    });
+  });
   try {
     return write(events);
   } catch (err) {
+    if (err instanceof EventInvalid) throw err;
     throw new LogWriteFailed(err);
   }
 }

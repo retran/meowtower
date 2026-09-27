@@ -53,3 +53,11 @@ export function eventByIdemKey(
     .get(idemKey) as Row | undefined;
   return row && toEvent(row);
 }
+
+/** Each distinct type and payload version in the log, for the start-up schema check. */
+export function storedTypeVersions(db: Db): { type: string; v: number }[] {
+  return db.prepare("SELECT DISTINCT type, v FROM events").all() as {
+    type: string;
+    v: number;
+  }[];
+}

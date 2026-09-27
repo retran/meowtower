@@ -47,7 +47,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs run format lint check test build exit 0, 63 tests; crash test 100 of 100 writes kept (TSK-0200 Evidence)
       closes: REQ-2226, REQ-3800, REQ-2202
       depends: TSK-0030 - it replaces the table that task's storage module and crash test write
-- [ ] T-002 [P] TSK-0210 Schemas, upcasters and the start-up schema check, with the task and attempt events (`src/shared/events.ts`)
+- [x] T-002 [P] TSK-0210 Schemas, upcasters and the start-up schema check, with the task and attempt events (`src/shared/events.ts`)
+      evidence: meow-verbs exit 0, 132 tests; missing facts refused by name; unknown schema stops start-up (TSK-0210 Evidence)
       closes: REQ-2204, REQ-2206, REQ-2208, REQ-2212, REQ-3804
       depends: TSK-0200 - the schemas validate inside `appendEvents`
 - [x] T-003 [P] TSK-0230 A static check keeps every template's parameters language-free (`tools/static-checks.ts`)

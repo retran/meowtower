@@ -38,7 +38,16 @@ TSK-0200, because validation runs inside `appendEvents` and the start-up check r
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 17 test files, 132 Vitest tests and 2 Playwright tests passed. `npx vitest run tests/crash --silent=false` printed `crash test: 100 of 100 writes kept, 0 lost`.
+- Seen failing first: before `src/shared/events.ts` existed, `tests/unit/event-schemas.test.ts` and `tests/unit/upcasters.test.ts` couldn't load their module. The start-up test passed with the check, failed with `checkSchemas` commented out, and passed again once restored.
+- Criteria 1 to 4, REQ-2204, REQ-2206, REQ-2208, REQ-2212, REQ-3804: `tests/unit/event-schemas.test.ts` (62 cases) passes. Each schema accepts a full payload; dropping any one top-level fact of `item_shown`, `attempt_submitted`, `verdict`, `hint_shown`, `thread_spent`, `solution_shown`, `explanation_shown` or `glossary_opened` makes `appendEvents` throw `EventInvalid` naming the field and write nothing, as does dropping any of the six parts of the input summary (`input.firstKeyMs` and the rest) or the view's `locale`. A second attempt without `parentItemId` is refused; `explanation_shown` refuses a `text` field; a batch with one invalid event writes none; an unknown type is refused as `event_schema_unknown`.
+- Criterion 5: `tests/unit/upcasters.test.ts` passes: a stored version-1 event reads as version 2 through its upcaster, and the stored payload is unchanged.
+- Criterion 6: `tests/unit/schema-startup.test.ts` passes: `meowtower` started on a log holding `from_the_future v7` exits non-zero with `event_schema_unknown: from_the_future v7`. The query lives in `src/engine/events/read.ts`, because TSK-0200's `events_sql` check confines SQL on `events` there.
+- Criterion 7: the field dictionary (`fieldDictionary()`) gives every field of every schema a description; the test finds no blank row.
+- The stage-0 event of TSK-0200 has its schema: `attempt_submitted` version 0 holds `raw`, the answer as entered.
+- Choices made where the requirements name a fact but not its form, each for the owning epic to extend through a new version: the input method is one of `keypad`, `keyboard`, `choice`, `voice`; focus losses are a count and a total duration; the verdict is one of `correct`, `partial`, `wrong`, `dont_know`, `unparsed`; the explanation's source is one of `model`, `cache`, `template`; a thread is spent on a `hint` or an `explanation`. Every schema is strict, so a field no version names is refused.
 
 ## Left alone
 
