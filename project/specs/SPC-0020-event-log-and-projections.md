@@ -29,7 +29,7 @@ It leaves out what other documents and decisions define. The container, the data
 | Projection registry | The list of tables that are projections, each with the function that folds events into it. |
 | Table `derived_meta` | One row per projection table: `model_version`, `threshold_version`, `graph_version`, `last_event_seq` and `computed_at`. |
 | Tables `items_view` and `attempts_view` | The flat projections of tasks shown and of attempts that the export writes as `items` and `attempts`. |
-| `./meowtower recompute` | Runs a full recompute inside `meowtower`. |
+| `./meowtower recompute` | Runs a full recompute inside `meowtower`, through `POST /recompute` on the Parent Room's listener, and prints the tables rebuilt, the last event and the time taken. |
 | `./meowtower export` | Runs the export inside `meowtower` and prints the output directory. |
 | `GET /api/parent/export/<file>` | The export's files, served only on the loopback listener `http://localhost:8080`. |
 | `data/blobs/<sha256>.webp` | Draft-pad images, one file per hash, written once. |
@@ -108,6 +108,8 @@ Seven tables are not projections, and no recompute registers or touches them: `b
 ### Recompute
 
 A full recompute builds every registered projection into a shadow table `<name>__next` from `seq` 1 while play goes on, catches up to the head of the log, then in one short transaction applies the events that arrived meanwhile and swaps each shadow table in (REQ-2200). With the same model, threshold and graph versions, every rebuilt table holds the same rows as before in every column except `computed_at` (REQ-2200). It keeps the `node_snapshots` rows of earlier model versions and adds rows under the current one. It uses the graph version in the content files. `./meowtower recompute` runs it on demand.
+
+The build runs on the server's connection in chunks of 500 events, each its own transaction, yielding between them, so an append waits at most for one chunk; it builds up to the head of the log as it stood at the start, and the swap's transaction folds in the rest. A projection folds each event into the table it is given, its own or its shadow, from one table definition. A recompute that fails drops its shadow tables and leaves the projections as they were. The check `projection_diverged` derives each projection afresh and reports the table with its first differing row, as stored and as derived. `recompute_failed`, `recompute_slow` and `log_large` join the parent's notices in `data/snapshots/notices.json` that SPC-0010 describes, and `log_large` is checked when a session ends.
 
 At start-up, before it accepts a play request, `meowtower` rebuilds every registered projection table that is missing (REQ-2232). It then runs a full recompute when the model or threshold version in the content files differs from `derived_meta` (REQ-2230).
 
