@@ -14,6 +14,8 @@ const MIGRATIONS = new URL("../../migrations/", import.meta.url);
 export const GUARDED_TRIGGERS = [
   { name: "events_no_update", table: "events", on: "UPDATE" },
   { name: "events_no_delete", table: "events", on: "DELETE" },
+  { name: "blobs_no_update", table: "blobs", on: "UPDATE" },
+  { name: "blobs_no_delete", table: "blobs", on: "DELETE" },
 ] as const;
 
 const GUARD_MESSAGE = "RAISE(ABORT, 'events are append-only')";

@@ -548,6 +548,23 @@ const parentDefs: EventDef[] = [
   },
 ];
 
+const scratchDefs: EventDef[] = [
+  {
+    type: "scratch_snapshot",
+    v: 1,
+    schema: obj({
+      itemId: id("the task the draft belongs to"),
+      attemptNo: z
+        .union([z.literal(1), z.literal(2)])
+        .describe("the attempt the draft was submitted with"),
+      sha256: z
+        .string()
+        .regex(/^[0-9a-f]{64}$/)
+        .describe("the SHA-256 hash of the stored image, also its file name"),
+    }),
+  },
+];
+
 const sessionDefs: EventDef[] = [
   {
     type: "session_started",
@@ -597,6 +614,7 @@ export const EVENT_DEFS: readonly EventDef[] = [
   ...parentDefs,
   ...safetyDefs,
   ...sessionDefs,
+  ...scratchDefs,
 ];
 
 /** ADR-0020's Event catalogue: the only type names the registry may hold. */

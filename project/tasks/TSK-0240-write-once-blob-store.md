@@ -35,7 +35,17 @@ TSK-0210, because `scratch_snapshot` enters the schema registry that task makes.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 21 test files, 253 Vitest tests and 2 Playwright tests passed.
+- Seen failing first: `tests/unit/blob-store.test.ts` and `tests/unit/blob-check.test.ts` couldn't load before `src/engine/blobs/` existed. With the simulated crash moved after the event, the crash case failed (an event named a file whose write had "died"), and passed again once restored.
+- Criterion 1, REQ-2210: storing a WebP writes `<sha256>.webp` with the image's bytes, then the `blobs` row, then `scratch_snapshot` with `{ itemId, attemptNo, sha256 }`.
+- Criterion 2: storing the same image again leaves the file's bytes and modification time unchanged; the file is opened with exclusive create, and an existing file is never rewritten.
+- Criterion 3: an image over 512 KB is refused with `BlobRefused` (`blob_too_large`) and no file, row or event appears; bytes that aren't WebP are refused as `blob_not_webp`.
+- Criterion 4: `UPDATE` and `DELETE` on `blobs` fail with `events are append-only`; `blobs_no_update` and `blobs_no_delete` joined `GUARDED_TRIGGERS`, so TSK-0200's guard test now also shows `meowtower` refusing to start without either, and the migration runner refuses a migration that drops them. The update trigger guards the whole row, stricter than the hash column alone, because a row never needs any change.
+- Criterion 5: `verifyBlobs` passes a clean store, reports `blob_changed` for a file whose bytes were changed, and reports `blob_missing` for a `scratch_snapshot` event with no file (`tests/unit/blob-check.test.ts`). It is a function the verify command of ADR-0190 calls once that command exists.
+- Criterion 6: with the process "killed" right after the file's sync (a hook that throws), no `scratch_snapshot` is logged, and every logged event's file exists.
+- The writer lives in `src/engine/blobs/store.ts`; TSK-0070 reuses it for the write-once rule on `data/blobs/`.
 
 ## Left alone
 

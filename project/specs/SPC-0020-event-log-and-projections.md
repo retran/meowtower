@@ -23,7 +23,7 @@ It leaves out what other documents and decisions define. The container, the data
 | --- | --- |
 | Table `events` | The log. One row per event, never updated or deleted. |
 | Triggers `events_no_update`, `events_no_delete` | `BEFORE UPDATE ON events` and `BEFORE DELETE ON events`, each `RAISE(ABORT, 'events are append-only')`. |
-| Table `blobs` and its two triggers | One row per stored image, keyed by its SHA-256 hash; two triggers reject any change to or removal of the `sha256` column's value with the same message. |
+| Table `blobs` and its two triggers | One row per stored image, keyed by its SHA-256 hash; two triggers reject any change to a row and any removal, with the same message as `events`. |
 | `appendEvents` in `src/engine/events/` | The only code that inserts into `events`. It takes one or more events and returns their `seq` and `id` once the transaction commits. |
 | `src/shared/events.ts` | One zod schema per event type and payload version, and one upcaster from each version to the next. |
 | Projection registry | The list of tables that are projections, each with the function that folds events into it. |

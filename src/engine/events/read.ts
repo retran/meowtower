@@ -81,3 +81,12 @@ export function itemEvents(db: Db, itemId: string): StoredEvent[] {
       .all(itemId) as Row[]
   ).map(toEvent);
 }
+
+/** Every event of one type, in log order. */
+export function eventsOfType(db: Db, type: string): StoredEvent[] {
+  return (
+    db
+      .prepare("SELECT * FROM events WHERE type = ? ORDER BY seq")
+      .all(type) as Row[]
+  ).map(toEvent);
+}
