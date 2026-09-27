@@ -3,9 +3,14 @@
 # place. Fill each value from what the repository already does, never from what
 # it might do.
 
-# [verbs] is absent: the repository has no code, no package manifest and no
-# task runner yet. The stack in draft/khroniki-bashni-specifikaciya.md
-# (TypeScript, Vite, Vitest, Playwright) is planned, not present.
+# One command per verification verb, each run by the shell from the
+# repository's root.
+[verbs]
+format = "npx prettier --check ."
+lint = "npx eslint ."
+check = "npx tsc --noEmit"
+test = "npx vitest run tests"
+build = "npm run build && docker compose build"
 
 # [commits] is absent: branch main has no commits, so there is no convention
 # to read.

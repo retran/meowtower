@@ -34,7 +34,16 @@ Nothing.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac, with the names ADR-0200 sets (`./meowtower`, the service `meowtower`, the volume `meowtower-db`).
+
+- Verbs: `meow-verbs run format lint check test build` exited 0: format, lint, check, test and build passed; 2 test files, 7 tests passed.
+- REQ-2512, checked first against a `compose.yaml` without hardening, where 2 of the checks failed: `tests/smoke/compose.test.ts` now passes for both services. `docker compose config` shows `meowtower` with `user: node` and `proxy` with `user: 1000:1000`, each with `cap_drop: [ALL]`, `no-new-privileges:true` and `read_only: true`; `docker compose exec meowtower id -u` printed `1000`, and so did `proxy`.
+- REQ-2502: `tests/smoke/compose.test.ts` passes. After `./meowtower up`, `ls data/` printed `blobs caddy exports snapshots` and no database file; `docker volume inspect meowtower_meowtower-db` showed the volume, and `/var/lib/meowtower` inside `meowtower` held `meowtower.sqlite`.
+- Criterion 1: `./meowtower status` printed `Docker: running`, `meowtower: running`, `proxy: running`; `curl -k https://code-swirl.local/health` returned HTTP 200 `{"status":"ok","database":"ok"}`.
+- Criterion 4: after `./meowtower down`, no container ran, `meowtower_meowtower-db` was still listed and `caffeinate` had stopped.
+- Criterion 5: with `DOCKER_HOST` pointed at a socket that doesn't exist, `./meowtower status` printed `Docker Desktop is not running.` and exited 1. Docker Desktop itself wasn't quit, so this simulates the condition.
+- The health route's failure path: `tests/unit/health.test.ts` checks that a closed database gives HTTP 503.
+- Fixed on the way: Caddy's image gives its binary a file capability that the hardening forbids, so `proxy/Dockerfile` strips it; `./meowtower up` detaches `caffeinate`, which had kept the script from returning.
 
 ## Left alone
 

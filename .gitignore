@@ -5,3 +5,11 @@ personal/
 design/
 
 .DS_Store
+
+# Build output and dependencies
+node_modules/
+dist/
+
+# Runtime data on the Mac, and the model key
+data/
+.env

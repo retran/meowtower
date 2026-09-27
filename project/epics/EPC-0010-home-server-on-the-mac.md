@@ -41,7 +41,8 @@ A task is marked in the commit that advances it, never in a later pass.
 
 ## Tasks
 
-- [ ] T-001 TSK-0010 The containers and `./tower up`, `down` and `status` serve a health page on the Mac (`compose.yaml`, `Caddyfile`, `tower`, `src/server/`)
+- [x] T-001 TSK-0010 The containers and `./tower up`, `down` and `status` serve a health page on the Mac (`compose.yaml`, `Caddyfile`, `tower`, `src/server/`)
+      evidence: meow-verbs run format lint check test build exit 0, 7 tests; ./meowtower up serves /health HTTP 200 (TSK-0010 Evidence)
       closes: REQ-2502, REQ-2512
       depends: none
 - [ ] T-002 TSK-0020 The iPad trusts HTTPS through `./tower ipad-setup` and installs the home-screen app

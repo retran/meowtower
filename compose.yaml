@@ -1,0 +1,45 @@
+name: meowtower
+
+# Both services run unprivileged (REQ-2512): no root user, no capabilities,
+# no privilege escalation and a read-only root file system.
+x-hardened: &hardened
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  read_only: true
+  tmpfs: ["/tmp"]
+  restart: unless-stopped
+
+services:
+  meowtower:
+    <<: *hardened
+    build: .
+    user: node
+    environment:
+      TZ: ${TZ:-UTC}
+    # The live database lives in the named volume; every other file is on the
+    # Mac under data/ (REQ-2502).
+    volumes:
+      - meowtower-db:/var/lib/meowtower
+      - ./data/blobs:/data/blobs
+      - ./data/snapshots:/data/snapshots
+      - ./data/exports:/data/exports
+
+  proxy:
+    <<: *hardened
+    build: ./proxy
+    user: "1000:1000"
+    environment:
+      TZ: ${TZ:-UTC}
+      TOWER_HOST: ${TOWER_HOST:-localhost}
+      XDG_CONFIG_HOME: /data/config
+      XDG_DATA_HOME: /data
+    ports:
+      - "443:8443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./data/caddy:/data
+    depends_on:
+      - meowtower
+
+volumes:
+  meowtower-db:

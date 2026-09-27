@@ -1,0 +1,8 @@
+dist/
+node_modules/
+design/
+data/
+personal/
+project/
+canon/
+*.md

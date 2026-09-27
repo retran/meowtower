@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
+# subcommands it needs; this one has up, down and status.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+CAFFEINATE_PID=data/.caffeinate.pid
+
+host_name() { echo "$(scutil --get LocalHostName 2>/dev/null || hostname -s).local"; }
+mac_time_zone() { readlink /etc/localtime | sed 's#.*/zoneinfo/##'; }
+docker_running() { docker info >/dev/null 2>&1; }
+
+compose() {
+  TOWER_HOST="$(host_name)" TZ="$(mac_time_zone)" docker compose "$@"
+}
+
+cmd_up() {
+  if ! docker_running; then echo "Docker Desktop is not running."; exit 1; fi
+  mkdir -p data/blobs data/snapshots data/exports data/caddy
+  compose up -d --build
+  # Keep the Mac awake while the server runs.
+  if [[ ! -f $CAFFEINATE_PID ]] || ! kill -0 "$(cat $CAFFEINATE_PID)" 2>/dev/null; then
+    # Detach it fully, or the script waits on its output and never returns.
+    nohup caffeinate -ims >/dev/null 2>&1 &
+    echo $! > "$CAFFEINATE_PID"
+  fi
+  local url="https://$(host_name)"
+  echo "Meowtower is up at $url"
+  if command -v qrencode >/dev/null; then qrencode -t ansiutf8 "$url"; fi
+}
+
+cmd_down() {
+  # Never pass -v: the volume meowtower-db holds the live database.
+  if docker_running; then compose down; fi
+  if [[ -f $CAFFEINATE_PID ]]; then
+    kill "$(cat $CAFFEINATE_PID)" 2>/dev/null || true
+    rm -f "$CAFFEINATE_PID"
+  fi
+}
+
+cmd_status() {
+  if ! docker_running; then echo "Docker Desktop is not running."; exit 1; fi
+  echo "Docker: running"
+  for svc in meowtower proxy; do
+    local state
+    state="$(compose ps --format '{{.State}}' "$svc" 2>/dev/null | head -1)"
+    echo "$svc: ${state:-not running}"
+  done
+}
+
+case "${1:-}" in
+  up) cmd_up ;;
+  down) cmd_down ;;
+  status) cmd_status ;;
+  *) echo "usage: ./meowtower up|down|status" >&2; exit 2 ;;
+esac

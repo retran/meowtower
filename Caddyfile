@@ -1,0 +1,12 @@
+{
+	# Unprivileged ports inside the container; the Mac publishes 443.
+	http_port 8080
+	https_port 8443
+	auto_https disable_redirects
+	admin off
+}
+
+https://{$TOWER_HOST}, https://localhost {
+	tls internal
+	reverse_proxy meowtower:3000
+}
