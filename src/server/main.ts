@@ -2,7 +2,8 @@ import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
 import { openDatabase } from "./database.js";
 
-const dbPath = process.env["TOWER_DB"] ?? "/var/lib/meowtower/meowtower.sqlite";
+const dbPath =
+  process.env["MEOWTOWER_DB"] ?? "/var/lib/meowtower/meowtower.sqlite";
 const port = Number(process.env["PORT"] ?? 3000);
 
 const db = openDatabase(dbPath);

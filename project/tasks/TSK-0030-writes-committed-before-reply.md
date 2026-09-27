@@ -30,7 +30,14 @@ TSK-0010, because the database lives in the volume `tower-db` it creates.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac, with the names ADR-0200 sets. Criteria 1 and 2 are met; criterion 3 waits for the answer request of ADR-0030.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 6 test files, 18 tests passed, the crash test included.
+- Criterion 1: `tests/unit/database.test.ts` passes: `journal_mode` is `wal` and `synchronous` is `2`, and each migration applies once and is recorded in `schema_migrations`. In the container, the live database in `meowtower-db` reads `journal_mode wal` with migration 1 applied.
+- Criterion 2, REQ-2508, seen failing first: against a route that replied before writing, `tests/crash/crash.test.ts` kept 0 of 20 writes. With the insert committed before the reply, `npx vitest run tests/crash --silent=false` printed `crash test: 100 of 100 writes kept, 0 lost`, matching the predicted 0 lost. The test also checks that no server already holds its port, because an earlier version killed only the `npx` wrapper and tested a live leftover process.
+- In the container: a write over HTTPS returned 201, and after `docker compose restart meowtower` it read back 200.
+- Not run: the variant that restarts the Docker virtual machine, which ADR-0010's reversal condition names. It needs Docker Desktop restarted by hand and is left for the stage 0 checklist.
+- Open: criterion 3, the same crash test against ADR-0030's answer request, once that epic exists.
 
 ## Left alone
 

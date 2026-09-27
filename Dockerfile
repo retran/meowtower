@@ -16,6 +16,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY package.json ./
 COPY content ./content
+COPY migrations ./migrations
 RUN mkdir -p /var/lib/meowtower && chown node:node /var/lib/meowtower
 USER node
 EXPOSE 3000
