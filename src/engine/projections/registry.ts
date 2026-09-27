@@ -4,6 +4,7 @@
 import type Database from "better-sqlite3";
 import type { StoredEvent } from "../events/read.js";
 import { flatViews } from "./flat-views.js";
+import { knowledge } from "./knowledge.js";
 import { lifecycle } from "./lifecycle.js";
 import { prepared } from "./statements.js";
 
@@ -14,6 +15,12 @@ export interface Projection {
   table: string;
   /** The table's definition, used to create it and to rebuild it when missing. */
   create: string;
+  /**
+   * The table keeps rows of earlier versions: it has `model_version`,
+   * `threshold_version` and `graph_version` columns, and a recompute rebuilds
+   * only the current versions' rows (SPC-0020).
+   */
+  versioned?: boolean;
   /** Folds one event into `table`, the projection's own or a shadow copy of it. */
   apply: (
     db: Db,
@@ -23,18 +30,28 @@ export interface Projection {
   ) => void;
 }
 
-/**
- * The versions the projections were computed with. The model, threshold and
- * graph files arrive with the epics realising ADR-0060, ADR-0140 and ADR-0050;
- * until then each is recorded as "none".
- */
-export const VERSIONS = {
-  model: "none",
-  thresholds: "none",
-  graph: "none",
-} as const;
+export {
+  VERSIONS,
+  useVersions,
+  versionLabel,
+  type Versions,
+} from "./versions.js";
+import { VERSIONS } from "./versions.js";
 
-const registered: Projection[] = [...flatViews, ...lifecycle];
+/**
+ * REQ-2230: true when a projection was computed under another model or
+ * threshold version than the content files name now.
+ */
+export function versionsChanged(db: Db): boolean {
+  return (
+    prepared(
+      db,
+      "SELECT 1 FROM derived_meta WHERE model_version <> ? OR threshold_version <> ? LIMIT 1",
+    ).get(VERSIONS.model, VERSIONS.thresholds) !== undefined
+  );
+}
+
+const registered: Projection[] = [...flatViews, ...lifecycle, ...knowledge];
 
 export const PROJECTIONS: readonly Projection[] = registered;
 

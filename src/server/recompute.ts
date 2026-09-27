@@ -7,7 +7,7 @@ import { mkdirSync } from "node:fs";
 import { eventsBytes } from "../engine/events/read.js";
 import {
   recompute,
-  VERSION_LABEL,
+  versionLabel,
   type RecomputeOptions,
   type RecomputeResult,
 } from "../engine/recompute.js";
@@ -44,9 +44,9 @@ export async function runRecompute(
     return result;
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
-    console.error(`recompute_failed: ${VERSION_LABEL}: ${reason}`);
+    console.error(`recompute_failed: ${versionLabel()}: ${reason}`);
     const notices = readNotices(dir);
-    notices.recompute_failed = { at, version: VERSION_LABEL, reason };
+    notices.recompute_failed = { at, version: versionLabel(), reason };
     writeNotices(dir, notices);
     throw err;
   }

@@ -74,7 +74,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs exit 0, 274 tests; seven files from a copy; DuckDB reads Parquet; 404 on HTTPS, 200 on loopback (TSK-0290 Evidence)
       closes: REQ-2234, REQ-2236, REQ-2238, REQ-2240
       depends: TSK-0250 - `attempts` and `items` are the flat projections; TSK-0060 - the loopback listener must exist
-- [ ] T-009 [P] TSK-0270 A version change recomputes at start-up, and logged decisions stay fixed under a new model
+- [x] T-009 [P] TSK-0270 A version change recomputes at start-up, and logged decisions stay fixed under a new model
       closes: REQ-2230, REQ-2224
       depends: TSK-0260 - the start-up recompute is that task's recompute
 - [ ] T-010 [P] TSK-0280 Emptying the explanation cache loses no fact about play

@@ -14,7 +14,7 @@ import {
   checkProjections,
   recompute,
   shadowOf,
-  VERSION_LABEL,
+  versionLabel,
 } from "../../src/engine/recompute.js";
 import { readNotices } from "../../src/server/backups.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
@@ -246,7 +246,7 @@ describe("recompute_failed", () => {
     expect(PROJECTIONS.map((p) => shadowOf(p.table))).not.toContain(undefined);
     expect(readNotices(w.dir).recompute_failed).toEqual({
       at: "2026-09-27T21:00:00.000Z",
-      version: VERSION_LABEL,
+      version: versionLabel(),
       reason: "disk full",
     });
     const page = await (

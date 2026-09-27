@@ -147,6 +147,76 @@ export function checkNoVerdictWords(root: string): Finding[] {
     }));
 }
 
+/**
+ * REQ-2224 (ADR-0020): no game projection reaches the knowledge model, the
+ * Director or the answer check, directly or through any module between,
+ * helpers both sides share included, so a recompute under new versions can't
+ * change a logged outcome, reward or branch. Type-only imports are skipped:
+ * they leave nothing at run time.
+ */
+export const FORBIDDEN_FOR_GAME = [
+  "src/engine/model/",
+  "src/engine/states/",
+  "src/engine/director/",
+  "src/shared/answer.ts",
+];
+/** Projection modules that aren't game projections: the knowledge ones and the registry, which imports every projection by design. */
+const NOT_GAME = new Set(["knowledge.ts", "registry.ts"]);
+
+function runtimeImports(path: string): string[] {
+  const text = readFileSync(path, "utf8");
+  const found: string[] = [];
+  const pattern =
+    /^\s*(?:import|export)\s+(?!type\b)(?:[^;]*?\sfrom\s+)?["'](\.{1,2}\/[^"']+)["']/gm;
+  for (const m of text.matchAll(pattern)) {
+    const spec = m[1];
+    if (!spec) continue;
+    const target = join(path, "..", spec.replace(/\.js$/, ".ts"));
+    if (existsSync(target)) found.push(target);
+  }
+  return found;
+}
+
+export function checkGameProjectionImports(root: string): Finding[] {
+  const dir = join(root, "src", "engine", "projections");
+  if (!existsSync(dir)) return [];
+  const games = readdirSync(dir)
+    .filter((f) => f.endsWith(".ts") && !NOT_GAME.has(f))
+    .map((f) => join(dir, f));
+  const forbidden = (path: string): boolean => {
+    const rel = relative(root, path).split(sep).join("/");
+    return FORBIDDEN_FOR_GAME.some((f) =>
+      f.endsWith("/") ? rel.startsWith(f) : rel === f,
+    );
+  };
+  const findings: Finding[] = [];
+  for (const start of games) {
+    // Breadth-first, so the chain reported is a shortest one.
+    const from = new Map<string, string | null>([[start, null]]);
+    const queue = [start];
+    while (queue.length) {
+      const at = queue.shift() as string;
+      if (forbidden(at)) {
+        const chain: string[] = [];
+        for (let p: string | null = at; p; p = from.get(p) ?? null)
+          chain.unshift(relative(root, p));
+        findings.push({
+          check: "game_projection_imports",
+          file: relative(root, start),
+          match: chain.join(" -> "),
+        });
+        break;
+      }
+      for (const next of runtimeImports(at))
+        if (!from.has(next)) {
+          from.set(next, at);
+          queue.push(next);
+        }
+    }
+  }
+  return findings;
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = process.cwd();
   const { checkParamsLanguageFree, loadTemplateSchemas } =
@@ -159,6 +229,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkBlobWritesConfined(root),
     ...checkProjectionsPure(root),
     ...checkNoVerdictWords(root),
+    ...checkGameProjectionImports(root),
     ...checkParamsLanguageFree(templates),
   ];
   console.log(
@@ -168,7 +239,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
-      "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»",
+      "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
+      "game_projection_imports followed the runtime imports of each game projection in src/engine/projections to the knowledge model, the Director and the answer check",
   );
   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
   process.exit(findings.length ? 1 : 0);

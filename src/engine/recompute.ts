@@ -13,6 +13,7 @@ import { eventsAfter, headSeq } from "./events/read.js";
 import {
   PROJECTIONS,
   VERSIONS,
+  versionLabel,
   type Projection,
 } from "./projections/registry.js";
 
@@ -67,7 +68,18 @@ export interface RecomputeResult {
   ms: number;
 }
 
-export const VERSION_LABEL = `model ${VERSIONS.model}, thresholds ${VERSIONS.thresholds}, graph ${VERSIONS.graph}`;
+export { versionLabel };
+
+/** The rows of a versioned table that another set of versions computed. */
+const OTHER_VERSIONS =
+  "NOT (model_version = ? AND threshold_version = ? AND graph_version = ?)";
+const CURRENT_VERSIONS =
+  "model_version = ? AND threshold_version = ? AND graph_version = ?";
+const versionArgs = (): string[] => [
+  VERSIONS.model,
+  VERSIONS.thresholds,
+  VERSIONS.graph,
+];
 
 /**
  * Rebuilds every registered projection and swaps it in. On a failure the
@@ -89,6 +101,16 @@ export async function recompute(
     for (const p of projections) {
       db.exec(`DROP TABLE IF EXISTS ${shadow(p)}`);
       db.exec(createAs(p, shadow(p)));
+      // A versioned table keeps the rows earlier versions computed.
+      const live = db
+        .prepare(
+          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+        )
+        .get(p.table);
+      if (p.versioned && live)
+        db.prepare(
+          `INSERT INTO ${shadow(p)} SELECT * FROM ${p.table} WHERE ${OTHER_VERSIONS}`,
+        ).run(...versionArgs());
     }
     // The build runs up to the head as it stood at the start, since appends
     // go on meanwhile; the swap's transaction catches up the rest.
@@ -195,10 +217,15 @@ export function checkProjections(db: Db): Divergence[] {
       })();
       const columns = comparedColumns(db, p.table);
       const list = columns.join(", ");
+      // A versioned table is compared on the current versions' rows only.
+      const where = p.versioned ? ` WHERE ${CURRENT_VERSIONS}` : "";
       const rows = (table: string) =>
         db
-          .prepare(`SELECT ${list} FROM ${table} ORDER BY ${list}`)
-          .all() as Record<string, unknown>[];
+          .prepare(`SELECT ${list} FROM ${table}${where} ORDER BY ${list}`)
+          .all(...(p.versioned ? versionArgs() : [])) as Record<
+          string,
+          unknown
+        >[];
       const stored = rows(p.table);
       const derived = rows(fresh);
       const n = Math.max(stored.length, derived.length);

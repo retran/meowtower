@@ -4,7 +4,13 @@ import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 import { snapshotNow } from "./snapshots.js";
 import { backupAfterSession } from "./backups.js";
-import { checkLogSize } from "./recompute.js";
+import { checkLogSize, runRecompute } from "./recompute.js";
+import { readContentVersions } from "./versions.js";
+import {
+  useVersions,
+  versionLabel,
+  versionsChanged,
+} from "../engine/projections/registry.js";
 import { dirname } from "node:path";
 
 const dbPath =
@@ -16,6 +22,8 @@ const exports = process.env["MEOWTOWER_EXPORTS"] ?? "/data/exports";
 
 let db: Db;
 try {
+  // The versions come first: a table rebuilt at open records them.
+  useVersions(readContentVersions());
   // A snapshot before any pending migration (REQ-2528).
   db = openDatabase(dbPath, {
     beforeMigrate: (d) => snapshotNow(d, snapshots, new Date()),
@@ -25,6 +33,21 @@ try {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);
 }
+// A new model or threshold version recomputes every projection before the
+// first request (REQ-2230); a failure leaves the old projections and play
+// goes on, with recompute_failed for the parent.
+if (versionsChanged(db)) {
+  console.log(`startup_recompute: now ${versionLabel()}`);
+  try {
+    const done = await runRecompute(db, { dir: snapshots, now: Date.now });
+    console.log(
+      `startup_recompute: ${done.tables.length} tables in ${done.ms} ms`,
+    );
+  } catch {
+    // runRecompute has raised recompute_failed.
+  }
+}
+
 // A snapshot after each session (REQ-2526); data/ is the snapshots folder's parent.
 const onSessionEnded = (): void => {
   checkLogSize(db, snapshots, Date.now);
