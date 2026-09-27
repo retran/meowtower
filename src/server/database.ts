@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import Database from "better-sqlite3";
-import { storedTypeVersions } from "../engine/events/read.js";
+import { allEvents, storedTypeVersions } from "../engine/events/read.js";
+import { rebuildMissing } from "../engine/projections/registry.js";
 import { events } from "../shared/events.js";
 
 export type Db = Database.Database;
@@ -45,6 +46,8 @@ export function openDatabase(
     migrate(db, migrations, beforeMigrate);
     checkGuard(db);
     checkSchemas(db);
+    // REQ-2232: a missing projection table is rebuilt before any request.
+    rebuildMissing(db, () => allEvents(db), new Date().toISOString());
   } catch (err) {
     db.close();
     throw err;

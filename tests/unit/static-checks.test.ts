@@ -93,3 +93,29 @@ describe("REQ-2226: only appendEvents and the migrations name events in SQL", ()
     expect(checkEventsSqlConfined(root)).toEqual([]);
   });
 });
+
+describe("projections are pure folds", () => {
+  it("finds no clock, random source or network in src/engine/projections", async () => {
+    const { checkProjectionsPure } =
+      await import("../../tools/static-checks.js");
+    expect(checkProjectionsPure(process.cwd())).toEqual([]);
+  });
+  it("names a projection that reads the clock", async () => {
+    const { checkProjectionsPure } =
+      await import("../../tools/static-checks.js");
+    const root = mkdtempSync(join(tmpdir(), "meowtower-pure-"));
+    mkdirSync(join(root, "src/engine/projections"), { recursive: true });
+    writeFileSync(
+      join(root, "src/engine/projections/bad.ts"),
+      "const t = Date.now();",
+    );
+    expect(checkProjectionsPure(root)).toEqual([
+      {
+        check: "projection_purity",
+        file: "src/engine/projections/bad.ts",
+        match: "Date.now",
+      },
+    ]);
+    rmSync(root, { recursive: true, force: true });
+  });
+});

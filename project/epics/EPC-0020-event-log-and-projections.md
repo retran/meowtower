@@ -63,7 +63,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs exit 0, 253 tests; file synced before event; blob_changed reported; triggers guarded (TSK-0240 Evidence)
       closes: REQ-2210
       depends: TSK-0210 - `scratch_snapshot` needs its schema in the registry
-- [ ] T-006 TSK-0250 The projection registry, `derived_meta`, the flat `items_view` and `attempts_view`, corrections, and the start-up rebuild of a missing table
+- [x] T-006 TSK-0250 The projection registry, `derived_meta`, the flat `items_view` and `attempts_view`, corrections, and the start-up rebuild of a missing table
+      evidence: meow-verbs exit 0, 270 tests; folds in the log transaction; missing view rebuilt at start-up (TSK-0250 Evidence)
       closes: REQ-3802, REQ-2232, REQ-2228
       depends: TSK-0210 and TSK-0220 - the flat projections fold the task, attempt and parent-action events those tasks define
 - [ ] T-007 [P] TSK-0260 The shadow-table full recompute, `./meowtower recompute`, and the rebuild test

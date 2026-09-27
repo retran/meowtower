@@ -117,6 +117,17 @@ export function checkBlobWritesConfined(root: string): Finding[] {
   );
 }
 
+/** Projections are pure folds: no clock, random source or network (SPC-0020). */
+export function checkProjectionsPure(root: string): Finding[] {
+  const dir = join(root, "src", "engine", "projections");
+  return scan(
+    "projection_purity",
+    existsSync(dir) ? files(dir) : [],
+    root,
+    /Date\.now|new Date\(|Math\.random|performance\.now|from "node:(crypto|http|https|net|dgram)"|\bfetch\(/,
+  );
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = process.cwd();
   const { checkParamsLanguageFree, loadTemplateSchemas } =
@@ -127,6 +138,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkNoPush(root),
     ...checkEventsSqlConfined(root),
     ...checkBlobWritesConfined(root),
+    ...checkProjectionsPure(root),
     ...checkParamsLanguageFree(templates),
   ];
   console.log(
@@ -134,7 +146,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
-      "blob_write searched the code outside the blob store for writes or deletes in data/blobs",
+      "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
+      "projection_purity searched src/engine/projections for clocks, random sources and network modules",
   );
   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
   process.exit(findings.length ? 1 : 0);

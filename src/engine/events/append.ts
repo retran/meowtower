@@ -1,5 +1,6 @@
 import type Database from "better-sqlite3";
 import { EventInvalid, events as registry } from "../../shared/events.js";
+import { applyProjections } from "../projections/registry.js";
 import { ulid } from "./ulid.js";
 
 export { EventInvalid };
@@ -65,7 +66,27 @@ export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
         JSON.stringify(e.payload),
         e.idemKey ?? null,
       );
-      return { seq: Number(lastInsertRowid), id };
+      const seq = Number(lastInsertRowid);
+      const ts = new Date(now).toISOString();
+      // Every projection folds the event in this same transaction (SPC-0020).
+      applyProjections(
+        db,
+        {
+          seq,
+          id,
+          ts,
+          clientMs,
+          deviceId,
+          sessionId: e.sessionId ?? null,
+          adventureId: e.adventureId ?? null,
+          type: e.type,
+          v: e.v,
+          payload: e.payload,
+          idemKey: e.idemKey ?? null,
+        },
+        ts,
+      );
+      return { seq, id };
     });
   });
   try {

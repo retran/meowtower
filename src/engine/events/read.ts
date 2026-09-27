@@ -90,3 +90,21 @@ export function eventsOfType(db: Db, type: string): StoredEvent[] {
       .all(type) as Row[]
   ).map(toEvent);
 }
+
+/**
+ * Every event in log order, for a replay. Pages of 1,000 rows, because a
+ * replay writes between reads and better-sqlite3 allows no other statement
+ * while a query is being iterated.
+ */
+export function* allEvents(db: Db): Generator<StoredEvent> {
+  const page = db.prepare(
+    "SELECT * FROM events WHERE seq > ? ORDER BY seq LIMIT 1000",
+  );
+  let after = 0;
+  for (;;) {
+    const rows = page.all(after) as Row[];
+    if (!rows.length) return;
+    for (const row of rows) yield toEvent(row);
+    after = rows[rows.length - 1]?.seq ?? after;
+  }
+}
