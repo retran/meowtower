@@ -30,8 +30,12 @@ The system consists of two containers and one command. The container `meowtower`
 | `./meowtower status` | Reports in one line each whether Docker and both containers run, the last snapshot and how long it took, and any open `backup_failed` or `storage_ceiling` notice. |
 | `./meowtower set-home-network` | Records the Mac's default gateway, as its IP address and the router's hardware address where the Mac can read it, in `data/home-gateway`. The first `./meowtower up` records it too. |
 | `./meowtower pair` | Prints a new 6-digit pairing code, asked for through `POST /pair-code` on the Parent Room's listener, so only the Mac issues codes. |
-| `POST /api/pair` | `{ code, kind }` on the game listener; on a live code it sets the device cookie and replies 200, otherwise 403 `pairing_code_invalid`. The only `/api` route that needs no token. |
-| `./meowtower set-pin` | Sets the Parent Room PIN. |
+| `POST /api/pair` | `{ code, kind }` on the game listener; on a live code it sets the device cookie and replies 200, otherwise 403 `pairing_code_invalid`, or `429 pairing_locked` with `retryAt` during a lockout. The only `/api` route that needs no token. |
+| `GET` and `PUT /api/device` | The calling device's interface, `{ kind: "tablet" \| "computer" }`, read and switched. |
+| `POST /api/parent/login` | `{ pin }` from a paired device; opens a parent session bound to that device. |
+| `GET /api/parent/devices`, `POST /api/parent/devices/:id/revoke` and `POST /api/parent/pair-code` | The Parent Room's devices page: the paired devices, revoking one, and a pairing code with the time it expires. Each needs a parent session opened on the calling device. |
+| `GET /i18n/<lang>.json` and `GET /client/<module>.js` | The client's strings, the `ui.` keys of the language file only, and its compiled modules. Public, like the page. |
+| `./meowtower set-pin` | Reads the Parent Room PIN twice, 4 to 8 digits, and sets it through `POST /pin` on the Parent Room's listener, so only the Mac sets it; the PIN reaches `curl` on stdin. |
 | `./meowtower ipad-setup` | Writes the configuration profile that installs Caddy's root certificate into `data/setup/`, where `proxy` serves it at `https://<mac-name>.local/setup/meowtower.mobileconfig` as `application/x-apple-aspen-config`, and prints the iPad's steps. `--print-profile` prints the profile instead. With no root certificate yet it prints `root_certificate_missing` and exits 1. |
 | `./meowtower db-snapshot` | Takes one snapshot on demand, through `POST /snapshot` on the Parent Room's listener; the server records the file and its time in `data/snapshots/last.json`, which `./meowtower status` shows. |
 | `./meowtower restore` | Stops `meowtower`, runs `dist/server/restore.js` in its container to copy the newest snapshot over the live database, and starts it again. |
@@ -44,8 +48,10 @@ The system consists of two containers and one command. The container `meowtower`
 | `data/setup/` | The iPad profile, which holds only the public root certificate. |
 | `.env` | Holds the OpenRouter key on the Mac, given to the `meowtower` service only. |
 | Device cookie | A random 256-bit token in an `HttpOnly`, `Secure`, `SameSite=Strict` cookie with no expiry date. |
-| Table `devices` | One row per paired device: the token's SHA-256 hash, whether it is revoked, and the device's interface choice. |
-| Errors | `401 device_token_missing` for an `/api` request with no known device token; `403 pairing_code_invalid`; `401 device_revoked`; `pairing_locked`; `pin_locked`; `wrong_network`; `port_in_use`; `docker_not_running`; `backup_failed`; `storage_ceiling`; `model_service_down`; `server_unreachable`. |
+| Table `devices` | One row per paired device: the token's SHA-256 hash, whether it is revoked, and in `kind` the device's interface, set at pairing and switched in the settings. |
+| Table `parent_pin` | The PIN's scrypt hash and its salt. |
+| Table `lockouts` | For pairing codes and for the PIN, one row each: the wrong entries in a row and the end of a running lockout. |
+| Errors | `401 device_token_missing` for an `/api` request with no known device token; `403 pairing_code_invalid`; `401 device_revoked`; `429 pairing_locked` and `429 pin_locked`, each with `retryAt`; `403 pin_invalid`; `409 pin_not_set`; `401 parent_session_missing`; `400 pin_format` from `POST /pin`; `wrong_network`; `port_in_use`; `docker_not_running`; `backup_failed`; `storage_ceiling`; `model_service_down`; `server_unreachable`. |
 
 ### What this part requires from other parts
 
@@ -81,7 +87,9 @@ A device pairs with a 6-digit code that `./meowtower pair` or the Parent Room is
 
 When the parent revokes a device in the Parent Room, `meowtower` marks its row revoked and answers every later request carrying that token with `401 device_revoked` (REQ-2520).
 
-`meowtower` counts wrong pairing codes in a row and wrong PINs in a row separately. After the fifth wrong entry of one kind, it refuses every attempt of that kind for 15 minutes, a correct entry included, and a correct entry outside a lockout resets that kind's count (REQ-2522).
+`meowtower` counts wrong pairing codes in a row and wrong PINs in a row separately, one count of each kind for the whole server, kept in `lockouts` so a restart doesn't clear it. After the fifth wrong entry of one kind, it refuses every attempt of that kind for 15 minutes, a correct entry included, and a correct entry outside a lockout resets that kind's count (REQ-2522). The refusal names when attempts resume, and the count starts again at 0 after it. Any paired device, the player's included, can start the PIN's lockout.
+
+The Parent Room PIN is kept as an scrypt hash with its own salt. A correct PIN opens a parent session in an `HttpOnly`, `Secure`, `SameSite=Strict` cookie, bound to the device that opened it and held in memory, so a restart asks for the PIN again. The devices page lists the paired devices, revokes one after a second press, and issues pairing codes.
 
 ### The model key
 
@@ -103,7 +111,9 @@ A backup copy is one snapshot plus `data/blobs/`. The snapshot holds the event l
 
 ### The client
 
-One client code base builds a tablet interface and a computer interface, each covering every screen of the game and the Parent Room (REQ-2534). On its first start on a device the client picks the tablet interface when `(pointer: coarse)` matches and `(any-pointer: fine)` doesn't, and the computer interface otherwise (REQ-2536). The player switches the interface in the settings; `meowtower` stores the choice in that device's `devices` row, and the choice holds on that device until she changes it (REQ-2538).
+One client code base builds a tablet interface and a computer interface, each covering every screen of the game and the Parent Room (REQ-2534). On its first start on a device the client picks the tablet interface when `(pointer: coarse)` matches and `(any-pointer: fine)` doesn't, and the computer interface otherwise (REQ-2536). The player switches the interface in the settings; `meowtower` stores the choice in that device's `devices` row, and the choice holds on that device until she changes it (REQ-2538). A device not yet paired keeps its switch in memory until pairing sends it, so a reload before pairing picks from the device again.
+
+The client holds no text of its own: it reads the `ui.` keys of the language file from `meowtower`, which serves no other key, because the file also holds task texts and short solutions. Every screen registers a route in the client's route list, which the page exposes, because the keyboard test finds each screen through that list.
 
 On the computer interface every control on every screen works from the keyboard alone, with a visible focus ring (REQ-2540).
 
@@ -122,7 +132,8 @@ The device stores in IndexedDB only the queue of answers it hasn't sent, and ask
 | A request carries no device token | `meowtower` answers `401`. |
 | A request carries a revoked token | `meowtower` answers `401 device_revoked`, and the device shows that it needs pairing from the Parent Room. |
 | A pairing code is older than 5 minutes | `meowtower` refuses it. |
-| The fifth wrong pairing code or PIN in a row | `meowtower` refuses attempts of that kind for 15 minutes with `pairing_locked` or `pin_locked`, and the screen says when it takes attempts again. |
+| The fifth wrong pairing code or PIN in a row | `meowtower` refuses attempts of that kind for 15 minutes with `429 pairing_locked` or `429 pin_locked` and `retryAt`, and the screen says when it takes attempts again. |
+| A parent request comes without a parent session opened on the calling device | `401 parent_session_missing`; the client shows the PIN screen. |
 | The Mac's default gateway differs from the recorded one | `./meowtower up` prints `wrong_network` with the recorded gateway and the current one, and starts nothing. When either side's hardware address is unknown, the IP addresses alone decide. |
 | The Parent Room's port is taken by another program | `./meowtower up` prints `port_in_use` and starts nothing. |
 | The Docker engine isn't running | `./meowtower up` and `status` print `docker_not_running`. |

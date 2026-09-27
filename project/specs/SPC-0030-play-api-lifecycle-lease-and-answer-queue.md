@@ -27,21 +27,21 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 
 | Route | What it does |
 | --- | --- |
-| `POST /api/session/start` | `{ mode: "zero" \| "daily" }`. Opens a session and takes the lease for the calling device. `daily` continues the open adventure or plans a new one. |
-| `GET /api/adventure/current` | The open adventure: its state and where play stopped (floor, room, slot). |
+| `POST /api/session/start` | `{ mode: "zero" \| "daily", clientSeq }`. Opens a session and takes the lease for the calling device. `daily` continues the open adventure or plans a new one; a Session 0 (`zero`) belongs to no adventure. |
+| `GET /api/adventure/current` | The open adventure, `planned`, `active` or `paused`, with where play stopped (floor, room, slot), or `null` when none is open. |
 | `POST /api/adventure/resume` | Takes the lease for the calling device and returns `ResumeOut`. |
 | `POST /api/session/:id/resume` | The same as `POST /api/adventure/resume`, for the current session. |
 | `POST /api/session/:id/heartbeat` | The lease holder's heartbeat. |
 | `GET /api/session/:id/next` | The next packet: `room`, `scene`, `chest`, `break`, `stop_offer` or `end`. |
 | `POST /api/session/:id/answer` | `AnswerIn` for a first or second attempt; replies `AnswerOut`. |
-| `POST /api/item/:itemId/hint` | Buys the next hint level; replies `HintOut`. |
+| `POST /api/item/:itemId/hint` | `HintIn`: buys the hint level the request names, which is the next one or one already paid for; replies `HintOut`. |
 | `POST /api/item/:itemId/explain` | Buys a detailed explanation; replies `ExplainOut` with `status: "pending"`. |
-| `POST /api/item/:itemId/second-attempt` | Returns the parallel task for the second attempt as a `room` packet. |
+| `POST /api/item/:itemId/second-attempt` | `{ clientSeq }`, after the first attempt's verdict. Returns the parallel task for the second attempt as a `room` packet. |
 | `POST /api/session/:id/chest` | `{ chestId, rewardId }`: her pick of one of the chest's three options. |
 | `POST /api/session/:id/scene/input` | A scene choice, her free text, or a free-text draft. |
 | `POST /api/session/:id/rewards/delivered` | The client's acknowledgement that it showed a grant or a ceremony. |
-| `POST /api/session/:id/pause` | `{ reason: "leave" \| "background" \| "idle" }`. |
-| `POST /api/session/:id/break` | The rest-stop button. |
+| `POST /api/session/:id/pause` | `{ reason: "leave" \| "background" \| "idle", clientSeq }`; replies `{ status: "paused" }`. |
+| `POST /api/session/:id/break` | The rest-stop button: `{ action: "start" \| "end", clientSeq }`; replies `{ status: "resting" \| "playing" }`. |
 | `POST /api/session/:id/extend` | «Ещё один ряд» after a `stop_offer`. |
 | `GET /api/session/:id/events` | The SSE stream. |
 | `GET /api/session/:id/poll?after=<seq>` | The stream's messages after `seq`, for a client whose stream dropped. |
@@ -58,18 +58,28 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 | `Room` | An opaque random 128-bit `itemId`, the rendered `view`, the `InputSpec`, the slot, the room length, the attempt number, the thread stock and the hint levels already shown. |
 | `AnswerIn` | `itemId`, `raw`, the client's `parsed` as a hint, `dontKnow`, the input timings and method, and `clientSeq`. |
 | `AnswerOut` | For a first attempt the game outcome `clean`, `partial` or `alt`; for every attempt the streak, the grants, the thread stock, `feedback.correctAnswer` formatted for display, the short solution and `battleLine`, a line from the pool keyed by outcome. It has no verdict field. |
+| `HintIn` | `level`, 1 to 3, and `clientSeq`. |
 | `HintOut` | The hint level, its text and the thread stock. |
 | `ExplainOut` | `status: "pending"` and the thread stock. |
 | `ResumeOut` | `adventureId`, the packet to continue on, the rewards not yet delivered, and `wrapUp`. |
 | `stop_offer` | `canExtend`. |
+| `end` | `{ kind: "end" }`: the adventure has reached its finale or its short ending; a new session plans the next one. |
+| `PollOut` | `messages`: the stream's messages after the `seq` asked for. |
 
 ### SSE messages
 
-The stream `GET /api/session/:id/events` carries four messages, each with the `seq` of the log event it reports: `scene_ready`, `explanation_ready`, `lease_moved` and `safety_pause`. This part sends `explanation_ready` and `lease_moved`; the parts ADR-0110 defines send `scene_ready` and `safety_pause`.
+The stream `GET /api/session/:id/events` carries four messages, each with the `seq` of the log event it reports: `scene_ready`, `explanation_ready`, `lease_moved` and `safety_pause`. This part sends `explanation_ready` and `lease_moved`; the parts ADR-0110 defines send `scene_ready` and `safety_pause`. `explanation_ready` carries the `seq` of `explanation_bought`, the `itemId`, the source, `model` or `template`, and the text. The server keeps each session's messages in memory for the poll route, because the explanation's text never enters the log; after a restart the resume packet brings a client back.
 
 ### Events this part logs
 
-`adventure_planned`, `adventure_started`, `adventure_paused` with the reason `leave`, `background`, `idle` or `lease_expired`, `adventure_resumed`, `adventure_completed`, `adventure_wrapped_up`, `session_started`, `session_ended`, `device_lease_taken`, `settings_changed`, `scene_prepared`, `text_draft_saved`, `rewards_delivered`, `attempt_late` and `item_focus`, all through `appendEvents`. It also logs, on the routes it serves, the types other decisions own: `attempt_submitted`, `verdict`, `hint_shown`, `thread_spent`, `explanation_bought` and `finish_today`.
+`adventure_planned`, `adventure_started`, `adventure_paused` with the reason `leave`, `background`, `idle` or `lease_expired`, `adventure_resumed`, `adventure_completed`, `adventure_wrapped_up`, `session_started`, `session_ended`, `device_lease_taken`, `settings_changed`, `scene_prepared`, `text_draft_saved`, `rewards_delivered`, `attempt_late` and `item_focus`, all through `appendEvents`. It also logs, on the routes it serves, the types other decisions own: `attempt_submitted`, `verdict`, `hint_shown`, `thread_spent`, `explanation_bought` and `finish_today`. Every event of a daily session carries the adventure in its envelope.
+
+| Event, v1 | Payload |
+| --- | --- |
+| `adventure_planned`, `adventure_started`, `adventure_completed` | `adventureId` |
+| `adventure_wrapped_up` | `adventureId` and `unopenedSecrets` |
+| `session_ended` | `sessionId` and the pause reason |
+| `explanation_bought` | `itemId` and `attemptNo` |
 
 ### Statuses and error names
 
@@ -78,8 +88,13 @@ The stream `GET /api/session/:id/events` carries four messages, each with the `s
 | `409 lease_moved` | the player, on the device she left | another device holds the lease |
 | `409 day_finished` | the player | `extend` after `finish_today`, until 04:00 |
 | `401 parent_session_expired` | the parent | a parent request 30 minutes after the last one |
-| `409` | the developer | an event would move an adventure out of `complete` or `wrapped_up` |
-| `429` | the developer | more than 20 state-changing requests in a second from one device |
+| `409 adventure_closed` | the developer | an event would move an adventure out of `complete` or `wrapped_up` |
+| `409 session_ended` | the developer | `next`, `pause` or `break` on a session that has ended |
+| `409 attempt_open` | the developer | a second attempt asked for before the first attempt's verdict |
+| `409 not_a_first_attempt` | the developer | a second attempt asked for on a second attempt |
+| `409 no_threads` | the player | a hint or an explanation with no thread left |
+| `400 hint_level_skipped` | the developer | a hint level beyond the next one |
+| `429 rate_limited` | the developer | more than 20 state-changing requests in a second from one device |
 | `500` | the developer | an outgoing body failed its `.strict()` schema |
 | `server_unreachable` | the player | the client can't reach the server and shows the waiting scene |
 | `attempt_late` | the parent | an answer arrived for a task that already had its attempt |
@@ -88,7 +103,7 @@ The stream `GET /api/session/:id/events` carries four messages, each with the `s
 ### What this part requires from other parts
 
 - ADR-0020 supplies `appendEvents`, the unique `idem_key` column, the projections `adventures`, `sessions`, `reward_queue` and `resume_snapshot`, and the event schemas in `src/shared/events.ts`.
-- SPC-0010 supplies the device token, the device's kind, `tablet` or `computer`, set by the pointer test at pairing, the PIN check and its lockout, and the durable commit before a reply.
+- SPC-0010 supplies the device token, the device's kind, `tablet` or `computer`, set at pairing and switched in the settings, the PIN check and its lockout, and the durable commit before a reply.
 - ADR-0040 and ADR-0070 supply the tasks, the answer check and the next packet; ADR-0080 the threads, hints and second attempts; ADR-0090 the game day, the breaks and the soft stop; ADR-0110 the scenes, the short ending and the waiting scene; ADR-0120 the explanation text; ADR-0140 the grants, chests and secrets.
 - ADR-0190 holds this part's budgets in its Baselines table.
 
@@ -108,9 +123,9 @@ Before any body leaves the server, the server parses it with its `.strict()` sch
 
 ### Repeated requests and charges
 
-The server logs the events of every state-changing request with `idem_key` set to `<route>:<deviceId>:<clientSeq>`. A request whose key is already in the log appends nothing and gets the reply rebuilt from the events the first request logged, so an answer sent twice is recorded once (REQ-2432) and a hint sent twice spends one thread (REQ-2422).
+The server logs the events of every state-changing request under the key `<route>:<deviceId>:<clientSeq>`: the first event's `idem_key` is the key, and each later event's the key with `#1`, `#2` and so on, since `idem_key` is unique per event. A request whose key is already in the log appends nothing and gets the reply rebuilt from the events the first request logged, so an answer sent twice is recorded once (REQ-2432) and a hint sent twice spends one thread (REQ-2422).
 
-A charge also has a key of its own that ignores `clientSeq`: a hint is charged at most once per item and hint level, an explanation at most once per item, and a second attempt is created at most once per item. A repeated second-attempt request returns the same parallel task (REQ-2426), and a hint, explanation or second attempt requested again after a resume, with a new `clientSeq`, charges no thread already paid (REQ-0214).
+A charge also has a key of its own that ignores `clientSeq`: a hint is charged at most once per item and hint level, an explanation at most once per item, and a second attempt is created at most once per item. The server finds a charge in the log, reading and appending with no other request between. A repeated second-attempt request returns the same parallel task (REQ-2426), and a hint, explanation or second attempt requested again after a resume, with a new `clientSeq`, charges no thread already paid (REQ-0214).
 
 `POST /api/item/:itemId/explain` logs `thread_spent` and `explanation_bought` and replies `pending` at once (REQ-2424). The text arrives as `explanation_ready` on the stream, or as a template explanation after 10 seconds.
 
@@ -118,15 +133,15 @@ The server answers `429` to a device's 21st state-changing request within one se
 
 ### Adventure and session lifecycle
 
-An adventure is `planned`, `active`, `paused`, `complete` or `wrapped_up`, and a session `active` or `ended`; the `adventures` and `sessions` projections hold the state. `appendEvents` refuses an event that would move an adventure out of `complete` or `wrapped_up` (REQ-2404).
+An adventure is `planned`, `active`, `paused`, `complete` or `wrapped_up`, and a session `active` or `ended`; the `adventures` and `sessions` projections hold the state. `appendEvents` refuses an event that would move an adventure out of `complete` or `wrapped_up` (REQ-2404). A session's tasks count across the adventure's sessions, so a task left open is shown again in the next session.
 
-`POST /api/session/start` with `daily` continues the adventure that is `planned`, `active` or `paused`, and plans a new one only when there is none (REQ-0226). The first `next` of a planned adventure logs `adventure_started`.
+`POST /api/session/start` with `daily` continues the adventure that is `planned`, `active` or `paused`, and plans a new one only when there is none (REQ-0226). The first `next` of a planned adventure logs `adventure_started`, and the first `next` of a paused one logs `adventure_resumed`. The `next` after the finale logs `adventure_completed` and returns `end`.
 
-The client sends `POST /api/session/:id/pause` with `leave` from «Сохранить и уйти», which logs `adventure_paused` and `session_ended` and nothing else; every earlier action is already in the log, so she can leave at any moment, mid-task or mid-review (REQ-0200). The client sends `background`, with `fetch` and `keepalive`, when `visibilitychange` reports the page hidden (REQ-2406). It sends `idle` after 90 seconds without input outside the task window (REQ-2408), and after 5 minutes without input with a task open (REQ-2410). A rest stop or an eye exercise logs its own events and leaves the session `active` and the adventure unpaused (REQ-2412).
+The client sends `POST /api/session/:id/pause` with `leave` from «Сохранить и уйти», which logs `adventure_paused` and `session_ended` and nothing else; every earlier action is already in the log, so she can leave at any moment, mid-task or mid-review (REQ-0200). On a finished adventure a leave logs `session_ended` alone. `background` and `idle` log the same pair as a leave, and on a finished adventure they get `409 adventure_closed`. The client sends `background`, with `fetch` and `keepalive`, when `visibilitychange` reports the page hidden (REQ-2406). It sends `idle` after 90 seconds without input outside the task window (REQ-2408), and after 5 minutes without input with a task open (REQ-2410). A rest stop or an eye exercise logs its own events and leaves the session `active` and the adventure unpaused (REQ-2412): `break` with `start` logs `rest_stop_started` and with `end` logs `rest_stop_ended`.
 
 ### One device at a time
 
-`POST /api/session/start` and `POST /api/adventure/resume` take the lease for the calling device and log `device_lease_taken`. The client calls them only when the player taps to play or to continue, never when it opens. The holder sends a heartbeat every 15 seconds. After 45 seconds without one, the server logs `adventure_paused` with the reason `lease_expired` and `session_ended`, as device `server`, and the state equals the one «Сохранить и уйти» leaves, so a closed app, a flat battery or a change of device keeps the same state (REQ-0202).
+`POST /api/session/start` and `POST /api/adventure/resume` take the lease for the calling device and log `device_lease_taken`. The client calls them only when the player taps to play or to continue, never when it opens. The holder sends a heartbeat every 15 seconds. After 45 seconds without one, the server logs `adventure_paused` with the reason `lease_expired` and `session_ended`, as device `server`, or `session_ended` alone on a finished adventure, and the state equals the one «Сохранить и уйти» leaves, so a closed app, a flat battery or a change of device keeps the same state (REQ-0202).
 
 The server accepts state-changing requests only from the lease holder and answers any other device `409 lease_moved` (REQ-0220). When the lease moves, the server sends `lease_moved` on the old device's stream, and that device turns view-only and shows «Приключение продолжено в другом месте» with a button to continue there (REQ-0222).
 
@@ -167,9 +182,9 @@ While the client has no connection, the hint, explanation and second-attempt con
 | A device sends a state-changing request without the lease | `409 lease_moved`; an answer in it is still logged as the attempt or as `attempt_late`. |
 | The holder's heartbeat stops for 45 seconds | The server logs the pause with `lease_expired` and ends the session. |
 | Two devices are open and neither is tapped | Neither takes the lease. |
-| An event would reopen a complete or wrapped-up adventure | `appendEvents` refuses it, the transaction rolls back, and the request gets `409`. |
+| An event would reopen a complete or wrapped-up adventure | `appendEvents` refuses it, the transaction rolls back, and the request gets `409 adventure_closed`. |
 | An outgoing body carries a field outside its schema | The request fails with `500`, and the body never reaches the client. |
-| A device sends more than 20 state-changing requests in a second | `429` until the second passes. |
+| A device sends more than 20 state-changing requests in a second | `429 rate_limited` until the second passes; a refused request doesn't count. |
 | The SSE stream drops, for example when iPadOS suspends the page | The client reads what it missed from the poll route and the resume packet. |
 | The explanation text isn't ready after 10 seconds | The client receives a template explanation. |
 | The server can't be reached | The client keeps the answer in its queue, shows the waiting scene (`server_unreachable`), keeps the three help controls inactive and shows no new task. |
