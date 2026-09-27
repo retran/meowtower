@@ -57,7 +57,7 @@ A task is marked in the commit that advances it, never in a later pass.
       evidence: meow-verbs exit 0, 243 tests; 6-digit code pairs within 5 min; 401 without token (TSK-0040 Evidence)
       closes: REQ-2516, REQ-2518
       depends: TSK-0030 - the `devices` table lives in the database it opens
-- [>] T-005 TSK-0050 The PIN guards the Parent Room, both lockouts hold, and the parent revokes a device
+- [x] T-005 TSK-0050 The PIN guards the Parent Room, both lockouts hold, and the parent revokes a device
       closes: REQ-2520, REQ-2522
       depends: TSK-0040 - revocation and the pairing lockout act on pairing; TSK-0100 - the devices page is a client screen in both interfaces
 - [x] T-006 TSK-0060 The server answers only on the home network, and the Parent Room listener only on the Mac

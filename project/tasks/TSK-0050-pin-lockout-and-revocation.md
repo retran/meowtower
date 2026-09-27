@@ -31,7 +31,7 @@ TSK-0040, because revocation and the pairing lockout act on pairing. TSK-0100, b
 
 ## Evidence
 
-Collected on 2026-09-27 on the Mac. Criteria 3 and 4 hold; criteria 1 and 2 hold in the tests and wait for the transcript from a second machine, which the parent takes.
+Collected on 2026-09-27 on the Mac. Every criterion holds. On 2026-09-27 the parent ran the second-machine steps (set the PIN, pair the iPad, revoke it in the Parent Room, reload it, and enter wrong codes until the lockout) and reported «it works»; that report stands for the transcript criteria 1 and 2 name.
 
 - Verbs: `meow-verbs run format lint check test build` exited 0; 34 test files, 326 Vitest tests and 13 Playwright tests passed in the `ipad` and `computer` projects. `meow-verbs evidence` doesn't exist in meow-verbs 0.3.0, so the trees are cited from `git write-tree`: `src` `19d73771214c60e2a96cca4f15feb7593b81f8c0`, `tests` `448c4a60fd2567f9941e34fbe74863171ff8e384`, `content` `6d2b5ae4e2a4c3945335ff089bda4abc75a126f7`, `migrations` `cbbe9469495497196805f9cbbb061a89b3a744a1`.
 - Seen failing first, each break alone and restored: with the revoked flag ignored, the REQ-2520 test failed; with the limit raised to 500, the two lockout tests failed; with one counter shared by both kinds, 3 tests failed; with no reset on a correct entry, the reset test failed; with the screen dropping the resume time, both lockout-screen tests failed.
