@@ -17,7 +17,7 @@ Each record was moved from one range of the draft specification on 2026-09-26. T
 
 ## Conclusions
 
-<!-- meow-method index -->
+<!-- meow-flow index -->
 
 39 researchs in all: 39 approved.
 
@@ -62,7 +62,7 @@ Each record was moved from one range of the draft specification on 2026-09-26. T
 | [RES-3400](RES-3400-design-art-and-key-art.md) | The owner's design replaces the draft's bright candy chibi style with a soft pastel anime style in the manner of a visual novel. | approved |
 | [RES-3500](RES-3500-design-screens-and-prototype.md) | The owner's design draws every screen of the game and of the Parent Room for an iPad in landscape, 1180 by 820. | approved |
 | [RES-3900](RES-3900-reconciling-approved-research.md) | The approved research contradicts itself in seven places, and this record picks one side of each. | approved |
-<!-- /meow-method index -->
+<!-- /meow-flow index -->
 
 ## Sources
 

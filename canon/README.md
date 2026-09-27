@@ -3,7 +3,7 @@
 The canon records hold the world of Tower Chronicles: its places, characters,
 creatures, items, campaign and the rules the Master follows when it invents
 more. They are a project-local kind, kept outside `project/` because
-`meow-method` knows only its own kinds and rejects any other inside the
+`meow-flow` (its command is `paw`) knows only its own kinds and rejects any other inside the
 record.
 
 Each record is one chapter of the world, in a file named

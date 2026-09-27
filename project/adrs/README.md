@@ -1,6 +1,6 @@
 # Decisions
 
-<!-- meow-method index -->
+<!-- meow-flow index -->
 
 19 decisions in all: 19 approved.
 
@@ -25,4 +25,4 @@
 | [ADR-0170](ADR-0170-offline-art-in-one-style-chosen-by-a-person.md) | Game art is generated offline in one style, scored by a judge model, chosen by a person and animated as whole sprites | approved |
 | [ADR-0180](ADR-0180-parent-room-report-limits-lessons.md) | The Parent Room and its report are projections of the event log behind a PIN, with twelve limits, lesson rechecks and labels, and an export on the Mac only | approved |
 | [ADR-0190](ADR-0190-verify-command-stages-and-mvp-scope.md) | One verify command, simulations and a person's acceptance gate every stage, and the MVP holds exactly the approved scope | approved |
-<!-- /meow-method index -->
+<!-- /meow-flow index -->

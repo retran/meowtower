@@ -57,6 +57,6 @@ styles.
 
 <gate>
 The repository has no checks yet. It holds no code, and
-`.meowpaw/profile.toml` declares no command for fmt, lint, typecheck, test or
+`.meowpaw/profile.toml` declares no command for format, lint, check, test or
 build.
 </gate>
