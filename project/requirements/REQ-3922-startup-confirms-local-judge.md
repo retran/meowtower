@@ -3,7 +3,7 @@ id: REQ-3922
 artifact: requirement
 topic: judge
 class: functional
-status: draft
+status: approved
 revised: 2026-09-27
 elaborates: RES-3910
 verification: behavioural

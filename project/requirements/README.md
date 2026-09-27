@@ -4,7 +4,7 @@ None yet: the project is at the research stage.
 
 <!-- meow-flow index -->
 
-982 requirements in all: 969 approved, 10 draft, 3 superseded.
+982 requirements in all: 977 approved, 5 superseded.
 
 | Identifier | What it requires | Status |
 | --- | --- | --- |
@@ -760,10 +760,10 @@ None yet: the project is at the research stage.
 | [REQ-2636](REQ-2636-parent-told-what-leaves.md) | The Parent Room MUST tell the parent the three kinds of data that leave the Mac: content made without the player, the player's story material (her cleaned free text, invented names, story memory and summary outcome events) and the one-task explanation request. | approved |
 | [REQ-2638](REQ-2638-disclosure-states-residual-risk.md) | The Parent Room's account of what leaves the Mac MUST state that summary outcome events coarsely reflect how well the player does in a domain. | approved |
 | [REQ-2640](REQ-2640-judge-request-minimal.md) | A request to the judge model MUST carry only the cleaned text its question needs, and no story memory, outcome events, answers, times, estimates or other maths result. | approved |
-| [REQ-2642](REQ-2642-parent-told-judge-company.md) | The Parent Room MUST tell the parent which company reads the player's cleaned text for safety checks, in which country, and that the company keeps none of it. | approved |
+| [REQ-2642](REQ-2642-parent-told-judge-company.md) | The Parent Room MUST tell the parent which company reads the player's cleaned text for safety checks, in which country, and that the company keeps none of it. | superseded |
 | [REQ-2644](REQ-2644-player-tier-any-region.md) | The player tier MAY use zero-retention endpoints in any region. | approved |
 | [REQ-2646](REQ-2646-data-leaving-the-mac.md) | The server MUST NOT send off the parent's Mac any data other than content made without the player, the player's story material (her cleaned free text, invented names, story memory and summary outcome events), the age the parent set, and the one-task explanation request. | approved |
-| [REQ-2648](REQ-2648-parent-told-where-checks-run.md) | The Parent Room MUST tell the parent, for each check on the player's text, where it runs and, for each place off the Mac, which company reads the text, in which country and whether it keeps any of it, the fallback included, as the gateway is configured when the parent opens the page. | draft |
+| [REQ-2648](REQ-2648-parent-told-where-checks-run.md) | The Parent Room MUST tell the parent, for each check on the player's text, where it runs and, for each place off the Mac, which company reads the text, in which country and whether it keeps any of it, the fallback included, as the gateway is configured when the parent opens the page. | approved |
 | [REQ-2700](REQ-2700-every-model-call-costed.md) | The server MUST record every call to an external model service, the judge model's included, with its cost. | approved |
 | [REQ-2702](REQ-2702-adventure-budget.md) | An adventure's spend on the Master, the planner, live frames, blind checks and the judge model's checks MUST stop at the adventure budget, which starts at $1.5. | approved |
 | [REQ-2704](REQ-2704-explanation-daily-spend.md) | The day's spend on live explanations MUST stop at the explanation budget, which starts at $0.3. | approved |
@@ -776,11 +776,11 @@ None yet: the project is at the research stage.
 | [REQ-2718](REQ-2718-play-key-monthly-limit.md) | The play key MUST carry a spending limit of $60 that resets each month. | approved |
 | [REQ-2720](REQ-2720-monthly-limit-fallback.md) | When the month's play spend reaches $60, by the game's own count or because the service refuses a call for the limit, every session until the end of the month MUST use the fallbacks. | approved |
 | [REQ-2722](REQ-2722-monthly-limit-notice.md) | When the month's play spend has reached its limit, the Parent Room MUST show the parent a notice. | approved |
-| [REQ-2724](REQ-2724-judge-on-play-key.md) | The judge model's calls during play MUST go on the play key and count inside its monthly limit. | approved |
+| [REQ-2724](REQ-2724-judge-on-play-key.md) | The judge model's calls during play MUST go on the play key and count inside its monthly limit. | superseded |
 | [REQ-2726](REQ-2726-no-unchecked-text-when-budget-out.md) | When a budget runs out, the game MUST NOT show any text that has not passed a safety check. | approved |
 | [REQ-2728](REQ-2728-offline-runs-separate-key.md) | Offline runs MUST spend from a key other than the play key. | approved |
 | [REQ-2730](REQ-2730-offline-key-limit.md) | The key for an offline run MUST carry a spending limit equal to that run's budget. | approved |
-| [REQ-2732](REQ-2732-hosted-judge-on-play-key.md) | Every call to a hosted judge model during play MUST go on the play key, so that it counts inside the key's monthly limit. | draft |
+| [REQ-2732](REQ-2732-hosted-judge-on-play-key.md) | Every call to a hosted judge model during play MUST go on the play key, so that it counts inside the key's monthly limit. | approved |
 | [REQ-2800](REQ-2800-floor-assets-use-floor-palette.md) | Every art asset that belongs to a floor MUST use that floor's palette. | approved |
 | [REQ-2802](REQ-2802-character-sheet-contents.md) | Each character MUST have a character sheet that shows the character from the front and the side and with 3 to 4 emotions. | approved |
 | [REQ-2804](REQ-2804-character-sheet-comes-first.md) | An asset of a character other than its character sheet MUST NOT be generated before that sheet exists. | approved |
@@ -982,14 +982,14 @@ None yet: the project is at the research stage.
 | [REQ-3812](REQ-3812-graph-overlay-keeps-base-graph.md) | A curriculum overlay on the skill graph MUST add nodes and links without changing any node or link of the base graph. | approved |
 | [REQ-3814](REQ-3814-report-keeps-layers-apart.md) | The report MUST NOT mix results from different graph layers unless the parent chooses to mix them. | approved |
 | [REQ-3816](REQ-3816-explanation-cache-holds-no-fact.md) | Emptying the explanation cache MUST lose no fact about play. | approved |
-| [REQ-3910](REQ-3910-judge-answers-only-the-mac.md) | A judge model running on the parent's Mac MUST give no model answer to a request from any device other than that Mac. | draft |
-| [REQ-3912](REQ-3912-judge-answer-carries-probabilities.md) | The server MUST treat a local judge's answer to a check as an error unless it names one of the check's fixed answers and gives a probability, between 0 and 1, for each of them. | draft |
-| [REQ-3914](REQ-3914-local-judge-meets-timeout.md) | A check MUST move to a judge model on the Mac only after that judge answers the check's test set on the family Mac, with the check's fixed prompt already cached and as many checks running at once as the game sends in one turn, within the judge timeout ADR-0100 sets, now 1500 ms, at the 95th percentile, measured at the gateway. | draft |
-| [REQ-3916](REQ-3916-judge-chosen-per-check.md) | Among the models on the Mac that pass a judge check's agreement test (REQ-1688) and latency test (REQ-3914), the one with the highest agreement with the reference model MUST answer the check; models within one percentage point of each other tie, and a tie goes to the model that answers the most checks, then to the smaller model. | draft |
-| [REQ-3918](REQ-3918-judge-supports-russian.md) | A model on the Mac whose model card lists its supported languages without Russian MUST NOT answer a judge check. | draft |
-| [REQ-3920](REQ-3920-changed-judge-retested.md) | When the model file a judge on the Mac serves has a different hash from the one a check passed on, the server MUST NOT send that judge the check until the check's agreement test (REQ-1688) and latency test (REQ-3914) have passed on the file it serves. | draft |
-| [REQ-3922](REQ-3922-startup-confirms-local-judge.md) | When the server starts, it MUST confirm that each judge on the Mac answers, and read the hash of the model file it serves, before it sends that judge a check. | draft |
-| [REQ-3924](REQ-3924-unpassed-check-stays-hosted.md) | A judge check for which no model on the Mac passes both its agreement test (REQ-1688) and its latency test (REQ-3914) MUST stay with the hosted judge if that judge passed the check's test set, and otherwise with the safety model, as the approved record places it (RES-1600, RES-3910). | draft |
+| [REQ-3910](REQ-3910-judge-answers-only-the-mac.md) | A judge model running on the parent's Mac MUST give no model answer to a request from any device other than that Mac. | approved |
+| [REQ-3912](REQ-3912-judge-answer-carries-probabilities.md) | The server MUST treat a local judge's answer to a check as an error unless it names one of the check's fixed answers and gives a probability, between 0 and 1, for each of them. | approved |
+| [REQ-3914](REQ-3914-local-judge-meets-timeout.md) | A check MUST move to a judge model on the Mac only after that judge answers the check's test set on the family Mac, with the check's fixed prompt already cached and as many checks running at once as the game sends in one turn, within the judge timeout ADR-0100 sets, now 1500 ms, at the 95th percentile, measured at the gateway. | approved |
+| [REQ-3916](REQ-3916-judge-chosen-per-check.md) | Among the models on the Mac that pass a judge check's agreement test (REQ-1688) and latency test (REQ-3914), the one with the highest agreement with the reference model MUST answer the check; models within one percentage point of each other tie, and a tie goes to the model that answers the most checks, then to the smaller model. | approved |
+| [REQ-3918](REQ-3918-judge-supports-russian.md) | A model on the Mac whose model card lists its supported languages without Russian MUST NOT answer a judge check. | approved |
+| [REQ-3920](REQ-3920-changed-judge-retested.md) | When the model file a judge on the Mac serves has a different hash from the one a check passed on, the server MUST NOT send that judge the check until the check's agreement test (REQ-1688) and latency test (REQ-3914) have passed on the file it serves. | approved |
+| [REQ-3922](REQ-3922-startup-confirms-local-judge.md) | When the server starts, it MUST confirm that each judge on the Mac answers, and read the hash of the model file it serves, before it sends that judge a check. | approved |
+| [REQ-3924](REQ-3924-unpassed-check-stays-hosted.md) | A judge check for which no model on the Mac passes both its agreement test (REQ-1688) and its latency test (REQ-3914) MUST stay with the hosted judge if that judge passed the check's test set, and otherwise with the safety model, as the approved record places it (RES-1600, RES-3910). | approved |
 
 By topic:
 

@@ -3,7 +3,7 @@ id: REQ-2724
 artifact: requirement
 topic: cost
 class: non-functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-2700
 verification: static

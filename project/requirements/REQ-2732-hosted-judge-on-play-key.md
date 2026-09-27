@@ -3,7 +3,7 @@ id: REQ-2732
 artifact: requirement
 topic: cost
 class: non-functional
-status: draft
+status: approved
 revised: 2026-09-27
 elaborates: [RES-2700, RES-3910]
 verification: static
