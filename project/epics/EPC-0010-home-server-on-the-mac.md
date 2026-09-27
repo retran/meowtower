@@ -64,7 +64,8 @@ A task is marked in the commit that advances it, never in a later pass.
       evidence: wrong_network test passes; Parent Room on loopback only; owner confirmed from a second machine 2026-09-27 (TSK-0060 Evidence)
       closes: REQ-2510
       depends: TSK-0010 - the listeners and `./tower up` must exist
-- [ ] T-007 TSK-0070 Snapshots on demand and before migrations, and `./tower restore`
+- [x] T-007 TSK-0070 Snapshots on demand and before migrations, and `./tower restore`
+      evidence: meow-verbs exit 0, 262 tests; 1 GB snapshot 1,798 ms; restore works; blobs read-only (TSK-0070 Evidence)
       closes: REQ-2524, REQ-2528, REQ-2532
       depends: TSK-0030 - a snapshot copies the database it opens
 - [ ] T-008 TSK-0080 A snapshot after each session, retention, and the backup and storage notices

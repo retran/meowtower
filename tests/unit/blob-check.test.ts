@@ -1,5 +1,5 @@
 // TSK-0240, REQ-2210: the verify check shows whether a stored image changed.
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
@@ -25,6 +25,8 @@ describe("verifyBlobs", () => {
 
   it("reports blob_changed for a file whose bytes changed", () => {
     const hash = storeScratch(db, blobs, webp("tampered"), ctx);
+    // Tampering from outside the server must lift the read-only mode first.
+    chmodSync(join(blobs, `${hash}.webp`), 0o644);
     writeFileSync(join(blobs, `${hash}.webp`), webp("something else"));
     expect(verifyBlobs(db, blobs)).toEqual([
       { failure: "blob_changed", file: `${hash}.webp` },

@@ -33,7 +33,16 @@ TSK-0030, because a snapshot copies the database it opens.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 24 test files, 262 Vitest tests and 2 Playwright tests passed. The lint verb now also runs `blob_write`.
+- Seen failing first: `tests/unit/snapshots.test.ts` couldn't load before `src/server/snapshots.ts` existed, and the overwrite case of `tests/unit/blob-write-once.test.ts` failed before stored files were made read-only. `tests/unit/main-snapshot.test.ts` failed with the start-up hook replaced by a no-op and passed once restored; it caught that my first wiring of the hook into `main.ts` hadn't applied.
+- Criterion 1, REQ-2532 and REQ-2524: `./meowtower db-snapshot` printed `Snapshot: meowtower-2026-09-27T15-30-03Z.sqlite in 34 ms`; the file opens in SQLite with every table of the live database (`blobs`, `devices`, `events`, `pairing_codes`, `schema_migrations`, `sqlite_sequence`), and the test finds the same tables and rows, the log and one `blobs` row included.
+- Criterion 2, REQ-2528: a database holding data, started with a pending migration, gets a snapshot without the migration's table while the live file gains it; a fresh database gets none. The real start (`main.ts`) snapshots into `MEOWTOWER_SNAPSHOTS` before migrating.
+- Criterion 3: during a 384 ms snapshot on its worker thread, 2,458 writes ran and the slowest took 19 ms. A write that waited for the snapshot would take about as long as it does, so the test fails when the slowest write reaches half the snapshot's time.
+- Criterion 4, REQ-2532: the blob store writes each file with mode 0444, so an overwrite fails with `EACCES`; the lint check `blob_write` finds no code outside the blob store that writes into or deletes from `data/blobs`, and names a fixture that calls `rmSync` on a blob.
+- Criterion 5: `node --import tsx tests/perf/snapshot-1gb.ts` built a 1.00 GB database and snapshotted it in 1,798 ms, against the 60 s budget in ADR-0190's Baselines table; `./meowtower status` printed `last snapshot: 2026-09-27T15:30:03.427Z, took 34 ms`.
+- Criterion 6: the restore test leaves the live database equal to the newest of two snapshots; on the Mac, `./meowtower restore` printed `restored /data/snapshots/meowtower-2026-09-27T15-30-03Z.sqlite` and the server answered `/health` with `ok` afterwards.
 
 ## Left alone
 

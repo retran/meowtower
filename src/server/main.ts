@@ -2,15 +2,20 @@ import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
+import { snapshotNow } from "./snapshots.js";
 
 const dbPath =
   process.env["MEOWTOWER_DB"] ?? "/var/lib/meowtower/meowtower.sqlite";
 const port = Number(process.env["PORT"] ?? 3000);
 const parentPort = Number(process.env["PARENT_PORT"] ?? 3001);
+const snapshots = process.env["MEOWTOWER_SNAPSHOTS"] ?? "/data/snapshots";
 
 let db: Db;
 try {
-  db = openDatabase(dbPath);
+  // A snapshot before any pending migration (REQ-2528).
+  db = openDatabase(dbPath, {
+    beforeMigrate: (d) => snapshotNow(d, snapshots, new Date()),
+  });
 } catch (err) {
   // A missing guard or a refused migration stops the start (SPC-0020).
   console.error(err instanceof Error ? err.message : String(err));
@@ -18,7 +23,7 @@ try {
 }
 const game = serve({ fetch: createApp({ db }).fetch, port });
 const parent = serve({
-  fetch: createParentApp({ db }).fetch,
+  fetch: createParentApp({ db, dbPath, snapshots }).fetch,
   port: parentPort,
 });
 

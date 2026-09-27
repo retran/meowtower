@@ -28,14 +28,21 @@ const GUARD_MESSAGE = "RAISE(ABORT, 'events are append-only')";
  */
 export function openDatabase(
   path: string,
-  { migrations = MIGRATIONS }: { migrations?: URL } = {},
+  {
+    migrations = MIGRATIONS,
+    beforeMigrate,
+  }: {
+    migrations?: URL;
+    /** Called once before pending migrations run on a database that holds data (REQ-2528). */
+    beforeMigrate?: (db: Db) => void;
+  } = {},
 ): Db {
   const db = new Database(path);
   db.pragma("journal_mode = WAL");
   db.pragma("synchronous = FULL");
   db.pragma("busy_timeout = 5000");
   try {
-    migrate(db, migrations);
+    migrate(db, migrations, beforeMigrate);
     checkGuard(db);
     checkSchemas(db);
   } catch (err) {
@@ -112,7 +119,7 @@ function guardBreach(sql: string, existing: Set<string>): string | undefined {
   return undefined;
 }
 
-function migrate(db: Db, dir: URL): void {
+function migrate(db: Db, dir: URL, beforeMigrate?: (db: Db) => void): void {
   db.exec(
     "CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL) STRICT",
   );
@@ -125,6 +132,8 @@ function migrate(db: Db, dir: URL): void {
   const files = readdirSync(dir)
     .filter((f) => /^\d{4}_.+\.sql$/.test(f))
     .sort();
+  const pending = files.some((f) => !applied.has(Number(f.slice(0, 4))));
+  if (pending && applied.size > 0) beforeMigrate?.(db);
   for (const file of files) {
     const version = Number(file.slice(0, 4));
     if (applied.has(version)) continue;

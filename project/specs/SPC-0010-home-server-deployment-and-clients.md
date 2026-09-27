@@ -33,8 +33,8 @@ The system consists of two containers and one command. The container `meowtower`
 | `POST /api/pair` | `{ code, kind }` on the game listener; on a live code it sets the device cookie and replies 200, otherwise 403 `pairing_code_invalid`. The only `/api` route that needs no token. |
 | `./meowtower set-pin` | Sets the Parent Room PIN. |
 | `./meowtower ipad-setup` | Writes the configuration profile that installs Caddy's root certificate into `data/setup/`, where `proxy` serves it at `https://<mac-name>.local/setup/meowtower.mobileconfig` as `application/x-apple-aspen-config`, and prints the iPad's steps. `--print-profile` prints the profile instead. With no root certificate yet it prints `root_certificate_missing` and exits 1. |
-| `./meowtower db-snapshot` | Takes one snapshot on demand. |
-| `./meowtower restore` | Loads the newest snapshot as the live database. |
+| `./meowtower db-snapshot` | Takes one snapshot on demand, through `POST /snapshot` on the Parent Room's listener; the server records the file and its time in `data/snapshots/last.json`, which `./meowtower status` shows. |
+| `./meowtower restore` | Stops `meowtower`, runs `dist/server/restore.js` in its container to copy the newest snapshot over the live database, and starts it again. |
 | `./meowtower export` and `./meowtower recompute` | Run the export and the recompute ADR-0020 defines, inside `meowtower`. |
 | Docker volume `meowtower-db` | Holds the live SQLite database. No Mac program can open it. |
 | `data/blobs/` | The blob store, write-once. |
@@ -97,7 +97,7 @@ A snapshot is `VACUUM INTO data/snapshots/meowtower-<UTC timestamp>.sqlite`, tak
 
 After each snapshot `meowtower` keeps the newest 30 and the first snapshot of every calendar month, and deletes the rest (REQ-2530). Monthly snapshots have no end date.
 
-A backup copy is one snapshot plus `data/blobs/`. The snapshot holds the event log and the `blobs` table with every file's hash, and `meowtower` never overwrites or deletes a file in `data/blobs/` (REQ-2532).
+A backup copy is one snapshot plus `data/blobs/`. The snapshot holds the event log and the `blobs` table with every file's hash, and `meowtower` never overwrites or deletes a file in `data/blobs/` (REQ-2532): the blob store writes each file read-only, and a static check in the lint verb names any other code that writes into or deletes from `data/blobs/`.
 
 `./meowtower restore` loads the newest snapshot as the live database.
 

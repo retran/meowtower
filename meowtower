@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; these are up, down, status, ipad-setup, set-home-network and pair.
+# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, pair, db-snapshot and restore.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -147,6 +147,21 @@ cmd_pair() {
   echo "Enter it on the device within 5 minutes. It works once."
 }
 
+# One snapshot on demand, taken by the server so play goes on (SPC-0010).
+cmd_db_snapshot() {
+  local reply
+  reply="$(curl -fsS -X POST "http://localhost:$PARENT_PORT/snapshot")" \
+    || { echo "backup_failed: the server took no snapshot; is it up?"; exit 1; }
+  echo "Snapshot: $(echo "$reply" | sed -n 's/.*"file":"[^"]*\/\([^"]*\)".*/\1/p') in $(echo "$reply" | sed -n 's/.*"ms":\([0-9]*\).*/\1/p') ms"
+}
+
+# The live database becomes the newest snapshot. Play stops while it runs.
+cmd_restore() {
+  compose stop meowtower
+  compose run --rm --no-deps meowtower node dist/server/restore.js
+  compose start meowtower
+}
+
 cmd_up() {
   check_home_network
   if ! docker_running; then echo "docker_not_running: Docker isn't running (Docker Desktop or OrbStack)."; exit 1; fi
@@ -183,6 +198,11 @@ cmd_status() {
     state="$(compose ps --format '{{.State}}' "$svc" 2>/dev/null | head -1)"
     echo "$svc: ${state:-not running}"
   done
+  if [[ -f data/snapshots/last.json ]]; then
+    echo "last snapshot: $(sed -n 's/.*"at":"\([^"]*\)".*/\1/p' data/snapshots/last.json), took $(sed -n 's/.*"ms":\([0-9]*\).*/\1/p' data/snapshots/last.json) ms"
+  else
+    echo "last snapshot: none yet"
+  fi
 }
 
 case "${1:-}" in
@@ -192,5 +212,7 @@ case "${1:-}" in
   ipad-setup) shift; cmd_ipad_setup "$@" ;;
   set-home-network) cmd_set_home_network ;;
   pair) cmd_pair ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair" >&2; exit 2 ;;
+  db-snapshot) cmd_db_snapshot ;;
+  restore) cmd_restore ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|db-snapshot|restore" >&2; exit 2 ;;
 esac

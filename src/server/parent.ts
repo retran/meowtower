@@ -2,6 +2,9 @@ import { Hono } from "hono";
 import { lang, t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { issuePairingCode } from "./devices.js";
+import { takeSnapshot } from "./snapshots.js";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 const escape = (s: string): string =>
   s.replace(/[&<>"]/g, (ch) => `&#${ch.charCodeAt(0)};`);
@@ -11,13 +14,36 @@ const escape = (s: string): string =>
 export function createParentApp({
   db,
   now = Date.now,
+  dbPath,
+  snapshots,
 }: {
   db: Db;
   now?: () => number;
+  dbPath?: string;
+  snapshots?: string;
 }): Hono {
   const app = new Hono();
   // Only the Mac reaches this listener, so only the Mac issues pairing codes.
   app.post("/pair-code", (c) => c.json({ code: issuePairingCode(db, now()) }));
+  // ./meowtower db-snapshot: one snapshot on demand, its time kept for status.
+  app.post("/snapshot", async (c) => {
+    if (!dbPath || !snapshots) return c.json({ error: "backup_failed" }, 500);
+    try {
+      const taken = await takeSnapshot(dbPath, snapshots, new Date(now()));
+      writeFileSync(
+        join(snapshots, "last.json"),
+        JSON.stringify({
+          file: taken.file,
+          ms: taken.ms,
+          at: new Date(now()).toISOString(),
+        }),
+      );
+      return c.json(taken);
+    } catch (err) {
+      console.error(`backup_failed: ${String(err)}`);
+      return c.json({ error: "backup_failed" }, 500);
+    }
+  });
   app.get("/", (c) =>
     c.html(
       `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">` +

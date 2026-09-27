@@ -87,6 +87,36 @@ export function checkEventsSqlConfined(root: string): Finding[] {
   );
 }
 
+/** REQ-2532: only the blob store writes into data/blobs, and nothing deletes there. */
+export function checkBlobWritesConfined(root: string): Finding[] {
+  const store = join(root, "src", "engine", "blobs", "store.ts");
+  const tests = join(root, "tests");
+  const self = join(root, "tools", "static-checks.ts");
+  const paths = files(root).filter(
+    (p) =>
+      /\.(ts|js|mjs|sh)$/.test(p) &&
+      p !== store &&
+      p !== self &&
+      !p.startsWith(tests),
+  );
+  return paths.flatMap((path) =>
+    readFileSync(path, "utf8")
+      .split("\n")
+      .filter(
+        (line) =>
+          /blobs/.test(line) &&
+          /\b(unlink|unlinkSync|rmSync|rm\s*\(|writeFile|appendFile|renameSync|truncate)/.test(
+            line,
+          ),
+      )
+      .map((line) => ({
+        check: "blob_write",
+        file: relative(root, path),
+        match: line.trim(),
+      })),
+  );
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = process.cwd();
   const { checkParamsLanguageFree, loadTemplateSchemas } =
@@ -96,13 +126,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkNoKeyInClient(root),
     ...checkNoPush(root),
     ...checkEventsSqlConfined(root),
+    ...checkBlobWritesConfined(root),
     ...checkParamsLanguageFree(templates),
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
-      `params_language read ${templates.length} templates in src/templates for string parameters`,
+      `params_language read ${templates.length} templates in src/templates for string parameters; ` +
+      "blob_write searched the code outside the blob store for writes or deletes in data/blobs",
   );
   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
   process.exit(findings.length ? 1 : 0);

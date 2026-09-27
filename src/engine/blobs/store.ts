@@ -1,7 +1,14 @@
 // The write-once blob store (SPC-0020): a draft-pad image becomes
 // data/blobs/<sha256>.webp, synced to disk before the log refers to it.
 import { createHash } from "node:crypto";
-import { closeSync, fsyncSync, mkdirSync, openSync, writeSync } from "node:fs";
+import {
+  closeSync,
+  fchmodSync,
+  fsyncSync,
+  mkdirSync,
+  openSync,
+  writeSync,
+} from "node:fs";
 import { join } from "node:path";
 import type Database from "better-sqlite3";
 import { appendEvents, type NewEvent } from "../events/append.js";
@@ -55,6 +62,8 @@ export function storeScratch(
   if (fd !== undefined) {
     try {
       writeSync(fd, image);
+      // Read-only once written: an overwrite by any server code fails (REQ-2532).
+      fchmodSync(fd, 0o444);
       fsyncSync(fd);
     } finally {
       closeSync(fd);
