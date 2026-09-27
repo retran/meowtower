@@ -117,6 +117,28 @@ export function checkBlobWritesConfined(root: string): Finding[] {
   );
 }
 
+/**
+ * REQ-3816: only the explanation request, in src/server/explain/, reads
+ * \`explain_cache\`, so no projection, report or export can depend on it and
+ * emptying it loses no fact about play. Migrations create it; tests fill it.
+ */
+export function checkExplainCacheConfined(root: string): Finding[] {
+  const allowed = join(root, "src", "server", "explain") + sep;
+  const skipped = [
+    join(root, "tests") + sep,
+    join(root, "migrations") + sep,
+    allowed,
+  ];
+  const self = join(root, "tools", "static-checks.ts");
+  const paths = files(root).filter(
+    (p) =>
+      /\.(ts|js|mjs|sh|sql)$/.test(p) &&
+      p !== self &&
+      !skipped.some((d) => p.startsWith(d)),
+  );
+  return scan("explain_cache", paths, root, /\bexplain_cache\b/);
+}
+
 /** Projections are pure folds: no clock, random source or network (SPC-0020). */
 export function checkProjectionsPure(root: string): Finding[] {
   const dir = join(root, "src", "engine", "projections");
@@ -230,6 +252,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkProjectionsPure(root),
     ...checkNoVerdictWords(root),
     ...checkGameProjectionImports(root),
+    ...checkExplainCacheConfined(root),
     ...checkParamsLanguageFree(templates),
   ];
   console.log(
@@ -240,7 +263,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
-      "game_projection_imports followed the runtime imports of each game projection in src/engine/projections to the knowledge model, the Director and the answer check",
+      "game_projection_imports followed the runtime imports of each game projection in src/engine/projections to the knowledge model, the Director and the answer check; " +
+      "explain_cache searched the code outside src/server/explain, migrations and tests for the explanation cache",
   );
   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
   process.exit(findings.length ? 1 : 0);

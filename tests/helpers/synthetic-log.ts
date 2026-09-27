@@ -33,12 +33,14 @@ export interface SyntheticLog {
   seed: number;
   /** Events appended in one call, which only speeds the writing. */
   batch?: number;
+  /** Adds a bought and shown explanation after a quarter of the wrong answers. */
+  explanations?: boolean;
 }
 
 /** Writes the log and returns how many events it appended. */
 export function writeSyntheticLog(
   db: Db,
-  { days, tasksPerDay, seed, batch = 200 }: SyntheticLog,
+  { days, tasksPerDay, seed, batch = 200, explanations = false }: SyntheticLog,
 ): number {
   const r = random(seed);
   let pending: NewEvent[] = [];
@@ -168,6 +170,31 @@ export function writeSyntheticLog(
         },
         ...envelope,
       });
+      if (explanations && !right && r() < 0.25) {
+        push({
+          type: "thread_spent",
+          v: 1,
+          payload: { itemId, reason: "explanation", count: 1 },
+          ...envelope,
+        });
+        push({
+          type: "explanation_bought",
+          v: 1,
+          payload: { itemId, attemptNo: 1 },
+          ...envelope,
+        });
+        push({
+          type: "explanation_shown",
+          v: 1,
+          payload: {
+            itemId,
+            attemptNo: 1,
+            dwellMs: 5000 + Math.floor(r() * 20000),
+            source: r() < 0.5 ? "cache" : "template",
+          },
+          ...envelope,
+        });
+      }
       if (r() < 0.01)
         push({
           type: "item_flagged",

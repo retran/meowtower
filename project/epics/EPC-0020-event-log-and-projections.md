@@ -77,7 +77,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-009 [P] TSK-0270 A version change recomputes at start-up, and logged decisions stay fixed under a new model
       closes: REQ-2230, REQ-2224
       depends: TSK-0260 - the start-up recompute is that task's recompute
-- [ ] T-010 [P] TSK-0280 Emptying the explanation cache loses no fact about play
+- [x] T-010 [P] TSK-0280 Emptying the explanation cache loses no fact about play
       closes: REQ-3816
       depends: TSK-0260 - the test compares projections before and after a recompute
 

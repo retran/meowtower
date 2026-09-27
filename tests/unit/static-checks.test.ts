@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   checkEventsSqlConfined,
+  checkExplainCacheConfined,
   checkGameProjectionImports,
   checkNoKeyInClient,
   checkNoPush,
@@ -208,5 +209,37 @@ describe("REQ-2224: no game projection reaches the knowledge model, the Director
       "src/engine/model/estimate.ts": "export const estimate = 1;\n",
     });
     expect(checkGameProjectionImports(root)).toEqual([]);
+  });
+});
+
+describe("REQ-3816: only the explanation request reads explain_cache", () => {
+  it("passes this repository", () => {
+    expect(checkExplainCacheConfined(process.cwd())).toEqual([]);
+  });
+  it("names a projection, the export and a report that read the cache", () => {
+    const root = repo({
+      "src/engine/projections/quests.ts":
+        'db.prepare("SELECT text FROM explain_cache");\n',
+      "src/server/export.ts": "const tables = ['explain_cache'];\n",
+      "src/parent/report.ts": "// joins explain_cache for the report\n",
+    });
+    expect(
+      checkExplainCacheConfined(root)
+        .map((f) => f.file)
+        .sort(),
+    ).toEqual([
+      join("src", "engine", "projections", "quests.ts"),
+      join("src", "parent", "report.ts"),
+      join("src", "server", "export.ts"),
+    ]);
+  });
+  it("passes the explanation request, a migration and a test", () => {
+    const root = repo({
+      "src/server/explain/cache.ts":
+        'db.prepare("SELECT text FROM explain_cache");\n',
+      "migrations/0008_explain_cache.sql": "CREATE TABLE explain_cache (x);\n",
+      "tests/x.test.ts": "explain_cache\n",
+    });
+    expect(checkExplainCacheConfined(root)).toEqual([]);
   });
 });

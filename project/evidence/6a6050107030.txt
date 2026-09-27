@@ -1,0 +1,116 @@
+meow-verbs evidence 1
+record: 6a6050107030
+verb: build
+command: npm run build && docker compose build
+targets: none
+outcome: passed
+exit status: 0
+tree: 9586ee6448c7867e19771c85b554e932bcfc5d78
+time: 2026-09-27T23:12:25Z
+
+
+> build
+> tsc -p tsconfig.build.json
+
+ Image meowtower-meowtower Building 
+ Image meowtower-proxy Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 961B done
+#1 DONE 0.0s
+
+#2 [proxy internal] load build definition from Dockerfile
+#2 transferring dockerfile: 358B done
+#2 DONE 0.0s
+
+#3 [proxy internal] load metadata for docker.io/library/caddy:2
+#3 DONE 0.0s
+
+#4 [meowtower internal] load build definition from Dockerfile
+#4 transferring dockerfile: 783B done
+#4 DONE 0.0s
+
+#5 [meowtower internal] load metadata for docker.io/library/node:24-slim
+#5 DONE 0.0s
+
+#6 [proxy internal] load .dockerignore
+#6 transferring context: 2B done
+#6 DONE 0.0s
+
+#7 [meowtower internal] load .dockerignore
+#7 transferring context: 2B done
+#7 DONE 0.0s
+
+#8 [proxy 1/2] FROM docker.io/library/caddy:2
+#8 DONE 0.0s
+
+#9 [proxy 2/2] RUN apk add --no-cache libcap && setcap -r /usr/bin/caddy && apk del libcap
+#9 CACHED
+
+#10 [meowtower build 1/8] FROM docker.io/library/node:24-slim
+#10 DONE 0.0s
+
+#11 [proxy] exporting to image
+#11 exporting layers done
+#11 writing image sha256:df07d5777b6dc3adb08b6f86cf91a5a99d7b6d661173798c9cd9c3e400c6c8db done
+#11 naming to docker.io/library/meowtower-proxy done
+#11 DONE 0.0s
+
+#12 [meowtower internal] load build context
+#12 transferring context: 30.41kB done
+#12 DONE 0.0s
+
+#13 [meowtower stage-1 5/8] COPY package.json ./
+#13 CACHED
+
+#14 [meowtower stage-1 4/8] COPY --from=build /app/dist ./dist
+#14 CACHED
+
+#15 [meowtower build 4/8] COPY package.json package-lock.json ./
+#15 CACHED
+
+#16 [meowtower build 2/8] RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++   && rm -rf /var/lib/apt/lists/*
+#16 CACHED
+
+#17 [meowtower build 5/8] RUN npm ci --no-audit --no-fund
+#17 CACHED
+
+#18 [meowtower stage-1 3/8] COPY --from=build /app/node_modules ./node_modules
+#18 CACHED
+
+#19 [meowtower stage-1 2/8] WORKDIR /app
+#19 CACHED
+
+#20 [meowtower build 3/8] WORKDIR /app
+#20 CACHED
+
+#21 [meowtower build 7/8] COPY src ./src
+#21 CACHED
+
+#22 [meowtower build 6/8] COPY tsconfig.json tsconfig.build.json ./
+#22 CACHED
+
+#23 [meowtower build 8/8] RUN npm run build && npm prune --omit=dev
+#23 CACHED
+
+#24 [meowtower stage-1 6/8] COPY content ./content
+#24 CACHED
+
+#25 [proxy] resolving provenance for metadata file
+#25 DONE 0.0s
+
+#26 [meowtower stage-1 7/8] COPY migrations ./migrations
+#26 DONE 0.1s
+
+#27 [meowtower stage-1 8/8] RUN mkdir -p /var/lib/meowtower && chown node:node /var/lib/meowtower
+#27 DONE 0.2s
+
+#28 [meowtower] exporting to image
+#28 exporting layers 0.0s done
+#28 writing image sha256:5b3bc65f265212b60e8ef8cdf86ae90dcf0ef495b338b34b4c677f7b77f0a1ef done
+#28 naming to docker.io/library/meowtower-meowtower done
+#28 DONE 0.1s
+
+#29 [meowtower] resolving provenance for metadata file
+#29 DONE 0.0s
+ Image meowtower-meowtower Built 
+ Image meowtower-proxy Built 
