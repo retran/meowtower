@@ -109,6 +109,8 @@ A backup copy is one snapshot plus `data/blobs/`. The snapshot holds the event l
 
 `./meowtower restore` loads the newest snapshot as the live database.
 
+The parent's notices live in `data/snapshots/notices.json`, one object keyed by notice kind, beside `last.json`, where `./meowtower status` and the Mac's Parent Room page read them. `backup_failed` rises when a snapshot fails and the next good snapshot clears it. `storage_ceiling` counts what `meowtower` sees of `data/`, the blob store, the snapshots and the exports, and rises at 20 GB and again at each further 10 GB. Snapshot names have one-second resolution, and a snapshot whose name is taken takes the next free second.
+
 ### The client
 
 One client code base builds a tablet interface and a computer interface, each covering every screen of the game and the Parent Room (REQ-2534). On its first start on a device the client picks the tablet interface when `(pointer: coarse)` matches and `(any-pointer: fine)` doesn't, and the computer interface otherwise (REQ-2536). The player switches the interface in the settings; `meowtower` stores the choice in that device's `devices` row, and the choice holds on that device until she changes it (REQ-2538). A device not yet paired keeps its switch in memory until pairing sends it, so a reload before pairing picks from the device again.
