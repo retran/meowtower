@@ -87,6 +87,12 @@ switch; `draft/` and `design/` are never committed; every commit is signed.
 | `design/design-system/guidelines/30-screens.md` | cited | RES-3500 holds its content; kept with `design/` until its assets move |
 | `design/key-art/README.md` | cited | RES-3400 holds its content; kept with `design/` until its assets move |
 | `design/screens/README.md` | cited | RES-3500 holds its content; kept with `design/` until its assets move |
+| `docs/README.md` | cited | User documentation for the parent, written by EPC-0020's document step after onboarding and kept |
+| `docs/how-to/export-the-game-data.md` | cited | User documentation for the parent, written by EPC-0020's document step after onboarding and kept |
+| `docs/how-to/recompute-the-derived-tables.md` | cited | User documentation for the parent, written by EPC-0020's document step after onboarding and kept |
+| `docs/reference/parent-notices.md` | cited | User documentation for the parent, written by EPC-0020's document step after onboarding and kept |
+
+Amended by EPC-0020, whose document step added the four `docs/` pages above.
 
 Outside the table: the design system's code in `design/design-system/`
 (`tokens.json`, `tokens.css`, `components/bundle.js`, `components/bundle.css`,
