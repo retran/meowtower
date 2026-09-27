@@ -80,6 +80,10 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-010 [P] TSK-0280 Emptying the explanation cache loses no fact about play
       closes: REQ-3816
       depends: TSK-0260 - the test compares projections before and after a recompute
+- [x] T-011 TSK-0295 A failed log write replies 503 on every route and reaches the parent as a notice
+      closes: none - it realises ADR-0020's failure table for `log_write_failed`
+      depends: TSK-0200 - it raises `LogWriteFailed`; TSK-0080 - the notices live in its file
+      why added: the epic's verification on 2026-09-28 found `log_write_failed` only in the server's log and a play route answering 500, and the owner asked to fix it
 
 These tasks can run in parallel once their dependencies are done:
 
@@ -106,6 +110,22 @@ Every one of the 27 requirements ADR-0020 addresses lands in exactly one task ab
 | TSK-0290 | REQ-2234, REQ-2236, REQ-2238, REQ-2240 |
 
 The smallest set of tasks that would test the decision is TSK-0200, TSK-0250 and TSK-0260. Together they show whether the database refuses every change to the log, whether projections written in the same transaction as the log rebuild identical from it, and whether a full recompute of a simulated year fits the 60-second budget, which covers ADR-0020's first and third reversal conditions.
+
+## Verification
+
+Verified on 2026-09-27 (UTC) at tree `092a38220b07` on `main`, which merges no pull requests: realised in part, with the gaps below, which the owner accepted on 2026-09-28 as waiting on their own epics. `meow-verbs evidence` exited 0 for format, lint, check, test and build, with test record `3848d07ed77c` (39 test files, 353 Vitest tests, 13 Playwright tests), and `paw check coverage` found nothing.
+
+Met: criteria 1, 2, 7, 8, 9, 10, 11 and 12, each by its task's evidence and the run above; criterion 3 on the synthetic 30-day log, which stands for ADR-0190's simulated run until that exists, as this epic allows.
+
+Open, worst first:
+
+- Criterion 6 isn't met: no report exists until ADR-0180's epic registers `report_cache`; TSK-0280's test walks the projection registry and covers it then. REQ-3816 is realised in part.
+- Criterion 4 isn't met: `inventory`, `progress`, `outcomes`, `threads`, `familiars` and `reward_queue` don't exist; TSK-0270's test holds for the four game tables that do, and REQ-2224 is realised in part until those tables exist and ADR-0190's simulated run fills them.
+- Criterion 5 is met in part: `blobs`, `devices` and `explain_cache` stay unchanged through a recompute; `llm_log`, `art_jobs`, `frames` and `bakeoff` come with their epics, and REQ-2242 is realised in part.
+- A change of graph version triggers no recompute; ADR-0050's epic, which gives the graph its version, adds it.
+- The verification found `log_write_failed` reaching only the server's log and a play route answering 500 on a failed write; TSK-0295, added after approval, fixed both.
+
+ADR-0020's reversal conditions: a synthetic year recomputes in 568 ms against the 10-minute condition, and TSK-0200's guard test found no trigger bypass, so neither holds. Nobody needs to erase a fact about the player today, so the third doesn't hold; it returns when the family asks for an erasure.
 
 ## Not covered
 
