@@ -24,10 +24,11 @@ The system consists of two containers and one command. The container `meowtower`
 | Surface | What it is |
 | --- | --- |
 | `https://<mac-name>.local` | Caddy in `proxy`, listening on 8443 inside the container and published by the Mac as port 443. It terminates HTTPS with its own local certificate authority (`tls internal`) and forwards to `meowtower`. |
-| `http://localhost:8080` | The Parent Room over plain HTTP, published on `127.0.0.1` only. It is the only listener that carries the export routes ADR-0020 defines. |
+| `http://localhost:8080` | The Parent Room over plain HTTP, published on `127.0.0.1` only, from port 3001 in `meowtower`. `MEOWTOWER_PARENT_PORT`, in the environment or `.env`, moves it to another loopback port. It is the only listener that carries the export routes ADR-0020 defines. |
 | `./meowtower up` | Checks the network, runs `docker compose up -d` and `caffeinate`, sets the containers' time zone to the Mac's, and prints the QR code for the iPad. |
 | `./meowtower down` | Stops the containers. It never passes `-v`, so the volume `meowtower-db` survives. |
 | `./meowtower status` | Reports in one line each whether Docker and both containers run, the last snapshot and how long it took, and any open `backup_failed` or `storage_ceiling` notice. |
+| `./meowtower set-home-network` | Records the Mac's default gateway, as its IP address and the router's hardware address where the Mac can read it, in `data/home-gateway`. The first `./meowtower up` records it too. |
 | `./meowtower pair` | Prints a new 6-digit pairing code. |
 | `./meowtower set-pin` | Sets the Parent Room PIN. |
 | `./meowtower ipad-setup` | Writes the configuration profile that installs Caddy's root certificate into `data/setup/`, where `proxy` serves it at `https://<mac-name>.local/setup/meowtower.mobileconfig` as `application/x-apple-aspen-config`, and prints the iPad's steps. `--print-profile` prints the profile instead. With no root certificate yet it prints `root_certificate_missing` and exits 1. |
@@ -43,7 +44,7 @@ The system consists of two containers and one command. The container `meowtower`
 | `.env` | Holds the OpenRouter key on the Mac, given to the `meowtower` service only. |
 | Device cookie | A random 256-bit token in an `HttpOnly`, `Secure`, `SameSite=Strict` cookie with no expiry date. |
 | Table `devices` | One row per paired device: the token's SHA-256 hash, whether it is revoked, and the device's interface choice. |
-| Errors | `401` for a request with no device token; `401 device_revoked`; `pairing_locked`; `pin_locked`; `wrong_network`; `backup_failed`; `storage_ceiling`; `model_service_down`; `server_unreachable`. |
+| Errors | `401` for a request with no device token; `401 device_revoked`; `pairing_locked`; `pin_locked`; `wrong_network`; `port_in_use`; `docker_not_running`; `backup_failed`; `storage_ceiling`; `model_service_down`; `server_unreachable`. |
 
 ### What this part requires from other parts
 
@@ -121,7 +122,9 @@ The device stores in IndexedDB only the queue of answers it hasn't sent, and ask
 | A request carries a revoked token | `meowtower` answers `401 device_revoked`, and the device shows that it needs pairing from the Parent Room. |
 | A pairing code is older than 5 minutes | `meowtower` refuses it. |
 | The fifth wrong pairing code or PIN in a row | `meowtower` refuses attempts of that kind for 15 minutes with `pairing_locked` or `pin_locked`, and the screen says when it takes attempts again. |
-| The Mac's default gateway differs from the recorded one | `./meowtower up` prints `wrong_network` with the recorded gateway and the current one, and starts nothing. |
+| The Mac's default gateway differs from the recorded one | `./meowtower up` prints `wrong_network` with the recorded gateway and the current one, and starts nothing. When either side's hardware address is unknown, the IP addresses alone decide. |
+| The Parent Room's port is taken by another program | `./meowtower up` prints `port_in_use` and starts nothing. |
+| The Docker engine isn't running | `./meowtower up` and `status` print `docker_not_running`. |
 | Another machine connects to port 8080 | The Mac refuses the connection. |
 | OpenRouter fails or can't be reached | The adventure continues on library and pool texts, and the Parent Room shows `model_service_down` as a line for the parent. |
 | A snapshot fails | `meowtower` raises `backup_failed` once per failure, as a Parent Room notice and in `./meowtower status`, and the next good snapshot clears it. |

@@ -1,5 +1,6 @@
 {
   "ui.app.name": "Мяубашня",
   "ui.app.shortName": "Мяубашня",
-  "ui.app.starting": "Башня просыпается…"
+  "ui.app.starting": "Башня просыпается…",
+  "parent.room.title": "Комната родителя"
 }

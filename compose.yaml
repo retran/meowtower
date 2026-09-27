@@ -21,6 +21,9 @@ services:
         required: false
     environment:
       TZ: ${TZ:-UTC}
+    # The Parent Room answers on the Mac's loopback only (REQ-2510).
+    ports:
+      - "127.0.0.1:${MEOWTOWER_PARENT_PORT:-8080}:3001"
     # The live database lives in the named volume; every other file is on the
     # Mac under data/ (REQ-2502).
     volumes:

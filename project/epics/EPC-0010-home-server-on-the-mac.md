@@ -57,7 +57,7 @@ A task is marked in the commit that advances it, never in a later pass.
 - [ ] T-005 TSK-0050 The PIN guards the Parent Room, both lockouts hold, and the parent revokes a device
       closes: REQ-2520, REQ-2522
       depends: TSK-0040 - revocation and the pairing lockout act on pairing; TSK-0100 - the devices page is a client screen in both interfaces
-- [ ] T-006 TSK-0060 The server answers only on the home network, and the Parent Room listener only on the Mac
+- [>] T-006 TSK-0060 The server answers only on the home network, and the Parent Room listener only on the Mac
       closes: REQ-2510
       depends: TSK-0010 - the listeners and `./tower up` must exist
 - [ ] T-007 TSK-0070 Snapshots on demand and before migrations, and `./tower restore`

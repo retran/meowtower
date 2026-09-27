@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; these are up, down, status and ipad-setup.
+# subcommands it needs; these are up, down, status, ipad-setup and set-home-network.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -11,7 +11,8 @@ mac_time_zone() { readlink /etc/localtime | sed 's#.*/zoneinfo/##'; }
 docker_running() { docker info >/dev/null 2>&1; }
 
 compose() {
-  MEOWTOWER_HOST="$(host_name)" TZ="$(mac_time_zone)" docker compose "$@"
+  MEOWTOWER_HOST="$(host_name)" TZ="$(mac_time_zone)" MEOWTOWER_PARENT_PORT="${MEOWTOWER_PARENT_PORT:-8080}" \
+    docker compose "$@"
 }
 
 ROOT_CERT="${MEOWTOWER_ROOT_CERT:-data/caddy/caddy/pki/authorities/local/root.crt}"
@@ -84,8 +85,61 @@ cmd_ipad_setup() {
   if command -v qrencode >/dev/null; then qrencode -t ansiutf8 "$url"; fi
 }
 
+HOME_GATEWAY_FILE="${MEOWTOWER_HOME_GATEWAY_FILE:-data/home-gateway}"
+
+# The current default gateway, as "IP hardware-address", or "IP unknown" when
+# the Mac can't read the router's hardware address.
+gateway_id() {
+  if [[ -n ${MEOWTOWER_GATEWAY_ID:-} ]]; then echo "$MEOWTOWER_GATEWAY_ID"; return; fi
+  local ip mac
+  ip="$(route -n get default 2>/dev/null | awk '/gateway:/{print $2}' || true)"
+  mac="$(arp -n "$ip" 2>/dev/null | awk '{print $4}' || true)"
+  [[ $mac =~ ^[0-9a-f:]+$ ]] || mac=unknown
+  echo "${ip:-none} $mac"
+}
+
+cmd_set_home_network() {
+  mkdir -p "$(dirname "$HOME_GATEWAY_FILE")"
+  local id
+  id="$(gateway_id)"
+  echo "$id" > "$HOME_GATEWAY_FILE"
+  echo "Home network recorded: $(cat "$HOME_GATEWAY_FILE")"
+}
+
+# REQ-2510: start only on the home network. The first up records it.
+check_home_network() {
+  local current recorded
+  current="$(gateway_id)"
+  if [[ ! -s $HOME_GATEWAY_FILE ]]; then cmd_set_home_network; return; fi
+  recorded="$(cat "$HOME_GATEWAY_FILE")"
+  local r_ip=${recorded% *} r_mac=${recorded#* } c_ip=${current% *} c_mac=${current#* }
+  if [[ $r_ip != "$c_ip" ]] || { [[ $r_mac != unknown && $c_mac != unknown ]] && [[ $r_mac != "$c_mac" ]]; }; then
+    echo "wrong_network: this isn't the home network (recorded gateway $recorded, current $current)."
+    echo "Nothing started. After changing routers, run ./meowtower set-home-network at home."
+    exit 1
+  fi
+}
+
+# The same setting Compose reads from .env.
+if [[ -z ${MEOWTOWER_PARENT_PORT:-} && -f .env ]]; then
+  MEOWTOWER_PARENT_PORT="$(sed -n 's/^MEOWTOWER_PARENT_PORT=//p' .env | tail -1)"
+fi
+PARENT_PORT="${MEOWTOWER_PARENT_PORT:-8080}"
+
+# The Parent Room's loopback port must be free, or it would silently not bind.
+check_parent_port() {
+  if compose ps --format '{{.Name}}' 2>/dev/null | grep -q meowtower-meowtower; then return; fi
+  if lsof -nP -iTCP:"$PARENT_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "port_in_use: port $PARENT_PORT is taken, so the Parent Room can't listen there."
+    echo "Nothing started. Set MEOWTOWER_PARENT_PORT to a free port, for example in .env."
+    exit 1
+  fi
+}
+
 cmd_up() {
-  if ! docker_running; then echo "Docker Desktop is not running."; exit 1; fi
+  check_home_network
+  if ! docker_running; then echo "docker_not_running: Docker isn't running (Docker Desktop or OrbStack)."; exit 1; fi
+  check_parent_port
   mkdir -p data/blobs data/snapshots data/exports data/caddy data/setup
   compose up -d --build
   # Caddy reads its bind-mounted Caddyfile only at start, so apply any change.
@@ -97,7 +151,7 @@ cmd_up() {
     echo $! > "$CAFFEINATE_PID"
   fi
   local url="https://$(host_name)"
-  echo "Meowtower is up at $url"
+  echo "Meowtower is up at $url; the Parent Room is at http://localhost:$PARENT_PORT on this Mac"
   if command -v qrencode >/dev/null; then qrencode -t ansiutf8 "$url"; fi
 }
 
@@ -111,7 +165,7 @@ cmd_down() {
 }
 
 cmd_status() {
-  if ! docker_running; then echo "Docker Desktop is not running."; exit 1; fi
+  if ! docker_running; then echo "docker_not_running: Docker isn't running (Docker Desktop or OrbStack)."; exit 1; fi
   echo "Docker: running"
   for svc in meowtower proxy; do
     local state
@@ -125,5 +179,6 @@ case "${1:-}" in
   down) cmd_down ;;
   status) cmd_status ;;
   ipad-setup) shift; cmd_ipad_setup "$@" ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup" >&2; exit 2 ;;
+  set-home-network) cmd_set_home_network ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network" >&2; exit 2 ;;
 esac

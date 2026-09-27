@@ -61,12 +61,18 @@ describe("REQ-2502: all game data is stored on the parent's Mac", () => {
     expect(caddy?.source).toMatch(/\/data\/caddy$/);
   });
 
-  it("publishes HTTPS on the Mac's port 443 only from proxy", () => {
+  it("publishes HTTPS on 443 from proxy, and the Parent Room on the Mac's loopback only", () => {
     expect(service("proxy").ports?.[0]).toMatchObject({
       target: 8443,
       published: "443",
     });
-    expect(service("meowtower").ports ?? []).toEqual([]);
+    expect(service("meowtower").ports).toEqual([
+      // The port may move (MEOWTOWER_PARENT_PORT); the loopback binding may not.
+      expect.objectContaining({
+        target: 3001,
+        host_ip: "127.0.0.1",
+      }),
+    ]);
   });
 });
 

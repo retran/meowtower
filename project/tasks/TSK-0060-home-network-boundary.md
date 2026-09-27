@@ -30,7 +30,14 @@ TSK-0010, because the listeners and `./tower up` must exist.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac, whose Docker engine is OrbStack. Criteria 1 and 3 are met; criterion 2 needs a second machine.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; Vitest 30 tests and Playwright 2 tests passed.
+- Criterion 1, REQ-2510: `tests/smoke/home-network.test.ts`, seen failing before the check existed, now passes: `set-home-network` records the gateway, `up` on a different gateway prints `wrong_network` with both gateways and exits 1, and `up` on the recorded one passes the check. On the Mac, with the recorded gateway `192.168.178.1 unknown` and a simulated router `00:11:22:33:44:55`, `./meowtower up` printed `wrong_network` and exited 1.
+- The home network is recorded as the gateway's IP address and the router's hardware address, in `data/home-gateway`, on the first `./meowtower up` or by `./meowtower set-home-network`. Here the Mac's ARP table had no entry for the router, so the address is recorded as `unknown` and the IP address decides.
+- Criterion 3: `curl http://localhost:8480/` returned HTTP 200 with the page «Комната родителя». Port 8080 is published by another project on this Mac (meowhub), so `./meowtower up` refused with `port_in_use` on the default, and the local `.env`, which git ignores, sets `MEOWTOWER_PARENT_PORT=8480`.
+- Criterion 2, partly: `lsof` shows the Parent Room listening on `127.0.0.1:8480` only, and a request from the Mac to its own home-network address on that port got no connection (curl exit 28). A second machine on the home network is still to try it.
+- Fixed on the way: reading the router's hardware address no longer stops the script when the ARP table has no entry, and a Docker engine that isn't running now reads `docker_not_running` for Docker Desktop and OrbStack alike.
 
 ## Left alone
 
