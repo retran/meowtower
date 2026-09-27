@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, pair, db-snapshot and restore.
+# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, pair, db-snapshot, restore and export.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -162,6 +162,15 @@ cmd_restore() {
   compose start meowtower
 }
 
+# The export, run by the server from a fresh copy (REQ-2238): the raw log,
+# the flat tables and the field dictionary under data/exports/<UTC time>/.
+cmd_export() {
+  local reply
+  reply="$(curl -fsS -X POST "http://localhost:$PARENT_PORT/api/parent/export")" \
+    || { echo "export_failed: the server wrote no export; is it up?"; exit 1; }
+  echo "Export written to data/exports/$(echo "$reply" | sed -n 's/.*"dir":"[^"]*\/\([^"/]*\)".*/\1/p')/"
+}
+
 cmd_up() {
   check_home_network
   if ! docker_running; then echo "docker_not_running: Docker isn't running (Docker Desktop or OrbStack)."; exit 1; fi
@@ -214,5 +223,6 @@ case "${1:-}" in
   pair) cmd_pair ;;
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|db-snapshot|restore" >&2; exit 2 ;;
+  export) cmd_export ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|db-snapshot|restore|export" >&2; exit 2 ;;
 esac

@@ -126,3 +126,39 @@ const attemptsView: Projection = {
 };
 
 export const flatViews: readonly Projection[] = [itemsView, attemptsView];
+
+/** What each column of the flat views means: the export's field dictionary. */
+export const VIEW_COLUMNS: Record<string, Record<string, string>> = {
+  items_view: {
+    item_id: "the opaque identifier of the task shown",
+    session_id: "the session it was shown in",
+    template_id: "the template that generated it",
+    template_version: "the template's version",
+    node: "the skill-graph node",
+    subtype: "the node's subtype",
+    purpose: "why the Director chose it",
+    attempt_no: "1 for a first attempt's task, 2 for a second attempt's twin",
+    parent_item_id: "for a twin, the task it follows",
+    correct_answer: "the correct answer as shown",
+    shown_seq: "the log sequence number of its item_shown event",
+    excluded: "1 when the parent excluded the task",
+    flagged: "1 when the parent flagged the task",
+    computed_at: "when the row was last computed",
+  },
+  attempts_view: {
+    item_id: "the task answered",
+    attempt_no: "1 or 2",
+    session_id: "the session",
+    entered: "the answer as entered",
+    assisted: "1 when help came before the answer",
+    hint_level: "the highest hint rung shown before the answer",
+    submitted_ms: "time from showing the task to submission",
+    input_method: "how the answer was entered",
+    verdict: "the checker's verdict",
+    outcome: "the game outcome",
+    trap_id: "the misconception the answer matched, if any",
+    excluded: "1 when the parent excluded the task",
+    flagged: "1 when the parent flagged the task",
+    computed_at: "when the row was last computed",
+  },
+};

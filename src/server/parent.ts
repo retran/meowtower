@@ -3,6 +3,8 @@ import { lang, t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { issuePairingCode } from "./devices.js";
 import { takeSnapshot } from "./snapshots.js";
+import { EXPORT_FILES, exportAll } from "./export.js";
+import { readFileSync } from "node:fs";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -16,15 +18,33 @@ export function createParentApp({
   now = Date.now,
   dbPath,
   snapshots,
+  exports,
 }: {
   db: Db;
   now?: () => number;
   dbPath?: string;
   snapshots?: string;
+  exports?: string;
 }): Hono {
   const app = new Hono();
   // Only the Mac reaches this listener, so only the Mac issues pairing codes.
   app.post("/pair-code", (c) => c.json({ code: issuePairingCode(db, now()) }));
+  // The export, only on this Mac-only listener (REQ-2240, REQ-2238).
+  let lastExport: string | undefined;
+  app.post("/api/parent/export", async (c) => {
+    if (!dbPath || !exports) return c.json({ error: "export_failed" }, 500);
+    const { dir, counts } = await exportAll(dbPath, exports, new Date(now()));
+    lastExport = dir;
+    return c.json({ dir, counts });
+  });
+  app.get("/api/parent/export/:file", (c) => {
+    const file = c.req.param("file");
+    if (!lastExport || !(EXPORT_FILES as readonly string[]).includes(file))
+      return c.notFound();
+    return c.body(readFileSync(join(lastExport, file)), 200, {
+      "content-disposition": `attachment; filename="${file}"`,
+    });
+  });
   // ./meowtower db-snapshot: one snapshot on demand, its time kept for status.
   app.post("/snapshot", async (c) => {
     if (!dbPath || !snapshots) return c.json({ error: "backup_failed" }, 500);

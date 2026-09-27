@@ -9,6 +9,7 @@ const dbPath =
 const port = Number(process.env["PORT"] ?? 3000);
 const parentPort = Number(process.env["PARENT_PORT"] ?? 3001);
 const snapshots = process.env["MEOWTOWER_SNAPSHOTS"] ?? "/data/snapshots";
+const exports = process.env["MEOWTOWER_EXPORTS"] ?? "/data/exports";
 
 let db: Db;
 try {
@@ -23,7 +24,7 @@ try {
 }
 const game = serve({ fetch: createApp({ db }).fetch, port });
 const parent = serve({
-  fetch: createParentApp({ db, dbPath, snapshots }).fetch,
+  fetch: createParentApp({ db, dbPath, snapshots, exports }).fetch,
   port: parentPort,
 });
 

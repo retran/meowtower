@@ -70,7 +70,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [ ] T-007 [P] TSK-0260 The shadow-table full recompute, `./meowtower recompute`, and the rebuild test
       closes: REQ-2200, REQ-2242
       depends: TSK-0250 - it rebuilds the registered projections; TSK-0080 - `recompute_failed`, `recompute_slow` and `log_large` reach the parent as that task's notices
-- [ ] T-008 [P] TSK-0290 `./meowtower export` and the loopback-only export routes
+- [x] T-008 [P] TSK-0290 `./meowtower export` and the loopback-only export routes
+      evidence: meow-verbs exit 0, 274 tests; seven files from a copy; DuckDB reads Parquet; 404 on HTTPS, 200 on loopback (TSK-0290 Evidence)
       closes: REQ-2234, REQ-2236, REQ-2238, REQ-2240
       depends: TSK-0250 - `attempts` and `items` are the flat projections; TSK-0060 - the loopback listener must exist
 - [ ] T-009 [P] TSK-0270 A version change recomputes at start-up, and logged decisions stay fixed under a new model

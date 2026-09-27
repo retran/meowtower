@@ -108,3 +108,11 @@ export function* allEvents(db: Db): Generator<StoredEvent> {
     after = rows[rows.length - 1]?.seq ?? after;
   }
 }
+
+/** Every event row as stored, in log order, for the export. */
+export function eventRows(db: Db): Record<string, unknown>[] {
+  return db.prepare("SELECT * FROM events ORDER BY seq").all() as Record<
+    string,
+    unknown
+  >[];
+}

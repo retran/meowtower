@@ -34,7 +34,16 @@ TSK-0250, because `attempts` and `items` are the flat projections it adds. TSK-0
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 27 test files, 274 Vitest tests and 2 Playwright tests passed. The build verb built the image with `@duckdb/node-api` 1.5.5-r.5.
+- Seen failing first: `tests/integration/export.test.ts` couldn't load before `src/server/export.ts` existed. The first full run failed TSK-0200's `events_sql` check, because the export read `events` itself; the read moved to `eventRows` in `src/engine/events/read.ts`.
+- Criterion 1, REQ-2234, REQ-2236, REQ-2238: over a synthetic 30-day log of 30 sessions and 600 tasks, `exportAll` wrote `data/exports/2026-09-27T12-00-00Z/` with the seven files. On the Mac, `./meowtower export` printed `Export written to data/exports/2026-09-27T17-19-02Z/`, and the folder held `attempts.csv`, `attempts.parquet`, `events.jsonl`, `events.parquet`, `fields.csv`, `items.csv` and `items.parquet`, written inside the container.
+- Criterion 2: DuckDB opens `events.parquet`, `attempts.parquet` and `items.parquet`; `events.jsonl` and `events.parquet` both hold 1,800 rows, the `events` count of the copy, and the attempts and items files 600 rows each, the rows of `attempts_view` and `items_view`.
+- Criterion 3: the test appended a further day of events while the export ran; the export's counts equal the copy's, taken by `VACUUM INTO` the moment the export started, and the export reads only that copy, which it deletes at the end.
+- Criterion 4: `fields.csv` has a described row for every column of `attempts.csv`, `items.csv` and every key of an `events.jsonl` line, plus every payload field from the schemas' descriptions.
+- Criterion 5, REQ-2240: through `https://code-swirl.local` with a paired device's cookie, `/api/parent/export/events.jsonl` answered `404 Not Found`; on `http://localhost:8480` (this Mac's Parent Room port) it answered 200. The test shows the same on the two apps.
+- Fixed on the way: an empty log now exports as an empty `events.jsonl`, where it had been a single blank line.
 
 ## Left alone
 
