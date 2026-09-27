@@ -45,7 +45,8 @@ A task is marked in the commit that advances it, never in a later pass.
       evidence: meow-verbs run format lint check test build exit 0, 7 tests; ./meowtower up serves /health HTTP 200 (TSK-0010 Evidence)
       closes: REQ-2502, REQ-2512
       depends: none
-- [>] T-002 TSK-0020 The iPad trusts HTTPS through `./tower ipad-setup` and installs the home-screen app
+- [x] T-002 TSK-0020 The iPad trusts HTTPS through `./tower ipad-setup` and installs the home-screen app
+      evidence: owner confirmed on a real iPad 2026-09-27: trusted HTTPS, standalone app; profile and chain tests pass (TSK-0020 Evidence)
       closes: REQ-2500, REQ-2514
       depends: TSK-0010 - Caddy's authority and the served page must exist
 - [>] T-003 TSK-0030 The server commits each write before it replies, proven by the crash test
@@ -57,7 +58,8 @@ A task is marked in the commit that advances it, never in a later pass.
 - [ ] T-005 TSK-0050 The PIN guards the Parent Room, both lockouts hold, and the parent revokes a device
       closes: REQ-2520, REQ-2522
       depends: TSK-0040 - revocation and the pairing lockout act on pairing; TSK-0100 - the devices page is a client screen in both interfaces
-- [>] T-006 TSK-0060 The server answers only on the home network, and the Parent Room listener only on the Mac
+- [x] T-006 TSK-0060 The server answers only on the home network, and the Parent Room listener only on the Mac
+      evidence: wrong_network test passes; Parent Room on loopback only; owner confirmed from a second machine 2026-09-27 (TSK-0060 Evidence)
       closes: REQ-2510
       depends: TSK-0010 - the listeners and `./tower up` must exist
 - [ ] T-007 TSK-0070 Snapshots on demand and before migrations, and `./tower restore`
