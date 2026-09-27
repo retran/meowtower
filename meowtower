@@ -147,6 +147,23 @@ cmd_pair() {
   echo "Enter it on the device within 5 minutes. It works once."
 }
 
+# The Parent Room PIN, 4 to 8 digits, read twice without echo and sent over
+# the Parent Room's listener, which only this Mac can reach (SPC-0010).
+cmd_set_pin() {
+  local pin again status
+  read -rs -p "New Parent Room PIN (4 to 8 digits): " pin; echo
+  read -rs -p "The same PIN again: " again; echo
+  [[ "$pin" == "$again" ]] || { echo "pin_mismatch: the two entries differ."; exit 1; }
+  [[ "$pin" =~ ^[0-9]{4,8}$ ]] || { echo "pin_format: use 4 to 8 digits."; exit 1; }
+  # On stdin, so the PIN never shows in the process list.
+  status="$(printf '{"pin":"%s"}' "$pin" | curl -sS -o /dev/null -w '%{http_code}' \
+    -X POST -H 'content-type: application/json' --data @- \
+    "http://localhost:$PARENT_PORT/pin")" \
+    || { echo "server_unreachable: run ./meowtower up first."; exit 1; }
+  [[ "$status" == "200" ]] || { echo "pin_not_set: the server answered $status."; exit 1; }
+  echo "The Parent Room PIN is set."
+}
+
 # One snapshot on demand, taken by the server so play goes on (SPC-0010).
 cmd_db_snapshot() {
   local reply
@@ -221,8 +238,9 @@ case "${1:-}" in
   ipad-setup) shift; cmd_ipad_setup "$@" ;;
   set-home-network) cmd_set_home_network ;;
   pair) cmd_pair ;;
+  set-pin) cmd_set_pin ;;
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
   export) cmd_export ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|db-snapshot|restore|export" >&2; exit 2 ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|set-pin|db-snapshot|restore|export" >&2; exit 2 ;;
 esac

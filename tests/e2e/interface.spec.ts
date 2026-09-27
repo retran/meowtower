@@ -18,6 +18,8 @@ async function ready(page: Page, route = "/"): Promise<void> {
   await page.goto("about:blank");
   await page.goto(`/#${route}`);
   await expect(page.locator("body")).toHaveAttribute("data-screen", route);
+  // A screen that loads its content marks itself busy until it has.
+  await expect(page.locator("[data-busy]")).toHaveCount(0);
 }
 
 test("REQ-2536: the first start picks the interface from the device", async ({

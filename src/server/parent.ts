@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { lang, t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { issuePairingCode } from "./devices.js";
+import { PIN_PATTERN, setPin } from "./parent-access.js";
 import { takeSnapshot } from "./snapshots.js";
 import { EXPORT_FILES, exportAll } from "./export.js";
 import { readFileSync } from "node:fs";
@@ -29,6 +30,16 @@ export function createParentApp({
   const app = new Hono();
   // Only the Mac reaches this listener, so only the Mac issues pairing codes.
   app.post("/pair-code", (c) => c.json({ code: issuePairingCode(db, now()) }));
+  // ./meowtower set-pin: only the Mac sets the Parent Room PIN.
+  app.post("/pin", async (c) => {
+    const body = (await c.req.json().catch(() => null)) as {
+      pin?: unknown;
+    } | null;
+    const pin = typeof body?.pin === "string" ? body.pin : "";
+    if (!PIN_PATTERN.test(pin)) return c.json({ error: "pin_format" }, 400);
+    setPin(db, pin, new Date(now()));
+    return c.json({ set: true });
+  });
   // The export, only on this Mac-only listener (REQ-2240, REQ-2238).
   let lastExport: string | undefined;
   app.post("/api/parent/export", async (c) => {

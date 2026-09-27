@@ -5,6 +5,7 @@ import type { Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
 import type { Db } from "./database.js";
+import { attempt } from "./parent-access.js";
 import {
   DEVICE_COOKIE,
   deviceForToken,
@@ -32,8 +33,22 @@ export function mountPairing(app: Hono, db: Db, now: () => number): void {
 
   app.post("/api/pair", async (c) => {
     const body = PairIn.safeParse(await c.req.json().catch(() => null));
-    if (!body.success) return c.json({ error: "pairing_code_invalid" }, 403);
-    const token = pairDevice(db, body.data.code, body.data.kind, now());
+    // A malformed code counts as a wrong one, and a lockout refuses even a
+    // correct code (REQ-2522).
+    let token: string | null = null;
+    const tried = attempt(db, "pairing", now(), () => {
+      if (!body.success) return false;
+      token = pairDevice(db, body.data.code, body.data.kind, now());
+      return token !== null;
+    });
+    if (tried.result === "locked")
+      return c.json(
+        {
+          error: "pairing_locked",
+          retryAt: new Date(tried.retryAt).toISOString(),
+        },
+        429,
+      );
     if (!token) return c.json({ error: "pairing_code_invalid" }, 403);
     // No Expires or Max-Age: the device keeps its access until revoked (REQ-2518).
     setCookie(c, DEVICE_COOKIE, token, {

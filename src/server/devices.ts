@@ -50,7 +50,42 @@ export function setDeviceInterface(
   db.prepare("UPDATE devices SET kind = ? WHERE id = ?").run(kind, deviceId);
 }
 
-const CODE_LIFETIME_MS = 5 * 60 * 1000;
+export interface DeviceRow {
+  id: string;
+  kind: Interface;
+  revoked: boolean;
+  createdAt: string;
+}
+
+export function listDevices(db: Db): DeviceRow[] {
+  return (
+    db
+      .prepare(
+        "SELECT id, kind, revoked, created_at FROM devices ORDER BY created_at",
+      )
+      .all() as {
+      id: string;
+      kind: Interface;
+      revoked: number;
+      created_at: string;
+    }[]
+  ).map((r) => ({
+    id: r.id,
+    kind: r.kind,
+    revoked: r.revoked === 1,
+    createdAt: r.created_at,
+  }));
+}
+
+/** Marks the device revoked; every later request with its token gets 401 (REQ-2520). */
+export function revokeDevice(db: Db, deviceId: string): boolean {
+  return (
+    db.prepare("UPDATE devices SET revoked = 1 WHERE id = ?").run(deviceId)
+      .changes === 1
+  );
+}
+
+export const CODE_LIFETIME_MS = 5 * 60 * 1000;
 
 /** Issues a 6-digit pairing code that lives 5 minutes (REQ-2516). */
 export function issuePairingCode(db: Db, now: number): string {

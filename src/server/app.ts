@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { isOpen, type Db } from "./database.js";
 import { mountPairing } from "./pairing.js";
+import { mountParentRoom } from "./parent-room.js";
 import { mountPlay } from "./play.js";
 import { mountShell } from "./shell.js";
 import { mountStage0 } from "./stage0.js";
@@ -19,6 +20,7 @@ export function createApp({
 }): Hono {
   const app = new Hono();
   mountPairing(app, db, now);
+  mountParentRoom(app, db, now);
   app.get("/health", (c) =>
     isOpen(db)
       ? c.json({ status: "ok", database: "ok" })

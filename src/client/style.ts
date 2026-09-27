@@ -41,7 +41,12 @@ section {
   border-radius: var(--radius-lg);
 }
 .actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
-.status:empty { display: none; }
+.status:empty, .code:empty { display: none; }
+.devices { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.devices li { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
+.devices li > span:first-child { flex: 1; }
+.tag { padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--paper); }
+.code { font-size: 1.4em; font-weight: 700; }
 
 .control {
   display: inline-flex;

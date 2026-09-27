@@ -7,11 +7,23 @@ export async function loadStrings(lang: string): Promise<void> {
   strings = (await res.json()) as Record<string, string>;
 }
 
-export function t(key: string): string {
+/** The string for `key`, with each `{name}` replaced from `vars`. */
+export function t(key: string, vars: Record<string, string> = {}): string {
   const value = strings[key];
   if (value === undefined) {
     console.error(`string_missing: ${key}`);
     return key;
   }
-  return value;
+  return value.replace(
+    /\{(\w+)\}/g,
+    (whole, name: string) => vars[name] ?? whole,
+  );
+}
+
+/** A time of day as the player's language writes it, such as 14:32. */
+export function clock(at: Date): string {
+  return at.toLocaleTimeString(document.documentElement.lang || "ru", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }

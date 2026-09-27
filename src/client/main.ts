@@ -17,14 +17,20 @@ async function boot(): Promise<void> {
   document.head.append(style);
   await loadStrings(document.documentElement.lang || "ru");
 
-  const paired = await device();
+  const found = await device();
   const shell: Shell = {
-    paired: paired !== null,
+    paired: found.state === "paired",
+    revoked: found.state === "revoked",
     // An unpaired device's switch lives in memory only: the browser's storage
     // holds no game data (SPC-0010, REQ-2542), and pairing sends the choice.
-    current: paired?.kind ?? detectInterface(),
+    current: found.state === "paired" ? found.kind : detectInterface(),
     setPaired(value) {
       shell.paired = value;
+      if (value) shell.revoked = false;
+    },
+    setRevoked(value) {
+      shell.revoked = value;
+      if (value) shell.paired = false;
     },
     setInterface(chosen: Interface) {
       shell.current = chosen;
