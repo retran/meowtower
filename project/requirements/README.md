@@ -4,7 +4,7 @@ None yet: the project is at the research stage.
 
 <!-- meow-method index -->
 
-966 requirements in all: 966 approved.
+971 requirements in all: 968 approved, 3 superseded.
 
 | Identifier | What it requires | Status |
 | --- | --- | --- |
@@ -517,7 +517,7 @@ None yet: the project is at the research stage.
 | [REQ-1760](REQ-1760-outcome-badge-mapping.md) | The outcome badge MUST show `crit` for a `clean` outcome that closes a clean row, `clean` for any other `clean` outcome, `partial` for a `partial` outcome, `soft` for an `alt` outcome after a wrong answer and `unknown` for an `alt` outcome after «Не знаю» (I don't know). | approved |
 | [REQ-1762](REQ-1762-alt-badge-labels.md) | The `soft` badge MUST read «Узел ослаблен» (Knot loosened) and the `unknown` badge «Принято» (Accepted). | approved |
 | [REQ-1764](REQ-1764-canon-branch-rule-in-words.md) | The canon MUST describe the room's branch rule in words and give no threshold value. | approved |
-| [REQ-1800](REQ-1800-master-writes-for-age.md) | The Master's text MUST suit the player's age (kept in `personal/player.md`). | approved |
+| [REQ-1800](REQ-1800-master-writes-for-age.md) | The Master's text MUST suit the player's age (kept in `personal/player.md`). | superseded |
 | [REQ-1802](REQ-1802-no-personal-data-questions.md) | The Master MUST NOT ask the player for personal data. | approved |
 | [REQ-1804](REQ-1804-no-schoolwork-talk.md) | The Master MUST NOT talk about schoolwork or grades. | approved |
 | [REQ-1806](REQ-1806-outcomes-as-world-events.md) | The Master MUST tell every trial outcome as an event in the world, never as a verdict on the heroine. | approved |
@@ -537,6 +537,7 @@ None yet: the project is at the research stage.
 | [REQ-1834](REQ-1834-triggers-run-locally-first.md) | The hand-written triggers MUST check the player's text on the parent's Mac before any outside model reads it. | approved |
 | [REQ-1836](REQ-1836-judge-never-lowers-signal.md) | A model's judgement of a signal's level MUST NOT lower a level the hand-written triggers found. | approved |
 | [REQ-1838](REQ-1838-dialogues-readable-by-parent.md) | Every dialogue MUST be saved and readable by the parent in the Parent Room. | approved |
+| [REQ-1840](REQ-1840-master-writes-for-configured-age.md) | The Master MUST write for the age the parent set in the Parent Room. | approved |
 | [REQ-1900](REQ-1900-planned-friendship-always-succeeds.md) | When the story reaches a planned friendship with a roster familiar, the friendship MUST succeed whatever the player answered in the tasks. | approved |
 | [REQ-1902](REQ-1902-friendship-growth-ignores-answers.md) | A familiar's friendship MUST grow by the same amount whether the player's answers are right, wrong or «Не знаю» (I don't know). | approved |
 | [REQ-1904](REQ-1904-evolution-timing-ignores-answers.md) | The moment a familiar evolves MUST NOT depend on whether the player's answers are right or wrong. | approved |
@@ -738,7 +739,7 @@ None yet: the project is at the research stage.
 | [REQ-2542](REQ-2542-device-keeps-only-unsent-answers.md) | A device MUST keep no game data locally except answers it has not yet sent to the server. | approved |
 | [REQ-2544](REQ-2544-pushes-only-to-parent-subscriptions.md) | After the MVP, the server MUST send alarm pushes only to push subscriptions made from the Parent Room on a paired device. | approved |
 | [REQ-2546](REQ-2546-revoked-device-loses-pushes.md) | When the parent revokes a device, the server MUST delete that device's push subscription. | approved |
-| [REQ-2600](REQ-2600-only-three-kinds-leave-mac.md) | The server MUST NOT send off the parent's Mac any data other than content made without the player, the player's story material (her cleaned free text, invented names, story memory and summary outcome events) and the one-task explanation request. | approved |
+| [REQ-2600](REQ-2600-only-three-kinds-leave-mac.md) | The server MUST NOT send off the parent's Mac any data other than content made without the player, the player's story material (her cleaned free text, invented names, story memory and summary outcome events) and the one-task explanation request. | superseded |
 | [REQ-2602](REQ-2602-explanation-request-only-on-thread.md) | An explanation request MUST leave the Mac only when the player spends a guiding thread on that task's explanation. | approved |
 | [REQ-2604](REQ-2604-explanation-request-contents.md) | An explanation request MUST hold only the task text as shown, the engine's solution steps and answer, the player's answer, any matched misconception with its engine calculation, the error class and the familiar's kind, name, traits and sample lines. | approved |
 | [REQ-2606](REQ-2606-blind-check-input.md) | The blind check of an explanation MUST receive only the task text and the finished explanation. | approved |
@@ -761,6 +762,7 @@ None yet: the project is at the research stage.
 | [REQ-2640](REQ-2640-judge-request-minimal.md) | A request to the judge model MUST carry only the cleaned text its question needs, and no story memory, outcome events, answers, times, estimates or other maths result. | approved |
 | [REQ-2642](REQ-2642-parent-told-judge-company.md) | The Parent Room MUST tell the parent which company reads the player's cleaned text for safety checks, in which country, and that the company keeps none of it. | approved |
 | [REQ-2644](REQ-2644-player-tier-any-region.md) | The player tier MAY use zero-retention endpoints in any region. | approved |
+| [REQ-2646](REQ-2646-data-leaving-the-mac.md) | The server MUST NOT send off the parent's Mac any data other than content made without the player, the player's story material (her cleaned free text, invented names, story memory and summary outcome events), the age the parent set, and the one-task explanation request. | approved |
 | [REQ-2700](REQ-2700-every-model-call-costed.md) | The server MUST record every call to an external model service, the judge model's included, with its cost. | approved |
 | [REQ-2702](REQ-2702-adventure-budget.md) | An adventure's spend on the Master, the planner, live frames, blind checks and the judge model's checks MUST stop at the adventure budget, which starts at $1.5. | approved |
 | [REQ-2704](REQ-2704-explanation-daily-spend.md) | The day's spend on live explanations MUST stop at the explanation budget, which starts at $0.3. | approved |
@@ -955,17 +957,20 @@ None yet: the project is at the research stage.
 | [REQ-3642](REQ-3642-live-frames-kept-with-status.md) | The game MUST keep every live story frame with its check status. | approved |
 | [REQ-3644](REQ-3644-live-frame-to-library.md) | The Parent Room MUST let the parent move a live story frame into the frame library with one action. | approved |
 | [REQ-3646](REQ-3646-llm-calls-recorded.md) | The game MUST record every language-model request and its response. | approved |
-| [REQ-3648](REQ-3648-science-from-bank-only.md) | Natural science questions MUST come only from the hand-made science bank. | approved |
+| [REQ-3648](REQ-3648-science-from-bank-only.md) | Natural science questions MUST come only from the hand-made science bank. | superseded |
 | [REQ-3650](REQ-3650-science-parent-approval.md) | A natural science question MUST reach the player only after the parent approves that question. | approved |
 | [REQ-3652](REQ-3652-science-repeat-window-small-bank.md) | Before stage 0.5, the game MUST NOT repeat a natural science question within 45 days while its topic has a question not shown in that time. | approved |
 | [REQ-3654](REQ-3654-science-repeat-window-large-bank.md) | From stage 0.5, the game MUST NOT repeat a natural science question within 90 days while its topic has a question not shown in that time. | approved |
 | [REQ-3656](REQ-3656-science-repeat-longest-ago.md) | When a topic has no fresh natural science question, the game MUST use the question it showed longest ago. | approved |
 | [REQ-3658](REQ-3658-science-repeat-logged.md) | When the game repeats a natural science question within its no-repeat window, the event log MUST mark the repeat. | approved |
+| [REQ-3660](REQ-3660-science-only-from-approved-bank.md) | Natural science questions MUST come only from the science bank, never from text generated during play. | approved |
 | [REQ-3700](REQ-3700-first-version-includes-mvp-parts.md) | The first version MUST include every part of the MVP contents list: levels and experience with daily quests; chests with a choice of 1 from 3, the forge and the buttons-only shop; the MVP familiar roster with friendship and evolution; the Master's story with success and other-path branches, floor states, Diary pages, names the player gives, free text and light dreamcore; the single mode with guiding threads, explanations, the event log and knowledge model v1; and, for the parent, lesson marks, report v1 and the raw data export. | approved |
 | [REQ-3702](REQ-3702-first-version-excludes-deferred-items.md) | The first version MUST NOT contain any item the draft defers until after the MVP: Ascents and anchor forms; story battles between familiars and the ring of elements; items and familiars made by AI, and live pictures; Diary ciphers; the free mode «Свободная прогулка» (Free Walk); characteristics, paths and story ranks by the calendar; room decor; the Dutch layer; and the full roster of familiars with the full set of dreamcore. | approved |
 | [REQ-3704](REQ-3704-player-facing-text-in-russian.md) | Every text and task the player sees in the first version MUST be in Russian. | approved |
 | [REQ-3706](REQ-3706-game-teaches-no-new-topics.md) | The game MUST NOT offer lessons that teach a new maths topic. | approved |
 | [REQ-3708](REQ-3708-canon-agrees-with-specification.md) | The canon MUST NOT contradict the specification on method, time, rewards or safety. | approved |
+| [REQ-3710](REQ-3710-parent-sets-age-and-group.md) | The Parent Room MUST let the parent set the player's real name, age and school group, and change each at any time. | approved |
+| [REQ-3712](REQ-3712-rules-read-configured-age-and-group.md) | Every rule that depends on the player's real name, age or school group MUST read the values the parent set, never a value fixed in the code, the content or a tracked file. | approved |
 | [REQ-3800](REQ-3800-event-identity-and-order.md) | Every event MUST carry a unique identifier, a sequence number that places it in one increasing order over the whole log, its event type and the version of its payload schema. | approved |
 | [REQ-3802](REQ-3802-derived-data-records-versions.md) | Every derived table and snapshot MUST record the model, threshold and graph versions it was computed with, the sequence number of the last event it took into account and the time it was computed. | approved |
 | [REQ-3804](REQ-3804-shown-task-records-answer.md) | When the game shows a task, the event log MUST record its correct answer and its short solution as they would be shown. | approved |
@@ -998,18 +1003,18 @@ By topic:
 - measurement: REQ-1100, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-1112, REQ-1114, REQ-1116, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132
 - outcomes: REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764
 - platform: REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-2542, REQ-2544, REQ-2546
-- privacy: REQ-2600, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2610, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2636, REQ-2638, REQ-2640, REQ-2642, REQ-2644
+- privacy: REQ-2600, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2610, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2636, REQ-2638, REQ-2640, REQ-2642, REQ-2644, REQ-2646
 - progression: REQ-2000, REQ-2002, REQ-2004, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2018, REQ-2020, REQ-2022, REQ-2024, REQ-2026, REQ-2028, REQ-2030, REQ-2032, REQ-2034, REQ-2036, REQ-2038
 - report: REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2308, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378
 - resume: REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, REQ-0214, REQ-0216, REQ-0218, REQ-0220, REQ-0222, REQ-0224, REQ-0226, REQ-0228, REQ-0230, REQ-0232, REQ-0234, REQ-0236
 - rewards: REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2116, REQ-2118, REQ-2120, REQ-2122, REQ-2124, REQ-2126, REQ-2128, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2138, REQ-2140, REQ-2142, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2180, REQ-2182, REQ-2184, REQ-2186
-- safety: REQ-1800, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838
-- scope: REQ-3700, REQ-3702, REQ-3704, REQ-3706, REQ-3708
+- safety: REQ-1800, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840
+- scope: REQ-3700, REQ-3702, REQ-3704, REQ-3706, REQ-3708, REQ-3710, REQ-3712
 - screens: REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3512, REQ-3514, REQ-3516, REQ-3518, REQ-3520, REQ-3522, REQ-3524, REQ-3526, REQ-3528, REQ-3530, REQ-3532, REQ-3534
 - selection: REQ-1000, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-1014, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-1026, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056
 - skill-graph: REQ-0800, REQ-0802, REQ-0804, REQ-0806, REQ-0808, REQ-0810, REQ-0812, REQ-0814, REQ-0816, REQ-0818, REQ-0820, REQ-0822, REQ-0824, REQ-0826, REQ-0828, REQ-0830, REQ-0832, REQ-0834, REQ-0836, REQ-0838, REQ-0840, REQ-0842, REQ-0844, REQ-0846, REQ-0848, REQ-0850, REQ-0852, REQ-0854
 - stages: REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020
-- task-text: REQ-3600, REQ-3602, REQ-3604, REQ-3606, REQ-3608, REQ-3610, REQ-3612, REQ-3614, REQ-3616, REQ-3618, REQ-3620, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3630, REQ-3632, REQ-3634, REQ-3636, REQ-3638, REQ-3640, REQ-3642, REQ-3644, REQ-3646, REQ-3648, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658
+- task-text: REQ-3600, REQ-3602, REQ-3604, REQ-3606, REQ-3608, REQ-3610, REQ-3612, REQ-3614, REQ-3616, REQ-3618, REQ-3620, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3630, REQ-3632, REQ-3634, REQ-3636, REQ-3638, REQ-3640, REQ-3642, REQ-3644, REQ-3646, REQ-3648, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660
 - templates: REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1212, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1228, REQ-1230, REQ-1232, REQ-1234, REQ-1236, REQ-1238, REQ-1240, REQ-1242, REQ-1244
 - threads: REQ-0500, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0526, REQ-0528, REQ-0530, REQ-0532, REQ-0534, REQ-0536, REQ-0538, REQ-0540, REQ-0542, REQ-0544, REQ-0546, REQ-0548, REQ-0550, REQ-0552
 - time: REQ-0300, REQ-0302, REQ-0304, REQ-0306, REQ-0308, REQ-0310, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0334, REQ-0336, REQ-0338, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364

@@ -3,7 +3,7 @@ id: REQ-1800
 artifact: requirement
 topic: safety
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-1800
 verification: judgement
