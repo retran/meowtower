@@ -4,7 +4,7 @@ None yet: the project is at the research stage.
 
 <!-- meow-flow index -->
 
-972 requirements in all: 969 approved, 3 superseded.
+982 requirements in all: 969 approved, 10 draft, 3 superseded.
 
 | Identifier | What it requires | Status |
 | --- | --- | --- |
@@ -763,6 +763,7 @@ None yet: the project is at the research stage.
 | [REQ-2642](REQ-2642-parent-told-judge-company.md) | The Parent Room MUST tell the parent which company reads the player's cleaned text for safety checks, in which country, and that the company keeps none of it. | approved |
 | [REQ-2644](REQ-2644-player-tier-any-region.md) | The player tier MAY use zero-retention endpoints in any region. | approved |
 | [REQ-2646](REQ-2646-data-leaving-the-mac.md) | The server MUST NOT send off the parent's Mac any data other than content made without the player, the player's story material (her cleaned free text, invented names, story memory and summary outcome events), the age the parent set, and the one-task explanation request. | approved |
+| [REQ-2648](REQ-2648-parent-told-where-checks-run.md) | The Parent Room MUST tell the parent, for each check on the player's text, where it runs and, for each place off the Mac, which company reads the text, in which country and whether it keeps any of it, the fallback included, as the gateway is configured when the parent opens the page. | draft |
 | [REQ-2700](REQ-2700-every-model-call-costed.md) | The server MUST record every call to an external model service, the judge model's included, with its cost. | approved |
 | [REQ-2702](REQ-2702-adventure-budget.md) | An adventure's spend on the Master, the planner, live frames, blind checks and the judge model's checks MUST stop at the adventure budget, which starts at $1.5. | approved |
 | [REQ-2704](REQ-2704-explanation-daily-spend.md) | The day's spend on live explanations MUST stop at the explanation budget, which starts at $0.3. | approved |
@@ -779,6 +780,7 @@ None yet: the project is at the research stage.
 | [REQ-2726](REQ-2726-no-unchecked-text-when-budget-out.md) | When a budget runs out, the game MUST NOT show any text that has not passed a safety check. | approved |
 | [REQ-2728](REQ-2728-offline-runs-separate-key.md) | Offline runs MUST spend from a key other than the play key. | approved |
 | [REQ-2730](REQ-2730-offline-key-limit.md) | The key for an offline run MUST carry a spending limit equal to that run's budget. | approved |
+| [REQ-2732](REQ-2732-hosted-judge-on-play-key.md) | Every call to a hosted judge model during play MUST go on the play key, so that it counts inside the key's monthly limit. | draft |
 | [REQ-2800](REQ-2800-floor-assets-use-floor-palette.md) | Every art asset that belongs to a floor MUST use that floor's palette. | approved |
 | [REQ-2802](REQ-2802-character-sheet-contents.md) | Each character MUST have a character sheet that shows the character from the front and the side and with 3 to 4 emotions. | approved |
 | [REQ-2804](REQ-2804-character-sheet-comes-first.md) | An asset of a character other than its character sheet MUST NOT be generated before that sheet exists. | approved |
@@ -980,6 +982,14 @@ None yet: the project is at the research stage.
 | [REQ-3812](REQ-3812-graph-overlay-keeps-base-graph.md) | A curriculum overlay on the skill graph MUST add nodes and links without changing any node or link of the base graph. | approved |
 | [REQ-3814](REQ-3814-report-keeps-layers-apart.md) | The report MUST NOT mix results from different graph layers unless the parent chooses to mix them. | approved |
 | [REQ-3816](REQ-3816-explanation-cache-holds-no-fact.md) | Emptying the explanation cache MUST lose no fact about play. | approved |
+| [REQ-3910](REQ-3910-judge-answers-only-the-mac.md) | A judge model running on the parent's Mac MUST give no model answer to a request from any device other than that Mac. | draft |
+| [REQ-3912](REQ-3912-judge-answer-carries-probabilities.md) | The server MUST treat a local judge's answer to a check as an error unless it names one of the check's fixed answers and gives a probability, between 0 and 1, for each of them. | draft |
+| [REQ-3914](REQ-3914-local-judge-meets-timeout.md) | A check MUST move to a judge model on the Mac only after that judge answers the check's test set on the family Mac, with the check's fixed prompt already cached and as many checks running at once as the game sends in one turn, within the judge timeout ADR-0100 sets, now 1500 ms, at the 95th percentile, measured at the gateway. | draft |
+| [REQ-3916](REQ-3916-judge-chosen-per-check.md) | Among the models on the Mac that pass a judge check's agreement test (REQ-1688) and latency test (REQ-3914), the one with the highest agreement with the reference model MUST answer the check; models within one percentage point of each other tie, and a tie goes to the model that answers the most checks, then to the smaller model. | draft |
+| [REQ-3918](REQ-3918-judge-supports-russian.md) | A model on the Mac whose model card lists its supported languages without Russian MUST NOT answer a judge check. | draft |
+| [REQ-3920](REQ-3920-changed-judge-retested.md) | When the model file a judge on the Mac serves has a different hash from the one a check passed on, the server MUST NOT send that judge the check until the check's agreement test (REQ-1688) and latency test (REQ-3914) have passed on the file it serves. | draft |
+| [REQ-3922](REQ-3922-startup-confirms-local-judge.md) | When the server starts, it MUST confirm that each judge on the Mac answers, and read the hash of the model file it serves, before it sends that judge a check. | draft |
+| [REQ-3924](REQ-3924-unpassed-check-stays-hosted.md) | A judge check for which no model on the Mac passes both its agreement test (REQ-1688) and its latency test (REQ-3914) MUST stay with the hosted judge if that judge passed the check's test set, and otherwise with the safety model, as the approved record places it (RES-1600, RES-3910). | draft |
 
 By topic:
 
@@ -989,7 +999,7 @@ By topic:
 - art: REQ-3400, REQ-3402, REQ-3404, REQ-3406, REQ-3408, REQ-3410, REQ-3412, REQ-3414, REQ-3416, REQ-3418, REQ-3420, REQ-3422
 - attempts: REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0414, REQ-0416, REQ-0418, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432
 - components: REQ-3200, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3218, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3236, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246
-- cost: REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2724, REQ-2726, REQ-2728, REQ-2730
+- cost: REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2724, REQ-2726, REQ-2728, REQ-2730, REQ-2732
 - data-model: REQ-3800, REQ-3802, REQ-3804, REQ-3808, REQ-3810, REQ-3812, REQ-3814, REQ-3816
 - design-system: REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148
 - development: REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952
@@ -997,6 +1007,7 @@ By topic:
 - explanations: REQ-0600, REQ-0602, REQ-0604, REQ-0606, REQ-0608, REQ-0610, REQ-0612, REQ-0614, REQ-0616, REQ-0618, REQ-0620, REQ-0622, REQ-0624, REQ-0626, REQ-0628, REQ-0630, REQ-0632, REQ-0634, REQ-0636, REQ-0638
 - familiars: REQ-1900, REQ-1902, REQ-1904, REQ-1906, REQ-1908, REQ-1910, REQ-1912, REQ-1914, REQ-1916, REQ-1918, REQ-1920, REQ-1922, REQ-1924, REQ-1926, REQ-1928, REQ-1930, REQ-1932, REQ-1934, REQ-1936, REQ-1938, REQ-1940, REQ-1942, REQ-1944, REQ-1946, REQ-1948, REQ-1950, REQ-1952, REQ-1954
 - graphics: REQ-2800, REQ-2802, REQ-2804, REQ-2806, REQ-2808, REQ-2810, REQ-2812, REQ-2814, REQ-2816, REQ-2818, REQ-2820, REQ-2822, REQ-2824, REQ-2826, REQ-2828, REQ-2830, REQ-2832, REQ-2834, REQ-2836, REQ-2838, REQ-2840
+- judge: REQ-3910, REQ-3912, REQ-3914, REQ-3916, REQ-3918, REQ-3920, REQ-3922, REQ-3924
 - knowledge-model: REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0956, REQ-0958, REQ-0960, REQ-0962, REQ-0964, REQ-0966, REQ-0968, REQ-0970, REQ-0972, REQ-0974, REQ-0976, REQ-0978, REQ-0980, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0990, REQ-0992, REQ-0994
 - lessons: REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1414, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-1426
 - limits: REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1320, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1342, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364
@@ -1004,7 +1015,7 @@ By topic:
 - measurement: REQ-1100, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-1112, REQ-1114, REQ-1116, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132
 - outcomes: REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764
 - platform: REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-2542, REQ-2544, REQ-2546
-- privacy: REQ-2600, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2610, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2636, REQ-2638, REQ-2640, REQ-2642, REQ-2644, REQ-2646
+- privacy: REQ-2600, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2610, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2636, REQ-2638, REQ-2640, REQ-2642, REQ-2644, REQ-2646, REQ-2648
 - progression: REQ-2000, REQ-2002, REQ-2004, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2018, REQ-2020, REQ-2022, REQ-2024, REQ-2026, REQ-2028, REQ-2030, REQ-2032, REQ-2034, REQ-2036, REQ-2038
 - report: REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2308, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378
 - resume: REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, REQ-0214, REQ-0216, REQ-0218, REQ-0220, REQ-0222, REQ-0224, REQ-0226, REQ-0228, REQ-0230, REQ-0232, REQ-0234, REQ-0236
