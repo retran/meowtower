@@ -6,6 +6,7 @@ import {
   checkEventsSqlConfined,
   checkNoKeyInClient,
   checkNoPush,
+  checkNoVerdictWords,
 } from "../../tools/static-checks.js";
 
 const dirs: string[] = [];
@@ -117,5 +118,34 @@ describe("projections are pure folds", () => {
       },
     ]);
     rmSync(root, { recursive: true, force: true });
+  });
+});
+
+describe("REQ-2414: no answer reply says «верно» or «неверно»", () => {
+  const ru = (strings: Record<string, string>): string =>
+    repo({ "content/i18n/ru.json": JSON.stringify(strings) });
+  it("passes this repository", () => {
+    expect(checkNoVerdictWords(process.cwd())).toEqual([]);
+  });
+  it("names a battle line holding «Верно!»", () => {
+    const root = ru({ "battle.clean.1": "Верно!" });
+    expect(checkNoVerdictWords(root)).toEqual([
+      {
+        check: "verdict_words",
+        file: join("content", "i18n", "ru.json"),
+        match: "battle.clean.1: Верно!",
+      },
+    ]);
+  });
+  it("names «неверно» in a short solution, in any case", () => {
+    const root = ru({ "standin.task.2.solution": "Это НЕВЕРНО." });
+    expect(checkNoVerdictWords(root)).toHaveLength(1);
+  });
+  it("passes a word that only contains it, and keys no reply shows", () => {
+    const root = ru({
+      "battle.alt.1": "Достоверно известно одно.",
+      "parent.room.title": "Верно",
+    });
+    expect(checkNoVerdictWords(root)).toEqual([]);
   });
 });

@@ -3,6 +3,7 @@
 // write goes through appendEvents and commits before the reply.
 import { randomUUID } from "node:crypto";
 import type { Context, Hono } from "hono";
+import type { z } from "zod";
 import { getCookie } from "hono/cookie";
 import { appendEvents } from "../engine/events/append.js";
 import {
@@ -20,6 +21,7 @@ import {
 import { t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { DEVICE_COOKIE, deviceForToken } from "./devices.js";
+import { send } from "./send.js";
 import {
   ROOM_LENGTH,
   STANDIN_TASKS,
@@ -46,8 +48,8 @@ function device(db: Db, c: Context): string | Response {
   return found.ok ? found.deviceId : c.json({ error: found.error }, 401);
 }
 
-function roomFor(shown: ItemShown, slot: number): Room {
-  return Room.parse({
+function roomFor(shown: ItemShown, slot: number): z.input<typeof Room> {
+  return {
     kind: "room",
     itemId: shown.itemId,
     view: shown.view,
@@ -57,7 +59,7 @@ function roomFor(shown: ItemShown, slot: number): Room {
     attemptNo: shown.attemptNo,
     threads: 0,
     hintLevels: [],
-  });
+  };
 }
 
 export function mountPlay(app: Hono, db: Db): void {
@@ -76,7 +78,7 @@ export function mountPlay(app: Hono, db: Db): void {
         sessionId,
       },
     ]);
-    return c.json(SessionStartOut.parse({ sessionId }));
+    return send(c, SessionStartOut, { sessionId });
   });
 
   app.get("/api/session/:id/next", (c) => {
@@ -98,7 +100,8 @@ export function mountPlay(app: Hono, db: Db): void {
     );
     // An open task is shown again as it was, never replaced.
     const open = firsts.find((s) => !answered.has(s.itemId));
-    if (open) return c.json(roomFor(open, firsts.indexOf(open) % ROOM_LENGTH));
+    if (open)
+      return send(c, Room, roomFor(open, firsts.indexOf(open) % ROOM_LENGTH));
 
     const index = firsts.length;
     const task = STANDIN_TASKS[index % STANDIN_TASKS.length];
@@ -134,7 +137,7 @@ export function mountPlay(app: Hono, db: Db): void {
         sessionId,
       },
     ]);
-    return c.json(roomFor(item, index % ROOM_LENGTH));
+    return send(c, Room, roomFor(item, index % ROOM_LENGTH));
   });
 
   app.post("/api/session/:id/answer", async (c) => {
@@ -211,7 +214,7 @@ export function mountPlay(app: Hono, db: Db): void {
       },
     ]);
 
-    const reply = AnswerOut.parse({
+    const reply: z.input<typeof AnswerOut> = {
       ...(shown.attemptNo === 1 ? { outcome } : {}),
       streak,
       grants: [],
@@ -219,11 +222,11 @@ export function mountPlay(app: Hono, db: Db): void {
       feedback: { correctAnswer: shown.correctAnswer },
       shortSolution: shown.shortSolution,
       battleLine: t(`battle.${outcome}.1`),
-    });
+    };
     c.header(
       "Server-Timing",
       `app;dur=${(performance.now() - started).toFixed(2)}`,
     );
-    return c.json(reply);
+    return send(c, AnswerOut, reply);
   });
 }

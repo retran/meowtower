@@ -32,7 +32,13 @@ TSK-0300, because it checks the packets and replies that task sends.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 29 test files, 281 Vitest tests and 2 Playwright tests passed. The lint verb now also runs `verdict_words`.
+- Seen failing first: with the room reply sent by `c.json` and given a `node` field and the correct answer, the recorder reported `1230 packets, 600 forbidden fields, 600 early answers` and failed; with `send` restored it reports 0 of each. Its first clean run reported 152 early answers, all digits inside session and item UUIDs, so the answer check now leaves out keys ending in `Id`.
+- Criterion 1: `src/server/send.ts` parses every body `play.ts` sends with its `.strict()` schema; `tests/unit/send.test.ts` adds `node` to a stand-in answer reply and gets `500` with `{"error":"packet_invalid"}`, and none of the reply's fields in the body.
+- Criterion 2, REQ-2428 and REQ-2420: `tests/integration/packet-recorder.test.ts` plays the stand-in adventure for 30 simulated days of 20 tasks and printed `recorder: 1230 packets, 0 forbidden fields, 0 early answers`. The end-to-end fixture in `tests/e2e/fixtures.ts` now runs the same forbidden-field check, and the `correctAnswer` check outside an answer reply, on every JSON response a screen receives.
+- Criterion 3, REQ-2414: the lint verb printed `verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»` and found none; `tests/unit/static-checks.test.ts` fails a fixture `battle.clean.1` holding «Верно!» and a short solution holding «НЕВЕРНО», and passes «Достоверно» and keys no reply shows.
 
 ## Left alone
 

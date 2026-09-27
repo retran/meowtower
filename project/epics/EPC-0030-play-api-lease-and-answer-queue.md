@@ -48,7 +48,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs exit 0, 236 tests; answer committed before reply; p95 4.33 ms; crash 100 of 100 (TSK-0300 Evidence)
       closes: REQ-2416, REQ-2418, REQ-2442
       depends: TSK-0210 and TSK-0220 - `item_shown`, `attempt_submitted`, `verdict` and `session_started` need their schemas; TSK-0040 - the device token identifies the device
-- [ ] T-002 [P] TSK-0310 No packet carries the task's design or its answer early, and no reply says «верно» or «неверно» (`src/shared/api.ts`, `tests/e2e/fixtures.ts`, `tools/static-checks.ts`)
+- [x] T-002 [P] TSK-0310 No packet carries the task's design or its answer early, and no reply says «верно» or «неверно» (`src/shared/api.ts`, `tests/e2e/fixtures.ts`, `tools/static-checks.ts`)
       closes: REQ-2414, REQ-2420, REQ-2428
       depends: TSK-0300 - it checks the packets and replies that task sends
 - [ ] T-003 [P] TSK-0320 Repeated answers, hints, explanations and second attempts are recorded and charged once, and the SSE stream delivers the explanation

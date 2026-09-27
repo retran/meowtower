@@ -128,6 +128,25 @@ export function checkProjectionsPure(root: string): Finding[] {
   );
 }
 
+/** REQ-2414: no answer reply says «верно» or «неверно», in any case. */
+export const REPLY_KEYS = /^(battle\.|standin\.task\.\d+\.solution)/;
+export function checkNoVerdictWords(root: string): Finding[] {
+  const path = join(root, "content", "i18n", "ru.json");
+  if (!existsSync(path)) return [];
+  const strings = JSON.parse(readFileSync(path, "utf8")) as Record<
+    string,
+    string
+  >;
+  const word = /(?<!\p{L})(не)?верно(?!\p{L})/iu;
+  return Object.entries(strings)
+    .filter(([key, text]) => REPLY_KEYS.test(key) && word.test(text))
+    .map(([key, text]) => ({
+      check: "verdict_words",
+      file: relative(root, path),
+      match: `${key}: ${text}`,
+    }));
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = process.cwd();
   const { checkParamsLanguageFree, loadTemplateSchemas } =
@@ -139,6 +158,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkEventsSqlConfined(root),
     ...checkBlobWritesConfined(root),
     ...checkProjectionsPure(root),
+    ...checkNoVerdictWords(root),
     ...checkParamsLanguageFree(templates),
   ];
   console.log(
@@ -147,7 +167,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
-      "projection_purity searched src/engine/projections for clocks, random sources and network modules",
+      "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
+      "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»",
   );
   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
   process.exit(findings.length ? 1 : 0);

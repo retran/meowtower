@@ -1,6 +1,9 @@
 // Every end-to-end test records each response the client receives, so the
-// check that no response carries the model key covers every screen (REQ-2504).
+// checks cover every screen: no response carries the model key (REQ-2504), no
+// JSON body carries a field of the task's design (REQ-2428), and only an
+// answer reply carries the correct answer (REQ-2420).
 import { test as base, expect } from "@playwright/test";
+import { forbiddenFields } from "../helpers/packets.js";
 
 const KEY = "sk-or-v1-e2e-fake-key-0000";
 
@@ -17,12 +20,24 @@ export const test = base.extend<{ leaks: string[] }>({
             const text = headers + body.toString("latin1");
             if (text.includes(KEY) || text.includes("sk-or-"))
               leaks.push(res.url());
+            if (!(res.headers()["content-type"] ?? "").includes("json")) return;
+            const json: unknown = JSON.parse(body.toString("utf8"));
+            for (const field of forbiddenFields(json))
+              leaks.push(`${res.url()}: ${field}`);
+            if (
+              body.includes("correctAnswer") &&
+              !new URL(res.url()).pathname.endsWith("/answer")
+            )
+              leaks.push(`${res.url()}: correctAnswer outside an answer reply`);
           })(),
         );
       });
       await use(leaks);
       await Promise.all(pending);
-      expect(leaks, "responses carrying the model key").toEqual([]);
+      expect(
+        leaks,
+        "responses carrying the model key, the design or an early answer",
+      ).toEqual([]);
     },
     { auto: true },
   ],
