@@ -2,5 +2,16 @@
   "ui.app.name": "Мяубашня",
   "ui.app.shortName": "Мяубашня",
   "ui.app.starting": "Башня просыпается…",
-  "parent.room.title": "Комната родителя"
+  "parent.room.title": "Комната родителя",
+  "standin.task.1.text": "Три кристалла и ещё четыре. Сколько кристаллов?",
+  "standin.task.1.solution": "3 + 4 = 7",
+  "standin.task.2.text": "У двери пять замков, два уже открыты. Сколько осталось?",
+  "standin.task.2.solution": "5 − 2 = 3",
+  "standin.task.3.text": "Два моста по шесть досок. Сколько досок всего?",
+  "standin.task.3.solution": "2 · 6 = 12",
+  "battle.clean.1": "Узел распутан начисто.",
+  "battle.clean.2": "Нить легла ровно.",
+  "battle.partial.1": "Нить почти на месте.",
+  "battle.alt.1": "Узел ослаблен. Башня показывает другую дорогу.",
+  "battle.alt.2": "Тропа сворачивает. Туман расступается чуть левее."
 }

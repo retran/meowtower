@@ -61,3 +61,23 @@ export function storedTypeVersions(db: Db): { type: string; v: number }[] {
     v: number;
   }[];
 }
+
+/** Every event of a session, in log order. */
+export function sessionEvents(db: Db, sessionId: string): StoredEvent[] {
+  return (
+    db
+      .prepare("SELECT * FROM events WHERE session_id = ? ORDER BY seq")
+      .all(sessionId) as Row[]
+  ).map(toEvent);
+}
+
+/** Every event naming a task by its itemId, in log order. */
+export function itemEvents(db: Db, itemId: string): StoredEvent[] {
+  return (
+    db
+      .prepare(
+        "SELECT * FROM events WHERE json_extract(payload, '$.itemId') = ? ORDER BY seq",
+      )
+      .all(itemId) as Row[]
+  ).map(toEvent);
+}

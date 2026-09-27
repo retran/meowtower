@@ -36,7 +36,18 @@ TSK-0210 and TSK-0220, because `item_shown`, `attempt_submitted`, `verdict` and 
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 18 test files, 236 Vitest tests and 2 Playwright tests passed.
+- Seen failing first: before `src/server/devices.ts`, `src/server/play.ts` and `src/shared/api.ts` existed, `tests/unit/answer-route.test.ts` couldn't load. With «Не знаю» mapped to `wrong`, the REQ-2442 case failed; with `feedback.correctAnswer` emptied, both REQ-2418 cases failed; each passed again once restored.
+- Criterion 1, REQ-2508: `tests/unit/answer-route.test.ts` reads the log through a second read-only connection as the reply arrives and finds `item_shown`, `attempt_submitted` and `verdict` for the `itemId`; the two answer events are written by one `appendEvents` call, one transaction.
+- Criterion 2, REQ-2416, REQ-2418: a first attempt's reply carries `outcome: "clean"`, the streak, empty grants, the short solution, `feedback.correctAnswer` `7` and a `battleLine`; a second attempt's reply carries the same without `outcome`. The twin is logged by the test, because the second-attempt route comes with TSK-0320.
+- Criterion 3, REQ-2442: «Не знаю» logs `dont_know`, an empty `raw` logs `unparsed` and a wrong answer logs `wrong`, three distinct verdicts.
+- Criterion 4: over 1,000 answers the reply's `Server-Timing` gave `answer p95: 4.33 ms`, against the 300 ms budget and the prediction of well under it. The answer path makes one transaction and no network call; no model gateway exists yet.
+- Criterion 5: `tests/crash/crash.test.ts` now also runs against this route: `crash test (answer): 100 of 100 answers kept, 0 lost`, recorded in TSK-0030's evidence.
+- A device authenticates with the `meowtower_device` cookie, whose SHA-256 hash sits in the new `devices` table (migration 3); a request without it gets 401 `device_token_missing`. Tests register a device through `registerDevice`, which pairing (TSK-0040) will call.
+- The stand-in adventure is three hand-written tasks in `src/server/standin.ts`, with their text, solutions and the battle lines in `content/i18n/ru.json`.
+- Changed on the way: two tests hard-coded the migration count at 2, so they now read the latest migration from `migrations/`; the crash test and Playwright set `PARENT_PORT`, because port 3001 is published by another project on this Mac.
 
 ## Left alone
 

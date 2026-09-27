@@ -13,6 +13,7 @@ export default defineConfig({
     reuseExistingServer: false,
     env: {
       PORT: String(PORT),
+      PARENT_PORT: "3925",
       MEOWTOWER_DB: "/tmp/meowtower-e2e.sqlite",
       // A fake key, so the recorder can prove no response carries it.
       OPENROUTER_API_KEY: "sk-or-v1-e2e-fake-key-0000",

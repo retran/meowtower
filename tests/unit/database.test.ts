@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -32,7 +32,10 @@ describe("migrations", () => {
     const applied = db
       .prepare("SELECT version FROM schema_migrations ORDER BY version")
       .all();
-    expect(applied).toEqual([{ version: 1 }, { version: 2 }]);
+    const shipped = readdirSync("migrations")
+      .filter((f) => /^\d{4}_.+\.sql$/.test(f))
+      .map((f) => ({ version: Number(f.slice(0, 4)) }));
+    expect(applied).toEqual(shipped);
     expect(db.prepare("SELECT count(*) AS n FROM events").get()).toEqual({
       n: 0,
     });

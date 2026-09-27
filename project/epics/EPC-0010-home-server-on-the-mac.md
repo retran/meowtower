@@ -49,7 +49,8 @@ A task is marked in the commit that advances it, never in a later pass.
       evidence: owner confirmed on a real iPad 2026-09-27: trusted HTTPS, standalone app; profile and chain tests pass (TSK-0020 Evidence)
       closes: REQ-2500, REQ-2514
       depends: TSK-0010 - Caddy's authority and the served page must exist
-- [>] T-003 TSK-0030 The server commits each write before it replies, proven by the crash test
+- [x] T-003 TSK-0030 The server commits each write before it replies, proven by the crash test
+      evidence: crash test 100 of 100 writes and 100 of 100 answers kept (TSK-0030 Evidence)
       closes: REQ-2508
       depends: TSK-0010 - the database lives in the volume `tower-db` it creates
 - [ ] T-004 TSK-0040 A device pairs by a 6-digit code and keeps its access

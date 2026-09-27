@@ -548,6 +548,17 @@ const parentDefs: EventDef[] = [
   },
 ];
 
+const sessionDefs: EventDef[] = [
+  {
+    type: "session_started",
+    v: 1,
+    schema: obj({
+      sessionId: id("the session"),
+      mode: z.enum(["zero", "daily"]).describe("Session 0 or a daily session"),
+    }),
+  },
+];
+
 const safetyDefs: EventDef[] = [
   {
     type: "safety_event",
@@ -585,6 +596,7 @@ export const EVENT_DEFS: readonly EventDef[] = [
   ...breakDefs,
   ...parentDefs,
   ...safetyDefs,
+  ...sessionDefs,
 ];
 
 /** ADR-0020's Event catalogue: the only type names the registry may hold. */

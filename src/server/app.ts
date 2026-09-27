@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { isOpen, type Db } from "./database.js";
+import { mountPlay } from "./play.js";
 import { mountShell } from "./shell.js";
 import { mountStage0 } from "./stage0.js";
 
@@ -12,5 +13,6 @@ export function createApp({ db }: { db: Db }): Hono {
   );
   mountShell(app);
   mountStage0(app, db);
+  mountPlay(app, db);
   return app;
 }

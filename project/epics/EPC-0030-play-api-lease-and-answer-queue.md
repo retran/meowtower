@@ -44,7 +44,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0300 An answer posted to the server is logged and committed before the reply, which returns the outcome and the correct answer (`src/shared/api.ts`, `src/server/`)
+- [x] T-001 TSK-0300 An answer posted to the server is logged and committed before the reply, which returns the outcome and the correct answer (`src/shared/api.ts`, `src/server/`)
+      evidence: meow-verbs exit 0, 236 tests; answer committed before reply; p95 4.33 ms; crash 100 of 100 (TSK-0300 Evidence)
       closes: REQ-2416, REQ-2418, REQ-2442
       depends: TSK-0210 and TSK-0220 - `item_shown`, `attempt_submitted`, `verdict` and `session_started` need their schemas; TSK-0040 - the device token identifies the device
 - [ ] T-002 [P] TSK-0310 No packet carries the task's design or its answer early, and no reply says «верно» or «неверно» (`src/shared/api.ts`, `tests/e2e/fixtures.ts`, `tools/static-checks.ts`)

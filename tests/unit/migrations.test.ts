@@ -1,11 +1,24 @@
 // REQ-2226: the migration runner refuses a migration that drops or replaces a
 // guarded trigger, and applies nothing of it.
-import { cpSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { openDatabase } from "../../src/server/database.js";
+
+// The newest migration the repository ships; a refused one leaves it newest.
+const LATEST = Math.max(
+  ...readdirSync("migrations")
+    .filter((f) => /^\d{4}_.+\.sql$/.test(f))
+    .map((f) => Number(f.slice(0, 4))),
+);
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -54,7 +67,7 @@ describe("REQ-2226: the migration runner guards the triggers", () => {
     expect(tables).toEqual([]);
     expect(
       db.prepare("SELECT max(version) AS v FROM schema_migrations").get(),
-    ).toEqual({ v: 2 });
+    ).toEqual({ v: LATEST });
     db.close();
   });
 
