@@ -1,0 +1,24 @@
+# What this repository declares to the harness. Every section is optional: a
+# unit whose section is absent reports what it can't do and does nothing in its
+# place. Fill each value from what the repository already does, never from what
+# it might do.
+
+# [verbs] is absent: the repository has no code, no package manifest and no
+# task runner yet. The stack in draft/khroniki-bashni-specifikaciya.md
+# (TypeScript, Vite, Vitest, Playwright) is planned, not present.
+
+# [commits] is absent: branch main has no commits, so there is no convention
+# to read.
+
+# The branch nobody commits to directly, and whether every pushed commit must
+# carry a verified signature.
+[git]
+trunk = "main"
+require_signatures = true
+
+# [record] and [tracker] are absent: the repository keeps no record directory
+# and has no remote.
+
+# [prose] is absent: the owner asked for the project to be kept in English
+# (2026-09-26), which is the default. The Russian texts in draft/ and design/
+# are game content and are not committed.

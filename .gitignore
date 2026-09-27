@@ -1,0 +1,7 @@
+# Personal data about the player stays local
+personal/
+
+# Design files are not committed (CLAUDE.md)
+design/
+
+.DS_Store
