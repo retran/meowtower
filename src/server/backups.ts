@@ -23,6 +23,10 @@ export const STORAGE_STEP_GB = 10;
 export interface Notices {
   backup_failed: { at: string; reason: string } | null;
   storage_ceiling: { at: string; gb: number } | null;
+  // The recompute's notices (TSK-0260) share the file.
+  recompute_failed?: { at: string; version: string; reason: string } | null;
+  recompute_slow?: { at: string; ms: number } | null;
+  log_large?: { at: string; bytes: number } | null;
 }
 
 const NOTICES = "notices.json";
@@ -33,7 +37,7 @@ export function readNotices(dir: string): Notices {
   return JSON.parse(readFileSync(path, "utf8")) as Notices;
 }
 
-function writeNotices(dir: string, notices: Notices): void {
+export function writeNotices(dir: string, notices: Notices): void {
   writeFileSync(join(dir, NOTICES), JSON.stringify(notices));
 }
 

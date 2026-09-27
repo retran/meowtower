@@ -4,6 +4,7 @@ import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 import { snapshotNow } from "./snapshots.js";
 import { backupAfterSession } from "./backups.js";
+import { checkLogSize } from "./recompute.js";
 import { dirname } from "node:path";
 
 const dbPath =
@@ -26,6 +27,7 @@ try {
 }
 // A snapshot after each session (REQ-2526); data/ is the snapshots folder's parent.
 const onSessionEnded = (): void => {
+  checkLogSize(db, snapshots, Date.now);
   void backupAfterSession({
     live: dbPath,
     dir: snapshots,

@@ -132,6 +132,39 @@ export function* allEvents(db: Db): Generator<StoredEvent> {
   }
 }
 
+/** Up to `limit` events after `after`, in log order. */
+export function eventsAfter(
+  db: Db,
+  after: number,
+  limit: number,
+): StoredEvent[] {
+  return (
+    db
+      .prepare("SELECT * FROM events WHERE seq > ? ORDER BY seq LIMIT ?")
+      .all(after, limit) as Row[]
+  ).map(toEvent);
+}
+
+/** The log's last seq, 0 when it's empty. */
+export function headSeq(db: Db): number {
+  return (
+    db.prepare("SELECT coalesce(max(seq), 0) AS seq FROM events").get() as {
+      seq: number;
+    }
+  ).seq;
+}
+
+/** The bytes the log's table takes in the file, for the `log_large` notice. */
+export function eventsBytes(db: Db): number {
+  return (
+    db
+      .prepare(
+        "SELECT coalesce(sum(pgsize), 0) AS bytes FROM dbstat WHERE name = 'events'",
+      )
+      .get() as { bytes: number }
+  ).bytes;
+}
+
 /** Every event row as stored, in log order, for the export. */
 export function eventRows(db: Db): Record<string, unknown>[] {
   return db.prepare("SELECT * FROM events ORDER BY seq").all() as Record<

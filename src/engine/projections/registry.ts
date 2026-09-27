@@ -14,7 +14,13 @@ export interface Projection {
   table: string;
   /** The table's definition, used to create it and to rebuild it when missing. */
   create: string;
-  apply: (db: Db, event: StoredEvent, computedAt: string) => void;
+  /** Folds one event into `table`, the projection's own or a shadow copy of it. */
+  apply: (
+    db: Db,
+    event: StoredEvent,
+    computedAt: string,
+    table?: string,
+  ) => void;
 }
 
 /**

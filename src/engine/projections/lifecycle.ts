@@ -31,12 +31,12 @@ const adventures: Projection = {
     changed_at TEXT NOT NULL,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string) {
+  apply(db: Db, e: StoredEvent, computedAt: string, table = "adventures") {
     const state = ADVENTURE_STATE[e.type];
     if (!state || !e.adventureId) return;
     prepared(
       db,
-      `INSERT INTO adventures (adventure_id, state, planned_seq, changed_seq, changed_at, computed_at)
+      `INSERT INTO ${table} (adventure_id, state, planned_seq, changed_seq, changed_at, computed_at)
        VALUES (?, ?, ?, ?, ?, ?)
        ON CONFLICT(adventure_id) DO UPDATE SET state = excluded.state,
          changed_seq = excluded.changed_seq, changed_at = excluded.changed_at,
@@ -58,19 +58,19 @@ const sessions: Projection = {
     ended_seq INTEGER,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string) {
+  apply(db: Db, e: StoredEvent, computedAt: string, table = "sessions") {
     if (e.type === "session_started") {
       const p = e.payload as { sessionId: string; mode: string };
       prepared(
         db,
-        `INSERT INTO sessions (session_id, adventure_id, mode, device_id, state, started_seq, computed_at)
+        `INSERT INTO ${table} (session_id, adventure_id, mode, device_id, state, started_seq, computed_at)
          VALUES (?, ?, ?, ?, 'active', ?, ?)`,
       ).run(p.sessionId, e.adventureId, p.mode, e.deviceId, e.seq, computedAt);
     } else if (e.type === "session_ended") {
       const p = e.payload as { sessionId: string };
       prepared(
         db,
-        `UPDATE sessions SET state = 'ended', ended_seq = ?, computed_at = ? WHERE session_id = ?`,
+        `UPDATE ${table} SET state = 'ended', ended_seq = ?, computed_at = ? WHERE session_id = ?`,
       ).run(e.seq, computedAt, p.sessionId);
     }
   },

@@ -5,6 +5,7 @@ import { issuePairingCode } from "./devices.js";
 import { PIN_PATTERN, setPin } from "./parent-access.js";
 import { takeSnapshot } from "./snapshots.js";
 import { readNotices } from "./backups.js";
+import { runRecompute } from "./recompute.js";
 import { EXPORT_FILES, exportAll } from "./export.js";
 import { readFileSync } from "node:fs";
 import { writeFileSync } from "node:fs";
@@ -57,6 +58,22 @@ export function createParentApp({
       "content-disposition": `attachment; filename="${file}"`,
     });
   });
+  // ./meowtower recompute: a full recompute on demand (SPC-0020).
+  app.post("/recompute", async (c) => {
+    if (!snapshots) return c.json({ error: "recompute_failed" }, 500);
+    try {
+      const result = await runRecompute(db, { dir: snapshots, now });
+      return c.json(result);
+    } catch (err) {
+      return c.json(
+        {
+          error: "recompute_failed",
+          reason: err instanceof Error ? err.message : String(err),
+        },
+        500,
+      );
+    }
+  });
   // ./meowtower db-snapshot: one snapshot on demand, its time kept for status.
   app.post("/snapshot", async (c) => {
     if (!dbPath || !snapshots) return c.json({ error: "backup_failed" }, 500);
@@ -89,6 +106,18 @@ export function createParentApp({
             gb: String(notices.storage_ceiling.gb),
           })
         : null,
+      notices?.recompute_failed
+        ? t("parent.notice.recomputeFailed", {
+            at: notices.recompute_failed.at,
+            version: notices.recompute_failed.version,
+          })
+        : null,
+      notices?.recompute_slow
+        ? t("parent.notice.recomputeSlow", {
+            seconds: String(Math.round(notices.recompute_slow.ms / 1000)),
+          })
+        : null,
+      notices?.log_large ? t("parent.notice.logLarge") : null,
     ].filter((l): l is string => l !== null);
     return c.html(
       `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">` +

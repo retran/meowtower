@@ -67,7 +67,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs exit 0, 270 tests; folds in the log transaction; missing view rebuilt at start-up (TSK-0250 Evidence)
       closes: REQ-3802, REQ-2232, REQ-2228
       depends: TSK-0210 and TSK-0220 - the flat projections fold the task, attempt and parent-action events those tasks define
-- [ ] T-007 [P] TSK-0260 The shadow-table full recompute, `./meowtower recompute`, and the rebuild test
+- [x] T-007 [P] TSK-0260 The shadow-table full recompute, `./meowtower recompute`, and the rebuild test
       closes: REQ-2200, REQ-2242
       depends: TSK-0250 - it rebuilds the registered projections; TSK-0080 - `recompute_failed`, `recompute_slow` and `log_large` reach the parent as that task's notices
 - [x] T-008 [P] TSK-0290 `./meowtower export` and the loopback-only export routes

@@ -37,7 +37,34 @@ TSK-0250, because the recompute rebuilds the registered projections. TSK-0080, b
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds for the tables that exist on this date, criterion 3 with the one-chunk wait the first open finding names; criterion 1 runs on the synthetic 30-day log until ADR-0190's simulation exists.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 36 test files, 338 Vitest tests and 13 Playwright tests passed. `meow-verbs evidence` doesn't exist in meow-verbs 0.3.0, so the trees are cited from `git write-tree`: `src` `051a29e283cd1f220a310aa325c245f998602938`, `tests` `daffb1001d4511935ffa522b58d3e952171c5ca7`, `content` `07ba7f7acd3d51532a7b7bf07fbf604c04a230b1`, and the script `meowtower` `57756e237406f66a72f309ecac1952932ada86a4`.
+- Seen failing first, each break alone and restored: with the swap skipping its catch-up, the appends test failed; with the swap deleting `devices`, the service-tables test failed; with a failure leaving its shadow tables, the failure test failed; with the divergence check never reporting, the `projection_diverged` test failed; with the fold skipping `item_flagged`, the rebuild test and the divergence test failed.
+- Criterion 1, REQ-2200: `tests/integration/rebuild.test.ts` writes the synthetic 30-day log from seed 7 through `appendEvents` and printed `rebuild: 2077 events; items_view 600 rows, attempts_view 600 rows, adventures 10 rows, sessions 30 rows`; each table in turn, dropped and recomputed, equals its rows before in every column but `computed_at`, which records when the rebuild ran and so differs by design, and no `__next` table is left. The test walks every registered projection, so a view registered later is checked the same way.
+- Criterion 2, REQ-2242: the row count and a SHA-256 of `blobs` and `devices` are the same after a recompute; `explain_cache`, `llm_log`, `art_jobs`, `frames` and `bakeoff` don't exist yet and are absent before and after; the test names all seven, so it checks each one's rows as soon as the task that adds it runs.
+- Criterion 3: appends in a loop during a recompute in chunks of 200 printed `appends during recompute: 11, longest wait 0.19 ms, recompute 10 ms`, and `items_view` after the swap holds every appended task. During the year run of criterion 6, 367 appends ran and the longest waited 1.83 ms: an append waits at most for one chunk, not only for the swap.
+- Criterion 4: `checkProjections` finds nothing on a clean database, and after one `attempts_view` row's verdict is edited, it reports `projection_diverged` for `attempts_view` with the first differing row as stored and as derived. The function stands in for the check until the task that builds ADR-0190's `npm run verify` calls it.
+- Criterion 5: a recompute that throws on its third chunk leaves every projection as it was and no shadow table, and `notices.json` holds `recompute_failed` with the time and `model none, thresholds none, graph none`; the next good recompute clears it. The Mac's Parent Room page shows «Пересчёт не удался (2026-09-27T21:00:00.000Z, …». A recompute failed on its second chunk into a git worktree's `data/snapshots`, and `./meowtower status` there printed `recompute_failed: the recompute at 2026-09-27T21:46:42.762Z (model none, thresholds none, graph none) failed; the old projections stay.`
+- Criterion 6: `node --import tsx tests/perf/recompute-year.ts` printed `recompute-year: 183469 events written in 3.2 s; full recompute of 4 tables in 568 ms against the 60,000 ms budget; 367 appends during it, the longest waiting 1.83 ms`. The figure isn't written into ADR-0190's Baselines table, which holds the budget, not the measurements. With the budget set below the time, `recompute_slow` rose once over two recomputes.
+- Criterion 7: with the limit injected at 1,024 bytes, `log_large` rose once over two checks, and not at all under the real 1 GB limit.
+- Criterion 8: against a server on scratch ports holding the 30-day log, `./meowtower recompute` printed `Recomputed: items_view, attempts_view, adventures, sessions` and `Up to event 2077, in 10 ms.`
+
+Choices this task made, where SPC-0020 left a gap:
+
+- The build runs on the server's connection in chunks of 500 events, each its own transaction, yielding to the event loop between them. What to do says its own connection, but better-sqlite3 is synchronous, so a second connection in the same thread would hold play up just the same; an append waits at most one chunk. It builds up to the head as it stood at the start, since appends go on, and the swap's transaction catches up the rest.
+- A projection's `apply` takes the table to fold into, its own or `<name>__next`, and its `CREATE TABLE` is renamed for the shadow, so each projection keeps one definition for its table and every copy of it.
+- `projection_diverged` is the function `checkProjections`, ready for ADR-0190's `npm run verify`, which doesn't exist yet; `recompute_slow` is raised by the recompute itself against the 60-second budget.
+- The three notices share `data/snapshots/notices.json` with TSK-0080's, and show in `./meowtower status` and on the Mac's Parent Room page. `log_large` is checked at each session's end, since the log grows only with play and a session's end is already when the server takes its snapshot.
+- `./meowtower recompute` asks the server through `POST /recompute` on the Parent Room's listener, as `db-snapshot` does, so it runs inside `meowtower`.
+
+### Open review findings
+
+An agent reviewed this record; these findings stay open, with the reason. They sit under Evidence because the frozen check lets an approved task change only this section.
+
+- Criterion 3 says no append waits beyond the swap transaction, and What to do says the build runs on its own connection; the build runs in chunks on the server's connection, so an append can wait for one chunk as well, 1.83 ms at most in the year run. Not changed: the criterion and What to do are frozen.
+- REQ-2200 and REQ-2242 are shown for the tables that exist today: four projections, and two of the seven service tables. The knowledge-model views REQ-2200 names and the five other service tables come with later epics, and `tests/integration/rebuild.test.ts` checks each as it arrives; the synthetic log stands for ADR-0190's simulated run until that exists. The evidence for the later tables belongs to the tasks that register them, and the simulated run's to the task that builds ADR-0190's simulation; until then REQ-2200 and REQ-2242 are closed for the tables present on 2026-09-27.
+- The choices above are statements SPC-0020 doesn't make yet. They wait for an amendment to SPC-0020, which needs the owner's approval and is named in this task's gate report to the owner.
 
 ## Left alone
 

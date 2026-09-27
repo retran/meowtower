@@ -28,12 +28,12 @@ const itemsView: Projection = {
     flagged INTEGER NOT NULL DEFAULT 0,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string) {
+  apply(db: Db, e: StoredEvent, computedAt: string, table = "items_view") {
     const p = e.payload as P;
     if (e.type === "item_shown") {
       prepared(
         db,
-        `INSERT INTO items_view (item_id, session_id, template_id, template_version, node, subtype,
+        `INSERT INTO ${table} (item_id, session_id, template_id, template_version, node, subtype,
            purpose, attempt_no, parent_item_id, correct_answer, shown_seq, computed_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       ).run(
@@ -54,7 +54,7 @@ const itemsView: Projection = {
       const column = e.type === "item_flagged" ? "flagged" : "excluded";
       prepared(
         db,
-        `UPDATE items_view SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
+        `UPDATE ${table} SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
       ).run(computedAt, p["itemId"]);
     }
   },
@@ -80,14 +80,14 @@ const attemptsView: Projection = {
     computed_at TEXT NOT NULL,
     PRIMARY KEY (item_id, attempt_no)
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string) {
+  apply(db: Db, e: StoredEvent, computedAt: string, table = "attempts_view") {
     const p = e.payload as P;
     if (e.type === "attempt_submitted" && e.v >= 1) {
       const input = p["input"] as P;
       const answer = p["answer"] as P;
       prepared(
         db,
-        `INSERT INTO attempts_view (item_id, attempt_no, session_id, entered, assisted, hint_level,
+        `INSERT INTO ${table} (item_id, attempt_no, session_id, entered, assisted, hint_level,
            submitted_ms, input_method, computed_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(item_id, attempt_no) DO UPDATE SET entered = excluded.entered,
@@ -108,7 +108,7 @@ const attemptsView: Projection = {
     } else if (e.type === "verdict") {
       prepared(
         db,
-        `INSERT INTO attempts_view (item_id, attempt_no, session_id, verdict, outcome, trap_id, computed_at)
+        `INSERT INTO ${table} (item_id, attempt_no, session_id, verdict, outcome, trap_id, computed_at)
          VALUES (?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(item_id, attempt_no) DO UPDATE SET verdict = excluded.verdict,
            outcome = excluded.outcome, trap_id = excluded.trap_id, computed_at = excluded.computed_at`,
@@ -125,7 +125,7 @@ const attemptsView: Projection = {
       const column = e.type === "item_flagged" ? "flagged" : "excluded";
       prepared(
         db,
-        `UPDATE attempts_view SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
+        `UPDATE ${table} SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
       ).run(computedAt, p["itemId"]);
     }
   },

@@ -164,6 +164,19 @@ cmd_set_pin() {
   echo "The Parent Room PIN is set."
 }
 
+# A full recompute of every projection, run by the server through the Parent
+# Room's listener while play goes on (SPC-0020).
+cmd_recompute() {
+  local reply
+  reply="$(curl -sS -X POST "http://localhost:$PARENT_PORT/recompute")" \
+    || { echo "server_unreachable: run ./meowtower up first."; exit 1; }
+  if [[ "$reply" == *'"error"'* ]]; then
+    echo "recompute_failed: $reply"; exit 1
+  fi
+  echo "Recomputed: $(echo "$reply" | sed -n 's/.*"tables":\[\([^]]*\)\].*/\1/p' | tr -d '"' | sed 's/,/, /g')"
+  echo "Up to event $(echo "$reply" | sed -n 's/.*"lastSeq":\([0-9]*\).*/\1/p'), in $(echo "$reply" | sed -n 's/.*"ms":\([0-9]*\).*/\1/p') ms."
+}
+
 # One snapshot on demand, taken by the server so play goes on (SPC-0010).
 cmd_db_snapshot() {
   local reply
@@ -236,6 +249,13 @@ cmd_status() {
     ceiling="$(sed -n 's/.*"storage_ceiling":{"at":"[^"]*","gb":\([0-9]*\)}.*/\1/p' data/snapshots/notices.json)"
     [[ -n "$failed" ]] && echo "backup_failed: the snapshot at $failed failed; the next good one clears this."
     [[ -n "$ceiling" ]] && echo "storage_ceiling: data/ holds more than $ceiling GB."
+    local rfailed rslow large
+    rfailed="$(sed -n 's/.*"recompute_failed":{"at":"\([^"]*\)","version":"\([^"]*\)".*/\1 (\2)/p' data/snapshots/notices.json)"
+    rslow="$(sed -n 's/.*"recompute_slow":{"at":"[^"]*","ms":\([0-9]*\)}.*/\1/p' data/snapshots/notices.json)"
+    large="$(sed -n 's/.*"log_large":{"at":"\([^"]*\)".*/\1/p' data/snapshots/notices.json)"
+    [[ -n "$rfailed" ]] && echo "recompute_failed: the recompute at $rfailed failed; the old projections stay."
+    [[ -n "$rslow" ]] && echo "recompute_slow: a full recompute took $rslow ms, over the 60 s budget."
+    [[ -n "$large" ]] && echo "log_large: the event log passed 1 GB."
   fi
   return 0
 }
@@ -248,8 +268,9 @@ case "${1:-}" in
   set-home-network) cmd_set_home_network ;;
   pair) cmd_pair ;;
   set-pin) cmd_set_pin ;;
+  recompute) cmd_recompute ;;
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
   export) cmd_export ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|set-pin|db-snapshot|restore|export" >&2; exit 2 ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|set-pin|recompute|db-snapshot|restore|export" >&2; exit 2 ;;
 esac
