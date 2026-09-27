@@ -1,6 +1,6 @@
 # Canon
 
-The canon records hold the world of Tower Chronicles: its places, characters,
+The canon records hold the world of Meowtower: its places, characters,
 creatures, items, campaign and the rules the Master follows when it invents
 more. They are a project-local kind, kept outside `project/` because
 `meow-flow` (its command is `paw`) knows only its own kinds and rejects any other inside the

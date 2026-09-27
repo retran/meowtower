@@ -1,6 +1,6 @@
 # The record
 
-The record of Tower Chronicles: the vision in `vision.md`, the onboarding report in `onboarding.md`, decisions in `adrs/`, specifications in `specs/`, epics in `epics/` and tasks in `tasks/`.
+The record of Meowtower: the vision in `vision.md`, the onboarding report in `onboarding.md`, decisions in `adrs/`, specifications in `specs/`, epics in `epics/` and tasks in `tasks/`.
 
 ## Specifications
 

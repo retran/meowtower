@@ -4,7 +4,7 @@ None yet: the project is at the research stage.
 
 <!-- meow-flow index -->
 
-971 requirements in all: 968 approved, 3 superseded.
+972 requirements in all: 968 approved, 1 draft, 3 superseded.
 
 | Identifier | What it requires | Status |
 | --- | --- | --- |
@@ -971,6 +971,7 @@ None yet: the project is at the research stage.
 | [REQ-3708](REQ-3708-canon-agrees-with-specification.md) | The canon MUST NOT contradict the specification on method, time, rewards or safety. | approved |
 | [REQ-3710](REQ-3710-parent-sets-age-and-group.md) | The Parent Room MUST let the parent set the player's real name, age and school group, and change each at any time. | approved |
 | [REQ-3712](REQ-3712-rules-read-configured-age-and-group.md) | Every rule that depends on the player's real name, age or school group MUST read the values the parent set, never a value fixed in the code, the content or a tracked file. | approved |
+| [REQ-3714](REQ-3714-game-named-meowtower.md) | The game, its repository and its technical names MUST carry the name Meowtower («Мяубашня» in the player's language). | draft |
 | [REQ-3800](REQ-3800-event-identity-and-order.md) | Every event MUST carry a unique identifier, a sequence number that places it in one increasing order over the whole log, its event type and the version of its payload schema. | approved |
 | [REQ-3802](REQ-3802-derived-data-records-versions.md) | Every derived table and snapshot MUST record the model, threshold and graph versions it was computed with, the sequence number of the last event it took into account and the time it was computed. | approved |
 | [REQ-3804](REQ-3804-shown-task-records-answer.md) | When the game shows a task, the event log MUST record its correct answer and its short solution as they would be shown. | approved |
@@ -1009,7 +1010,7 @@ By topic:
 - resume: REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, REQ-0214, REQ-0216, REQ-0218, REQ-0220, REQ-0222, REQ-0224, REQ-0226, REQ-0228, REQ-0230, REQ-0232, REQ-0234, REQ-0236
 - rewards: REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2116, REQ-2118, REQ-2120, REQ-2122, REQ-2124, REQ-2126, REQ-2128, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2138, REQ-2140, REQ-2142, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2180, REQ-2182, REQ-2184, REQ-2186
 - safety: REQ-1800, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840
-- scope: REQ-3700, REQ-3702, REQ-3704, REQ-3706, REQ-3708, REQ-3710, REQ-3712
+- scope: REQ-3700, REQ-3702, REQ-3704, REQ-3706, REQ-3708, REQ-3710, REQ-3712, REQ-3714
 - screens: REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3512, REQ-3514, REQ-3516, REQ-3518, REQ-3520, REQ-3522, REQ-3524, REQ-3526, REQ-3528, REQ-3530, REQ-3532, REQ-3534
 - selection: REQ-1000, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-1014, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-1026, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056
 - skill-graph: REQ-0800, REQ-0802, REQ-0804, REQ-0806, REQ-0808, REQ-0810, REQ-0812, REQ-0814, REQ-0816, REQ-0818, REQ-0820, REQ-0822, REQ-0824, REQ-0826, REQ-0828, REQ-0830, REQ-0832, REQ-0834, REQ-0836, REQ-0838, REQ-0840, REQ-0842, REQ-0844, REQ-0846, REQ-0848, REQ-0850, REQ-0852, REQ-0854

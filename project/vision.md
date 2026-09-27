@@ -7,11 +7,11 @@ revised: 2026-09-26
 
 <!-- Recovered by onboarding. Every statement names the record it came from and how it was found: high where the record states it, medium where two statements combine, low where it was inferred. The research records are drafts moved from the owner's draft design. -->
 
-# Tower Chronicles
+# Meowtower
 
 ## What it is
 
-Tower Chronicles («Хроники Башни») is a daily adventure game for one player,
+Meowtower («Мяубашня») is a daily adventure game for one player,
 a primary-school girl, that measures and consolidates her maths
 and science while she plays. (from RES-0010, high; the player from CLAUDE.md, high)
 Each adventure of the day refines a map of her knowledge, and the parent sees
