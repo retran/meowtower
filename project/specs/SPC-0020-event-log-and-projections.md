@@ -111,7 +111,11 @@ A full recompute builds every registered projection into a shadow table `<name>_
 
 The build runs on the server's connection in chunks of 500 events, each its own transaction, yielding between them, so an append waits at most for one chunk; it builds up to the head of the log as it stood at the start, and the swap's transaction folds in the rest. A projection folds each event into the table it is given, its own or its shadow, from one table definition. A recompute that fails drops its shadow tables and leaves the projections as they were. The check `projection_diverged` derives each projection afresh and reports the table with its first differing row, as stored and as derived. `recompute_failed`, `recompute_slow` and `log_large` join the parent's notices in `data/snapshots/notices.json` that SPC-0010 describes, and `log_large` is checked when a session ends.
 
-At start-up, before it accepts a play request, `meowtower` rebuilds every registered projection table that is missing (REQ-2232). It then runs a full recompute when the model or threshold version in the content files differs from `derived_meta` (REQ-2230).
+At start-up, before it accepts a play request, `meowtower` rebuilds every registered projection table that is missing (REQ-2232). It then runs a full recompute when the model or threshold version in the content files differs from `derived_meta` (REQ-2230). The versions come from `content/versions.json` until the model, threshold and graph files name their own, and the server reads them before it opens the database, since a table rebuilt at open records them. A start-up recompute that fails leaves the old projections, raises `recompute_failed` and lets the server start. A graph version change triggers no recompute yet.
+
+A projection marked `versioned`, `node_snapshots` among them, carries the model, threshold and graph versions in its rows; a recompute keeps the rows of other versions and rebuilds the current versions' rows, and the check `projection_diverged` compares the current versions' rows only. `node_snapshots` stays empty until the knowledge model of ADR-0060 is set.
+
+A check in the lint verb follows each game projection's runtime imports, type-only imports aside, and fails one that reaches `src/engine/model/`, `src/engine/states/`, `src/engine/director/` or `src/shared/answer.ts`, directly or through any module between, naming the chain (REQ-2224). The knowledge projections and the registry are not game projections for this check.
 
 ### The explanation cache
 
