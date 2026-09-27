@@ -75,6 +75,8 @@ export interface PlayOptions {
   stream: Stream;
   /** Writes an explanation; ADR-0120's epic supplies it, and until then none does. */
   explainer?: (itemId: string) => Promise<string>;
+  /** Runs after a session's end is committed; the server takes a snapshot then (REQ-2526). */
+  onSessionEnded?: (sessionId: string) => void;
 }
 
 interface ItemShown {
@@ -178,7 +180,7 @@ function answerReply(
 export function mountPlay(
   app: Hono,
   db: Db,
-  { now, stream, explainer }: PlayOptions,
+  { now, stream, explainer, onSessionEnded }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
 
@@ -473,6 +475,7 @@ export function mountPlay(
         return c.json({ error: "adventure_closed" }, 409);
       throw err;
     }
+    onSessionEnded?.(sessionId);
     return send(c, PauseOut, { status: "paused" });
   });
 

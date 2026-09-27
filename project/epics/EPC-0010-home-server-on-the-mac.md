@@ -68,7 +68,7 @@ A task is marked in the commit that advances it, never in a later pass.
       evidence: meow-verbs exit 0, 262 tests; 1 GB snapshot 1,798 ms; restore works; blobs read-only (TSK-0070 Evidence)
       closes: REQ-2524, REQ-2528, REQ-2532
       depends: TSK-0030 - a snapshot copies the database it opens
-- [ ] T-008 TSK-0080 A snapshot after each session, retention, and the backup and storage notices
+- [x] T-008 TSK-0080 A snapshot after each session, retention, and the backup and storage notices
       closes: REQ-2526, REQ-2530
       depends: TSK-0070 - it reuses the snapshot worker; TSK-0050 - the notices show in the Parent Room
 - [>] T-009 TSK-0090 The OpenRouter key never reaches a client

@@ -12,11 +12,13 @@ export function createApp({
   now = Date.now,
   stream = createStream(),
   explainer,
+  onSessionEnded,
 }: {
   db: Db;
   now?: () => number;
   stream?: Stream;
   explainer?: (itemId: string) => Promise<string>;
+  onSessionEnded?: (sessionId: string) => void;
 }): Hono {
   const app = new Hono();
   mountPairing(app, db, now);
@@ -28,6 +30,11 @@ export function createApp({
   );
   mountShell(app);
   mountStage0(app, db);
-  mountPlay(app, db, { now, stream, ...(explainer ? { explainer } : {}) });
+  mountPlay(app, db, {
+    now,
+    stream,
+    ...(explainer ? { explainer } : {}),
+    ...(onSessionEnded ? { onSessionEnded } : {}),
+  });
   return app;
 }

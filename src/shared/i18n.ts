@@ -8,10 +8,14 @@ const strings = JSON.parse(
 
 export const lang = "ru";
 
-export function t(key: string): string {
+/** The string for `key`, with each `{name}` replaced from `vars`. */
+export function t(key: string, vars: Record<string, string> = {}): string {
   const value = strings[key];
   if (value === undefined) throw new Error(`string_missing: ${key}`);
-  return value;
+  return value.replace(
+    /\{(\w+)\}/g,
+    (whole, name: string) => vars[name] ?? whole,
+  );
 }
 
 /** The strings the client shell shows: the `ui.` keys only, because the file

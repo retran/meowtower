@@ -4,6 +4,7 @@ import type { Db } from "./database.js";
 import { issuePairingCode } from "./devices.js";
 import { PIN_PATTERN, setPin } from "./parent-access.js";
 import { takeSnapshot } from "./snapshots.js";
+import { readNotices } from "./backups.js";
 import { EXPORT_FILES, exportAll } from "./export.js";
 import { readFileSync } from "node:fs";
 import { writeFileSync } from "node:fs";
@@ -75,12 +76,27 @@ export function createParentApp({
       return c.json({ error: "backup_failed" }, 500);
     }
   });
-  app.get("/", (c) =>
-    c.html(
+  // The parent's notices (SPC-0010): a failed backup until the next good
+  // one, and the storage ceiling once data/ passes it.
+  app.get("/", (c) => {
+    const notices = snapshots ? readNotices(snapshots) : null;
+    const lines = [
+      notices?.backup_failed
+        ? t("parent.notice.backupFailed", { at: notices.backup_failed.at })
+        : null,
+      notices?.storage_ceiling
+        ? t("parent.notice.storageCeiling", {
+            gb: String(notices.storage_ceiling.gb),
+          })
+        : null,
+    ].filter((l): l is string => l !== null);
+    return c.html(
       `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">` +
         `<title>${escape(t("parent.room.title"))}</title></head>` +
-        `<body><h1>${escape(t("parent.room.title"))}</h1></body></html>`,
-    ),
-  );
+        `<body><h1>${escape(t("parent.room.title"))}</h1>` +
+        lines.map((l) => `<p role="alert">${escape(l)}</p>`).join("") +
+        `</body></html>`,
+    );
+  });
   return app;
 }

@@ -42,6 +42,8 @@
   "ui.devices.code": "Код {code}, действует до {time}.",
   "ui.devices.loginNeeded": "Сначала войдите в Комнату родителя.",
   "parent.room.title": "Комната родителя",
+  "parent.notice.backupFailed": "Резервная копия не получилась ({at}). Следующая удачная копия снимет это сообщение.",
+  "parent.notice.storageCeiling": "Папка data/ заняла больше {gb} ГБ.",
   "standin.task.1.text": "Три кристалла и ещё четыре. Сколько кристаллов?",
   "standin.task.1.solution": "3 + 4 = 7",
   "standin.task.1.twin.text": "Два гриба и ещё шесть. Сколько грибов?",

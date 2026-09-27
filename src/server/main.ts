@@ -3,6 +3,8 @@ import { createApp } from "./app.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 import { snapshotNow } from "./snapshots.js";
+import { backupAfterSession } from "./backups.js";
+import { dirname } from "node:path";
 
 const dbPath =
   process.env["MEOWTOWER_DB"] ?? "/var/lib/meowtower/meowtower.sqlite";
@@ -22,7 +24,16 @@ try {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);
 }
-const game = serve({ fetch: createApp({ db }).fetch, port });
+// A snapshot after each session (REQ-2526); data/ is the snapshots folder's parent.
+const onSessionEnded = (): void => {
+  void backupAfterSession({
+    live: dbPath,
+    dir: snapshots,
+    dataRoot: dirname(snapshots),
+    now: Date.now,
+  });
+};
+const game = serve({ fetch: createApp({ db, onSessionEnded }).fetch, port });
 const parent = serve({
   fetch: createParentApp({ db, dbPath, snapshots, exports }).fetch,
   port: parentPort,
