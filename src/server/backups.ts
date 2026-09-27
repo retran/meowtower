@@ -27,6 +27,7 @@ export interface Notices {
   recompute_failed?: { at: string; version: string; reason: string } | null;
   recompute_slow?: { at: string; ms: number } | null;
   log_large?: { at: string; bytes: number } | null;
+  log_write_failed?: { at: string; reason: string } | null;
 }
 
 const NOTICES = "notices.json";

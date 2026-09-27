@@ -47,6 +47,7 @@
   "parent.notice.recomputeFailed": "Пересчёт не удался ({at}, {version}). Прежние данные остались на месте.",
   "parent.notice.recomputeSlow": "Пересчёт занял {seconds} с, дольше минуты.",
   "parent.notice.logLarge": "Журнал событий занял больше 1 ГБ.",
+  "parent.notice.logWriteFailed": "Игра не смогла записать событие ({at}). Проверьте свободное место на Mac.",
   "standin.task.1.text": "Три кристалла и ещё четыре. Сколько кристаллов?",
   "standin.task.1.solution": "3 + 4 = 7",
   "standin.task.1.twin.text": "Два гриба и ещё шесть. Сколько грибов?",

@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { LogWriteFailed } from "../engine/events/append.js";
 import { isOpen, type Db } from "./database.js";
 import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
@@ -6,6 +7,7 @@ import { mountPlay } from "./play.js";
 import { mountShell } from "./shell.js";
 import { mountStage0 } from "./stage0.js";
 import { createStream, type Stream } from "./stream.js";
+import { raise, writeSucceeded } from "./failures.js";
 
 export function createApp({
   db,
@@ -21,6 +23,17 @@ export function createApp({
   onSessionEnded?: (sessionId: string) => void;
 }): Hono {
   const app = new Hono();
+  // A failed log write replies 503 on every route and reaches the parent
+  // (ADR-0020); a later state-changing request that succeeds clears it.
+  app.onError((err, c) => {
+    if (!(err instanceof LogWriteFailed)) throw err;
+    raise("log_write_failed", err.message, now);
+    return c.json({ error: "log_write_failed" }, 503);
+  });
+  app.use("/api/*", async (c, next) => {
+    await next();
+    if (c.req.method !== "GET" && c.res.status < 500) writeSucceeded();
+  });
   mountPairing(app, db, now);
   mountParentRoom(app, db, now);
   app.get("/health", (c) =>

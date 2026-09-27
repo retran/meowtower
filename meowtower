@@ -256,6 +256,9 @@ cmd_status() {
     [[ -n "$rfailed" ]] && echo "recompute_failed: the recompute at $rfailed failed; the old projections stay."
     [[ -n "$rslow" ]] && echo "recompute_slow: a full recompute took $rslow ms, over the 60 s budget."
     [[ -n "$large" ]] && echo "log_large: the event log passed 1 GB."
+    local wfailed
+    wfailed="$(sed -n 's/.*"log_write_failed":{"at":"\([^"]*\)".*/\1/p' data/snapshots/notices.json)"
+    [[ -n "$wfailed" ]] && echo "log_write_failed: a write to the event log failed at $wfailed; check the free space on the Mac."
   fi
   return 0
 }

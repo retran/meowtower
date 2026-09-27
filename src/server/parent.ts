@@ -118,6 +118,9 @@ export function createParentApp({
           })
         : null,
       notices?.log_large ? t("parent.notice.logLarge") : null,
+      notices?.log_write_failed
+        ? t("parent.notice.logWriteFailed", { at: notices.log_write_failed.at })
+        : null,
     ].filter((l): l is string => l !== null);
     return c.html(
       `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">` +

@@ -6,6 +6,7 @@ import { snapshotNow } from "./snapshots.js";
 import { backupAfterSession } from "./backups.js";
 import { checkLogSize, runRecompute } from "./recompute.js";
 import { readContentVersions } from "./versions.js";
+import { useNoticesDir } from "./failures.js";
 import {
   useVersions,
   versionLabel,
@@ -20,6 +21,7 @@ const parentPort = Number(process.env["PARENT_PORT"] ?? 3001);
 const snapshots = process.env["MEOWTOWER_SNAPSHOTS"] ?? "/data/snapshots";
 const exports = process.env["MEOWTOWER_EXPORTS"] ?? "/data/exports";
 
+useNoticesDir(snapshots);
 let db: Db;
 try {
   // The versions come first: a table rebuilt at open records them.

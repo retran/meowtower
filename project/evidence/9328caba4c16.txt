@@ -1,0 +1,15 @@
+meow-verbs evidence 1
+record: 9328caba4c16
+verb: lint
+command: npm run lint
+targets: none
+outcome: passed
+exit status: 0
+tree: 092a38220b07b3ba9fcf1e21dfab8d24cddbed12
+time: 2026-09-27T23:35:20Z
+
+
+> lint
+> eslint . && tsx tools/static-checks.ts
+
+static checks: key_in_client searched dist/client, src/client and content for sk-or-; push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; params_language read 0 templates in src/templates for string parameters; blob_write searched the code outside the blob store for writes or deletes in data/blobs; projection_purity searched src/engine/projections for clocks, random sources and network modules; verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; game_projection_imports followed the runtime imports of each game projection in src/engine/projections to the knowledge model, the Director and the answer check; explain_cache searched the code outside src/server/explain, migrations and tests for the explanation cache
