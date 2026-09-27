@@ -40,7 +40,7 @@ The system consists of two containers and one command. The container `meowtower`
 | `data/exports/` | Exports, written by ADR-0020's export. |
 | `data/caddy/` | Caddy's certificate authority and state. |
 | `data/setup/` | The iPad profile, which holds only the public root certificate. |
-| `.env` | Holds the OpenRouter key on the Mac. |
+| `.env` | Holds the OpenRouter key on the Mac, given to the `meowtower` service only. |
 | Device cookie | A random 256-bit token in an `HttpOnly`, `Secure`, `SameSite=Strict` cookie with no expiry date. |
 | Table `devices` | One row per paired device: the token's SHA-256 hash, whether it is revoked, and the device's interface choice. |
 | Errors | `401` for a request with no device token; `401 device_revoked`; `pairing_locked`; `pin_locked`; `wrong_network`; `backup_failed`; `storage_ceiling`; `model_service_down`; `server_unreachable`. |

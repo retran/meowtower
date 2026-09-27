@@ -13,3 +13,7 @@ dist/
 # Runtime data on the Mac, and the model key
 data/
 .env
+
+# Playwright output
+test-results/
+playwright-report/

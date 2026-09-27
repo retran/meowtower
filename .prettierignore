@@ -6,3 +6,5 @@ personal/
 project/
 canon/
 *.md
+test-results/
+playwright-report/

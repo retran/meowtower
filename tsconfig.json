@@ -11,5 +11,11 @@
     "types": ["node"],
     "outDir": "dist"
   },
-  "include": ["src", "tests"]
+  "include": [
+    "src",
+    "tests",
+    "tools",
+    "playwright.config.ts",
+    "vitest.config.ts"
+  ]
 }

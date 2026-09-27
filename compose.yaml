@@ -14,6 +14,11 @@ services:
     <<: *hardened
     build: .
     user: node
+    # The model key lives in .env on the Mac and reaches this service only
+    # (REQ-2504).
+    env_file:
+      - path: .env
+        required: false
     environment:
       TZ: ${TZ:-UTC}
     # The live database lives in the named volume; every other file is on the

@@ -66,7 +66,7 @@ A task is marked in the commit that advances it, never in a later pass.
 - [ ] T-008 TSK-0080 A snapshot after each session, retention, and the backup and storage notices
       closes: REQ-2526, REQ-2530
       depends: TSK-0070 - it reuses the snapshot worker; TSK-0050 - the notices show in the Parent Room
-- [ ] T-009 TSK-0090 The OpenRouter key never reaches a client
+- [>] T-009 TSK-0090 The OpenRouter key never reaches a client
       closes: REQ-2504
       depends: TSK-0010 - the key's `.env` and the client bundle must exist
 - [ ] T-010 TSK-0100 One client shell with a tablet and a computer interface, chosen by the device and switchable
@@ -75,7 +75,8 @@ A task is marked in the commit that advances it, never in a later pass.
 - [ ] T-011 TSK-0110 A device keeps no game data except unsent answers
       closes: REQ-2542
       depends: TSK-0100 - the storage it restricts belongs to the client shell
-- [ ] T-012 TSK-0120 The server sends no push in the MVP, and a check keeps it so
+- [x] T-012 TSK-0120 The server sends no push in the MVP, and a check keeps it so
+      evidence: meow-verbs run format lint check test build exit 0; push_code check passes here and fails 4 fixtures (TSK-0120 Evidence)
       closes: REQ-2544, REQ-2546
       depends: TSK-0010 - the check runs over the code base it starts
 - [ ] T-013 TSK-0130 The adventure plays on without the model service

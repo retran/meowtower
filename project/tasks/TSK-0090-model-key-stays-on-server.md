@@ -30,7 +30,13 @@ TSK-0010, because the key's `.env` and the client bundle must exist.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Criteria 1 and 2 are met; criterion 3 waits for a simulated day from the epics realising ADR-0030 and ADR-0040.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; Vitest 26 tests and Playwright 2 tests passed.
+- The key: `compose.yaml` gives `.env` to `meowtower` only; `tests/smoke/compose.test.ts` reads the file and fails if `proxy` gets `.env` or `OPENROUTER`.
+- Criterion 1, REQ-2504: `tools/static-checks.ts` runs in the lint verb as a stand-in for ADR-0190's verify group 1 and searches `dist/client`, `src/client` and `content` for `sk-or-`; it passes here and names the file for a fixture carrying a key (`tests/unit/static-checks.test.ts`).
+- Criterion 2, REQ-2504: `tests/e2e/fixtures.ts` records every response header and body in every Playwright test, with the server started on a fake key `sk-or-v1-e2e-fake-key-0000`. The shell test passes, and a self-test that serves the key is marked `test.fail()` and does fail, so the recorder catches a leak.
+- Open: criterion 3, the same recording over a full simulated day.
 
 ## Left alone
 

@@ -29,7 +29,11 @@ TSK-0010, because the check runs over the code base it starts.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; the lint verb ran `tools/static-checks.ts`, which printed that `push_code` searched the code base for VAPID keys, push tables, push libraries and `push.apple.com`, and found nothing.
+- Criterion 1, REQ-2544 and REQ-2546: the check passes over this repository (`tests/unit/static-checks.test.ts`, "passes this repository").
+- Criterion 2: the same test file adds, one at a time, a `push_subscriptions` migration, a VAPID key, a `web-push` dependency and a call to `api.push.apple.com`; the check fails each and names its file.
 
 ## Left alone
 

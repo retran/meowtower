@@ -7,9 +7,9 @@
 # repository's root.
 [verbs]
 format = "npx prettier --check ."
-lint = "npx eslint ."
+lint = "npm run lint"
 check = "npx tsc --noEmit"
-test = "npx vitest run tests"
+test = "npm test"
 build = "npm run build && docker compose build"
 
 # [commits] is absent: branch main has no commits, so there is no convention

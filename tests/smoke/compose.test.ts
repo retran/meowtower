@@ -1,5 +1,6 @@
 // Verify group 9 (ADR-0190): the Docker smoke test's static checks.
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 interface Service {
@@ -66,5 +67,20 @@ describe("REQ-2502: all game data is stored on the parent's Mac", () => {
       published: "443",
     });
     expect(service("meowtower").ports ?? []).toEqual([]);
+  });
+});
+
+describe("REQ-2504: the model key reaches only the server", () => {
+  // Compose drops an optional .env that doesn't exist, so read the file itself.
+  const text = readFileSync("compose.yaml", "utf8");
+  const block = (name: string): string =>
+    new RegExp(
+      `\\n  ${name}:\\n([\\s\\S]*?)(?=\\n  [a-z-]+:\\n|\\nvolumes:)`,
+    ).exec(text)?.[1] ?? "";
+
+  it("gives .env to meowtower and nothing to proxy", () => {
+    expect(block("meowtower")).toMatch(/env_file:[\s\S]*path: \.env/);
+    expect(block("proxy")).not.toContain(".env");
+    expect(block("proxy")).not.toContain("OPENROUTER");
   });
 });
