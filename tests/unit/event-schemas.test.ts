@@ -6,7 +6,11 @@ import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import { appendEvents, EventInvalid } from "../../src/engine/events/append.js";
 import { openDatabase } from "../../src/server/database.js";
-import { fieldDictionary } from "../../src/shared/events.js";
+import {
+  EVENT_CATALOGUE,
+  EVENT_DEFS,
+  fieldDictionary,
+} from "../../src/shared/events.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-schemas-"));
 const db = openDatabase(join(dir, "meowtower.sqlite"));
@@ -73,6 +77,52 @@ const valid: Record<string, Record<string, unknown>> = {
     source: "model",
   },
   glossary_opened: { itemId: "i-1", term: "знаменатель" },
+  scene_shown: {
+    sceneId: "sc-1",
+    lines: [{ speaker: "system", text: "Узел ослаблен." }],
+  },
+  choice_made: { sceneId: "sc-1", choiceId: "c-2" },
+  free_text: { sceneId: "sc-1", cleaned: "Я иду к мосту." },
+  name_given: { target: "familiar", targetId: "f-1", name: "Пуговка" },
+  reward_granted: {
+    source: "quest",
+    kind: "buttons",
+    rewardId: "r-1",
+    amount: 10,
+  },
+  chest_offered: {
+    chestId: "ch-1",
+    options: [
+      { kind: "buttons", rewardId: "r-2", quality: "good" },
+      { kind: "shards", rewardId: "r-3", quality: "ordinary" },
+      { kind: "page", rewardId: "r-4", quality: "good" },
+    ],
+  },
+  chest_chosen: { chestId: "ch-1", rewardId: "r-2" },
+  forge_crafted: { recipeId: "rc-1", craftedId: "it-1" },
+  shop_purchase: { shopItemId: "it-2", price: 80 },
+  level_up: { level: 2 },
+  quest_progress: { questId: "q-1", progress: 1, target: 3 },
+  familiar_friendship: { familiarId: "f-1", points: 12, level: 1 },
+  familiar_hatched: { familiarId: "f-1" },
+  familiar_evolved: { familiarId: "f-1", stage: 2 },
+  thread_granted: { source: "morning", count: 3 },
+  adventure_paused: { reason: "idle" },
+  adventure_resumed: { pausedMs: 600000 },
+  device_lease_taken: { previousDeviceId: null },
+  eye_exercise: { exerciseId: "e-1", completed: true },
+  rest_stop_offered: { trigger: "fatigue" },
+  rest_stop_started: { trigger: "button" },
+  rest_stop_ended: { durationMs: 300000 },
+  soft_stop: { activeMs: 3600000 },
+  extension: { minutes: 20 },
+  parent_tag_added: { node: "F2", subtype: null },
+  parent_tag_removed: { node: "F2", subtype: null },
+  item_flagged: { itemId: "i-1", note: null },
+  item_excluded: { itemId: "i-1", reason: "ambiguous" },
+  settings_changed: { key: "creepiness", value: 1 },
+  safety_event: { level: "everyday", source: "free_text", sceneId: "sc-1" },
+  llm_call: { llmLogId: "log-1", role: "master" },
 };
 
 const without = (o: object, key: string): Record<string, unknown> =>
@@ -179,5 +229,64 @@ describe("the field dictionary", () => {
     const rows = fieldDictionary();
     expect(rows.length).toBeGreaterThan(40);
     expect(rows.filter((r) => !r.description)).toEqual([]);
+  });
+});
+
+describe("REQ-2214: her free text is logged only in its cleaned form", () => {
+  it("free_text has no field for the text before cleaning", () => {
+    expect(() =>
+      append("free_text", {
+        ...valid["free_text"],
+        raw: "text before cleaning",
+      }),
+    ).toThrow(EventInvalid);
+  });
+});
+
+describe("REQ-2222: every model call points to its llm_log row", () => {
+  it("refuses llm_call without llmLogId", () => {
+    expect(() => append("llm_call", { role: "master" })).toThrow("llmLogId");
+  });
+});
+
+describe("REQ-2220: parent actions outside a session keep the device and both times", () => {
+  for (const type of [
+    "item_flagged",
+    "item_excluded",
+    "parent_tag_added",
+    "parent_tag_removed",
+    "settings_changed",
+  ]) {
+    it(type, () => {
+      const [appended] = appendEvents(db, [
+        {
+          type,
+          v: 1,
+          payload: valid[type],
+          origin: { deviceId: "parent-mac", clientMs: 1000 },
+        },
+      ]);
+      const row = db
+        .prepare(
+          "SELECT device_id, ts, client_ms, session_id, adventure_id FROM events WHERE seq = ?",
+        )
+        .get(appended?.seq);
+      expect(row).toMatchObject({
+        device_id: "parent-mac",
+        client_ms: 1000,
+        session_id: null,
+        adventure_id: null,
+      });
+      expect((row as { ts: string }).ts).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    });
+  }
+});
+
+describe("ADR-0020: every registered type is in the event catalogue", () => {
+  it("names only catalogue types", () => {
+    const outside = EVENT_DEFS.map((d) => d.type).filter(
+      (t) => !EVENT_CATALOGUE.includes(t),
+    );
+    expect(outside).toEqual([]);
   });
 });

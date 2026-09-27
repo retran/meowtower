@@ -34,7 +34,16 @@ TSK-0210, because these types enter the registry and follow the versioning rule 
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 17 test files, 229 Vitest tests and 2 Playwright tests passed. `npx vitest run tests/crash --silent=false` printed `crash test: 100 of 100 writes kept, 0 lost`.
+- Seen failing first: with the 31 valid payloads added to `tests/unit/event-schemas.test.ts` before any schema existed, 93 cases failed with `event_schema_unknown`.
+- Criterion 1, REQ-2214, REQ-2216, REQ-2218, REQ-2220, REQ-2222: for each of the 31 types, a valid example is stored and every payload with one required fact dropped is refused, naming the field.
+- Criterion 2, REQ-2214: `free_text` refuses a `raw` field beside `cleaned`; its strict schema has no field for the text before cleaning.
+- Criterion 3, REQ-2222: `llm_call` without `llmLogId` is refused, naming `llmLogId`.
+- Criterion 4, REQ-2220: `item_flagged`, `item_excluded`, `parent_tag_added`, `parent_tag_removed` and `settings_changed`, appended from a device with no session or adventure, are stored with `device_id`, `client_ms` and the server's `ts`, and null session and adventure.
+- Criterion 5: every type in `EVENT_DEFS` is in `EVENT_CATALOGUE`, the 81 names of ADR-0020's Event catalogue kept in `src/shared/events.ts`.
+- Choices made where the requirements name a fact but not its form, for the owning epics to extend through a new version: a pause's reason is `background`, `idle` or `leave`; a name's target is `heroine`, `familiar`, `floor`, `tangle`, `room` or `item`; a safety signal's level is `none`, `everyday` or `serious`; a chest offers exactly three options.
 
 ## Left alone
 

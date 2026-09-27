@@ -55,7 +55,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs exit 0; params_language read 0 templates; fixtures fail on free and nested strings (TSK-0230 Evidence)
       closes: REQ-3808
       depends: none - it reads template files and fixtures, not the log
-- [ ] T-004 [P] TSK-0220 Schemas for the story, economy, break, parent, safety and model-call events (`src/shared/events.ts`)
+- [x] T-004 [P] TSK-0220 Schemas for the story, economy, break, parent, safety and model-call events (`src/shared/events.ts`)
+      evidence: meow-verbs exit 0, 229 tests; 31 schemas refuse missing facts; registry names only catalogue types (TSK-0220 Evidence)
       closes: REQ-2214, REQ-2216, REQ-2218, REQ-2220, REQ-2222
       depends: TSK-0210 - it adds types to the registry and versioning rule that task makes
 - [ ] T-005 [P] TSK-0240 The write-once blob store logs each draft-pad image by its hash (`data/blobs/`, table `blobs`)

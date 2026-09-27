@@ -297,6 +297,279 @@ const glossaryOpenedV1 = z
   })
   .strict();
 
+// Story, economy, break, parent, safety and model-call events (TSK-0220). Each
+// owning epic adds its own fields through a new version.
+const id = (what: string) => z.string().min(1).describe(what);
+const count = (what: string) => z.number().int().nonnegative().describe(what);
+const ms = (what: string) => z.number().int().nonnegative().describe(what);
+const obj = <T extends z.ZodRawShape>(shape: T) => z.object(shape).strict();
+
+const storyDefs: EventDef[] = [
+  {
+    type: "scene_shown",
+    v: 1,
+    schema: obj({
+      sceneId: id("the scene shown"),
+      lines: z
+        .array(
+          obj({
+            speaker: id("who speaks the line"),
+            text: z.string().describe("the line as shown"),
+          }),
+        )
+        .min(1)
+        .describe("the scene's lines as shown"),
+    }),
+  },
+  {
+    type: "choice_made",
+    v: 1,
+    schema: obj({
+      sceneId: id("the scene"),
+      choiceId: id("the option chosen"),
+    }),
+  },
+  // Only the cleaned form: the strict schema has no field for the text before cleaning.
+  {
+    type: "free_text",
+    v: 1,
+    schema: obj({
+      sceneId: id("the scene"),
+      cleaned: z.string().describe("her free text after cleaning"),
+    }),
+  },
+  {
+    type: "name_given",
+    v: 1,
+    schema: obj({
+      target: z
+        .enum(["heroine", "familiar", "floor", "tangle", "room", "item"])
+        .describe("what she named"),
+      targetId: id("the thing named"),
+      name: z.string().min(1).describe("the name she gave"),
+    }),
+  },
+];
+
+const economyDefs: EventDef[] = [
+  {
+    type: "reward_granted",
+    v: 1,
+    schema: obj({
+      source: id("what the reward came from"),
+      kind: id("the kind of reward"),
+      rewardId: id("the reward"),
+      amount: count("how much was granted"),
+    }),
+  },
+  {
+    type: "chest_offered",
+    v: 1,
+    schema: obj({
+      chestId: id("the chest"),
+      options: z
+        .array(
+          obj({
+            kind: id("the reward's kind"),
+            rewardId: id("the reward"),
+            quality: id("the reward's quality"),
+          }),
+        )
+        .length(3)
+        .describe("the three rewards offered"),
+    }),
+  },
+  {
+    type: "chest_chosen",
+    v: 1,
+    schema: obj({
+      chestId: id("the chest"),
+      rewardId: id("the reward chosen"),
+    }),
+  },
+  {
+    type: "forge_crafted",
+    v: 1,
+    schema: obj({ recipeId: id("the recipe"), craftedId: id("the item made") }),
+  },
+  {
+    type: "shop_purchase",
+    v: 1,
+    schema: obj({
+      shopItemId: id("the item bought"),
+      price: count("its price in buttons"),
+    }),
+  },
+  {
+    type: "level_up",
+    v: 1,
+    schema: obj({
+      level: z.number().int().positive().describe("the new level"),
+    }),
+  },
+  {
+    type: "quest_progress",
+    v: 1,
+    schema: obj({
+      questId: id("the quest"),
+      progress: count("progress made"),
+      target: count("progress needed"),
+    }),
+  },
+  {
+    type: "familiar_friendship",
+    v: 1,
+    schema: obj({
+      familiarId: id("the familiar"),
+      points: count("friendship points"),
+      level: count("friendship level"),
+    }),
+  },
+  {
+    type: "familiar_hatched",
+    v: 1,
+    schema: obj({ familiarId: id("the familiar that hatched") }),
+  },
+  {
+    type: "familiar_evolved",
+    v: 1,
+    schema: obj({
+      familiarId: id("the familiar"),
+      stage: z.number().int().positive().describe("the new stage"),
+    }),
+  },
+  {
+    type: "thread_granted",
+    v: 1,
+    schema: obj({
+      source: id("what granted the threads"),
+      count: count("threads granted"),
+    }),
+  },
+];
+
+const breakDefs: EventDef[] = [
+  {
+    type: "adventure_paused",
+    v: 1,
+    schema: obj({
+      reason: z
+        .enum(["background", "idle", "leave"])
+        .describe("why play paused"),
+    }),
+  },
+  {
+    type: "adventure_resumed",
+    v: 1,
+    schema: obj({ pausedMs: ms("how long the pause lasted") }),
+  },
+  {
+    type: "device_lease_taken",
+    v: 1,
+    schema: obj({
+      previousDeviceId: z
+        .string()
+        .nullable()
+        .describe("the device that held the lease, or null"),
+    }),
+  },
+  {
+    type: "eye_exercise",
+    v: 1,
+    schema: obj({
+      exerciseId: id("the exercise shown"),
+      completed: z.boolean().describe("whether it was completed"),
+    }),
+  },
+  {
+    type: "rest_stop_offered",
+    v: 1,
+    schema: obj({ trigger: id("what offered the rest stop") }),
+  },
+  {
+    type: "rest_stop_started",
+    v: 1,
+    schema: obj({ trigger: id("what started the rest stop") }),
+  },
+  {
+    type: "rest_stop_ended",
+    v: 1,
+    schema: obj({ durationMs: ms("how long the rest stop lasted") }),
+  },
+  {
+    type: "soft_stop",
+    v: 1,
+    schema: obj({
+      activeMs: ms("the day's active time when the soft stop played"),
+    }),
+  },
+  {
+    type: "extension",
+    v: 1,
+    schema: obj({
+      minutes: z.number().int().positive().describe("minutes added"),
+    }),
+  },
+];
+
+const tag = obj({
+  node: id("the skill-graph node"),
+  subtype: z
+    .string()
+    .nullable()
+    .describe("the subtype, or null for the whole node"),
+});
+const parentDefs: EventDef[] = [
+  { type: "parent_tag_added", v: 1, schema: tag },
+  { type: "parent_tag_removed", v: 1, schema: tag },
+  {
+    type: "item_flagged",
+    v: 1,
+    schema: obj({
+      itemId: id("the task flagged"),
+      note: z.string().nullable().describe("the parent's note, or null"),
+    }),
+  },
+  {
+    type: "item_excluded",
+    v: 1,
+    schema: obj({
+      itemId: id("the task excluded"),
+      reason: id("why it was excluded"),
+    }),
+  },
+  {
+    type: "settings_changed",
+    v: 1,
+    schema: obj({
+      key: id("the setting changed"),
+      value: z.unknown().describe("its new value"),
+    }),
+  },
+];
+
+const safetyDefs: EventDef[] = [
+  {
+    type: "safety_event",
+    v: 1,
+    schema: obj({
+      level: z
+        .enum(["none", "everyday", "serious"])
+        .describe("the signal's level"),
+      source: id("what raised the signal"),
+      sceneId: z.string().nullable().describe("the scene, or null"),
+    }),
+  },
+  {
+    type: "llm_call",
+    v: 1,
+    schema: obj({
+      llmLogId: id("the llm_log row of the call"),
+      role: id("the model role called"),
+    }),
+  },
+];
+
 export const EVENT_DEFS: readonly EventDef[] = [
   { type: "item_shown", v: 1, schema: itemShownV1 },
   { type: "attempt_submitted", v: 0, schema: attemptSubmittedV0 },
@@ -307,6 +580,96 @@ export const EVENT_DEFS: readonly EventDef[] = [
   { type: "solution_shown", v: 1, schema: solutionShownV1 },
   { type: "explanation_shown", v: 1, schema: explanationShownV1 },
   { type: "glossary_opened", v: 1, schema: glossaryOpenedV1 },
+  ...storyDefs,
+  ...economyDefs,
+  ...breakDefs,
+  ...parentDefs,
+  ...safetyDefs,
+];
+
+/** ADR-0020's Event catalogue: the only type names the registry may hold. */
+export const EVENT_CATALOGUE: readonly string[] = [
+  "adventure_planned",
+  "adventure_started",
+  "adventure_paused",
+  "adventure_resumed",
+  "adventure_completed",
+  "adventure_wrapped_up",
+  "session_started",
+  "session_ended",
+  "device_lease_taken",
+  "settings_changed",
+  "scene_prepared",
+  "text_draft_saved",
+  "rewards_delivered",
+  "attempt_late",
+  "item_focus",
+  "item_shown",
+  "verdict",
+  "scratch_snapshot",
+  "item_flagged",
+  "model_activated",
+  "attempt_submitted",
+  "hint_shown",
+  "solution_shown",
+  "explanation_bought",
+  "twin_unavailable",
+  "thread_granted",
+  "thread_spent",
+  "pocket_thread_given",
+  "day_opened",
+  "plan_built",
+  "floor_entered",
+  "room_opened",
+  "eye_exercise",
+  "rest_stop_offered",
+  "rest_stop_started",
+  "rest_stop_ended",
+  "soft_stop",
+  "extension",
+  "save_accepted",
+  "finish_today",
+  "avoidance_signal",
+  "anxiety_signal",
+  "zone_changed",
+  "clock_jump",
+  "llm_call",
+  "budget_month_spent",
+  "master_pick_rejected",
+  "scene_shown",
+  "choice_made",
+  "free_text",
+  "name_given",
+  "plan_written",
+  "safety_event",
+  "line_approved",
+  "diary_cipher",
+  "explanation_shown",
+  "frame_accepted",
+  "frame_removed",
+  "live_frames_paused",
+  "science_approved",
+  "room_outcome",
+  "floor_outcome",
+  "combo",
+  "reward_reopened",
+  "reward_granted",
+  "chest_offered",
+  "chest_chosen",
+  "level_up",
+  "quest_progress",
+  "forge_crafted",
+  "shop_purchase",
+  "familiar_friendship",
+  "familiar_evolved",
+  "familiar_hatched",
+  "looks_set",
+  "glossary_opened",
+  "parent_tag_added",
+  "parent_tag_removed",
+  "item_excluded",
+  "glossary_entry_approved",
+  "calibration",
 ];
 
 export const events = createRegistry(EVENT_DEFS);
