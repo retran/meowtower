@@ -4,7 +4,7 @@ None yet: the project is at the research stage.
 
 <!-- meow-flow index -->
 
-972 requirements in all: 968 approved, 1 draft, 3 superseded.
+972 requirements in all: 969 approved, 3 superseded.
 
 | Identifier | What it requires | Status |
 | --- | --- | --- |
@@ -971,7 +971,7 @@ None yet: the project is at the research stage.
 | [REQ-3708](REQ-3708-canon-agrees-with-specification.md) | The canon MUST NOT contradict the specification on method, time, rewards or safety. | approved |
 | [REQ-3710](REQ-3710-parent-sets-age-and-group.md) | The Parent Room MUST let the parent set the player's real name, age and school group, and change each at any time. | approved |
 | [REQ-3712](REQ-3712-rules-read-configured-age-and-group.md) | Every rule that depends on the player's real name, age or school group MUST read the values the parent set, never a value fixed in the code, the content or a tracked file. | approved |
-| [REQ-3714](REQ-3714-game-named-meowtower.md) | The game, its repository and its technical names MUST carry the name Meowtower («Мяубашня» in the player's language). | draft |
+| [REQ-3714](REQ-3714-game-named-meowtower.md) | The game, its repository and its technical names MUST carry the name Meowtower («Мяубашня» in the player's language). | approved |
 | [REQ-3800](REQ-3800-event-identity-and-order.md) | Every event MUST carry a unique identifier, a sequence number that places it in one increasing order over the whole log, its event type and the version of its payload schema. | approved |
 | [REQ-3802](REQ-3802-derived-data-records-versions.md) | Every derived table and snapshot MUST record the model, threshold and graph versions it was computed with, the sequence number of the last event it took into account and the time it was computed. | approved |
 | [REQ-3804](REQ-3804-shown-task-records-answer.md) | When the game shows a task, the event log MUST record its correct answer and its short solution as they would be shown. | approved |

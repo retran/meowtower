@@ -1,7 +1,7 @@
 ---
 id: ADR-0200
 artifact: adr
-status: draft
+status: approved
 revised: 2026-09-27
 addresses: [REQ-3714]
 supersedes: []
