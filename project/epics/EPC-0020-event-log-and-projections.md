@@ -50,7 +50,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [ ] T-002 [P] TSK-0210 Schemas, upcasters and the start-up schema check, with the task and attempt events (`src/shared/events.ts`)
       closes: REQ-2204, REQ-2206, REQ-2208, REQ-2212, REQ-3804
       depends: TSK-0200 - the schemas validate inside `appendEvents`
-- [ ] T-003 [P] TSK-0230 A static check keeps every template's parameters language-free (`tools/static-checks.ts`)
+- [x] T-003 [P] TSK-0230 A static check keeps every template's parameters language-free (`tools/static-checks.ts`)
+      evidence: meow-verbs exit 0; params_language read 0 templates; fixtures fail on free and nested strings (TSK-0230 Evidence)
       closes: REQ-3808
       depends: none - it reads template files and fixtures, not the log
 - [ ] T-004 [P] TSK-0220 Schemas for the story, economy, break, parent, safety and model-call events (`src/shared/events.ts`)

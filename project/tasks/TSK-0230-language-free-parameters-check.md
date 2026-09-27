@@ -32,7 +32,13 @@ None. It reads template files and fixtures, not the log. The epic realising ADR-
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0; 14 test files, 67 Vitest tests and 2 Playwright tests passed.
+- Criterion 1, REQ-3808: the lint verb printed `params_language read 0 templates in src/templates for string parameters` and found nothing; no template exists yet, so the check says so and its fixtures carry the proof.
+- Criteria 2 and 3, REQ-3808: `tests/unit/params-language-free.test.ts` passes. A free `unit` string in `N1.words` is named as `unit`; a string nested in an object and in an array is named as `part.label` and `names[]`; a schema of integers, a rational `{num, den}`, a boolean, an enum and an array of rationals passes.
+- Seen failing first: before `tools/params-language-free.ts` existed the test file couldn't load its module. With the walker's recursion into objects and arrays removed, the free-string and nested cases failed (2 of 4), and passed again once restored.
+- The convention, chosen here because ADR-0040 names the folder but not the schema's form: each template in `src/templates/` exports an object with a string `id` and a zod `paramsSchema`; the check loads every such export and walks `z.toJSONSchema(paramsSchema)`. The epic realising ADR-0040 writes templates in that form.
 
 ## Left alone
 

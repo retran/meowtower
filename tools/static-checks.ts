@@ -89,15 +89,20 @@ export function checkEventsSqlConfined(root: string): Finding[] {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = process.cwd();
+  const { checkParamsLanguageFree, loadTemplateSchemas } =
+    await import("./params-language-free.js");
+  const templates = await loadTemplateSchemas(root);
   const findings = [
     ...checkNoKeyInClient(root),
     ...checkNoPush(root),
     ...checkEventsSqlConfined(root),
+    ...checkParamsLanguageFree(templates),
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
-      "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events",
+      "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
+      `params_language read ${templates.length} templates in src/templates for string parameters`,
   );
   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
   process.exit(findings.length ? 1 : 0);
