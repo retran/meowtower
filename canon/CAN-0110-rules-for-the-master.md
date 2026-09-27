@@ -1,7 +1,7 @@
 ---
 id: CAN-0110
 artifact: canon
-status: draft
+status: approved
 revised: 2026-09-27
 ---
 

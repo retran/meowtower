@@ -1,7 +1,7 @@
 ---
 id: RES-1600
 artifact: research
-status: draft
+status: approved
 revised: 2026-09-27
 ---
 
