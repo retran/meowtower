@@ -13,20 +13,31 @@ import { randomUUID } from "node:crypto";
 import type { Context, Hono } from "hono";
 import type { z } from "zod";
 import { getCookie } from "hono/cookie";
-import { appendEvents, type NewEvent } from "../engine/events/append.js";
 import {
+  AdventureClosed,
+  appendEvents,
+  type NewEvent,
+} from "../engine/events/append.js";
+import {
+  adventureEvents,
   itemEvents,
   requestEvents,
   sessionEvents,
   type StoredEvent,
 } from "../engine/events/read.js";
 import {
+  AdventureCurrentOut,
   AnswerIn,
   AnswerOut,
+  BreakIn,
+  BreakOut,
+  End,
   ExplainOut,
   HintIn,
   HintOut,
   ItemActionIn,
+  PauseIn,
+  PauseOut,
   Room,
   SessionStartIn,
   SessionStartOut,
@@ -37,8 +48,11 @@ import { DEVICE_COOKIE, deviceForToken } from "./devices.js";
 import { createRateCap } from "./rate.js";
 import { send } from "./send.js";
 import { mountStream, type Stream } from "./stream.js";
+import { adventureState, openAdventure, sessionRow } from "./lifecycle.js";
 import {
   ROOM_LENGTH,
+  STANDIN_ADVENTURE_TASKS,
+  STANDIN_ROOMS_PER_FLOOR,
   STANDIN_TASKS,
   STANDIN_THREADS,
   standinVerdict,
@@ -106,9 +120,21 @@ const firstsOf = (log: StoredEvent[]): ItemShown[] =>
     .map((e) => payloadOf<ItemShown>(e))
     .filter((s) => s.attemptNo === 1);
 
-function roomFor(shown: ItemShown, log: StoredEvent[]): z.input<typeof Room> {
+const answeredIn = (log: StoredEvent[]): Set<string> =>
+  new Set(
+    log
+      .filter((e) => e.type === "verdict")
+      .map((e) => payloadOf<{ itemId: string }>(e).itemId),
+  );
+
+/** A room packet; `played` is the adventure's log, where the slot counts from. */
+function roomFor(
+  shown: ItemShown,
+  log: StoredEvent[],
+  played: StoredEvent[] = log,
+): z.input<typeof Room> {
   const first = shown.parentItemId ?? shown.itemId;
-  const slot = firstsOf(log).findIndex((s) => s.itemId === first);
+  const slot = firstsOf(played).findIndex((s) => s.itemId === first);
   return {
     kind: "room",
     itemId: shown.itemId,
@@ -155,6 +181,23 @@ export function mountPlay(
   { now, stream, explainer }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
+
+  /** A session's envelope: the session and, for a daily one, its adventure. */
+  function within(sessionId: string): {
+    sessionId: string;
+    adventureId?: string;
+  } {
+    const adventureId = sessionRow(db, sessionId)?.adventureId;
+    return adventureId ? { sessionId, adventureId } : { sessionId };
+  }
+
+  /** The log play counts in: the adventure's, or the session's for Session 0. */
+  const playLog = (sessionId: string): StoredEvent[] => {
+    const adventureId = sessionRow(db, sessionId)?.adventureId;
+    return adventureId
+      ? adventureEvents(db, adventureId)
+      : sessionEvents(db, sessionId);
+  };
 
   /** A paired device under the rate cap, for a request that changes state. */
   function writer(c: Context): string | Response {
@@ -214,49 +257,133 @@ export function mountPlay(
     const body = SessionStartIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     const key = `session-start:${deviceId}:${body.data.clientSeq}`;
-    const [prior] = requestEvents(db, key);
+    const prior = requestEvents(db, key).find(
+      (e) => e.type === "session_started",
+    );
     if (prior)
       return send(c, SessionStartOut, {
         sessionId: payloadOf<{ sessionId: string }>(prior).sessionId,
       });
     const sessionId = randomUUID();
-    appendEvents(
-      db,
-      keyed(
-        [
-          {
-            type: "session_started",
-            v: 1,
-            payload: { sessionId, mode: body.data.mode },
-            origin: { deviceId, clientMs: Date.now() },
-            sessionId,
-          },
-        ],
-        key,
-      ),
-    );
+    const origin = { deviceId, clientMs: Date.now() };
+    // A daily session continues the open adventure and plans one only when
+    // none is open (REQ-0226). Session 0 belongs to no adventure.
+    const events: NewEvent[] = [];
+    let adventureId: string | undefined;
+    if (body.data.mode === "daily") {
+      adventureId = openAdventure(db)?.adventureId;
+      if (!adventureId) {
+        adventureId = randomUUID();
+        events.push({
+          type: "adventure_planned",
+          v: 1,
+          payload: { adventureId },
+          origin,
+          adventureId,
+        });
+      }
+    }
+    events.push({
+      type: "session_started",
+      v: 1,
+      payload: { sessionId, mode: body.data.mode },
+      origin,
+      sessionId,
+      ...(adventureId ? { adventureId } : {}),
+    });
+    appendEvents(db, keyed(events, key));
     return send(c, SessionStartOut, { sessionId });
+  });
+
+  app.get("/api/adventure/current", (c) => {
+    const deviceId = device(db, c);
+    if (deviceId instanceof Response) return deviceId;
+    const open = openAdventure(db);
+    if (!open) return send(c, AdventureCurrentOut, { adventure: null });
+    const played = adventureEvents(db, open.adventureId);
+    const firsts = firstsOf(played);
+    const answered = answeredIn(played);
+    const openAt = firsts.findIndex((s) => !answered.has(s.itemId));
+    const index = openAt === -1 ? firsts.length : openAt;
+    const room = Math.floor(index / ROOM_LENGTH);
+    return send(c, AdventureCurrentOut, {
+      adventure: {
+        adventureId: open.adventureId,
+        state: open.state,
+        floor: Math.floor(room / STANDIN_ROOMS_PER_FLOOR) + 1,
+        room: (room % STANDIN_ROOMS_PER_FLOOR) + 1,
+        slot: index % ROOM_LENGTH,
+      },
+    });
   });
 
   app.get("/api/session/:id/next", (c) => {
     const deviceId = device(db, c);
     if (deviceId instanceof Response) return deviceId;
     const sessionId = c.req.param("id");
-    const log = sessionEvents(db, sessionId);
-    if (!log.some((e) => e.type === "session_started")) {
-      return c.json({ error: "session_unknown" }, 404);
-    }
-    const firsts = firstsOf(log);
-    const answered = new Set(
-      log
-        .filter((e) => e.type === "verdict")
-        .map((e) => payloadOf<{ itemId: string }>(e).itemId),
-    );
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    if (session.state === "ended")
+      return c.json({ error: "session_ended" }, 409);
+    const origin = { deviceId, clientMs: Date.now() };
+    const adventure = session.adventureId
+      ? adventureState(db, session.adventureId)
+      : undefined;
+    if (
+      adventure &&
+      (adventure.state === "complete" || adventure.state === "wrapped_up")
+    )
+      return send(c, End, { kind: "end" });
+
+    // Play on a planned adventure starts it, and on a paused one resumes it.
+    const lifecycle: NewEvent[] = [];
+    if (session.adventureId && adventure?.state === "planned")
+      lifecycle.push({
+        type: "adventure_started",
+        v: 1,
+        payload: { adventureId: session.adventureId },
+        origin,
+        adventureId: session.adventureId,
+        sessionId,
+      });
+    if (session.adventureId && adventure?.state === "paused")
+      lifecycle.push({
+        type: "adventure_resumed",
+        v: 1,
+        payload: {
+          pausedMs: Math.max(0, Date.now() - Date.parse(adventure.changedAt)),
+        },
+        origin,
+        adventureId: session.adventureId,
+        sessionId,
+      });
+
+    const played = playLog(sessionId);
+    const firsts = firstsOf(played);
+    const answered = answeredIn(played);
     // An open task is shown again as it was, never replaced.
     const open = firsts.find((s) => !answered.has(s.itemId));
-    if (open) return send(c, Room, roomFor(open, log));
+    if (open) {
+      if (lifecycle.length) appendEvents(db, lifecycle);
+      return send(c, Room, roomFor(open, sessionEvents(db, sessionId), played));
+    }
 
     const index = firsts.length;
+    // The stand-in adventure's finale.
+    if (session.adventureId && index >= STANDIN_ADVENTURE_TASKS) {
+      appendEvents(db, [
+        ...lifecycle,
+        {
+          type: "adventure_completed",
+          v: 1,
+          payload: { adventureId: session.adventureId },
+          origin,
+          adventureId: session.adventureId,
+          sessionId,
+        },
+      ]);
+      return send(c, End, { kind: "end" });
+    }
     const task = STANDIN_TASKS[index % STANDIN_TASKS.length];
     if (!task) return c.json({ error: "no_task" }, 500);
     const shown: ItemShown = {
@@ -275,6 +402,7 @@ export function mountPlay(
       seed: `standin-${index}`,
     };
     appendEvents(db, [
+      ...lifecycle,
       {
         type: "item_shown",
         v: 1,
@@ -286,11 +414,120 @@ export function mountPlay(
           node: "standin",
           purpose: "standin",
         },
-        origin: { deviceId, clientMs: Date.now() },
-        sessionId,
+        origin,
+        ...within(sessionId),
       },
     ]);
-    return send(c, Room, roomFor(shown, sessionEvents(db, sessionId)));
+    return send(
+      c,
+      Room,
+      roomFor(shown, sessionEvents(db, sessionId), playLog(sessionId)),
+    );
+  });
+
+  app.post("/api/session/:id/pause", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = PauseIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const sessionId = c.req.param("id");
+    const key = `pause:${deviceId}:${body.data.clientSeq}`;
+    if (requestEvents(db, key).length)
+      return send(c, PauseOut, { status: "paused" });
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    if (session.state === "ended")
+      return c.json({ error: "session_ended" }, 409);
+    // Every earlier action is already in the log, so leaving logs only the
+    // pause and the session's end, at any step (REQ-0200).
+    const { reason } = body.data;
+    const origin = { deviceId, clientMs: Date.now() };
+    const events: NewEvent[] = [];
+    // A finished adventure has nothing to pause: leaving it still ends the
+    // session, and only an automatic pause meets the guard (REQ-2404).
+    const finished = session.adventureId
+      ? ["complete", "wrapped_up"].includes(
+          adventureState(db, session.adventureId)?.state ?? "",
+        )
+      : false;
+    if (session.adventureId && !(reason === "leave" && finished))
+      events.push({
+        type: "adventure_paused",
+        v: 1,
+        payload: { reason },
+        origin,
+        adventureId: session.adventureId,
+        sessionId,
+      });
+    events.push({
+      type: "session_ended",
+      v: 1,
+      payload: { sessionId, reason },
+      origin,
+      ...within(sessionId),
+    });
+    try {
+      appendEvents(db, keyed(events, key));
+    } catch (err) {
+      if (err instanceof AdventureClosed)
+        return c.json({ error: "adventure_closed" }, 409);
+      throw err;
+    }
+    return send(c, PauseOut, { status: "paused" });
+  });
+
+  app.post("/api/session/:id/break", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = BreakIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const sessionId = c.req.param("id");
+    const { action, clientSeq } = body.data;
+    const key = `break:${deviceId}:${clientSeq}`;
+    const status = action === "start" ? "resting" : "playing";
+    if (requestEvents(db, key).length) return send(c, BreakOut, { status });
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    if (session.state === "ended")
+      return c.json({ error: "session_ended" }, 409);
+    // A rest stop logs its own events and pauses nothing (REQ-2412).
+    const stops = sessionEvents(db, sessionId).filter(
+      (e) => e.type === "rest_stop_started" || e.type === "rest_stop_ended",
+    );
+    const last = stops[stops.length - 1];
+    const resting = last?.type === "rest_stop_started";
+    if (action === "start" ? resting : !resting)
+      return send(c, BreakOut, { status });
+    const origin = { deviceId, clientMs: Date.now() };
+    appendEvents(
+      db,
+      keyed(
+        [
+          action === "start"
+            ? {
+                type: "rest_stop_started",
+                v: 1,
+                payload: { trigger: "button" },
+                origin,
+                ...within(sessionId),
+              }
+            : {
+                type: "rest_stop_ended",
+                v: 1,
+                payload: {
+                  durationMs: Math.max(
+                    0,
+                    Date.now() - Date.parse(last?.ts ?? ""),
+                  ),
+                },
+                origin,
+                ...within(sessionId),
+              },
+        ],
+        key,
+      ),
+    );
+    return send(c, BreakOut, { status });
   });
 
   app.post("/api/session/:id/answer", async (c) => {
@@ -348,7 +585,7 @@ export function mountPlay(
               hintLevel: Math.max(0, ...hints),
             },
             origin,
-            sessionId,
+            ...within(sessionId),
           },
           {
             type: "verdict",
@@ -363,7 +600,7 @@ export function mountPlay(
               steps: [],
             },
             origin,
-            sessionId,
+            ...within(sessionId),
           },
         ],
         key,
@@ -428,14 +665,14 @@ export function mountPlay(
             v: 1,
             payload: { itemId, attemptNo: shown.attemptNo, level },
             origin,
-            sessionId,
+            ...within(sessionId),
           },
           {
             type: "thread_spent",
             v: 1,
             payload: { itemId, reason: "hint", count: 1 },
             origin,
-            sessionId,
+            ...within(sessionId),
           },
         ],
         key,
@@ -486,14 +723,14 @@ export function mountPlay(
             v: 1,
             payload: { itemId, reason: "explanation", count: 1 },
             origin,
-            sessionId,
+            ...within(sessionId),
           },
           {
             type: "explanation_bought",
             v: 1,
             payload: { itemId, attemptNo: shown.attemptNo },
             origin,
-            sessionId,
+            ...within(sessionId),
           },
         ],
         key,
@@ -523,7 +760,8 @@ export function mountPlay(
       .filter((e) => e.type === "item_shown")
       .map((e) => payloadOf<ItemShown>(e))
       .find((s) => s.parentItemId === itemId);
-    if (created) return send(c, Room, roomFor(created, log));
+    if (created)
+      return send(c, Room, roomFor(created, log, playLog(sessionId)));
 
     if (shown.attemptNo !== 1)
       return c.json({ error: "not_a_first_attempt" }, 409);
@@ -561,12 +799,16 @@ export function mountPlay(
               purpose: "standin",
             },
             origin: { deviceId, clientMs: Date.now() },
-            sessionId,
+            ...within(sessionId),
           },
         ],
         `second-attempt:${deviceId}:${body.data.clientSeq}`,
       ),
     );
-    return send(c, Room, roomFor(twin, sessionEvents(db, sessionId)));
+    return send(
+      c,
+      Room,
+      roomFor(twin, sessionEvents(db, sessionId), playLog(sessionId)),
+    );
   });
 }

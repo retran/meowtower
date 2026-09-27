@@ -85,6 +85,15 @@ export function sessionEvents(db: Db, sessionId: string): StoredEvent[] {
   ).map(toEvent);
 }
 
+/** Every event of an adventure, across its sessions, in log order. */
+export function adventureEvents(db: Db, adventureId: string): StoredEvent[] {
+  return (
+    db
+      .prepare("SELECT * FROM events WHERE adventure_id = ? ORDER BY seq")
+      .all(adventureId) as Row[]
+  ).map(toEvent);
+}
+
 /** Every event naming a task by its itemId, in log order. */
 export function itemEvents(db: Db, itemId: string): StoredEvent[] {
   return (

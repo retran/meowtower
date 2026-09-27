@@ -38,6 +38,9 @@ export const Room = z
   .strict();
 export type Room = z.infer<typeof Room>;
 
+/** The adventure has reached its finale; a new session plans the next one. */
+export const End = z.object({ kind: z.literal("end") }).strict();
+
 export const AnswerIn = z
   .object({
     itemId: z.string().min(1),
@@ -118,3 +121,32 @@ export const StreamMessage = ExplanationReady;
 export type StreamMessage = z.infer<typeof StreamMessage>;
 
 export const PollOut = z.object({ messages: z.array(StreamMessage) }).strict();
+
+/** «Сохранить и уйти», the page hidden, or no input for too long (SPC-0030). */
+export const PauseIn = z
+  .object({ reason: z.enum(["leave", "background", "idle"]), clientSeq })
+  .strict();
+export const PauseOut = z.object({ status: z.literal("paused") }).strict();
+
+/** The rest-stop button starts a rest stop, and its end resumes play. */
+export const BreakIn = z
+  .object({ action: z.enum(["start", "end"]), clientSeq })
+  .strict();
+export const BreakOut = z
+  .object({ status: z.enum(["resting", "playing"]) })
+  .strict();
+
+export const AdventureCurrentOut = z
+  .object({
+    adventure: z
+      .object({
+        adventureId: z.string(),
+        state: z.enum(["planned", "active", "paused"]),
+        floor: z.number().int().positive(),
+        room: z.number().int().positive(),
+        slot: z.number().int().nonnegative(),
+      })
+      .strict()
+      .nullable(),
+  })
+  .strict();

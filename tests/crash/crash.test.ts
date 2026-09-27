@@ -19,6 +19,13 @@ const env = {
   PARENT_PORT: "3918",
 };
 
+// A failed assertion skips the test's own kill, so every child still running
+// is killed after the file; otherwise it holds the port for the next run.
+const running = new Set<ChildProcess>();
+afterAll(() => {
+  for (const child of running) child.kill("SIGKILL");
+});
+
 async function start(): Promise<ChildProcess> {
   // Spawn node itself, so SIGKILL hits the server and not a wrapper.
   const child = spawn(
@@ -29,6 +36,8 @@ async function start(): Promise<ChildProcess> {
       stdio: "ignore",
     },
   );
+  running.add(child);
+  child.once("exit", () => running.delete(child));
   for (let i = 0; i < 200; i++) {
     try {
       if ((await fetch("http://127.0.0.1:3917/health")).ok) return child;
@@ -113,7 +122,7 @@ describe("REQ-2508: no answer whose reply was sent is lost when the process dies
           await fetch("http://127.0.0.1:3917/api/session/start", {
             method: "POST",
             headers,
-            body: JSON.stringify({ mode: "daily", clientSeq: i }),
+            body: JSON.stringify({ mode: "zero", clientSeq: i }),
           })
         ).json()) as { sessionId: string };
         const { itemId } = (await (

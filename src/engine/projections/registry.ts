@@ -4,6 +4,8 @@
 import type Database from "better-sqlite3";
 import type { StoredEvent } from "../events/read.js";
 import { flatViews } from "./flat-views.js";
+import { lifecycle } from "./lifecycle.js";
+import { prepared } from "./statements.js";
 
 type Db = Database.Database;
 
@@ -26,7 +28,7 @@ export const VERSIONS = {
   graph: "none",
 } as const;
 
-const registered: Projection[] = [...flatViews];
+const registered: Projection[] = [...flatViews, ...lifecycle];
 
 export const PROJECTIONS: readonly Projection[] = registered;
 
@@ -42,9 +44,10 @@ export function withProjection<T>(p: Projection, body: () => T): T {
 
 function tableExists(db: Db, table: string): boolean {
   return (
-    db
-      .prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?")
-      .get(table) !== undefined
+    prepared(
+      db,
+      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+    ).get(table) !== undefined
   );
 }
 
@@ -54,7 +57,8 @@ export function applyProjections(
   event: StoredEvent,
   computedAt: string,
 ): void {
-  const meta = db.prepare(
+  const meta = prepared(
+    db,
     `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, last_seq, computed_at)
      VALUES (?, ?, ?, ?, ?, ?)
      ON CONFLICT(name) DO UPDATE SET model_version = excluded.model_version,
@@ -93,7 +97,8 @@ export function rebuildMissing(
       for (const p of missing) p.apply(db, e, computedAt);
       last = e.seq;
     }
-    const meta = db.prepare(
+    const meta = prepared(
+      db,
       `INSERT OR REPLACE INTO derived_meta VALUES (?, ?, ?, ?, ?, ?)`,
     );
     for (const p of missing)

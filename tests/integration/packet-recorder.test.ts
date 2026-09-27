@@ -94,12 +94,17 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
     focusLosses: { count: 0, totalMs: 0 },
     method: "keypad",
   };
+  let ends = 0;
   for (let day = 0; day < 30; day++) {
-    const { sessionId } = (await call("/api/session/start", {
-      method: "POST",
-      body: JSON.stringify({ mode: "daily", clientSeq: day }),
-    })) as { sessionId: string };
     let seq = day * 1000;
+    const start = async (): Promise<string> =>
+      (
+        (await call("/api/session/start", {
+          method: "POST",
+          body: JSON.stringify({ mode: "daily", clientSeq: ++seq }),
+        })) as { sessionId: string }
+      ).sessionId;
+    let sessionId = await start();
     const post = (path: string, body: object, helps?: string) =>
       call(
         path,
@@ -116,9 +121,16 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
       answered.add(itemId);
     };
     for (let t = 0; t < 20; t++) {
-      const room = (await call(`/api/session/${sessionId}/next`)) as {
+      let room = (await call(`/api/session/${sessionId}/next`)) as {
         itemId: string;
+        kind: string;
       };
+      // After the finale a new session plans the next adventure.
+      if (room.kind === "end") {
+        ends++;
+        sessionId = await start();
+        room = (await call(`/api/session/${sessionId}/next`)) as typeof room;
+      }
       // Two hints and two explanations a day stay inside the thread stock.
       if (t % 10 === 1)
         await post(`/api/item/${room.itemId}/hint`, { level: 1 }, room.itemId);
@@ -133,14 +145,18 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
         await call(`/api/session/${sessionId}/poll?after=0`);
       }
     }
+    await post(`/api/session/${sessionId}/pause`, { reason: "leave" });
   }
   const leaks = packets.flatMap((p) => forbiddenFields(p.body));
   console.log(
     `recorder: ${packets.length} packets, ${leaks.length} forbidden fields, ${earlyAnswers.length} early answers`,
   );
-  // A day: the start, 20 tasks shown and answered, 2 hints, and 2 rounds of
-  // explanation, second attempt, its answer and a poll.
-  expect(packets.length).toBe(30 * (1 + 20 * 2 + 2 + 2 * 4));
+  // A day: the start, 20 tasks shown and answered, 2 hints, 2 rounds of
+  // explanation, second attempt, its answer and a poll, and the leave. Each
+  // finale adds the end packet and a new start: 600 tasks in adventures of
+  // 60 reach 9 finales.
+  expect(ends).toBe(9);
+  expect(packets.length).toBe(30 * (1 + 20 * 2 + 2 + 2 * 4 + 1) + 2 * ends);
   expect(refused).toEqual([]);
   expect(leaks).toEqual([]);
   expect(earlyAnswers).toEqual([]);

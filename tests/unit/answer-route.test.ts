@@ -36,11 +36,13 @@ const input = {
   method: "keypad" as const,
 };
 
+// Session 0 belongs to no adventure, so each test's session starts on the
+// first stand-in task and the long run never reaches a finale.
 async function start(): Promise<string> {
   const res = await app.request("/api/session/start", {
     method: "POST",
     headers: { ...cookie, "content-type": "application/json" },
-    body: JSON.stringify({ mode: "daily", clientSeq: ++seq }),
+    body: JSON.stringify({ mode: "zero", clientSeq: ++seq }),
   });
   expect(res.status).toBe(200);
   return ((await res.json()) as { sessionId: string }).sessionId;

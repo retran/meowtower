@@ -34,6 +34,11 @@ export const STANDIN_TASKS: readonly StandinTask[] = [
 
 export const ROOM_LENGTH = STANDIN_TASKS.length;
 
+/** The tasks after which the stand-in adventure reaches its finale. */
+export const STANDIN_ADVENTURE_TASKS = 60;
+/** The rooms on each stand-in floor, for where play stopped. */
+export const STANDIN_ROOMS_PER_FLOOR = 5;
+
 /** The guiding threads a session starts with, until ADR-0080's epic. */
 export const STANDIN_THREADS = 5;
 

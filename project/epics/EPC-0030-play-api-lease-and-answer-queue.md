@@ -54,7 +54,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-003 [P] TSK-0320 Repeated answers, hints, explanations and second attempts are recorded and charged once, and the SSE stream delivers the explanation
       closes: REQ-2422, REQ-2424, REQ-2426, REQ-2432
       depends: TSK-0300 - it keys the routes that task opens
-- [ ] T-004 [P] TSK-0330 The adventure and session lifecycle, the leave route, the break route and the guard against reopening
+- [x] T-004 [P] TSK-0330 The adventure and session lifecycle, the leave route, the break route and the guard against reopening
       closes: REQ-0200, REQ-0226, REQ-2404, REQ-2412
       depends: TSK-0300 - the session start and `next` it extends; TSK-0250 - `adventures` and `sessions` are registered projections
 - [ ] T-005 [P] TSK-0390 The parent session expires after 30 minutes, and the parent sets the three-day limit

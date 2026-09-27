@@ -4,6 +4,7 @@
 import type Database from "better-sqlite3";
 import type { StoredEvent } from "../events/read.js";
 import type { Projection } from "./registry.js";
+import { prepared } from "./statements.js";
 
 type Db = Database.Database;
 type P = Record<string, unknown>;
@@ -30,7 +31,8 @@ const itemsView: Projection = {
   apply(db: Db, e: StoredEvent, computedAt: string) {
     const p = e.payload as P;
     if (e.type === "item_shown") {
-      db.prepare(
+      prepared(
+        db,
         `INSERT INTO items_view (item_id, session_id, template_id, template_version, node, subtype,
            purpose, attempt_no, parent_item_id, correct_answer, shown_seq, computed_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -50,7 +52,8 @@ const itemsView: Projection = {
       );
     } else if (e.type === "item_flagged" || e.type === "item_excluded") {
       const column = e.type === "item_flagged" ? "flagged" : "excluded";
-      db.prepare(
+      prepared(
+        db,
         `UPDATE items_view SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
       ).run(computedAt, p["itemId"]);
     }
@@ -82,7 +85,8 @@ const attemptsView: Projection = {
     if (e.type === "attempt_submitted" && e.v >= 1) {
       const input = p["input"] as P;
       const answer = p["answer"] as P;
-      db.prepare(
+      prepared(
+        db,
         `INSERT INTO attempts_view (item_id, attempt_no, session_id, entered, assisted, hint_level,
            submitted_ms, input_method, computed_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -102,7 +106,8 @@ const attemptsView: Projection = {
         computedAt,
       );
     } else if (e.type === "verdict") {
-      db.prepare(
+      prepared(
+        db,
         `INSERT INTO attempts_view (item_id, attempt_no, session_id, verdict, outcome, trap_id, computed_at)
          VALUES (?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(item_id, attempt_no) DO UPDATE SET verdict = excluded.verdict,
@@ -118,7 +123,8 @@ const attemptsView: Projection = {
       );
     } else if (e.type === "item_flagged" || e.type === "item_excluded") {
       const column = e.type === "item_flagged" ? "flagged" : "excluded";
-      db.prepare(
+      prepared(
+        db,
         `UPDATE attempts_view SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
       ).run(computedAt, p["itemId"]);
     }

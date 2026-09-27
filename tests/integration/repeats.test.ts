@@ -57,8 +57,9 @@ function player(options: Partial<Parameters<typeof createApp>[0]> = {}) {
   const get = (path: string): Promise<Response> =>
     Promise.resolve(app.request(path, { headers }));
   async function session(): Promise<{ sessionId: string; room: Room }> {
+    // Session 0 belongs to no adventure, so each player's session is its own.
     const res = await post("/api/session/start", {
-      mode: "daily",
+      mode: "zero",
       clientSeq: 0,
     });
     const { sessionId } = (await res.json()) as { sessionId: string };

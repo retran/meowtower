@@ -576,6 +576,43 @@ const sessionDefs: EventDef[] = [
       mode: z.enum(["zero", "daily"]).describe("Session 0 or a daily session"),
     }),
   },
+  {
+    type: "session_ended",
+    v: 1,
+    schema: obj({
+      sessionId: id("the session"),
+      reason: z
+        .enum(["leave", "background", "idle"])
+        .describe("why the session ended"),
+    }),
+  },
+  // The adventure's lifecycle (SPC-0030). The adventure is the event's
+  // envelope adventure_id and its payload's adventureId both.
+  {
+    type: "adventure_planned",
+    v: 1,
+    schema: obj({ adventureId: id("the adventure planned") }),
+  },
+  {
+    type: "adventure_started",
+    v: 1,
+    schema: obj({ adventureId: id("the adventure that became active") }),
+  },
+  {
+    type: "adventure_completed",
+    v: 1,
+    schema: obj({ adventureId: id("the adventure that reached its finale") }),
+  },
+  {
+    type: "adventure_wrapped_up",
+    v: 1,
+    schema: obj({
+      adventureId: id("the adventure the three-day rule closed"),
+      unopenedSecrets: z
+        .array(id("a secret"))
+        .describe("the secrets she didn't open"),
+    }),
+  },
 ];
 
 const safetyDefs: EventDef[] = [
