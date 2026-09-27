@@ -32,6 +32,24 @@ export function deviceForToken(
   return { ok: true, deviceId: row.id };
 }
 
+export type Interface = "tablet" | "computer";
+
+/** The interface the device uses, chosen at pairing and switched in the settings (REQ-2538). */
+export function deviceInterface(db: Db, deviceId: string): Interface {
+  const row = db
+    .prepare("SELECT kind FROM devices WHERE id = ?")
+    .get(deviceId) as { kind: Interface } | undefined;
+  return row?.kind ?? "computer";
+}
+
+export function setDeviceInterface(
+  db: Db,
+  deviceId: string,
+  kind: Interface,
+): void {
+  db.prepare("UPDATE devices SET kind = ? WHERE id = ?").run(kind, deviceId);
+}
+
 const CODE_LIFETIME_MS = 5 * 60 * 1000;
 
 /** Issues a 6-digit pairing code that lives 5 minutes (REQ-2516). */

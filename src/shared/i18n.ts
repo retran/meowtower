@@ -13,3 +13,11 @@ export function t(key: string): string {
   if (value === undefined) throw new Error(`string_missing: ${key}`);
   return value;
 }
+
+/** The strings the client shell shows: the `ui.` keys only, because the file
+ *  also holds task texts and short solutions no client may read early. */
+export function uiStrings(): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(strings).filter(([key]) => key.startsWith("ui.")),
+  );
+}

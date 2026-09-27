@@ -21,6 +21,8 @@ export const test = base.extend<{ leaks: string[] }>({
             if (text.includes(KEY) || text.includes("sk-or-"))
               leaks.push(res.url());
             if (!(res.headers()["content-type"] ?? "").includes("json")) return;
+            // A body the browser didn't keep, such as a redirect's, is empty.
+            if (body.length === 0) return;
             const json: unknown = JSON.parse(body.toString("utf8"));
             for (const field of forbiddenFields(json))
               leaks.push(`${res.url()}: ${field}`);

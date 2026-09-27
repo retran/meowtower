@@ -74,7 +74,7 @@ A task is marked in the commit that advances it, never in a later pass.
 - [>] T-009 TSK-0090 The OpenRouter key never reaches a client
       closes: REQ-2504
       depends: TSK-0010 - the key's `.env` and the client bundle must exist
-- [ ] T-010 TSK-0100 One client shell with a tablet and a computer interface, chosen by the device and switchable
+- [>] T-010 TSK-0100 One client shell with a tablet and a computer interface, chosen by the device and switchable
       closes: REQ-2534, REQ-2536, REQ-2538, REQ-2540
       depends: TSK-0040 - the choice is stored in the device's `devices` row
 - [ ] T-011 TSK-0110 A device keeps no game data except unsent answers

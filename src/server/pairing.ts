@@ -5,7 +5,15 @@ import type { Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
 import type { Db } from "./database.js";
-import { DEVICE_COOKIE, deviceForToken, pairDevice } from "./devices.js";
+import {
+  DEVICE_COOKIE,
+  deviceForToken,
+  deviceInterface,
+  pairDevice,
+  setDeviceInterface,
+} from "./devices.js";
+
+const DeviceIn = z.object({ kind: z.enum(["tablet", "computer"]) }).strict();
 
 const PairIn = z
   .object({
@@ -35,5 +43,25 @@ export function mountPairing(app: Hono, db: Db, now: () => number): void {
       path: "/",
     });
     return c.json({ paired: true });
+  });
+
+  // The device's interface: the pairing request set it from the device, and
+  // the settings switch it; it holds on this device until switched (REQ-2538).
+  const self = (token: string | undefined): string | null => {
+    const found = deviceForToken(db, token);
+    return found.ok ? found.deviceId : null;
+  };
+  app.get("/api/device", (c) => {
+    const id = self(getCookie(c, DEVICE_COOKIE));
+    if (!id) return c.json({ error: "device_token_missing" }, 401);
+    return c.json({ kind: deviceInterface(db, id) });
+  });
+  app.put("/api/device", async (c) => {
+    const id = self(getCookie(c, DEVICE_COOKIE));
+    if (!id) return c.json({ error: "device_token_missing" }, 401);
+    const body = DeviceIn.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    setDeviceInterface(db, id, body.data.kind);
+    return c.json({ kind: body.data.kind });
   });
 }
