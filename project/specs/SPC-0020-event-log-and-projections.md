@@ -49,7 +49,7 @@ It leaves out what other documents and decisions define. The container, the data
 - Only `appendEvents` inserts into `events`, and no code updates or deletes a row of it.
 - A projection depends on the log and on the versioned content files only. It reads no clock, no random source and no network.
 - A game projection doesn't import the knowledge model, the Director or the answer check, directly or through a shared module.
-- `explain_cache` is read only by the path that serves a requested explanation; no projection, report or export reads it.
+- `explain_cache` is read only by the path that serves a requested explanation, in `src/server/explain/`, which also drains the cache and counts its rows; no projection, report or export reads it, and a check in the lint verb fails any other file under `src/` or `tools/` that names it.
 - The export reads only its own `VACUUM INTO` copy, never the live database.
 
 ## Behaviour
@@ -119,7 +119,7 @@ A check in the lint verb follows each game projection's runtime imports, type-on
 
 ### The explanation cache
 
-`explain_cache` is read only when an explanation is requested. `explanation_shown` records what was shown, so emptying the cache changes no event, no projection and no report (REQ-3816).
+`explain_cache` is read only when an explanation is requested. `explanation_shown` records what was shown, so emptying the cache changes no event, no projection and no report (REQ-3816). Migration `0008_explain_cache.sql` creates the table with ADR-0120's columns. After the cache is emptied, a requested explanation falls back to live generation or the template explanation.
 
 ### The export
 
