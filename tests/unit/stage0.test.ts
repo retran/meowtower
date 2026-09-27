@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createApp } from "../../src/server/app.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
+import { registerDevice } from "../../src/server/devices.js";
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -18,7 +19,21 @@ function db(): Db {
   dirs.push(dir);
   return openDatabase(join(dir, "meowtower.sqlite"));
 }
-const write = (app: ReturnType<typeof createApp>, body: object) =>
+// Every /api route needs a paired device's token (TSK-0040).
+function paired(d: Db): {
+  request: (path: string, init?: RequestInit) => Promise<Response>;
+} {
+  const app = createApp({ db: d });
+  const cookie = `meowtower_device=${registerDevice(d, "tablet")}`;
+  return {
+    request: async (path, init = {}) =>
+      app.request(path, {
+        ...init,
+        headers: { ...(init.headers as object), cookie },
+      }),
+  };
+}
+const write = (app: ReturnType<typeof paired>, body: object) =>
   app.request("/api/stage0/write", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -28,7 +43,7 @@ const write = (app: ReturnType<typeof createApp>, body: object) =>
 describe("POST /api/stage0/write appends to the log", () => {
   it("appends one attempt_submitted event keyed by the request id, once", async () => {
     const d = db();
-    const app = createApp({ db: d });
+    const app = paired(d);
     const body = { id: "w1", answer: "3/4", deviceId: "ipad-1", clientMs: 5 };
     expect((await write(app, body)).status).toBe(201);
     expect((await write(app, body)).status).toBe(201);
@@ -59,7 +74,7 @@ describe("POST /api/stage0/write appends to the log", () => {
       "CREATE TRIGGER full_disk BEFORE INSERT ON events BEGIN SELECT RAISE(ABORT, 'disk full'); END",
     );
     const errors = vi.spyOn(console, "error").mockImplementation(() => {});
-    const res = await write(createApp({ db: d }), { id: "w1" });
+    const res = await write(paired(d), { id: "w1" });
     expect(res.status).toBe(503);
     expect(await res.json()).toEqual({ error: "log_write_failed" });
     expect(errors).toHaveBeenCalledWith(

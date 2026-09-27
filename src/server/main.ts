@@ -18,7 +18,7 @@ try {
 }
 const game = serve({ fetch: createApp({ db }).fetch, port });
 const parent = serve({
-  fetch: createParentApp().fetch,
+  fetch: createParentApp({ db }).fetch,
   port: parentPort,
 });
 

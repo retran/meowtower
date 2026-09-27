@@ -54,13 +54,16 @@ describe("REQ-2508: no committed write is lost when the process dies", () => {
   it(
     `keeps the write ${RUNS} times out of ${RUNS}`,
     async () => {
+      const seed = openDatabase(env.MEOWTOWER_DB);
+      const cookie = `meowtower_device=${registerDevice(seed, "tablet")}`;
+      seed.close();
       let lost = 0;
       for (let i = 0; i < RUNS; i++) {
         const id = `w${i}`;
         let child = await start();
         const res = await fetch("http://127.0.0.1:3917/api/stage0/write", {
           method: "POST",
-          headers: { "content-type": "application/json" },
+          headers: { "content-type": "application/json", cookie },
           body: JSON.stringify({ id }),
         });
         expect(res.status).toBe(201);
@@ -68,6 +71,7 @@ describe("REQ-2508: no committed write is lost when the process dies", () => {
         child = await start();
         const found = await fetch(
           `http://127.0.0.1:3917/api/stage0/write/${id}`,
+          { headers: { cookie } },
         );
         if (found.status !== 200) lost++;
         await kill(child);

@@ -29,7 +29,8 @@ The system consists of two containers and one command. The container `meowtower`
 | `./meowtower down` | Stops the containers. It never passes `-v`, so the volume `meowtower-db` survives. |
 | `./meowtower status` | Reports in one line each whether Docker and both containers run, the last snapshot and how long it took, and any open `backup_failed` or `storage_ceiling` notice. |
 | `./meowtower set-home-network` | Records the Mac's default gateway, as its IP address and the router's hardware address where the Mac can read it, in `data/home-gateway`. The first `./meowtower up` records it too. |
-| `./meowtower pair` | Prints a new 6-digit pairing code. |
+| `./meowtower pair` | Prints a new 6-digit pairing code, asked for through `POST /pair-code` on the Parent Room's listener, so only the Mac issues codes. |
+| `POST /api/pair` | `{ code, kind }` on the game listener; on a live code it sets the device cookie and replies 200, otherwise 403 `pairing_code_invalid`. The only `/api` route that needs no token. |
 | `./meowtower set-pin` | Sets the Parent Room PIN. |
 | `./meowtower ipad-setup` | Writes the configuration profile that installs Caddy's root certificate into `data/setup/`, where `proxy` serves it at `https://<mac-name>.local/setup/meowtower.mobileconfig` as `application/x-apple-aspen-config`, and prints the iPad's steps. `--print-profile` prints the profile instead. With no root certificate yet it prints `root_certificate_missing` and exits 1. |
 | `./meowtower db-snapshot` | Takes one snapshot on demand. |
@@ -44,7 +45,7 @@ The system consists of two containers and one command. The container `meowtower`
 | `.env` | Holds the OpenRouter key on the Mac, given to the `meowtower` service only. |
 | Device cookie | A random 256-bit token in an `HttpOnly`, `Secure`, `SameSite=Strict` cookie with no expiry date. |
 | Table `devices` | One row per paired device: the token's SHA-256 hash, whether it is revoked, and the device's interface choice. |
-| Errors | `401` for a request with no device token; `401 device_revoked`; `pairing_locked`; `pin_locked`; `wrong_network`; `port_in_use`; `docker_not_running`; `backup_failed`; `storage_ceiling`; `model_service_down`; `server_unreachable`. |
+| Errors | `401 device_token_missing` for an `/api` request with no known device token; `403 pairing_code_invalid`; `401 device_revoked`; `pairing_locked`; `pin_locked`; `wrong_network`; `port_in_use`; `docker_not_running`; `backup_failed`; `storage_ceiling`; `model_service_down`; `server_unreachable`. |
 
 ### What this part requires from other parts
 

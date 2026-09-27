@@ -15,7 +15,7 @@ afterAll(() => {
 
 describe("REQ-2510: the Parent Room has its own listener", () => {
   it("serves the Parent Room page", async () => {
-    const res = await createParentApp().request("/");
+    const res = await createParentApp({ db }).request("/");
     expect(res.status).toBe(200);
     expect(await res.text()).toContain(t("parent.room.title"));
   });

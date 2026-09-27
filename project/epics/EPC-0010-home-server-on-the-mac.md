@@ -53,7 +53,8 @@ A task is marked in the commit that advances it, never in a later pass.
       evidence: crash test 100 of 100 writes and 100 of 100 answers kept (TSK-0030 Evidence)
       closes: REQ-2508
       depends: TSK-0010 - the database lives in the volume `tower-db` it creates
-- [ ] T-004 TSK-0040 A device pairs by a 6-digit code and keeps its access
+- [x] T-004 TSK-0040 A device pairs by a 6-digit code and keeps its access
+      evidence: meow-verbs exit 0, 243 tests; 6-digit code pairs within 5 min; 401 without token (TSK-0040 Evidence)
       closes: REQ-2516, REQ-2518
       depends: TSK-0030 - the `devices` table lives in the database it opens
 - [ ] T-005 TSK-0050 The PIN guards the Parent Room, both lockouts hold, and the parent revokes a device

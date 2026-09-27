@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; these are up, down, status, ipad-setup and set-home-network.
+# subcommands it needs; these are up, down, status, ipad-setup, set-home-network and pair.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -136,6 +136,17 @@ check_parent_port() {
   fi
 }
 
+# A 6-digit pairing code that lives 5 minutes, issued through the Parent
+# Room's listener, which only this Mac can reach (REQ-2516).
+cmd_pair() {
+  local reply code
+  reply="$(curl -fsS -X POST "http://localhost:$PARENT_PORT/pair-code")" \
+    || { echo "server_unreachable: run ./meowtower up first."; exit 1; }
+  code="$(echo "$reply" | sed -n 's/.*"code":"\([0-9]\{6\}\)".*/\1/p')"
+  echo "Pairing code: $code"
+  echo "Enter it on the device within 5 minutes. It works once."
+}
+
 cmd_up() {
   check_home_network
   if ! docker_running; then echo "docker_not_running: Docker isn't running (Docker Desktop or OrbStack)."; exit 1; fi
@@ -180,5 +191,6 @@ case "${1:-}" in
   status) cmd_status ;;
   ipad-setup) shift; cmd_ipad_setup "$@" ;;
   set-home-network) cmd_set_home_network ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network" >&2; exit 2 ;;
+  pair) cmd_pair ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair" >&2; exit 2 ;;
 esac
