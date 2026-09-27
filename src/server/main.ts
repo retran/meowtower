@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
-import { openDatabase } from "./database.js";
+import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 
 const dbPath =
@@ -8,7 +8,14 @@ const dbPath =
 const port = Number(process.env["PORT"] ?? 3000);
 const parentPort = Number(process.env["PARENT_PORT"] ?? 3001);
 
-const db = openDatabase(dbPath);
+let db: Db;
+try {
+  db = openDatabase(dbPath);
+} catch (err) {
+  // A missing guard or a refused migration stops the start (SPC-0020).
+  console.error(err instanceof Error ? err.message : String(err));
+  process.exit(1);
+}
 const game = serve({ fetch: createApp({ db }).fetch, port });
 const parent = serve({
   fetch: createParentApp().fetch,

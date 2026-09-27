@@ -32,10 +32,10 @@ describe("migrations", () => {
     const applied = db
       .prepare("SELECT version FROM schema_migrations ORDER BY version")
       .all();
-    expect(applied).toEqual([{ version: 1 }]);
-    expect(db.prepare("SELECT count(*) AS n FROM stage0_writes").get()).toEqual(
-      { n: 0 },
-    );
+    expect(applied).toEqual([{ version: 1 }, { version: 2 }]);
+    expect(db.prepare("SELECT count(*) AS n FROM events").get()).toEqual({
+      n: 0,
+    });
     db.close();
   });
 });

@@ -60,7 +60,7 @@ The permitted dependencies run one way. `proxy` depends on `meowtower`, the clie
 
 ### Where it runs and where the data lives
 
-The game runs in a browser on the iPad, installed as a home-screen web app, and in a browser on the computer, served by `meowtower` on the Mac over the home network (REQ-2500). All game data lives on the Mac: the live database in the volume `meowtower-db` and every other file under `data/` (REQ-2502). `meowtower` opens SQLite through `better-sqlite3` in WAL mode with `synchronous=FULL`, then applies each numbered SQL file in `migrations/` that `schema_migrations` doesn't list, in order, each in its own transaction. At stage 0 the one write route is `POST /api/stage0/write`, which ADR-0020's event log replaces.
+The game runs in a browser on the iPad, installed as a home-screen web app, and in a browser on the computer, served by `meowtower` on the Mac over the home network (REQ-2500). All game data lives on the Mac: the live database in the volume `meowtower-db` and every other file under `data/` (REQ-2502). `meowtower` opens SQLite through `better-sqlite3` in WAL mode with `synchronous=FULL`, then applies each numbered SQL file in `migrations/` that `schema_migrations` doesn't list, in order, each in its own transaction. At stage 0 the one write route is `POST /api/stage0/write`, which appends one event to ADR-0020's event log through `appendEvents` and replies only after that append commits; the play routes of ADR-0030 replace it.
 
 `meowtower` runs as the user `node` and Caddy as an unprivileged user. Both containers run with `cap_drop: [ALL]`, `no-new-privileges` and a read-only root file system apart from their data mounts (REQ-2512).
 

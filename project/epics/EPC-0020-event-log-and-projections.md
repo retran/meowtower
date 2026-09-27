@@ -43,7 +43,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0200 The append-only `events` table and `appendEvents` replace the stage-0 write (`migrations/`, `src/engine/events/`, `src/server/stage0.ts`, `src/server/database.ts`, `tests/crash/`)
+- [x] T-001 TSK-0200 The append-only `events` table and `appendEvents` replace the stage-0 write (`migrations/`, `src/engine/events/`, `src/server/stage0.ts`, `src/server/database.ts`, `tests/crash/`)
+      evidence: meow-verbs run format lint check test build exit 0, 63 tests; crash test 100 of 100 writes kept (TSK-0200 Evidence)
       closes: REQ-2226, REQ-3800, REQ-2202
       depends: TSK-0030 - it replaces the table that task's storage module and crash test write
 - [ ] T-002 [P] TSK-0210 Schemas, upcasters and the start-up schema check, with the task and attempt events (`src/shared/events.ts`)

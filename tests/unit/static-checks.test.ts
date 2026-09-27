@@ -2,7 +2,11 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { checkNoKeyInClient, checkNoPush } from "../../tools/static-checks.js";
+import {
+  checkEventsSqlConfined,
+  checkNoKeyInClient,
+  checkNoPush,
+} from "../../tools/static-checks.js";
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -56,5 +60,36 @@ describe("REQ-2544, REQ-2546: the MVP holds no push code", () => {
     expect(checkNoPush(repo({ [file]: text }))).toEqual([
       { check: "push_code", file, match },
     ]);
+  });
+});
+
+describe("REQ-2226: only appendEvents and the migrations name events in SQL", () => {
+  it("passes this repository", () => {
+    expect(checkEventsSqlConfined(process.cwd())).toEqual([]);
+  });
+  it.each([
+    ["src/server/rogue.ts", 'db.exec("DELETE FROM events");', "FROM events"],
+    [
+      "src/server/rogue.ts",
+      'db.prepare("UPDATE events SET v = 2");',
+      "UPDATE events",
+    ],
+    [
+      "src/engine/game/fold.ts",
+      "INSERT INTO events (type) VALUES (?)",
+      "INTO events",
+    ],
+    ["tools/fix.sql", "DROP TABLE events;", "TABLE events"],
+  ])("names %s for %s", (file, text, match) => {
+    expect(checkEventsSqlConfined(repo({ [file]: text }))).toEqual([
+      { check: "events_sql", file, match },
+    ]);
+  });
+  it("allows SQL on events in src/engine/events/ and migrations/", () => {
+    const root = repo({
+      "src/engine/events/append.ts": "INSERT INTO events (type) VALUES (?)",
+      "migrations/0002_events.sql": "CREATE TABLE events (seq INTEGER);",
+    });
+    expect(checkEventsSqlConfined(root)).toEqual([]);
   });
 });

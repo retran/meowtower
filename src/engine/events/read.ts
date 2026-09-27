@@ -1,0 +1,55 @@
+import type Database from "better-sqlite3";
+
+type Db = Database.Database;
+
+export interface StoredEvent {
+  seq: number;
+  id: string;
+  ts: string;
+  clientMs: number;
+  deviceId: string;
+  sessionId: string | null;
+  adventureId: string | null;
+  type: string;
+  v: number;
+  payload: unknown;
+  idemKey: string | null;
+}
+
+interface Row {
+  seq: number;
+  id: string;
+  ts: string;
+  client_ms: number;
+  device_id: string;
+  session_id: string | null;
+  adventure_id: string | null;
+  type: string;
+  v: number;
+  payload: string;
+  idem_key: string | null;
+}
+
+const toEvent = (r: Row): StoredEvent => ({
+  seq: r.seq,
+  id: r.id,
+  ts: r.ts,
+  clientMs: r.client_ms,
+  deviceId: r.device_id,
+  sessionId: r.session_id,
+  adventureId: r.adventure_id,
+  type: r.type,
+  v: r.v,
+  payload: JSON.parse(r.payload) as unknown,
+  idemKey: r.idem_key,
+});
+
+export function eventByIdemKey(
+  db: Db,
+  idemKey: string,
+): StoredEvent | undefined {
+  const row = db
+    .prepare("SELECT * FROM events WHERE idem_key = ?")
+    .get(idemKey) as Row | undefined;
+  return row && toEvent(row);
+}

@@ -43,7 +43,20 @@ TSK-0010, because the database lives in the volume it creates. It builds on the 
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-27 on the Mac. Every criterion holds; the notice surface of criterion 8 and the device identifier wait for later tasks, as the last two items say.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0: format, lint, check, test and build passed; 13 test files, 63 tests passed, the crash test included. The lint verb printed `events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events` and found nothing.
+- Seen failing first: before the migration and `appendEvents` existed, `npx vitest run tests/unit` failed 16 tests and could not load `append-events.test.ts` and `events-guard.test.ts` (`Cannot find module '../../src/engine/events/append.js'`, `no such table: events`, `checkEventsSqlConfined is not a function`).
+- Criterion 1, REQ-2226: `tests/unit/events-guard.test.ts` passes: `UPDATE events SET type = type` and `DELETE FROM events` both fail with `events are append-only` and every row is unchanged, also from a second connection that bypasses meowtower's code. With the two triggers cut from `migrations/0002_events.sql`, all 14 cases of that file failed.
+- Criterion 2, REQ-2226: the same file starts `src/server/main.ts` on a copy with `events_no_update` dropped, then with `events_no_delete` dropped; each time the process exits non-zero with `log_guard_missing: <trigger>` on stderr. With the start-up check removed from `openDatabase`, both cases failed: the server started and the test killed it.
+- Criterion 3, REQ-2226: `tests/unit/migrations.test.ts` passes: a migration that drops a guarded trigger, drops it if it exists, drops and re-creates it, drops or renames `events`, or sets `writable_schema` fails with `migration_refused: 0099_bad.sql ...`, its earlier `CREATE TABLE` is absent afterwards and `schema_migrations` stays at 2; a migration adding a column applies. With the runner's checks removed, all 6 refusal cases failed. `main.ts` exits 1 on any error `openDatabase` throws, the same path criterion 2 shows.
+- Criterion 4, the prediction of no bypass: holds. After `VACUUM`, `VACUUM INTO` (reopened as a new database), `ADD COLUMN` and `DROP COLUMN` on `events`, `CREATE INDEX` and `DROP INDEX` on it, a new table, renaming another table, `REINDEX` and `ANALYZE`, both triggers are present and refuse `UPDATE` and `DELETE`; 10 cases pass. ADR-0020's third reversal condition is not met.
+- Criterion 5, REQ-3800 and REQ-2202: `tests/unit/append-events.test.ts` passes: 1,000 events appended in 10 batches each have a unique ULID, `seq` one greater than the previous, `type`, `v`, `ts` in UTC, `client_ms`, `device_id`, and the session and adventure given; an event with origin `server` has `device_id = 'server'` and `client_ms` equal to its `ts`. A batch with a repeated `idem_key` writes nothing.
+- Criterion 6: `npx vitest run tests/crash --silent=false` printed `crash test: 100 of 100 writes kept, 0 lost`, with `tests/crash/crash.test.ts` unchanged and the route appending to `events`.
+- Criterion 7, REQ-2226: `tests/unit/static-checks.test.ts` passes: the check `events_sql` names `src/server/rogue.ts`, `src/engine/game/fold.ts` and `tools/fix.sql` for SQL on `events`, allows `src/engine/events/` and `migrations/`, and passes this repository. Tests are exempt, because the guard test must run the forbidden statements.
+- Criterion 8: `tests/unit/stage0.test.ts` passes: with an insert that aborts, the route replies 503 `{"error":"log_write_failed"}`, logs `log_write_failed: ...` and writes nothing. With the route's catch removed, it replied 500 and the test failed.
+- Open: `log_write_failed` goes to the server's log (`src/server/failures.ts`) because the Parent Room notices and their place in `./meowtower status` come with TSK-0080.
+- Deviation, stage-0 only: the route takes `deviceId`, `clientMs` and `answer` from the request body; a body without them, such as the crash test's, is logged under the device `unpaired` with the server time and an empty raw answer, until TSK-0040 pairs devices. The event is `attempt_submitted` at version 0, the task's default; the owner hasn't named another type.
 
 ## Left alone
 
