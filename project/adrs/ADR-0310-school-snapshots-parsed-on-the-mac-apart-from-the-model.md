@@ -253,3 +253,5 @@ Two agent reviews ran on this record, and I fixed every finding they marked as a
 - The payload table, the CSV columns and the fixture directory's name and tracking are specification-level detail. I keep the payloads here, because this record owns the six types under ADR-0020's rule, and leave the fixture directory and the final columns to the specification step.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0420 and ADR-0450, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

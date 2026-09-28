@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-37 decisions in all: 37 approved.
+45 decisions in all: 45 approved.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
@@ -43,4 +43,12 @@
 | [ADR-0350](ADR-0350-judge-checks-move-one-by-one-to-a-pinned-model-on-the-mac.md) | Judge checks move one by one to open models that llama.cpp serves on the Mac host, each check to the model that passed its Russian test set and its 1500 ms test on the file it serves, behind a loopback endpoint with a key or, failing that, the key alone, and every other check stays on its hosted route | approved |
 | [ADR-0360](ADR-0360-settle-the-conflicts-the-specifications-found.md) | Each conflict the specifications found settles for the approved requirement and a fair measurement, the addendum decision that owns a detail wins it, and twenty requirements that can't hold as written get replacements | approved |
 | [ADR-0370](ADR-0370-settle-what-the-decisions-and-specifications-still-leave-open.md) | Every gap the decisions and specifications still leave open settles by ADR-0360's defaults, rejected findings stay as records, and three requirements get replacements | approved |
+| [ADR-0380](ADR-0380-addendum-2-figures-carry-intervals-lines-come-from-fixed-contrasts.md) | Every figure addendum 2 adds shows its count and 80 % Wilson interval, the report draws its own lines only from contrasts fixed before her data exists, at 95 %, check 5 counts both lines on one seed against a rate the report's own code measures, and only the parts that shape the log join the MVP | approved |
+| [ADR-0390](ADR-0390-profile-eight-raw-shares-against-their-own-past-after-mvp.md) | After the MVP, the profile is a Parent Room screen of eight raw shares, each over one dimension's own observations with an 80 % Wilson interval for the last 28 played game days, read against its own previous window and never summed or ranked | approved |
+| [ADR-0400](ADR-0400-retention-check-holds-stable-node-and-report-shows-help-by-depth.md) | A holdable node that first reaches «устойчиво» gets a logged retention check 28 to 35 game days on, held back from every path until then, a series of 2 of 2 or 3 of 4 decides its retention, and the post-MVP report shows each node's weeks by depth of help; the MVP gains only the task on `solution_shown` and `hint_shown` | approved |
+| [ADR-0410](ADR-0410-tag-every-frame-and-hold-first-encounters-until-fluent.md) | Every accepted frame carries one context tag from a list that only grows, the Director holds each subtype's context format until its node is fluent or 14 game days pass and its last unshown context until its node is fluent, and the projection `first_exposures` computes every first encounter from the log | approved |
+| [ADR-0420](ADR-0420-quadrants-cut-each-side-on-its-own-measure.md) | After the MVP, the "home and school" screen sorts each linked goal and each entered Cito category into one of four quadrants or none, cutting each side on its own measure, computing every row on the Mac at request time and wording every quadrant as a check; in the MVP only the Cito form gains its optional category list | approved |
+| [ADR-0430](ADR-0430-dutch-probe-letters-from-checked-text-pairs-after-the-mvp.md) | The Dutch probe ships after the MVP and only once the owner allows Dutch probe text: families of letters on one ordinary template, each text written offline as a Russian and Dutch pair that three different models check and the parent approves, shown one presentation a game day in a balanced order, and read only in the stream `nl_probe` | approved |
+| [ADR-0440](ADR-0440-constructions-expand-into-the-four-operations-and-pass-per-family.md) | «Сплети загадку» takes the seven constructions by expanding each named operation into the four operations the verdict already judges, masking fraction words as tokens of their own, gating each construction on its nodes and letting each new number family play in text only after its own 50-text test | approved |
+| [ADR-0450](ADR-0450-hypotheses-logged-from-mvp-labelled-later-on-later-data.md) | The parent's hypotheses are two parent events from the first version, and after the MVP a label judges each only on later data by numeric conditions and a hold, with the build check's example conditions fixed here | approved |
 <!-- /meow-flow index -->

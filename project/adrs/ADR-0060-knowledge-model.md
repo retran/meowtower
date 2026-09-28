@@ -255,3 +255,5 @@ A premortem, written as though the model had failed. The parent saw many nodes s
 Amended by ADR-0210, ADR-0220, ADR-0230, ADR-0240, ADR-0250, ADR-0260, ADR-0280, ADR-0290, ADR-0300 and ADR-0310, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0390, ADR-0400 and ADR-0450, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

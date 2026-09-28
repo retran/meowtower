@@ -256,3 +256,5 @@ The premortem, written as though it had happened: at the stage 0.3 review the pa
 ## Open review findings
 
 - An agent review asked me to replace REQ-1130 or change entry 16 so an adventure of fewer than 10 in-corridor slots also gets a raise. I kept the rule and wrote the choice into entry 16, because any raise in so short an adventure pushes its review share outside REQ-1010's band, and the third reversal condition watches whether the raise works.
+
+Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

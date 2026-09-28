@@ -148,3 +148,5 @@ The case against the lead is its cost in clarity. The parent must read three dif
 - C. Barroso and others, "A meta-analysis of the relation between math anxiety and math achievement", Psychological Bulletin 147(2), 2021, PMID 33119346, abstract read through Europe PMC 2026-09-28 - r = -.28 over 747 effect sizes.
 - S. A. Livingston and C. Lewis, "Estimating the Consistency and Accuracy of Classifications Based on Test Scores", Journal of Educational Measurement 32, 179-197, 1995, https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1745-3984.1995.tb00462.x, abstract read 2026-09-28 - consistency and accuracy of a classification by cut score.
 - Binomial computation with `python3`, run 2026-09-28 - the share of 5-task blocks at 4 or more right for a per-task accuracy of 0.6, 0.7, 0.8 and 0.9.
+
+Amended by ADR-0420, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

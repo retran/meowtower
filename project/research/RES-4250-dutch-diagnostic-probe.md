@@ -205,3 +205,5 @@ Every presentation, bare and Russian included, writes `nl_probe` and stays out o
 - [Kieffer, Rivera and Francis, "Research-Based Recommendations for the Use of Accommodations in Large-scale Assessments, 2012 Update", Center on Instruction, ERIC ED537635](https://files.eric.ed.gov/fulltext/ED537635.pdf), read 2026-09-28 - glossaries' 11 % to 21 % gap reduction, no effect on fluent readers, and academic language as the larger share.
 - [Hausknecht, Halpert, Di Paolo and Moriarty Gerrard, "Retesting in selection", Journal of Applied Psychology, 2007, PMID 17371085](https://pubmed.ncbi.nlm.nih.gov/17371085/), abstract read 2026-09-28 - the retest effect of 0.26 and larger effects with identical forms and coaching.
 - [Barlow and Hayes, "Alternating treatments design", Journal of Applied Behavior Analysis, 1979, PMID 489478](https://pubmed.ncbi.nlm.nih.gov/489478/), abstract read 2026-09-28 - sequential confounding, carryover and alternation effects, and counterbalancing.
+
+Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

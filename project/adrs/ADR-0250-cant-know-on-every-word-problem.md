@@ -217,3 +217,5 @@ The premortem, written as though it had happened: after three months the report 
 - A reviewer found that check 5's lag-1 correlation bound of ±0.05 fails about 3 % of honest runs at 2,000 slots. I left the bound as written, because the test's author fixes the seed or widens the bound when writing the test, and the decision only needs the draw to show no cadence.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

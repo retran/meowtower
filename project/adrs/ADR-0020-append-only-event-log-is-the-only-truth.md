@@ -207,3 +207,5 @@ Seven names in the drafts are not event types. `explanation_ready`, `lease_moved
 Amended by ADR-0210, ADR-0220, ADR-0240, ADR-0250, ADR-0270, ADR-0280, ADR-0310, ADR-0320 and ADR-0340, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0380, ADR-0400, ADR-0410, ADR-0420 and ADR-0450, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

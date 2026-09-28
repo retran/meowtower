@@ -3,7 +3,7 @@ id: REQ-6672
 artifact: requirement
 topic: development
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4200
 verification: behavioural

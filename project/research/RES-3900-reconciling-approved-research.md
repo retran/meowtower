@@ -84,3 +84,5 @@ RES-3100 conclusion 15 says "Every touch target must be at least 56px and every 
 - RES-2900, read 2026-09-27 - conclusion 3.
 - RES-3000, read 2026-09-27 - conclusions 5, 12 and 25.
 - RES-3100, read 2026-09-27 - conclusions 15 and 26.
+
+Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
