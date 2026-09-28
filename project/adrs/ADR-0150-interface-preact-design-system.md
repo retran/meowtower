@@ -132,3 +132,5 @@ The premortem, written as though it already happened: the port shipped and the o
 - The Parent Room's contents and the PIN: ADR-0180. This decision fixes only its colours and heading.
 - Where the sound files come from. This decision only caps their loudness.
 - Portrait orientation on the iPad. The design draws landscape only, and the stage 0 spike (REQ-3002) should show whether the home-screen app can be held in landscape before anyone designs a portrait layout.
+
+Amended by ADR-0220, ADR-0250, ADR-0270, ADR-0300, ADR-0320, ADR-0330 and ADR-0340, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

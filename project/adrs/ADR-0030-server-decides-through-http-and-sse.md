@@ -149,3 +149,5 @@ For a month with nobody attending: the queue holds at most one answer per device
 - The explanation's text and its fallback template (ADR-0120).
 - How the knowledge model uses `interrupted`, `crossDevice` and `attempt_late` (ADR-0060).
 - The Parent Room's screens and report (ADR-0180), and the PIN's storage and lockout (ADR-0010).
+
+Amended by ADR-0250 and ADR-0260, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

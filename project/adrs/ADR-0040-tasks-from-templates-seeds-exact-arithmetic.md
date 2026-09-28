@@ -185,3 +185,5 @@ The failure states this decision adds, each with one audience and its next step:
 - The glossary file's format and the Russian strings of hints and explanations: ADR-0160. ADR-0160 names this record as the owner of the term hints; this record builds the term spans in the view, and ADR-0150 draws the marks and the tap explanation.
 - Detailed explanations a model writes from the graph: ADR-0120.
 - How a half credit enters the estimate: ADR-0060, which follows RES-0900's rule of 0.5 as right and 0.5 as wrong.
+
+Amended by ADR-0220, ADR-0230, ADR-0240, ADR-0250, ADR-0260, ADR-0270, ADR-0290, ADR-0300 and ADR-0340, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

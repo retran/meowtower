@@ -117,3 +117,5 @@ For a month with nobody attending: the rolling snapshots keep draining, the mont
 - The Parent Room's content and the PIN session's timeout (ADR-0180 and ADR-0030).
 - A copy of the data off the Mac. No decision in the design makes one; Time Machine covering `data/` is the parent's choice, and a disk failure without it loses everything. This needs the owner.
 - Web push after the MVP beyond the table and cascade named above: the permission button, the service worker and VAPID keys come with that later item.
+
+Amended by ADR-0340 and ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

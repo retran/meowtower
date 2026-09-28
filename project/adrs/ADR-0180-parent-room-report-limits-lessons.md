@@ -221,3 +221,5 @@ Premortem, written from 2027-03 as if it had happened. The parent stopped openin
 - The colours of states and the Parent Room's theme belong to ADR-0150.
 - The dynamics screen, the node-by-Ascent matrix, the full limits views and the anxiety signals from erasures, hesitation and phrases come after the MVP, and the log defines those signals before a later record measures them.
 - The alarm notice and the later web push belong to the safety decision of ADR-0110.
+
+Amended by ADR-0220, ADR-0230, ADR-0240, ADR-0250, ADR-0260, ADR-0270, ADR-0280, ADR-0290, ADR-0300, ADR-0310, ADR-0330 and ADR-0340, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

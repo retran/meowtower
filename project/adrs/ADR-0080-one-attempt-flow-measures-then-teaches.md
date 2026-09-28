@@ -143,3 +143,5 @@ The premortem, written as though it had happened: six months in, the report show
 - How the adventure places tasks, warm-ups and easy tasks, and the System's announcement before a task and outcome line after it: ADR-0090.
 - The report's before and after accuracies and the help-seeking flag: ADR-0180 and ADR-0070.
 - Tasks that hide the answer, which the draft defers to Ascents after the MVP (RES-0400).
+
+Amended by ADR-0210, ADR-0220, ADR-0230, ADR-0240, ADR-0260, ADR-0270, ADR-0280, ADR-0290, ADR-0300 and ADR-0330, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

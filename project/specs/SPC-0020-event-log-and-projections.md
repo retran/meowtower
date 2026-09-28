@@ -146,3 +146,5 @@ The Parent Room offers the same export through `GET /api/parent/export/<file>` o
 | A file for a new image's hash already exists | The exclusive create fails, `meowtower` keeps the existing file and its row, and logs `scratch_snapshot` with that hash. |
 | A template's parameter schema has a string-typed field | The lint verb's static check fails, naming the template and field. |
 | An export is requested through `https://<mac-name>.local` | `meowtower` answers 404. |
+
+Amended by ADR-0220, ADR-0240, ADR-0260, ADR-0310, ADR-0330 and ADR-0340, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

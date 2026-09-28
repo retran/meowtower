@@ -162,3 +162,5 @@ Premortem, written as though it already happened: by March 2027 she had stopped 
 - Keeping `explain_cache` through a recompute and emptying it without losing a fact (REQ-2242, REQ-3816). ADR-0020 settles these.
 - Which model the bake-off picks for `EXPLAIN_MODEL`; the defaults stay `anthropic/claude-sonnet-5` and `google/gemini-3.8-flash` (RES-0600) until ADR-0100's bake-off record changes them.
 - Explanations in English and Dutch.
+
+Amended by ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

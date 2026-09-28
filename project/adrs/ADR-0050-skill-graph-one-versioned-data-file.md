@@ -138,3 +138,5 @@ The failure states this decision adds, each with one audience and its next step:
 - The independent mental arithmetic tasks, REQ-0830, model-choice problems, REQ-0836, glossary coverage, REQ-0844, and answers by result, REQ-0848: ADR-0040.
 - Node states and how subtype weights enter the node estimate: ADR-0060.
 - The content of the Dutch overlay `graph.nl.yaml` and the `nl` curriculum layer, which RES-2550 defers until after the MVP; this record settles only the rule every overlay must pass.
+
+Amended by ADR-0250, ADR-0290 and ADR-0300, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

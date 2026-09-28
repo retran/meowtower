@@ -112,3 +112,5 @@ The premortem, written as though it already happened. The gate shipped and passe
 - How task text is phrased and rendered per locale: ADR-0040, which reads the notation profile from `ru.json`.
 - The Dutch glossary word a term hint shows: it lives in `lexicon.ru.json` beside the Russian term, as REQ-3704 describes. ADR-0040 builds the term spans in the task view, ADR-0150 draws the marks and the tap explanation, and ADR-0180 holds the parent's approval of the Dutch word.
 - Who writes and reviews a second language's strings and forbidden list. That is a person's work at the Dutch stage, outside the MVP scope ADR-0190 fixes.
+
+Amended by ADR-0210, ADR-0250 and ADR-0290, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

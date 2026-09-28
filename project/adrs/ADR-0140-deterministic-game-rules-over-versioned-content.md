@@ -196,3 +196,5 @@ Premortem, written as if it happened: by November the player had learned that a 
 - Guiding threads, their stock, cap and the conversion of surplus threads into buttons; ADR-0080 owns them, and this record's quest and clean-row rules only call its grant.
 - Calibrated thresholds; they arrive in a later decision record, named by version, after the stage 0.1 simulation.
 - Familiar battles, stats, paths, rank changes, legendaries and AI-made creatures, which come after the MVP; this record fixes only the rules they must follow when they arrive.
+
+Amended by ADR-0250, ADR-0260, ADR-0280, ADR-0290, ADR-0320 and ADR-0330, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

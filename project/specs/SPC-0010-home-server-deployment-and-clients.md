@@ -146,3 +146,5 @@ The device stores in IndexedDB only the queue of answers it hasn't sent, and ask
 | A snapshot of a 1 GB database takes longer than 60 seconds | `./meowtower status` shows the time against the budget in ADR-0190's Baselines table. |
 | The volume `meowtower-db` is deleted, for example by `docker compose down -v` or a Docker Desktop reset | The live database is gone; `./meowtower restore` loads the newest snapshot, and events after it are lost. |
 | A device's storage is wiped | The device loses its token and needs pairing again; no game data is lost, because the server holds it all. |
+
+Amended by ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

@@ -151,3 +151,5 @@ Premortem, written as though it already happened: at stage 0.4 the verify comman
 - The Master's own text and its safety pipeline. ADR-0110 settles these, and REQ-3600 holds for its text through the same `CheckedText` gate.
 - Which science topics E1 to E5 are and their place outside the skill graph (REQ-0802, ADR-0050), and how the report counts only the first answer to a repeated question (REQ-2362, ADR-0180).
 - Frames and questions in English and Dutch.
+
+Amended by ADR-0280 and ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

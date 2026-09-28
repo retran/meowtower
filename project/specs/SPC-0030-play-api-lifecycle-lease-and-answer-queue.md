@@ -194,3 +194,5 @@ While the client has no connection, the hint, explanation and second-attempt con
 | A parent request comes 30 minutes after the last one | `401 parent_session_expired`; the client shows the PIN screen again and keeps the page. |
 | `extend` after `finish_today` on the same game day | `409 day_finished` until 04:00. |
 | The answer reply takes longer than 300 ms at the 95th percentile | The verify report shows the measure against ADR-0190's Baselines table. |
+
+Amended by ADR-0210, ADR-0220, ADR-0240 and ADR-0250, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.

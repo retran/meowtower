@@ -273,3 +273,5 @@ Group 8's load time, bundle size and frames per second have no baseline yet; the
 - Which backlog item comes first is the family's choice at the stage 0.3 review, by the signals in RES-3000.
 - The pure-measurement mode and the habit of hints before an answer stay open until the stage 0.3 review, as the ledger above says.
 - How the Russian strings are stored and checked belongs to ADR-0160.
+
+Amended by ADR-0210, ADR-0220, ADR-0230, ADR-0240, ADR-0260, ADR-0280, ADR-0290, ADR-0300, ADR-0310, ADR-0320, ADR-0330, ADR-0340 and ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
