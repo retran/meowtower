@@ -19,7 +19,7 @@ Each record was moved from one range of the draft specification on 2026-09-26. T
 
 <!-- meow-flow index -->
 
-54 researchs in all: 54 approved.
+62 researchs in all: 62 approved.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
@@ -77,6 +77,14 @@ Each record was moved from one range of the draft specification on 2026-09-26. T
 | [RES-4110](RES-4110-silent-play.md) | The owner's addendum of 2026-09-28 makes silence the normal state of the game: sound is off by default, music and effects are turned on only in the parent's settings, and every sound event has a visual equivalent that works alone. | approved |
 | [RES-4120](RES-4120-engagement-and-ownership.md) | Most of section 12 of the owner's addendum can be built on the approved design without touching the measurement: story choices, scenes without tasks, a recurring cast, protected running jokes, rereading, hidden details, rituals and the parent's checklist all live on the Master's side of the split in ADR-0110, where the Director still decides every trial and outcome. | approved |
 | [RES-4130](RES-4130-parent-sandbox.md) | The parent's sandbox fits the code as it stands at commit 47c0a7b. | approved |
+| [RES-4200](RES-4200-goal-falsifiability-and-addendum-2-cross-cutting-rules.md) | The owner's addendum 2 of 2026-09-28 restates the project's goal as a profile of her maths and the real boundary of what she does on her own, and makes falsifiability a required property of the report. | approved |
+| [RES-4210](RES-4210-ability-profile.md) | The owner's addendum 2 of 2026-09-28 makes an ability profile the first section of the parent's report: eight dimensions, each computed from its own observation streams with a count and an 80 % interval, never summed into one number, drawn as horizontal bars with the dynamics over 4 weeks, and never shown to the player. | approved |
+| [RES-4220](RES-4220-skill-trajectory-and-confirmed-retention.md) | The owner's addendum 2 of 2026-09-28, item 3, asks for three things. | approved |
+| [RES-4230](RES-4230-transfer-first-exposures.md) | The owner's addendum 2 of 2026-09-28, item 4, asks the game to record her first unassisted attempt on a new subtype, format or context as a transfer observation, near for a new format or context and far for a new subtype. | approved |
+| [RES-4240](RES-4240-home-and-school-quadrants.md) | The owner's addendum 2 of 2026-09-28, item 5, asks the "home and school" screen of ADR-0310 to put each school goal, and each Cito domain mapped to nodes, into one of four quadrants: high or low at home, high or low at school. | approved |
+| [RES-4250](RES-4250-dutch-diagnostic-probe.md) | The owner's addendum 2 of 2026-09-28, item 6, adds a Dutch diagnostic probe. | approved |
+| [RES-4260](RES-4260-compose-riddles-for-rational-numbers-and-multi-step-expressions.md) | The owner's addendum 2 of 2026-09-28, item 7, extends «Сплети загадку» (Weave a riddle) from word-problem types to seven constructions: equal groups, the two meanings of division, a fraction of a number, decimals, percentages, ratios and multi-step expressions. | approved |
+| [RES-4270](RES-4270-parent-hypotheses.md) | The owner's addendum 2 of 2026-09-28, item 8, adds a page «Гипотезы» (Hypotheses) to the Parent Room. | approved |
 <!-- /meow-flow index -->
 
 ## Sources
