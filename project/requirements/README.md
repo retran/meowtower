@@ -4,7 +4,7 @@ None yet: the project is at the research stage.
 
 <!-- meow-flow index -->
 
-1619 requirements in all: 1546 approved, 73 superseded.
+1620 requirements in all: 1546 approved, 74 superseded.
 
 | Identifier | What it requires | Status |
 | --- | --- | --- |
@@ -736,7 +736,7 @@ None yet: the project is at the research stage.
 | [REQ-2536](REQ-2536-interface-chosen-by-device.md) | When the game starts on a device, the game MUST choose the tablet or the computer interface from the device's input and screen size. | approved |
 | [REQ-2538](REQ-2538-interface-switch-in-settings.md) | The settings MUST let the player switch between the tablet interface and the computer interface. | approved |
 | [REQ-2540](REQ-2540-computer-keyboard-operable.md) | On the computer interface, every screen MUST be usable from the keyboard alone. | approved |
-| [REQ-2542](REQ-2542-device-keeps-only-unsent-answers.md) | A device MUST keep no game data locally except answers it has not yet sent to the server. | approved |
+| [REQ-2542](REQ-2542-device-keeps-only-unsent-answers.md) | A device MUST keep no game data locally except answers it has not yet sent to the server. | superseded |
 | [REQ-2544](REQ-2544-pushes-only-to-parent-subscriptions.md) | After the MVP, the server MUST send alarm pushes only to push subscriptions made from the Parent Room on a paired device. | approved |
 | [REQ-2546](REQ-2546-revoked-device-loses-pushes.md) | When the parent revokes a device, the server MUST delete that device's push subscription. | approved |
 | [REQ-2600](REQ-2600-only-three-kinds-leave-mac.md) | The server MUST NOT send off the parent's Mac any data other than content made without the player, the player's story material (her cleaned free text, invented names, story memory and summary outcome events) and the one-task explanation request. | superseded |
@@ -1627,6 +1627,7 @@ None yet: the project is at the research stage.
 | [REQ-6500](REQ-6500-explanation-numbers-from-engine-or-her-answer.md) | Every number in a detailed explanation MUST be a number the engine computed or the answer the player entered, never one the language model wrote. | approved |
 | [REQ-6502](REQ-6502-at-most-three-explanation-texts-at-once.md) | At any one time, the game MUST keep at most 3 model-written detailed explanation texts that it can show for tasks that share the template, template version, trap, graph shape, familiar and the kind of answer the player gave. | approved |
 | [REQ-6504](REQ-6504-game-text-names-no-studievaardigheden.md) | Text the game writes into the report and the Parent Room MUST NOT name a Studievaardigheden test. | approved |
+| [REQ-6506](REQ-6506-device-keeps-only-unsent-actions.md) | A device MUST keep no game data locally except the entries of its event queue that it has not yet sent to the server. | approved |
 
 By topic:
 
@@ -1652,7 +1653,7 @@ By topic:
 - master: REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1626, REQ-1628, REQ-1630, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-5030, REQ-5032, REQ-5268, REQ-6146, REQ-6148, REQ-6150, REQ-6152, REQ-6154, REQ-6200, REQ-6202, REQ-6208, REQ-6214, REQ-6216, REQ-6218, REQ-6220, REQ-6222, REQ-6224, REQ-6254, REQ-6256, REQ-6258, REQ-6262, REQ-6264, REQ-6266, REQ-6278, REQ-6279, REQ-6280, REQ-6282, REQ-6434, REQ-6436, REQ-6438
 - measurement: REQ-1100, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-1112, REQ-1114, REQ-1116, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132, REQ-5334, REQ-5534, REQ-5644, REQ-5646, REQ-5840, REQ-5842, REQ-6402
 - outcomes: REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764, REQ-5206, REQ-5224, REQ-5226, REQ-5228, REQ-5230, REQ-5236, REQ-5288, REQ-5298, REQ-5310, REQ-5416, REQ-5418, REQ-5422, REQ-5504, REQ-5506, REQ-5508, REQ-5510, REQ-5522
-- platform: REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-2542, REQ-2544, REQ-2546
+- platform: REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-2542, REQ-2544, REQ-2546, REQ-6506
 - privacy: REQ-2600, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2610, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2636, REQ-2638, REQ-2640, REQ-2642, REQ-2644, REQ-2646, REQ-2648, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5200, REQ-5202, REQ-5204, REQ-5208, REQ-5210, REQ-5212, REQ-5272, REQ-5996, REQ-6030, REQ-6048, REQ-6070, REQ-6080, REQ-6082, REQ-6322, REQ-6330, REQ-6366, REQ-6368, REQ-6372
 - progression: REQ-2000, REQ-2002, REQ-2004, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2018, REQ-2020, REQ-2022, REQ-2024, REQ-2026, REQ-2028, REQ-2030, REQ-2032, REQ-2034, REQ-2036, REQ-2038, REQ-5018, REQ-5020, REQ-6126, REQ-6244, REQ-6246
 - puzzles: REQ-5700, REQ-5702, REQ-5704, REQ-5706, REQ-5708, REQ-5718, REQ-5720, REQ-5722, REQ-5724, REQ-5725, REQ-5738, REQ-5740, REQ-5742, REQ-5744, REQ-5746, REQ-5752, REQ-5756, REQ-5768, REQ-5770, REQ-5790

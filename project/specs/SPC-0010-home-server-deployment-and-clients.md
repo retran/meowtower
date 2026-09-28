@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-2542, REQ-2544, REQ-2546, REQ-3714]
+states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-3714]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -125,7 +125,7 @@ The client holds no text of its own: it reads the `ui.` keys of the language fil
 
 On the computer interface every control on every screen works from the keyboard alone, with a visible focus ring (REQ-2540).
 
-The device stores in IndexedDB only the unsent entries of its event queue, and asks for `navigator.storage.persist()` on first launch. The event queue holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order the player made them, with at most one answer per device, and ADR-0030 states how the queue sends them. Its service worker caches code and pictures, and caches sound files only while a sound channel is on (ADR-0320), and `localStorage` holds no game data (REQ-2542).
+The device stores in IndexedDB only the unsent entries of its event queue, and asks for `navigator.storage.persist()` on first launch. The event queue holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order the player made them, with at most one answer per device, and ADR-0030 states how the queue sends them. Its service worker caches code and pictures, and caches sound files only while a sound channel is on (ADR-0320), and `localStorage` holds no game data (REQ-6506).
 
 ### Push
 
@@ -161,4 +161,3 @@ The device stores in IndexedDB only the unsent entries of its event queue, and a
 
 - The agent review asked to state the parent session in one place, since ADR-0030 also states it. I keep the cookie, device binding and memory here as the deployment's view and leave the idle expiry to ADR-0030; the two agree today.
 - The agent review asked for reasons beside the lockout's refusal of a correct entry, the player's ability to start the PIN lockout, and the snapshot name collision rule. I keep them without reasons, because a specification states what the system does and never why (S8).
-- REQ-2542 lets a device keep only answers it hasn't sent, and the event queue ADR-0370 sets also keeps unsent grouping sets, `looks_set`, `glossary_opened` and `plan_draft`. This document states the queue as ADR-0370 sets it; whether REQ-2542's wording needs a replacement is a judgement for the owner (S11).
