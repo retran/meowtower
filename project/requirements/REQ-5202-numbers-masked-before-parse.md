@@ -3,7 +3,7 @@ id: REQ-5202
 artifact: requirement
 topic: privacy
 class: non-functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4020
 verification: behavioural

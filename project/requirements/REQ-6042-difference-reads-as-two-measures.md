@@ -3,7 +3,7 @@ id: REQ-6042
 artifact: requirement
 topic: report
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4100
 verification: judgement

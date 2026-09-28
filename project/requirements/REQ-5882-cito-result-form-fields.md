@@ -3,7 +3,7 @@ id: REQ-5882
 artifact: requirement
 topic: report
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4080
 verification: behavioural

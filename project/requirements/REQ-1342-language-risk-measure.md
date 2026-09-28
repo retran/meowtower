@@ -3,7 +3,7 @@ id: REQ-1342
 artifact: requirement
 topic: limits
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-1300
 verification: behavioural
