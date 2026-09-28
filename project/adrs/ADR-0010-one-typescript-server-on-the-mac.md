@@ -119,3 +119,5 @@ For a month with nobody attending: the rolling snapshots keep draining, the mont
 - Web push after the MVP beyond the table and cascade named above: the permission button, the service worker and VAPID keys come with that later item.
 
 Amended by ADR-0340 and ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

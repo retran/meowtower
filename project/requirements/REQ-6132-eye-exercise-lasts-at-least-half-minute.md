@@ -3,7 +3,7 @@ id: REQ-6132
 artifact: requirement
 topic: time
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4110
 verification: behavioural

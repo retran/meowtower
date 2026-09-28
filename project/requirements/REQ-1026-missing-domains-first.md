@@ -3,7 +3,7 @@ id: REQ-1026
 artifact: requirement
 topic: selection
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-1000
 verification: behavioural

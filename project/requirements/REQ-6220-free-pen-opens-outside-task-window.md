@@ -3,7 +3,7 @@ id: REQ-6220
 artifact: requirement
 topic: master
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4120
 verification: behavioural

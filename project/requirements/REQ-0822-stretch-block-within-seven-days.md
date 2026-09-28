@@ -3,7 +3,7 @@ id: REQ-0822
 artifact: requirement
 topic: skill-graph
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-0800
 verification: behavioural

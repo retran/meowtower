@@ -3,7 +3,7 @@ id: REQ-5860
 artifact: requirement
 topic: selection
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4080
 verification: behavioural

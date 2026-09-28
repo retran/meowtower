@@ -114,3 +114,5 @@ The premortem, written as though it already happened. The gate shipped and passe
 - Who writes and reviews a second language's strings and forbidden list. That is a person's work at the Dutch stage, outside the MVP scope ADR-0190 fixes.
 
 Amended by ADR-0210, ADR-0250 and ADR-0290, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

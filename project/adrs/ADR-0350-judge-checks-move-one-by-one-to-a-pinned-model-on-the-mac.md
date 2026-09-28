@@ -523,3 +523,5 @@ checks to their hosted route if the load can't be moved.
   event type names it and its fields and owns it. The columns and the line
   stay as the smallest statement of what the table and the page must hold;
   the specification may rename them.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

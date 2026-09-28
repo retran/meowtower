@@ -218,3 +218,5 @@ The premortem, written as though it had happened: at the stage 0.3 review the bl
 - Whether a grouping ever joins the knowledge model: a later model version through ADR-0060's activation rule.
 - The resized forge recipes, if the yarn rises: the record REQ-5536 opens.
 - Expressions that mix operations, and so whether she respects precedence, and a grouping item of the distributive law alone: RES-4050 left both out, and a new research record would bring them in.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

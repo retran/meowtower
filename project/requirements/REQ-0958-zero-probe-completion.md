@@ -3,7 +3,7 @@ id: REQ-0958
 artifact: requirement
 topic: knowledge-model
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-0900
 verification: behavioural

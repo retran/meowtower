@@ -230,3 +230,5 @@ The premortem, written as though it had already happened. Six weeks in, the pare
 - An agent reviewer suggested citing SPC-0020 in place of the event payload table and the failure-states table. I kept both, because ADR-0210 makes this decision the owner of the 14 event types, and SPC-0020 gains them only after the owner approves this record; the failure table follows the house style of ADR-0080 and ADR-0110.
 - A second agent reviewer suggested comparing a small pen bucket paid from the month's slack. I didn't add it, because RES-4120 and ADR-0210 already decided the pen gets no bucket of its own, and this decision can't reopen that.
 - The same reviewer suggested merging the paragraph on order-only routes into the one on route B. I left them apart, because the first gives the reason for the swap and the second the cost the reader weighs beside the objection.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

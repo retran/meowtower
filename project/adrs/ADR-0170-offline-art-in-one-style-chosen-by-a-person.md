@@ -153,3 +153,5 @@ Premortem, written as if it happened: the queue ran overnight after the style ch
 - The canon's list of pictures, the five dreamcore locations and each card's wording; the canon and the spec own them.
 - Live art, part-mask animation and art for AI-made creatures, which come after the MVP; the live art design in RES-2800 stays for that stage.
 - Whether a floor asset uses its floor's palette and whether a stage picture keeps its creature recognisable. The person who chooses judges both, with the palette and the previous stage shown beside the variants, because no program can.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

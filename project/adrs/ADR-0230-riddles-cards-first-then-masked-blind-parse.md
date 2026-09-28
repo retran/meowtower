@@ -542,3 +542,5 @@ file with a dictionary it wasn't written from.
 
 - The second agent review asked to move the event payloads, the schema's fields, the file paths and the function's name into the specification. Rejected: the approved decisions of this repository, ADR-0080 and ADR-0100 among them, name their events, schemas and modules, and the brief for this step makes the decision that needs an event type own it with its payload fields.
 - Consistency with ADR-0210, found after the second review and not reviewed again: ADR-0210 names the tokens `[N1]`, `[N2]` and so on, while REQ-5202 names them `n1` to `nm`, which this decision follows; and ADR-0210's rule that a parse output failing its schema falls back to sentence cards differs from REQ-5288, which gives such a riddle `unparsed`, and this decision follows REQ-5288. The owner settles both when approving ADR-0210 and this decision together.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

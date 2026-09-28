@@ -251,3 +251,5 @@ Two agent reviews ran on this record, and I fixed every finding they marked as a
 - `sourceNote` has a 200-character bound with no stated reason. I keep it that way, because the bound changes nobody's work and only keeps a pasted document out of the field.
 - No failure state covers a confirmation that arrives after the hourly sweep deleted the temporary file. The route answers as for `snapshot_unreadable` and asks for the file again, and the specification step names the state.
 - The payload table, the CSV columns and the fixture directory's name and tracking are specification-level detail. I keep the payloads here, because this record owns the six types under ADR-0020's rule, and leave the fixture directory and the final columns to the specification step.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

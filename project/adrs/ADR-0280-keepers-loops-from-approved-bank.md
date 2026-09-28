@@ -237,3 +237,5 @@ The premortem, written as though it had happened: three months in, the parent fo
 - The owner's rule for growing the branch by her interest, and difficulty 5: after the MVP, reading the section's counts.
 - Puzzles in English and Dutch, which need their own text files, approvals and a check that each locale's text fits the same data.
 - A shared count of running clues across the Master's scenes and the puzzles; until ADR-0110 logs clues, the parent judges the pace at approval.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

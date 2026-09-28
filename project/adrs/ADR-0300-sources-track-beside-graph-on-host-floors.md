@@ -229,3 +229,5 @@ The premortem, written as though it had happened: by the third month the parent 
 - Choosing a suitable source and reading schemas and flow charts, which the track leaves out (REQ-5992).
 - A zoom event in the log, and any report of how often she zooms.
 - Whether «сама» ever admits track attempts, which needs the refit after the MVP (ADR-0060).
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

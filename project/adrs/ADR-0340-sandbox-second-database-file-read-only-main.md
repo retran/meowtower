@@ -239,3 +239,5 @@ The premortem, written as though it had happened: in February the parent found t
 - The design of the sandbox's screens beyond the frame and the label: the specification step and ADR-0150.
 - Whether the parent's notes, which no longer cross from the sandbox, should be written in the Parent Room instead: ADR-0180.
 - Defending the volume against root inside the Docker virtual machine.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

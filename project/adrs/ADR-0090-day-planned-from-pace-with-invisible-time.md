@@ -199,3 +199,5 @@ The premortem, written as though it had happened: two months in, the parent foun
 - Whether the iPad's status bar clock can be hidden in a home-screen web app. I haven't verified it for the current iPadOS, and the game can't draw over it; the owner decides whether it matters.
 
 Amended by ADR-0210, ADR-0250, ADR-0280, ADR-0290, ADR-0320 and ADR-0330, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

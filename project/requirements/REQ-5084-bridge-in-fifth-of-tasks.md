@@ -3,7 +3,7 @@ id: REQ-5084
 artifact: requirement
 topic: task-text
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4000
 verification: evaluation

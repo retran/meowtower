@@ -198,3 +198,5 @@ Premortem, written as if it happened: by November the player had learned that a 
 - Familiar battles, stats, paths, rank changes, legendaries and AI-made creatures, which come after the MVP; this record fixes only the rules they must follow when they arrive.
 
 Amended by ADR-0250, ADR-0260, ADR-0280, ADR-0290, ADR-0320 and ADR-0330, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

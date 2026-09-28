@@ -172,3 +172,5 @@ The premortem, written as though it had happened: at stage 0.3 the silent test w
 - The texts of the reaction lines and the eyes-off lines; the parent approves them through ADR-0110's pool.
 - Dictation's own behaviour, which stays as ADR-0150, part 7, sets it.
 - Whether she actually rests during an eyes-off exercise. Nothing on the screen can tell, and the reversal condition on quick taps is the only watch.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

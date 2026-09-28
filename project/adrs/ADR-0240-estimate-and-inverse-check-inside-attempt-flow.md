@@ -216,3 +216,5 @@ The premortem, written as though it had happened: three months in, the node card
 ## Open review findings
 
 - The first review asked to move the route bodies, reply shapes and payload fields into SPC-0020 and SPC-0030 and keep only the facts here. I kept them, because ADR-0080 and ADR-0220 name their events and routes at the same level, and ADR-0020 makes the owning decision of each event type define its payload.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

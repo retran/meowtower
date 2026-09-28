@@ -421,3 +421,5 @@ unseen. The report on cache reads in part 6 of the decision now catches this
 on the first such adventure.
 
 Amended by ADR-0210, ADR-0220, ADR-0230, ADR-0280, ADR-0340 and ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
