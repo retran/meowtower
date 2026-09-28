@@ -277,3 +277,5 @@ Group 8's load time, bundle size and frames per second have no baseline yet; the
 Amended by ADR-0210, ADR-0220, ADR-0230, ADR-0240, ADR-0260, ADR-0280, ADR-0290, ADR-0300, ADR-0310, ADR-0320, ADR-0330, ADR-0340 and ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

@@ -9,11 +9,11 @@ states: [REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, R
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
-# The play API, the adventure and session lifecycle, the device lease and the offline answer queue
+# The play API, the adventure and session lifecycle, the device lease and the offline event queue
 
 ## Scope
 
-This document covers the contract between the game client and the `meowtower` server: the routes under `/api`, the packets and replies they carry, the server-sent events (SSE) stream and its poll route, the lifecycle of an adventure and a session, the lease that lets one device play at a time, the resume point, the three-day rule, the parent session and the finish-today route, the fields that carry the estimate, the inverse check and «Нельзя узнать» (can't be known), and the client's answer queue and offline state. It is written at the API level: routes, packets, messages, states and the events each request logs. A reader who needs how the server is deployed or paired reads SPC-0010, and one who needs a screen's layout reads the specification of the interface.
+This document covers the contract between the game client and the `meowtower` server: the routes under `/api`, the packets and replies they carry, the server-sent events (SSE) stream and its poll route, the lifecycle of an adventure and a session, the lease that lets one device play at a time, the resume point, the three-day rule, the parent session and the finish-today route, the fields that carry the estimate, the inverse check and «Нельзя узнать» (can't be known), and the client's event queue and offline state. It is written at the API level: routes, packets, messages, states and the events each request logs. A reader who needs how the server is deployed or paired reads SPC-0010, and one who needs a screen's layout reads the specification of the interface.
 
 It leaves out what other decisions define. The `events` table, `appendEvents` and the projections' storage and rebuild belong to ADR-0020. What a task contains and how an answer is checked belong to ADR-0040 and ADR-0250, which task comes next to ADR-0070, the attempt flow, hints and threads as game rules to ADR-0080 and ADR-0220, the estimate and the inverse check as game rules to ADR-0240, and the game day, the soft stop, extensions, eye exercises and rest stops as story to ADR-0090. Scene text and the waiting scene's wording belong to ADR-0110 and ADR-0160, the explanation's text to ADR-0120, grants, chests and secrets to ADR-0140, and the Parent Room's pages to ADR-0180. How the knowledge model reads `interrupted`, `crossDevice` and `attempt_late` belongs to ADR-0060.
 
@@ -27,16 +27,16 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 
 | Route | What it does |
 | --- | --- |
-| `POST /api/session/start` | `{ mode: "zero" \| "daily", clientSeq }`. Opens a session and takes the lease for the calling device. `daily` continues the open adventure or plans a new one; a Session 0 (`zero`) belongs to no adventure. |
+| `POST /api/session/start` | `{ mode: "zero" \| "daily", clientSeq }`. Opens a session and takes the lease for the calling device; replies `{ sessionId, adventureId }`. `daily` continues the open adventure or plans a new one; a Session 0 (`zero`) belongs to no adventure, and its `adventureId` is null. |
 | `GET /api/adventure/current` | The open adventure, `planned`, `active` or `paused`, with where play stopped (floor, room, slot), or `null` when none is open. |
-| `POST /api/adventure/resume` | Takes the lease for the calling device and returns `ResumeOut`. |
-| `POST /api/session/:id/resume` | The same as `POST /api/adventure/resume`, for the current session. |
+| `POST /api/adventure/resume` | `{ clientSeq }`. Opens a new session, takes the lease for the calling device and returns `ResumeOut` with the new `sessionId`. |
 | `POST /api/session/:id/heartbeat` | The lease holder's heartbeat. |
-| `GET /api/session/:id/next` | The next packet: `room`, `scene`, `chest`, `break`, `stop_offer` or `end`. |
+| `GET /api/session/:id/next` | The next packet: `room`, `scene`, `chest`, `break`, `stop_offer` or `end`. While the packet it last returned is still open, it returns that packet again. |
 | `POST /api/session/:id/answer` | `AnswerIn` for a first or second attempt; replies `AnswerOut`. |
 | `POST /api/item/:itemId/hint` | `HintIn`: shows the rung the request names, which is the next one or one already shown; the first rung of an attempt opens the ladder for 1 thread. Replies `HintOut`. |
 | `POST /api/item/:itemId/check` | `CheckIn`: one inverse check of her preliminary answer before the first attempt; replies `CheckOut`. |
-| `POST /api/item/:itemId/explain` | Buys a detailed explanation; replies `ExplainOut` with `status: "pending"`. |
+| `POST /api/item/:itemId/explain` | Buys a detailed explanation, or on an item already charged produces its text again; replies `ExplainOut` with `status: "pending"`. |
+| `POST /api/item/:itemId/plan/draft` | `{ laid, clientSeq }`: her partly laid solution plan; logs `plan_draft`, whose contents ADR-0270 defines. |
 | `POST /api/item/:itemId/second-attempt` | `{ clientSeq }`, after the first attempt's verdict. Returns the parallel task for the second attempt as a `room` packet with an `itemId` of its own. |
 | `POST /api/session/:id/chest` | `{ chestId, rewardId }`: her pick of one of the chest's three options. |
 | `POST /api/session/:id/scene/input` | A scene choice, her free text, or a free-text draft. |
@@ -51,7 +51,7 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 | `GET` and `PUT /api/parent/settings` | The parent settings, among them `threeDayLimit`. |
 | `POST /api/parent/finish-today` | «Закончить на сегодня». |
 
-`POST /api/game/forge`, `POST /api/game/shop/buy` and the other `/api/parent/*` routes follow the same contract, and their contents belong to ADR-0140 and ADR-0180. The API has no push route and no session mode `checkpoint` or `free`.
+`POST /api/game/forge`, `POST /api/game/shop/buy` and the other `/api/parent/*` routes follow the same contract, and their contents belong to ADR-0140 and ADR-0180. The API has no push route, no session resume route and no session mode `checkpoint` or `free`.
 
 ### Packets and replies
 
@@ -66,18 +66,18 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 | `CheckIn` | `preliminaryRaw`, `checkRaw` and `clientSeq`. |
 | `CheckOut` | `match` and `checksLeft`. |
 | `ExplainOut` | `status: "pending"` and the thread stock. |
-| `ResumeOut` | `adventureId`, the packet to continue on with the rungs already shown and their framing lines, the rewards not yet delivered, and `wrapUp`. |
+| `ResumeOut` | `sessionId`, `adventureId`, the packet to continue on with the rungs already shown and their framing lines, the rewards not yet delivered, the `itemId`s of the open room whose explanation she bought, and `wrapUp`. |
 | `stop_offer` | `canExtend`. |
 | `end` | `{ kind: "end" }`: the adventure has reached its finale or its short ending; a new session plans the next one. |
 | `PollOut` | `messages`: the stream's messages after the `seq` asked for. |
 
 ### SSE messages
 
-The stream `GET /api/session/:id/events` carries five messages, each with the `seq` of the log event it reports: `scene_ready`, `explanation_ready`, `lease_moved`, `safety_pause` and `settings`, whose sound channels ADR-0320 states. This part sends `explanation_ready` and `lease_moved`; the parts ADR-0110 defines send `scene_ready` and `safety_pause`. `explanation_ready` carries the `seq` of `explanation_bought`, the `itemId`, the source, `model` or `template`, and the text. The server keeps each session's messages in memory for the poll route, because the explanation's text never enters the log; after a restart the resume packet brings a client back.
+The stream `GET /api/session/:id/events` carries five messages, each with the `seq` of the log event it reports: `scene_ready`, `explanation_ready`, `lease_moved`, `safety_pause` and `settings`, whose sound channels ADR-0320 states. This part sends `explanation_ready` and `lease_moved`; the parts ADR-0110 defines send `scene_ready` and `safety_pause`. `explanation_ready` carries the `seq` of `explanation_bought`, the `itemId`, the source, `model` or `template`, and the text. The server keeps each session's messages in memory for the poll route, and the explanation's text never enters the log; after a restart the resume packet brings a client back, and a repeated explanation request delivers the text again.
 
 ### Events this part logs
 
-`adventure_planned`, `adventure_started`, `adventure_paused` with the reason `leave`, `background`, `idle` or `lease_expired`, `adventure_resumed`, `adventure_completed`, `adventure_wrapped_up`, `session_started`, `session_ended`, `device_lease_taken`, `settings_changed`, `scene_prepared`, `text_draft_saved`, `rewards_delivered`, `attempt_late` and `item_focus`, all through `appendEvents`. It also logs, on the routes it serves, the types other decisions own: `attempt_submitted`, `verdict`, `hint_shown` with `ladderOpenedBy`, `thread_spent` with the reason `hint_ladder` or `explanation`, `explanation_bought`, `self_check_used`, `save_accepted` and `finish_today`. SPC-0020 holds their payload versions. Every event of a daily session carries the adventure in its envelope.
+`adventure_planned`, `adventure_started`, `adventure_paused` with the reason `leave`, `background`, `idle` or `lease_expired`, `adventure_resumed`, `adventure_completed`, `adventure_wrapped_up`, `session_started`, `session_ended`, `device_lease_taken`, `settings_changed`, `scene_prepared`, `text_draft_saved`, `rewards_delivered`, `attempt_late` and `item_focus`, all through `appendEvents`. It also logs, on the routes it serves, the types other decisions own: `attempt_submitted`, `verdict`, `hint_shown` with `ladderOpenedBy`, `thread_spent` with the reason `hint_ladder` or `explanation`, `explanation_bought`, `self_check_used`, `save_accepted`, `finish_today` and `plan_draft`. SPC-0020 holds their payload versions. Every event of a daily session carries the adventure in its envelope.
 
 | Event, v1 | Payload |
 | --- | --- |
@@ -94,17 +94,18 @@ The stream `GET /api/session/:id/events` carries five messages, each with the `s
 | `409 day_finished` | the player | `extend` after `finish_today`, until 04:00 |
 | `401 parent_session_expired` | the parent | a parent request 30 minutes after the last one |
 | `409 adventure_closed` | the developer | an event would move an adventure out of `complete` or `wrapped_up` |
-| `409 session_ended` | the developer | `next`, `pause` or `break` on a session that has ended |
+| `409 session_ended` | the player | `next`, `pause` or `break` on a session that has ended; the client shows the button to continue |
 | `409 attempt_open` | the developer | a second attempt asked for before the first attempt's verdict |
 | `409 not_a_first_attempt` | the developer | a second attempt asked for on a second attempt |
 | `409 no_threads` | the player | a ladder opening or an explanation with no thread left |
 | `400 hint_level_skipped` | the developer | a rung beyond the next one |
 | `400 hint_level_beyond_ladder` | the developer | a rung past `hintMaxLevel`, a rung on a ladder of length 0 included |
 | `422 answer_kind_refused` | the developer | `insufficient` on an item without `allowInsufficient`, or together with `dontKnow` or a non-empty `raw` |
-| `estimate_missing` | the player | an answer on an item with an estimate, with no pick, no «Не знаю» and no `insufficient` |
-| `check_limit_reached` | the player | a fourth counted check on one task |
-| `check_late` | the developer | a check after the task's first attempt |
-| `429 rate_limited` | the developer | more than 20 state-changing requests in a second from one device |
+| `422 estimate_missing` | the player | an answer on an item with an estimate, with no pick, no «Не знаю» and no `insufficient` |
+| `409 check_limit_reached` | the player | a fourth counted check on one task |
+| `409 check_late` | the developer | a check after the task's first attempt |
+| `422 check_unparsed` | the player | a `checkRaw` the server can't parse; the client shows the check field again |
+| `429 rate_limited` | the developer | more than 20 state-changing or `next` requests in a second from one device |
 | `500` | the developer | an outgoing body failed its `.strict()` schema |
 | `server_unreachable` | the player | the client can't reach the server and shows the waiting scene |
 | `attempt_late` | the parent | an answer arrived for a task that already had its attempt |
@@ -114,7 +115,7 @@ The stream `GET /api/session/:id/events` carries five messages, each with the `s
 
 - ADR-0020 supplies `appendEvents`, the unique `idem_key` column, the projections `adventures`, `sessions`, `reward_queue` and `resume_snapshot`, and the event schemas in `src/shared/events.ts`.
 - SPC-0010 supplies the device token, the device's kind, `tablet` or `computer`, set at pairing and switched in the settings, the PIN check and its lockout, and the durable commit before a reply.
-- ADR-0040, ADR-0250 and ADR-0070 supply the tasks, the answer check, the "what's missing" options and the next packet; ADR-0080 and ADR-0220 the threads, the hint ladder, its framing lines and second attempts; ADR-0240 the estimate options, the check's target and its verdicts; ADR-0090 the game day, the breaks and the soft stop; ADR-0110 the scenes, the short ending and the waiting scene; ADR-0120 the explanation text; ADR-0140 the grants, chests and secrets.
+- ADR-0040, ADR-0250 and ADR-0070 supply the tasks, the answer check, the "what's missing" options and the next packet; ADR-0080 and ADR-0220 the threads, the hint ladder, its framing lines and second attempts; ADR-0240 the estimate options, the check's target and its verdicts; ADR-0090 the game day, the breaks and the soft stop; ADR-0110 the scenes, the short ending and the waiting scene; ADR-0120 the explanation text; ADR-0140 the grants, chests and secrets; ADR-0270 the plan draft's contents.
 - ADR-0190 holds this part's budgets in its Baselines table.
 
 The permitted dependencies run one way. The client imports only `src/shared/`, and nothing in `src/server/` or `src/engine/`. Route code writes to the log only through `appendEvents`. `src/shared/api.ts` imports only zod and `src/shared/`.
@@ -133,11 +134,11 @@ Until she answers, nothing the server sends lets a client tell an unanswerable T
 
 ### The inverse check
 
-`POST /api/item/:itemId/check` compares the parsed `checkRaw` in `Q` with the operand printed in the task that `Room.check` names, logs `self_check_used`, and replies `{ match, checksLeft }`. It never computes the correct answer, never judges `preliminaryRaw`, and logs the preliminary answer only inside `self_check_used`, never as `attempt_submitted` (REQ-2400, REQ-2420). A task allows 3 counted checks, and a `checkRaw` the server can't parse counts none of them. The server refuses a fourth counted check with `check_limit_reached` and a check after the first attempt with `check_late`, logging nothing for either. ADR-0080 states when the check is offered and what the player sees.
+`POST /api/item/:itemId/check` compares the parsed `checkRaw` in `Q` with the operand printed in the task that `Room.check` names, logs `self_check_used`, and replies `{ match, checksLeft }`. It never computes the correct answer, never judges `preliminaryRaw`, and logs the preliminary answer only inside `self_check_used`, never as `attempt_submitted` (REQ-2400, REQ-2420). A task allows 3 counted checks. A `checkRaw` the server can't parse gets `422 check_unparsed`, logs nothing and counts no check, and the client shows the check field again. The server refuses a fourth counted check with `409 check_limit_reached` and a check after the first attempt with `409 check_late`, logging nothing for either. ADR-0080 states when the check is offered and what the player sees.
 
 ### The answer
 
-`POST /api/session/:id/answer` logs the attempt and its verdict through `appendEvents`, commits the transaction, and only then replies. With `dontKnow: true`, the server logs the verdict `dont_know`, apart from `wrong` and from an empty `raw` (REQ-2442). With `insufficient` set, `dontKnow` false and `raw` empty, it logs `insufficient_correct`, `insufficient_partial` or `false_insufficient`, and it refuses `insufficient` with `422 answer_kind_refused` on an item whose `InputSpec` lacks `allowInsufficient`. On an item with an estimate, the server judges the pick in `estimate` together with the exact answer, so no estimate verdict leaves the server before the answer, and `AnswerOut` carries the pick and the correct option. An answer with `insufficient` set needs no pick there, and the server records no estimate for it; any other answer on such an item with no `estimate` and no `dontKnow` gets `estimate_missing`, logs nothing, and the client shows the four options again. `AnswerOut` carries the streak, the grants and the short solution, and for a first attempt the game outcome (REQ-2416), and after every attempt `feedback.correctAnswer` formatted for display (REQ-2418). No string the reply can carry, from the `battleLine` pool or from its string keys, contains `верно` or `неверно` as a whole word (REQ-2414). The answer path and the check route make no model call, and the server replies to each within 300 ms at the 95th percentile, from request received to reply sent.
+`POST /api/session/:id/answer` logs the attempt and its verdict through `appendEvents`, commits the transaction, and only then replies. With `dontKnow: true`, the server logs the verdict `dont_know`, apart from `wrong` and from an empty `raw` (REQ-2442). With `insufficient` set, `dontKnow` false and `raw` empty, it logs `insufficient_correct`, `insufficient_partial` or `false_insufficient`, and it refuses `insufficient` with `422 answer_kind_refused` on an item whose `InputSpec` lacks `allowInsufficient`. On an item with an estimate, the server judges the pick in `estimate` together with the exact answer, so no estimate verdict leaves the server before the answer, and `AnswerOut` carries the pick and the correct option. An answer with `insufficient` set needs no pick there, and the server records no estimate for it; any other answer on such an item with no `estimate` and no `dontKnow` gets `422 estimate_missing`, logs nothing, and the client shows the four options again. `AnswerOut` carries the streak, the grants and the short solution, and for a first attempt the game outcome (REQ-2416), and after every attempt `feedback.correctAnswer` formatted for display (REQ-2418). No string the reply can carry, from the `battleLine` pool or from its string keys, contains `верно` or `неверно` as a whole word (REQ-2414). The answer path and the check route make no model call, and the server replies to each within 300 ms at the 95th percentile, from request received to reply sent.
 
 ### Repeated requests and charges
 
@@ -147,9 +148,11 @@ A charge also has a key of its own that ignores `clientSeq`: a ladder opening is
 
 `POST /api/item/:itemId/hint` with level 1 on an attempt whose ladder is closed spends 1 thread, logs `thread_spent` with the reason `hint_ladder` and `hint_shown` with `ladderOpenedBy: "thread"`, and returns rung 1. Each later level on the same attempt spends nothing and logs `hint_shown` with `ladderOpenedBy: "free_step"`. A level past `hintMaxLevel` gets `400 hint_level_beyond_ladder`, and a level beyond the next rung gets `400 hint_level_skipped`; for either the server shows and charges nothing. A level already shown on the attempt returns that rung and spends no thread. ADR-0080 states the ladder's rungs and their framing lines.
 
-`POST /api/item/:itemId/explain` logs `thread_spent` and `explanation_bought` and replies `pending` at once (REQ-2424). The text arrives as `explanation_ready` on the stream, or as a template explanation after 10 seconds.
+`POST /api/item/:itemId/explain` logs `thread_spent` and `explanation_bought` and replies `pending` at once (REQ-2424). The text arrives as `explanation_ready` on the stream, or as a template explanation after 10 seconds. A repeated request on an item already charged, with any `clientSeq`, spends nothing, produces the text again by ADR-0120's order and sends it as `explanation_ready` (REQ-0214).
 
-The server answers `429` to a device's 21st state-changing request within one second.
+`GET /api/session/:id/next` is idempotent: while the packet it last returned is still open, it returns that packet again and logs nothing, and it logs a new packet's events only after the client acted on the previous one, so a repeated `next` logs a task once (REQ-2432). It carries no `clientSeq`.
+
+The server answers `429` to a device's 21st state-changing or `next` request within one second.
 
 ### Adventure and session lifecycle
 
@@ -161,17 +164,19 @@ The client sends `POST /api/session/:id/pause` with `leave` from «Сохран�
 
 ### One device at a time
 
-`POST /api/session/start` and `POST /api/adventure/resume` take the lease for the calling device and log `device_lease_taken`. The client calls them only when the player taps to play or to continue, never when it opens. The holder sends a heartbeat every 15 seconds. After 45 seconds without one, the server logs `adventure_paused` with the reason `lease_expired` and `session_ended`, as device `server`, or `session_ended` alone on a finished adventure, and the state equals the one «Сохранить и уйти» leaves, so a closed app, a flat battery or a change of device keeps the same state (REQ-0202). When another device takes the lease before then, the server logs the same events for the old session first, with the reason `lease_expired`, and then `device_lease_taken`.
+`POST /api/session/start` and `POST /api/adventure/resume` open a session, log `session_started`, take the lease for the calling device and log `device_lease_taken`. The client calls them only when the player taps to play or to continue, never when it opens. The holder sends a heartbeat every 15 seconds. After 45 seconds without one, the server logs `adventure_paused` with the reason `lease_expired` and `session_ended`, as device `server`, or `session_ended` alone on a finished adventure, and the state equals the one «Сохранить и уйти» leaves, so a closed app, a flat battery or a change of device keeps the same state (REQ-0202). When another device takes the lease before then, the server logs the same events for the old session first, with the reason `lease_expired`, and then `device_lease_taken`.
 
-The server accepts state-changing requests only from the lease holder and answers any other device `409 lease_moved`, except that it still logs an answer, as below (REQ-0220). When the lease moves, the server sends `lease_moved` on the old device's stream, and that device turns view-only and shows «Приключение продолжено в другом месте» with a button to continue there (REQ-0222).
+The server accepts state-changing requests and `next` only from the lease holder. While another device holds the lease, it answers any other device `409 lease_moved`, except that it still logs an answer, as below (REQ-0220). When the lease moves, the server sends `lease_moved` on the old device's stream, and that device turns view-only and shows «Приключение продолжено в другом месте» with a button to continue there (REQ-0222).
 
-An answer from a device that lost the lease is still logged, and its reply is `409 lease_moved`. When the item has no attempt yet, the server records the answer as that attempt, and the new holder gets the outcome with its next packet. When the item has one, the server logs `attempt_late` with the raw answer, and it gets no verdict, no grants and no weight in the estimate.
+An answer from a device that lost the lease to another device is still logged, and its reply is `409 lease_moved`. When the item has no attempt yet, the server records the answer as that attempt, and the new holder gets the outcome with its next packet. When the item has one, the server logs `attempt_late` with the raw answer, and it gets no verdict, no grants and no weight in the estimate.
+
+An answer from a device whose lease expired while no device holds the lease is recorded the same way, as the attempt or as `attempt_late`, and gets its `AnswerOut` with the outcome and the grants (REQ-2438). The device takes no lease, its next `next` gets `409 session_ended`, and the client shows the button to continue.
 
 ### Resume
 
-The `resume_snapshot` projection updates in the same transaction as the event that changes it, and after every adventure event it equals the resume point derived from the log alone (REQ-0206). `POST /api/adventure/resume` returns it as `ResumeOut`: the same floor, room, slot, `itemId` and view, attempt step, rungs already shown with the framing lines stored with them, scene line and rewards not yet delivered (REQ-0204). A resume shows the rungs again, spends no thread and logs no `hint_shown`. A resume before «Готово» (Done) on an item with an estimate shows the estimate step again, because the server never held the pick.
+The `resume_snapshot` projection updates in the same transaction as the event that changes it, and after every adventure event it equals the resume point derived from the log alone (REQ-0206). `POST /api/adventure/resume` returns it as `ResumeOut` with the new session's `sessionId`: the same floor, room, slot, `itemId` and view, attempt step, rungs already shown with the framing lines stored with them, scene line and rewards not yet delivered (REQ-0204). A resume shows the rungs again, spends no thread and logs no `hint_shown`. A resume before «Готово» (Done) on an item with an estimate shows the estimate step again, because the server never held the pick.
 
-Everything the snapshot holds is in the log (REQ-0208). `scene_prepared` holds the scene lines and branches as they passed the safety checks. `text_draft_saved` holds her free-text draft, sent at most once every 10 seconds while she types. `rewards_delivered` records each grant or ceremony the client showed. A resumed scene continues from `scene_prepared` with no new request to the Master (REQ-0216). A chest reopens with the three options its `chest_offered` holds (REQ-0218), and the random generator's state follows from the adventure seed and the draws logged.
+Everything the snapshot holds is in the log (REQ-0208). `scene_prepared` holds the scene lines and branches as they passed the safety checks. `text_draft_saved` holds her free-text draft, sent at most once every 10 seconds while she types. `plan_draft` holds her partly laid solution plan, sent through `POST /api/item/:itemId/plan/draft` at most once every 10 seconds while the row changes and at once when she leaves the task window or the page turns hidden (REQ-0208). `rewards_delivered` records each grant or ceremony the client showed. A resumed scene continues from `scene_prepared` with no new request to the Master (REQ-0216). A chest reopens with the three options its `chest_offered` holds (REQ-0218), and the random generator's state follows from the adventure seed and the draws logged.
 
 A task left unanswered comes back as the same first attempt, and its answer counts towards accuracy (REQ-0210). When a pause lies between a task's `item_shown` and its `attempt_submitted`, the server sets `interrupted: true` on the attempt, and its time counts in no measure (REQ-0212). When an attempt is submitted on a device of another kind than the one that showed its task, the server sets `crossDevice: true`, and its time counts in no measure (REQ-0224).
 
@@ -181,9 +186,9 @@ An adventure day is a game day, from 04:00 to 04:00, on which a task or a scene 
 
 When the first session of a new game day starts on an adventure that already has `threeDayLimit` adventure days, `ResumeOut.wrapUp` is true. The server lets the open task and room finish, plays the short ending from the scene library and logs `adventure_wrapped_up` with the secrets she didn't open (REQ-0228). `reward_queue` takes those secrets (REQ-0232). The wrap-up logs no reversing grant and removes no event, so she keeps everything she earned (REQ-0230).
 
-### The answer queue and the offline state
+### The event queue and the offline state
 
-The client writes each answer to its IndexedDB queue and waits for the write to commit before it sends the answer. It retries from 1 second, doubling to at most 30 seconds, and on launch it flushes the queue before it asks to resume, so every answer reaches the log through a dropped connection, a closed app or a restart (REQ-2434). The client queues an answer only once it passes its `InputSpec` check and, on an item with an estimate, carries a pick, «Не знаю» or `insufficient`. It removes the answer from the queue on a `2xx` reply or `409 lease_moved`, and keeps it and retries on any other reply or none. The queue holds at most one answer per device, and the grouping sets ADR-0260 sends travel through it in order, none dropped. An answer unsent for 24 hours shows as `queue_stuck` in that device's settings, with the answer's time and a retry button.
+The client's queue is an event queue: it holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order she made them, and sends them in that order, none dropped. The client writes each entry to its IndexedDB queue and waits for the write to commit before it sends the entry. It retries from 1 second, doubling to at most 30 seconds, and on launch it flushes the queue before it asks to resume, so every answer reaches the log through a dropped connection, a closed app or a restart (REQ-2434). The client queues an answer only once it passes its `InputSpec` check and, on an item with an estimate, carries a pick, «Не знаю» or `insufficient`. It removes an entry from the queue on a `2xx` reply or `409 lease_moved`, and keeps it and retries on any other reply or none. The queue holds at most one answer per device. An answer unsent for 24 hours shows as `queue_stuck` in that device's settings, with the answer's time and a retry button.
 
 While the client has no connection, the hint, explanation and second-attempt controls are inactive (REQ-2436), and so is «Проверить нить» (Check the thread). An estimate pick waits in the queue inside its answer. After an answer goes into the queue with no connection, the client shows the waiting scene «Туман над тропой, фамильяр ищет дорогу» and no new task until the server answers; the outcome and the grants then arrive together (REQ-2438).
 
@@ -203,17 +208,21 @@ While the client has no connection, the hint, explanation and second-attempt con
 | A hint request names a rung beyond the next one | `400 hint_level_skipped`; nothing is shown or charged. |
 | A hint request names a rung already shown on the attempt | The rung returns; no thread is spent. |
 | `insufficient` arrives on an item without `allowInsufficient`, or with `dontKnow` or a `raw` | `422 answer_kind_refused`; nothing is logged. |
-| An answer on an item with an estimate carries no pick, no «Не знаю» and no `insufficient` | `estimate_missing`; nothing is logged, and the client shows the four options again. |
+| An answer on an item with an estimate carries no pick, no «Не знаю» and no `insufficient` | `422 estimate_missing`; nothing is logged, and the client shows the four options again. |
 | An answer on an item with an estimate carries `insufficient` and no pick | The server accepts it and records no estimate. |
-| A fourth counted check, or a check after the first attempt | `check_limit_reached` or `check_late`; nothing is logged. |
-| A device sends a state-changing request without the lease | `409 lease_moved`; an answer in it is still logged as the attempt or as `attempt_late`. |
+| A fourth counted check, or a check after the first attempt | `409 check_limit_reached` or `409 check_late`; nothing is logged. |
+| A check's `checkRaw` can't be parsed | `422 check_unparsed`; nothing is logged, no check is counted, and the client shows the check field again. |
+| A device sends a state-changing request or `next` while another device holds the lease | `409 lease_moved`; an answer in it is still logged as the attempt or as `attempt_late`. |
+| A device whose lease expired sends an answer while no device holds the lease | The answer is logged as the attempt or as `attempt_late` and gets its `AnswerOut`; the device's next `next` gets `409 session_ended`, and the client shows the button to continue. |
+| `next` arrives again while its last packet is still open | The server returns the same packet and logs nothing. |
 | The holder's heartbeat stops for 45 seconds | The server logs the pause with `lease_expired` and ends the session. |
 | Two devices are open and neither is tapped | Neither takes the lease. |
 | An event would reopen a complete or wrapped-up adventure | `appendEvents` refuses it, the transaction rolls back, and the request gets `409 adventure_closed`. |
 | An outgoing body carries a field outside its schema | The request fails with `500`, and the body never reaches the client. |
-| A device sends more than 20 state-changing requests in a second | `429 rate_limited` until the second passes; a refused request doesn't count. |
+| A device sends more than 20 state-changing or `next` requests in a second | `429 rate_limited` until the second passes; a refused request doesn't count. |
 | The SSE stream drops, for example when iPadOS suspends the page | The client reads what it missed from the poll route and the resume packet. |
 | The explanation text isn't ready after 10 seconds | The client receives a template explanation. |
+| The server restarts after an explanation is bought and before `explanation_ready` | `ResumeOut` lists the item, and a repeated explanation request spends nothing and sends the text as `explanation_ready`. |
 | The server can't be reached | The client keeps the answer in its queue, shows the waiting scene (`server_unreachable`), keeps the three help controls inactive and shows no new task. |
 | The page is killed after the tap and before the send | The answer is already in IndexedDB, and the next launch sends it before resuming. |
 | An answer stays unsent for 24 hours | `queue_stuck` shows in the device's settings with the answer's time and a retry button. |
@@ -226,9 +235,4 @@ While the client has no connection, the hint, explanation and second-attempt con
 
 - Round 1, the reasons for the import rules, the rate limit, the tap-only lease, the one-answer queue and the draft interval: rejected, because a specification states what the system does and never why (S8); ADR-0030 holds the reasons.
 - Rounds 1 and 2, `background` and `idle` on a finished adventure getting `409 adventure_closed` while a leave logs `session_ended` alone: rejected as a change. TSK-0330 built this contract and gives its reason, and the spec states it without the reason (S8).
-- Round 2, an offline device's answer after its lease expired with no other holder: the answer gets `409 lease_moved` and the client shows «Приключение продолжено в другом месте» though no device plays, against REQ-2438's outcome arriving with the grants. ADR-0030 doesn't say how the server answers when no device holds the lease; unresolved.
-- Round 2, which session the player continues in after a pause: the reply of `POST /api/session/start`, whether `POST /api/adventure/resume` opens a session and returns its id, and what "the current session" of `POST /api/session/:id/resume` is after `session_ended`. ADR-0030 doesn't settle it; unresolved.
-- Round 2, `GET /api/session/:id/next` logs events but carries no `clientSeq`: whether it counts as state-changing under the lease and the rate limit, and how a repeated `next` avoids logging a task twice. ADR-0030 doesn't settle it; unresolved.
-- Round 2, an explanation paid for and lost when the server restarts before `explanation_ready`: ADR-0030 keeps the text out of the log and doesn't say whether a repeat request or a resume produces it again; unresolved.
-- Round 2, `estimate_missing`, `check_limit_reached` and `check_late` have no HTTP status, and the reply and log for an unparseable `checkRaw` are unstated: ADR-0240 names neither; unresolved.
 - Round 2, the reason for the parent session's own cookie: rejected under S8.

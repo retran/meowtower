@@ -155,3 +155,5 @@ Premortem, written as if it happened: the queue ran overnight after the style ch
 - Whether a floor asset uses its floor's palette and whether a stage picture keeps its creature recognisable. The person who chooses judges both, with the palette and the previous stage shown beside the variants, because no program can.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

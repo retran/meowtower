@@ -68,7 +68,7 @@ The server reads these from `.env` at start and at no other time:
 
 ### Tables and events
 
-The gateway writes one `llm_log` row per call, a service table outside the projections, with the role, model, provider, tier, key, tokens, cost, latency, outcome, request and response. It stores the cached canon block once by its hash. It appends these events through `appendEvents`:
+The gateway writes one `llm_log` row per call, a service table outside the projections that no projection reads, with the role, model, provider, tier, key, tokens, cost, latency, outcome, request and response. The import check fails any projection code that names `llm_log`. The gateway stores the cached canon block once by its hash. It appends these events through `appendEvents`:
 
 | Event | When |
 | --- | --- |
@@ -110,7 +110,7 @@ Each role's model comes from `.env`, so switching a model needs a restart of the
 
 ### The start-up check
 
-Before the server listens, it reads OpenRouter's two catalogue listings, the default one and the image-output one, and `GET /api/v1/endpoints/zdr`. The server refuses to start as `model_config_invalid` when a configured model, text, image or judge, is missing from the catalogue (REQ-1644). It also refuses when a player-tier model, each entry of `MASTER_MODEL_CHOICES` and `PARSE_MODEL` included, has no zero-retention endpoint at a provider on the player-tier list (REQ-2628). It refuses when `JUDGE_CHECKS` names a check with no passing test-set record for the configured `JUDGE_MODEL` in the `bakeoff` table (REQ-1688). The refusal names the role, the model and the missing fact. When a configured local judge's `/props` names a model file other than the configured one, the server refuses to start as `judge_file_mismatch`, naming both files (REQ-1644).
+Before the server listens, it reads OpenRouter's two catalogue listings, the default one and the image-output one, and `GET /api/v1/endpoints/zdr`. The server refuses to start as `model_config_invalid` when a configured model, text, image or judge, is missing from the catalogue (REQ-1644). It also refuses when a player-tier model, each entry of `MASTER_MODEL_CHOICES` and `PARSE_MODEL` included, has no zero-retention endpoint at a provider on the player-tier list (REQ-2628). It refuses when `JUDGE_CHECKS` names a check with no passing test-set record for the configured `JUDGE_MODEL` in the `bakeoff` table (REQ-1688). It refuses when a provider on either tier list has no row in `content/providers.json`, the table that gives each provider's OpenRouter slug, company, country and retention (REQ-2648). The refusal names the role or provider, the model and the missing fact. When a configured local judge's `/props` names a model file other than the configured one, the server refuses to start as `judge_file_mismatch`, naming both files (REQ-1644).
 
 When the catalogue can't be reached, the server starts with every live call off, as `models_unverified`, and the game runs on the library and the cache. The check retries every 10 minutes, and the first pass turns live calls on.
 
@@ -127,6 +127,8 @@ The Parent Room offers the Master's model only from `MASTER_MODEL_CHOICES` (REQ-
 ### The judge route
 
 A `JudgeRequest` goes only to the judge route, and the judge roles take no other request class, so a judge never writes text, solves a task or judges a picture (REQ-1686). The route for each check is the one ADR-0350 resolves: a local judge, `JUDGE_MODEL` or `SAFETY_MODEL`. A check reaches a judge model, hosted or local, only when the judge matched the reference model on the check's labelled Russian test set at the stage 0 bake-off and the `bakeoff` table holds that passing record (REQ-1688).
+
+Agreement is the share, in percent, of a test set's items on which the judge's label equals the reference model's label. The bake-off sends the reference model through the gateway twice on each item, as two separate requests with the settings play uses for that model and no response cache, and the reference's self-agreement is the share of items on which its two labels are equal. A judge matches the reference when its agreement is no more than one percentage point below the reference's self-agreement and it gives the gravest label on every item where the reference gives it: `serious` on `signal`, whose labels are none, everyday, `scared` and serious in rising order, and a failing answer on `safety` (REQ-1688). ADR-0350's tie between judges reads this measure.
 
 When the judge that answers a check errs, passes its timeout of 1500 ms or gives an answer ADR-0350 refuses, the gateway sends the same question with the same text to `SAFETY_MODEL` and logs `judge_fell_back` (REQ-1690).
 
@@ -208,7 +210,7 @@ The gateway reads `GATEWAY_MODE` at start and logs it. The `tower` service start
 
 ### The page on what leaves the Mac
 
-The Parent Room's page on what leaves the Mac is a text in the content files. It names the five kinds of data that leave the Mac, matching the list under "What leaves the Mac" item for item (REQ-5044). It states that summary outcome events coarsely reflect how well the player does in a domain (REQ-2638). It says that voice input through Safari's speech recognition goes from the iPad to Apple and never through the server. ADR-0350 states the page's list of checks on her text. A test compares the five kinds and the providers the page names with the defaults in the code.
+The Parent Room's page on what leaves the Mac is a text in the content files. It names the five kinds of data that leave the Mac, matching the list under "What leaves the Mac" item for item (REQ-5044). It states that summary outcome events coarsely reflect how well the player does in a domain (REQ-2638). It names each provider's country from the provider's row in `content/providers.json`, the row the start-up check reads (REQ-2648). It says that voice input through Safari's speech recognition goes from the iPad to Apple and never through the server. ADR-0350 states the page's list of checks on her text. A test compares the five kinds and the providers the page names with the defaults in the code.
 
 ## The contract with the local judge
 
@@ -221,7 +223,7 @@ The gateway offers ADR-0350:
 - an `llm_log` row for each local call, with provider `local`, the judge's name, the model file's hash, cost 0 and no key;
 - the replay of local requests from `tests/recordings/`, by a hash that includes the judge's name and file hash;
 - the bake-off tool's local route, which ADR-0350 runs its candidates through;
-- the provider facts the start-up check reads, for the page's list of checks.
+- the rows of `content/providers.json` the start-up check reads, from which the page's list of checks takes each provider's company, country and retention.
 
 Three rules bind both parts. A local call carries no OpenRouter key and reserves nothing from any bucket. A local judge that fails ADR-0350's checks sends its checks to their standby route and never stops the server, except that a judge serving a model file other than the configured one stops it as `judge_file_mismatch`, and ADR-0350's checks replace the catalogue and zero-retention checks for a local judge. ADR-0350 opens no connection to a judge except through the gateway.
 
@@ -229,6 +231,7 @@ Three rules bind both parts. A local call carries no OpenRouter key and reserves
 
 | Condition | What happens |
 | --- | --- |
+| A provider on either tier list has no row in `content/providers.json` | `model_config_invalid`: the server doesn't start and names the provider. |
 | A configured model is missing from the catalogue | `model_config_invalid`: the server doesn't start and names the role, the model and the fact. |
 | A player-tier model, a Master choice or `PARSE_MODEL` has no zero-retention endpoint at a player-tier provider | `model_config_invalid`: the server doesn't start. |
 | `JUDGE_CHECKS` names a check with no passing test-set record | `model_config_invalid`: the server doesn't start. |

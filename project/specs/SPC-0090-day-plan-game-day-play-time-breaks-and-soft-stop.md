@@ -41,7 +41,7 @@ Every packet of `GET /api/session/:id/next` carries whether «Привал» is 
 | --- | --- |
 | `room_opened` | the room's drawn length |
 | `eye_exercise` | the exercise: `far`, `blink`, `figure_eight` or `palms` |
-| `rest_stop_ended` | the reason: `tap`, `timeout`, `puzzle_opened` or `screen_opened`, and with `screen_opened` the screen's name |
+| `rest_stop_ended` | the reason: `tap`, `timeout`, `puzzle_opened` or `screen_opened`, and with `screen_opened` the screen's name; SPC-0020's upcaster reads a version 1 event as `unrecorded`, a reason this part never writes |
 | `save_accepted` | the reason: `adventure` or `puzzle` |
 | `anxiety_signal` | the kind: `alt_run`, `rapid_guess_rise`, `erase_hesitation` or `free_text` |
 | `zone_changed` | the old and the new IANA zone name |
@@ -131,7 +131,7 @@ The budgets sum to 22 minutes, inside the 20 to 25 minutes Session 0 lasts (REQ-
 
 A game day ends at 04:00 in the time zone of the device she plays on (REQ-5000). `gameDayOf(ts, zone)` in `src/engine/day/` computes the game day index from the server's clock and the zone the client sent at the session's start. A change of zone logs `zone_changed` and takes effect at the next 04:00 of the old zone.
 
-No screen, line, number or string she can reach names that hour (REQ-5002). The story tells the change of day with the line «Башня перевязалась за ночь» (The Tower re-knitted itself overnight), under the key `story.day_turn` (REQ-5006). The line opens «В прошлый раз…» (Last time…) on the first adventure of every game day except her first, and the parent judges its wording at stage acceptance.
+No screen, line, number or string she can reach names that hour (REQ-5002). The story tells the change of day with the line «Башня перевязалась за ночь» (The Tower re-knitted itself overnight), under the key `story.day_turn` (REQ-5006). The line opens «В прошлый раз…» (Last time…), the opening scene ADR-0110 orders from the planner's latest session summary, on the first adventure of every game day except her first, and the parent judges its wording at stage acceptance.
 
 The server starts at most one new adventure in a game day (REQ-5004): `appendEvents` refuses `adventure_planned` when the log already holds one for the same game day, with Session 0 counted as one. The next adventure is planned at the first server contact of the next game day, which logs `day_opened`.
 
@@ -147,7 +147,7 @@ The server counts time from the event log alone, with its own clock. An active i
 | The eye count | active time since the last eye exercise, time on the screens without tasks included whenever she spends it, and a puzzle opened at a rest stop included (REQ-5016) | eye exercises and the rest stop's campfire scene | at each eye exercise, and after a pause longer than 5 minutes (REQ-0312) |
 | The soft-stop point | 60 minutes of the day's active time, moved to the moment of each «Ещё один ряд» (One more row) plus 20 minutes of active time | nothing | at the change of game day |
 
-Both the day's active time and the eye count take each eye exercise's length from `eye_exercise_ended`. When the server's clock or the device's zone moves by more than a minute during a session, the server logs `clock_jump` and counts intervals from the log's order, never across the jump.
+Both the day's active time and the eye count take each eye exercise's length from `eye_exercise_ended`. When the server's clock or the device's zone moves by more than a minute during a session, the server logs `clock_jump` and counts intervals from the log's order, never across the jump: an active interval that spans the jump closes at the last event before it, a new one opens at the first event after it, and the gap between the two counts as no active time.
 
 ### Boundaries and the order of timed events
 
@@ -191,7 +191,7 @@ When she answers «Не знаю» three times with no other answer between them
 The server detects four anxiety signals:
 
 - three `alt` outcomes in a row;
-- a rising share of rapid guesses: among the session's last 10 first attempts at least 20 %, and at least 15 percentage points above the share among its first 10;
+- a rising share of rapid guesses, tested from the session's 20th first attempt on: among the session's last 10 first attempts at least 20 %, and at least 15 percentage points above the share among its first 10;
 - erasing with hesitation: on 2 of the last 3 tasks, 3 or more erasures and a time over twice the template's `fluencyMs`;
 - «мне страшно» (I'm scared) or «не хочу» (I don't want to) in her free text, found by ADR-0110's hand-written triggers.
 
@@ -223,7 +223,7 @@ The Parent Room holds the memo on how to talk with the child about the game, fro
 | --- | --- | --- |
 | The adventure doesn't reach its finale before she accepts the soft stop (`plan_overrun`) | It continues on the next game day, and SPC-0030's three-day rule wraps it up after three adventure days. | the parent |
 | A second `adventure_planned` in one game day | `appendEvents` refuses it; `next` returns `end`, and the client offers the screens without tasks. | the developer |
-| The server's clock or the device's zone moves by more than a minute in a session (`clock_jump`) | The server logs it and counts intervals from the log's order, never across the jump. | the developer |
+| The server's clock or the device's zone moves by more than a minute in a session (`clock_jump`) | The server logs it, closes the active interval at the last event before the jump, opens a new one at the first event after it, and counts the gap as no active time. | the developer |
 | The device reports a new zone | The server logs `zone_changed`, and the new zone takes effect at the next 04:00 of the old zone. | the developer |
 | The client loses the server (`connection_gap`) | SPC-0030's lease lapses, play pauses at her last activity, and the gap counts as no active time. | the developer |
 | A timed-event line holds a digit or a time word (`line_refused`) | The verify step fails the content. | the developer |
@@ -239,5 +239,3 @@ The Parent Room holds the memo on how to talk with the child about the game, fro
 ## Open review findings
 
 - The agent reviewer asked for the reasons behind the zone-change rule, the wall-clock «Привал» wait, the adventure staying closed after «Закончить на сегодня», the planner reading no `puzzle_*` event and the order of timed events. Rejected: a specification states what the part does and never why, and ADR-0090, ADR-0210 and ADR-0280 hold those reasons; ADR-0090 gives none for the order, so this document can't supply one.
-- The agent reviewer asked what an active interval that spans a `clock_jump` counts as. Rejected for now: ADR-0090 says only that intervals never count across the jump, and choosing between closing the interval at the last event and dropping it is the decision's to make.
-- The agent reviewer asked when the rapid-guess signal's two windows of 10 first attempts start to count, since they overlap below 20 attempts. Rejected for now: ADR-0090 doesn't say, and the choice is the decision's to make.

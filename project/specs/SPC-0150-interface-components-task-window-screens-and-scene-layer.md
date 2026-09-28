@@ -69,7 +69,7 @@ Each port has the markup, `tw-*` class names and roles of its owner component, s
 | `looks_set` | the theme, the palette, the text size and the custom colours | she changes one of them in her settings |
 | `glossary_opened` | the term and the `itemId` | she taps a marked term |
 
-Both go through the client's write queue, which SPC-0030 states, so a change made offline waits there like an answer.
+Both go through the client's event queue, which SPC-0030 states: it holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order she made them, and IndexedDB keeps any unsent entry, so a change made offline waits there beside her answers.
 
 ### Checks that hold the rules
 
@@ -77,7 +77,7 @@ The verify command runs these static checks, and each stops the build when it fa
 
 | Check | What it rejects |
 | --- | --- |
-| Contrast script | Any of the 31 colour pairs RES-3100 lists, per palette and theme below 4.5:1 for text or 3:1 for strokes and the focus ring, in both themes, the four presets and 20,000 seeded random custom palettes per theme. |
+| Contrast script | Any of the 31 colour pairs RES-3100 lists, per palette and theme below 4.5:1 for text or 3:1 for strokes and the focus ring, in both themes, the four presets and 20,000 seeded random custom palettes per theme, with every colour `paletteVars` derives, the black and white fallbacks included. |
 | stylelint | A colour literal in `src/`, a reference to an `--art-*` or location token outside `src/ui/scene/`, and a `font-size` that isn't a type-scale token. |
 | Shadow and element script | A shadow token whose colour is black or has equal red, green and blue values, and an `el-*` token redefined inside a palette block. |
 | Character scan | Any Unicode `Extended_Pictographic` character, "✓" or "✗" in `src/` or in the string files. |
@@ -88,7 +88,7 @@ Playwright tests on WebKit at the iPad's 1180 by 820 and at a 1440 by 900 deskto
 
 ### What this part requires from other parts
 
-- SPC-0030 supplies the packets the screens draw, the write queue and the lease; SPC-0020 supplies `looks_set` and `glossary_opened` in the event catalogue.
+- SPC-0030 supplies the packets the screens draw, the event queue and the lease; SPC-0020 supplies `looks_set` and `glossary_opened` in the event catalogue.
 - ADR-0160 supplies `t()`, the string files and the glossary entries in `lexicon.ru.json`; SPC-0040 supplies the `InputSpec`, `check()` and the term spans in the task view; ADR-0180 supplies the parent's approval of each Dutch word.
 - SPC-0140 supplies the rank, the chest's rewards, the element names she gave, the creatures she has met and the quests; SPC-0110 supplies the scenes, the Underside flag and the dreamcore event; ADR-0170 supplies the scene art and each scene's still image.
 - ADR-0190 holds this part's budgets in its Baselines table: a screen change on the iPad within 100 ms, 200 story messages in the DOM, 30 entries each in `corrections.css` and `divergences.json`, and the sound loudness.
@@ -107,7 +107,7 @@ Interface text takes its colour from the interface tokens, `ink`, `ink-muted`, `
 
 Her settings screen offers, all at once and at any time, the light and the dark theme (REQ-3102), the four preset palettes and a custom palette (REQ-3104), and normal or large text (REQ-3522). No theme, palette or text size is locked behind progress or carries a price (REQ-3106). The theme choice holds `light` and `dark` only, and the dreamcore theme is never among them (REQ-3108). A change applies on the next frame and logs one `looks_set` when she commits it; a drag in the device's colour picker logs one `looks_set` when it ends.
 
-Each palette card in `PalettePicker` previews its own colours in the current theme (REQ-3242). A custom palette has four colour roles, and each `ColorRole` accepts any colour she picks from the offered swatches or from the device's colour picker (REQ-3244). `paletteVars` sets the variables for her four colours and derives the text, stroke and focus colours from them, shifting each until it reaches its contrast threshold against every surface it sits on.
+Each palette card in `PalettePicker` previews its own colours in the current theme (REQ-3242). A custom palette has four colour roles, and each `ColorRole` accepts any colour she picks from the offered swatches or from the device's colour picker (REQ-3244). `paletteVars` sets the variables for her four colours and derives the text, stroke and focus colours from them, shifting each until it reaches its contrast threshold against every surface it sits on. When no single shift of a derived colour reaches its threshold against every surface, `paletteVars` derives that colour for each surface on its own, and on a surface where no shift of her colour reaches the threshold it takes black or white, whichever reaches it, so every colour she picks is accepted.
 
 The server writes her last looks into the HTML shell it serves as the root attributes and custom variables, so every paired device opens in the theme, palette, text size and colours she last chose, with no flash of the default (REQ-3110). The service worker never answers a request for the HTML shell, which always comes from the server. The server's `looks_set` schema accepts `light` and `dark` for the theme and a `#RRGGBB` colour for a role, and refuses anything else with 400, so no request sets dreamcore or writes CSS into the `style` attribute.
 
@@ -145,7 +145,7 @@ Every Underside screen shows the «Мне страшно» button (REQ-3514) and
 
 `StoryLog` keeps its latest 200 messages in the DOM, the budget ADR-0190 holds, and fetches older ones when she scrolls up. It gives the narrator, characters, familiars, the heroine, the Diary and System windows each a look of its own through the message's speaker, and the parent judges the looks at stage acceptance (REQ-3232).
 
-`StoryInput` holds a voice button beside its text field (REQ-3234). Where Safari offers speech recognition, the button starts it in `ru-RU`. Where it offers none, the button focuses the field, so the system keyboard opens with its own dictation key.
+`StoryInput` holds a voice button beside its text field (REQ-3234). Where Safari offers speech recognition, the button starts it in `ru-RU`. Where it offers none on the tablet, the button focuses the field, so the system keyboard opens with its own dictation key. Where the browser on the computer offers none, the button focuses the field and shows one line from the Russian string file that names the Mac's dictation key.
 
 At the Awakening's closing System window, the window shows «Пробуждение завершено. Добро пожаловать в Башню.» (Awakening complete. Welcome to the Tower.) from the string file (REQ-3528), with a `RankBadge` beside it at rank E, the rank SPC-0140's progression holds at that point (REQ-3530).
 
@@ -208,9 +208,9 @@ PixiJS draws the scene picture, sprites and effects inside the scene column and 
 | A test finds a running animation inside an open task window | The Playwright run fails. | developer |
 | WebGL is missing or its context is lost | `scene_unavailable`: the scene column shows the scene's still image, the story goes on, and the client reports the error. | developer; the player sees the still |
 | A font file fails to load within the preload | `font_missing`: that screen renders in `system-ui`, and the client reports the error. | developer |
-| Safari offers no speech recognition | `voice_unavailable`: the voice button focuses the field for the system keyboard's dictation. | player |
+| The browser offers no speech recognition | `voice_unavailable`: the voice button focuses the field; on the tablet the system keyboard's dictation key serves, and on the computer a line from the string file names the Mac's dictation key. | player |
 | `looks_set` carries `dream`, a colour that isn't `#RRGGBB` or a sound field | The server answers 400 and logs nothing. | developer |
-| A `looks_set` write can't reach the server | It waits in the client's write queue, and the look stays applied on this device. | player |
+| A `looks_set` write can't reach the server | It waits in the client's event queue, and the look stays applied on this device. | player |
 | An entry doesn't parse | The field takes the soft outline, «Готово» stays inactive, and the clock keeps running. | player |
 | A glossary entry's Dutch word isn't approved | The popover shows the Russian explanation and the picture only. | player |
 | A term span has no glossary entry | The span shows as plain text. | player |
@@ -220,6 +220,3 @@ PixiJS draws the scene picture, sprites and effects inside the scene column and 
 
 - Rejected, round 1: add a reason beside the gap before «Нельзя узнать», the live region present from the first paint, the textures destroyed on a floor change and the 380 px scene column. A specification states what the system does and never why (spec rule S8); the reasons stay in ADR-0150, ADR-0250 and ADR-0190. The 200-message limit now names ADR-0190 as the budget that holds it.
 - Rejected, round 1: drop the plain-text rendering of a term span with no glossary entry, since SPC-0040's build check refuses such a template. The rule still defines what the task window draws for a span that reaches it by any other path, and it can be tested with a fixture task view.
-- Open after round 2: `looks_set` and `glossary_opened` go through the client's write queue, but SPC-0030 states only an answer queue holding at most one answer per device, and SPC-0010 lets IndexedDB hold only unsent answers. ADR-0150 part 3 sends `looks_set` through the client queue of ADR-0030, so the fix is a general event queue in SPC-0030 and SPC-0010, which this document can't make.
-- Open after round 2: no decision in force says what `paletteVars` does when no single derived text, stroke or focus colour reaches its threshold against every surface of a custom palette. Rejecting the colour breaks REQ-3244, so the fallback needs a decision.
-- Open after round 2: on the computer, where the browser offers no speech recognition, focusing the field opens no dictation key, so the voice button of REQ-3234 does nothing there. ADR-0150 part 7 decides only the iPad's fallback, so the computer's fallback needs a decision.

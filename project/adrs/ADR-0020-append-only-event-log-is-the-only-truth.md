@@ -205,3 +205,5 @@ Seven names in the drafts are not event types. `explanation_ready`, `lease_moved
 - Whether a recompute may choose a graph version, which RES-2200 leaves open. Here a recompute always uses the graph version in the content files.
 
 Amended by ADR-0210, ADR-0220, ADR-0240, ADR-0250, ADR-0270, ADR-0280, ADR-0310, ADR-0320 and ADR-0340, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

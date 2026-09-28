@@ -129,7 +129,7 @@ The middleware `main.ts` mounts on the sandbox route trees sets a flag in Node's
 
 A sandbox snapshot runs in a worker thread, which opens its own read-only connection to her file with `openReadOnly`. It first checks with `fs.statfs` that the volume has at least 3 x (her live file plus its `-wal` file) free. The builder then runs `VACUUM INTO` a temporary file, one statement and so one read transaction, so the copy shows her state at one point in time while she plays, with no answer missing its task and no projection ahead of its events (REQ-6320).
 
-The builder creates a fresh file with role `sandbox` and attaches the temporary copy. It copies `events` with `profile` set to `'sandbox'`, and `blobs`, `explain_cache` and `frames` as they are. It leaves `parent_pin`, `lockouts`, `devices`, `llm_log`, `art_jobs`, `bakeoff` and `local_judge_files` empty, so the snapshot holds no PIN hash, no lockout record and no device token or its hash (REQ-6322). It rebuilds the projections, renames the result over `sandbox-snapshot.sqlite` and deletes the temporary copy.
+The builder creates a fresh file with role `sandbox` and attaches the temporary copy. It copies `events` with `profile` set to `'sandbox'`, and `blobs`, `explain_cache` and `frames` as they are. It leaves `parent_pin`, `lockouts`, `devices`, `llm_log`, `art_jobs`, `bakeoff` and `local_judge_files` empty, so the snapshot holds no PIN hash, no lockout record and no device token or its hash (REQ-6322). A copied `llm_call` event points at an `llm_log` row the snapshot leaves empty, and it changes no projection, because no projection reads `llm_log` and SPC-0020's lint check fails projection code that names it. The builder rebuilds the projections, renames the result over `sandbox-snapshot.sqlite` and deletes the temporary copy.
 
 The builder keeps three table lists: the copy list (`events`, `blobs`, `explain_cache`, `frames`), the empty list (the seven tables above) and the rebuilt list (`db_role` and `schema_migrations`, which the fresh file's open writes, and every table in the projection registry). A group 1 check fails, naming the table, when a table in the schema is on none of the three lists, so a table a later migration adds fails group 1 until someone lists it. When the builder meets a table on none of the three lists, one a migration added after the last group 1 run, it creates the table in the snapshot and leaves it empty.
 
@@ -229,16 +229,6 @@ The commands print their output and write it to no file; a copy in a file exists
 | The sandbox bucket is spent, the offline key answers 402, or the gateway or the PIN is missing | SPC-0100's `sandbox_budget_spent` and `offline_key_refused`, and SPC-0190's `409 sandbox_models_unavailable`. |
 | A snapshot of a 1 GB file takes more than 180 seconds | The full verify on the family Mac fails against SPC-0190's Baselines table. |
 
-## Choices this document makes
-
-- ADR-0340 names neither the rebuilt table list nor `local_judge_files`. The builder rebuilds `db_role`, `schema_migrations` and the projections and leaves `local_judge_files` empty, because ADR-0340's two lists alone fail its own group 1 check on those tables from the first build.
-- ADR-0340 doesn't say where the play handlers keep the lease and its timers. They keep them per engine context, because REQ-6348 forbids a sandbox adventure from moving the player's lease.
-- ADR-0340 doesn't name the sandbox route trees. They are `/api/parent/sandbox/*` and the loopback `/sandbox/*`, matched with the trailing slash, so the confirmed actions keep the parent's device as ADR-0340 requires.
-- ADR-0340 doesn't say how the confirmed-action module reaches `sandbox.sqlite`, what a confirm does during a reset, or what a confirm answers when only the pointer append fails. The module asks for the current handle on each confirm, a confirm during a reset answers `409 sandbox_resetting`, and a pointer failure answers `503 log_write_failed` with the token used.
-- The server sweeps the snapshot builder's temporary copy and the reset's temporary file at start, beside the `sandbox-cli-*` files ADR-0340 names.
-
 ## Open review findings
 
 - The first agent review asked for the reason beside the 5-minute token expiry, the 20-token cap, the 3 x free-space factor, the 2 GB `sandbox_large` threshold and the rule that no player screen links to the sandbox. Rejected: the method's rule S8 keeps reasons in the decision, and ADR-0340 holds each of them.
-- The second agent review asked to amend ADR-0340 with the choices above and cite the amendment. Open: this step edits only this document, so the choices stay recorded here with their reasons until the owner amends ADR-0340.
-- The second agent review suggested saying that a copied `llm_call` event points at an `llm_log` row the snapshot leaves empty, and that no projection follows the pointer. Not taken: SPC-0020 and SPC-0100 own `llm_call` and its projections, and neither decision says whether a fold reads `llm_log`.

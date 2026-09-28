@@ -26,7 +26,7 @@ It leaves out what other specifications state. The event schemas and the project
 | The event log | Every event except the `school_snapshot_*`, `puzzle_*` and `diary_cipher` events. |
 | `content/graph.yaml` | Nodes, subtypes with their level, weight and `form`, prerequisites per subtype. |
 | `content/model.vN.json` | The parameters, the prior rows for groups 7 and 8, and `admittedForms`. |
-| The `thresholds` projection | The fluency threshold per template and device type, under the active threshold version. |
+| The `thresholds` projection and `content/versions.json` | The fluency threshold per template and device type, under the active threshold version. |
 | `RULES_VERSION` in `src/engine/states/version.ts` | The version of the state and inference rules. |
 
 ### Projections it writes
@@ -69,7 +69,7 @@ The model lives in `src/engine/model/` and `src/engine/states/`. Code there does
 
 The server runs the model at three moments. After each graded first attempt, it recomputes the estimates and states of the attempted node and its graph neighbours from that node's events. When an adventure ends, it runs a full recompute over the whole log with the active versions of the model, the thresholds and the rules, and the result replaces every per-node result (REQ-0900). At server start, it compares the versions recorded in `node_estimates` with the active ones and runs a full recompute over the whole history when any differs (REQ-0902).
 
-Every run evaluates forgetting and decay at the server time of the event that triggered it, so a recompute of the same log at a later hour gives the same projections. The per-node update takes at most 50 ms at the 95th percentile, and the full recompute over one year of play at most 10 s on the family Mac.
+Every run evaluates forgetting and decay at the server time of the event that triggered it, and a run that no event triggers, the one at server start included, evaluates them at the server time of the newest event in the log, so a recompute of the same log at a later hour gives the same projections (REQ-0912). The per-node update takes at most 50 ms at the 95th percentile, and the full recompute over one year of play at most 10 s on the family Mac.
 
 ### Versions
 
@@ -77,12 +77,12 @@ Four versions govern every result, and every row of `node_estimates` and `node_s
 
 | Version | Where it lives | What changes it |
 | --- | --- | --- |
-| model | `content/model.vN.json` plus the prior row in use | `./tower model activate`, which writes `model_activated`, or a change of the school-group setting |
+| model | `content/model.vN.json` plus the prior row in use | `./tower model activate`, which writes `model_activated`, or a change of the school-group setting, which logs `settings_changed` |
 | rules | `RULES_VERSION` | a code change to the state or inference rules |
-| thresholds | the `thresholds` projection | a threshold change by a person or the monthly motor recalibration |
+| thresholds | the version in `content/versions.json` joined by `+` with the `seq` of the latest `fact_threshold_set`, or with `0` when the log holds none, such as `3+0` or `3+18204` | a threshold file change, a threshold change by a person or the monthly motor recalibration |
 | graph | `content/graph.yaml` | a graph edit |
 
-The prior row follows the latest school-group setting in the log, and SPC-0040 states where that setting lives. The model version is the file version plus the row, so a change of school group is a new model version and a full recompute, and the starting estimates of another group take effect only that way (REQ-0984). No date or clock value selects a row.
+The prior row follows the latest school-group setting in the log, and SPC-0040 states where that setting lives. The model version is the file version plus the row, so a change of school group is a new model version and a full recompute, and the starting estimates of another group take effect only that way (REQ-0984). A change of school group passes no held-out gate and writes no `model_activated`. No date or clock value selects a row.
 
 A golden test runs fixed fixture logs through the rule engine and compares the states with stored results, and it fails, naming the fixture, when the states change and `RULES_VERSION` didn't. A new rules version triggers the full recompute at the next server start (REQ-0902).
 
@@ -96,7 +96,7 @@ The "on her own" estimate takes an attempt as an observation only when it is a g
 - it is a riddle, of either form;
 - its `item_shown.forms` holds a form that the active model version doesn't list in `admittedForms`, which also keeps it out of the fluency estimate, the "with help" estimate and the shares by depth of help, while it still feeds its stream (REQ-5026).
 
-An `attempt_late` event is never an observation. An attempt with `interrupted: true` or `crossDevice: true`, or on an item that carries an estimate, counts for accuracy, and its time counts in no measure: its `fast` is 0 and its time enters no block's median. Every other attempt's time excludes `checkMs`.
+An `attempt_late` event is never an observation. An attempt with `interrupted: true` or `crossDevice: true`, or on an item that carries an estimate, counts for accuracy, and its time counts in no measure: it stays out of the fluency estimate, and its time enters no block's median (REQ-0926). Every other attempt's time excludes `checkMs`.
 
 Each observation carries a score `c` and a weight `w`. The score is 1 for right, 0.5 for partially right and 0 for wrong or «Не знаю» (I don't know), so a partially right answer counts as half right and half wrong (REQ-0918). The verdict `insufficient_correct` scores 1, `insufficient_partial` 0.5 and `false_insufficient` 0 (REQ-5424). The weight is 1, or 0.5 when ADR-0070's fatigue signal marks the attempt.
 
@@ -137,7 +137,7 @@ Each pair of node and subtype keeps its own BKT estimate `pKnow` (REQ-0908), wit
 | `pLearnFeedback` | 0.15 |
 | `pGuess` | free input 0.03; a choice among `k` options 1/`k` |
 | `pSlip` | `max(0.10, 1 - 0.95^steps)`, with `steps` the template's number of steps |
-| forgetting half-life `H` | starts at 60 days; times 1.5 after a right answer at least 3 days after the pair's previous observation, at most 365 days; back to 60 days after a wrong answer |
+| forgetting half-life `H` | starts at 60 days; times 1.5 after a right answer at least 3 days after the pair's previous observation, at most 365 days; back to 60 days after a wrong answer; unchanged after a partially right answer (REQ-0918) |
 
 A subtype takes the prior of its own level from the active row, highest at 1F, lower at 1S and lowest at stretch, so a node with 1F and 1S subtypes starts its 1F subtypes higher (REQ-0982).
 
@@ -154,7 +154,7 @@ A node's estimate is the mean of its subtypes' estimates weighted by the subtype
 
 ### Fluency, "with help" and the shares by depth of help
 
-Two beta estimates sit beside BKT per node and subtype, and neither feeds `pKnow`. Fluency takes the observations of the "on her own" estimate, graded unassisted first attempts, and "with help" takes assisted attempts:
+Two beta estimates sit beside BKT per node and subtype, and neither feeds `pKnow`. Fluency takes the observations of the "on her own" estimate, graded unassisted first attempts, except an attempt whose time counts in no measure, and "with help" takes assisted attempts:
 
 - Fluency starts at `αf = βf = 1`. Each observation adds `w * c * fast * 2^(-age / 30 days)` to `αf` and `w * (1 - c * fast) * 2^(-age / 30 days)` to `βf`, so it estimates the share of first attempts that are right, unassisted and no slower than the fluency threshold (REQ-0926), and an attempt 30 days old has half its weight (REQ-0928). `fast` is 1 when the attempt took no longer than the template's threshold for the device type under the active threshold version.
 - "With help" does the same over assisted attempts only, counting a right assisted attempt as a success, with the same 30-day half-life (REQ-0922, REQ-0924). It is pooled over every depth of help (REQ-5140).
@@ -170,7 +170,7 @@ Each estimate carries these derived fields:
 - `uncertainty = entropy(pKnow) * 3 / (3 + nEff)`, where `entropy` is the binary entropy in bits and `nEff` is the sum of the node's observation weights, each times `2^(-age / H)` with the pair's current half-life. It falls as fresh observations accumulate, three fresh observations halve it, and a node with none keeps its full entropy (REQ-0988).
 - `lastSeen` is the date of the last unassisted first attempt, and `stale` is true when that date is more than 30 days old.
 - `nextReview` is `lastSeen` plus 1, 3, 7, 14 or 30 days after the 1st to 5th unassisted success in a row, and plus 30 days after each further success (REQ-0990). After an unassisted failure it is `lastSeen` plus 1 day (REQ-0992). A success is an observation with `c = 1`, and a partially right answer ends the run and counts as a failure.
-- `confidence` is high for a block within 14 days, medium for a probe or a check 15 to 30 days old, and low for an inferred state or evidence older than 30 days.
+- `confidence` is high for a full block within 14 days, medium for a full block 15 to 30 days old and for a probe or an island check within 30 days, and low for an inferred state or evidence older than 30 days.
 
 ### States from explicit rules
 
@@ -184,12 +184,12 @@ The rule engine gives each node a state by explicit rules applied to the listed 
 | `block-fast` | a full block scores 4 or more, and the median time of its right answers is at or below the threshold | fluent (REQ-0942) |
 | `probe-fast` | both tasks of a probe right and each no slower than the threshold; for a choice-only probe, all 3 right | fluent (REQ-0942) |
 | `stable` | "fluent" in two checks at least 14 days apart, at least one of them a full block, and no later check worse than "fluent" | stable (REQ-0944) |
-| `open` | tasks exist but no block or probe is complete, or a probe escalated | being clarified |
+| `open` | tasks exist but no block or probe is complete, or the newest complete check is a probe that isn't `probe-fast` and no full block has formed after it | being clarified |
 | `none` | no unassisted first attempt | not checked, or "stretch: not checked" on a stretch node |
 
-A block's score counts a partially right answer as 0.5. A check for `stable` is a full block, or an Ascent anchor form once Ascents exist, and never a probe (REQ-0944).
+When several complete checks match, the newest by the `seq` of its last observation sets the tested state, and `stable` reads the whole history (REQ-0934). A complete probe that isn't `probe-fast` escalates as ADR-0070 states. A block's score counts a partially right answer as 0.5. A check for `stable` is a full block, or an Ascent anchor form once Ascents exist, and never a probe (REQ-0944).
 
-A full block is the node's last 5 graded observations, unassisted first attempts only, within 7 days, covering every subtype of weight 0.2 or more (REQ-0950). It never spans a lesson mark for its node, a `parent_tag_added` event: observations before the mark don't enter a block after it (REQ-0952). A control fact never enters a full block or a probe (REQ-0932), and ADR-0290 states the same for a Volley fact. A probe is 2 observations of different subtypes with `purpose: probe`, or, for a node the graph tests only by choice tasks, 3 choice observations with at least 4 options each (REQ-0954).
+A full block is the node's last 5 graded observations, unassisted first attempts only, within 7 days, covering every subtype of weight 0.2 or more (REQ-0950). It never spans a lesson mark for its node, a `parent_tag_added` event: observations before the mark don't enter a block after it (REQ-0952). A mark the parent removes, `parent_tag_removed`, counts as never set from the recompute the removal triggers. A control fact never enters a full block or a probe (REQ-0932), and ADR-0290 states the same for a Volley fact. A probe is 2 observations of different subtypes with `purpose: probe`, or, for a node the graph tests only by choice tasks, 3 choice observations with at least 4 options each (REQ-0954).
 
 The state carries a label key whose string lives in the per-language file. The state "not mastered" has the key `state.not_mastered`, whose Russian string is «Пока не освоено» (not mastered yet) (REQ-0946).
 
@@ -205,7 +205,7 @@ The engine applies the inference rules after the tested states:
 
 ### Obligations for the Director
 
-Each run writes `node_obligations`: open escalations, blocks owed after a probe scoring 0 out of 2, probes owed to the direct descendants of an "understands" node, nodes queued after a failed island check, cut-off nodes with their `cutBy`, stale nodes and due reviews. The list is a set keyed by node and kind, so it holds at most one row per node and kind. ADR-0070 states what the Director does with each row.
+Each run writes `node_obligations`, which holds seven kinds: open escalations, blocks owed after a probe scoring 0 out of 2, probes owed to the direct descendants of an "understands" node, nodes queued after a failed island check, cut-off nodes with their `cutBy`, stale nodes and due reviews. The list is a set keyed by node and kind, so it holds at most one row per node and kind. ADR-0070 states what the Director does with each row.
 
 ### Snapshots
 
@@ -219,7 +219,7 @@ The model keeps a row for every node of the graph up to the end of group 8, leve
 
 ### Accepting a new model version
 
-A new model version replaces the active one only through `./tower model activate`, which runs `tools/eval-model.ts` first (REQ-0980). The tool replays the log with the candidate and with the active version and predicts each unassisted first attempt of the held-out days, the last 20 % of play days, from the events before it. It computes log-loss and expected calibration error over 10 equal-width bins, and refuses the activation unless the candidate is lower on both. Model v1 is exempt, because it has no predecessor. The same gate admits a form into `admittedForms` (REQ-5026) and a version that reads the depth of help (REQ-5144), and a new prior row reaches the estimates only as a new model version (REQ-0984).
+A new model version replaces the active one only through `./tower model activate`, which runs `tools/eval-model.ts` first (REQ-0980). The tool replays the log with the candidate and with the active version and predicts each unassisted first attempt of the held-out days, the last 20 % of play days, from the events before it. It computes log-loss and expected calibration error over 10 equal-width bins, and refuses the activation unless the candidate is lower on both. Model v1 is exempt, because it has no predecessor. The gate tests a parameter file with all its prior rows, and a change of the school-group setting runs no gate. The same gate admits a form into `admittedForms` (REQ-5026) and a version that reads the depth of help (REQ-5144), and a new prior row reaches the estimates only as a new model version (REQ-0984).
 
 ## Failure paths
 
@@ -239,15 +239,5 @@ A new model version replaces the active one only through `./tower model activate
 | Any model failure during play | The player sees nothing, and play continues on the last estimates. |
 
 ## Open review findings
-
-An agent reviewer raised these on 2026-09-28, and each stays open because the decisions in force don't settle it, so the spec can't state it without choosing:
-
-- Which complete check sets the tested state when several match, such as an older `block-fast` and a newer `block-low`, and whether a complete probe that isn't `probe-fast` counts as escalated and so gets `open`. ADR-0060 gives no precedence; ADR-0070 states the escalation.
-- The time at which the recompute at server start evaluates forgetting, since no event triggers it. ADR-0060 names only the triggering event's time.
-- The `confidence` level of a probe or an island check within 14 days, and whether a block 15 to 30 days old is "a check" for the medium band. ADR-0060 lists only the three bands.
-- Whether a change of the school-group setting passes the held-out gate of `./tower model activate` and writes `model_activated`. ADR-0060 makes it a new model version and a full recompute and says nothing of the gate.
-- Whether a right answer with `fast` 0, on an item with `interrupted`, `crossDevice` or an estimate, is meant to count against the fluency estimate. ADR-0060 says such an attempt can't be fast, ADR-0240 extends that to every item with an estimate, and neither leaves these attempts out of the fluency estimate.
-- What a partially right answer does to the forgetting half-life `H`. ADR-0060 names only a right and a wrong answer.
-- ADR-0060 bounds `node_obligations` at "six kinds" while listing seven; the spec states one row per node and kind.
 
 The reasons behind the values and rules here, such as the fatigue weight, the `pGuess` of 0.06, the 30-day stale cut, the budgets and the snapshot ceiling, stay in ADR-0060, ADR-0070, ADR-0210 and ADR-0250, because a specification states what the system does.

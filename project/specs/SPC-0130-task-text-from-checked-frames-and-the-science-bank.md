@@ -32,7 +32,7 @@ It leaves out what other parts define. The task's steps, numbers, answer, word-p
 | `content/frames.ru.json` | The committed copy of the library. |
 | The `frames` table | Every live frame with its status. |
 | `content/science.ru.json` | The science bank: questions for the topics E1 to E5, each a choice from four, each wrong option with the misconception it tests, each question with a content hash; the file declares `repeatWindowDays`. |
-| The frame review screen | Each candidate with its structure and floor, and «принять / отклонить / поправить» (accept / reject / edit). |
+| The frame review screen | Each candidate with its structure and floor, and «принять / отклонить / поправить» (accept / reject / edit); an edited candidate still waiting for its check shows as waiting, with no accept control. |
 | The live frame list | Each live frame with its status, and «В библиотеку» (To the library). |
 | The science review screen | Each question with its correct option and each wrong option beside its misconception, with approve and reject. |
 
@@ -40,10 +40,13 @@ It leaves out what other parts define. The task's steps, numbers, answer, word-p
 
 | Event | Payload |
 | --- | --- |
-| `frame_accepted` | the frame's text and hash, and `as_written` or `as_edited` |
+| `frame_accepted` | the frame's text and hash, `as_written` or `as_edited`, and `candidateSince` |
+| `frame_candidate_rejected` | the candidate's hash and `candidateSince` |
+| `frame_candidate_expired` | the candidate's hash and `candidateSince` |
 | `frame_removed` | the frame's hash |
 | `live_frames_paused` | the game day |
-| `science_approved` | the question's hash |
+| `science_approved` | the question's hash and `candidateSince` |
+| `science_rejected` | the question's hash and `candidateSince` |
 | `item_shown`, fields this part adds | `frameId`, `frameSource` (`library` or `live`), `frameRepeat: true` on a frame shown within 14 game days, and `repeat: true` on a science question shown within its window |
 
 ### Live frame statuses
@@ -67,11 +70,13 @@ It leaves out what other parts define. The task's steps, numbers, answer, word-p
 | `science_repeat` | the question shown longest ago is used and marked | the parent, on the science review screen |
 | `science_topic_empty` | the Director takes another topic | the parent, on the science review screen |
 
+| `frames_acceptance_unchecked` | the verify command counts every frame in `content/frames.ru.json` | the owner, as a verify warning |
+
 The player sees none of these states.
 
 ### Permitted dependencies
 
-The frame service calls models only through the gateway (ADR-0100) and runs its checks only through the shared check module. The science module imports nothing from the gateway, and the verify command's import rule fails the build if it does. Both write to the log only through `appendEvents`. The library in play is read from the log's events together with `content/frames.ru.json`, and a file alone never adds a frame or a question. The Parent Room's screens write the parent's events, behind the PIN.
+The frame service calls models only through the gateway (ADR-0100) and runs its checks only through the shared check module. The science module imports nothing from the gateway, and the verify command's import rule fails the build if it does. Both write to the log only through `appendEvents`. The verify command reads acceptance only from the newest snapshot in `data/snapshots/`, never from the live database. The library in play is read from the log's events together with `content/frames.ru.json`, and a file alone never adds a frame or a question. The Parent Room's screens write the parent's events, behind the PIN.
 
 ## Behaviour
 
@@ -101,15 +106,15 @@ Every request to a model goes through the gateway, which records the request and
 
 ### The frame library
 
-The library holds only frames the parent accepted, as written or as edited (REQ-3638). `npm run frames:generate` puts each variant that passed steps 1 to 5 into the candidates file. It holds at most the larger of 5 and one and a half times the structure's shortfall against the stage's target, 5 frames from stage 0.2 and 20 from stage 0.4, as candidates for a structure, counting the candidates already waiting, and reports `frame_candidates_full` when it stops. A candidate older than 60 days expires, and the log records the expiry.
+The library holds only frames the parent accepted, as written or as edited (REQ-3638). `npm run frames:generate` puts each variant that passed steps 1 to 5 into the candidates file. It holds at most the larger of 5 and one and a half times the structure's shortfall against the stage's target, 5 frames from stage 0.2 and 20 from stage 0.4, as candidates for a structure, counting the candidates already waiting, and reports `frame_candidates_full` when it stops. Each candidate records `candidateSince`, the day it entered the candidates file. At the first change of game day after a candidate turns 60 days old, the server writes `frame_candidate_expired` and the candidate leaves the file.
 
-The frame review screen offers accept, reject and edit on each candidate (REQ-3636). An edit reruns step 3 at once and shows the parent in words what the edited text failed. An edit that passes step 3 waits for steps 4 and 5, the safety check and the three blind solves, which run at the next `frames:generate`, and joins the library only when they pass. Acceptance writes `frame_accepted` with the frame's text and hash, marked `as_written` or `as_edited`.
+The frame review screen offers accept, reject and edit on each candidate (REQ-3636). Rejection writes `frame_candidate_rejected`. An edit reruns step 3 at once and shows the parent in words what the edited text failed. An edit that passes step 3 shows as waiting for its check, with no accept control, until the next `frames:generate` runs steps 4 and 5, the safety check and the three blind solves, on it. When they pass, the screen offers accept on the edited candidate again; when they fail, it shows the failure in words and the edit stays a candidate. The Parent Room writes every acceptance: `frame_accepted` with the frame's text and hash, marked `as_written` or `as_edited`, and the candidate's `candidateSince`. The review time of any decision on a candidate is the day of its event minus its `candidateSince`.
 
 The library in play is the set of frames whose hash the log holds in a `frame_accepted` event and in no later `frame_removed` event. The server writes it to `data/exports/frames.ru.json` after each change, and the owner commits that copy to `content/frames.ru.json`. The server serves a frame from the committed file only when the log holds its acceptance.
 
 Probes, the Guardian ladder (лестница Стражей) and every fallback case take their frames only from the library (REQ-3604).
 
-The verify command reads no log: it counts the frames in `content/frames.ru.json`, the committed copy of the export the server writes from the library in play. It fails a build whose file holds fewer than 5 frames for any word-problem structure from stage 0.2 (REQ-3606), or fewer than 20 from stage 0.4 (REQ-3608), and one holding a frame that fails step 3. A frame added to the file by hand counts in verify, and the server skips it at start as `frame_unaccepted`.
+The verify command counts a frame of `content/frames.ru.json` only when the newest snapshot in `data/snapshots/` holds its `frame_accepted` and no later `frame_removed`. With no snapshot, it counts every frame in the file and reports `frames_acceptance_unchecked`. It fails a build whose counted frames number fewer than 5 for any word-problem structure from stage 0.2 (REQ-3606), or fewer than 20 from stage 0.4 (REQ-3608), and one whose file holds a frame that fails step 3. When a snapshot exists, verify doesn't count a frame added to the file by hand, and the server skips that frame at start as `frame_unaccepted`.
 
 ### Choosing a frame
 
@@ -131,9 +136,9 @@ A live frame counts as checked when it has finished the pipeline or failed a ste
 
 Natural science questions come only from `content/science.ru.json`, never from text generated during play (REQ-3660). An agent or a person drafts the questions offline into the file. Each wrong option names the misconception it tests (REQ-1238), and the parent judges each option on the science review screen. The verify command fails a build whose bank holds fewer than 40 questions in any topic (REQ-1236).
 
-A question reaches the player only when the log holds a `science_approved` event for its current hash, written when the parent approves it on the science review screen (REQ-3650). An edited question has a new hash and waits for a new approval.
+A question reaches the player only when the log holds a `science_approved` event for its current hash, written when the parent approves it on the science review screen (REQ-3650). Rejecting a question there writes `science_rejected`. Both events carry `candidateSince`, the day the question entered `content/science.ru.json`. An edited question has a new hash and waits for a new approval.
 
-When the Director gives a science slot a topic, the question is the least recently shown approved question of that topic, never-shown first. The window is 45 game days before stage 0.5 (REQ-3652) and 90 game days from stage 0.5 (REQ-3654), and the verify command fails a build whose `repeatWindowDays` doesn't match its stage. When the topic has no approved question outside the window, the question shown longest ago comes (REQ-3656), and its `item_shown` carries `repeat: true` (REQ-3658).
+When the Director gives a science slot a topic, the question is the least recently shown approved question of that topic, never-shown first, with ties broken by the day's seed. The window is 45 game days before stage 0.5 (REQ-3652) and 90 game days from stage 0.5 (REQ-3654), and the verify command fails a build whose `repeatWindowDays` doesn't match its stage. When the topic has no approved question outside the window, the question shown longest ago comes (REQ-3656), and its `item_shown` carries `repeat: true` (REQ-3658).
 
 ### Language
 
@@ -159,7 +164,10 @@ Frames and science questions exist in Russian only: `content/frames.ru.json`, `c
 | `content/frames.ru.json` holds a frame with no `frame_accepted` in the log | `frame_unaccepted`; the server never serves it and reports it once at start. |
 | An edited frame fails step 3 | `frame_edit_failed`; it stays a candidate, and the screen shows its failures in words. |
 | A structure's candidates reach the larger of 5 and one and a half times its shortfall | `frame_candidates_full`; `frames:generate` adds no more to it. |
-| A candidate waits 60 days | It expires, and the log records the expiry. |
+| A candidate turns 60 days old | At the next change of game day the server writes `frame_candidate_expired`, and the candidate leaves the file. |
+| An edited candidate hasn't yet passed steps 4 and 5 | The review screen shows it as waiting for its check, with no accept control. |
+| The verify command finds no snapshot in `data/snapshots/` | `frames_acceptance_unchecked`; it counts every frame in the file. |
+| `content/frames.ru.json` holds a frame the newest snapshot has no acceptance for | The verify command doesn't count it. |
 | A science question has no approval of its current hash | `science_unapproved`; it isn't served. |
 | A topic has no approved question outside its window | `science_repeat`; the question shown longest ago is served with `repeat: true`. |
 | A topic has no approved question at all | `science_topic_empty`; the Director takes another topic. |
@@ -169,8 +177,5 @@ Frames and science questions exist in Russian only: `content/frames.ru.json`, `c
 
 ## Open review findings
 
-- Open: nothing names the writer of `frame_accepted` `as_edited` for an edited frame. The parent's edit happens on the review screen, and its blind solves run later in the offline `frames:generate`, while only the Parent Room writes a parent's event. ADR-0130 says the edit joins the library when the solves pass and names no writer or waiting status, so choosing one is a decision for ADR-0130, not this spec.
-- Open: the parent's rejection of a frame candidate or a science question, and a candidate's 60-day expiry, have no named event, though the expiry must reach the log. The time from candidate to decision and the review time that ADR-0130's reversal triggers need have no record either. ADR-0130's list of new events holds none of these, so naming them is a decision for ADR-0130.
-- Open: ADR-0130 has the verify command count accepted frames in `content/frames.ru.json`, but acceptance lives only in the log, which verify doesn't read. A frame added to the file by hand therefore counts towards REQ-3606 and REQ-3608 in verify while the server skips it. Whether verify should read the export's hash list or the log is a decision for ADR-0130 or ADR-0190.
 - Rejected: bring the header comment's promise of a reason for each rule into line with rule S8. The comment is the repository's standard header, and the body now carries no reasons.
 - Rejected: add the reason to the rules on the candidate cap, the 60-day expiry, the 50,000-row report, the science module's import rule, the request holding no name of hers and the end-of-day expiry of `ready` frames. A spec states what the system does and never why (rule S8), and ADR-0130 holds the reasons.

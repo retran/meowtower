@@ -24,8 +24,9 @@ It leaves out what other documents state. SPC-0040 states the template contract,
 | Module | What it holds |
 | --- | --- |
 | `src/templates/plan.ts` | the plan builder and `gradePlan` |
-| `word_problem_cycle` | the projection that counts first-shown word problems, rebuilt from `item_shown.openingPhase` |
-| `src/shared/api.ts` | `PlanView` and the plan route's request and reply, each under a `.strict()` zod schema |
+| `word_problem_cycle` | the `game` projection that counts first-shown T2 to T4 word problems, rebuilt from `item_shown.openingPhase` |
+| `word_problem_cycle_t1` | the `game` projection that counts first-shown T1 problems, rebuilt from `item_shown` |
+| `src/shared/api.ts` | `PlanView` and the requests and replies of the plan route and the draft route, each under a `.strict()` zod schema |
 | `content/plans.ru.json` | the Russian card wordings, keyed `<templateId>.<quantityId>` |
 
 ### What a word problem template declares
@@ -36,9 +37,11 @@ A word problem template declares a quantity id for every node of every valid gra
 
 `PlanView` carries each card's opaque id and text, in display order, and nothing else. The needed set, the kinds, the dependencies, the graph and the engine's order stay on the server until the answer.
 
-### The plan route
+### The plan routes
 
 `POST /api/item/:itemId/plan` takes the laid sequence of card ids, `endedBy` and `clientSeq`, logs `plan_submitted` and moves the attempt to `solve`. It is idempotent by `clientSeq`, as SPC-0030's routes are, and its reply carries no label and no fault.
+
+`POST /api/item/:itemId/plan/draft` takes `{ laid, clientSeq }`, the card ids of a partly laid plan in her order, and logs `plan_draft`. It is idempotent by `clientSeq`.
 
 ### Events
 
@@ -71,8 +74,8 @@ A word problem template declares a quantity id for every node of every valid gra
 
 - SPC-0040 supplies the valid graphs, the structure traps, the surplus datum, `solution(p)`, `hints(p)`, the distinctness test, the filler and the generation fallbacks.
 - SPC-0080 supplies the `open`, `review` and `closed` states, the hint ladder and the rule that a rung marks the attempt assisted.
-- SPC-0030 supplies `clientSeq` idempotence, the answer queue and its waiting scene, and the resume point, which holds the newest `plan_draft` per item.
-- SPC-0020 supplies `appendEvents`, the projection registry and upcasting.
+- SPC-0030 supplies `clientSeq` idempotence, the event queue and its waiting scene, and the resume point, which holds the newest `plan_draft` per item.
+- SPC-0020 supplies `appendEvents`, the projection registry with each projection's class, and upcasting.
 - SPC-0180 supplies the word-problem matrix and its period.
 
 The permitted dependencies run one way. `src/templates/plan.ts` imports only template code and `src/shared/`, and never the model gateway; the existing `no-restricted-imports` rule on `src/templates` enforces it. `gradePlan` is pure: it reads no clock, no database and no randomness. The client imports only `src/shared/`. Route code writes to the log only through `appendEvents`.
@@ -90,7 +93,7 @@ The item builder gives every first-shown word problem one opening phase, a model
 
 In every run of consecutive compound problems, model choices are 20 % to 30 % of them within one problem (REQ-5610). In any 30 days, the compound problems chosen to open with a plan are 20 % to 30 % of the compound problems she gets, or within one problem of that range, whether or not their template could build the plan (REQ-6422). The compound problems that open with a plan in any 30 days split between step and final-answer input within 40 % to 60 %, or within one problem of that range (REQ-5608). No problem gets both a model choice and a plan (REQ-5602).
 
-A T1 problem never opens with a plan (REQ-5600). A second counter over first-shown T1 problems gives a model choice at `t mod 4 = 0`, which holds the T1 share at 20 % to 30 % within one problem (REQ-5670).
+A T1 problem never opens with a plan (REQ-5600). `word_problem_cycle_t1` counts the `item_shown` events of first-shown T1 problems, leaving out a second attempt and a riddle she composes, and gives a model choice at T1 position `t mod 4 = 0`, which holds the T1 share at 20 % to 30 % within one problem (REQ-5670).
 
 When the template can't build a plan for any candidate the generator draws, the item builder logs `plan_unavailable` for the problem, and the problem opens with no phase. The plan moves to no other problem, and the slot still counts as chosen for a plan.
 
@@ -126,7 +129,7 @@ The label is the first fault in the order `used_distractor`, `missing_step`, `ex
 
 ### The `plan` phase
 
-A problem with a plan runs the `open` state in two phases, `plan` then `solve`. In `plan` the task window shows the problem text, the cards in an order the task's seeded stream shuffles, and a row where she lays them. The action row holds, in this order, «Не знаю» (I don't know), «Нельзя узнать», the thread button and «Готово» (Done), and «Готово» stays inactive while the row is empty. She can move and take back any card until she presses «Готово». The client sends each partly laid plan as `plan_draft`, and the server logs it.
+A problem with a plan runs the `open` state in two phases, `plan` then `solve`. In `plan` the task window shows the problem text, the cards in an order the task's seeded stream shuffles, and a row where she lays them. The action row holds, in this order, «Не знаю» (I don't know), «Нельзя узнать», the thread button and «Готово» (Done), and «Готово» stays inactive while the row is empty. She can move and take back any card until she presses «Готово». The client sends the partly laid plan through the draft route and SPC-0030's event queue, at most once every 10 seconds while the row changes and at once when she leaves the task window or the page turns hidden, and the server logs it as `plan_draft`.
 
 «Готово» sends the laid sequence. The server logs `plan_submitted` with the full sequence she laid, before she answers the problem (REQ-5638, REQ-5640), and the window moves to `solve` with no word, mark or colour about the plan (REQ-5650). The log records the plan's `planChoice` as one of the five labels, apart from the answer (REQ-5636).
 
@@ -162,18 +165,14 @@ A planning error is a plan labelled anything but `correct`, counted apart from m
 | A template lacks a quantity id, a stated quantity, an eligible decoy for its tier or a card wording | `plan_template_incomplete`: the build fails and names the template and the quantity. |
 | A sequence names an unknown card or a card twice, or no card with `endedBy: ready` | `400 plan_rejected`: the server writes nothing, and the phase stays open and unchanged. |
 | The same plan request arrives twice with one `clientSeq` | The server appends nothing and returns the state the first request left. |
-| The client has no connection when she presses «Готово» | SPC-0030's queue holds the plan, and the waiting scene shows. |
+| The client has no connection when she presses «Готово» | SPC-0030's event queue holds the plan, and the waiting scene shows. |
+| The client has no connection while she lays cards | SPC-0030's event queue holds each `plan_draft` in order and sends it when the connection returns. |
 | The app closes while she lays cards | The resume shows the cards in the same order with the row as the newest `plan_draft` left it. |
 | She misses a step in her plan and then needs a row for it | She adds a row, up to 6. |
-
-## Open findings
-
-- ADR-0360 has the client send a partly laid plan as `plan_draft` and names neither the route that carries it nor how often it is sent. This document states neither; the epic step chooses both.
 
 ## Open review findings
 
 - Rejected: give each rule its reason, for example why a `stated` decoy leaves out the given's number, why «Готово» stays inactive on an empty row, and why step rows stop at 6. A specification states what the system does, and ADR-0270 holds the reasons.
 - Rejected: upcast an older Guardian `item_shown` or `attempt_submitted` as `openingPhase: "model"`. ADR-0270 sets the upcaster to read every older event as `none`, and the repository holds no code, so no older event exists; changing the rule is a decision for ADR-0270.
 - Rejected: say "bought" for a rung, as ADR-0270 does, in place of "shown". SPC-0080 marks an attempt assisted when a rung is shown, whether the tap spent a thread or was free, and this document uses its term.
-- Open: the T1 counter has no named projection and no stated source. ADR-0270 names neither, and the epic step names them.
 - Rejected in part: drop the writing-standard comment at the top, which promises a reason with each rule. Every record carries that comment, so this document keeps it, and Scope now names ADR-0270 as the holder of the reasons.

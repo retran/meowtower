@@ -231,3 +231,5 @@ The premortem, written as though it had happened: by the third month the parent 
 - Whether «сама» ever admits track attempts, which needs the refit after the MVP (ADR-0060).
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

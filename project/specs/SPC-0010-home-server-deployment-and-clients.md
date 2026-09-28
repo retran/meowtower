@@ -115,7 +115,7 @@ A backup copy is one snapshot plus `data/blobs/`. The snapshot holds the event l
 
 `./meowtower restore` loads the newest snapshot as the live database.
 
-The parent's notices live in `data/snapshots/notices.json`, one object keyed by notice kind, beside `last.json`, where `./meowtower status` and the Mac's Parent Room page read them. `backup_failed` rises when a snapshot fails and the next good snapshot clears it. `storage_ceiling` counts what `meowtower` sees of `data/`, the blob store, the snapshots and the exports, and rises at 20 GB and again at each further 10 GB. Snapshot names have one-second resolution, and a snapshot whose name is taken takes the next free second.
+The parent's notices live in `data/snapshots/notices.json`, one object keyed by notice kind, beside `last.json`, where `./meowtower status` and the Mac's Parent Room page read them. `backup_failed` rises when a snapshot fails and the next good snapshot clears it. `storage_ceiling` counts `data/`, the blob store, the snapshots and the exports, together with the live database and its write-ahead log, which `meowtower` reads as the size of `meowtower.sqlite` and `meowtower.sqlite-wal` in `/var/lib/meowtower`. It rises at 20 GB and again at each further 10 GB. Snapshot names have one-second resolution, and a snapshot whose name is taken takes the next free second.
 
 ### The client
 
@@ -125,7 +125,7 @@ The client holds no text of its own: it reads the `ui.` keys of the language fil
 
 On the computer interface every control on every screen works from the keyboard alone, with a visible focus ring (REQ-2540).
 
-The device stores in IndexedDB only the queue of answers it hasn't sent, and asks for `navigator.storage.persist()` on first launch. Its service worker caches code and pictures, and caches sound files only while a sound channel is on (ADR-0320), and `localStorage` holds no game data (REQ-2542).
+The device stores in IndexedDB only the unsent entries of its event queue, and asks for `navigator.storage.persist()` on first launch. The event queue holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order the player made them, with at most one answer per device, and ADR-0030 states how the queue sends them. Its service worker caches code and pictures, and caches sound files only while a sound channel is on (ADR-0320), and `localStorage` holds no game data (REQ-2542).
 
 ### Push
 
@@ -151,14 +151,14 @@ The device stores in IndexedDB only the queue of answers it hasn't sent, and ask
 | Another machine connects to the Parent Room's loopback port | The Mac refuses the connection. |
 | OpenRouter fails or can't be reached | The adventure continues on library and pool texts, and the Parent Room shows `model_service_down` as a line for the parent. |
 | A snapshot fails | `meowtower` raises `backup_failed` once per failure, as a Parent Room notice and in `./meowtower status`, and the next good snapshot clears it. |
-| `data/` passes 20 GB | `meowtower` raises `storage_ceiling` once, and again at each further 10 GB. |
+| `data/` and the live database with its write-ahead log pass 20 GB | `meowtower` raises `storage_ceiling` once, and again at each further 10 GB. |
 | A snapshot of a 1 GB database takes longer than 60 seconds | `./meowtower status` shows the time against the budget in ADR-0190's Baselines table. |
 | The volume `meowtower-db` is deleted, for example by `docker compose down -v` or a Docker Desktop reset | The live database is gone; `./meowtower restore` loads the newest snapshot, and events after it are lost. |
 | A local judge is down or not yet verified | `./meowtower status` names its state; its checks take their standby route, as ADR-0350 states, and play goes on. |
-| A device's storage is wiped | The device loses its token and needs pairing again. The answers still in its IndexedDB queue are lost; everything the server acknowledged is kept, because the server holds it. |
+| A device's storage is wiped | The device loses its token and needs pairing again. The entries still in its IndexedDB event queue are lost; everything the server acknowledged is kept, because the server holds it. |
 
 ## Open review findings
 
 - The agent review asked to state the parent session in one place, since ADR-0030 also states it. I keep the cookie, device binding and memory here as the deployment's view and leave the idle expiry to ADR-0030; the two agree today.
-- The agent review asked whether `storage_ceiling` should count the live database, which sits in `meowtower-db` outside `data/`. The ceiling counts what `meowtower` sees of `data/`, as the Snapshots section states; counting the volume as well would need a decision.
 - The agent review asked for reasons beside the lockout's refusal of a correct entry, the player's ability to start the PIN lockout, and the snapshot name collision rule. I keep them without reasons, because a specification states what the system does and never why (S8).
+- REQ-2542 lets a device keep only answers it hasn't sent, and the event queue ADR-0370 sets also keeps unsent grouping sets, `looks_set`, `glossary_opened` and `plan_draft`. This document states the queue as ADR-0370 sets it; whether REQ-2542's wording needs a replacement is a judgement for the owner (S11).

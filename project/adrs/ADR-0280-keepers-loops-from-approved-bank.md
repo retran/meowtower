@@ -239,3 +239,5 @@ The premortem, written as though it had happened: three months in, the parent fo
 - A shared count of running clues across the Master's scenes and the puzzles; until ADR-0110 logs clues, the parent judges the pace at approval.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

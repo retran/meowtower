@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-36 decisions in all: 36 approved.
+37 decisions in all: 37 approved.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
@@ -42,4 +42,5 @@
 | [ADR-0340](ADR-0340-sandbox-second-database-file-read-only-main.md) | The parent's sandbox runs the unchanged engine on a second SQLite file in the database volume, reads the player's file only read-only, marks its events in the envelope where a guarded trigger refuses them, and changes her game only through confirmed actions, each logged once as its own event from the sandbox | approved |
 | [ADR-0350](ADR-0350-judge-checks-move-one-by-one-to-a-pinned-model-on-the-mac.md) | Judge checks move one by one to open models that llama.cpp serves on the Mac host, each check to the model that passed its Russian test set and its 1500 ms test on the file it serves, behind a loopback endpoint with a key or, failing that, the key alone, and every other check stays on its hosted route | approved |
 | [ADR-0360](ADR-0360-settle-the-conflicts-the-specifications-found.md) | Each conflict the specifications found settles for the approved requirement and a fair measurement, the addendum decision that owns a detail wins it, and twenty requirements that can't hold as written get replacements | approved |
+| [ADR-0370](ADR-0370-settle-what-the-decisions-and-specifications-still-leave-open.md) | Every gap the decisions and specifications still leave open settles by ADR-0360's defaults, rejected findings stay as records, and three requirements get replacements | approved |
 <!-- /meow-flow index -->

@@ -69,7 +69,7 @@ All go through `appendEvents`.
 
 | Name | Audience | Meaning |
 | --- | --- | --- |
-| `content_invalid` | the owner, through the verify command | a content file fails its schema |
+| `content_invalid` | the owner, through the verify command or the start-up log | a content file fails its schema |
 | `guardian_endings_missing` | the owner, through the log | a Guardian reached its problem without three endings |
 | `shelf_slot_empty` | the owner, through the Parent Room | a shelf slot has no candidate |
 | `409 not_enough_buttons` | the developer | a shop purchase the button stock can't pay |
@@ -94,7 +94,7 @@ The dependencies run one way. `src/game/` imports only `src/shared/` and its con
 
 A spell has exactly three outcomes, judged on the first attempt's verdict: `clean` for a correct verdict, `partial` («почти», almost) for a partial verdict, and `alt` («ослаблен», loosened) for a wrong answer or «Не знаю» (I don't know) (REQ-1742). On a word problem answered «Нельзя узнать» (can't be known), the verdict `insufficient_correct`, with the withheld given chosen, gets credit 1 and the outcome `clean` (REQ-5416). The verdict `insufficient_partial`, with a wrong given or none, gets credit 0.5 and the outcome `partial` (REQ-5418). The verdict `false_insufficient`, on a solvable problem, counts as a wrong answer with credit 0 and the outcome `alt` (REQ-5422).
 
-A task's outcome and every bonus depend on the unassisted first attempt alone (REQ-1702). A second attempt never enters the outcome, the streak, a bonus or the room branch (REQ-1704). An assisted first attempt, one answered after a thread opened its hint ladder, gets its outcome and badge from its verdict, counts at most 0.5 in the room and floor shares, leaves the streak unchanged and earns no shard, as ADR-0140 sets.
+A task's outcome and every bonus depend on the unassisted first attempt alone (REQ-1702). A second attempt never enters the outcome, the streak, a bonus or the room branch (REQ-1704). An assisted first attempt, one answered after a thread opened its hint ladder, gets its outcome and badge from its verdict, counts the smaller of its slot value and 0.5 in the room and floor shares, leaves the streak unchanged and earns no shard, as ADR-0140 sets.
 
 The badge is a view of the outcome (REQ-1760):
 
@@ -118,7 +118,7 @@ When the streak reaches 3, the module logs `combo` and fires a clean row, which 
 
 ### Room branch, floor state and chapter finale
 
-A room's slot values are `clean` 1, `partial` 0.5 and `alt` 0. A rapid guess counts 0.5 when correct and 0 when wrong (REQ-1712), and an assisted first attempt the same. A room takes `success` when its clean share over all its slots reaches the room threshold, and `alt` otherwise (REQ-1716).
+A room's slot values are `clean` 1, `partial` 0.5 and `alt` 0. A rapid guess counts 0.5 when correct and 0 when wrong (REQ-1712). An assisted first attempt counts the smaller of its slot value and 0.5, so an assisted `clean` or `partial` counts 0.5 and an assisted `alt` 0. A room takes `success` when its clean share over all its slots reaches the room threshold, and `alt` otherwise (REQ-1716).
 
 A floor's share uses the same values over its rooms' scored tasks and its Guardian's problem, leaving out mental arithmetic, warm-ups and check facts. The floor is `triumph` at the triumph threshold, `victory` at the victory threshold and `cunning` below it. A floor with no rooms and no Guardian gets no state (REQ-1722), and it stays out of the day's summary and out of the chapter finale's shares (REQ-1724). The chapter finale takes its triumph variant when at least the first share of its floor-days are `triumph` or `victory` and at least the second share are `triumph`.
 
@@ -138,7 +138,7 @@ Both room branches and all three floor states move the campaign on by the same s
 
 ### The reward queue
 
-A reward the Director ordered for `success` and missed on `alt` enters `reward_queue`. The next lead-in takes from the queue first, oldest first, and an entry 6 sessions old comes without a trial at the next floor-entry scene, logged as `reward_reopened`. So every missed reward returns within 7 sessions (REQ-1720). Checkpoint pages and legendary rewards never enter the queue, because they come by the calendar. The secrets a wrapped-up adventure left unopened enter the same queue, as SPC-0030 states, and return under the same rule.
+A reward the Director ordered for `success` and missed on `alt` enters `reward_queue`. The next lead-in takes from the queue first, oldest first, and an entry 6 sessions old comes without a trial at the first scene of the next session, whether that scene is a floor entry or any other, logged as `reward_reopened`. So every missed reward returns within 7 sessions (REQ-1720). Checkpoint pages and legendary rewards never enter the queue, because they come by the calendar. The secrets a wrapped-up adventure left unopened enter the same queue, as SPC-0030 states, and return under the same rule.
 
 ### The simulation and the first-month review
 
@@ -160,7 +160,7 @@ The heroine holds rank E from Session 0 through the MVP (REQ-2020), and «Мир
 
 ### Daily quests and daily rewards
 
-Daily quests and daily rewards come on every game day on which she plays, from the day their system opens, as ADR-0330 states, and no setting or rule switches them off after that (REQ-5018). The module picks the day's 3 daily quests by the day's seed and shows them with «В прошлый раз…» (Last time…). The daily rewards are the grants of a met quest: 50 experience, 10 buttons (REQ-2132) and the guiding thread SPC-0080 states. The choice of two routes of the day comes beside the 3 quests and never takes a quest's place (REQ-5020).
+Daily quests and daily rewards come every game day once their system has opened, as ADR-0330 states, and no setting or rule switches them off (REQ-5018). The module picks the day's 3 daily quests by the day's seed. They show beside «В прошлый раз…» (Last time…), the opening scene ADR-0110 orders from the planner's latest session summary, or beside the library opening that replaces it when that order fails. The daily rewards are the grants of a met quest: 50 experience, 10 buttons (REQ-2132) and the guiding thread SPC-0080 states. The choice of two routes of the day comes beside the 3 quests and never takes a quest's place (REQ-5020).
 
 Every quest template counts an act of play, such as clearing floors or picking from a chest, and none counts a correct answer, so every quest can be met without answering any task correctly (REQ-2006). A content check rejects a template whose counter reads a verdict. The module logs `quest_progress` as a quest counts an act and when it is met. A quest unmet when the game day ends disappears with no penalty and no event she sees (REQ-2008).
 
@@ -210,7 +210,7 @@ Quality follows the branch:
 | Room on `success`, floor on `triumph` | sparkling | good | ordinary |
 | Room on `alt`, floor on `victory` or `cunning`, a stateless floor | good | ordinary | ordinary |
 
-So a room on `success` offers one sparkling reward (REQ-2108), and a room on `alt` offers only ordinary or good ones (REQ-2110). A Diary page has no quality tier and counts as good, so when pages take the largest shortfall in a success chest, the sparkling slot moves to the next category. A cosmetic reward is an item she doesn't own: a curiosity when ordinary, an accessory when good and an outfit when sparkling. The floor chest on `triumph` adds the floor's special reward. The module logs `chest_offered` with the three rewards, so a resume before the pick shows the same three, and a reload or a replayed request can't re-roll a chest.
+So a room on `success` offers one sparkling reward (REQ-2108), and a room on `alt` offers only ordinary or good ones (REQ-2110). A Diary page has no quality tier and counts as good. When pages take the largest shortfall in a success chest, the pages fill the first slot as good, the category with the second shortfall takes the sparkling quality, and the third slot stays ordinary, so the chest still offers one sparkling reward. A cosmetic reward is an item she doesn't own: a curiosity when ordinary, an accessory when good and an outfit when sparkling. The floor chest grants the floor's special reward beside her pick the first time that floor reaches `triumph`, and a later `triumph` on the same floor adds nothing. Each floor's entry in `content/economy.json` names its special reward, a sparkling cosmetic, and a content test fails a floor without one. The module logs `chest_offered` with the three rewards, so a resume before the pick shows the same three, and a reload or a replayed request can't re-roll a chest.
 
 ### The shop
 
@@ -241,7 +241,7 @@ The server loads an entry only with `ownerApproved: true`, set when the owner ha
 
 In Session 0 she chooses her first familiar from «Пуговка», «Винтик» and «Безешка» (REQ-1912). The game asks her to name it (REQ-1914) and to give it one or two traits, from the list in the string files or her own words through the free-text path (REQ-1916); `familiar_hatched` records both.
 
-The same naming rule holds for every familiar that hatches. The hatching screen offers the familiar's canon name as the first suggestion (REQ-1952), and she can replace it with a name of her own (REQ-1954). The module filters the naming window's suggestions before the screen shows them. It drops a suggestion equal to the name of any move in `familiars.yaml` (REQ-3532) or to the current name of anything she has named (REQ-3534). It compares names after trimming, folding case and folding «ё» to «е», and fills a dropped place from the hand-written list under the same filter.
+The same naming rule holds for every familiar that hatches. The hatching screen offers the familiar's canon name as the first suggestion (REQ-1952), and she can replace it with a name of her own (REQ-1954). The module filters the naming window's suggestions before the screen shows them. It drops a suggestion equal to the name of any move in `familiars.yaml` (REQ-3532) or to any name in use in her game (REQ-3534): the current names she gave and the canon names of everything the game has shown her. It compares names after trimming, folding case and folding «ё» to «е», and fills a dropped place from the hand-written list under the same filter.
 
 ### Friendship and evolution
 
@@ -264,6 +264,8 @@ The bestiary is a projection. It shows a page for each creature she has met (REQ
 | Condition | What happens |
 | --- | --- |
 | A content file fails its schema at start-up | `content_invalid`: the server keeps the last valid version, refuses the new one, and the verify command reports it to the owner; the player sees nothing. |
+| A content file has no valid version at the first start-up | `content_invalid`, naming the file: the server refuses to start and tells the owner. |
+| A floor's entry in `content/economy.json` names no special reward | The content test fails the build. |
 | A familiar entry lacks `ownerApproved: true`, lacks a chosen picture for a listed stage, or isn't one of the nine allowed | The load check fails and the entry never joins the roster. |
 | A Guardian lacks a fallback ending for a state | The build check fails. At runtime, `guardian_endings_missing`: the Director skips the Guardian problem, the floor ends with the System's state line, and the log tells the owner. |
 | `canon.ru.md` or `lines.ru.json` names a fourth outcome or a share beside the room's branch words | The content check fails the build. |
@@ -284,13 +286,10 @@ The bestiary is a projection. It shows a page for each creature she has met (REQ
 ## Choices this document makes
 
 - Where REQ-1748 or the assisted-attempt rule and REQ-1750 both meet one `alt` first attempt, the streak stays unchanged: the listed cases name that attempt and REQ-1750 names every `alt`.
-
 - The daily rewards REQ-5018 names are read as the grants of a met daily quest; the morning's guiding threads belong to SPC-0080.
 - The shop and forge refusals are named `409 not_enough_buttons` and `409 not_enough_materials`, and log nothing; no decision names them.
 
 ## Open review findings
 
 - The agent reviewer asked for the reason of the assisted-attempt rule beside it. Rejected: the method's rule S8 keeps a decision's reasons in the decision, and the sentence now names ADR-0140, which holds this one.
-- The agent reviewer suggested naming the floor chest's special reward on `triumph` and what «В прошлый раз…» shows beside the quests. Not taken: ADR-0140 and ADR-0330 define neither, and the canon and ADR-0330 own the scene.
-- The second agent review found five gaps that ADR-0140 leaves open, and this document doesn't choose them: the filter of REQ-3534 compares against the names she gave, as ADR-0140 words it, and not against canon names already in her game; an entry 6 sessions old returns at the next floor-entry scene, which a session with no floor entry lacks; the server's behaviour at a first start-up with no valid content version; the third slot's quality when Diary pages take the largest shortfall in a success chest; and whether an assisted `partial` counts 0.5. The owner settles each through ADR-0140's record.
 - The second agent review read the name-folding rule as this document's choice. Rejected: ADR-0140 sets it.

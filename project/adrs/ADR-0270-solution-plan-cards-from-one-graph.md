@@ -204,3 +204,5 @@ The premortem, written as though it had already happened: three months in, the p
 - REQ-5120 lists what the task window may hold and names no plan cards. I read the cards as the task's options, as the model choice's four models are; if the owner reads it otherwise, a requirement has to add them.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

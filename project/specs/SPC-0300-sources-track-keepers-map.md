@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, REQ-5914, REQ-5916, REQ-5918, REQ-5920, REQ-5922, REQ-5924, REQ-5926, REQ-5928, REQ-5930, REQ-5932, REQ-5934, REQ-5936, REQ-5938, REQ-5940, REQ-5942, REQ-5944, REQ-5946, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-5956, REQ-5958, REQ-5960, REQ-5962, REQ-5964, REQ-5966, REQ-6428, REQ-5970, REQ-5972, REQ-5974, REQ-5976, REQ-5978, REQ-5980, REQ-5982, REQ-5984, REQ-5986, REQ-5988, REQ-5990, REQ-5992, REQ-5994, REQ-5996]
+states: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, REQ-5914, REQ-5916, REQ-5918, REQ-5920, REQ-5922, REQ-5924, REQ-5926, REQ-5928, REQ-5930, REQ-5932, REQ-5934, REQ-5936, REQ-5938, REQ-5940, REQ-5942, REQ-5944, REQ-5946, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-5956, REQ-5958, REQ-5960, REQ-5962, REQ-5964, REQ-5966, REQ-6428, REQ-5970, REQ-5972, REQ-5974, REQ-5976, REQ-5978, REQ-5980, REQ-5982, REQ-5984, REQ-5986, REQ-5988, REQ-5990, REQ-5992, REQ-6504, REQ-5996]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -197,7 +197,7 @@ The screen shows «находит, но не считает» (finds but doesn't
 
 No track node counts in the VWO readiness block's coverage, margin, ceiling or ladder (REQ-5970), and none appears in the report's gap list (REQ-5972). Both read `nodes` only, and a unit test with every track node «пока не освоено» (not mastered yet) changes no figure in either.
 
-Neither the report nor the Parent Room names a Studievaardigheden test (REQ-5994) or claims that the player's school gives one (REQ-5924). The Parent Room asks the parent nothing about which tests the school gives (REQ-5996). A build check searches every string file and the Parent Room's schemas for the word Studievaardigheden and fails on a match, and a search of the settings schema finds no field for the school's tests.
+Text the game writes into the report and the Parent Room never names a Studievaardigheden test (REQ-6504) or claims that the player's school gives one (REQ-5924). A school document the parent imports under ADR-0310 shows as the school wrote it, whatever test it names. The Parent Room asks the parent nothing about which tests the school gives (REQ-5996). A build check searches every string file and the Parent Room's schemas for the word Studievaardigheden and fails on a match, and a search of the settings schema finds no field for the school's tests.
 
 ### Simulation, acceptance and the checklist
 
@@ -226,4 +226,3 @@ Neither the report nor the Parent Room names a Studievaardigheden test (REQ-5994
 ## Open review findings
 
 - Rejected: add a reason to each rule (the 1S prior, the fluency thresholds, the daily cap, the node order, the size ceilings, the minimum gap, `choice` only for labels, the zoom range and its reset). A specification states what the system does and never why (S8); the reasons live in ADR-0300.
-- Rejected: say whether school-document text the parent imports under ADR-0310 falls under REQ-5994's ban on naming Studievaardigheden. No decision in force settles it, and choosing here would make a decision the spec step doesn't own; the build check stays on string files and Parent Room schemas as ADR-0300 states.

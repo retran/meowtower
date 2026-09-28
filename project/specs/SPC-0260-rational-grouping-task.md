@@ -15,7 +15,7 @@ states: [REQ-5500, REQ-5502, REQ-5504, REQ-5506, REQ-5508, REQ-5510, REQ-5512, R
 
 This document covers the rational grouping task from end to end: the `grouping` declaration on a template and its build checks, the task window's links and marks, the grouping route and the `grouping_submitted` event, the pure function `scoreGrouping`, the short loop reward, the `grouping_stream` projection, the Director's placement of a grouping task, the «Видит удобные приёмы» (Sees convenient methods) block of the report, and the weekly yarn table `./meowtower yarn-weeks`. It is written at the component level: modules, routes, packets, events, projections and the rules each applies. ADR-0260 holds the reason for every rule and number stated here.
 
-It leaves out what other documents state. SPC-0030 states the play API's shared contract, the lease, the resume point and the answer queue, and SPC-0020 states the event log, `appendEvents` and the projection registry. SPC-0040 states the template contract a grouping template extends, SPC-0070 the Director's other slot sources, SPC-0080 the attempt flow and the hint ladder, SPC-0140 the other rewards and the forge recipes, SPC-0060 the knowledge model and the rule for new forms, and SPC-0180 the rest of the report.
+It leaves out what other documents state. SPC-0030 states the play API's shared contract, the lease, the resume point and the client's event queue, and SPC-0020 states the event log, `appendEvents` and the projection registry. SPC-0040 states the template contract a grouping template extends, SPC-0070 the Director's other slot sources, SPC-0080 the attempt flow and the hint ladder, SPC-0140 the other rewards and the forge recipes, SPC-0060 the knowledge model and the rule for new forms, and SPC-0180 the rest of the report.
 
 ## Boundary
 
@@ -26,7 +26,7 @@ It leaves out what other documents state. SPC-0030 states the play API's shared 
 | `src/engine/grouping/` | `scoreGrouping`, the admissibility check and the plan replay |
 | `src/shared/api.ts` | the grouping route's request and reply, `AnswerIn.lastGroupingSeq`, and the grouping part of the room view |
 | `src/shared/events.ts` | the `grouping_submitted` schema |
-| the projection registry | `grouping_stream` |
+| the projection registry | `grouping_stream`, class `knowledge` |
 | `./meowtower yarn-weeks` | the weekly yarn table |
 | `content/` | `system.short_loop`, `parent.grouping.invited` and the block's labels in the Russian string file; `spell.short_loop` in the scene effect data |
 
@@ -68,7 +68,7 @@ The room view of a grouping task carries the expression's numbers and signs with
 
 ### Projection
 
-`grouping_stream`, the projection of the `grouping` stream SPC-0060 lists, holds one row per grouping attempt: technique, host node, template, attempt number, score and `assisted`.
+`grouping_stream`, the projection of the `grouping` stream SPC-0060 lists, is registered with the class `knowledge` and holds one row per grouping attempt: technique, host node, template, attempt number, score and `assisted`.
 
 ### Statuses and error names
 
@@ -79,13 +79,13 @@ The room view of a grouping task carries the expression's numbers and signs with
 | `grouping_out_of_order` | the developer | an answer's `lastGroupingSeq` differs from the `clientSeq` of the attempt's last `grouping_submitted` |
 | `grouping_link_cap` | the owner | an attempt reached 40 changes |
 | `no_grouping_candidate` | the owner | no grouping template passes the Director's four gates for a floor |
-| `yarn_weeks_high` | the owner | two weeks in a row closed above 60 star yarn |
+| `yarn_weeks_high` | the owner, in `./meowtower status` | two weeks in a row closed above 60 star yarn |
 
 ### What this part requires from other parts
 
 - SPC-0040 supplies the template contract, `solve()`, `sampleParallel`, the subtype test and the repeat window.
 - SPC-0020 supplies `appendEvents`, the projection registry, the recompute and the check `projection_diverged`.
-- SPC-0030 supplies the answer route, `clientSeq` idempotence, the device queue and the resume point.
+- SPC-0030 supplies the answer route, `clientSeq` idempotence, the client's event queue and the resume point.
 - SPC-0080 supplies the attempt flow, the `closed` state, the hint ladder and the packet test.
 - SPC-0070 supplies `planFloor`, the volume forecast and the graded minimum.
 - SPC-0060 supplies the drop rule for a form outside `admittedForms`.
@@ -121,11 +121,11 @@ The window never colours, ticks, crosses or labels a link or a mark as optimal, 
 
 ### Logging the links
 
-Each change to the links or the mark sends `POST /api/item/:itemId/grouping` with the whole current set, and the server scores the set and logs one `grouping_submitted` (REQ-5566). The client draws the loop at the tap and sends the request through SPC-0030's persisted answer queue, which keeps every set in order and drops none of them, up to the 40 changes of `grouping_link_cap` (REQ-5566). A set still unsent when the app closes stays in the queue and goes out when the app opens again.
+Each change to the links or the mark sends `POST /api/item/:itemId/grouping` with the whole current set, and the server scores the set and logs one `grouping_submitted` (REQ-5566). The client draws the loop at the tap and sends the request through SPC-0030's event queue, which holds answers and grouping sets in the order she made them, keeps every set and drops none of them, up to the 40 changes of `grouping_link_cap` (REQ-5566). A set still unsent when the app closes stays in the queue and goes out when the app opens again.
 
 The resume point restores the links and the mark of an open attempt from the last `grouping_submitted` whose `attempt` is that attempt's number (REQ-5568). A second attempt shows the parallel expression `sampleParallel` gives, and its window opens with no loops and no mark.
 
-The grouping an attempt submits is the last `grouping_submitted` of that attempt before its `attempt_submitted`. When she submits an attempt with nothing drawn, the server appends a `grouping_submitted` with no links, no mark and the score `none` in the attempt's transaction, before its `attempt_submitted`. That event records the links and their score, and no other event repeats them: `attempt_submitted` carries no grouping field (REQ-5570, REQ-5572). `lastGroupingSeq` is `null` when an attempt opens, and the server accepts `null` when the attempt has no `grouping_submitted` and appends the empty one. When `AnswerIn.lastGroupingSeq` differs from the `clientSeq` of the attempt's last `grouping_submitted`, or is `null` while the attempt has one, the server refuses the answer with `grouping_out_of_order`, and the client's queue sends the grouping request first and the answer after it. A refused grouping request logs nothing, and its reply names the request that logged the current set, so the client's next `lastGroupingSeq` matches the log and the answer goes through.
+The grouping an attempt submits is the last `grouping_submitted` of that attempt before its `attempt_submitted`. When she submits an attempt with nothing drawn, the server appends a `grouping_submitted` with no links, no mark and the score `none` in the attempt's transaction, before its `attempt_submitted`. That event records the links and their score, and no other event repeats them: `attempt_submitted` carries no grouping field (REQ-5570, REQ-5572). `lastGroupingSeq` is `null` when an attempt opens, and the server accepts `null` when the attempt has no `grouping_submitted` and appends the empty one. When `AnswerIn.lastGroupingSeq` differs from the `clientSeq` of the attempt's last `grouping_submitted`, or is `null` while the attempt has one, the server refuses the answer with `grouping_out_of_order`, and the client's event queue sends the grouping request first and the answer after it. A refused grouping request logs nothing, and its reply names the request that logged the current set, so the client's next `lastGroupingSeq` matches the log and the answer goes through.
 
 ### The score
 
@@ -153,7 +153,7 @@ The knowledge model drops every grouping-task attempt from the "on her own" esti
 
 ### The rational calculation stream
 
-`grouping_stream` is the «рациональный счёт» (rational calculation) stream: one row per grouping attempt, with technique, host node, template, attempt number, score and `assisted` (REQ-5542). It folds each `attempt_submitted` whose `item_shown.forms` holds `grouping`, takes the score from the last `grouping_submitted` before it, `assisted` from the attempt's `assisted` flag, and the technique and host node from the template version `item_shown` names. It is a registered projection, so a recompute rebuilds it from the log alone and `projection_diverged` compares it with a fresh derivation (REQ-5544). Every unassisted figure the stream gives leaves out assisted rows (REQ-5576).
+`grouping_stream` is the «рациональный счёт» (rational calculation) stream: one row per grouping attempt, with technique, host node, template, attempt number, score and `assisted` (REQ-5542). It folds each `attempt_submitted` whose `item_shown.forms` holds `grouping`, takes the score from the last `grouping_submitted` before it, `assisted` from the attempt's `assisted` flag, and the technique and host node from the template version `item_shown` names. It is a registered projection of the class `knowledge`, so the import check of SPC-0020 lets it read the model's modules, a recompute rebuilds it from the log alone and `projection_diverged` compares it with a fresh derivation (REQ-5544). Every unassisted figure the stream gives leaves out assisted rows (REQ-5576).
 
 ### Placement by the Director
 
@@ -164,7 +164,7 @@ A room slot has four sources, frontier, review, parent topic and grouping (REQ-5
 3. The volume forecast, counting no grouping task, still gives the adventure its minimum of graded first attempts (REQ-5550).
 4. The slot is in a room, never in mental arithmetic (REQ-5556).
 
-`item_shown` records the slot as `flowSlot: grouping`, apart from the other three sources (REQ-5558). Among eligible templates the Director takes the technique with the fewest unassisted first attempts on grouping tasks in the last 30 days, ties broken by the day's seed, and puts the task in the last slot of the floor's first room. A grouping-task attempt counts neither towards the minimum of graded first attempts (REQ-5552), nor in the flow corridor's success share, nor as a slot `n` of the review deficit rule. A second attempt on a grouping task is part of the same task.
+`item_shown` records the slot as `flowSlot: grouping`, apart from the other three sources (REQ-5558). Among eligible templates the Director takes the technique with the fewest unassisted first attempts on grouping tasks in the last 30 days, ties broken by the day's seed. Among the eligible templates of that technique it takes the least recently shown one, the template whose latest `item_shown` is oldest, with a never-shown template first and ties broken by the day's seed. The Director puts the task in the last slot of the floor's first room. A grouping-task attempt counts neither towards the minimum of graded first attempts (REQ-5552), nor in the flow corridor's success share, nor as a slot `n` of the review deficit rule. A second attempt on a grouping task is part of the same task.
 
 ### The report block
 
@@ -176,7 +176,7 @@ Under the block the sentence `parent.grouping.invited` tells the parent that the
 
 `./meowtower yarn-weeks` prints, for each week of 7 game days from Monday, the star yarn granted per source from `reward_granted`, with `short_loop` as a row of its own, and per week the number of floors that logged `no_grouping_candidate` and of attempts that reached `grouping_link_cap` (REQ-5534). The owner reads it at the stage 0.3 review.
 
-When a week closes as the second in a row above 60 star yarn, the server raises `yarn_weeks_high` once, asking the owner to open a record that resizes the forge recipes; it fires again only after a week at or below 60 has closed (REQ-5536). The forge recipe amounts in `content/economy.json` stay as SPC-0140 states them until a record opened under REQ-5536 resizes them, and a diff check fails a change to them without that record (REQ-5590).
+When a week closes as the second in a row above 60 star yarn, the server raises `yarn_weeks_high`, which `./meowtower status` shows to the owner once, asking the owner to open a record that resizes the forge recipes; it fires again only after a week at or below 60 has closed (REQ-5536). The forge recipe amounts in `content/economy.json` stay as SPC-0140 states them until a record opened under REQ-5536 resizes them, and a diff check fails a change to them without that record (REQ-5590).
 
 ## Failure paths
 
@@ -188,10 +188,10 @@ When a week closes as the second in a row above 60 star yarn, the server raises 
 | An attempt reaches 40 changes | `grouping_link_cap`: the server logs one `grouping_submitted` with `capped: true`, refuses further changes with a reply naming that event's `clientSeq`, and keeps the loops as they stand; the window takes no more taps on that attempt, and she can still answer. |
 | The same grouping request arrives twice with one `clientSeq` | The server appends nothing and returns the set the first request logged. |
 | No grouping template passes the four gates for a floor | `no_grouping_candidate`: the floor runs without a grouping task, and the `why` field of its first room records it. |
-| Two weeks in a row close above 60 star yarn | `yarn_weeks_high` shows once to the owner. |
-| The device has no connection | Loops draw on the device, and the persisted queue holds every set in order. |
+| Two weeks in a row close above 60 star yarn | `./meowtower status` shows `yarn_weeks_high` to the owner once; it shows again only after a week at or below 60 has closed and two weeks above 60 have followed. |
+| The device has no connection | Loops draw on the device, and the event queue holds every set in order, and IndexedDB keeps it. |
 | An answer carries a `lastGroupingSeq` that names no `grouping_submitted` of its attempt, or `null` while the attempt has one | `grouping_out_of_order`: the server refuses it, the queue sends the attempt's held sets in order, and the answer follows with the `clientSeq` the reply names. |
-| The app closes with a set unsent | The set stays in the persisted queue and goes out when the app opens again. |
+| The app closes with a set unsent | The set stays in the event queue in IndexedDB and goes out when the app opens again. |
 | `spell.short_loop` has no art yet | The scene plays a placeholder animation drawn in code from the design tokens. |
 
 ## Open review findings
@@ -199,6 +199,4 @@ When a week closes as the second in a row above 60 star yarn, the server raises 
 - Round 1, the reasons for the cap of 40 changes, the 6 templates, the 1,000 seeds, the room slot and the technique the Director picks, the exclusion from the success share, the threshold of 5 attempts and weeks from Monday: rejected, because a specification states what the system does and never why (S8); ADR-0260 holds the reasons.
 - Round 1, `admissible` as a declared field that is always every pair and every number: rejected, because REQ-5512 names the field and ADR-0260 fixes its value.
 - Round 1, the build check shutting out a rounding expression with mixed operations such as `503 − 198`, which REQ-5524 would allow: rejected, because ADR-0260 fails every mixed expression, and a template that meets the narrower check still meets REQ-5524.
-- Round 1, the channel through which `yarn_weeks_high` reaches the owner: ADR-0260 names no channel; unresolved.
 - Round 2, the comment on line 10 promising a reason beside each rule: rejected as a change, because the comment is the spec template's standard line; the Scope now names ADR-0260 as the holder of the reasons.
-- Round 2, which template the Director takes when several of the chosen technique are eligible: rejected, because ADR-0260 settles only the technique, and stating a template rule here would add a decision no record made; unresolved.

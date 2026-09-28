@@ -41,7 +41,7 @@ Every asset has an entry in `content/art.yaml` (REQ-2806). The entry gives:
 - `card`, the description as a card of the canon's own characters and things;
 - `size`, in pixels;
 - `transparent`, whether the asset needs a transparent background;
-- `references`, the 2 to 3 reference pictures;
+- `references`, the 1 to 3 reference pictures;
 - `kind`, one of `sheet`, `emotion`, `overlay`, `pose`, `stage`, `background` and `item`;
 - `character`, for an asset of a character;
 - `floor`, for an asset that belongs to a floor;
@@ -92,7 +92,7 @@ The tool calls every model through ADR-0100's gateway on the offline key and the
 - ADR-0110 supplies the creepiness level in force.
 - ADR-0180 supplies the Parent Room, its PIN and the panels where the style check, the choice screen, the tint-mask approval and the drafts line sit.
 - ADR-0150 supplies PixiJS 8.21.0 and Preact, the design tokens the placeholders are drawn from, and the scene column the sprites render in.
-- ADR-0190 runs this part's catalogue, pure-black, fringe and SVG checks in its verify command and holds this part's ceilings in its Baselines table.
+- ADR-0190 runs this part's catalogue, pure-black, fringe, SVG, colour-token and colour-literal checks in its verify command and holds this part's ceilings in its Baselines table.
 - ADR-0140 reads each familiar's stage pictures' `chosen` state to decide the MVP roster.
 
 The permitted dependencies run one way. `tools/art-generate.ts` reaches a model only through ADR-0100's gateway and reads the design folder only under `design/key-art/`. The server reads `content/art.yaml`, `public/art/`, drafts in `data/art/variants/` and `art_jobs`, and never imports the art tool. The client imports no image-generation code and no gateway code; it receives pictures by asset id from the server.
@@ -123,7 +123,7 @@ Each emotion the game shows is its own picture of kind `emotion`, generated from
 
 ### Making a variant
 
-Each request carries the `STYLE` block, the `NEGATIVE` block, the floor's palette for an asset with a `floor`, and 2 to 3 references. The floor's palette serves REQ-2800. keyart-heroine or the chosen heroine sheet goes with every request, the character's sheet where one exists, and keyart-tower or keyart-archive only with a world picture. `ART_MODEL_BG` falls back to `google/gemini-3.1-flash-image` when Seed refuses `bytedance-seed/seedream-4.5` under the content tier.
+Each request carries the `STYLE` block, the `NEGATIVE` block, the floor's palette for an asset with a `floor`, and 1 to 3 references. The floor's palette serves REQ-2800. keyart-heroine before the style check, or the chosen heroine sheet after it, goes with every request, the character's sheet where one exists, and keyart-tower or keyart-archive only with a world picture. A heroine sheet and an item with no character carry keyart-heroine or the chosen heroine sheet alone (REQ-2806). `ART_MODEL_BG` falls back to `google/gemini-3.1-flash-image` when Seed refuses `bytedance-seed/seedream-4.5` under the content tier.
 
 A transparent asset is generated on a flat key colour outside its palette: magenta `#FF00FF`, or green `#00FF00` for a pink or lilac asset. sharp 0.35.4 cuts it out, removes the key colour's spill from the edge pixels, and writes WebP with alpha and a preview (REQ-2808).
 
@@ -137,6 +137,8 @@ Two program checks run on every variant before the judge sees it, and each rejec
 A variant a program check rejects gets the score 1 with the failed check named, and the judge never sees it (REQ-2820). The judge scores every variant that passes both from 1 to 10 against the art checklist, so every variant has a score from 1 to 10 (REQ-2820). The checklist covers the match to the card, the style against the references, the same character as the sheet, the count of fingers and eyes, no text or watermark, no likeness to a known character, a flat background, and fitness for a child.
 
 Six judge findings reject a variant whatever its score: adult presentation, a maid uniform, a suggestive pose, an adult body, any text in any language, and a grey mouse in a heroine picture (REQ-2834, REQ-3412, REQ-3420). A variant scored below 7 is never offered and never used, and the queue generates a replacement in its slot (REQ-2822). A variant passes when both program checks pass, no hard-fail finding is present and the score is 7 or more.
+
+Outside a checked variant or icon, a pixel of art reaches the screen only through the placeholders, the shaders, the particle effects and the tint, and each of them keeps pure black off the screen (REQ-3402). A token test fails any colour token of the art, the placeholders, the shaders and the particle effects whose three channels are all at or below 16 out of 255. A lint fails a colour literal in the placeholder, shader and particle code, which takes its colours only from those tokens. The tint shader raises each channel of a tinted pixel to at least 17.
 
 ### The queue
 
@@ -170,7 +172,7 @@ PixiJS animates each character as one sprite: breathing by squash, a bounce, a s
 
 ### The cloak colour
 
-The cloak colour the player picks tints only the heroine's cardigan and bows (REQ-3406). Each heroine picture ships with a tint mask. `tools/art-generate.ts mask <id>` makes a candidate in `data/art/masks/` by selecting the chosen sheet's cardigan and bow colours; the Parent Room's tint-mask panel shows it over the picture, and the person's approval copies it to `public/art/<id>.mask.webp` and records who approved it and when in `art_jobs`. The server sends a mask only once it is approved. At runtime a PixiJS colour filter limited to the mask moves the masked pixels to the chosen colour and keeps their shading. A heroine picture with no approved mask shows untinted with `tint_mask_missing`.
+The cloak colour the player picks tints only the heroine's cardigan and bows (REQ-3406). Each heroine picture ships with a tint mask. `tools/art-generate.ts mask <id>` makes a candidate in `data/art/masks/` by selecting the chosen sheet's cardigan and bow colours; the Parent Room's tint-mask panel shows it over the picture, and the person's approval copies it to `public/art/<id>.mask.webp` and records who approved it and when in `art_jobs`. The server sends a mask only once it is approved. At runtime a PixiJS colour filter limited to the mask moves the masked pixels to the chosen colour, keeps their shading and raises each channel to at least 17 (REQ-3402). A heroine picture with no approved mask shows untinted with `tint_mask_missing`.
 
 ### Icons and element symbols
 
@@ -200,6 +202,7 @@ Unchosen variants stay in `data/art/variants/` and drain 30 days after their ass
 - A heroine picture has no approved tint mask: it shows untinted with `tint_mask_missing` (REQ-3406).
 - A catalogue entry lacks a required field, a sheet card differs from the others outside the four free fields, or a dreamcore asset lacks its creepiness fields: the catalogue check fails the verify command (REQ-2806, REQ-3422, REQ-2814).
 - An SVG icon breaks the outline, black or size rule: the SVG check fails the verify command (REQ-3414).
+- A colour token of the art, the placeholders, the shaders or the particle effects has all three channels at or below 16, or the placeholder, shader or particle code holds a colour literal: the token test or the lint fails the verify command (REQ-3402).
 
 ## Choices this document makes
 
@@ -219,6 +222,4 @@ Unchosen variants stay in `data/art/variants/` and drain 30 days after their ass
 
 - Round 1 asked to give the reasons for the model check reading both listings and for the one-way dependencies, and the reason keyart-heroine isn't shown before the style check. Rejected: a spec states what the system does and never why (S8), and ADR-0170 holds these reasons.
 - Round 1 asked to say where the values 3 errors, 30 days and 400 variants come from. Rejected for the same rule (S8): ADR-0170 marks them as chosen values.
-- Round 2, finding 8: a heroine sheet and an item with no character get only one reference from the rules, against the 2 to 3 every request carries. Open after round two: ADR-0170 names no second reference, and choosing one is a style judgement for the owner.
-- Round 2, finding 9: the pure-black rule of REQ-3402 is checked on generated variants and SVG icons only, not on the placeholders, the shader and particle effects or the tinted pixels. Open after round two: ADR-0170 gives no check for them.
 - Round 2, finding 13: the header comment asks each rule to carry its reason. Rejected: the comment is the writing standard's header, and a spec states no reasons (S8).

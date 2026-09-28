@@ -202,7 +202,7 @@ Every step of her play with a puzzle is logged under one of the puzzle event typ
 
 ### The parent's report
 
-Report v1 shows the section «Нестандартное мышление» on the VWO readiness screen beside the ceiling above 1S, labelled «запас, а не оценка» (a reserve, not an assessment); the section adds no screen (REQ-5796). It shows the puzzles solved in each theme, the mean of the highest rung taken on solved puzzles, the puzzles she came back to by herself, which are those she opened on a later game day than their offer, the puzzles solved with no rung on the second or third game day after the offer, and the counts of puzzles offered, opened and shelved (REQ-5798). When the box passes 20 puzzles, the section shows one line saying so, once. In `puzzle_bank_exhausted`, the section shows the count of approved puzzles left.
+Report v1 shows the section «Нестандартное мышление» on the VWO readiness screen beside the ceiling above 1S, labelled «запас, а не оценка» (a reserve, not an assessment); the section adds no screen (REQ-5796). It shows the puzzles solved in each theme, the mean of the highest rung taken on solved puzzles, where a puzzle solved with no rung counts as 0, the puzzles she came back to by herself, which are those she opened on a later game day than their offer, the puzzles solved with no rung on the second or third game day after the offer, and the counts of puzzles offered, opened and shelved (REQ-5798). When the box rises past 20 puzzles, the section shows one line saying so. The line shows again only after the box has fallen to 20 or below and risen past 20 once more. In `puzzle_bank_exhausted`, the section shows the count of approved puzzles left.
 
 ### Build verification
 
@@ -233,4 +233,3 @@ ADR-0190's verification fails on any puzzle whose reference solution fails its c
 ## Open review findings
 
 - Round 1 asked for a reason beside each value, such as the word limits, $20, the queue of 60, 5 adventure days, 7 game days, 300 moves and the box line at 20, or a sentence pointing to ADR-0280 for them. Rejected: a specification states what the system does and never why (S8), and ADR-0280 holds each reason. Round 2 noted the same point and didn't reopen it.
-- Round 2: the report's mean of the highest rung taken doesn't say whether a puzzle solved with no rung counts as 0 or is left out, and the line when the box passes 20 doesn't say whether "once" means once ever or once each time the box passes 20. Open: ADR-0280 settles neither, and the review limit of two rounds ends here.

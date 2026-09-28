@@ -220,3 +220,5 @@ The premortem, written as though it had happened: at the stage 0.3 review the bl
 - Expressions that mix operations, and so whether she respects precedence, and a grouping item of the distributive law alone: RES-4050 left both out, and a new research record would bring them in.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

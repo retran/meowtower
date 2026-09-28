@@ -13,9 +13,9 @@ states: [REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, R
 
 ## Scope
 
-This document covers where every player-facing and parent-facing string lives, the function that reads it, the checks that keep strings out of the code, the one forbidden-word list, the text gate that checks every line the heroine sees, the fixed labels the interface must carry, and the Dutch word bridge's keywords: their place in the lexicon, their count, their approval and their share of tasks. It is written at the level of files, keys, functions and checks.
+This document covers where every player-facing and parent-facing string lives, the function that reads it, the checks that keep strings out of the code, the content test for «узелок» (little knot) and the guilt list over every content and string file, the one forbidden-word list, the text gate that checks every line the heroine sees, the fixed labels the interface must carry, and the Dutch word bridge's keywords: their place in the lexicon, their count, their approval and their share of tasks. It is written at the level of files, keys, functions and checks.
 
-It leaves out the rules for generated text that a word list can't check. The voice of generated System lines, narration and jokes, the phrases of guilt and attachment, the word «узелок» (little knot) in generated text and the ally's name belong to SPC-0110. How the Explainer's shared check module runs its other steps belongs to SPC-0120, and how a task's text is phrased and rendered to SPC-0040. Which Dutch words the player may see at all, and the bridge's events, belong to ADR-0190. The bridge's two gates, the node state and the parent's switch, belong to ADR-0290, and the term marks and tap explanation in the task window to SPC-0150. The parent's glossary panel belongs to ADR-0180.
+It leaves out the rules for generated text that a word list can't check. The voice of generated System lines, narration and jokes, the phrases of guilt and attachment in generated text, the guilt list itself, the word «узелок» in generated text and the ally's name belong to SPC-0110. How the Explainer's shared check module runs its other steps belongs to SPC-0120, and how a task's text is phrased and rendered to SPC-0040. Which Dutch words the player may see at all, and the bridge's events, belong to ADR-0190. The bridge's two gates, the node state and the parent's switch, belong to ADR-0290, and the term marks and tap explanation in the task window to SPC-0150. The parent's glossary panel belongs to ADR-0180.
 
 ## Boundary
 
@@ -23,7 +23,7 @@ It leaves out the rules for generated text that a word list can't check. The voi
 
 | Path | What it holds |
 | --- | --- |
-| `content/i18n/ru.json` | Every interface label, accessible name, fixed System line, the canon's names shown on screen, the Parent Room's text, and the notation profile apart from the multiplication sign. |
+| `content/i18n/ru.json` | Every interface label, accessible name, fixed System line, the canon's names shown on screen, the Parent Room's text, the dictation line, and the notation profile apart from the multiplication sign. |
 | `content/lines.ru.json`, `frames.ru.json`, `science.ru.json`, `lexicon.ru.json`, `recipes.ru.json`, `shop.ru.json`, `branches.ru.json`, `plans.ru.json`, `canon.ru.md` and every other `*.ru.*` content file | The other Russian content, one file per kind and language. |
 | `content/shaming.ru.json` | The one forbidden-word list and its fixtures. |
 | `src/shared/i18n.ts` | `t(key, params)` and the generated key and parameter types. |
@@ -76,7 +76,7 @@ The verify command runs these static checks on the strings (REQ-3810):
 - the lint rule `no-literal-string` from `eslint-plugin-i18next` rejects literal text in JSX and in `aria-label`, `title`, `placeholder` and `alt`;
 - every language file has the reference keys and placeholders;
 - a player screen shows a Latin-script word only where ADR-0190 allows one, and the check refuses any other;
-- no key under `ui.task.*`, `ui.outcome.*`, `ui.scheme.*` or `system.knot.*` holds a form of «узелок»;
+- a content test over every `content/*.ru.json` file and every string file fails the build on any form of «узелок» and on any phrase of the guilt list that `content/safety.ru.json` holds and SPC-0110 states;
 - no line of the timed-event pools SPC-0090 and ADR-0320 name, the lines announcing an eye exercise, a rest stop, the soft stop or an extension, holds a digit or a form from the time-word section of the forbidden list (`line_refused`);
 - `textGate` passes every string in every per-language content file, apart from `parent.*` keys and files only the parent reads, and 200 rendered seeds of every task template. It checks a `ui.*` value as `label`, a `system.*` value as `system` and every other string as `line`.
 
@@ -87,6 +87,8 @@ A render test loads a pseudo-language file directly, outside the shipped set, wh
 Tests pin the world's labels to their exact values (REQ-3310): «Схема узла» (the knot scheme) and «Как легла нить» (how the thread lay) for the review, «Твоё заклинание» (your spell) for her answer, «Готово» (Done), «Не знаю» (I don't know) and «Путеводная нить» (guiding thread) for the task buttons, «Распутан начисто» (untangled cleanly), «Почти чисто» (nearly clean), «Узел ослаблен» (the knot is loosened) and «Принято» (accepted) for outcomes, «Привал» (rest stop), «Сохранить и уйти» (Save and leave) and «Ещё один ряд» (One more row) for leaving, and «Дней в Башне» (Days in the Tower) for the day counter.
 
 The key `ui.task.cantKnow` holds «Нельзя узнать» (can't be known), and a test pins it, so the button that claims a word problem can't be answered never reads like «Не знаю» (REQ-5470).
+
+The key `ui.voice.dictation` holds one line that names the Mac's dictation key, and the voice button on a computer whose browser offers no speech recognition shows it, as SPC-0150 states.
 
 The key `ui.task.thread` holds «Путеводная нить · {n}», and code fills `n` with the current thread count (REQ-3322). At zero threads the button reads «Путеводная нить · 0».
 
@@ -106,7 +108,7 @@ The parent reads the whole `system.*` section at the stage 0.3 acceptance and si
 - the test words ADR-0290 states;
 - phrases matched as runs of tokens, among them «не получилось» (didn't work), «ты не поняла» (you didn't understand), «это же просто» (it's easy) and the shortage phrases «нити закончились» (the threads have run out), «нитей не осталось» (no threads are left), «нет нитей» (no threads) and their forms (REQ-3324);
 - the rejected labels of REQ-3312, in a section of their own that the set of forbidden forms leaves out, each matched only against a whole `label` value after trimming and folding case;
-- the forms of «узелок», in a section of their own that the set of forbidden forms leaves out, which the verify check reads for the knot's own keys `ui.task.*`, `ui.outcome.*`, `ui.scheme.*` and `system.knot.*`;
+- the forms of «узелок», in a section of their own that the set of forbidden forms leaves out, which the content test reads for every `content/*.ru.json` file and every string file;
 - a time-word section, such as «минута», «секунда» and «час», with every inflected form, which the set of forbidden forms leaves out and the verify checks on `ui.*` values and the timed-event pools read;
 - fixtures: forms that must match, such as «ошибкой», «задачку», «Урок», «ОЦЕНКА» and the mixed-script «зaдача» with a Latin "a", and words that must pass, such as «примерно», «примерить», «мимоза» and «верно».
 
@@ -114,7 +116,7 @@ A tool script generates the inflected forms once from the OpenCorpora dictionary
 
 ### The text gate
 
-`textGate` normalises the text: Unicode normalization form C (NFC), lower case, «ё» to «е», soft hyphens, zero-width characters and stress marks removed, and Latin letters that look like Cyrillic ones folded to Cyrillic. It splits the text into Cyrillic word tokens, looks each token up in the set of forms, and matches the phrases as token runs. Every kind is checked for the forbidden forms, the phrases and emoji; a `system` line is also checked for "!" and digits, and a `label` is also compared as a whole with the rejected labels. The gate doesn't check «узелок», because it gets no key; the verify check above does.
+`textGate` normalises the text: Unicode normalization form C (NFC), lower case, «ё» to «е», soft hyphens, zero-width characters and stress marks removed, and Latin letters that look like Cyrillic ones folded to Cyrillic. It splits the text into Cyrillic word tokens, looks each token up in the set of forms, and matches the phrases as token runs. Every kind is checked for the forbidden forms, the phrases and emoji; a `system` line is also checked for "!" and digits, and a `label` is also compared as a whole with the rejected labels. The gate doesn't check «узелок»; the content test above does.
 
 The server calls `textGate` on every line before the line leaves for the client, whichever source wrote it: the Master, the line pool, the Explainer, a task template or a fixed string (REQ-3326). For a fixed `system` line, the server passes the value to the gate before `t()` fills its fields, so a number from a field never fails the digit check. Fixed strings and template seeds pass the same gate at build, so the client receives no heroine-facing text the gate hasn't passed. Her own words shown back as she wrote them, `source: "player"`, skip the gate, and so does every key under `parent.*`, since REQ-3314 exempts both. When she types a forbidden word, the Master's reply still passes the gate, so the reply can't repeat the word to her.
 
@@ -143,7 +145,7 @@ While the bridge is on and at least 30 words are approved, the Director puts bri
 | A fixed string, content file or template seed holds a forbidden form | `forbidden_in_content`: the build stops and names the key or template and the form. |
 | A line of a timed-event pool holds a digit or a time word | `line_refused`: verify fails the content and names the line. |
 | A `system.*` value holds "!" or a digit | Verify fails and names the key. |
-| A key under `ui.task.*`, `ui.outcome.*`, `ui.scheme.*` or `system.knot.*` holds a form of «узелок» | Verify fails and names the key and the form. |
+| A `content/*.ru.json` file or a string file holds a form of «узелок» or a phrase of the guilt list | The content test fails the build and names the file, the key and the form or phrase. |
 | A `ui.*` value equals a rejected label or holds a time phrase | Verify fails and names the key. |
 | A pinned label changes its value | The label test fails and names the key and both values. |
 | A generated line holds a forbidden form, a shortage phrase or emoji | `text_blocked`: the line is never shown, the source's fallback replaces it, and a row goes to the log table. |

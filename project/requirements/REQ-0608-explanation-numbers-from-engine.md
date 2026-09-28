@@ -3,7 +3,7 @@ id: REQ-0608
 artifact: requirement
 topic: explanations
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-0600
 verification: behavioural

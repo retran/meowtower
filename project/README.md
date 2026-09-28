@@ -12,7 +12,7 @@ The record of Meowtower: the vision in `vision.md`, the onboarding report in `on
 | --- | --- | --- |
 | [SPC-0010](specs/SPC-0010-home-server-deployment-and-clients.md) | The home server on the Mac, its deployment, its clients and its network boundary | live |
 | [SPC-0020](specs/SPC-0020-event-log-and-projections.md) | The event log, its projections, the blob store and the export | live |
-| [SPC-0030](specs/SPC-0030-play-api-lifecycle-lease-and-answer-queue.md) | The play API, the adventure and session lifecycle, the device lease and the offline answer queue | live |
+| [SPC-0030](specs/SPC-0030-play-api-lifecycle-lease-and-answer-queue.md) | The play API, the adventure and session lifecycle, the device lease and the offline event queue | live |
 | [SPC-0040](specs/SPC-0040-task-generation-and-answer-checking.md) | Task generation from templates, seeds and exact arithmetic, the solution graph and answer checking | live |
 | [SPC-0050](specs/SPC-0050-skill-graph-data-file.md) | The skill graph data file, its validator and its query module | live |
 | [SPC-0060](specs/SPC-0060-knowledge-model-estimates-states-and-streams.md) | The knowledge model: estimates, states, inference, versions and the streams of new forms | live |

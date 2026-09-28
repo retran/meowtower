@@ -61,9 +61,10 @@ This part logs `item_shown`, `attempt_submitted`, `verdict`, `hint_shown`, `thre
 | `409 attempt_open` | the developer | a second attempt asked for before the first attempt's verdict |
 | `409 not_a_first_attempt` | the developer | a second attempt asked for on a second attempt |
 | `409 no_twin` | the developer | a second attempt asked for on a first attempt that doesn't bring one |
-| `400 estimate_missing` | the player | an answer on an item with an estimate carries no pick, no «Не знаю» (I don't know) and no `insufficient` |
+| `422 estimate_missing` | the player | an answer on an item with an estimate carries no pick, no «Не знаю» (I don't know) and no `insufficient` |
 | `409 check_late` | the developer | a check after the first attempt |
 | `409 check_limit_reached` | the player | a fourth check on one task |
+| `422 check_unparsed` | the player | a check whose `checkRaw` doesn't parse |
 | `400 check_not_offered` | the developer | a check on a task whose `Room` carried no `check` |
 
 ### What this part requires from other parts
@@ -128,7 +129,7 @@ The event log records every second attempt as `attempt: 2` with `assisted: true`
 
 #### Price
 
-The first tap on the thread button before the answer opens the task's ladder, spends 1 guiding thread and shows rung 1 (REQ-5100). The server logs `thread_spent` with the reason `hint_ladder` and `hint_shown` with `ladderOpenedBy: "thread"`. Each later tap on the same attempt shows the next rung, spends nothing and logs `hint_shown` with `ladderOpenedBy: "free_step"` (REQ-5102). A shown rung marks the attempt `assisted: true`, and `hintLevel` records the deepest rung she saw (REQ-0530).
+The first tap on the thread button before the answer opens the task's ladder, spends 1 guiding thread and shows rung 1 (REQ-5100). The server logs `thread_spent` with the reason `hint_ladder` and `hint_shown` with `ladderOpenedBy: "thread"`. Each later tap on the same attempt shows the next rung, spends nothing and logs `hint_shown` with `ladderOpenedBy: "free_step"` (REQ-5102). SPC-0020's upcaster reads a version 1 `thread_spent` with the reason `hint` as `hint_ladder` and a version 1 `hint_shown` as `ladderOpenedBy: "thread"`, so every version 1 rung reads as paid. A shown rung marks the attempt `assisted: true`, and `hintLevel` records the deepest rung she saw (REQ-0530).
 
 The parallel task's ladder costs 1 thread of its own, whether or not she opened the first task's ladder (REQ-5104). An attempt spends at most 1 ladder opening and 1 explanation, so a task spends at most 4 threads across both attempts. A ladder opening is charged at most once per item, as ADR-0220 sets SPC-0030's charge key, so a repeated request, or a request with a new `clientSeq` after a resume, never charges again.
 
@@ -213,7 +214,7 @@ The builder shuffles the four options with the item's seeded stream, so over eac
 
 On an item with an estimate, `open` begins with the estimate step. The window shows the task and the four options, and hides the answer field, the keypad and «Готово». The thread button is inactive during the step. «Не знаю» works in the step and gives `alt`, with no estimate recorded. An `AnswerIn` that carries `insufficient`, from «Нельзя узнать», needs no pick either, and the server records no estimate for it.
 
-When she taps an option, the client locks the pick and opens the answer field, and nothing goes to the server until «Готово». `AnswerIn` then carries the pick as `estimate` beside the exact answer, and the server judges both in one request, so no verdict on the estimate leaves the server before the exact answer (REQ-5306). A resume before «Готово» shows the estimate step again. An `AnswerIn` for an item with an estimate, with no pick, no «Не знаю» and no `insufficient`, gets `400 estimate_missing`, logs nothing, and the client shows the estimate step again.
+When she taps an option, the client locks the pick and opens the answer field, and nothing goes to the server until «Готово». `AnswerIn` then carries the pick as `estimate` beside the exact answer, and the server judges both in one request, so no verdict on the estimate leaves the server before the exact answer (REQ-5306). A resume before «Готово» shows the estimate step again. An `AnswerIn` for an item with an estimate, with no pick, no «Не знаю» and no `insufficient`, gets `422 estimate_missing`, logs nothing, and the client shows the estimate step again.
 
 `AnswerOut` for the first attempt carries `estimate: { picked, correct }` beside `feedback.correctAnswer`, and the review shows the estimate's verdict together with the exact answer's (REQ-5308). Her pick is outlined and the correct option carries ADR-0150's selected state, with no word or sign REQ-0110 forbids. The second attempt has no estimate step.
 
@@ -253,11 +254,11 @@ The button opens a field under the prompt. For 345 - 178 with her entry 167 the 
 
 Before the first attempt, the server sends no correct answer, no result her check should give for her preliminary answer and no verdict on that preliminary answer (REQ-5344). `Room` carries `check: { op, operand, checksLeft }`, both printed in the task, and nothing else about the check. The field shows only «Сходится» (It matches) or «Не сходится» (It doesn't match), and never the correct answer (REQ-5346). It shows no tick, cross, «верно», «неверно» or «ошибка» (REQ-5348).
 
-A check never makes an attempt assisted (REQ-5350). The server logs the preliminary answer only inside `self_check_used` and never as `attempt_submitted`, so the answer she sends with «Готово» after a check is her first attempt, and a right one is `clean` (REQ-5352). A task allows at most 3 checks, and a `checkRaw` the server can't parse uses none of them. After the third, the button stays visible and inactive at `disabled-alpha`, with no words (ADR-0240). The second attempt has no check.
+A check never makes an attempt assisted (REQ-5350). The server logs the preliminary answer only inside `self_check_used` and never as `attempt_submitted`, so the answer she sends with «Готово» after a check is her first attempt, and a right one is `clean` (REQ-5352). A task allows at most 3 checks. The server counts the item's `self_check_used` events in the log, so a resume never resets the count (ADR-0370). A `checkRaw` the server can't parse gets `422 check_unparsed`, logs nothing and uses none of the 3 checks, and the client shows the check field again. After the third, the button stays visible and inactive at `disabled-alpha`, with no words (ADR-0240). The second attempt has no check.
 
 ### Time
 
-The fluency test and the rapid-guess test read no time spent in the estimate step or the check field (REQ-5334). An attempt on an item with an estimate counts for accuracy, and its whole time counts in no measure, so nothing subtracts the estimate step. Such an attempt is never `fast`, never enters a block's median time and is never tested for a rapid guess. On every attempt on an item without an estimate the client measures `checkMs`, the time the check field is open, and sends it in `AnswerIn`'s timings. The measures read the time from the task's appearance to «Готово», without pauses and without `checkMs`. Time spent correcting her answer after a check stays in (ADR-0240).
+The fluency test and the rapid-guess test read no time spent in the estimate step or the check field (REQ-5334). An attempt on an item with an estimate counts for accuracy, and its whole time counts in no measure, so nothing subtracts the estimate step. Such an attempt is never `fast`, never enters a block's median time or the fluency estimate, and is never tested for a rapid guess (ADR-0370). On every attempt on an item without an estimate the client measures `checkMs`, the time the check field is open, and sends it in `AnswerIn`'s timings. The measures read the time from the task's appearance to «Готово», without pauses and without `checkMs`. Time spent correcting her answer after a check stays in (ADR-0240).
 
 ## Failure paths
 
@@ -276,21 +277,21 @@ The fluency test and the rapid-guess test read no time spent in the estimate ste
 | An approved line isn't yet in the committed `content/framings.ru.json` (`framing_uncommitted`) | The rung shows without it; the framing screen counts approved lines awaiting a commit. |
 | A line in `content/framings.ru.json` has no approval event (`framing_unapproved`) | The server never shows it and reports it once at start. |
 | The framing generator fails (`framing_generation_failed`) | The generator stops, the queue keeps what it holds, and play is unaffected. |
-| An answer on an item with an estimate carries no pick, no «Не знаю» and no `insufficient` (`estimate_missing`) | `400 estimate_missing`; nothing is logged and the client shows the estimate step again. |
+| An answer on an item with an estimate carries no pick, no «Не знаю» and no `insufficient` (`estimate_missing`) | `422 estimate_missing`; nothing is logged and the client shows the estimate step again. |
 | The option builder finds no four options that keep the three errors off the correct one (`estimate_refused`) | The item goes out without an estimate, the room's estimate stays open, and the verify report shows the refused share per subtype. |
 | A check arrives after the first attempt (`check_late`) | `409 check_late`; nothing is logged. |
 | A fourth check arrives on one task (`check_limit_reached`) | `409 check_limit_reached`; nothing is logged, and the button is inactive. |
 | A check arrives on a task that offers none | `400 check_not_offered`; nothing is logged. |
-| `checkRaw` doesn't parse | The check uses none of the task's 3 checks, and the reply carries `checksLeft` unchanged. |
+| `checkRaw` doesn't parse (`check_unparsed`) | `422 check_unparsed`; nothing is logged, the check uses none of the task's 3 checks, and the client shows the check field again. |
 | The client has no connection (`offline`) | The hint, explanation, second-attempt and check controls stay inactive, the pick waits with its answer in SPC-0030's answer queue, and the waiting scene shows. |
 | A resume comes before «Готово» on an item with an estimate | The estimate step shows again, and the attempt's time already counts in no measure. |
 
 ## Choices made in writing this document
 
-The decisions leave two details open, and this document fixes them. The flow and the ledger live in `src/engine/attempt/`, since the decisions name the engine's pure functions and not their folder. The error names `no_twin` and `check_not_offered` and the statuses of `estimate_missing`, `check_late` and `check_limit_reached` follow SPC-0030's split of `400` for a malformed request and `409` for one the state refuses.
+The decisions leave two details open, and this document fixes them. The flow and the ledger live in `src/engine/attempt/`, since the decisions name the engine's pure functions and not their folder. The error names `no_twin` and `check_not_offered` and their statuses follow SPC-0030's split of `400` for a malformed request and `409` for one the state refuses; ADR-0240 as ADR-0370 amends it sets the statuses of `estimate_missing`, `check_unparsed`, `check_late` and `check_limit_reached`.
 
 ## Open review findings
 
 - The agent review asked for a reason beside the candidate queue's cap of 5 and its 60-day expiry, the rule that a change to the pocket changes CAN-0030 in the same commit, and the limit of 3 checks a task. I keep them without reasons, because a specification states what the system does and the reasons live in ADR-0220, ADR-0080 and ADR-0240.
 - The agent review asked for the parts this document requires to be named by their specifications, SPC-0040, SPC-0060, SPC-0070, ADR-0120, ADR-0140 and others, in place of their decisions. I keep the decisions, because those specifications are being reviewed and revised in the same pass as this one, and a pointer to a section of one of them can go stale before the pass ends. The `forms` sentence points to SPC-0040 and SPC-0020 because no decision this document cites defines that field.
-- A second agent review asked for the decision holding each reason to be cited beside several more rules, among them the framing hash, the pocket per floor, the inactive button during the estimate step, the bound of 1000, the formula for `q`, the 0.6 gap and the 20 draws. I cited the decision beside the charge key, the queue limits, the canon commit, the check limit and the check time, and left the rest, because each of the others sits in a section whose rules all come from one decision: the framing and the ladder from ADR-0220, the pocket from ADR-0080, and the estimate step, the bound, `q`, the gap and the draws from ADR-0240. The same review asked whether a resume resets the count of 3 checks; ADR-0240 doesn't say, so that stays for the owner of ADR-0240 to settle.
+- A second agent review asked for the decision holding each reason to be cited beside several more rules, among them the framing hash, the pocket per floor, the inactive button during the estimate step, the bound of 1000, the formula for `q`, the 0.6 gap and the 20 draws. I cited the decision beside the charge key, the queue limits, the canon commit, the check limit and the check time, and left the rest, because each of the others sits in a section whose rules all come from one decision: the framing and the ladder from ADR-0220, the pocket from ADR-0080, and the estimate step, the bound, `q`, the gap and the draws from ADR-0240.

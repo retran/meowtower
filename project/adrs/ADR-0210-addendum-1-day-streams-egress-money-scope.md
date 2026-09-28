@@ -319,3 +319,5 @@ The premortem, written as though it had happened. At the stage 0.3 review the re
 - Whether an early refit should admit a stream before the MVP ends: this record keeps ADR-0060's deferral of the refit tool.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

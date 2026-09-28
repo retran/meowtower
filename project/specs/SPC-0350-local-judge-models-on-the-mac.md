@@ -30,7 +30,7 @@ It is written at the component level: processes, the HTTP requests between the g
 | `tools/judge-candidates.json` | One entry per local candidate: its name, its file, its parameter count, the repository it was downloaded from, the languages its model card lists, as a list or as a count, and `checks`, the checks the candidate may take. |
 | The launchd daemon `meowtower.judge.<name>` | The system launchd daemon that runs one judge as the judge account, with `KeepAlive` true. |
 | The judge account | The standard macOS account, without administrator rights, that `./meowtower setup` creates and every judge process runs as. |
-| `data/judges/owners.json` | One entry per judge, written by `./meowtower up`: the user its process runs as and that user's groups. |
+| `data/judges/owners.json` | One entry per judge, written by `./meowtower up` and rewritten by SPC-0010's network watch every 60 seconds while the stack runs: the user its process runs as and that user's groups. |
 | `tools/bakeoff.ts --local` | The local bake-off, run in the `tools` container on the family Mac. |
 
 ### A judge process
@@ -55,7 +55,7 @@ Every judge check has a fixed set of at most 8 answers, each mapped in the check
 | --- | --- | --- | --- |
 | `safety` | her cleaned free text, or a Master reply, against the forbidden-content checklist | `A` breaks no item, `B` breaks an item | 0, 1, 2 |
 | `creepiness` | a Master reply against the order's creepiness level | `A` level 0, `B` level 1, `C` level 2 | 3, 4, 5 |
-| `signal` | her cleaned free text | `A` none, `B` everyday, `C` serious | 6 |
+| `signal` | her cleaned free text | `A` none, `B` everyday, `C` `scared`, `D` serious, in rising order | 6 |
 | `sorting` | her cleaned free text against the scene's three options | `A`, `B` and `C` the options in the order the scene lists them, `D` none | 7 |
 | `shaming` | a text shown to her: does it judge or shame the heroine? | `A` no, `B` yes | 8 |
 | `placeholder_safety` | an explanation or a frame with its placeholders, before numbers fill them | `A` breaks no item, `B` breaks an item | 9 |
@@ -80,21 +80,21 @@ This part offers the gateway one function, `resolveJudgeRoute(check)`, which SPC
 
 ### What this part requires from other parts
 
-- SPC-0100 supplies the gateway this route lives in, the play key and its modes, the judge timeout of 1500 ms, the agreement test and its measure, the `JUDGE_CHECKS` start-up check, the fallback to `SAFETY_MODEL`, the provider facts it checks at start-up (company, country, retention), and `llm_log`.
+- SPC-0100 supplies the gateway this route lives in, the play key and its modes, the judge timeout of 1500 ms, the agreement test and its measure, the `JUDGE_CHECKS` start-up check, the fallback to `SAFETY_MODEL`, the rows of `content/providers.json` it checks at start-up (company, country, retention), and `llm_log`.
 - SPC-0230 supplies the cleaned text every judge reads.
-- SPC-0010 supplies `./meowtower up`, `down` and `status`, the notices file `data/snapshots/notices.json`, and the `models/` mount.
+- SPC-0010 supplies `./meowtower up`, `down` and `status`, the network watch, the notices file `data/snapshots/notices.json`, and the `models/` mount.
 - SPC-0020 supplies `appendEvents` and the event catalogue that lists `judge_route_changed`.
 - ADR-0180's Parent Room supplies the page that shows where each check runs, and ADR-0160's language file its strings.
 
 ### Permitted dependencies
 
-The dependencies run one way. Only the gateway in `meowtower` calls a judge's routes; the bake-off reaches a judge through the gateway's local route, and no other code, the client included, opens a connection to a judge. A judge process depends on nothing in `meowtower`: it reads its model file and answers HTTP, and never opens the database. The route table depends on `LOCAL_JUDGES`, the `bakeoff` table, `local_judge_files` and each judge's probe results, and the Parent Room page depends only on the route table, the judges' states and SPC-0100's provider facts.
+The dependencies run one way. Only the gateway in `meowtower` calls a judge's routes; the bake-off reaches a judge through the gateway's local route, and no other code, the client included, opens a connection to a judge. A judge process depends on nothing in `meowtower`: it reads its model file and answers HTTP, and never opens the database. The route table depends on `LOCAL_JUDGES`, the `bakeoff` table, `local_judge_files` and each judge's probe results, and the Parent Room page depends only on the route table, the judges' states and the rows of `content/providers.json`.
 
 ## Behaviour
 
 ### Starting and stopping a judge
 
-`./meowtower setup`, run once with administrator rights, creates the judge account. `./meowtower up` reads `LOCAL_JUDGES` and, when it names any judge, runs `brew pin llama.cpp`, generates `LOCAL_JUDGE_KEY` as 32 random bytes when `.env` holds none, writes each judge's launchd daemon with `UserName` set to the judge account and loads it with `launchctl bootstrap system`, so launchd restarts the judge when it exits. Once the judge runs, `./meowtower up` reads the user its process runs as and that user's groups, and writes them to `data/judges/owners.json` (REQ-2512). It refuses to start a judge, with `model_config_invalid` naming the entry and the fault, when `LOCAL_JUDGES` has more than 2 entries (REQ-3916), when the key is missing or shorter than 32 bytes, when the file lies outside `models/`, when the file has no entry in `tools/judge-candidates.json`, or when the file's candidate entry lists languages without Russian (REQ-3918). `./meowtower down` unloads the daemons with `launchctl bootout system`.
+`./meowtower setup`, run once with administrator rights, creates the judge account. `./meowtower up` reads `LOCAL_JUDGES` and, when it names any judge, runs `brew pin llama.cpp`, generates `LOCAL_JUDGE_KEY` as 32 random bytes when `.env` holds none, writes each judge's launchd daemon with `UserName` set to the judge account and loads it with `launchctl bootstrap system`, so launchd restarts the judge when it exits. Once the judge runs, `./meowtower up` reads the user its process runs as and that user's groups, and writes them to `data/judges/owners.json` (REQ-2512). While the stack runs, SPC-0010's network watch reads them again every 60 seconds and rewrites the file, so a judge restarted as another user fails its first step within about a minute (REQ-2512). It refuses to start a judge, with `model_config_invalid` naming the entry and the fault, when `LOCAL_JUDGES` has more than 2 entries (REQ-3916), when the key is missing or shorter than 32 bytes, when the file lies outside `models/`, when the file has no entry in `tools/judge-candidates.json`, or when the file's candidate entry lists languages without Russian (REQ-3918). `./meowtower down` unloads the daemons with `launchctl bootout system`.
 
 A judge listens on `127.0.0.1` and answers only with the key, so no device other than the Mac gets a model answer from it (REQ-3910). A request from `meowtower` or `tools` through `host.docker.internal` counts as coming from the Mac. When the stage 0 test on the family Mac shows that a container can't reach a judge bound to `127.0.0.1`, the owner sets `LOCAL_JUDGE_BIND=all`, and then the key alone keeps every other device from a model answer, the iPad included (REQ-3910).
 
@@ -110,7 +110,7 @@ A judge listens on `127.0.0.1` and answers only with the key, so no device other
 2. It warms the check's slots by sending the check's fixed prompt once to each of them.
 3. It sends the check's labelled Russian test set, the one SPC-0100's agreement test uses for the reference model, with 6 requests in flight in total: for `safety` or `creepiness`, 3 of the check under test and 3 of the other; for any other check, 1 of the check under test, 3 `safety` and 2 `creepiness`.
 4. It measures the 95th-percentile latency at the gateway, from the request leaving the gateway to the parsed answer, and the check passes latency when that is at most 1500 ms (REQ-3914).
-5. It computes agreement with the reference model by SPC-0100's measure, sets the check's thresholds from the test set, and writes one `bakeoff` row with the inputs, the results and both pass flags.
+5. It sends the reference model each item twice and computes the candidate's agreement and the reference's self-agreement by SPC-0100's measure. The check passes agreement when the candidate is at most one percentage point below the reference's self-agreement and gives the gravest label on every item where the reference gives it: `D` serious on `signal` and `B` on `safety`. It then sets the check's thresholds from the test set, and writes one `bakeoff` row with the inputs, the results and both pass flags.
 
 A local run spends nothing from the bake-off budget, because a local call costs $0.
 
@@ -157,7 +157,7 @@ Every local call writes an `llm_log` row. In `replay` mode the gateway answers a
 
 ### Where each check runs, in the Parent Room
 
-The Parent Room's page on what leaves the Mac lists each check on her text, built from the route table and the judges' states when the parent opens it (REQ-2648). For each check it says where the check runs now, on the Mac or at a company, and for each company that can read the text, the fallback `SAFETY_MODEL`'s included, the company's name, its country and whether it keeps any of the text, from SPC-0100's provider facts (REQ-2648). A check whose route is local while its judge isn't `up` shows its standby route and the line «Сейчас проверка идёт через интернет» (right now the check goes over the internet), whose string lives in the language file. The page notifies nobody. A test builds the page for three configurations, no local judge, one judge taking some checks, and a judge that is `down`, and compares every row with the route table and the judges' states (REQ-2648).
+The Parent Room's page on what leaves the Mac lists each check on her text, built from the route table and the judges' states when the parent opens it (REQ-2648). For each check it says where the check runs now, on the Mac or at a company, and for each company that can read the text, the fallback `SAFETY_MODEL`'s included, the company's name, its country and whether it keeps any of the text, from the provider's row in `content/providers.json`, the row SPC-0100's start-up check reads (REQ-2648). A check whose route is local while its judge isn't `up` shows its standby route and the line «Сейчас проверка идёт через интернет» (right now the check goes over the internet), whose string lives in the language file. The page notifies nobody. A test builds the page for three configurations, no local judge, one judge taking some checks, and a judge that is `down`, and compares every row with the route table and the judges' states (REQ-2648).
 
 ### Storage
 
@@ -180,13 +180,7 @@ The Parent Room's page on what leaves the Mac lists each check on her text, buil
 
 The player sees none of these states: a check on a standby or fallback route reads the same to her.
 
-## Open findings
-
-- `data/judges/owners.json`, written by `./meowtower up` and read at the judge's first step, is a choice this document makes, because ADR-0360 decides that no check routes to a judge running as root or as a member of `admin` and names no way for the server in its container to read the owner of a process on the Mac.
-
 ## Open review findings
 
-- The agent review found that SPC-0100 states no agreement measure, although this document cites it for bake-off step 5 and the tie. ADR-0350 leaves the measure, and whether it weights the serious class of `signal`, to the specification. Open: SPC-0100 or this document has to state it before the bake-off can be built.
-- The agent review found that SPC-0100's provider facts name no country, which the Parent Room page needs (REQ-2648). Open: SPC-0100 has to name each provider's country, or a provider table has to be added.
 - The agent review asked for the reasons behind `n_probs` 100 and the one-slot checks. I keep them without reasons, as S8 asks.
 - The agent review asked for each rule's reason in its sentence: the 8-label limit, the refusal while an adventure is open, the 30-second warm-up, the 3 errors in a row and the 50 GB ceiling. I keep them without reasons, because a specification states what the system does and never why (S8), and ADR-0350 holds each reason.

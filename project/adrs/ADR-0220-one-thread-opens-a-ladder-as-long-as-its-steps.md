@@ -213,3 +213,5 @@ A reviewer found that a ladder of one rung never brings a twin, because REQ-5130
 A second reviewer suggested moving the payload fields and the event table out of this decision into ADR-0020's catalogue and SPC-0030. I kept them, because the brief for the addendum's decisions makes the decision that needs a new event type name it and its payload fields and own it, and ADR-0020 gives each type one owning decision that defines its payload.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

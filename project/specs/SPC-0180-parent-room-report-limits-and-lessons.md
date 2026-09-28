@@ -29,6 +29,8 @@ Every route below needs a paired device. Every route other than `POST /api/paren
 | `GET /api/parent/report` | Returns the current `ReportModel` from `report_cache`. |
 | `GET /api/parent/report?at=<date>` | Returns the report as of a past date, from the daily snapshots of ADR-0060. |
 | `POST /api/parent/tags` | Writes `parent_tag_added` for a lesson mark. |
+| `DELETE /api/parent/tags/:tagId` | Writes `parent_tag_removed` for that lesson mark. |
+| `POST /api/parent/items/:itemId/exclude` | Writes `item_excluded` in ADR-0340's version 2 with `source: "parent_room"` for that task. |
 | `GET` and `PUT /api/parent/settings` | Reads and changes the settings, the player's real name, age and school group among them. |
 
 The client's Parent Room is the `/parent` area of the Preact client, and it reads its data only from `/api/parent/*`.
@@ -38,7 +40,7 @@ The client's Parent Room is the `/parent` area of the Preact client, and it read
 | Surface | What it is |
 | --- | --- |
 | `src/parent/` | The report functions: pure functions over the projections and the knowledge model's outputs, each returning a part of `ReportModel`. |
-| `report_cache` | One `ReportModel` with its `DerivedMeta`: the model, threshold and graph versions and `lastEventSeq`, the sequence number of the last event it read. It keeps the current version set and the one before it. |
+| `report_cache` | One `ReportModel` with its `DerivedMeta`: the model, threshold and graph versions and `lastEventSeq`; the threshold version is the one SPC-0020 records in `derived_meta`, the version in `content/versions.json` joined by `+` with the `seq` of the latest `fact_threshold_set`, the sequence number of the last event it read. It keeps the current version set and the one before it. |
 | `limits` | One `LimitsResult` per session. |
 | `thresholds` | One fluency threshold per template and device type, iPad or computer, with its version. |
 | `parent_tags` | The lesson marks and their open recheck windows. |
@@ -94,6 +96,8 @@ The Parent Room hosts the report and, behind the same session and in the tabs of
 The settings panel holds the player's real name, age and school group, and the parent can change each at any time (REQ-3710). A change writes `settings_changed` to the log in the local database, and no value enters a tracked file. The first setup asks for all three before Session 0 can start. The panel also holds the music and effects channels, each with a switch and a volume, which ADR-0320 states. SPC-0040 reads the age, SPC-0100 the real name for the egress guard, and SPC-0060 the school group for its prior row.
 
 The glossary panel pairs each Russian term with its drafted Dutch word, and lists the bridge words beside the glossary entries with the count of approved ones. The parent approves, edits or rejects each entry. Approval writes `glossary_entry_approved`, and the term hint shows the Dutch word only for an entry whose latest approval matches its current text (REQ-0846).
+
+The lessons list shows every lesson mark with a remove control beside it, which calls `DELETE /api/parent/tags/:tagId`. The flagged-task list shows each task flagged for the parent with an exclude control beside it, which calls `POST /api/parent/items/:itemId/exclude`.
 
 The calibration mode lets an adult solve 3 tasks of a node on a device type, and writes `calibration` events, as "Fluency thresholds" sets out.
 
@@ -230,6 +234,8 @@ The running game never changes a catalogue threshold, because `content/` is moun
 
 The parent marks nodes or subtypes as «занимались на уроке» (we worked on this in the lesson), with a date and an optional note, and `POST /api/parent/tags` writes `parent_tag_added` (REQ-1400). The `parent_tags` projection opens two recheck windows counted in game days from the day of the mark: recheck 1 from day 1 to day 3 (REQ-1402) and recheck 2 from day 12 to day 16 (REQ-1404). The Director reads the open windows and collects a full block on the node inside each. A recheck is done when a full block forms inside its window.
 
+When the parent removes a mark, `parent_tag_removed` starts the full recompute of SPC-0020, and from it every knowledge projection treats the mark as never set: its open recheck windows close, it gives no label, and SPC-0060's rule that a full block doesn't span a lesson mark stops applying to it (REQ-1400, REQ-1402).
+
 A check is a state computed from a full block; an inferred, unchecked or cut-off state is never a check. States rank in the order «Пока не освоено», «Понимает», «Понимает, нужна скорость», «Бегло», «Устойчиво». The labels are:
 
 - «Улучшилось после урока» (improved after a lesson) when the node or one of its prerequisites in the graph has a lesson mark, and the state at a check after the mark is higher than at the last check before it (REQ-1406);
@@ -286,5 +292,4 @@ It doesn't defend against a person with the Mac's user account, who can take a c
 ## Open review findings
 
 - An agent reviewer asked for a reason beside the placements under "Choices made in this document", the 50-row page, the two version sets in `report_cache` and the Director's narrow read of `parent_tags` and `thresholds`. I rejected it, because rule S8 of the spec step keeps reasons in the decision: ADR-0180 gives the reasons for the page size, the version sets and the Director's read, and the placements' reason belongs to the design step that settles them.
-- An agent reviewer found that `item_excluded` and `parent_tag_removed`, which ADR-0020's catalogue gives to ADR-0180, have no route or control in this document, and asked for routes, controls and how a removed mark closes its recheck windows. ADR-0180 names none of them, so this document lists the two events and leaves the routes, the controls and the window rule open for a decision.
-- The same reviewer asked again for reasons beside the rules the first finding above names; the rejection above holds.
+- The same reviewer asked again for reasons beside the rules the first finding above names; the rejection under the first finding holds.

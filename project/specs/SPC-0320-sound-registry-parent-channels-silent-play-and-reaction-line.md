@@ -32,7 +32,8 @@ It leaves out what other specifications state. SPC-0090 states when an eye exerc
 | `content/familiars.yaml` | Each familiar's waiting animations. |
 | The canon data | A `heard` tag and a `seenSign` on every creature, place or clue the canon defines by what the heroine hears. |
 | `verify/baselines.json` | The -6 dB ceiling, the 100 ms tap budget, the 2 s first-line budget with its 1 s target, the 60-line reaction bank and the 20 neutral reaction lines. |
-| `docs/ipad-checklist.md` | The three stage 0 rows on sound. |
+| The stage 0 spike's sound test page | A music switch and an effects switch, both off on a new install, that play one test file each through `playSound` and the audio module the game uses. |
+| `docs/ipad-checklist.md` | The three rows on sound, run at stage 0 on the spike's test page and again at stage 0.3 on the game's own settings. |
 
 ### The registry entry
 
@@ -199,7 +200,7 @@ Group 4 holds these tests besides:
 
 The lint step fails a build in which `AudioContext` or `webkitAudioContext` appears in `src` outside `src/client/audio/`, or in which `new Audio(` or a call to `HTMLMediaElement`'s `play()` appears anywhere in `src`.
 
-The stage 0 spike's iPad checklist holds three rows on sound: on a real iPad, a new install plays no sound (REQ-6158), each parent switch makes its own channel sound (REQ-6160), and with silent mode on neither channel sounds (REQ-6162).
+The stage 0 spike carries a sound test page with a music switch and an effects switch, both off on a new install, that plays through `playSound` and the audio module the game uses. The iPad checklist holds three rows on sound, run on a real iPad: a new install plays no sound (REQ-6158), each switch makes its own channel sound (REQ-6160), and with silent mode on neither channel sounds (REQ-6162). At stage 0 the rows run on the spike's test page, and the stage 0 acceptance record holds their results. At stage 0.3 the checklist runs them again on the game's own settings in the Parent Room.
 
 ## Failure paths
 

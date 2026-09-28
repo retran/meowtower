@@ -284,3 +284,5 @@ The premortem, written as though it had failed. By February the report showed bl
 - Agent review, preference: cap the fact review ladder at 12 or 13 days so an automatic fact has slack before its 14-day limit. Rejected: a 13-day cap raises the fresh shows needed from about 20 to about 21 a day and a 12-day cap to about 23, above what the Volley supplies after M7, and the Volley already takes the oldest automatic facts first.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

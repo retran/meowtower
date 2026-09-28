@@ -241,3 +241,5 @@ The premortem, written as though it had happened: in February the parent found t
 - Defending the volume against root inside the Docker virtual machine.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
