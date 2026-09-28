@@ -3,7 +3,7 @@ id: REQ-0703
 artifact: requirement
 topic: answer-input
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-0700
 verification: behavioural

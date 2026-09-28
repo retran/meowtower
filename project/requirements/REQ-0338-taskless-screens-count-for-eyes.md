@@ -3,7 +3,7 @@ id: REQ-0338
 artifact: requirement
 topic: time
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-0300
 verification: behavioural

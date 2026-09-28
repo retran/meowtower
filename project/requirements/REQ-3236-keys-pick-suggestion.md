@@ -3,7 +3,7 @@ id: REQ-3236
 artifact: requirement
 topic: components
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-3200
 verification: behavioural

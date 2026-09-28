@@ -3,7 +3,7 @@ id: REQ-3702
 artifact: requirement
 topic: scope
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-0010
 verification: judgement

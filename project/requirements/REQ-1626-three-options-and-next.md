@@ -3,7 +3,7 @@ id: REQ-1626
 artifact: requirement
 topic: master
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-1600
 verification: behavioural

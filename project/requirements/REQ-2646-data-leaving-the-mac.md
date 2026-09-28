@@ -3,7 +3,7 @@ id: REQ-2646
 artifact: requirement
 topic: privacy
 class: non-functional
-status: approved
+status: superseded
 revised: 2026-09-27
 elaborates: RES-2600
 verification: behavioural
