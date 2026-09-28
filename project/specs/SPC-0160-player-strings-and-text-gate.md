@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, REQ-3314, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-6416, REQ-5470]
+states: [REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, REQ-3314, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-7172, REQ-5470]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -15,7 +15,7 @@ states: [REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, R
 
 This document covers where every player-facing and parent-facing string lives, the function that reads it, the checks that keep strings out of the code, the content test for «узелок» (little knot) and the guilt list over every content and string file, the one forbidden-word list, the text gate that checks every line the heroine sees, the fixed labels the interface must carry, and the Dutch word bridge's keywords: their place in the lexicon, their count, their approval and their share of tasks. It is written at the level of files, keys, functions and checks.
 
-It leaves out the rules for generated text that a word list can't check. The voice of generated System lines, narration and jokes, the phrases of guilt and attachment in generated text, the guilt list itself, the word «узелок» in generated text and the ally's name belong to SPC-0110. How the Explainer's shared check module runs its other steps belongs to SPC-0120, and how a task's text is phrased and rendered to SPC-0040. Which Dutch words the player may see at all, and the bridge's events, belong to ADR-0190. The bridge's two gates, the node state and the parent's switch, belong to ADR-0290, and the term marks and tap explanation in the task window to SPC-0150. The parent's glossary panel belongs to ADR-0180.
+It leaves out the rules for generated text that a word list can't check. The voice of generated System lines, narration and jokes, the phrases of guilt and attachment in generated text, the guilt list itself, the word «узелок» in generated text and the ally's name belong to SPC-0110. How the Explainer's shared check module runs its other steps belongs to SPC-0120, and how a task's text is phrased and rendered to SPC-0040. Which Dutch words the player may see at all, and the bridge's events, belong to ADR-0190. The bridge's two gates, the node state and the parent's switch, belong to ADR-0290, and the term marks and tap explanation in the task window to SPC-0150. The parent's glossary panel belongs to ADR-0180. The Dutch probe, its letters, its text pairs and the checks its offline run makes belong to ADR-0430; this document states only the Dutch section of the forbidden list, how `textGate` checks Dutch text, and the string check's allowance for the probe's Dutch text.
 
 ## Boundary
 
@@ -25,7 +25,7 @@ It leaves out the rules for generated text that a word list can't check. The voi
 | --- | --- |
 | `content/i18n/ru.json` | Every interface label, accessible name, fixed System line, the canon's names shown on screen, the Parent Room's text, the dictation line, and the notation profile apart from the multiplication sign. |
 | `content/lines.ru.json`, `frames.ru.json`, `science.ru.json`, `lexicon.ru.json`, `recipes.ru.json`, `shop.ru.json`, `branches.ru.json`, `plans.ru.json`, `canon.ru.md` and every other `*.ru.*` content file | The other Russian content, one file per kind and language. |
-| `content/shaming.ru.json` | The one forbidden-word list and its fixtures. |
+| `content/shaming.ru.json` | The one forbidden-word list, its fixtures, and, after the MVP, its section `nl` of Dutch forms. |
 | `src/shared/i18n.ts` | `t(key, params)` and the generated key and parameter types. |
 | `src/shared/voice/` | `textGate`. |
 
@@ -60,13 +60,13 @@ Keys are English and dotted, grouped by reader: `ui.*`, `system.*`, `canon.*`, `
 
 ### Permitted dependencies
 
-The client and the server read strings only through `t()`, and no module under `src/` holds a player-facing literal. `src/shared/i18n.ts` imports only the generated types and the language files. `textGate` reads only `content/shaming.<lang>.json` for the `lang` it is given, `content/shaming.ru.json` in the shipped set, and every check of the forbidden list, the Explainer's and the frames' check module among them, calls `textGate` and keeps no list of its own. Every source that writes a line for the heroine, the Master, the line pool, the Explainer and the task templates, hands the line to the server's gate call and never sends it to the client directly. `textGate` imports nothing from `src/server/`, `src/engine/` or `src/ui/`.
+The client and the server read strings only through `t()`, and no module under `src/` holds a player-facing literal. `src/shared/i18n.ts` imports only the generated types and the language files. `textGate` reads only `content/shaming.ru.json`: for `lang: "ru"` its Russian sections, and for `lang: "nl"` its section `nl`. Every check of the forbidden list, the Explainer's and the frames' check module among them, calls `textGate` and keeps no list of its own. Every source that writes a line for the heroine, the Master, the line pool, the Explainer and the task templates, hands the line to the server's gate call and never sends it to the client directly. `textGate` imports nothing from `src/server/`, `src/engine/` or `src/ui/`.
 
 ## Behaviour
 
 ### Strings live in language files
 
-Every string the player or the parent reads comes from a per-language file under `content/`, and none is written in the code (REQ-3810). The build generates a TypeScript union of the keys in `ru.json` and a parameter type for each key's placeholders, so a missing key or a missing parameter is a type error. `ru.json` is the reference: another language file must hold exactly its keys, with the same placeholders, before the language can be offered. A second language adds `content/i18n/<lang>.json` and the matching `*.<lang>.*` files with no change to code, and it needs its own forbidden list.
+Every string the player or the parent reads comes from a per-language file under `content/`, and none is written in the code (REQ-3810). The build generates a TypeScript union of the keys in `ru.json` and a parameter type for each key's placeholders, so a missing key or a missing parameter is a type error. `ru.json` is the reference: another language file must hold exactly its keys, with the same placeholders, before the language can be offered. A second language adds `content/i18n/<lang>.json` and the matching `*.<lang>.*` files with no change to code, and it needs its own section of `content/shaming.ru.json`, written by a person as the section `nl` is.
 
 The profile holds `lang`, and the server accepts only a shipped language. The shipped set is `["ru"]`, and the settings screen shows no language choice until a second language passes the key check. The client renders the interface in the profile's language, and the server renders every story line, System window and task in it, so a line already in the story log stays in the language it was shown in.
 
@@ -75,16 +75,16 @@ The verify command runs these static checks on the strings (REQ-3810):
 - `src/` holds no Cyrillic character outside test fixtures;
 - the lint rule `no-literal-string` from `eslint-plugin-i18next` rejects literal text in JSX and in `aria-label`, `title`, `placeholder` and `alt`;
 - every language file has the reference keys and placeholders;
-- a player screen shows a Latin-script word only where ADR-0190 allows one, and the check refuses any other;
-- a content test over every `content/*.ru.json` file and every string file fails the build on any form of «узелок» and on any phrase of the guilt list that `content/safety.ru.json` holds and SPC-0110 states;
+- a player screen shows a Latin-script word only where ADR-0190 allows one, or, after the MVP and under the condition in "The text gate", as the Dutch text of an approved probe pair inside a letter's task content and its cards while `probe.enabled` is on, and the check refuses any other;
+- a content test over every `content/*.ru.json` file and every string file, apart from `content/shaming.ru.json` and `content/safety.ru.json`, fails the build on any form of «узелок» and on any phrase of the guilt list that `content/safety.ru.json` holds and SPC-0110 states, a list of its own that is no forbidden-word list;
 - no line of the timed-event pools SPC-0090 and ADR-0320 name, the lines announcing an eye exercise, a rest stop, the soft stop or an extension, holds a digit or a form from the time-word section of the forbidden list (`line_refused`);
-- `textGate` passes every string in every per-language content file, apart from `parent.*` keys and files only the parent reads, and 200 rendered seeds of every task template. It checks a `ui.*` value as `label`, a `system.*` value as `system` and every other string as `line`.
+- `textGate` passes every string in every per-language content file, apart from `parent.*` keys, files only the parent reads, `content/shaming.ru.json` and `content/safety.ru.json`, and 200 rendered seeds of every task template. It checks a `ui.*` value as `label`, a `system.*` value as `system` and every other string as `line`.
 
 A render test loads a pseudo-language file directly, outside the shipped set, whose values are the keys themselves, and finds no visible or accessible text on any screen that isn't a key.
 
 ### Fixed labels
 
-Tests pin the world's labels to their exact values (REQ-3310): «Схема узла» (the knot scheme) and «Как легла нить» (how the thread lay) for the review, «Твоё заклинание» (your spell) for her answer, «Готово» (Done), «Не знаю» (I don't know) and «Путеводная нить» (guiding thread) for the task buttons, «Распутан начисто» (untangled cleanly), «Почти чисто» (nearly clean), «Узел ослаблен» (the knot is loosened) and «Принято» (accepted) for outcomes, «Привал» (rest stop), «Сохранить и уйти» (Save and leave) and «Ещё один ряд» (One more row) for leaving, and «Дней в Башне» (Days in the Tower) for the day counter.
+Tests pin the world's labels to their exact values (REQ-3310): «Схема узла» (the knot scheme) and «Как легла нить» (how the thread lay) for the review, «Твоё заклинание» (your spell) for her answer, «Готово» (Done), «Не знаю» (I don't know) for the task buttons, «Путеводная нить» (guiding thread) as the text before « · {n}» in `ui.task.thread`, «Распутан начисто» (untangled cleanly), «Почти чисто» (nearly clean), «Узел ослаблен» (the knot is loosened) and «Принято» (accepted) for outcomes, «Привал» (rest stop), «Сохранить и уйти» (Save and leave) and «Ещё один ряд» (One more row) for leaving, and «Дней в Башне» (Days in the Tower) for the day counter.
 
 The key `ui.task.cantKnow` holds «Нельзя узнать» (can't be known), and a test pins it, so the button that claims a word problem can't be answered never reads like «Не знаю» (REQ-5470).
 
@@ -110,6 +110,7 @@ The parent reads the whole `system.*` section at the stage 0.3 acceptance and si
 - the rejected labels of REQ-3312, in a section of their own that the set of forbidden forms leaves out, each matched only against a whole `label` value after trimming and folding case;
 - the forms of «узелок», in a section of their own that the set of forbidden forms leaves out, which the content test reads for every `content/*.ru.json` file and every string file;
 - a time-word section, such as «минута», «секунда» and «час», with every inflected form, which the set of forbidden forms leaves out and the verify checks on `ui.*` values and the timed-event pools read;
+- after the MVP, under the condition in "The text gate", a section `nl` of Dutch forms that a person writes by hand, which the set of Russian forms leaves out and `textGate` reads for `lang: "nl"`;
 - fixtures: forms that must match, such as «ошибкой», «задачку», «Урок», «ОЦЕНКА» and the mixed-script «зaдача» with a Latin "a", and words that must pass, such as «примерно», «примерить», «мимоза» and «верно».
 
 A tool script generates the inflected forms once from the OpenCorpora dictionary, the owner reviews them, and the list is committed expanded, so the run-time check needs no morphology library.
@@ -117,6 +118,8 @@ A tool script generates the inflected forms once from the OpenCorpora dictionary
 ### The text gate
 
 `textGate` normalises the text: Unicode normalization form C (NFC), lower case, «ё» to «е», soft hyphens, zero-width characters and stress marks removed, and Latin letters that look like Cyrillic ones folded to Cyrillic. It splits the text into Cyrillic word tokens, looks each token up in the set of forms, and matches the phrases as token runs. Every kind is checked for the forbidden forms, the phrases and emoji; a `system` line is also checked for "!" and digits, and a `label` is also compared as a whole with the rejected labels. The gate doesn't check «узелок»; the content test above does.
+
+For `lang: "nl"`, `textGate` applies the same normalisation apart from the fold to Cyrillic, splits the text into Latin-script word tokens, and looks each token up in the section `nl`. The Dutch probe of ADR-0430 is the only caller that passes `lang: "nl"`. The section `nl`, this Dutch branch of `textGate` and the string check's allowance for probe text come after the MVP, with the probe, and only once the owner has amended the rule in `CLAUDE.md` that text the player sees is in Russian only. Until that amendment, none of the three is built.
 
 The server calls `textGate` on every line before the line leaves for the client, whichever source wrote it: the Master, the line pool, the Explainer, a task template or a fixed string (REQ-3326). For a fixed `system` line, the server passes the value to the gate before `t()` fills its fields, so a number from a field never fails the digit check. Fixed strings and template seeds pass the same gate at build, so the client receives no heroine-facing text the gate hasn't passed. Her own words shown back as she wrote them, `source: "player"`, skip the gate, and so does every key under `parent.*`, since REQ-3314 exempts both. When she types a forbidden word, the Master's reply still passes the gate, so the reply can't repeat the word to her.
 
@@ -130,7 +133,7 @@ The bridge's keywords are entries in `lexicon.ru.json` with `bridge: true`, each
 
 The game shows a bridge keyword only after the parent approves that word through the glossary panel, which writes `glossary_entry_approved`, and never before that event for that word (REQ-5086). While fewer than 30 words are approved, the bridge stays off and the glossary panel shows the approved count.
 
-While the bridge is on and at least 30 words are approved, the Director puts bridge keywords into 15 % to 25 % of the T1 to T4 and Sources tasks shown on nodes at «Понимает» (understands) or above, over any 14 game days on which she plays (REQ-6416). Tasks on nodes below «Понимает» and tasks shown while the bridge is off stay out of the count. The simulation group of ADR-0190 checks that share over every 14-game-day window of 60 simulated days, with `bridge.enabled` on and at least 30 words approved from the first day, and counts only the tasks on the nodes the simulation holds at «Понимает» or above. A bridge keyword sits inside a task's content, and the gates ADR-0290 states and the form rule SPC-0040 states decide which tasks may carry one.
+While the bridge is on and at least 30 words are approved, the Director puts bridge keywords into 15 % to 25 % of the T1 to T4 and Sources tasks, other than Dutch probe letters, shown on nodes at «Понимает» (understands) or above, over any 14 game days on which she plays (REQ-7172). Tasks on nodes below «Понимает», tasks shown while the bridge is off and every attempt whose `forms` holds `nl_probe` stay out of the count, and the bridge's renderer never picks a letter. The simulation group of ADR-0190 checks that share over every 14-game-day window of 60 simulated days, with `bridge.enabled` on and at least 30 words approved from the first day, and counts only the tasks, other than Dutch probe letters, on the nodes the simulation holds at «Понимает» or above. A bridge keyword sits inside a task's content, and the gates ADR-0290 states and the form rule SPC-0040 states decide which tasks may carry one.
 
 ## Failure paths
 
@@ -150,15 +153,23 @@ While the bridge is on and at least 30 words are approved, the Director puts bri
 | A pinned label changes its value | The label test fails and names the key and both values. |
 | A generated line holds a forbidden form, a shortage phrase or emoji | `text_blocked`: the line is never shown, the source's fallback replaces it, and a row goes to the log table. |
 | A generated line hides a forbidden word behind Latin look-alike letters, soft hyphens or stress marks | Normalisation removes them, and the gate blocks the line. |
+| After the MVP, a Dutch text checked with `lang: "nl"` holds a form from the section `nl` | The gate returns the rule and the form, and ADR-0430 states what the probe does with the refusal. |
 | One source has more than 5 % of its lines blocked on a game day of play | `text_blocked_high`: `./meowtower status` shows it once for that source and day. |
 | One source has more than 5 % of its lines blocked in a day of verify's own runs | The verify summary reports it once. |
 | The bridge list holds 29 or fewer, or 51 or more, entries | The group 1 check fails the build with the count. |
 | A bridge word has no `glossary_entry_approved` | The game doesn't show it. |
 | Fewer than 30 bridge words are approved | `bridge_below_minimum`: the bridge stays off, and the glossary panel shows the count. |
-| The simulated bridge share, over tasks on nodes at «Понимает» or above, leaves 15 % to 25 % in a 14-game-day window | `bridge_share_out_of_band`: the build fails and names the window. |
+| The simulated bridge share, over tasks other than Dutch probe letters on nodes at «Понимает» or above, leaves 15 % to 25 % in a 14-game-day window | `bridge_share_out_of_band`: the build fails and names the window. |
 
 ## Open review findings
 
 - Rejected, round 1: give the log table's 1,000-row cap and the "more than half" re-report threshold their reasons. A specification states what the system does and never why (S8), and ADR-0160 holds the reasons.
 - Rejected, round 2: give reasons for blocking emoji, keeping the log table outside the event log, its cap and re-report threshold, retiring a failed pool line, and keeping the Dutch word in `lexicon.ru.json` with no Dutch locale file. Rule S8 applies again, and ADR-0160, ADR-0190 and ADR-0210 hold the reasons.
 - Rejected, round 2: name the key of each pinned world label. The test pins values, the building step chooses the keys, and the test names whatever key holds each value.
+- Open, round 1: the Russian gate splits only Cyrillic tokens, so the Latin test word «Cito» that ADR-0290 adds to the list never matches at run time. ADR-0290's group 1 check catches it in `src/templates/` and player strings at build, but not in generated text. Splitting Latin tokens in the Russian gate changes ADR-0160's tokenisation, a decision this spec can't make; the owner settles it through ADR-0160.
+- Open, round 1: REQ-3300, REQ-3304, REQ-3306 and REQ-3318 cover every System line and every joke, and this spec states them only for fixed `system.*` lines, while the pointer to SPC-0110 for generated lines leads to a spec that doesn't state them. Moving them between specs is outside this update, which applies addendum 2's swap alone.
+- Rejected, round 1: fold Latin look-alike letters only inside tokens that mix scripts, so a bridge word made of look-alike letters stays Latin. ADR-0160 states a whole-text fold, and the building step settles the case with the fixtures.
+- Open, round 2: the blocked share behind `text_blocked_high` and the verify summary needs a count of every line each source sent through the gate, and the log table holds only blocked rows under a 1,000-row cap. ADR-0160 names no such count; the owner settles the denominator through ADR-0160.
+- Rejected, round 2: name «день» as outside the time-word section. A person writes the section and the owner reviews it, and the label test on «Дней в Башне» fails the build at once if the section catches it.
+- Rejected, round 2: say whether "more than half" is relative or in percentage points. The text is ADR-0160's, which addendum 2 left unchanged, and this update applies addendum 2 alone.
+- Rejected, round 2: reword the header comment on reasons. Every record in the repository carries that comment, and S8 governs what a specification states.

@@ -13,9 +13,9 @@ states: [REQ-6300, REQ-6302, REQ-6304, REQ-6306, REQ-6308, REQ-6310, REQ-6312, R
 
 ## Scope
 
-This document covers the parent's sandbox «Песочница» (Sandbox): a second game that the `meowtower` server runs with the unchanged engine on a database file of its own. It states the sandbox's files, the read-only connection to the player's file, the `profile` mark and the guards that refuse a sandbox event in her file, the snapshot and the reset, where sandbox model calls are recorded and counted, the parent session that guards the sandbox routes, the sandbox frame, the confirmed actions that cross into her game, and the command-line sandbox the agent runs on the Mac. It is written at the level of files, routes, events, commands and the modules that may hold each database handle.
+This document covers the parent's sandbox «Песочница» (Sandbox): a second game that the `meowtower` server runs with the unchanged engine on a database file of its own. It states the sandbox's files, the read-only connection to the player's file, the `profile` mark and the guards that refuse a sandbox event in her file, the snapshot and the reset, where sandbox model calls are recorded and counted, the parent session that guards the sandbox routes, the entry link with its list of nodes, the sandbox frame, the confirmed actions that cross into her game, and the command-line sandbox the agent runs on the Mac. It is written at the level of files, routes, events, commands and the modules that may hold each database handle.
 
-It leaves out what other documents state. SPC-0020 states the event log, `appendEvents`, the projections and the migration runner, which this part extends. SPC-0010 states the listeners, pairing, the PIN and its lockout, and SPC-0030 states the play routes and the parent session with its 30-minute idle expiry. SPC-0100 states the model gateway, its keys and the sandbox's $20 monthly bucket on the offline key. SPC-0190 states the stage at which the sandbox is built, the loopback interim before the PIN guards it, and `409 sandbox_models_unavailable`. The features the parent runs inside the sandbox, such as the engine panel, batches, puzzles, widgets, «Сплети загадку» (Weave a riddle) with the parser, scenes and the Master, belong to the documents that own each of them; this part only runs them on the sandbox's file. SPC-0150 states the striped frame as a component, SPC-0160 the string files, SPC-0180 the Parent Room and its entry to the sandbox, and SPC-0280 the puzzle bank and `puzzle_approved`.
+It leaves out what other documents state. SPC-0020 states the event log, `appendEvents`, the projections and the migration runner, which this part extends. SPC-0010 states the listeners, pairing, the PIN and its lockout, and SPC-0030 states the play routes and the parent session with its 30-minute idle expiry. SPC-0100 states the model gateway, its keys and the sandbox's $20 monthly bucket on the offline key. SPC-0190 states the stage at which the sandbox is built, the loopback interim before the PIN guards it, and `409 sandbox_models_unavailable`. The features the parent runs inside the sandbox, such as the engine panel, batches, puzzles, widgets, «Сплети загадку» (Weave a riddle) with the parser, scenes and the Master, belong to the documents that own each of them; this part only runs them on the sandbox's file. SPC-0150 states the striped frame as a component, SPC-0160 the string files, SPC-0180 the Parent Room and its entry to the sandbox, SPC-0280 the puzzle bank and `puzzle_approved`, and SPC-0310 the "home and school" screen, whose check for low at home and high at school opens the sandbox on a list of nodes.
 
 ## Boundary
 
@@ -147,11 +147,13 @@ A sandbox model call goes through the gateway with the sandbox mark and the sand
 
 The gateway reserves each sandbox call against the sandbox bucket by reading the month's sum from `sandbox-spend.sqlite` plus the reservations in flight, and settles the call there. A reset never touches `sandbox-spend.sqlite`, so the month's spend and its count against the cap survive every reset (REQ-6374). The play key's monthly count reads only her file's `llm_log`, so no sandbox call, from the Parent Room or from the command line, enters it (REQ-6336). The Parent Room's cost line shows «Песочница» (Sandbox) on a line of its own, with the month's spend from `sandbox-spend.sqlite`, the command line's calls included, against the $20 cap (REQ-6340). The riddle parser run in the sandbox spends from the sandbox bucket too.
 
-### Access and the parent session
+### Access, the entry link and the parent session
 
 Every sandbox route on the game listener sits under `/api/parent/`, so each request needs a parent session opened with the PIN on a paired device, and the same device on every request of that session (REQ-6342). A request from another paired device, or with no parent session, gets SPC-0030's `401 parent_session_expired`. No player screen links to the sandbox.
 
-Every sandbox request renews the parent session's 30-minute idle expiry, `/api/parent/sandbox/play/*` included, so an adventure the parent plays as the player keeps its session while requests keep coming (REQ-6344). Parent sessions live in the server's memory, as `ParentSessions` keeps them, so neither a login's session nor its renewals write to her file (REQ-6376).
+The sandbox's entry link takes an optional list of nodes. When the link carries nodes, the sandbox lists them at its head, each linking to that node's templates in the sandbox; without nodes it opens as the Parent Room's entry opens it. Opening the sandbox from the link writes no event to either file. The check for low at home and high at school on SPC-0310's "home and school" screen opens the link with the row's nodes.
+
+Every sandbox request renews the parent session's 30-minute idle expiry, `/api/parent/sandbox/play/*` included, so an adventure the parent plays as the player keeps its session while requests keep coming (REQ-6344). Parent sessions live in the server's memory, as `ParentSessions` keeps them, so neither a session nor its renewals write to her file (REQ-6376). The PIN login itself can write one row: a correct PIN resets the PIN's count in her file's `lockouts`, as SPC-0010 states.
 
 ### Screens
 
@@ -193,7 +195,7 @@ The commands print their output and write it to no file; a copy in a file exists
 
 ### Ceilings
 
-- `sandbox.sqlite` over 2 GB: the sandbox header shows the marker `sandbox_large`, which stays until a reset drains the file (REQ-6300).
+- `sandbox.sqlite` over 2 GB: the sandbox header shows the marker `sandbox_large`, which stays until a reset drains the file.
 - Temporary files: a `sandbox-cli-*` file is deleted when its command ends, and the snapshot builder's temporary copy and the reset's file under a temporary name are deleted when the snapshot or the reset ends; the server sweeps all three kinds at start.
 - `sandbox-spend.sqlite`: a nightly job deletes rows older than 13 months, keeping the current month and the same month a year earlier (REQ-6374).
 - The sandbox's `llm_log` bodies: SPC-0100's nightly deletion after 90 days runs on `sandbox.sqlite` as on her file (REQ-6328).
@@ -203,7 +205,7 @@ The commands print their output and write it to no file; a copy in a file exists
 
 | Condition | What happens |
 | --- | --- |
-| Sandbox code appends an event through the player's handle with `profile: 'sandbox'` | `appendEvents` throws `SandboxEventRefused` before the `INSERT`; the request fails with `500`; the owner gets one Parent Room notice a day naming the route and event type; the parent sees an ordinary sandbox server error. |
+| Sandbox code appends an event through the player's handle with `profile: 'sandbox'` | `appendEvents` throws `SandboxEventRefused` before the `INSERT`; the request fails with `500 sandbox_event_refused`; the owner gets one Parent Room notice a day naming the route and event type; the parent sees an ordinary sandbox server error. |
 | A `sandbox` event reaches her file over any connection, or a `main` event reaches a sandbox file | `events_profile_guard` aborts the insert with `event profile does not match database`, and the transaction rolls back; the request fails with `500 sandbox_event_refused`, and the owner gets the same daily notice as in the row above. |
 | The parent starts or resumes an adventure under `/api/parent/sandbox/play/*` while the player holds the lease | The player's lease, heartbeat timer, event stream and answer queue stay as they were; no `lease_moved` reaches her device. |
 | A file has no `db_role` row | `events_profile_guard` refuses every insert into it. |
@@ -232,3 +234,9 @@ The commands print their output and write it to no file; a copy in a file exists
 ## Open review findings
 
 - The first agent review asked for the reason beside the 5-minute token expiry, the 20-token cap, the 3 x free-space factor, the 2 GB `sandbox_large` threshold and the rule that no player screen links to the sandbox. Rejected: the method's rule S8 keeps reasons in the decision, and ADR-0340 holds each of them.
+- The second agent review, first round, asked for the reasons behind the 5-minute token expiry and the 20-token cap, saying ADR-0340 gives none. Rejected: ADR-0340's section on confirmed actions gives both reasons beside the numbers, and rule S8 keeps them there.
+- The same round asked this document to state which routes the loopback listener serves before the PIN guards the sandbox. Rejected: SPC-0190 states that interim, and this document cites it in its scope.
+- The same round found that the `AsyncLocalStorage` flag marks only appends made inside a sandbox request, so a timer or job that sandbox code starts outside a request appends without the device identifier `sandbox`. It asked for a static check that keeps `src/server/sandbox/` from importing the flag's storage. Open: ADR-0340 names no such check and no rule on appends outside a request, so adding either needs an amendment to ADR-0340.
+- The same round suggested three changes. The first is per-table hashes in place of the whole-file hash for REQ-6324, because a WAL checkpoint changes the file's bytes. The second is a line saying that a restart between the main append and the pointer append leaves `sandbox_action_applied` unwritten after the retry's `410`. The third moves the acceptance test's steps to a task. Open: each changes a check or a failure path ADR-0340 fixes, so each waits for the owner.
+- The second round found that this document and ADR-0340's check 17 make a snapshot of a 1 GB file over 180 seconds fail the full verify, while SPC-0190 records a measurement past a baseline as a defect and lets verify pass. Open: two records in force disagree, and rule S11 leaves the choice to the owner.
+- The same round found that this document keeps `sandbox_large` in the sandbox header until a reset, while ADR-0340's Baselines row and its notices section say the parent sees `sandbox_large` once. Open: a lasting marker and a single notice differ, and the owner settles which one ADR-0340 means.

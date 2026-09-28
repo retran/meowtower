@@ -4,20 +4,20 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-5058, REQ-5060, REQ-6000, REQ-6002, REQ-6004, REQ-6006, REQ-6008, REQ-6010, REQ-6012, REQ-6014, REQ-6016, REQ-6018, REQ-6020, REQ-6022, REQ-6024, REQ-6026, REQ-6028, REQ-6030, REQ-6032, REQ-6034, REQ-6036, REQ-6038, REQ-6040, REQ-6042, REQ-6044, REQ-6046, REQ-6048, REQ-6050, REQ-6052, REQ-6054, REQ-6056, REQ-6058, REQ-6060, REQ-6062, REQ-6066, REQ-6068, REQ-6070, REQ-6072, REQ-6074, REQ-6076, REQ-6078, REQ-6080, REQ-6082, REQ-6084, REQ-6086, REQ-6088, REQ-6090, REQ-6092]
+states: [REQ-5058, REQ-5060, REQ-6000, REQ-6002, REQ-6004, REQ-6006, REQ-6008, REQ-6010, REQ-6012, REQ-6014, REQ-6016, REQ-6018, REQ-6020, REQ-6022, REQ-6024, REQ-6026, REQ-6028, REQ-6030, REQ-6032, REQ-6034, REQ-6036, REQ-6038, REQ-6040, REQ-6044, REQ-6046, REQ-6048, REQ-6050, REQ-6052, REQ-6054, REQ-6056, REQ-6058, REQ-6060, REQ-6062, REQ-6066, REQ-6068, REQ-6070, REQ-6072, REQ-6074, REQ-6076, REQ-6078, REQ-6080, REQ-6082, REQ-6084, REQ-6086, REQ-6088, REQ-6090, REQ-6092, REQ-7000, REQ-7002, REQ-7004, REQ-7006, REQ-7008, REQ-7010, REQ-7012, REQ-7014, REQ-7016, REQ-7018, REQ-7020, REQ-7022, REQ-7024, REQ-7026, REQ-7028, REQ-7030, REQ-7032, REQ-7036, REQ-7038, REQ-7040, REQ-7042, REQ-7044, REQ-7046, REQ-7048, REQ-7050, REQ-7052, REQ-7054, REQ-7056, REQ-7060, REQ-7062, REQ-7064, REQ-7066, REQ-7068, REQ-7070, REQ-7072, REQ-7074, REQ-7076, REQ-7404]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
-# School snapshots and school goals: import, local parse, goal mapping, withdrawal and the two school screens
+# School snapshots and school goals: import, local parse, goal mapping, withdrawal, the quadrants and the two school screens
 
 ## Scope
 
-This document covers the school part of the game, which comes after the MVP: the import of a school snapshot on the Mac, the kept file, the local parser and its reparses, the six `school_snapshot_*` event types, the corrections and the withdrawal, the projections `school_values` and `school_snapshot_changes`, the goal catalogue file and the mapping panel, the "home and school" screen, the timeline, the export for the school, the four static checks that fence the part off, and the synthetic fixtures its tests read. A school snapshot is a copy of the pupil overview from the school's learning system, which the parent receives from the school. A school goal is one goal of that overview, or one goal of the list the parent enters by hand.
+This document covers the school part of the game, which comes after the MVP: the import of a school snapshot on the Mac, the kept file, the local parser and its reparses, the six `school_snapshot_*` event types, the corrections and the withdrawal, the projections `school_values` and `school_snapshot_changes`, the goal catalogue file and the mapping panel, the "home and school" screen with its four quadrants for goal rows and Cito rows, the Cito category entries with their mapping file and the event `cito_category_resolved`, the timeline, the export for the school, the static checks that fence the part off, and the synthetic fixtures its tests read. A school snapshot is a copy of the pupil overview from the school's learning system, which the parent receives from the school. A school goal is one goal of that overview, or one goal of the list the parent enters by hand. A Cito category entry is one line of the teacher's category analysis of a Cito result: a domain or category, its signal and its deviation. One part ships in the MVP: the schema of a Cito category entry, which the Cito result form of SPC-0290 carries.
 
-It is written at the component level: routes, files, event payloads, projections, modules, commands and static checks inside the `meowtower` container. The two screens are described at the level of what each cell and series shows, and their layout belongs to SPC-0150.
+It is written at the component level: routes, files, event payloads, projections, modules, commands and static checks inside the `meowtower` container. The two screens are described at the level of what each row, cell and series shows, and their layout belongs to SPC-0150.
 
-It leaves out what other documents state. SPC-0020 states the event log, `appendEvents`, the blob store with its triggers and the export of the whole log. SPC-0290 states the goal list the parent enters, its event `school_goal_mapped`, the Cito result form, the home skill scale and the Director's school-goal term. SPC-0060 states the knowledge model and its node states, SPC-0070 the Director's value, SPC-0100 the model gateway and what leaves the Mac, SPC-0180 the Parent Room, the PIN, report v1 and its nine screens, SPC-0160 the string files, and SPC-0190 the verify command, its groups, the personal-data scan and the scope guard that keeps this part out of the tree until the MVP ends.
+It leaves out what other documents state. SPC-0020 states the event log, `appendEvents`, the blob store with its triggers and the export of the whole log. SPC-0290 states the goal list the parent enters, its event `school_goal_mapped`, the Cito result form with its field `categories`, the event `external_test_recorded`, the horizons, the Dutch memo, the home skill scale and the Director's school-goal term. SPC-0060 states the knowledge model, its node states and the rules behind them, SPC-0070 the Director's value, SPC-0100 the model gateway and what leaves the Mac, SPC-0180 the Parent Room, the PIN, the report and its screens, the lesson-mark form, and the counts and 80 % intervals every share and difference of the report carries, SPC-0160 the string files, SPC-0190 the verify command, its groups, the personal-data scan and the scope guard that keeps this part out of the tree until the MVP ends, and SPC-0300 the Sources track and its screen. ADR-0340 states the parent's sandbox, ADR-0400 the trajectory and the retention list of the dynamics screen, ADR-0430 the Dutch probe, and ADR-0450 the hypotheses and their links to school goals.
 
 ## Boundary
 
@@ -35,10 +35,11 @@ Every route in this table needs the parent session of SPC-0180. Every route in t
 | `GET /api/parent/school/snapshots/:sha256/file` | loopback | The kept file, for checking a value against the document. |
 | `POST /api/parent/school/snapshots/:sha256/corrections` | loopback | `SchoolCorrectionIn`; appends `school_snapshot_corrected`. |
 | `POST /api/parent/school/snapshots/:sha256/withdraw` | loopback | `{ reason, clientSeq }`; appends `school_snapshot_withdrawn`. |
-| `GET /api/parent/school/goals` | loopback | The mapping panel: each snapshot goal and each entered goal with no confirmed link, marked with its source, its proposal and the count of vanished linked keys per subdomain. |
+| `GET /api/parent/school/goals` | loopback | The mapping panel: each snapshot goal and each entered goal with no confirmed link, marked with its source, its proposal and the count of vanished linked keys per subdomain, and each typed Cito category and `other` Cito signal with no resolution. |
 | `POST /api/parent/school/goals/:goalKey/link` | loopback | `{ source, nodes, proposedBy, clientSeq }`, with `source` `snapshot` or `entered`; appends `school_snapshot_goal_linked` for a snapshot goal and `school_goal_mapped` of SPC-0290, carrying the `goalKey`, for an entered goal. |
 | `POST /api/parent/school/goals/:goalKey/unlink` | loopback | `{ clientSeq }`; appends `school_snapshot_goal_unlinked`. |
-| `GET /api/parent/report/home-and-school` | loopback | The "home and school" screen's rows. |
+| `POST /api/parent/school/cito-categories/resolve` | loopback | `CitoResolveIn`; appends `cito_category_resolved`. |
+| `GET /api/parent/report/home-and-school` | loopback | The "home and school" screen's rows, each a `HomeAndSchoolRow`, computed on the request as of today. |
 | `GET /api/parent/report/timeline` | loopback | The timeline's three series. |
 | `POST /api/parent/school/export` | loopback | Writes the export for the school and returns its directory, or `school_export_empty`. |
 | `GET /api/parent/school/export/<dir>/school-data.csv` | loopback | The export's file. |
@@ -52,6 +53,9 @@ The schemas live in `src/shared/api.ts` beside the others, and every reply schem
 | `SchoolImportPreview` | `importId`, a ULID; `mediaType`; `bytes`; `pupilNameRead`, the name as read or `null`; `documentDateRead`, a date or `null`; `goalsRead`, a count; `outcome`, `read` or `failed`; `alreadyKept`, `null` or `{ importedOn, withdrawn }`. |
 | `SchoolImportConfirm` | `source`, `teacher`, `access_request` or `other`; `sourceNote`, at most 200 characters, or `null`; `documentDate`, required when `documentDateRead` is `null`; `clientSeq`. |
 | `SchoolCorrectionIn` | `goalKey` or `null`; `subdomain` or `null`, set for a field of one subdomain; `field`; `value`, typed by the field, or `null`; `parserVersionSeen`; `clientSeq`. A correction that adds a goal also carries `wording` and `subdomain`. |
+| `CitoCategoryEntry` | `category`, one of `lib:getallen`, `lib:verhoudingen`, `lib:meten-en-meetkunde`, `lib:verbanden`, `lovs:getallen`, `lovs:optellen-aftrekken`, `lovs:vermenigvuldigen-delen`, `lovs:meten-tijd-geld` or `typed`; `typedCategory`, at most 80 characters, set only with `typed`; `signal`, one of `below_notable`, `below_very_notable`, `not_notable`, `above_notable`, `above_very_notable` or `other`; `typedSignal`, at most 80 characters, set only with `other`; `deviationPercent`, an integer from -100 to 100, or `null`. It lives in `src/shared/events.ts`, and SPC-0290's field `categories` is a list of these. |
+| `CitoResolveIn` | `kind`, `category` or `signal`; `typed`, the printout's words; for `category`, `category` or `nodes`; for `signal`, `signal`; `clientSeq`. |
+| `HomeAndSchoolRow` | `kind`, `goal` or `cito`; `goalKey`, or the `resultId` and the entry's index; `quadrant`, one of `high_high`, `low_low`, `high_home_low_school` and `low_home_high_school`, or `null`; `reason`, a code of the reasons table, or `null`; `nodes`, each with its state and basis at the row's date and its current state; `oneCheck`; `targetMoved`; for a goal row, `snapshotDate` and `hypotheses`, the hypotheses of ADR-0450 that link to the goal; for a Cito row, the counts and shares at the test moment and today. |
 
 ### Events this part owns
 
@@ -65,6 +69,7 @@ Each type enters the event catalogue of SPC-0020 with its zod schema in `src/sha
 | `school_snapshot_withdrawn` | `sha256`; `reason`, `not_about_player`, `wrong_document` or `other` |
 | `school_snapshot_goal_linked` | `goalKey`; `nodes`, one to five node identifiers of the graph in SPC-0050; `proposedBy`, `catalogue` or `parent`; `catalogueVersion` or `null` |
 | `school_snapshot_goal_unlinked` | `goalKey` |
+| `cito_category_resolved` | `kind`, `category` or `signal`; `typed`, the printout's words lower-cased with runs of spaces collapsed, at most 80 characters; for `category`, either `category`, one of the eight listed keys, or `nodes`, 1 to 40 node identifiers of the graph in SPC-0050; for `signal`, `signal`, one of the five listed values; any of these `null` to undo |
 
 `status` takes `reached`, `developing`, `needs_help` or `null`. `level` and `targetLevel` take an integer from 0 to 5 or `null`.
 
@@ -77,7 +82,8 @@ Each type enters the event catalogue of SPC-0020 with its zod schema in `src/sha
 | Table `blobs` | One row per kept file, with its hash, size and `media_type`. |
 | Projection `school_values` | One row per snapshot, scope and field, where the scope is a goal key, a subdomain name or the whole snapshot: the latest read parse's value, the latest correction's value, the value in force and the `disagrees` mark. |
 | Projection `school_snapshot_changes` | Per pair of consecutive snapshots and per goal: the change of level, status and target, goals that appear or disappear, and the `target_moved` marks. |
-| `content/school-goal-catalogue.json` | `version`, `source`, the approving record and `entries`, each from a goal code or goal key to one to five nodes. It ships with `source: null` and no entries. |
+| `content/school-goal-catalogue.json` | `version`, `source`, the approving record, `goalTasksTimed` and `entries`, each from a goal code or goal key to one to five nodes. It ships with `source: null`, `goalTasksTimed: false` and no entries. |
+| `content/cito-categories.json` | `version`, its source and approving record, and one list of nodes per listed category, each LOVS list with `confirmed`. |
 | `data/exports/school-<UTC timestamp>/school-data.csv` | One export for the school. |
 | `tools/school-fixtures.ts` and `test/fixtures/school/` | The generator of synthetic overviews, and its output with a `manifest.json` of each file's hash. |
 
@@ -89,12 +95,15 @@ Each type enters the event catalogue of SPC-0020 with its zod schema in `src/sha
 | `src/engine/school/keys.ts` | The goal-key function, shared with SPC-0290's entered goals. |
 | `src/engine/school/projections/` | The folds behind `school_values` and `school_snapshot_changes`. |
 | `src/parent/school/` | The routes, the import sweep, the reparse worker, the mapping panel, the two screens' readers and `export.ts`. |
+| `src/parent/school/quadrants.ts` | The quadrant function: a pure function of an as-of date, today by default, over `school_values`, `school_snapshot_changes`, the confirmed snapshot links, `node_snapshots`, the Cito category fold, the `horizon_set` events of SPC-0290 up to each Cito result's `seq`, and the two content files. The screen's reader in `src/parent/school/` attaches ADR-0450's hypotheses to each goal row. |
+| `src/parent/school/cito-categories.ts` | The Cito category fold: each current Cito result's `categories` and the resolutions in force. |
 
 ### Commands, notices and errors
 
 | Name | Audience | Meaning |
 | --- | --- | --- |
 | `./meowtower export-school` | the parent | Writes the export for the school on the Mac and prints its directory. |
+| `./meowtower report home-and-school --as-of <date>` | the owner | Prints the "home and school" screen's rows as of a past date, on the Mac. |
 | `snapshot_type_refused` | the parent | The file's first bytes aren't PDF, PNG, JPEG or WebP. |
 | `snapshot_too_large` | the parent | The file is over 25 MB, or a PDF is over 20 pages. |
 | `snapshot_unreadable` | the parent | The parse timed out, failed, or found more than 400 goals. |
@@ -105,17 +114,22 @@ Each type enters the event catalogue of SPC-0020 with its zod schema in `src/sha
 | `snapshot_reparse_failed` | the owner | A reparse failed on a kept file; shown in `./meowtower status`. |
 | `school_files_large` | the parent | Kept snapshot files pass 1 GB together. |
 | `school_export_empty` | the parent | Nothing to export for the school. |
-| `school_events_in_model`, `school_data_to_gateway`, `school_snapshot_in_director`, `school_export_scope` | the building agent | A static check in group 1 failed, naming the file and the import chain. |
+| `category_list_too_long` | the parent | A Cito result sends more than 16 category entries, or a typed field over 80 characters. |
+| `category_map_unconfirmed` | the owner | `content/cito-categories.json` holds LOVS lists with `confirmed: false`; shown once per version in `./meowtower status`. |
+| `category_map_drift` | the building agent | A domain list in `content/cito-categories.json` differs from the table of REQ-7066; verify fails, naming the domain and the nodes. |
+| `quadrant_build_slow` | the building agent | The screen's build passes 1 s at the 95th percentile in verify's measurement. |
+| `school_events_in_model`, `school_data_to_gateway`, `school_snapshot_in_director`, `school_export_scope`, `cito_categories_scope` | the building agent | A static check in group 1 failed, naming the file and the import chain. |
 
 ### What this part requires from other parts
 
 - SPC-0010 supplies the loopback listener, the `data/` directory, `./meowtower status` and the `meowtower` image, which installs poppler-utils, tesseract-ocr, tesseract-ocr-nld and tesseract-ocr-eng.
 - SPC-0020 supplies `appendEvents`, the blob store with its exclusive create, read-only mode, triggers and the verify check `blob_changed`, the projection registry and the full recompute.
-- SPC-0050 supplies the node identifiers, SPC-0060 the node states and their labels, and SPC-0290 the Cito results' projection, the home skill scale and the goals the parent enters.
-- SPC-0180 supplies the parent session, the Parent Room's tabs, the report's frame and the Parent Room's notices; SPC-0160 supplies the Russian string file, where every string of this part lives under `parent.school.*`.
-- SPC-0190 runs the four static checks, the property test and the personal-data scan in group 1, and holds this part's ceilings in its Baselines table.
+- SPC-0050 supplies the node identifiers, SPC-0060 the node states, their labels, the rule behind each state and the daily rows of `node_snapshots`, and SPC-0290 the Cito results' projection, the results form, `external_test_recorded` with its `categories`, the horizons, the home skill scale and the goals the parent enters.
+- SPC-0180 supplies the parent session, the Parent Room's tabs, the report's frame, the Parent Room's notices, the lesson-mark form and the counts and 80 % intervals of each share and difference; SPC-0160 supplies the Russian string file, where every string of this part lives under `parent.school.*`.
+- SPC-0300 supplies the Sources track's screen, ADR-0450 the read side of the hypotheses with their school-goal links, ADR-0340 the sandbox's entry link that takes a list of nodes, ADR-0400 the trajectory and the retention list, and ADR-0430 the Dutch probe.
+- SPC-0190 runs the five static checks, the test of `content/cito-categories.json`, the property tests and the personal-data scan in group 1, and holds this part's ceilings in its Baselines table.
 
-The permitted dependencies run one way. `src/parent/school/` imports `src/engine/school/`, `src/shared/`, `appendEvents` and the read side of the node states, the Cito results and the home skill scale. `src/engine/school/` imports only `src/shared/` and the Node built-ins `node:child_process`, `node:crypto` and `node:fs`. Nothing under `src/engine/model/`, `src/engine/states/` or `src/engine/director/`, and nothing in the model gateway, imports `src/engine/school/` or `src/parent/school/`, directly or through any module between. Nothing under `src/engine/school/` or `src/parent/school/` imports the gateway. `src/parent/school/export.ts` reads only `school_values` and the Cito results' projection.
+The permitted dependencies run one way. `src/parent/school/` imports `src/engine/school/`, `src/shared/`, `appendEvents` and the read side of the node states, `node_snapshots`, the Cito results, the `horizon_set` events, the home skill scale and ADR-0450's hypotheses. `src/engine/school/` imports only `src/shared/` and the Node built-ins `node:child_process`, `node:crypto` and `node:fs`. Nothing under `src/engine/model/`, `src/engine/states/` or `src/engine/director/`, and nothing in the model gateway, imports `src/engine/school/` or `src/parent/school/`, directly or through any module between. Nothing under `src/engine/school/` or `src/parent/school/` imports the gateway. `src/parent/school/export.ts` reads only `school_values` and the Cito results' projection. Only files under `src/parent/school/`, `src/shared/events.ts` and SPC-0290's results form module read the field `categories` of `external_test_recorded`; SPC-0020's export of the whole log copies every event whole and is exempt.
 
 ## Behaviour
 
@@ -175,9 +189,11 @@ The tab «Данные школы» (School data) shows only when the Parent Roo
 
 `school_snapshot_changes` pairs each snapshot with the one before it by document date, with ties broken by import order. Per goal it lists the change of level, of status and of target, and the goals that appear or disappear. When a pair's target changed, the view marks both the target change and every status change of the same pair `target_moved` (REQ-6034).
 
-### The knowledge model and the Director read no snapshot
+### The knowledge model and the Director read no school data
 
 The knowledge model folds no `school_snapshot_*` event, so importing, parsing, correcting, withdrawing or linking a snapshot changes no estimate and no node state (REQ-6000). The static check `school_events_in_model` fails when a file under `src/engine/model/` or `src/engine/states/` names `school_snapshot_`, or reaches `src/engine/school/` or `src/parent/school/` through its runtime imports, directly or through any module between, and names the chain (REQ-6002). A property test runs a 30-day simulated log with and without random school snapshot events inserted and finds `node_estimates` and `node_snapshots` byte-identical (REQ-6000).
+
+No quadrant and no Cito category entry reaches the Director, the knowledge model or a model call (REQ-7052, REQ-7074). SPC-0290's projection of Cito results, which the Director reads for horizons, never carries `categories`, and the category fold lives in `src/parent/school/cito-categories.ts`, inside the fence of the checks below. The static check `cito_categories_scope` fails when a file outside `src/parent/school/`, `src/shared/events.ts` and SPC-0290's results form module reads `categories`. A property test over a 30-day simulated log finds `node_estimates`, `node_snapshots`, the Director's values and every gateway request body byte-identical with and without `categories` on the Cito events.
 
 A confirmed `school_snapshot_goal_linked` adds nothing to the value by which the Director ranks nodes (REQ-6058). The static check `school_snapshot_in_director` fails when a file under `src/engine/director/` names `school_snapshot_`, or reaches `src/engine/school/` or `src/parent/school/` through its runtime imports, directly or through any module between, and names the chain. A unit test of the Director finds that a log holding only snapshot links gives every node the same value as a log with none. SPC-0290 states the Director's term for goals the parent entered, which reads only `school_goal_mapped`.
 
@@ -199,15 +215,101 @@ A link takes effect only when the parent confirms it (REQ-5060). For a snapshot 
 
 Goals the parent enters in the Parent Room map through the same catalogue file, the same key function in `src/engine/school/keys.ts` and the same panel, with no model involved (REQ-6054). Their confirmation writes `school_goal_mapped`, which SPC-0290 states, and the event carries the goal's `goalKey`, so a link holds across every new import of the entered list. The Director's term for entered goals reads only that event and never sees a snapshot link.
 
+### Cito categories map to nodes
+
+A Cito category entry follows `CitoCategoryEntry`. The results form of SPC-0290 lets the parent choose its category from the four Leerling in beeld domains, «Getallen», «Verhoudingen», «Meten en meetkunde» and «Verbanden», and the four LOVS standard categories, «getallen», «optellen & aftrekken», «vermenigvuldigen & delen» and «meten, tijd en geld», each labelled in the list with its system, «Leerling in beeld» or «LOVS», or type the category as the printout writes it (REQ-7060). The parent enters the signal as one of the five listed values, or as `other` with the printout's own words (REQ-7062). The entry schema ships in the MVP, and in the MVP nothing reads the entries except the export of the whole log.
+
+`content/cito-categories.json` maps each listed category to nodes. The four Leerling in beeld domains map as the skill graph's research table maps them (REQ-7066):
+
+| Domain | Nodes |
+| --- | --- |
+| Getallen | N1 to N7, A1 to A11, A6a, A13, F1 to F8, D1 to D6 |
+| Verhoudingen | P1 to P6, M8, A14 |
+| Meten en meetkunde | M1 to M10, M12, M13, G1, G3 to G7 |
+| Verbanden | S1 to S6, G4 |
+
+The word problems T1 to T4 map to no domain. A test in group 1 fails verify with `category_map_drift` when the file's domain lists differ from this table. The four LOVS categories ship drafted by the building agent and marked `confirmed: false`, and map to nodes only once a person confirms them in the file with the approving record (REQ-7068). Until then, a LOVS row sits in no quadrant under `category_unmapped`, and `./meowtower status` shows `category_map_unconfirmed` once per version of the file.
+
+After the MVP, the mapping panel lists each typed category and each `other` signal with no resolution, and the parent maps a typed category to one of the eight listed categories or to 1 to 40 nodes, and an `other` signal to one of the five listed signals (REQ-7076). The resolution appends `cito_category_resolved`, keyed by the typed words after lower-casing and collapsing runs of spaces, and never by a result, so the same words in a later result or a correction resolve once. The latest resolution by `seq` for the same words and kind is in force, and a resolution with its target `null` undoes the earlier one. A row whose category is typed or whose signal is `other` stays in no quadrant until a resolution in force maps it (REQ-7064).
+
+After the MVP, SPC-0290's Dutch memo under `parent.cito.memo` also lists the category analysis of a Cito result and the conditions of the test, such as reading aloud or extra time, among what the parent can ask the school for (REQ-7070). The memo is parent-facing Dutch with a Russian gloss in `ru.json`, so it needs no change to the Russian-only rule in `CLAUDE.md`.
+
 ### The "home and school" screen
 
-After the MVP, the full report has a "home and school" screen, shown only in a Parent Room open on the Mac, that sets the school's per-goal values beside the home node states of the linked nodes (REQ-6060). It reads `school_values` from the latest snapshot by document date, the confirmed snapshot links and the node states of SPC-0060, and shows one row per goal with a confirmed link. Until a snapshot exists, it shows «Нет снимков из школы» (No snapshots from school).
+After the MVP, the full report has a "home and school" screen, shown only in a Parent Room open on the Mac, that sets the school's values beside the home node states of the same nodes (REQ-6060). It has a goal section, with one row per goal with a `school_snapshot_goal_linked` in force, and a Cito section, with one row per category entry of each current Cito result: the latest `external_test_recorded` for its moment that no later result replaces. Each row lands in one of four quadrants, high or low at home crossed with high or low at school, or in no quadrant with its reason (REQ-7000). Until a snapshot exists, the goal section shows «Нет снимков из школы» (No snapshots from school), and without a Cito result the screen shows no Cito section, so the screen works with either source alone.
 
-The school's level carries the label «уровень школы: сравнение с учениками по стране» (school level: compared with pupils nationally) (REQ-6036). The school's status carries «относительно цели, которую поставила школа» (relative to the target the school set) (REQ-6038). The home side shows the state labels of SPC-0180 for each linked node.
+The school's level carries the label «уровень школы: сравнение с учениками по стране» (school level: compared with pupils nationally) (REQ-6036). The school's status carries «относительно цели, которую поставила школа» (relative to the target the school set) (REQ-6038). The home side shows the state labels of SPC-0180 for each node of the row.
 
-No cell shows a school value in a home column or a home state in a school column, and no code maps a school level or status to a home state or back (REQ-6040). `src/parent/school/` holds no table, function or constant that takes a school value and returns a node state, or the reverse.
+No cell shows a school value in a home column or a home state in a school column, and no code maps a school level or status to a home state or back (REQ-6040). `src/parent/school/` holds no table, function or constant that takes a school value and returns a node state, or the reverse. Each side of a row is cut on its own scale.
 
-The screen marks a goal «измерения расходятся» (the measures differ) in two cases only: a school status `reached` while every linked node is below «Понимает» (Understands), and a school status `needs_help` while every linked node is «Бегло» (Fluent) or «Устойчиво» (Stable). Beside each mark it shows «Школа и игра меряют разное: школа сравнивает с целью и с учениками по стране, игра считает ответы самой» (The school and the game measure different things: the school compares with a target and with pupils nationally, the game counts her own answers), which words the difference as one between two measures and names no fault in her or in either measure (REQ-6042).
+#### The home side of a row
+
+The home side reads only tested states: a node's row in `node_snapshots` and the rule that produced it, from the ordinary unassisted first attempts SPC-0060's rules read, and never an inferred state, a state from a probe alone or another stream (REQ-7002). A node is high when its rule is `block-slow`, `block-fast` or `stable`, which rest on a block score of 4 or more, and low when its rule is `block-low` or `block-mid`, a block score of 3.5 or less (REQ-7004). A node under `probe-fast`, `open`, `none` or an inference rule has no home reading.
+
+While `goalTasksTimed` in `content/school-goal-catalogue.json` is `true`, a goal row counts a node at `block-slow` as neither high nor low, and a Cito row still counts it high (REQ-7006).
+
+A goal is high at home when every linked node is high, low when every linked node is low, and neither otherwise (REQ-7008). A goal row reads the latest snapshot by document date that holds the goal's key and isn't withdrawn, and shows that snapshot's document date, so a goal the latest snapshot no longer reads keeps the values of its last snapshot. The goal row reads each linked node's state from the `node_snapshots` row of the last play day on or before that snapshot's document date (REQ-7010), and shows the node's current state beside it (REQ-7012). When a linked node has no unassisted first attempt on or before that date, or its last one lies more than 30 days before it, the goal lands in no quadrant under `home_stale` (REQ-7014).
+
+A Cito row's date is the date of the horizon in force when the result was recorded that names the result's moment, or the date the result was recorded when no horizon names it. The row reads each node's state from the `node_snapshots` row of the last play day on or before that date (REQ-7026). A node is tested for a Cito row when its last unassisted first attempt lies within the 30 days before that date and its state then rests on a block rule (REQ-7032). The inside nodes are the category's mapped nodes. The outside nodes are the tested nodes of the four Leerling in beeld domains that the category doesn't map, so M8 and G4 count inside each category that maps them and outside the others, and T1 to T4 and the Sources track count on neither side.
+
+The home side of a Cito row is a relative strength when the share of tested inside nodes at a block score of 4 or more exceeds the share of tested outside nodes by at least the margin, a relative weakness when it falls short by at least the margin, and neither otherwise (REQ-7030). The margin in percentage points is 100 times the square root of q(1 - q)(1/n_in + 1/n_out), where q is the share over all tested nodes on both sides, and n_in and n_out count the tested nodes inside and outside. At 10 inside, 40 outside and q = 0.7 the margin is 16.2 points. With no tested node outside, the row is neither under `home_no_outside`; with q at 0 or 1 it is neither under `home_even`.
+
+A Cito row lands in no quadrant when its category has fewer tested nodes than its floor, the smaller of 10 and the larger of 5 and three quarters of the category's mapped nodes, rounded up (REQ-7404). The floor is 10 for Getallen and Meten en meetkunde and 6 for Verhoudingen and Verbanden. A row whose category has fewer than 10 tested inside nodes also passes the one-node guard: after one inside node moves one class toward the outside share, crossing the block score of 4, the difference recomputed with its margin must still stand, or the row lands under `home_one_node` (REQ-7404). A row whose category has 10 or more tested inside nodes follows the margin alone. The floor and the guard register in SPC-0180's floor registry, `src/parent/measures.ts`, as the Cito category measure.
+
+Each Cito row shows the category's share at the test moment and its share over the inside nodes tested in the 30 days before today (REQ-7028), each with its counts and SPC-0180's 80 % Wilson interval, and the difference with SPC-0180's 80 % Newcombe interval.
+
+#### The school side of a row
+
+A goal row reads `school_values` of its snapshot. The status `reached` is high when the goal's target level is 3 or above (REQ-7016), and `needs_help` is low when the target level is 3 or below (REQ-7018). A `reached` status on a target below 3 lands in no quadrant under `school_target_low`, and a `needs_help` status on a target above 3 under `school_target_high`. A `developing` status, an empty target level, a goal level of 0 and a status the parser couldn't place each put the goal in no quadrant under `school_unplaced` (REQ-7020). A row whose status comes from a pair `school_snapshot_changes` marks `target_moved` keeps its quadrant and carries the target mark (REQ-7022).
+
+A Cito row reads its entry's signal. `below_notable` and `below_very_notable` are low, a relative weakness, `above_notable` and `above_very_notable` are high, a relative strength, and `not_notable` is neither, which puts the row in no quadrant under `cito_not_notable` (REQ-7024).
+
+#### Every row in no quadrant says why
+
+The screen shows one reason per row in no quadrant, the first in this order that applies (REQ-7036). Each string lives under `parent.school.quadrant.none.*`.
+
+| Code | Row | When | String |
+| --- | --- | --- | --- |
+| `category_unmapped` | Cito | a typed category with no resolution in force, or an unconfirmed LOVS category | «раздел не сопоставлен с узлами» (the domain isn't mapped to nodes) |
+| `signal_other` | Cito | an `other` signal with no resolution in force | «сигнал Cito записан своими словами: выберите его значение» (Cito's signal is in its own words: choose its meaning) |
+| `category_small` | Cito | the category maps fewer than 5 nodes | «в разделе меньше 5 узлов: сравнить нельзя» (the domain has fewer than 5 nodes: no comparison possible) |
+| `school_unplaced` | goal | `developing`, no target level, level 0 or a status not read, with the case named | «школа не отметила статус, который можно сравнить» (the school gave no status that can be compared) |
+| `school_target_low` | goal | `reached` on a target below 3 | «цель ниже середины: достигнутая цель не говорит о владении» (the target is below the middle: a reached target says nothing about mastery) |
+| `school_target_high` | goal | `needs_help` on a target above 3 | «цель выше середины: недостигнутая цель не говорит о пробеле» (the target is above the middle: a missed target says nothing about a gap) |
+| `cito_not_notable` | Cito | `not_notable` | «Cito: не отличается от ожидания» (Cito: no different from expectation) |
+| `home_stale` | goal | a linked node never checked on or before the document date, or not checked in the 30 days up to it | «давно не проверялось дома» (not checked at home for a long time) |
+| `home_untested` | both | a linked node with no home reading, or no tested inside node | «нет проверки блоком» (no block check) |
+| `home_too_few` | Cito | fewer tested inside nodes than the floor | «проверено k из m узлов за 30 дней до теста» (k of m nodes checked in the 30 days before the test), with the tested and mapped counts |
+| `home_split` | goal | linked nodes on both sides at home | «узлы цели дома по разные стороны» (the goal's nodes sit on both sides at home) |
+| `home_speed_only` | goal | while `goalTasksTimed` is `true`, every linked node high or at `block-slow`, at least one at `block-slow` | «дома не хватает только скорости, а школа её меряет» (at home only speed is missing, and the school measures it) |
+| `home_no_outside` | Cito | no tested outside node | «вне раздела нет проверенных узлов: сравнивать не с чем» (no checked nodes outside the domain: nothing to compare with) |
+| `home_even` | Cito | the difference below the margin, or q at 0 or 1 | «дома разница с остальными узлами меньше порога» (at home the difference from her other nodes is below the margin) |
+| `home_one_node` | Cito | the one-node guard fails | «разница держится на одном узле» (the difference rests on one node) |
+
+Whenever a Cito result exists, the Cito section shows «Cito не строит профиль по разделам для 10 % самых сильных и 10 % самых слабых учеников: если строк нет, это правило Cito» (Cito builds no domain profile for the strongest and the weakest 10 % of pupils: if there are no rows, that is Cito's rule), whether or not the section holds a row (REQ-7038).
+
+#### Each quadrant shows its checks
+
+Each quadrant shows its heading and the checks it suggests, as links or sentences, on the row's nodes: a goal's linked nodes or a Cito category's tested nodes (REQ-7040).
+
+| Quadrant | Heading | Checks |
+| --- | --- | --- |
+| high at home, high at school | «Дома и в школе высоко» (High at home and at school) | a link to ADR-0400's retention list for the row's nodes |
+| low at home, low at school | «Дома и в школе низко» (Low at home and at school) | a link to SPC-0180's lesson-mark form with the row's nodes filled in, then a link to the nodes' trajectory of ADR-0400 |
+| high at home, low at school | «Дома высоко, в школе низко» (High at home, low at school) | the Dutch probe of ADR-0430 on the row's nodes; a link to SPC-0300's Sources track screen; the Dutch memo's question on the test conditions |
+| low at home, high at school | «Дома низко, в школе высоко» (Low at home, high at school) | a link opening ADR-0340's sandbox on the row's nodes (REQ-7050); the goal's or the category's wording beside the nodes' names; recalibration of the home tasks, as a sentence naming the nodes |
+
+The Dutch probe's check shows only once the probe exists, and ADR-0430 builds no probe text until the owner amends the Russian-only rule in `CLAUDE.md`. Following a check changes nothing in play by itself: a link writes no event and changes no input of the Director, and the lesson-mark form writes `parent_tag_added` only when the parent submits it (REQ-7048).
+
+The two disagreeing quadrants name their possible causes on both sides, each as something to check (REQ-7042). High at home and low at school reads «Что проверить. Дома: состояние может держаться на одном блоке из 5 ответов. В школе: формат заданий, язык, волнение, условия теста» (What to check. At home: the state may rest on one block of 5 answers. At school: the task format, the language, nerves, the test conditions). Low at home and high at school reads «Что проверить. Дома: задания игры могут быть сложнее или плохо откалиброваны, состояние может держаться на одном блоке. В школе: цель может проверяться в узком формате» (What to check. At home: the game's tasks may be harder or badly calibrated, the state may rest on one block. At school: the goal may be tested in a narrow format). The screen words every difference between the school's value and the home state as a difference between two measures, names a cause only as something to check, and names no fault in her or in either measure (REQ-7046).
+
+Every goal row carries «Школа и игра меряют разное: школа сравнивает с целью и с учениками по стране, игра считает ответы самой» (The school and the game measure different things: the school compares with a target and with pupils nationally, the game counts her own answers). Every Cito row carries «Cito и игра меряют разное: Cito сравнивает раздел с её общим баллом, игра сравнивает её ответы по узлам раздела с остальными узлами» (Cito and the game measure different things: Cito compares a domain with her overall score, the game compares her answers on the domain's nodes with her other nodes) (REQ-7044).
+
+Each goal row shows beside its values the hypotheses that ADR-0450 links to its goal, and the link never enters a hypothesis label. Each row lists its nodes, each with the basis of the state the row compared: «один блок» (one block) for a state resting on its last full block alone, or «две проверки» (two checks) for `stable` (REQ-7054). A row where any node rests on one block carries «одна проверка» (one check) (REQ-7056).
+
+#### Rows are computed at request time
+
+`GET /api/parent/report/home-and-school` calls `src/parent/school/quadrants.ts` on each request with today as the as-of date, and `./meowtower report home-and-school --as-of <date>` calls it with a past date. No quadrant is written to the log or to `report_cache`, so a full recompute gives the same screen, byte for byte (REQ-7072). The screen's build stays at or under 1 s at the 95th percentile with a year of log on the family Mac, the baseline SPC-0190 holds.
 
 ### The timeline
 
@@ -253,6 +355,13 @@ No real pupil overview, or any part of one, enters a tracked file (REQ-6082). `d
 | The log holds a `school_snapshot_*` event and the server has no schema for it | The server refuses to start, as SPC-0020 states for every type without a schema. |
 | A file under `src/engine/model/`, `src/engine/states/` or `src/engine/director/` reaches the school's code, the gateway and the school's code reach each other, or `export.ts` reads outside its two projections | The matching static check fails verify and names the file and the import chain. |
 | The preview takes longer than 30 seconds at the 95th percentile for a document of up to 4 pages on the family Mac | The verify report shows the measure against the Baselines table of SPC-0190. |
+| A Cito result sends more than 16 category entries, or a typed category or signal over 80 characters | `category_list_too_long`: the form refuses the save, names the limit it met and keeps what was typed. |
+| A resolution names no node, more than 40 nodes, a node the graph lacks, or a category or signal outside the listed values | `422`: nothing is appended. |
+| `content/cito-categories.json` holds a LOVS list with `confirmed: false` | Rows of that category sit under `category_unmapped`, and `./meowtower status` shows `category_map_unconfirmed` once per version of the file. |
+| A domain list in `content/cito-categories.json` differs from the table of REQ-7066 | `category_map_drift`: verify fails, naming the domain and the nodes. |
+| A file outside `src/parent/school/`, `src/shared/events.ts` and SPC-0290's results form module reads `categories` | `cito_categories_scope`: verify fails and names the file. |
+| The screen's build passes 1 s at the 95th percentile in verify's measurement | `quadrant_build_slow`: recorded as a finding against the baseline, which doesn't move. |
+| A row supports no cut on one of its sides | The row shows in no quadrant with the first reason of the reasons table. |
 
 ## Choices this document makes
 
@@ -262,7 +371,19 @@ ADR-0310 left these to the specification step, and this document chose them:
 - The fixtures live in `test/fixtures/school/`, tracked, with a manifest the generator writes and a test that regenerates them.
 - The route names, the request and reply schemas, the `409` `snapshot_blob_mismatch`, the `422` on a link with no node, more than five nodes or an unknown node, and the recovery of a confirmation whose file exists but whose events failed.
 
+ADR-0420 left these to the specification step, and this document chose them:
+
+- The resolution route `POST /api/parent/school/cito-categories/resolve`, the schemas `CitoResolveIn` and `HomeAndSchoolRow`, and the `422` on a resolution outside its limits.
+- A Cito row with no tested inside node shows `home_untested`, and one with some but fewer than its floor shows `home_too_few`.
+- `home_speed_only` applies when every linked node is high or at `block-slow`, with at least one at `block-slow`; any other mix under a timed catalogue shows `home_split`.
+- The string of `school_target_high`, «цель выше середины: недостигнутая цель не говорит о пробеле», which ADR-0420 names only as the mirror of `school_target_low`.
+- Without a Cito result, the screen shows no Cito section.
+- A Cito row's horizon date comes from folding `horizon_set` up to the result's `seq`, because SPC-0290's `horizons` projection holds only the horizons as they stand now.
+- A goal row reads the latest snapshot that holds its key and isn't withdrawn, so a goal missing from the latest snapshot keeps its last values and shows their date.
+
 ## Open review findings
 
 - Rejected, round 1: give a reason beside each limit (25 MB, 20 pages, 400 goals, 120 seconds, 1 GB of memory, 300 dpi, the one-hour sweep, the 1 GB `school_files_large` threshold, the 30-second preview baseline, one to five nodes per link). A specification states what the system does and never why (spec rule S8); the reasons belong in ADR-0310.
 - Rejected, round 2: reword REQ-6074's "event or file" as "keeps any file". The wording belongs to the requirement, not to this document, which already states that the preview writes only the temporary file and no kept file.
+- Rejected, round 1 of 2026-09-28: cite ADR-0340, ADR-0400, ADR-0430 and ADR-0450 in place of their decisions. This document cites only lower-numbered specifications and names a higher-numbered subject by its decision.
+- Rejected, round 1 of 2026-09-28: give a reason, or a pointer to where it lives, beside each limit. As in the earlier round, the reasons live in ADR-0310 and ADR-0420, and a specification states no reason (spec rule S8).

@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412]
+states: [REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -15,7 +15,7 @@ states: [REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, R
 
 This document covers the model gateway: the one server module that opens a connection to a model service. It states the roles and their configuration, the request classes, the egress guard, the two privacy tiers, the start-up check, the two keys and the budget buckets, the call log, the gateway's four modes, the bake-off route, the Master's model pick and the Parent Room's page on what leaves the Mac. It is written at the module level: the gateway's interface to its callers, its calls to OpenRouter, the settings it reads, the tables and events it writes and its failure states.
 
-ADR-0350, the local judge, is a child of this document. This document states the contract between the gateway and ADR-0350 under "The contract with the local judge", and ADR-0350 states the judge processes, the route resolver and the Parent Room's list of checks. What the Master's order holds and how its replies are checked belong to ADR-0110, how explanations are written and cached to ADR-0120, what the library plays when a budget runs out to ADR-0110 and SPC-0090, the riddle parse's graph and verdicts to ADR-0230, the sandbox's files to ADR-0340, and when the automated checks run the gateway in `replay` mode to ADR-0190.
+ADR-0350, the local judge, is a child of this document. This document states the contract between the gateway and ADR-0350 under "The contract with the local judge", and ADR-0350 states the judge processes, the route resolver and the Parent Room's list of checks. What the Master's order holds and how its replies are checked belong to ADR-0110, how explanations are written and cached to ADR-0120, what the library plays when a budget runs out to ADR-0110 and SPC-0090, the riddle parse's graph and verdicts to ADR-0230, the sandbox's files to ADR-0340, the Dutch probe's offline text run to ADR-0430, and when the automated checks run the gateway in `replay` mode to ADR-0190.
 
 ## Boundary
 
@@ -30,7 +30,7 @@ The gateway lives in `src/server/gateway/`, a path I chose. A caller hands it on
 | `BlindCheckRequest` | `LIVE_CHECK_MODEL` for explanations | the task text and the finished explanation (REQ-2606) |
 | `JudgeRequest` | the judge route of ADR-0350, then `SAFETY_MODEL` | one cleaned text, which for a composed riddle is its masked text, and one question typed as Noul (yes or no), Choice or Score |
 | `ParseRequest` | `PARSE_MODEL` | the fixed parse prompt by its hash and the riddle's masked text; the token list `n1` to `nm` and the schema version stay on the server (REQ-5036, REQ-5038) |
-| `ContentRequest` | every offline role, `LIVE_GEN_MODEL`, and `LIVE_CHECK_MODEL` for live frames | canon text, frames with placeholders, bake-off prompts, framing and puzzle drafts, and picture specifications built from JSON card ids |
+| `ContentRequest` | every offline role, `LIVE_GEN_MODEL`, and `LIVE_CHECK_MODEL` for live frames | canon text, frames with placeholders, bake-off prompts, framing and puzzle drafts, picture specifications built from JSON card ids, and, after the MVP, the probe run's requests: a template's structural specification, the probe's style guide, the Mainland's canon names and the target length (REQ-6688) |
 
 ### Roles
 
@@ -53,6 +53,8 @@ Each role takes its model id from `.env` (REQ-1642). The code fixes each role's 
 | `PUZZLE_MODEL` | content | offline | the run's budget | the model `PLANNER_MODEL` uses |
 | `GEN_MODEL`, `CHECK_MODEL`, `ART_JUDGE_MODEL` | content | offline | the run's budget | set in `.env` |
 | `ART_MODEL_CHAR`, `ART_MODEL_KEY`, `ART_MODEL_BG` | content | offline | art run | set in `.env` |
+| `PROBE_TEXT_MODEL`, after the MVP | content | offline | the run's budget | the model `GEN_MODEL` uses |
+| `PROBE_LANGUAGE_MODEL`, after the MVP | content | offline | the run's budget | the model `LIVE_CHECK_MODEL` uses |
 
 ### Settings
 
@@ -100,7 +102,7 @@ The player sees none of these states: each caller falls back to the library, the
 
 ### Permitted dependencies
 
-The dependencies run one way. Only `src/server/gateway/` opens a connection to a model service, the local judges included, and a lint rule refuses `fetch` to any host outside it. Callers import the request classes and the typed results and never an HTTP client. The gateway imports `appendEvents`, reads the Parent Room's settings for the names to clean, the topic names in the skill graph file, `content/numerals.ru.json` and ADR-0350's route resolver, and imports nothing from the engine, the Director or the Master.
+The dependencies run one way. Only `src/server/gateway/` opens a connection to a model service, the local judges included, and a lint rule refuses `fetch` to any host outside it. Callers import the request classes and the typed results and never an HTTP client. The gateway imports `appendEvents`, reads the Parent Room's settings for the names to clean, the topic names in the skill graph file, `content/numerals.ru.json` and ADR-0350's route resolver, and imports nothing from the engine, the Director or the Master. The gateway and every request-class builder import no hypothesis schema, no `hypothesis_days` projection and nothing from `src/parent/hypotheses/`, as ADR-0450's check `hypothesis_to_gateway` enforces. After the MVP, `src/engine/probe/` and the server's probe routes import nothing from the gateway, and `tools/probe/` reaches a model only through it, as ADR-0430 states.
 
 ## Behaviour
 
@@ -120,7 +122,7 @@ When the catalogue can't be reached, the server starts with every live call off,
 
 ### The Master's route and the parent's pick
 
-Every Master request names `[MASTER_MODEL, MASTER_FALLBACK_MODEL]` in OpenRouter's `models` list, so an order the Master's model fails goes to `z-ai/glm-5` before the caller gets `ProviderFailed` and ADR-0110 falls back to the library (REQ-1692).
+Every Master request names `[MASTER_MODEL, MASTER_FALLBACK_MODEL]` in OpenRouter's `models` list, so an order the Master's model fails goes to `MASTER_FALLBACK_MODEL` before the caller gets `ProviderFailed` and ADR-0110 falls back to the library (REQ-1692).
 
 The Parent Room offers the Master's model only from `MASTER_MODEL_CHOICES` (REQ-1694). A pick takes effect at the next adventure, and an open adventure keeps its model (REQ-1696). Before that adventure starts, the gateway checks the pick against the catalogue and the zero-retention list. When the pick has no zero-retention endpoint at a provider on the player-tier list, the adventure starts on `MASTER_MODEL` and the gateway appends `master_pick_rejected`, which the Parent Room shows (REQ-2630).
 
@@ -139,6 +141,10 @@ The server sends off the Mac only five kinds of data: content made without the p
 An `ExplainRequest` carries only the fields the class table lists, with no name of the player, no time, no estimate, no node id and no history of other tasks (REQ-2604). Before it sends one, the gateway finds the `thread_spent` event the request names in the log, and refuses the request when that event is missing or belongs to another task, so an explanation leaves the Mac only after she spent a thread on that task's explanation (REQ-2602). The gateway then removes the event's id from the body it sends. A `BlindCheckRequest` carries only the task text and the finished explanation (REQ-2606).
 
 A `ParseRequest` carries the riddle with every number replaced by a token, `n1` to `nm` in text order (REQ-5036). A number is a digit run, a decimal, a fraction or a Russian numeral word from `content/numerals.ru.json`, such as «пять» (five) or «полтора» (one and a half). The map from tokens to numbers stays on the Mac, and no request class has a field for it. A `ParseRequest` holds no target expression, node id, topic name or task id (REQ-5038). `PARSE_MODEL` runs on the player tier with `zdr: true`, so only an endpoint that keeps nothing receives a riddle (REQ-5040). Its timeout is 10 seconds and its `max_tokens` 4,000.
+
+No request class has a field for a figure the Parent Room computes: the ability profile, the weekly breakdown, retention checks, transfer figures, the quadrants, the probe's results and every other addendum 2 figure stay on the Mac, as do the hypotheses ADR-0450 keeps (REQ-6686). A test searches every request schema and fails on a field typed with a Parent Room figure, probe result or hypothesis schema, and on a numeric field other than `readerAge`, the one answer an `ExplainRequest` carries and the probe run's target length, a rule I chose.
+
+After the MVP, the Dutch probe's Russian and Dutch texts are written only by the offline probe run, under `PROBE_TEXT_MODEL`, `CHECK_MODEL` and `PROBE_LANGUAGE_MODEL` on the content tier and the offline key, in `ContentRequest`s whose fields hold no answer, tap, opened word or other data about the player (REQ-6688). ADR-0430 states the run and its import rule. No Dutch probe text is built until the owner amends the rule in `CLAUDE.md` that text the player sees is in Russian only.
 
 The picture builder takes JSON card ids and never a string, so no text the player wrote reaches a picture prompt (REQ-2632).
 
@@ -170,7 +176,7 @@ Every other request is in the content tier and carries `provider: { data_collect
 
 The gateway holds two OpenRouter keys. The play key carries a spending limit of $60 that resets each month (REQ-2718), and the play roles spend from it. Offline runs spend from the offline key (REQ-2728). The gateway refuses an offline role on the play key. It refuses a play role on the offline key, apart from `verify` mode, `bakeoff` mode and a call marked as a sandbox call, which only the sandbox's own routes can make. The framing of hint rungs and the retelling of puzzles run under `FRAMING_MODEL` and `PUZZLE_MODEL`, offline roles on the offline key, and never under `PLANNER_MODEL` (REQ-5034). The sandbox's model features spend from the offline key and never from the play key (REQ-5050).
 
-Between runs, the offline key's limit is the sandbox's $20 a month, reset at 00:00 UTC on the 1st. Before each offline run, the owner sets the limit so that what remains of it equals that run's budget, and after the run sets it back to $20 (REQ-6412). `verify --live`'s budget is what remains of the limit during that run.
+Between runs, the offline key's limit is the sandbox's $20 a month, reset at 00:00 UTC on the 1st. Before each offline run, the owner sets the limit so that what remains of it equals that run's budget, and after the run sets it back to $20 (REQ-6412). `verify --live`'s budget is what remains of the limit during that run. After the MVP, a probe text run's budget is $20 a run, set on the offline key's limit the same way (ADR-0430).
 
 ### Budgets
 
@@ -187,7 +193,7 @@ The gateway counts spend in buckets. Each call first reserves its worst-case cos
 | Bake-off | $25 (REQ-2710) | offline | the bake-off | the run stops and reports the candidates it finished |
 | Sandbox | $20 a month from 00:00 UTC on the 1st (REQ-5052) | offline | every sandbox call, the command-line sandbox's included | sandbox model features fall back to the end of the month |
 
-A game day ends at 04:00, and the explanation and parse buckets reset then. «Свободное перо» (Free Pen) has no bucket of its own: it spends from the current adventure's bucket, which is the open adventure, or after the finale the one that finished that game day (REQ-5054). SPC-0090 states how «Свободное перо» closes when that bucket runs out. ADR-0280 states the puzzle run's bucket, and ADR-0190 the `verify --live` budget.
+A game day ends at 04:00, and the explanation and parse buckets reset then. «Свободное перо» (Free Pen) has no bucket of its own: it spends from the current adventure's bucket, which is the open adventure, or after the finale the one that finished that game day (REQ-5054). SPC-0090 states how «Свободное перо» closes when that bucket runs out. ADR-0280 states the puzzle run's bucket, ADR-0430 the probe text run's $20 under "Keys", and ADR-0190 the `verify --live` budget.
 
 The daily buckets on the play key, the adventure's $1.5, the explanations' $0.3 and the parse's $0.1, sum to $1.9 a day, or $58.90 over a 31-day month, below the $60 monthly limit (REQ-5048). A group 1 check reads the play-key bucket of every role that is on from `verify/baselines.json`, multiplies each by 31 and fails as `bucket_sum_over_limit` when the sum reaches the monthly limit. The check counts a bucket set per adventure as daily, since at most one adventure starts in a game day, as SPC-0090 states. The live art bucket joins the sum when `LIVE_ART_MODEL` turns on.
 
@@ -210,7 +216,7 @@ The gateway reads `GATEWAY_MODE` at start and logs it. The `tower` service start
 
 ### The page on what leaves the Mac
 
-The Parent Room's page on what leaves the Mac is a text in the content files. It names the five kinds of data that leave the Mac, matching the list under "What leaves the Mac" item for item (REQ-5044). It states that summary outcome events coarsely reflect how well the player does in a domain (REQ-2638). It names each provider's country from the provider's row in `content/providers.json`, the row the start-up check reads (REQ-2648). It says that voice input through Safari's speech recognition goes from the iPad to Apple and never through the server. ADR-0350 states the page's list of checks on her text. A test compares the five kinds and the providers the page names with the defaults in the code.
+The Parent Room's page on what leaves the Mac is a text in the content files. It names the five kinds of data that leave the Mac, matching the list under "What leaves the Mac" item for item (REQ-5044). It states that summary outcome events coarsely reflect how well the player does in a domain (REQ-2638). The server builds its list of providers when the page opens, from `PLAYER_TIER_PROVIDERS`, `CONTENT_TIER_PROVIDERS` and each provider's row in `content/providers.json`, the row the start-up check reads, so it names each provider's country as the gateway is configured (REQ-2648). It says that voice input through Safari's speech recognition goes from the iPad to Apple and never through the server. ADR-0350 states the page's list of checks on her text. A test compares the five kinds with the list under "What leaves the Mac" and the providers the page names with the configured lists.
 
 ## The contract with the local judge
 
@@ -261,3 +267,10 @@ Three rules bind both parts. A local call carries no OpenRouter key and reserves
 - The reviewer asked for a reason beside each egress pattern. Rejected under S8; the patterns are choices this document records, and ADR-0100 names their test set.
 - The reviewer asked for a start-up check that `MASTER_MODEL` and `MASTER_FALLBACK_MODEL` are among `MASTER_MODEL_CHOICES`. Rejected: no decision sets that check, and REQ-1656 is met by the owner-approved record the configuration follows.
 - The reviewer noted that `parse_budget_spent` breaks the `budget_*_spent` naming. Rejected: ADR-0210 names the state, and a rename belongs in that decision.
+- The reviewer asked for a timeout and a `max_tokens` for every role, because the worst-case reservation needs `max_tokens`. Still open: ADR-0100 fixes only the judge's 1500 ms and the parse call's values, and the other roles' values need a decision before this document can state them.
+- The reviewer noted that a check reserved with its Master reply can't then be refused with `BudgetExhausted` when a bucket runs out. Still open: ADR-0100 states both rules without saying which pending checks the refusal reaches, and that choice belongs in the decision.
+- The reviewer suggested stating the `verify --live` budget in one place. Rejected: ADR-0190 and ADR-0190 own that budget, and this document states only how the gateway applies it.
+- The reviewer noted that the header comment asks for a reason beside each rule while this document rejects reasons under S8. Rejected: the comment is the marker every record carries, and S8 governs what a specification states.
+- The reviewer noted that setting the offline key's limit back to $20 after a run leaves it below the month's usage, so every sandbox call gets HTTP 402 until the month ends. Still open: ADR-0360 item 31 fixes that wording, and the correction belongs in a decision before this document can change it.
+- The reviewer asked to name ADR-0350 as the child and the other party of the contract with the local judge, in place of ADR-0350. Rejected: this document cites only lower-numbered specifications and names a higher-numbered subject by its decision; ADR-0350 names this document as its parent.
+- The reviewer noted that a game day ending at 04:00 local time can cross the month's reset at 00:00 UTC, so a month can hold part of a 32nd day's buckets, up to $60.80. Still open: REQ-5048 and ADR-0100 set the bound over a 31-day month, and changing the multiplier or the reset time needs a decision.

@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-0701, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-3712, REQ-5096, REQ-5400, REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5412, REQ-5420, REQ-5428, REQ-5430, REQ-5432, REQ-5436, REQ-5442, REQ-5444, REQ-5450, REQ-5466, REQ-5472]
+states: [REQ-0701, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-3712, REQ-5096, REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5420, REQ-5428, REQ-5430, REQ-5432, REQ-5436, REQ-5442, REQ-5444, REQ-5450, REQ-5466, REQ-5472, REQ-7158, REQ-7160]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -15,7 +15,7 @@ states: [REQ-0701, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, R
 
 This document covers how the server makes a maths task and how it checks an answer to it: the template contract, the generation pipeline from a seed to a rendered view, exact arithmetic, the parallel task of a second attempt, the computation graph behind the short solution and the explanations, the option builder, word problems with their surplus and unanswerable forms, the checker with its acceptance rules and error classes, step matching, the glossary check on templates, the template catalogue, and the verdict function of a composed riddle. It is written at the module and function level: modules, functions, types, build checks and the fields they fill. The one exception is the section on the «Нельзя узнать» (can't be known) control, which states what the task window shows.
 
-It leaves out what other documents state. The routes, the `Room` packet and `AnswerOut` are in SPC-0030, and the event schemas and their versions in SPC-0020. Which node, subtype and purpose a slot gets, the surplus and unanswerable form draw and the refusal guard are in ADR-0070. The hint ladder and its length are in ADR-0220, and when help is released, the attempt flow, the twin rules and the estimate step in ADR-0080. How a credit or a stream enters the estimate is in ADR-0060, and the subtype levels and the graph's weight rules in ADR-0050. The frame library and its pipeline are in ADR-0130, the keypad and the answer fields in ADR-0150, the string files and the Dutch bridge's word list in ADR-0160, and the report and its queues in ADR-0180. The compose flow of «Сплети загадку» (Weave a riddle) is in ADR-0230, the plan cards and the phase cycle in ADR-0270, the multiplication sign and the fact format in ADR-0290, the Sources track's answer kinds in ADR-0300, and disabled content in ADR-0340.
+It leaves out what other documents state. The routes, the `Room` packet and `AnswerOut` are in SPC-0030, and the event schemas and their versions in SPC-0020. Which node, subtype and purpose a slot gets, are in ADR-0070, and the surplus and unanswerable form draw and the refusal guard in ADR-0250. The hint ladder and its length are in ADR-0220, and when help is released, the attempt flow, the twin rules and the estimate step in ADR-0080. How a credit or a stream enters the estimate is in ADR-0060, and the subtype levels and the graph's weight rules in ADR-0050. The frame library and its pipeline are in ADR-0130, the keypad and the answer fields in ADR-0150, the string files and the Dutch bridge's word list in ADR-0160, and the report and its queues in ADR-0180. The compose flow of «Сплети загадку» (Weave a riddle) is in ADR-0230, the plan cards and the phase cycle in ADR-0270, the multiplication sign and the fact format in ADR-0290, the Sources track's answer kinds in ADR-0300, and disabled content in ADR-0340. The retention hold in the Director's reject predicate is in ADR-0400, the context list, the format hold and the side-slot rule in ADR-0410, the Dutch probe letters in ADR-0430, and the construction templates of a composed riddle in ADR-0440.
 
 ## Boundary
 
@@ -52,6 +52,7 @@ A template is a TypeScript module that exports one `Template<P>` object:
 | `render.ru(p, ctx)` | the view |
 | `difficulty(p)`, `sampleParallel(p, rng)` | the difficulty features, and the parallel task's parameters |
 | `fallback` | at least 5 parameter sets |
+| `contexts` | on a template with `format: "context"` only, the non-empty list of ids from `content/contexts.yaml` that its structure admits, as ADR-0410 states |
 | `riskyTerms` | each Russian maths term the task text uses |
 | `keyPresses(p)`, `spaceSize` | the key presses the answer needs, and the size of each subtype's parameter space |
 
@@ -63,11 +64,11 @@ A word problem template adds its structure id, the role of each number placehold
 
 `AnswerSpec` has the kinds `integer`, `decimal`, `fraction`, `mixed`, `quotientRemainder`, `time`, `point`, `compare`, `choice`, `grid`, `order`, `steps` and `equation`, and ADR-0300 adds `region`. An `equation` answer produces an `Answer` of kind `number`, or `fraction` under the `equivalent` rule. `Answer` also has the kinds `dont_know` and `insufficient`, the second with `missing: 0 | 1 | 2 | 3 | null`, the position of the chosen option or none.
 
-`check(spec, correct, raw)` returns either `unparsed` or a verdict with a credit of 1, 0.5 or 0, a class and a trap id. Besides the verdicts of an ordinary answer and `dont_know`, it returns `insufficient_correct`, `insufficient_partial` and `false_insufficient` for an answer of kind `insufficient`. The classes of a wrong answer are a trap's type, `computational`, `unclassified`, `used_extra_data` and `answered_insufficient`, and a verdict can also carry `alsoSlip: true` or `formMismatch: true`. A composed riddle's answer kind is `judgeCompose(target, graph)`.
+`check(spec, correct, raw)` returns either `unparsed` or a verdict with a credit of 1, 0.5 or 0, a class and a trap id. Besides the verdicts of an ordinary answer and `dont_know`, it returns `insufficient_correct`, `insufficient_partial` and `false_insufficient` for an answer of kind `insufficient`. The classes of a wrong answer are a trap's type, `computational`, `unclassified`, `used_extra_data` and `answered_insufficient`, and a verdict can also carry `alsoSlip: true` or `formMismatch: true`. A composed riddle has no `AnswerSpec` kind and takes its verdict from `judgeCompose(target, graph)`.
 
 ### What the client receives
 
-The client receives a task only as the `Room` packet of SPC-0030: an `itemId`, the view as `ItemViewOut` and the `InputSpec`. `ItemViewOut` holds the text, the SVG picture, the options, the term spans and the input description. `InputSpec` holds the answer kind and its input constraints, and on a T1 to T4 word problem `allowInsufficient: true` and the four "what's missing" options. Both schemas are zod `.strict()`, so a field outside them fails serialisation.
+The client receives a task only as the `Room` packet of SPC-0030: an `itemId`, the view as `ItemViewOut` and the `InputSpec`. `ItemViewOut` holds the text, the SVG picture, the options, the term spans and the input description. `InputSpec` holds the answer kind and its input constraints, and on a T1 to T4 word problem other than a Dutch probe letter `allowInsufficient: true` and the four "what's missing" options. Both schemas are zod `.strict()`, so a field outside them fails serialisation.
 
 ### Data this part keeps and fills
 
@@ -86,11 +87,12 @@ The `items` row and the `item_shown` event keep, on the server, the node, subtyp
 | `insufficient_unbuildable` | the developer, through the build | a fallback entry of a T1 to T4 template fails the withholding rule or the four-option fill at build |
 | `answer_kind_refused` | the developer, through the failure log | `AnswerIn` carries `insufficient` on an item without `allowInsufficient`, or beside `dontKnow` or a non-empty `raw` |
 | `template_check_failed` | the developer, through verify | a catalogue, trap, explanation, glossary or option check failed at build |
-| `compose_flag_off` | the owner, in `./meowtower status` | no passing live parser run is recorded for the configured parse model |
+| `held_node_refused` | the developer, through the refusal count in the verify simulation | after the MVP, the reject predicate refused a task of a node held for a retention check |
+| `compose_flag_off` | the owner, in `./meowtower status` | no passing live parser run is recorded for the configured parse model and prompt hash |
 
 ### What this part requires from other parts
 
-- The Director (ADR-0070) names the node, the subtype and the purpose, and passes the reject predicate that carries the no-repeat window.
+- The Director (ADR-0070) names the node, the subtype and the purpose, and passes the reject predicate that carries the no-repeat window and the retention hold of ADR-0400. For a side slot it names a subtype already shown whenever one fits, as ADR-0410 states.
 - The knowledge model (ADR-0060) supplies the set of fluent and stable nodes.
 - The skill graph (ADR-0050) supplies each subtype's level and weight, and its fields `form` and `requires`.
 - The frame library (ADR-0130) supplies the story frames, each with its story quantities and a clause per leaf given that the frame can leave out.
@@ -103,10 +105,10 @@ The `items` row and the `item_shown` event keep, on the server, the node, subtyp
 
 The server generates every maths task in daily play during play, from a template and a seed (REQ-1200), in this order:
 
-1. The item builder picks the template of the named subtype for the wanted answer kind.
-2. The base seed is SHA-256 over `sessionId`, `nodeId` and `slot`. Its first 128 bits seed xoshiro128**, and a state of all zeros is replaced by a fixed constant.
+1. The item builder picks the template of the named subtype for the wanted answer kind, under the format hold, and for a side slot in a format already shown on the subtype when one fits. The item builder takes only a template whose structure has a frame the frame picker admits, and when the context hold leaves none, it takes another template of the subtype, then a bare template, and then the Director takes another subtype. ADR-0410 states the holds and the side slots, and ADR-0130 the frame picker and `transfer_hold_no_frame`.
+2. The base seed is SHA-256 over `sessionId`, `nodeId` and `slot`, except for a Dutch probe letter, whose seed ADR-0430 draws when the letter's family is created and logs in `probe_family_created`. Its first 128 bits seed xoshiro128**, and a state of all zeros is replaced by a fixed constant.
 3. The generator draws candidate `k` from `hash(baseSeed, k)`, for `k` from 0 to 999, and takes the first candidate that passes `valid()`, the distinctness test and the caller's reject predicate. `valid()` holds every constraint the subtype sets, such as the number of carries, zeros, divisibility and irreducibility (REQ-1206).
-4. After 1,000 candidates, the generator takes the first entry of the template's `fallback` list that the predicate accepts, or the first entry when it accepts none (REQ-1208). The build checks every fallback entry with `valid()` and the distinctness test, and on a T1 to T4 template also with the four-option fill and, on an unanswerable template, the withholding rule, so a fallback entry never fails.
+4. After 1,000 candidates, the generator takes the first entry of the template's `fallback` list that the predicate accepts, or the first entry when it accepts none (REQ-1208). The build checks every fallback entry with `valid()` and the distinctness test, and on a T1 to T4 template also with the four-option fill and, on an unanswerable template, the withholding rule, so a fallback entry never fails. After the MVP, the generator asks the predicate about the task's nodes before step 3, and when it refuses a node held for a retention check, as ADR-0400 states, the generator draws no candidate and takes no fallback entry: it returns `held_node_refused`, and the caller takes its next candidate.
 5. The log stores the effective seed, `base/k` or `base/f<i>`. The same template, version and effective seed rebuild the same parameters, answer, traps and graphs byte for byte, whatever history shaped the predicate (REQ-1202). The view is the same too when the multiplication sign setting of ADR-0290 and the story frame of ADR-0130 are the same, because the seed fixes neither.
 6. `solve()` computes the answer and every trap's `apply()` its wrong answer, all in `Q`. A decimal is a fraction over 10^n, so 0,1 + 0,2 is exactly 0,3, and every solution, trap answer and answer check is exact (REQ-1204).
 7. The distinctness test compares values, never spellings: it rejects a candidate where a trap answer equals the correct answer or another trap answer (REQ-1210). A trap giving 2/4 against a correct 1/2 is therefore rejected.
@@ -175,7 +177,7 @@ The generator builds an unanswerable problem as a complete problem first, with t
 
 On every T1 to T4 word problem, solvable or unanswerable, `hints(p)` names each given by its quantity, such as «сколько конфет в первой коробке» (how many sweets were in the first box), and prints no given's value in any rung, as ADR-0360 decides.
 
-Every T1 to T4 problem has exactly 4 "what's missing" options, each naming a quantity of the story that the text doesn't state (REQ-5412). The option builder fills them the same way on both kinds:
+Every T1 to T4 problem other than a Dutch probe letter has exactly 4 "what's missing" options, each naming a quantity of the story that the text doesn't state (REQ-7160). The option builder fills them the same way on both kinds:
 
 1. Slot 1 is the asked quantity.
 2. Slot 2 is the withheld given on an unanswerable problem (REQ-5472), and on a solvable one a story quantity the frame declares that the text doesn't state, other than the asked quantity, drawn by the seeded stream.
@@ -187,7 +189,9 @@ The Dutch bridge's item selector skips every item whose `forms` holds `missing`,
 
 ### The «Нельзя узнать» control
 
-Every T1 to T4 word problem shows «Нельзя узнать» (can't be known) beside «Не знаю» (I don't know) in every phase: the model choice, the plan cards, the step fields and the final answer (REQ-5400). The task window's action row reads, left to right, «Не знаю», «Нельзя узнать», the thread button and «Готово» (Done), on solvable and unanswerable problems alike. A gap of at least one button's width separates «Не знаю» from «Нельзя узнать», and «Нельзя узнать» never sits on the keypad or next to a digit key (REQ-5402). On the computer interface the key with `KeyboardEvent.code` `KeyY` opens the options as a tap does; it differs from the shortcut of «Не знаю», and no answer field takes a letter (REQ-5404).
+Every T1 to T4 word problem other than a Dutch probe letter shows «Нельзя узнать» (can't be known) beside «Не знаю» (I don't know) in every phase: the model choice, the plan cards, the step fields and the final answer (REQ-7158). The task window's action row reads, left to right, «Не знаю», «Нельзя узнать», the thread button and «Готово» (Done), on solvable and unanswerable problems alike. A gap of at least one button's width separates «Не знаю» from «Нельзя узнать», and «Нельзя узнать» never sits on the keypad or next to a digit key (REQ-5402). On the computer interface the key with `KeyboardEvent.code` `KeyY` opens the options as a tap does; it differs from the shortcut of «Не знаю», and no answer field takes a letter (REQ-5404).
+
+A Dutch probe letter shows neither «Нельзя узнать» nor the four options, and ADR-0430 states its controls. The letters come after the MVP, and only once the owner amends the Russian-only rule in `CLAUDE.md`; until then no item is a letter.
 
 Pressing «Нельзя узнать» submits nothing: it opens the four options with «Готово» and «Назад» (Back). «Готово» submits with or without a chosen option (REQ-5420), and «Назад» returns to the problem as it was.
 
@@ -215,7 +219,7 @@ The client runs `check` only to parse, and never submits an `unparsed` entry. Su
 
 A template for a point task adds the trap `point.swapped` and rejects x = y, so the swap stays apart from the correct answer.
 
-On a T1 to T4 word problem the checker also takes `insufficient`, and then ignores the entered step values:
+On a T1 to T4 word problem other than a Dutch probe letter the checker also takes `insufficient`, and then ignores the entered step values:
 
 | Answer | Problem | Verdict | Credit | Class | Stated by |
 | --- | --- | --- | --- | --- | --- |
@@ -263,7 +267,7 @@ A template's `riskyTerms` lists each Russian maths term its task text uses, and 
 
 ### Composed riddles
 
-The generator builds a riddle's target with the purpose `compose`, and `judgeCompose(target, graph)` gives a riddle its verdict, from sentence cards or from a parsed text alike. «Сплети загадку» offers sentence cards in place of free composition until the masked parser has matched the labelled verdicts on at least 95 % of 200 reference riddles in a live run on the offline key, and whenever the game day's parse budget has run out (REQ-5096). The setting `COMPOSE_FREE` turns free composition on. The server refuses to start with it on unless `verify/parser-eval.json` records a passing live run for the configured `PARSE_MODEL`, so a changed parse model turns free composition off until it passes again. When the parse bucket can't reserve two parses, the Director offers a card riddle.
+The generator builds a riddle's target with the purpose `compose`, and `judgeCompose(target, graph)` gives a riddle its verdict, from sentence cards or from a parsed text alike. «Сплети загадку» offers sentence cards in place of free composition until the masked parser has matched the labelled verdicts on at least 95 % of 200 reference riddles in a live run on the offline key, and whenever the game day's parse budget has run out (REQ-5096). The setting `COMPOSE_FREE` turns free composition on. While `verify/parser-eval.json` records no passing live run for the configured `PARSE_MODEL` and prompt hash, the server starts with free composition off and offers card riddles only, so a changed parse model or prompt turns free composition off until it passes again; ADR-0230 states the flag. When the parse bucket can't reserve two parses, the Director offers a card riddle.
 
 ## Failure paths
 
@@ -272,6 +276,8 @@ The generator builds a riddle's target with the purpose `compose`, and `judgeCom
 | No candidate passes within 1,000 draws | The generator takes a fallback entry and counts `generation_fallback`; a template whose fallback share exceeds 1 % of its generations over 30 days appears once in the verify report. |
 | A template throws on a seed | `generation_error` goes to the server log, and the Director picks another subtype of the node. |
 | No parallel task passes within 1,000 candidates | `sampleParallel` returns `twin_unavailable`, and the server skips the second attempt, as ADR-0080 states. |
+| After the MVP, the reject predicate refuses a task of a node held for a retention check | The generator returns `held_node_refused`, and the caller takes its next candidate, as ADR-0400 states. |
+| The context hold leaves no frame for a template | The item builder takes another template of the subtype, then a bare template, then the Director another subtype, and ADR-0130 counts `transfer_hold_no_frame`. |
 | No fluent node covers a word problem's steps | The generator returns `no_fluent_numbers`, and the Director fills the slot with another task. |
 | A template can't withhold a given or fill 4 options within 1,000 candidates | The generator takes a fallback entry the build has checked; the build fails with `insufficient_unbuildable` when a fallback entry fails. |
 | The entry doesn't parse for its kind, such as «3,,5» | The client shows `unparsed` as the soft mark, submits nothing and keeps the clock running. |
@@ -282,11 +288,20 @@ The generator builds a riddle's target with the purpose `compose`, and `judgeCom
 | A frame breaks a readability limit | The frame pipeline rejects the frame. |
 | A module in `src/math`, `src/templates`, `src/render`, the checker or `src/shared/compose.ts` imports the model gateway or a network module, or code in `src/` calls `Math.random` | ESLint fails the build. |
 | An outgoing `ItemViewOut` or `InputSpec` carries an unlisted field | Serialisation fails, and the body never reaches the client. |
-| `COMPOSE_FREE` is on with no passing record for the configured `PARSE_MODEL` | The server refuses to start, and `./meowtower status` shows `compose_flag_off`. |
+| `COMPOSE_FREE` is on with no passing record for the configured `PARSE_MODEL` and prompt hash | Text riddles turn off, card riddles play, and `./meowtower status` shows `compose_flag_off`. |
 | The game day's parse bucket can't reserve two parses | The Director offers a card riddle. |
+
+## Open findings
+
+- ADR-0400 holds a node for a retention check out of every task that names it, and REQ-0784 draws a word problem's steps from every fluent or stable node. No decision says whether a held stable node still supplies a word problem's step numbers, which would show it without naming it. The generator's set stays as REQ-0784 states it until a decision settles this.
+- I chose to have the generator ask the predicate about the task's nodes before drawing a candidate, because no decision says how a refusal of a whole node reaches the generator, and a per-candidate refusal would end in an unaccepted fallback entry of a held node.
+- ADR-0430 draws a letter's seed at family creation, and no decision says whether steps 3 and 4 then run on that seed or what `item_shown` logs as a letter's effective seed.
 
 ## Open review findings
 
 - The round-one reviewer asked to add `src/shared/readability.ts` to the modules barred from the model gateway or to exclude it by name. Rejected: no decision in force bars that module, so either statement would be a rule no decision makes.
 - The round-one reviewer asked to give the client-import ban its reason by tying it to REQ-1220. Rejected: a specification states what the system does, never why, and ADR-0040 cites no requirement for that ban.
 - The round-two reviewer asked to cite ADR-0040's reading of "stable" beside REQ-0784's word «бегло» in the word-problem numbers rule. Rejected: that reading is a reason, which lives in ADR-0040, and ADR-0060 defines stable as a state past fluent.
+- The round-three reviewer, on the addendum 2 update, asked to cite REQ-5416, REQ-5418 and REQ-5422 in place of ADR-0140 in the verdict table. Rejected: those requirements aren't in this document's `states`, and the column names where each verdict's outcome is stated, which ADR-0140 holds.
+- The round-three reviewer asked again to give the client-import ban, the sign-comparison purposes and the plural mapping their reasons. Rejected for the reason given for the round-one finding: a specification states what the system does, never why.
+- The round-four reviewer, on the addendum 2 update, asked again for the reasons of the client-import ban, the sign-comparison purposes, the plural mapping and the 1 % fallback threshold. Rejected for the reason above.

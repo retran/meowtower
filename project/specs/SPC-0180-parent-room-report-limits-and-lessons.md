@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1342, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364, REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1414, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-1426, REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378, REQ-3710, REQ-3814, REQ-5146, REQ-5148, REQ-5150, REQ-5360, REQ-5362, REQ-5364, REQ-5366, REQ-5368, REQ-5454, REQ-5458, REQ-5460, REQ-5462, REQ-5464, REQ-6064]
+states: [REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364, REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-1426, REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378, REQ-3710, REQ-3814, REQ-5146, REQ-5148, REQ-5150, REQ-5360, REQ-5362, REQ-5364, REQ-5366, REQ-5368, REQ-5458, REQ-5460, REQ-5462, REQ-5464, REQ-6064, REQ-6600, REQ-6602, REQ-6604, REQ-6606, REQ-6608, REQ-6610, REQ-6612, REQ-6614, REQ-6616, REQ-6618, REQ-6620, REQ-6622, REQ-6624, REQ-6626, REQ-6628, REQ-6630, REQ-6632, REQ-6634, REQ-6638, REQ-6640, REQ-6642, REQ-6644, REQ-6648, REQ-6650, REQ-6796, REQ-7170, REQ-7174, REQ-7400]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -13,9 +13,9 @@ states: [REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, R
 
 ## Scope
 
-This document covers the Parent Room behind the PIN: the report's nine screens and how they are computed from the log, the twelve limits, the fluency thresholds per device type, the lesson marks with their two rechecks and four labels, the settings panel for the player's details, the glossary approval, the export tab, and the security boundary around them. It is written at the level of routes, projections, events and the content of each screen. The layout, colours and theme of the screens are the interface specification's (ADR-0150), and the Russian wording of every label is in the string file of ADR-0160.
+This document covers the Parent Room behind the PIN: the report's nine screens and how they are computed from the log, the twelve limits, the fluency thresholds per device type, the lesson marks with their two rechecks and four labels, the settings panel for the player's details, the glossary approval, the export tab, and the security boundary around them. It also covers the rules that hold for every report part addendum 2 adds: the count and interval each figure shows, the «мало данных» (too little data) floors, the interpretation lines from a fixed list of contrasts, the exclusion trail and the report that can't be curated. It is written at the level of routes, projections, events and the content of each screen. The layout, colours and theme of the screens are the interface specification's (ADR-0150), and the Russian wording of every label is in the string file of ADR-0160.
 
-It leaves out what other documents state. The PIN check and its lockout are SPC-0010's, and the parent session with its 30-minute expiry is SPC-0030's. The export's formats and field dictionary are SPC-0020's. The node states, estimates, uncertainty and probe rules are ADR-0060's, and the science questions with their misconceptions are ADR-0130's. The contents of the panels this part only places are named under "Panels this part places". The Sources screen's contents are ADR-0300's, the planning-error count and the plan cross ADR-0270's, the Cito sections ADR-0290's, the Interest section ADR-0330's, the «Видит удобные приёмы» (Sees convenient methods) block ADR-0260's, the composing line ADR-0230's, the «Нестандартное мышление» (Non-standard thinking) section ADR-0280's, the sandbox ADR-0340's, and the school screens after the MVP ADR-0310's.
+It leaves out what other documents state. The PIN check and its lockout are SPC-0010's, and the parent session with its 30-minute expiry is SPC-0030's. The export's formats and field dictionary are SPC-0020's. The node states, estimates, uncertainty and probe rules are ADR-0060's, and the science questions with their misconceptions are ADR-0130's. The contents of the panels this part only places are named under "Panels this part places". The Sources screen's contents are ADR-0300's, the planning-error count and the plan cross ADR-0270's, the Cito sections ADR-0290's, the Interest section ADR-0330's, the «Видит удобные приёмы» (Sees convenient methods) block ADR-0260's, the composing line ADR-0230's, the «Нестандартное мышление» (Non-standard thinking) section ADR-0280's, the sandbox ADR-0340's, and the school screens after the MVP ADR-0310's. The contents of addendum 2's report parts after the MVP belong to their own decisions: the profile to ADR-0390, the weekly breakdown, the trajectory and the retention list to ADR-0400, the transfer section to ADR-0410, the home-and-school quadrants to ADR-0420, the Dutch probe's presentations and section to ADR-0430, and the hypotheses to ADR-0450. Build check 5 and addendum 2's MVP scope are ADR-0380's and ADR-0190's.
 
 ## Boundary
 
@@ -33,6 +33,8 @@ Every route below needs a paired device. Every route other than `POST /api/paren
 | `POST /api/parent/items/:itemId/exclude` | Writes `item_excluded` in ADR-0340's version 2 with `source: "parent_room"` for that task. |
 | `GET` and `PUT /api/parent/settings` | Reads and changes the settings, the player's real name, age and school group among them. |
 
+The query schemas of the `/api/parent/report*` routes are strict: they accept only `at=` and a page number, and answer `400` to any other parameter, so no request can hide a node, a dimension or a figure (REQ-6606).
+
 The client's Parent Room is the `/parent` area of the Preact client, and it reads its data only from `/api/parent/*`.
 
 ### Code, projections and files
@@ -40,7 +42,12 @@ The client's Parent Room is the `/parent` area of the Preact client, and it read
 | Surface | What it is |
 | --- | --- |
 | `src/parent/` | The report functions: pure functions over the projections and the knowledge model's outputs, each returning a part of `ReportModel`. |
-| `report_cache` | One `ReportModel` with its `DerivedMeta`: the model, threshold and graph versions and `lastEventSeq`; the threshold version is the one SPC-0020 records in `derived_meta`, the version in `content/versions.json` joined by `+` with the `seq` of the latest `fact_threshold_set`, the sequence number of the last event it read. It keeps the current version set and the one before it. |
+| `report_cache` | One `ReportModel` with its `DerivedMeta`: the model, threshold and graph versions and `lastEventSeq`, the sequence number of the last event it read; the threshold version is the one SPC-0020 records in `derived_meta`, the version in `content/versions.json` joined by `+` with the `seq` of the latest `fact_threshold_set`. It keeps the current version set and the one before it. |
+| `src/parent/intervals.ts` | The only functions that compute the Wilson, Newcombe and median intervals. |
+| `src/parent/measures.ts` | The registry of every measure in addendum 2's report parts, each with its «мало данных» floor. |
+| `src/parent/contrasts.ts` | The contrasts that may draw an interpretation line, one for each entry of `verify/contrasts.json`. |
+| `verify/contrasts.json` | The fixed list of contrasts, each entry naming the decision that approved it. |
+| `excluded_attempts` | After the MVP, each `item_excluded` event joined to the attempts it removed, with its `source`. |
 | `limits` | One `LimitsResult` per session. |
 | `thresholds` | One fluency threshold per template and device type, iPad or computer, with its version. |
 | `parent_tags` | The lesson marks and their open recheck windows. |
@@ -62,7 +69,7 @@ The `meowtower` service mounts `content/` read-only.
 
 ### Failure states
 
-`report_stale`, `report_build_failed`, `too_little_data`, `threshold_uncalibrated`, `recheck_late` and `thresholds_changed_unversioned`, set out under Failure paths.
+`report_stale`, `report_build_failed`, `too_little_data`, `not_clear_yet`, `threshold_uncalibrated`, `recheck_late`, `thresholds_changed_unversioned`, `measure_floor_missing`, `contrast_not_declared`, `interval_reference_mismatch`, `threshold_label_reused` and `check_text_names_lesson`, set out under Failure paths.
 
 ### What this part requires from other parts
 
@@ -73,6 +80,8 @@ The `meowtower` service mounts `content/` read-only.
 - SPC-0070 supplies the refusal guard and its event `refusal_guard_changed`.
 - ADR-0070 reads the open recheck windows and the due motor check; ADR-0090 places the pure-input tasks in the adventure and counts active time.
 - ADR-0160 holds every Parent Room label under `parent.*` in the Russian string file.
+- ADR-0290 supplies each template's `format`, whose value `bare` marks a bare task.
+- ADR-0430 supplies, after the MVP, the Dutch probe's presentations `bare`, `ru`, `nl` and `nl_after_words`, their graded first attempts and the probe's section in the report, where the two interpretation lines sit; ADR-0390 places the profile screen's miss-rate line.
 - ADR-0190's verify runs the checks this part names, and its Baselines table holds this part's budgets.
 
 ### Permitted dependencies
@@ -81,6 +90,8 @@ The `meowtower` service mounts `content/` read-only.
 - Every write from the Parent Room goes through `appendEvents`.
 - No player route, player projection or player screen reads `report_cache`, `limits`, `parent_tags` or a `calibration` event.
 - No module in `src/engine/` imports `src/parent/`.
+- Only `src/parent/intervals.ts` computes an interval, and no other module in `src/parent/` imports a statistics library.
+- Only `src/parent/contrasts.ts` draws an interpretation line, and only for a contrast `verify/contrasts.json` lists.
 - The Director reads `parent_tags` and `thresholds` only for the open recheck windows and the due motor check.
 
 ## Behaviour
@@ -88,6 +99,8 @@ The `meowtower` service mounts `content/` read-only.
 ### Access
 
 The report opens only inside the Parent Room, after the parent enters the PIN, so the child never sees it (REQ-2352). The player's routes carry schemas with no field for a node state, an estimate, a percentage or a topic name, so the player's screens show only game progress and story outcomes (REQ-1426). ADR-0190's end-to-end scan checks the player's screens for node identifiers, state labels, percentages and topic names.
+
+The report offers no setting, filter or mode that hides a node, a dimension or a figure from the parent (REQ-6606). Beside the strict route schemas, the graph map draws every node of the graph, and a Playwright test counts them.
 
 ### Panels
 
@@ -105,7 +118,7 @@ The tab «Выгрузка данных» (Data export) runs the export SPC-0020
 
 #### Panels this part places
 
-The Parent Room also places panels whose contents other parts define: the switch «Закончить на сегодня» (Finish for today), inside the settings panel above, and the memo on talking with the child, with its first-week checklist (ADR-0090, ADR-0330); the review queues for frames, lines, scenes, art, explanation variants, framings and puzzles (ADR-0110, ADR-0120, ADR-0130, ADR-0170, SPC-0080, ADR-0280); the bake-off screen, the Master pick, the cost line and its notices (ADR-0100); the alarm notice (ADR-0110); the approval screen for reaction candidates, the flag on a reaction line in the dialogue book and the notice `reaction_bank_low` (ADR-0320); the page on what leaves the Mac with its list of judge checks (ADR-0100, ADR-0350); the Cito panel (ADR-0290); the card panel, the day-mark question, the free-pen switch and "open every system" (ADR-0330); the riddle list (ADR-0230); and the entry to the sandbox «Песочница» (Sandbox), which ADR-0340 defines. The sandbox's confirmed actions reach the player's log each as one event with `source: "sandbox"`, as ADR-0340 states.
+The Parent Room also places panels whose contents other parts define: the switch «Закончить на сегодня» (Finish for today), inside the settings panel above, and the memo on talking with the child, with its first-week checklist (ADR-0090, ADR-0330); the review queues for frames, lines, scenes, art, explanation variants, framings and puzzles (ADR-0110, ADR-0120, ADR-0130, ADR-0170, SPC-0080, ADR-0280); the bake-off screen, the Master pick, the cost line and its notices (ADR-0100); the alarm notice (ADR-0110); the approval screen for reaction candidates, the flag on a reaction line in the dialogue book and the notice `reaction_bank_low` (ADR-0320); the page on what leaves the Mac with its list of judge checks (ADR-0100, ADR-0350); the Cito panel (ADR-0290); the card panel, the day-mark question, the free-pen switch and "open every system" (ADR-0330); the riddle list (ADR-0230); the tab «Гипотезы» (Hypotheses), which after the MVP is the report's line «Гипотезы и их статус» (hypotheses and their status) (ADR-0450); and the entry to the sandbox «Песочница» (Sandbox), which ADR-0340 defines. The sandbox's confirmed actions reach the player's log each as one event with `source: "sandbox"`, as ADR-0340 states.
 
 ### How the report is computed
 
@@ -113,7 +126,9 @@ The report is a set of pure functions over the log, and `report_cache` holds the
 
 The skill map, the states and the «сама» estimate come only from unassisted first attempts (REQ-2310). Assisted attempts reach the report only in the «с помощью» figures: the assisted estimate, «решает с подсказкой» (solves with a hint), «почти готово» (nearly ready), «на пороге» (on the threshold), the mean depth of help, assisted groupings and the observation «склонна отказываться от задачи» (tends to refuse the problem) (REQ-2312).
 
-Every label comes from the Russian string file, never from a model. A check run by ADR-0190's verify rejects «плохо» (bad), «отстаёт» (falls behind) and «невнимательная» (careless) in every `parent.*` value, and the parent judges the rest of the wording, which reads in the style of «пока не освоено» (not mastered yet) and «понимает, нужна скорость» (understands, needs speed) (REQ-2306). No screen orders topics or proposes dates or exercises, so the report builds no lesson plan (REQ-2304). The report answers what the player has mastered, where her frontier is and what holds her back, which the parent judges (REQ-2302).
+Every label comes from the Russian string file, never from a model. A check run by ADR-0190's verify rejects «плохо» (bad), «отстаёт» (falls behind) and «невнимательная» (careless) in every `parent.*` value, and the parent judges the rest of the wording, which reads in the style of «пока не освоено» (not mastered yet) and «понимает, нужна скорость» (understands, needs speed) (REQ-2306). No screen orders topics or proposes dates or exercises, so the report builds no lesson plan (REQ-2304), and every line the report draws on its own comes from the fixed list of contrasts and reads «что проверить» (what to check), as "Figures and lines in addendum 2's parts" sets out. The report answers what the player has mastered, where her frontier is and what holds her back, which the parent judges (REQ-2302). No figure, label or interpretation is worded as a diagnosis (REQ-6604), and a weak side of her maths shows as clearly as a strong one (REQ-6602); the parent judges both at the acceptance of the stage that builds each part.
+
+After the MVP the full report breaks her maths results into their parts and shows where the boundary of what she does on her own runs (REQ-6600), which the parent judges. The parts are the profile (ADR-0390), the weekly breakdown, the trajectory and the retention list (ADR-0400), transfer (ADR-0410), the home-and-school quadrants (ADR-0420), the Dutch probe (ADR-0430) and the hypotheses (ADR-0450). «Профиль» (Profile) is the first of the report tabs, and the report's other screens follow it.
 
 Every figure reads only the base graph layer, and a report that mixes layers appears only as a choice the parent makes once a second layer exists (REQ-3814). The MVP has one layer.
 
@@ -123,10 +138,10 @@ Report v1 has nine screens, and no dynamics screen, "home and school" screen or 
 
 | Screen | What it shows |
 | --- | --- |
-| Summary | the pooled estimate matrix at the top; the last session; sessions and tasks this week; node counts by state for 1F, 1S and stretch; the frontier by domain (REQ-2320); one line per limit; the nodes not checked for more than 30 days (REQ-2322); the nodes marked «на пороге» and then «почти готово» (REQ-2318, REQ-5146, REQ-5148); the nodes whose errors all carry «возможна языковая причина» (possibly a language cause) (REQ-2372); each day's active time for the week (REQ-2376), with «долгий день» (a long day) above 120 minutes (REQ-2378); the weekly check line (REQ-5364); the observation «склонна отказываться от задачи» while it holds (REQ-5454); and the sections other parts define: «Видит удобные приёмы» (ADR-0260), «небрежные ошибки на знакомом» (careless errors on familiar material) and the horizon line (ADR-0290), and the Interest section (ADR-0330) |
+| Summary | the pooled estimate matrix at the top; the last session; sessions and tasks this week; node counts by state for 1F, 1S and stretch; the frontier by domain (REQ-2320); one line per limit; the nodes not checked for more than 30 days (REQ-2322); the nodes marked «на пороге» and then «почти готово» (REQ-2318, REQ-5146, REQ-5148); the nodes whose errors all carry «возможна языковая причина» (possibly a language cause) (REQ-2372); each day's active time for the week (REQ-2376), with «долгий день» (a long day) above 120 minutes (REQ-2378); the weekly check line (REQ-5364); the observation «склонна отказываться от задачи» while it holds (REQ-7174); the sections other parts define: «Видит удобные приёмы» (ADR-0260), «небрежные ошибки на знакомом» (careless errors on familiar material) and the horizon line (ADR-0290), and the Interest section (ADR-0330); and after the MVP, the count of excluded attempts with how many were right and how many wrong (REQ-6610), and the nodes under «ошибки есть и без трудных слов» (errors also without hard words) (REQ-6614) |
 | VWO readiness | the three measures, the ladder and the inferred figure; coverage of 1F, of 1S and of stretch as three separate figures (REQ-0828); the gap list with no stretch node (REQ-0824); the mastered stretch nodes listed as the ceiling above 1S (REQ-0826); the disclaimer and the preliminary mark; and the sections other parts define: «Нестандартное мышление» (ADR-0280) and the Cito preparation, careless errors and beyond-school sections (ADR-0290) |
 | Graph map | every node with its state label, hatching for inferred states and a ring around each frontier node (REQ-2374); under the word-problem domain, the matrix of problem type by number of steps (REQ-0834) with its error counts (REQ-0838), the four separate counts (REQ-5462), the line «Может составить задачу» (Can compose a problem) of ADR-0230, and the note on the unanswerable streams (REQ-5464); under domain A, the fact report of ADR-0290 |
-| Node card | the state with the «сама» estimate and its uncertainty (REQ-2314); «на пороге» and «почти готово»; the share of correct assisted attempts under «решает с подсказкой» (REQ-2316) with the mean depth of help beside it (REQ-5150); the estimate matrix (REQ-5366); every task as shown (REQ-2328); the language-cause mark per attempt (REQ-2368); the state history with lesson marks and labels; and the bare and context split of ADR-0290 |
+| Node card | the state with the «сама» estimate and its uncertainty (REQ-2314); «на пороге» and «почти готово»; the share of correct assisted attempts under «решает с подсказкой» (REQ-2316) with the mean depth of help beside it (REQ-5150); the estimate matrix (REQ-5366); every task as shown (REQ-2328); the language-cause mark per attempt (REQ-2368); the state history with lesson marks and labels; the bare and context split of ADR-0290; and after the MVP, each excluded attempt struck through with its source (REQ-6612) |
 | Misconceptions | the traps that fired, by frequency, with up to 3 examples a row (REQ-2324), one row per misconception across nodes (REQ-2326); below them, every answer or step the engine didn't recognise, listed as unclassified with its task for the parent to review by hand (REQ-0711) |
 | Limits | one row per limit, as "Limits" sets out |
 | Science | for each topic, the questions answered, with no score, state or percentage |
@@ -135,7 +150,7 @@ Report v1 has nine screens, and no dynamics screen, "home and school" screen or 
 
 #### Summary and node card
 
-A node is «почти готово» when its state is below «бегло» (fluent) and its «с помощью» estimate is at least 0.7 over at least 3 assisted attempts within the last 30 days (REQ-2318). A node counts as not checked for a long time when its last unassisted first attempt is more than 30 days old (REQ-2322).
+A node is «почти готово» when its state is below «бегло» (fluent) and its «с помощью» estimate is at least 0.7 over at least 3 assisted attempts within the last 30 days (REQ-2318). A node counts as not checked for a long time when its last unassisted first attempt is more than 30 days old (REQ-2322). After the MVP, once ADR-0400's retention checks exist, a node held for a retention check shows in that list with «проверка запланирована» (check planned) and its due window.
 
 A node is «на пороге» when its state is «Пока не освоено» (not mastered yet) or «Уточняется» (being clarified), it has at least 3 assisted attempts in the last 14 days, first and second attempts alike, and at least 60 % of them are first attempts answered right with rung 1 as their deepest rung (REQ-5146). A second attempt counts in the denominator and never in the numerator. «Не проверено» (not checked), «Не проверялся, отрезан узлом X» (not tested, cut off by node X) and «Stretch: не проверялся» never get the mark. A node that meets both rules shows «на пороге» first and then «почти готово», in the summary list and on the node card (REQ-5148).
 
@@ -145,7 +160,7 @@ The estimate matrix on the node card crosses the estimate, right or wrong, with 
 
 The weekly check line shows the share of first attempts on tasks offering the inverse check on which she used it, the number of answers saved and the number spoiled (REQ-5364). The report compares her preliminary answer at the first check of a task with her first attempt, each judged with ADR-0040's checker. A change from wrong to right counts as saved (REQ-5360), a change from right to wrong as spoiled (REQ-5362), and any other change as neither.
 
-The observation «склонна отказываться от задачи» shows while the latest `refusal_guard_changed` has `state: "raised"` (REQ-5454). SPC-0070's refusal guard writes that event when 3 or more of her last 20 solvable T1 to T4 first attempts, assisted ones included, are «Нельзя узнать» (can't be known), once 20 such attempts exist.
+The observation «склонна отказываться от задачи» shows while the latest `refusal_guard_changed` has `state: "raised"` (REQ-7174). SPC-0070's refusal guard writes that event when 3 or more of her last 20 solvable T1 to T4 first attempts, assisted ones included and Dutch probe letters left out, are «Нельзя узнать» (can't be known), once 20 such attempts exist.
 
 The summary shows each day's active time for the week as the soft stop of ADR-0090 counts it (REQ-2376), and marks a day above 120 minutes «долгий день»; a day of exactly 120 minutes carries no mark (REQ-2378). The mark changes nothing in play.
 
@@ -198,7 +213,7 @@ The report shows each limit smoothed over the last 7 sessions, or over as many a
 | Avoidance | runs of 3 «Не знаю» in a row, and the rest stops offered (REQ-1336) |
 | Anxiety | runs of 3 `alt` outcomes in a row, and a rapid-guess share in the last third of a session higher than in its first two thirds (REQ-1338) |
 | Flow | the success share by session and by floor against the 70-80 % target, and the share of review slots (REQ-1340) |
-| Language risk | the mistakes on tasks with a risk term whose explanation she didn't open (REQ-1342), listed by term and node (REQ-2370) |
+| Language risk | the mistakes on tasks other than Dutch probe letters that hold a risk term whose explanation she didn't open (REQ-7170), listed by term and node (REQ-2370) |
 | Help | hints before the answer with their level, «Не знаю» on first attempts, second-attempt correctness, detailed explanations opened with their reading time, and the share of assisted first attempts, with ADR-0070's `help_share_flag` (REQ-1344); the mean depth of help beside «решает с подсказкой» |
 
 The data model classes a mistake as `conceptual`, `procedural`, `fact`, `slip` or `unclassified`, and the error-type row reports `fact` and `slip` together as computational (REQ-1328). A mistake is `unclassified` where the task's traps and steps don't settle its class. The node's state "at that moment" for carelessness is its state computed from the events before that attempt.
@@ -232,7 +247,7 @@ The running game never changes a catalogue threshold, because `content/` is moun
 
 ### Lesson marks, rechecks and labels
 
-The parent marks nodes or subtypes as «занимались на уроке» (we worked on this in the lesson), with a date and an optional note, and `POST /api/parent/tags` writes `parent_tag_added` (REQ-1400). The `parent_tags` projection opens two recheck windows counted in game days from the day of the mark: recheck 1 from day 1 to day 3 (REQ-1402) and recheck 2 from day 12 to day 16 (REQ-1404). The Director reads the open windows and collects a full block on the node inside each. A recheck is done when a full block forms inside its window.
+The parent marks nodes or subtypes as «занимались на уроке» (we worked on this in the lesson), with a date and an optional note, and `POST /api/parent/tags` writes `parent_tag_added` (REQ-1400). The lesson-mark form can open from a link with its nodes filled in, as ADR-0420's quadrants link to it, and the mark is still written only when the parent submits the form. The `parent_tags` projection opens two recheck windows counted in game days from the day of the mark: recheck 1 from day 1 to day 3 (REQ-1402) and recheck 2 from day 12 to day 16 (REQ-1404). The Director reads the open windows and collects a full block on the node inside each. A recheck is done when a full block forms inside its window.
 
 When the parent removes a mark, `parent_tag_removed` starts the full recompute of SPC-0020, and from it every knowledge projection treats the mark as never set: its open recheck windows close, it gives no label, and SPC-0060's rule that a full block doesn't span a lesson mark stops applying to it (REQ-1400, REQ-1402).
 
@@ -247,11 +262,61 @@ A node with no check before the mark gets no improvement label, and its history 
 
 ### Dynamics views
 
-Until the dynamics screen exists, the dynamics views are the node card's state history and the lesson labels. They use only unassisted first attempts from blocks, probes and review (REQ-1414), never show inferred states or add them to checked ones (REQ-1416), and carry «без контрольных прогонов: сравнимость ниже» (no control runs: lower comparability) until Ascents exist (REQ-1418). A time comparison uses tasks answered on one device type only (REQ-1420), and an accuracy comparison may span both (REQ-1422). When the template versions behind a node's comparison differ, the comparison carries «контент изменён» (content changed) (REQ-1424).
+Until the dynamics screen exists, the dynamics views are the node card's state history and the lesson labels. They read only first attempts from blocks, probes, review, lesson rechecks and retention checks, with assisted first attempts only in figures labelled as help and every «сама» share read from unassisted first attempts alone; the profile's dynamics reads the unassisted first attempts its own bars read, and the fact states for basic facts (REQ-6796). They never show inferred states or add them to checked ones (REQ-1416), and carry «без контрольных прогонов: сравнимость ниже» (no control runs: lower comparability) until Ascents exist (REQ-1418). A time comparison uses tasks answered on one device type only (REQ-1420), and an accuracy comparison may span both (REQ-1422). When the template versions behind a node's comparison differ, the comparison carries «контент изменён» (content changed) (REQ-1424).
+
+### Figures and lines in addendum 2's parts
+
+This section is at the level of the figures the report computes and the rules that compute them. It holds for every report part addendum 2 adds, and each part's own decision says which figures it shows.
+
+#### Counts and intervals
+
+Every share in addendum 2's report parts shows its right answers, its attempts and its 80 % Wilson interval over the raw, unweighted counts of the window it names beside it (REQ-6616). The parts are the profile, the trajectories, retention, transfer, the home-and-school quadrants, the probe and the hypotheses. A difference between two shares shows its 80 % Newcombe hybrid score interval, built from the two Wilson limits the screen shows (REQ-6618). A median time shows its distribution-free 80 % interval from order statistics: the values at ranks j and n + 1 - j, with j the largest rank for which a binomial count of n at one half falls below j with chance 0.10 or less (REQ-6620). ADR-0060's entropy uncertainty stays on report v1's node card and in the Director.
+
+`src/parent/intervals.ts` computes every one of these intervals. A group 2 test compares it with `tests/reference/intervals.json`, a table computed once with Python's `scipy.stats`, and fails with `interval_reference_mismatch` on any difference above 0.0005.
+
+#### «Мало данных» floors
+
+Every measure in addendum 2's parts declares its «мало данных» floor in `src/parent/measures.ts`, and a group 1 check fails a measure registered without one with `measure_floor_missing`. The profile bar's floor is ADR-0390's, the transfer figure's ADR-0410's, the probe cell's ADR-0430's and the hypothesis condition's ADR-0450's. A share or a median time with no floor of its own that rests on fewer than 5 observations shows «мало данных» with its count in place of its value (REQ-6622). The limits keep their floor of 3 sessions, and the interest signal keeps ADR-0330's.
+
+A figure below its floor shows «мало данных» with its count, and enters no interpretation line, quadrant, profile line or hypothesis status (REQ-6624). A difference with either share below its floor shows «мало данных» too (REQ-6618). A property test feeds each registered measure a count one below its floor and finds nothing built from it.
+
+#### Interpretation lines from a fixed list
+
+The report draws an interpretation line of its own only from the contrasts `verify/contrasts.json` lists, a list fixed before any of her data exists (REQ-6630). The list holds the language line and the maths line of ADR-0380 and the profile's change lines of ADR-0390. A group 1 check fails with `contrast_not_declared` when the contrasts in `src/parent/contrasts.ts` and the entries in the file differ. A per-node figure shows its 80 % interval and draws no line (REQ-6640).
+
+Both lines read every graded first attempt on the Dutch probe's presentations since the probe was switched on, and the report treats that whole run as the probe's current phase. The report computes them only at three checkpoints, when the `bare`, `ru`, `nl` and `nl_after_words` cells first all hold 20, 40 and 80 graded first attempts, and shows the last checkpoint's result between them.
+
+- The language line compares Russian with Dutch, and Dutch with Dutch after the words are explained, and never bare with Dutch (REQ-6632). It appears only when the 95 % Newcombe hybrid score interval of at least one of its two differences excludes zero with the Dutch share the lower one: Dutch below Russian, or Dutch below Dutch after the words (REQ-7400).
+- The maths line compares with 0.8 the pooled share of right answers on the bare and Russian presentations (REQ-6634). It appears only when the upper limit of that share's 95 % Wilson interval lies below 0.8 (REQ-6644).
+
+When a contrast's 95 % interval still holds zero or its threshold, the report shows «пока не ясно» (not clear yet) in its place (REQ-6638). Every state of the language contrast short of a line reads «пока не ясно», a Dutch share clearly above the Russian one included. A maths share whose 95 % interval lies wholly above 0.8 shows neither a line nor «пока не ясно». The lines sit in the probe's section, which ADR-0430 places. They have no data until the probe exists after the MVP, and no probe text exists until the owner amends the rule in `CLAUDE.md` that player text is Russian only.
+
+Every line reads «что проверить» and names one check the game or the parent can run: a probe phase, a retention check, the sandbox or a question to the teacher (REQ-6626). No line proposes a lesson, a date for one or an exercise, and a line can name the window its figures come from (REQ-6628). The lines' texts live in the Russian string file under `parent.check.*`, and the label check in ADR-0190's verify fails a `parent.check.*` value containing «урок» (lesson), the stem «заняти» (session) in any form, «упражнени» (exercise) or a date, with `check_text_names_lesson`.
+
+The profile screen states in the line `parent.profile.miss_rate` that about 1 in 5 of the 80 % intervals it shows misses its true value (REQ-6642).
+
+#### The four states the school mixes
+
+The report carries the four states addendum 2 names with three node labels and one reading of the profile:
+
+| State | Carrier in the report |
+| --- | --- |
+| doesn't know | «Пока не освоено» on a node that isn't «на пороге» |
+| knows, not automatic | «Понимает, нужна скорость», and for a fact, ADR-0290's fact state |
+| knows with a little help | the node label «на пороге» |
+| understands beyond the standard format | no node label; the profile's transfer and conceptual-understanding dimensions and the ceiling above 1S |
+
+No node gets a label meaning it understands beyond the standard school format (REQ-6648). «На пороге» names only the node label of REQ-5146 and never a class of attempts (REQ-6650), so the weekly breakdown calls its rung-1 bin «хватило первой ступени» (rung 1 was enough). A group 1 check fails with `threshold_label_reused` when the Russian string file holds «на пороге» under any key other than that node label.
+
+#### The exclusion trail and the counter-list
+
+After the MVP the summary's count of excluded attempts (REQ-6610) and the node card's struck-through list (REQ-6612) read `excluded_attempts`. A sandbox exclusion by template version and parameter hash removes each of her attempts on that task, and each one counts. The node card's list pages at 50 rows.
+
+The list «ошибки есть и без трудных слов» holds each node with an error on a task whose `format` is `bare`, or an error after she opened the term's explanation (REQ-6614). It reads the same attempts as the list of nodes whose errors all carry «возможна языковая причина», and the two lists sit side by side.
 
 ### Export and the PDF snapshot
 
-The export tab runs on the Mac only. After the MVP the export adds a PDF snapshot of the report, made through the browser's print from a print stylesheet of the report screens, with no PDF library on the server (REQ-2354).
+The export tab runs on the Mac only. After the MVP the export adds a PDF snapshot of the report, made through the browser's print from a print stylesheet, with no PDF library on the server (REQ-2354). The snapshot holds every report screen and every node's card, or it prints nothing: the print stylesheet has no per-screen switch, and a test counts the printed sections against the screens and nodes (REQ-6608).
 
 ### Security boundary
 
@@ -277,6 +342,10 @@ It doesn't defend against a person with the Mac's user account, who can take a c
 | `report_build_failed`: a report function throws | The last good `report_cache` stays, the screen shows «Не удалось обновить отчёт, показан отчёт от …» (The report couldn't be updated; showing the report from …), and the error is logged with the last event sequence number. | owner |
 | `too_little_data`: fewer than 3 sessions hold data for a limit | The row shows «мало данных». | parent |
 | An estimate-matrix cell holds fewer than 5 answers | The cell shows «мало данных». | parent |
+| `too_little_data`: a figure in addendum 2's parts is below its measure's floor | The figure shows «мало данных» with its count and feeds no line, quadrant, profile line or status. | parent |
+| `not_clear_yet`: a contrast's 95 % interval still holds zero or its threshold | The line's place shows «пока не ясно». | parent |
+| A `/api/parent/report*` request carries a parameter other than `at=` or a page number | `400`. | parent |
+| `measure_floor_missing`, `contrast_not_declared`, `interval_reference_mismatch`, `threshold_label_reused` or `check_text_names_lesson` | Verify fails and names the case. | building agent |
 | A node has no attempt in 30 days | The mean depth of help shows «нет данных». | parent |
 | SPC-0070's refusal guard has not raised, or has cleared | The report shows no refusal observation. | parent |
 | `threshold_uncalibrated`: a device type has neither Session 0 nor an adult calibration | The threshold is the catalogue value, and the Parent Room asks for the 3-task adult calibration until someone does it or Session 0 runs on that device. | parent |
@@ -289,7 +358,16 @@ It doesn't defend against a person with the Mac's user account, who can take a c
 
 - The observation «склонна отказываться от задачи» sits on the summary screen, and the note on the unanswerable streams on the graph map beside the word-problem matrix; ADR-0250 names no screen for either.
 
+## Open findings
+
+- ADR-0380 and ADR-0450 say report v1 keeps its eight screens, while REQ-6064, ADR-0300 and ADR-0390 give it nine, the ninth being «Работа с источниками». This document keeps the nine screens REQ-6064 states, and doesn't choose between the decisions; ADR-0380 and ADR-0450 need their text brought into line by whoever owns them.
+- This part writes `item_excluded` and offers no way to reverse it, while ADR-0060 and SPC-0060 drop an excluded attempt only while no later event re-included it, and ADR-0060 asks ADR-0020 for `item_excluded` and its reversal. No approved record names the reversal event, its route or its control, so this document states none, and the flagged-task list has no undo until a decision defines one.
+- ADR-0380 gives two ranges for `tests/reference/intervals.json`: its Decision section puts the Wilson rows at every count from 0 of 1 to 1,000 of 1,000, while its ceilings and its realisation check stop at 60. This document names the table and its 0.0005 tolerance and states no range until the decision settles one.
+
 ## Open review findings
 
 - An agent reviewer asked for a reason beside the placements under "Choices made in this document", the 50-row page, the two version sets in `report_cache` and the Director's narrow read of `parent_tags` and `thresholds`. I rejected it, because rule S8 of the spec step keeps reasons in the decision: ADR-0180 gives the reasons for the page size, the version sets and the Director's read, and the placements' reason belongs to the design step that settles them.
 - The same reviewer asked again for reasons beside the rules the first finding above names; the rejection under the first finding holds.
+- The agent reviews of 2026-09-28 for addendum 2 ran two rounds. I fixed the first round's findings on the language line's direction, the `lastEventSeq` phrase, the missing reversal of `item_excluded`, which is now under Open findings, and the failure names, now stated at the checks that raise them. The first round's request for reasons beside the page size, the version sets and the Director's read gets the rejection above.
+- Open after the second round: the full limits screen after the MVP is said to show its views "over the same `LimitsResult`, adding views and no measures", but several of its views, such as the share of answers stopping at an intermediate step, the part of the session a careless error fell in, "what helped" for anxiety and "whether reviews help", need figures the `LimitsResult` table doesn't compute. REQ-1306 asks only for views. The sentence predates addendum 2, and which fields `LimitsResult` gains is for ADR-0180 or the stage that builds the full limits screen to settle, so I left it unchanged.
+- The second round again asked for a reason beside the placement under "Choices made in this document"; the rejection under the first finding above holds.

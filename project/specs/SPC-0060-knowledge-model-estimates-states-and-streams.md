@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-28
 checked-at:
-states: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976, REQ-0980, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0990, REQ-0992, REQ-0994, REQ-5024, REQ-5026, REQ-5028, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5318, REQ-5320, REQ-5322, REQ-5354, REQ-5424, REQ-5452]
+states: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976, REQ-0980, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0992, REQ-0994, REQ-5024, REQ-5026, REQ-5028, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5318, REQ-5320, REQ-5322, REQ-5354, REQ-5424, REQ-5452, REQ-6842]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -13,9 +13,9 @@ states: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, R
 
 ## Scope
 
-This document covers the knowledge model: the pure function that turns the event log into per-node estimates, report states, inferred states, obligations for the Director and daily snapshots, the versions that govern those results, the gate a new model version passes, and the separate streams that keep the new forms of the owner's addendum 1 out of the "on her own" estimate. It is written at the level of the model's inputs, projections, parameters and rules; it names no screen and no table layout.
+This document covers the knowledge model: the pure function that turns the event log into per-node estimates, report states, inferred states, obligations for the Director and daily snapshots, the versions that govern those results, the gate a new model version passes, and the separate streams that keep the new forms of the owner's addendum 1 out of the "on her own" estimate. From the owner's addendum 2 it covers how a retention check of ADR-0400 counts and moves the review ladder, the fence between the model and the profile of ADR-0390, and the rules version and recompute that ADR-0450's hypotheses share. It is written at the level of the model's inputs, projections, parameters and rules; it names no screen and no table layout.
 
-It leaves out what other specifications state. The event schemas and the projection storage and rebuild belong to SPC-0020. The skill graph's nodes, subtypes, levels and weights belong to SPC-0050. What the Director does with the estimates and obligations, the rapid-guess mark, the fatigue weight and the fatigue rule for blocks belong to ADR-0070. The attempt flow, the hint ladder, the estimate step and the inverse check as the player meets them belong to ADR-0080. How the report draws states, coverage, trends, the depth figures and «на пороге» (on the threshold) belongs to ADR-0180. The composing stream's counts belong to ADR-0230, the grouping stream's rows to ADR-0260, the plan phase and its labels to ADR-0270, the fact states and the Volley to ADR-0290, the Sources track's rows to ADR-0300, and the exclusion of school snapshots to ADR-0310.
+The reasons behind the values and rules here, such as the fatigue weight, the `pGuess` of 0.06, the 30-day stale cut, the budgets and the snapshot ceiling, stay in ADR-0060, ADR-0070, ADR-0210 and ADR-0250, because a specification states what the system does. It leaves out what other specifications state. The event schemas and the projection storage and rebuild belong to SPC-0020. The skill graph's nodes, subtypes, levels and weights belong to SPC-0050. What the Director does with the estimates and obligations, the rapid-guess mark, the fatigue weight and the fatigue rule for blocks belong to ADR-0070. The attempt flow, the hint ladder, the estimate step and the inverse check as the player meets them belong to ADR-0080. How the report draws states, coverage, trends, the depth figures and «на пороге» (on the threshold) belongs to ADR-0180. The composing stream's counts belong to ADR-0230, the grouping stream's rows to ADR-0260, the plan phase and its labels to ADR-0270, the fact states and the Volley to ADR-0290, the Sources track's rows to ADR-0300, and the exclusion of school snapshots to ADR-0310.
 
 ## Boundary
 
@@ -61,7 +61,7 @@ The refit tool `tools/fit-model.ts` doesn't exist during the MVP.
 
 ### Permitted dependencies
 
-The model lives in `src/engine/model/` and `src/engine/states/`. Code there does no input or output and makes no network call: it takes the log, the graph, the parameter file and the versions as arguments and returns projections, so one log under one set of versions always gives byte-identical projections. It reads no `school_snapshot_*` event, and the lint check `school_events_in_model` fails the build when it does. No route accepts an estimate or a state from a client, and only the server writes these projections. The Director and the report read the projections and never write them. No stream projection feeds `pKnow`, the fluency estimate or the "with help" estimate, and only an activated model version can change that, through `admittedForms`.
+The model lives in `src/engine/model/` and `src/engine/states/`. Code there does no input or output and makes no network call: it takes the log, the graph, the parameter file and the versions as arguments and returns projections, so one log under one set of versions always gives byte-identical projections. It reads no `school_snapshot_*` event, and the lint check `school_events_in_model` fails the build when it does. No route accepts an estimate or a state from a client, and only the server writes these projections. The Director and the report read the projections and never write them. No stream projection feeds `pKnow`, the fluency estimate or the "with help" estimate, and only an activated model version can change that, through `admittedForms`. The profile of ADR-0390 is a parent projection outside the knowledge model: it reads streams outside `admittedForms` and enters no estimate, state, probe or block. The lint check `model_reads_no_transfer` of ADR-0410 fails when code under `src/engine/model/` or `src/engine/states/` imports `first_exposures`. After the MVP, the lint check `hypothesis_reads_model` of ADR-0450 fails when `src/parent/hypotheses/` imports from `src/engine/model/`.
 
 ## Behaviour
 
@@ -78,13 +78,13 @@ Four versions govern every result, and every row of `node_estimates` and `node_s
 | Version | Where it lives | What changes it |
 | --- | --- | --- |
 | model | `content/model.vN.json` plus the prior row in use | `./tower model activate`, which writes `model_activated`, or a change of the school-group setting, which logs `settings_changed` |
-| rules | `RULES_VERSION` | a code change to the state or inference rules |
+| rules | `RULES_VERSION` | a code change to the state or inference rules; after the MVP, also a change to `content/hypothesis-measures.json` or to ADR-0390's `content/profile.dimensions.json` |
 | thresholds | the version in `content/versions.json` joined by `+` with the `seq` of the latest `fact_threshold_set`, or with `0` when the log holds none, such as `3+0` or `3+18204` | a threshold file change, a threshold change by a person or the monthly motor recalibration |
 | graph | `content/graph.yaml` | a graph edit |
 
 The prior row follows the latest school-group setting in the log, and SPC-0040 states where that setting lives. The model version is the file version plus the row, so a change of school group is a new model version and a full recompute, and the starting estimates of another group take effect only that way (REQ-0984). A change of school group passes no held-out gate and writes no `model_activated`. No date or clock value selects a row.
 
-A golden test runs fixed fixture logs through the rule engine and compares the states with stored results, and it fails, naming the fixture, when the states change and `RULES_VERSION` didn't. A new rules version triggers the full recompute at the next server start (REQ-0902).
+A golden test runs fixed fixture logs through the rule engine and compares the states with stored results, and it fails, naming the fixture, when the states change and `RULES_VERSION` didn't. A new rules version triggers the full recompute at the next server start (REQ-0902). After the MVP, the rules version covers the content of `content/hypothesis-measures.json` and `content/profile.dimensions.json`, and ADR-0450's check `hypothesis_measures_versioned` fails when that file or `content/profile.dimensions.json` changes and `RULES_VERSION` didn't.
 
 ### Observations
 
@@ -100,7 +100,7 @@ An `attempt_late` event is never an observation. An attempt with `interrupted: t
 
 Each observation carries a score `c` and a weight `w`. The score is 1 for right, 0.5 for partially right and 0 for wrong or «Не знаю» (I don't know), so a partially right answer counts as half right and half wrong (REQ-0918). The verdict `insufficient_correct` scores 1, `insufficient_partial` 0.5 and `false_insufficient` 0 (REQ-5424). The weight is 1, or 0.5 when ADR-0070's fatigue signal marks the attempt.
 
-A control fact is an observation of its node and updates its estimate (REQ-0930). A review task is an ordinary observation. A second attempt and a first attempt on which she opened the hint ladder are assisted, and they feed only the "with help" estimate and its shares by depth (REQ-0922). An inverse check makes no attempt assisted, so an unassisted first attempt made after a check feeds the "on her own" estimate from the first day, like any other first attempt of its subtype (REQ-5354).
+A control fact is an observation of its node and updates its estimate (REQ-0930). A review task is an ordinary observation, and ADR-0400 makes its retention check one too. A second attempt and a first attempt on which she opened the hint ladder are assisted, and they feed only the "with help" estimate and its shares by depth (REQ-0922). An inverse check makes no attempt assisted, so an unassisted first attempt made after a check feeds the "on her own" estimate from the first day, like any other first attempt of its subtype (REQ-5354).
 
 ### Streams of new forms
 
@@ -169,7 +169,7 @@ Each estimate carries these derived fields:
 
 - `uncertainty = entropy(pKnow) * 3 / (3 + nEff)`, where `entropy` is the binary entropy in bits and `nEff` is the sum of the node's observation weights, each times `2^(-age / H)` with the pair's current half-life. It falls as fresh observations accumulate, three fresh observations halve it, and a node with none keeps its full entropy (REQ-0988).
 - `lastSeen` is the date of the last unassisted first attempt, and `stale` is true when that date is more than 30 days old.
-- `nextReview` is `lastSeen` plus 1, 3, 7, 14 or 30 days after the 1st to 5th unassisted success in a row, and plus 30 days after each further success (REQ-0990). After an unassisted failure it is `lastSeen` plus 1 day (REQ-0992). A success is an observation with `c = 1`, and a partially right answer ends the run and counts as a failure.
+- `nextReview` is `lastSeen` plus 1, 3, 7, 14 or 30 days after the 1st to 5th unassisted success in a row, and plus 30 days after each further success (REQ-6842). After an unassisted failure it is `lastSeen` plus 1 day (REQ-0992). After the MVP, a retention check stands in for any review that falls while ADR-0400 holds the node, and the ladder resumes from the check's result, which counts as a success or a failure like any other observation (REQ-6842). The model still computes `nextReview` and `stale` for a held node, and the Director doesn't act on them. So a node that reaches «устойчиво» (stable) at its 4th success gets ADR-0400's check 28 to 35 game days after its latest meeting, in place of the review 14 days after `lastSeen`. A success is an observation with `c = 1`, and a partially right answer ends the run and counts as a failure.
 - `confidence` is high for a full block within 14 days, medium for a full block 15 to 30 days old and for a probe or an island check within 30 days, and low for an inferred state or evidence older than 30 days.
 
 ### States from explicit rules
@@ -211,7 +211,7 @@ Each run writes `node_obligations`, which holds seven kinds: open escalations, b
 
 The full recompute at the end of an adventure writes one snapshot of every node estimate and state for the game day of that adventure, keyed by the game day and the four versions (REQ-0906). A later adventure on the same game day overwrites that day's row, and a game day without play gets no row.
 
-When a version changes, the full recompute writes new rows for every past play day under the new versions and keeps every row of the earlier versions for comparison (REQ-0904). It deletes only rows of the active versions before it rewrites them. When `node_snapshots` exceeds 2 million rows, the model reports `snapshot_ceiling` once in `./tower status` and deletes nothing.
+When a version changes, the full recompute writes new rows for every past play day under the new versions and keeps every row of the earlier versions for comparison (REQ-0904). It deletes only rows of the active versions before it rewrites them. After the MVP, the server's full recompute then runs ADR-0450's rebuild of `hypothesis_days` under the same four versions, which rewrites its rows the same way and counts its hold only over play days after the day of the change. Code under `src/engine/model/` and `src/engine/states/` doesn't write `hypothesis_days`. When `node_snapshots` exceeds 2 million rows, the model reports `snapshot_ceiling` once in `./tower status` and deletes nothing.
 
 ### Scope of the model and its priors
 
@@ -233,6 +233,9 @@ A new model version replaces the active one only through `./tower model activate
 | The per-node update fails during play | `node_update_failed`: the Director keeps the node's last estimate for the rest of the adventure, and the full recompute at its end replaces it. |
 | The rule engine's states change and `RULES_VERSION` didn't | The golden test fails and names the fixture. |
 | Code under `src/engine/model/` or `src/engine/states/` reads a `school_snapshot_*` event | The lint check `school_events_in_model` fails the build. |
+| Code under `src/engine/model/` or `src/engine/states/` imports `first_exposures` | The lint check `model_reads_no_transfer` of ADR-0410 fails the build. |
+| After the MVP, code under `src/parent/hypotheses/` imports from `src/engine/model/` | The lint check `hypothesis_reads_model` of ADR-0450 fails the build. |
+| After the MVP, `content/hypothesis-measures.json` or `content/profile.dimensions.json` changes and `RULES_VERSION` didn't | The check `hypothesis_measures_versioned` fails the build. |
 | An attempt's `forms` holds a form outside `admittedForms` | The attempt stays out of every estimate, state, probe and block, the fluency and "with help" estimates included, and feeds its stream. |
 | A lesson mark falls inside a run of 5 observations | No block forms across it; the block completes only after 5 graded observations follow the mark. |
 | The `node_snapshots` table is deleted | A full recompute rebuilds the active versions' rows; earlier versions' rows come back only from the database snapshots or an old checkout. |
@@ -240,4 +243,14 @@ A new model version replaces the active one only through `./tower model activate
 
 ## Open review findings
 
-The reasons behind the values and rules here, such as the fatigue weight, the `pGuess` of 0.06, the 30-day stale cut, the budgets and the snapshot ceiling, stay in ADR-0060, ADR-0070, ADR-0210 and ADR-0250, because a specification states what the system does.
+The reviews of 2026-09-28 found these gaps. Each stays open because it asks for a rule no decision in force sets, and choosing one here would make a decision in a specification.
+
+- The surplus and unanswerable subtypes: the Observations list drops an attempt whose `forms` holds an unadmitted form from every estimate, while the paragraph on these subtypes says each keeps its own estimate with `pGuess` 0.06. Whether `node_estimates` holds a BKT estimate for `T1.surplus` during the MVP, or only its prior, needs ADR-0210 or ADR-0250 to say.
+- `lastSeen` is the date of the last unassisted first attempt, as ADR-0060 words it, and that wording doesn't say whether a warm-up or a rapid guess moves it. Narrowing it to the last observation of the "on her own" estimate needs an amendment to ADR-0060.
+- The time of an answer after a plan: ADR-0270 and REQ-5646 count the answer as one after no phase, and no decision says whether the time from `item_shown` to `plan_submitted` stays out of the fluency estimate and the block median.
+- A change of school group is a new model version that passes no held-out gate, while REQ-0980 lets a new model version replace the current one only through the gate. ADR-0060 states both; reconciling them needs an amendment to ADR-0060 or an exception in REQ-0980.
+- The `estimate` stream names its forgetting, priors, `pSlip` and `pGuess`, and REQ-5318 names no learning rates, so whether its feedback and practice steps run is unset.
+- After a new subtype is admitted, the ordinary subtypes' weights are scaled, and the full block's coverage of "every subtype of weight 0.2 or more" doesn't say whether it reads the graph weight or the scaled one. This applies only after the MVP.
+- `nEff` on a subtype row: ADR-0060 defines it as the sum of the node's observation weights with the node's half-life, and no decision says whether a row per node and subtype sums that subtype's observations alone or the whole node's, which give different numbers.
+- A retention check on which she opened the hint ladder: ADR-0400 counts it as a wrong retention observation, while this specification makes it an assisted attempt, which moves neither `lastSeen` nor the review ladder. No decision says whether the ladder treats it as an unassisted failure dated at the check, so the date of the next review after it is unset.
+- Rejected: a reviewer asked for a reason or a decision next to rules such as "No route accepts an estimate or a state from a client". A specification states what the system does, and the reasons stay in the decisions the Scope names.
