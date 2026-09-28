@@ -26,7 +26,9 @@ prototype.
 <principle name="project_in_english">
 Write the project itself in English: code, comments, commit messages and
 project documents. The owner asked for this on 2026-09-26. Text the player
-sees is in Russian only for now. Build the game so that English and Dutch can
+sees is in Russian only for now, with one exception the owner added on
+2026-09-28: the Dutch bridge's 30 to 50 keywords, kept as data beside the
+Russian text and approved by the parent word by word (REQ-5080). Build the game so that English and Dutch can
 be added later and the player can switch between the three languages: keep
 every player-facing string out of the code in a per-language file, because a
 string hard-coded in a component has to be found and moved before a second
