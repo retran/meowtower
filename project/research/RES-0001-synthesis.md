@@ -19,7 +19,7 @@ Each record was moved from one range of the draft specification on 2026-09-26. T
 
 <!-- meow-flow index -->
 
-40 researchs in all: 40 approved.
+54 researchs in all: 54 approved.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
@@ -63,6 +63,20 @@ Each record was moved from one range of the draft specification on 2026-09-26. T
 | [RES-3500](RES-3500-design-screens-and-prototype.md) | The owner's design draws every screen of the game and of the Parent Room for an iPad in landscape, 1180 by 820. | approved |
 | [RES-3900](RES-3900-reconciling-approved-research.md) | The approved research contradicts itself in seven places, and this record picks one side of each. | approved |
 | [RES-3910](RES-3910-local-open-source-judge.md) | An open model can take Jev's checks on the family Mac, but it has to run as a native macOS process beside the containers, because no container runtime on macOS that I read about gives a Linux container the Mac's GPU through Metal. | approved |
+| [RES-4000](RES-4000-addendum-1-cross-cutting-rules.md) | The owner's addendum 1 of 2026-09-28 keeps three approved rules as they stand: her screens show no clock, only unassisted first attempts measure, and the Master sees no maths. | approved |
+| [RES-4010](RES-4010-hint-ladder.md) | The owner's addendum 1 of 2026-09-28 changes the hint ladder in five ways, and each one overrides the approved record where they disagree. | approved |
+| [RES-4020](RES-4020-compose-a-word-problem.md) | The owner's addendum of 2026-09-28 adds «Сплети загадку»: the player writes a word problem for a given expression or diagram, a hosted model parses it without seeing the target, the engine compares the parse with the target by structure and value, and a familiar paraphrases the parse for her to confirm. | approved |
+| [RES-4030](RES-4030-estimate-and-inverse-check.md) | The owner's addendum 1 of 2026-09-28 adds two things to calculation tasks: an estimate from four options before the exact answer in about 15 % of scored tasks of named nodes, and a free button that lets the player check her answer by the inverse operation before she submits it. | approved |
+| [RES-4040](RES-4040-surplus-and-missing-data.md) | The owner's addendum 1 of 2026-09-28 adds word problems with a number the answer doesn't need («ложная нить», the false thread) and problems that can't be answered because a number is missing («оборванная нить», the broken thread). | approved |
+| [RES-4050](RES-4050-rational-grouping.md) | The owner's addendum 1 of 2026-09-28 adds «Короткая петля» (the short loop): a task shows an expression with a convenient grouping, such as `25 * 37 * 4`, the player links the convenient numbers with taps, then enters the answer. | approved |
+| [RES-4060](RES-4060-solution-plan-cards.md) | The owner's addendum 1 adds «Выкройка» (the pattern), a solution plan the player lays out from question cards before she solves a compound word problem. | approved |
+| [RES-4070](RES-4070-keepers-knots-puzzles.md) | The owner's addendum 1 of 2026-09-28 adds «Узелки Смотрителя» (the Keeper's knots) to the MVP: a voluntary branch of maths circle puzzles on the Keeper's Diary pages, outside the adventure's slots, the knowledge model and the day's budget, fed by a curated bank of about 50 puzzles over 11 themes with five interactive widgets. | approved |
+| [RES-4080](RES-4080-cito-m7-e7-preparation.md) | Cito's own documentation, read on 2026-09-28, confirms ten of the twelve claims the owner's addendum 1 makes about the Leerling in beeld tests M7 and E7. | approved |
+| [RES-4090](RES-4090-sources-track-studievaardigheden.md) | The owner's addendum of 2026-09-28 adds «Карта Смотрителя» (the Keeper's Map), a Sources track of five nodes, I1 to I5, that measures reading tables, charts, timetables, maps and two sources together. | approved |
+| [RES-4100](RES-4100-school-learning-system-snapshots.md) | The owner's addendum of 2026-09-28 adds, after the MVP, snapshots of the pupil overview from the school's learning system: each file is kept by its hash and never changed, parsed into events that carry the parser's version, and corrected only by new events. | approved |
+| [RES-4110](RES-4110-silent-play.md) | The owner's addendum of 2026-09-28 makes silence the normal state of the game: sound is off by default, music and effects are turned on only in the parent's settings, and every sound event has a visual equivalent that works alone. | approved |
+| [RES-4120](RES-4120-engagement-and-ownership.md) | Most of section 12 of the owner's addendum can be built on the approved design without touching the measurement: story choices, scenes without tasks, a recurring cast, protected running jokes, rereading, hidden details, rituals and the parent's checklist all live on the Master's side of the split in ADR-0110, where the Director still decides every trial and outcome. | approved |
+| [RES-4130](RES-4130-parent-sandbox.md) | The parent's sandbox fits the code as it stands at commit 47c0a7b. | approved |
 <!-- /meow-flow index -->
 
 ## Sources
