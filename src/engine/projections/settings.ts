@@ -10,6 +10,8 @@ type Db = Database.Database;
 
 const parentSettings: Projection = {
   name: "parent_settings",
+  class: "game",
+  module: import.meta.url,
   table: "parent_settings",
   create: `CREATE TABLE parent_settings (
     key TEXT PRIMARY KEY,

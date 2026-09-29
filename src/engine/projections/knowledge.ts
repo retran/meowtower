@@ -31,6 +31,8 @@ export function useKnowledgeModel(next: KnowledgeModel | null): void {
 
 const nodeSnapshots: Projection = {
   name: "node_snapshots",
+  class: "knowledge",
+  module: import.meta.url,
   table: "node_snapshots",
   versioned: true,
   create: `CREATE TABLE node_snapshots (

@@ -1,11 +1,13 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   checkEventsSqlConfined,
   checkExplainCacheConfined,
   checkGameProjectionImports,
+  type ProjectionEntry,
   checkNoKeyInClient,
   checkNoPush,
   checkNoVerdictWords,
@@ -154,6 +156,16 @@ describe("REQ-2414: no answer reply says «верно» or «неверно»", 
 
 describe("REQ-2224: no game projection reaches the knowledge model, the Director or the answer check", () => {
   const P = "src/engine/projections";
+  // A fixture projection is registered through the URL of its own module.
+  const entries = (
+    root: string,
+    ...list: [string, "game" | "knowledge"][]
+  ): ProjectionEntry[] =>
+    list.map(([file, cls]) => ({
+      name: file,
+      class: cls,
+      module: pathToFileURL(join(root, P, file)).href,
+    }));
   it("passes this repository", () => {
     expect(checkGameProjectionImports(process.cwd())).toEqual([]);
   });
@@ -162,7 +174,9 @@ describe("REQ-2224: no game projection reaches the knowledge model, the Director
       [`${P}/quests.ts`]: 'import { estimate } from "../model/estimate.js";\n',
       "src/engine/model/estimate.ts": "export const estimate = 1;\n",
     });
-    expect(checkGameProjectionImports(root)).toEqual([
+    expect(
+      checkGameProjectionImports(root, entries(root, ["quests.ts", "game"])),
+    ).toEqual([
       {
         check: "game_projection_imports",
         file: join(P, "quests.ts"),
@@ -177,7 +191,10 @@ describe("REQ-2224: no game projection reaches the knowledge model, the Director
         'export { pick } from "../director/pick.js";\n',
       "src/engine/director/pick.ts": "export const pick = 1;\n",
     });
-    const [found] = checkGameProjectionImports(root);
+    const [found] = checkGameProjectionImports(
+      root,
+      entries(root, ["rewards.ts", "game"]),
+    );
     expect(found?.match).toBe(
       [
         join(P, "rewards.ts"),
@@ -191,14 +208,18 @@ describe("REQ-2224: no game projection reaches the knowledge model, the Director
       [`${P}/familiars.ts`]: 'import { state } from "../states/rules.js";\n',
       "src/engine/states/rules.ts": "export const state = 1;\n",
     });
-    expect(checkGameProjectionImports(root)).toHaveLength(1);
+    expect(
+      checkGameProjectionImports(root, entries(root, ["familiars.ts", "game"])),
+    ).toHaveLength(1);
   });
   it("names an import of the answer check", () => {
     const root = repo({
       [`${P}/outcomes.ts`]: 'import { check } from "../../shared/answer.js";\n',
       "src/shared/answer.ts": "export const check = 1;\n",
     });
-    expect(checkGameProjectionImports(root)).toHaveLength(1);
+    expect(
+      checkGameProjectionImports(root, entries(root, ["outcomes.ts", "game"])),
+    ).toHaveLength(1);
   });
   it("passes a type-only import and a knowledge projection that reads the model", () => {
     const root = repo({
@@ -208,7 +229,12 @@ describe("REQ-2224: no game projection reaches the knowledge model, the Director
         'import { estimate } from "../model/estimate.js";\n',
       "src/engine/model/estimate.ts": "export const estimate = 1;\n",
     });
-    expect(checkGameProjectionImports(root)).toEqual([]);
+    expect(
+      checkGameProjectionImports(
+        root,
+        entries(root, ["threads.ts", "game"], ["knowledge.ts", "knowledge"]),
+      ),
+    ).toEqual([]);
   });
 });
 

@@ -129,6 +129,8 @@ describe("the flat views fold in the log's transaction", () => {
     const failing = {
       name: "failing",
       table: "failing_view",
+      class: "game" as const,
+      module: import.meta.url,
       create: "CREATE TABLE failing_view (x INTEGER) STRICT",
       apply: () => {
         throw new Error("projection failed");

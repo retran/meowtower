@@ -13,6 +13,13 @@ type Db = Database.Database;
 
 export interface Projection {
   name: string;
+  /**
+   * `game` projections may not reach the knowledge model, the Director or the
+   * answer check; the lint verb reads this field (REQ-2224, ADR-0020).
+   */
+  class: "game" | "knowledge";
+  /** The URL of the file that defines this entry: `import.meta.url`. */
+  module: string;
   table: string;
   /** The table's definition, used to create it and to rebuild it when missing. */
   create: string;

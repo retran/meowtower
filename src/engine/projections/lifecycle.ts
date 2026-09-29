@@ -22,6 +22,8 @@ export const FINISHED = ["complete", "wrapped_up"] as const;
 
 const adventures: Projection = {
   name: "adventures",
+  class: "game",
+  module: import.meta.url,
   table: "adventures",
   create: `CREATE TABLE adventures (
     adventure_id TEXT PRIMARY KEY,
@@ -47,6 +49,8 @@ const adventures: Projection = {
 
 const sessions: Projection = {
   name: "sessions",
+  class: "game",
+  module: import.meta.url,
   table: "sessions",
   create: `CREATE TABLE sessions (
     session_id TEXT PRIMARY KEY,

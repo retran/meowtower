@@ -17,9 +17,9 @@ After this task, every entry in the projection registry declares its class, `gam
 ## Acceptance criteria
 
 1. Given the registry, when a test reads every entry, then each has a class. `adventures`, `sessions`, `items_view`, `attempts_view` and `parent_settings` are `game`, and `node_snapshots` is `knowledge`, as SPC-0020's lists give them. Closed by: a unit test over `PROJECTIONS`.
-2. Given each entry, when the check runs, then it finds the entry's module through the entry's `module` field, the file's `import.meta.url`. A module holding entries of both classes fails as `projection_class_mixed`, because the import rule works per module, and a mixed one would either exempt its `game` entry or put its `knowledge` entry under the rule. A module whose entries share one class, or a helper module with no entries, doesn't fall under it. Closed by: the static check's test with a mixed fixture module.
+2. Given each entry, when the check runs, then it finds the entry's module through the entry's `module` field, the file's `import.meta.url`. A module holding entries of both classes fails as `projection_class_mixed`, because the import rule works per module, and a mixed one would either exempt its `game` entry or put its `knowledge` entry under the rule. A module whose entries share one class, or a helper module with no entries, doesn't fall under it. Every registered entry's `module` equals the URL of the file that defines it, because an entry marked with another file's URL would send the import rule down the wrong file and exempt a `game` projection. Closed by: the static check's test with a mixed fixture module, and a test that imports each projection module's own export and compares each entry's `module` with that module's URL.
 3. Given a fixture `game` projection that imports a helper which imports `src/engine/model/`, when the check runs over the fixture, then `game_projection_imports` fails, naming the entry and the chain through the helper. The same holds for a fixture that imports `src/engine/projections/versions.ts` and for one that imports `src/server/versions.ts`, the two modules that read the versions. Declared `knowledge`, all three fixtures pass. Closed by: the static check's test with these fixtures.
-4. Given a fixture projection of either class whose code names `llm_log` in an identifier or a string, when the check runs over the fixture, then `projection_reads_llm_log` fails, naming the file; a comment that names it doesn't count. Closed by: the same test.
+4. Given a fixture projection of either class whose code names `llm_log` in an identifier or a string, when the check runs over the fixture, then `projection_reads_llm_log` fails, naming the file; a comment that names it doesn't count. The rule follows the runtime imports of the entry's module, as the import rule does, because a query kept in a shared helper such as `statements.ts` would otherwise pass while SPC-0020 says no projection reads `llm_log`; a fixture whose helper names it fails, naming the helper and the chain. Closed by: the same test.
 5. Given the check's source, when the test reads it, then it names no file under `src/engine/projections/` apart from the forbidden target `versions.ts`, so no list of projection modules like today's `NOT_GAME` remains. `FORBIDDEN_FOR_GAME` stays, with both `versions.ts` modules added, because it names what a `game` projection mustn't reach, not which projections are `game`. Closed by: the same test.
 
 ## What to do
@@ -40,13 +40,6 @@ TSK-0250, because it built the registry. TSK-0270, because it built the import c
 ## Evidence
 
 Not yet.
-
-## Open review findings
-
-An agent reviewed this record; a person has not. Neither finding is fixed, because each changes the approved acceptance criteria and only the person who approved the task can change those.
-
-1. Criterion 2 has no evidence that a real entry's `module` names the file that defines it; `tests/unit/projection-class.test.ts` builds its `module` values by hand and checks only the path's shape. An entry in `lifecycle.ts` marked with `flat-views.ts` would send the import rule down the wrong file and exempt a `game` projection. Fix: add that every registered entry's `module` equals the URL of its defining file, closed by a test that imports each module's own export.
-2. Criterion 4 does not say whether `projection_reads_llm_log` scans only modules that hold entries or everything they import at run time. A query in a shared helper such as `statements.ts` would pass a check that scans entry modules only, against SPC-0020's "No projection reads `llm_log`". Fix: say which, with the reason, and add a helper fixture if the rule follows imports.
 
 ## Left alone
 

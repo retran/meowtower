@@ -78,6 +78,29 @@ describe("REQ-2224: each registry entry declares its class", () => {
   });
 });
 
+describe("REQ-2224: each entry's module is the file that defines it", () => {
+  it("names the defining file for every registered entry", async () => {
+    const own = {
+      "flat-views": await import("../../src/engine/projections/flat-views.js"),
+      lifecycle: await import("../../src/engine/projections/lifecycle.js"),
+      settings: await import("../../src/engine/projections/settings.js"),
+      knowledge: await import("../../src/engine/projections/knowledge.js"),
+    };
+    const defined = new Map<string, string>();
+    for (const [file, mod] of Object.entries(own)) {
+      const url = pathToFileURL(join(process.cwd(), P, `${file}.ts`)).href;
+      for (const value of Object.values(mod))
+        for (const p of [value].flat() as { name?: string }[])
+          if (p && typeof p === "object" && p.name) defined.set(p.name, url);
+    }
+    for (const p of PROJECTIONS)
+      expect((p as { module?: string }).module, p.name).toBe(
+        defined.get(p.name),
+      );
+    expect(defined.size).toBeGreaterThanOrEqual(PROJECTIONS.length);
+  });
+});
+
 describe("REQ-2224: a module that mixes classes fails", () => {
   it("names projection_class_mixed for one module with a game and a knowledge entry", () => {
     const root = repo({ [`${P}/both.ts`]: "export const x = 1;\n" });
@@ -157,6 +180,17 @@ describe("REQ-2224: no projection's code names llm_log", () => {
         join(P, "text.ts"),
       ]);
     }
+  });
+  it("names a helper that a projection imports and that names it", () => {
+    const root = repo({
+      [`${P}/uses.ts`]: 'import { q } from "./helper.js";\n',
+      [`${P}/helper.ts`]: 'export const q = "SELECT 1 FROM llm_log";\n',
+    });
+    const found = run(root, [entry(root, "uses", "game")]).filter(
+      (f) => f.check === "projection_reads_llm_log",
+    );
+    expect(found.map((f) => f.file)).toEqual([join(P, "helper.ts")]);
+    expect(found[0]?.match).toContain(join(P, "uses.ts"));
   });
   it("does not count a comment", () => {
     const root = repo({

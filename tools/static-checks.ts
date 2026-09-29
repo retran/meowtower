@@ -1,6 +1,8 @@
 // Static checks of ADR-0190's verify group 1, run by the lint verb.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
+import { fileURLToPath } from "node:url";
+import { PROJECTIONS } from "../src/engine/projections/registry.js";
 
 export interface Finding {
   check: string;
@@ -181,9 +183,10 @@ export const FORBIDDEN_FOR_GAME = [
   "src/engine/states/",
   "src/engine/director/",
   "src/shared/answer.ts",
+  // The two modules that read the model, threshold and graph versions.
+  "src/engine/projections/versions.ts",
+  "src/server/versions.ts",
 ];
-/** Projection modules that aren't game projections: the knowledge ones and the registry, which imports every projection by design. */
-const NOT_GAME = new Set(["knowledge.ts", "registry.ts"]);
 
 function runtimeImports(path: string): string[] {
   const text = readFileSync(path, "utf8");
@@ -199,41 +202,90 @@ function runtimeImports(path: string): string[] {
   return found;
 }
 
-export function checkGameProjectionImports(root: string): Finding[] {
-  const dir = join(root, "src", "engine", "projections");
-  if (!existsSync(dir)) return [];
-  const games = readdirSync(dir)
-    .filter((f) => f.endsWith(".ts") && !NOT_GAME.has(f))
-    .map((f) => join(dir, f));
+/** What the check reads of a registry entry, so a fixture can stand in for one. */
+export interface ProjectionEntry {
+  name: string;
+  class: "game" | "knowledge";
+  module: string;
+}
+
+/** The source without its comments, so a comment that names a table doesn't count. */
+function withoutComments(text: string): string {
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/(^|[^:])\/\/.*$/gm, "$1");
+}
+
+/**
+ * Walks the runtime imports from `start`, breadth-first so the chain reported
+ * is a shortest one, and returns the chain to the first module `hit` accepts.
+ */
+function chainTo(
+  start: string,
+  hit: (path: string) => boolean,
+): string[] | undefined {
+  const from = new Map<string, string | null>([[start, null]]);
+  const queue = [start];
+  while (queue.length) {
+    const at = queue.shift() as string;
+    if (hit(at)) {
+      const chain: string[] = [];
+      for (let p: string | null = at; p; p = from.get(p) ?? null)
+        chain.unshift(p);
+      return chain;
+    }
+    for (const next of runtimeImports(at))
+      if (!from.has(next)) {
+        from.set(next, at);
+        queue.push(next);
+      }
+  }
+  return undefined;
+}
+
+export function checkGameProjectionImports(
+  root: string,
+  projections: readonly ProjectionEntry[] = PROJECTIONS,
+): Finding[] {
   const forbidden = (path: string): boolean => {
     const rel = relative(root, path).split(sep).join("/");
     return FORBIDDEN_FOR_GAME.some((f) =>
       f.endsWith("/") ? rel.startsWith(f) : rel === f,
     );
   };
+  const namesLlmLog = (path: string): boolean =>
+    /\bllm_log\b/.test(withoutComments(readFileSync(path, "utf8")));
+  const byModule = new Map<string, ProjectionEntry[]>();
+  for (const entry of projections) {
+    const path = fileURLToPath(entry.module);
+    byModule.set(path, [...(byModule.get(path) ?? []), entry]);
+  }
   const findings: Finding[] = [];
-  for (const start of games) {
-    // Breadth-first, so the chain reported is a shortest one.
-    const from = new Map<string, string | null>([[start, null]]);
-    const queue = [start];
-    while (queue.length) {
-      const at = queue.shift() as string;
-      if (forbidden(at)) {
-        const chain: string[] = [];
-        for (let p: string | null = at; p; p = from.get(p) ?? null)
-          chain.unshift(relative(root, p));
+  for (const [start, entries] of byModule) {
+    const classes = new Set(entries.map((e) => e.class));
+    if (classes.size > 1)
+      findings.push({
+        check: "projection_class_mixed",
+        file: relative(root, start),
+        match: entries.map((e) => `${e.name}: ${e.class}`).join(", "),
+      });
+    if (classes.has("game")) {
+      const chain = chainTo(start, forbidden);
+      if (chain)
         findings.push({
           check: "game_projection_imports",
           file: relative(root, start),
-          match: chain.join(" -> "),
+          match: chain.map((p) => relative(root, p)).join(" -> "),
         });
-        break;
-      }
-      for (const next of runtimeImports(at))
-        if (!from.has(next)) {
-          from.set(next, at);
-          queue.push(next);
-        }
+    }
+    const chain = chainTo(start, namesLlmLog);
+    if (chain) {
+      const files = chain.map((p) => relative(root, p));
+      findings.push({
+        check: "projection_reads_llm_log",
+        file: files[files.length - 1] as string,
+        match: files.join(" -> "),
+      });
     }
   }
   return findings;
@@ -263,7 +315,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
-      "game_projection_imports followed the runtime imports of each game projection in src/engine/projections to the knowledge model, the Director and the answer check; " +
+      "game_projection_imports followed the runtime imports of each game projection in the registry to the knowledge model, the Director, the answer check and the version modules, and projection_reads_llm_log followed every projection's runtime imports for llm_log; " +
       "explain_cache searched the code outside src/server/explain, migrations and tests for the explanation cache",
   );
   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);

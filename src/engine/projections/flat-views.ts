@@ -11,6 +11,8 @@ type P = Record<string, unknown>;
 
 const itemsView: Projection = {
   name: "items_view",
+  class: "game",
+  module: import.meta.url,
   table: "items_view",
   create: `CREATE TABLE items_view (
     item_id TEXT PRIMARY KEY,
@@ -62,6 +64,8 @@ const itemsView: Projection = {
 
 const attemptsView: Projection = {
   name: "attempts_view",
+  class: "game",
+  module: import.meta.url,
   table: "attempts_view",
   create: `CREATE TABLE attempts_view (
     item_id TEXT NOT NULL,
