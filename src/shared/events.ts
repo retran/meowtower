@@ -456,7 +456,7 @@ const breakDefs: EventDef[] = [
     v: 1,
     schema: obj({
       reason: z
-        .enum(["background", "idle", "leave"])
+        .enum(["background", "idle", "leave", "lease_expired"])
         .describe("why play paused"),
     }),
   },
@@ -577,12 +577,22 @@ const sessionDefs: EventDef[] = [
     }),
   },
   {
+    type: "attempt_late",
+    v: 1,
+    schema: obj({
+      itemId: id("the item answered"),
+      raw: z
+        .string()
+        .describe("the answer as entered, from a device that lost the lease"),
+    }),
+  },
+  {
     type: "session_ended",
     v: 1,
     schema: obj({
       sessionId: id("the session"),
       reason: z
-        .enum(["leave", "background", "idle"])
+        .enum(["leave", "background", "idle", "lease_expired"])
         .describe("why the session ended"),
     }),
   },

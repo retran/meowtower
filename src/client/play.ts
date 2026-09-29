@@ -4,7 +4,14 @@
 // (REQ-2430), and pauses the adventure on background (REQ-2406) and on idle
 // (REQ-2408, REQ-2410). ADR-0150's epic replaces the screen.
 import type { AnswerIn, AnswerOut, Room } from "../shared/api.js";
-import { answer, nextPacket, pause, startSession } from "./api.js";
+import {
+  answer,
+  heartbeat,
+  MOVED,
+  nextPacket,
+  pause,
+  startSession,
+} from "./api.js";
 import { act, button, el, heading, link, status } from "./controls.js";
 import type { Screen } from "./screens.js";
 import { t } from "./strings.js";
@@ -13,6 +20,9 @@ import { t } from "./strings.js";
 export const IDLE_OUTSIDE_TASK_MS = 90 * 1000;
 /** With a task open the limit is longer, because long thought is normal (REQ-2410). */
 export const IDLE_IN_TASK_MS = 5 * 60 * 1000;
+
+/** The holder tells the server it is alive this often; 45 seconds without one ends the lease. */
+export const HEARTBEAT_MS = 15 * 1000;
 
 /** What each InputSpec kind lets into the field; everything else is refused. */
 const ACCEPTS: Record<Room["input"]["kind"], RegExp> = { integer: /^\d*$/ };
@@ -34,9 +44,13 @@ export const playScreen: Screen = {
     let sessionId: string | null = null;
     let taskOpen = false;
     let idle: ReturnType<typeof setTimeout> | undefined;
+    let beat: ReturnType<typeof setInterval> | undefined;
+    let events: EventSource | undefined;
 
     const detach = (): void => {
       clearTimeout(idle);
+      clearInterval(beat);
+      events?.close();
       document.removeEventListener("visibilitychange", onVisibility);
       for (const type of ["keydown", "pointerdown", "input"])
         document.removeEventListener(type, onActivity, true);
@@ -72,11 +86,47 @@ export const playScreen: Screen = {
       delete section.dataset["busy"];
     };
 
+    /** Another device holds the adventure: nothing here can play or answer any more (REQ-0222). */
+    function viewOnly(): void {
+      sessionId = null;
+      taskOpen = false;
+      clearTimeout(idle);
+      clearInterval(beat);
+      events?.close();
+      if (gone()) return;
+      draw(
+        status(t("ui.play.leaseMoved")),
+        el(
+          "nav",
+          { className: "actions" },
+          button("ui.play.continueHere", "play-continue-here", begin),
+          link("ui.nav.back", "back", "/"),
+        ),
+      );
+    }
+
+    /** Keeps the lease with a heartbeat and hears when it moves. */
+    function hold(id: string): void {
+      clearInterval(beat);
+      events?.close();
+      beat = setInterval(() => {
+        void heartbeat(id).then((state) => {
+          if (state === MOVED && sessionId === id) viewOnly();
+        });
+      }, HEARTBEAT_MS);
+      events = new EventSource(`/api/session/${encodeURIComponent(id)}/events`);
+      events.addEventListener("lease_moved", () => {
+        if (sessionId === id) viewOnly();
+      });
+    }
+
     async function stop(reason: Reason): Promise<void> {
       if (!sessionId) return;
       const id = sessionId;
       sessionId = null;
       clearTimeout(idle);
+      clearInterval(beat);
+      events?.close();
       await pause(id, reason);
       if (reason === "leave") {
         location.hash = "#/";
@@ -104,6 +154,7 @@ export const playScreen: Screen = {
       section.dataset["busy"] = "1";
       sessionId = await startSession();
       if (!sessionId) return refused("ui.play.refused");
+      hold(sessionId);
       await advance();
     }
 
@@ -112,6 +163,7 @@ export const playScreen: Screen = {
       section.dataset["busy"] = "1";
       const packet = await nextPacket(sessionId);
       if (gone()) return;
+      if (packet === MOVED) return viewOnly();
       if (!packet) return refused("ui.play.failed");
       if (packet.kind === "room") drawRoom(packet);
       else {
@@ -193,6 +245,7 @@ export const playScreen: Screen = {
         });
         sending = false;
         if (gone()) return;
+        if (reply === MOVED) return viewOnly();
         if (!reply) {
           note.textContent = t("ui.play.failed");
           return;

@@ -14,12 +14,15 @@ export function createApp({
   stream = createStream(),
   explainer,
   onSessionEnded,
+  sweepLeasesMs,
 }: {
   db: Db;
   now?: () => number;
   stream?: Stream;
   explainer?: (itemId: string) => Promise<string>;
   onSessionEnded?: (sessionId: string) => void;
+  /** Checks the lease this often, so a silent holder's pause reaches the log with no request; tests leave it off. */
+  sweepLeasesMs?: number;
 }): Hono {
   const app = new Hono();
   // A failed log write replies 503 on every route and reaches the parent
@@ -46,6 +49,7 @@ export function createApp({
     stream,
     ...(explainer ? { explainer } : {}),
     ...(onSessionEnded ? { onSessionEnded } : {}),
+    ...(sweepLeasesMs ? { sweepLeasesMs } : {}),
   });
   return app;
 }

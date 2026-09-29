@@ -33,6 +33,8 @@ import {
   BreakOut,
   End,
   ExplainOut,
+  HeartbeatIn,
+  HeartbeatOut,
   HintIn,
   HintOut,
   ItemActionIn,
@@ -78,6 +80,8 @@ export interface PlayOptions {
   explainer?: (itemId: string) => Promise<string>;
   /** Runs after a session's end is committed; the server takes a snapshot then (REQ-2526). */
   onSessionEnded?: (sessionId: string) => void;
+  /** Sweeps for an expired lease this often; without it only a request does. */
+  sweepLeasesMs?: number;
 }
 
 interface ItemShown {
@@ -178,12 +182,94 @@ function answerReply(
   };
 }
 
+/** The lease runs out after this long without a heartbeat or any request from its holder (SPC-0030). */
+export const LEASE_MS = 45_000;
+
+interface Lease {
+  deviceId: string;
+  sessionId: string;
+  beatAt: number;
+}
+
 export function mountPlay(
   app: Hono,
   db: Db,
-  { now, stream, explainer, onSessionEnded }: PlayOptions,
+  { now, stream, explainer, onSessionEnded, sweepLeasesMs }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
+
+  // One device holds the adventure at a time. The lease is kept in memory and
+  // taken only by a tap (`session/start`); every change to it is in the log
+  // as `device_lease_taken` and the pause and end it causes.
+  let lease: Lease | null = null;
+  let tick = 0;
+
+  /** Ends a session as the server, the way a leave does, with the reason `lease_expired`. */
+  function endSession(sessionId: string): void {
+    const session = sessionRow(db, sessionId);
+    if (!session || session.state === "ended") return;
+    const finished = session.adventureId
+      ? ["complete", "wrapped_up"].includes(
+          adventureState(db, session.adventureId)?.state ?? "",
+        )
+      : false;
+    const at = session.adventureId ? { adventureId: session.adventureId } : {};
+    const events: NewEvent[] = [];
+    if (session.adventureId && !finished)
+      events.push({
+        type: "adventure_paused",
+        v: 1,
+        payload: { reason: "lease_expired" },
+        origin: "server",
+        sessionId,
+        ...at,
+      });
+    events.push({
+      type: "session_ended",
+      v: 1,
+      payload: { sessionId, reason: "lease_expired" },
+      origin: "server",
+      sessionId,
+      ...at,
+    });
+    appendEvents(db, events);
+    onSessionEnded?.(sessionId);
+  }
+
+  /** Ends the holder's session when 45 seconds have passed without a sign of life. */
+  function expireLease(): void {
+    if (!lease) return;
+    tick = now();
+    if (tick - lease.beatAt < LEASE_MS) return;
+    const held = lease;
+    lease = null;
+    endSession(held.sessionId);
+  }
+
+  /** True when another device holds the lease; the holder's own request keeps it alive. */
+  function displaced(deviceId: string): boolean {
+    if (!lease) return false;
+    if (lease.deviceId !== deviceId) return true;
+    lease.beatAt = tick;
+    return false;
+  }
+
+  const leaseMoved = (c: Context): Response =>
+    c.json({ error: "lease_moved" }, 409);
+
+  if (sweepLeasesMs)
+    setInterval(() => {
+      try {
+        expireLease();
+      } catch {
+        // The database closed under the timer, at shutdown.
+      }
+    }, sweepLeasesMs).unref();
+
+  app.use("/api/*", async (_c, next) => {
+    expireLease();
+    await next();
+  });
 
   /** A session's envelope: the session and, for a daily one, its adventure. */
   function within(sessionId: string): {
@@ -269,6 +355,10 @@ export function mountPlay(
       });
     const sessionId = randomUUID();
     const origin = { deviceId, clientMs: Date.now() };
+    // Another device's tap takes the lease: the old session ends first, then
+    // the lease moves (SPC-0030).
+    const left = lease && lease.deviceId !== deviceId ? lease : null;
+    if (left) endSession(left.sessionId);
     // A daily session continues the open adventure and plans one only when
     // none is open (REQ-0226). Session 0 belongs to no adventure.
     const events: NewEvent[] = [];
@@ -294,8 +384,39 @@ export function mountPlay(
       sessionId,
       ...(adventureId ? { adventureId } : {}),
     });
-    appendEvents(db, keyed(events, key));
+    events.push({
+      type: "device_lease_taken",
+      v: 1,
+      payload: { previousDeviceId: lease?.deviceId ?? null },
+      origin,
+      sessionId,
+      ...(adventureId ? { adventureId } : {}),
+    });
+    const written = appendEvents(db, keyed(events, key));
+    tick = now();
+    lease = { deviceId, sessionId, beatAt: tick };
+    const taken = written[written.length - 1];
+    if (left && taken)
+      stream.publish(left.sessionId, { type: "lease_moved", seq: taken.seq });
     return send(c, SessionStartOut, { sessionId });
+  });
+
+  app.post("/api/session/:id/heartbeat", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = HeartbeatIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const sessionId = c.req.param("id");
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    if (session.state === "ended")
+      return c.json({ error: "session_ended" }, 409);
+    if (displaced(deviceId)) return leaseMoved(c);
+    // After a restart nobody holds the lease, and the first heartbeat of a
+    // live session takes it back without a tap.
+    lease ??= { deviceId, sessionId, beatAt: tick };
+    lease.beatAt = tick;
+    return send(c, HeartbeatOut, { status: "ok" });
   });
 
   app.get("/api/adventure/current", (c) => {
@@ -323,6 +444,7 @@ export function mountPlay(
   app.get("/api/session/:id/next", (c) => {
     const deviceId = device(db, c);
     if (deviceId instanceof Response) return deviceId;
+    if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
     const session = sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
@@ -433,6 +555,7 @@ export function mountPlay(
     if (deviceId instanceof Response) return deviceId;
     const body = PauseIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
     const key = `pause:${deviceId}:${body.data.clientSeq}`;
     if (requestEvents(db, key).length)
@@ -485,6 +608,7 @@ export function mountPlay(
     if (deviceId instanceof Response) return deviceId;
     const body = BreakIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
     const { action, clientSeq } = body.data;
     const key = `break:${deviceId}:${clientSeq}`;
@@ -561,6 +685,39 @@ export function mountPlay(
     if (found instanceof Response) return found;
     const { shown } = found;
 
+    // An answer from a device that lost the lease is still logged (REQ-0220):
+    // as the attempt when the item has none, otherwise as `attempt_late`,
+    // which gets no verdict and no grants. While another device holds the
+    // lease the reply is 409; when the lease only expired, the answer gets
+    // its outcome as usual (REQ-2434, REQ-2438).
+    const lost = displaced(deviceId);
+    const expired = !lost && sessionRow(db, found.sessionId)?.state === "ended";
+    const earlier = found.log.find(
+      (e) =>
+        e.type === "verdict" &&
+        payloadOf<{ itemId: string }>(e).itemId === a.itemId,
+    );
+    if ((lost || expired) && earlier) {
+      appendEvents(
+        db,
+        keyed(
+          [
+            {
+              type: "attempt_late",
+              v: 1,
+              payload: { itemId: a.itemId, raw: a.raw },
+              origin: { deviceId, clientMs: Date.now() },
+              ...within(found.sessionId),
+            },
+          ],
+          key,
+        ),
+      );
+      return lost
+        ? leaseMoved(c)
+        : send(c, AnswerOut, answerReply(found.log, earlier.seq, found.shown));
+    }
+
     // The server checks `raw` itself and ignores the client's `parsed`.
     const verdict: Verdict = standinVerdict(
       a.raw,
@@ -620,7 +777,7 @@ export function mountPlay(
       "Server-Timing",
       `app;dur=${(performance.now() - started).toFixed(2)}`,
     );
-    return send(c, AnswerOut, reply);
+    return lost ? leaseMoved(c) : send(c, AnswerOut, reply);
   });
 
   app.post("/api/item/:itemId/hint", async (c) => {
@@ -628,6 +785,7 @@ export function mountPlay(
     if (deviceId instanceof Response) return deviceId;
     const body = HintIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
     const { level, clientSeq } = body.data;
     const itemId = c.req.param("itemId");
     const found = item(c, itemId);
@@ -694,6 +852,7 @@ export function mountPlay(
     if (deviceId instanceof Response) return deviceId;
     const body = ItemActionIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
     const itemId = c.req.param("itemId");
     const found = item(c, itemId);
     if (found instanceof Response) return found;
@@ -753,6 +912,7 @@ export function mountPlay(
     if (deviceId instanceof Response) return deviceId;
     const body = ItemActionIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
     const itemId = c.req.param("itemId");
     const found = item(c, itemId);
     if (found instanceof Response) return found;

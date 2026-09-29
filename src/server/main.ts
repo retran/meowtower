@@ -60,7 +60,10 @@ const onSessionEnded = (): void => {
     now: Date.now,
   });
 };
-const game = serve({ fetch: createApp({ db, onSessionEnded }).fetch, port });
+const game = serve({
+  fetch: createApp({ db, onSessionEnded, sweepLeasesMs: 5000 }).fetch,
+  port,
+});
 const parent = serve({
   fetch: createParentApp({ db, dbPath, snapshots, exports }).fetch,
   port: parentPort,

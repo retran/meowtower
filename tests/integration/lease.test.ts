@@ -65,11 +65,23 @@ function world() {
         payload: string;
       }[]
     ).map((r) => ({ ...r, payload: JSON.parse(r.payload) as unknown }));
+  const count = (): number =>
+    (db.prepare("SELECT COUNT(*) AS n FROM events").get() as { n: number }).n;
+  const sequence = (): {
+    type: string;
+    session_id: string;
+    device_id: string;
+  }[] =>
+    db
+      .prepare("SELECT type, session_id, device_id FROM events ORDER BY seq")
+      .all() as { type: string; session_id: string; device_id: string }[];
   const adventureState = (): unknown =>
     db.prepare("SELECT * FROM adventures").all();
   return {
     device,
     rows,
+    count,
+    sequence,
     adventureState,
     advance: (ms: number) => (clock += ms),
   };
@@ -176,6 +188,81 @@ describe("REQ-0220: a device that lost the lease still has its answer logged", (
     expect(res.status).toBe(409);
     expect(w.rows("attempt_late")).toHaveLength(1);
     expect(w.rows("attempt_submitted")).toHaveLength(1);
+    expect(w.rows("verdict")).toHaveLength(1);
+  });
+});
+
+describe("REQ-0220: a displaced device's other requests are refused and log nothing", () => {
+  it("answers next, a hint and a pause with 409 lease_moved and adds no event", async () => {
+    const w = world();
+    const old = w.device("tablet");
+    const sessionId = await start(old);
+    const { itemId } = await room(old, sessionId);
+    await start(w.device("computer"));
+    const before = w.count();
+
+    const replies = [
+      await old.get(`/api/session/${sessionId}/next`),
+      await old.post(`/api/item/${itemId}/hint`, { level: 1 }),
+      await old.post(`/api/session/${sessionId}/pause`, { reason: "leave" }),
+    ];
+    for (const res of replies) {
+      expect(res.status).toBe(409);
+      expect(((await res.json()) as { error: string }).error).toBe(
+        "lease_moved",
+      );
+    }
+    expect(w.count()).toBe(before);
+  });
+});
+
+describe("REQ-0202: a change of device within 45 seconds ends the old session first", () => {
+  it("logs the old session's pause and end with lease_expired, as the server, before device_lease_taken", async () => {
+    const w = world();
+    const old = w.device("tablet");
+    const oldSession = await start(old);
+    await room(old, oldSession);
+    w.advance(10_000);
+    const fresh = w.device("computer");
+    const newSession = await start(fresh);
+
+    const order = w.sequence();
+    const paused = order.findIndex(
+      (e) => e.type === "adventure_paused" && e.session_id === oldSession,
+    );
+    const ended = order.findIndex(
+      (e) => e.type === "session_ended" && e.session_id === oldSession,
+    );
+    const taken = order.findIndex(
+      (e) => e.type === "device_lease_taken" && e.session_id === newSession,
+    );
+    expect(paused).toBeGreaterThan(-1);
+    expect(paused).toBeLessThan(taken);
+    expect(ended).toBeLessThan(taken);
+    expect(order[paused]?.device_id).toBe("server");
+    expect(order[ended]?.device_id).toBe("server");
+    expect(w.rows("adventure_paused")[0]?.payload).toMatchObject({
+      reason: "lease_expired",
+    });
+    expect(w.rows("session_ended")[0]?.payload).toMatchObject({
+      reason: "lease_expired",
+    });
+  });
+});
+
+describe("REQ-2434: an answer after the lease only expired is logged and gets its reply", () => {
+  it("records the attempt, then attempt_late with the first outcome, both with 200", async () => {
+    const w = world();
+    const p = w.device("tablet");
+    const sessionId = await start(p);
+    const { itemId } = await room(p, sessionId);
+    w.advance(45_000);
+    await p.get("/api/adventure/current");
+
+    expect((await answer(p, sessionId, itemId)).status).toBe(200);
+    expect(w.rows("attempt_submitted")).toHaveLength(1);
+    expect((await answer(p, sessionId, itemId)).status).toBe(200);
+    expect(w.rows("attempt_late")).toHaveLength(1);
     expect(w.rows("verdict")).toHaveLength(1);
   });
 });

@@ -5,6 +5,9 @@ const PORT = 3920;
 export default defineConfig({
   testDir: "tests/e2e",
   reporter: [["list"]],
+  // One device holds the adventure at a time (REQ-0220), and the tests share
+  // one server, so tests run one at a time or they take the lease from each other.
+  workers: 1,
   use: { baseURL: `http://127.0.0.1:${PORT}` },
   // The two interfaces (SPC-0010): an iPad in WebKit, and a computer in
   // Chromium at 1280x720.

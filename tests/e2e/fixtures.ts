@@ -16,6 +16,16 @@ export const test = base.extend<{ leaks: string[] }>({
         pending.push(
           (async () => {
             const headers = JSON.stringify(await res.allHeaders());
+            // An event stream never ends, so its body can't be read whole:
+            // only its headers are checked. It carries the two messages of
+            // SPC-0030, which hold no key.
+            if (
+              (res.headers()["content-type"] ?? "").includes("event-stream")
+            ) {
+              if (headers.includes(KEY) || headers.includes("sk-or-"))
+                leaks.push(res.url());
+              return;
+            }
             const body = await res.body().catch(() => Buffer.alloc(0));
             const text = headers + body.toString("latin1");
             if (text.includes(KEY) || text.includes("sk-or-"))

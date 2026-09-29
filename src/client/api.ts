@@ -162,21 +162,44 @@ export async function startSession(): Promise<string | null> {
   return status === 200 ? String(body["sessionId"]) : null;
 }
 
-export async function nextPacket(sessionId: string): Promise<Packet | null> {
+/** Another device holds the lease: this one turns view-only (REQ-0222). */
+export const MOVED = "lease_moved";
+export type Moved = typeof MOVED;
+
+const isMoved = (status: number, body: Record<string, unknown>): boolean =>
+  status === 409 && body["error"] === MOVED;
+
+export async function nextPacket(
+  sessionId: string,
+): Promise<Packet | Moved | null> {
   const { status, body } = await call(
     `/api/session/${encodeURIComponent(sessionId)}/next`,
   );
+  if (isMoved(status, body)) return MOVED;
   return status === 200 ? (body as unknown as Packet) : null;
+}
+
+/** The holder's heartbeat, sent every 15 seconds (SPC-0030). */
+export async function heartbeat(
+  sessionId: string,
+): Promise<"ok" | Moved | "failed"> {
+  const { status, body } = await call(
+    `/api/session/${encodeURIComponent(sessionId)}/heartbeat`,
+    { method: "POST", body: JSON.stringify({ clientSeq: nextSeq() }) },
+  );
+  if (isMoved(status, body)) return MOVED;
+  return status === 200 ? "ok" : "failed";
 }
 
 export async function answer(
   sessionId: string,
   sent: Omit<AnswerIn, "clientSeq">,
-): Promise<AnswerOut | null> {
+): Promise<AnswerOut | Moved | null> {
   const { status, body } = await call(
     `/api/session/${encodeURIComponent(sessionId)}/answer`,
     { method: "POST", body: JSON.stringify({ ...sent, clientSeq: nextSeq() }) },
   );
+  if (isMoved(status, body)) return MOVED;
   return status === 200 ? (body as unknown as AnswerOut) : null;
 }
 

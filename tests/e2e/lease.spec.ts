@@ -26,14 +26,18 @@ async function pairDevice(page: Page): Promise<void> {
   await expect(page.getByRole("status")).toHaveText(/Готово/);
 }
 
-async function play(page: Page): Promise<string> {
+async function play(
+  page: Page,
+): Promise<{ sessionId: string; itemId: string }> {
   const started = page.waitForResponse("**/api/session/start");
+  const packet = page.waitForResponse("**/next");
   await ready(page, "/play");
   const { sessionId } = (await (await started).json()) as {
     sessionId: string;
   };
+  const { itemId } = (await (await packet).json()) as { itemId: string };
   await expect(page.locator(".play .task")).toBeVisible();
-  return sessionId;
+  return { sessionId, itemId };
 }
 
 function leaseTaken(sessionIds: string[]): number {
@@ -62,26 +66,45 @@ test("REQ-0220, REQ-0222: the second device's tap turns the first view-only with
 }) => {
   const first = await pairedContext(browser);
   const second = await pairedContext(browser);
-  const firstSession = await play(first.page);
+  const held = await play(first.page);
 
   await play(second.page);
 
   await expect(
     first.page.getByText("Приключение продолжено в другом месте"),
   ).toBeVisible({ timeout: 5000 });
-  const late = await first.context.request.post(
-    `/api/session/${firstSession}/answer`,
-    {
-      data: {
-        itemId: "none",
+  await expect(first.page.locator("#play-answer")).toHaveCount(0);
+  await expect(
+    first.page.locator('[data-action="play-continue-here"]'),
+  ).toBeVisible();
+  // An answer already queued leaves from outside the screen, as the queue does.
+  const late = await first.page.evaluate(async ({ sessionId, itemId }) => {
+    const res = await fetch(`/api/session/${sessionId}/answer`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        itemId,
         raw: "7",
         dontKnow: false,
-        clientSeq: 1_000_000,
-      },
-    },
-  );
-  expect(late.status()).toBe(409);
-  expect(((await late.json()) as { error: string }).error).toBe("lease_moved");
+        clientSeq: Date.now(),
+        input: {
+          firstKeyMs: 1,
+          submittedMs: 2,
+          edits: 0,
+          erasures: 0,
+          keyPresses: 1,
+          focusLosses: { count: 0, totalMs: 0 },
+          method: "keypad",
+        },
+      }),
+    });
+    return {
+      status: res.status,
+      body: (await res.json()) as { error: string },
+    };
+  }, held);
+  expect(late.status).toBe(409);
+  expect(late.body.error).toBe("lease_moved");
   await first.context.close();
   await second.context.close();
 });
@@ -93,7 +116,7 @@ test("REQ-0220: two open devices that nobody taps take no lease beyond the first
   const second = await pairedContext(browser);
   await first.page.clock.install();
   await second.page.clock.install();
-  const session = await play(first.page);
+  const { sessionId: session } = await play(first.page);
 
   await first.page.clock.fastForward("10:00");
   await second.page.clock.fastForward("10:00");

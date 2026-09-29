@@ -117,12 +117,22 @@ export const ExplanationReady = z
     text: z.string().min(1),
   })
   .strict();
-export const StreamMessage = ExplanationReady;
+/** The lease moved to another device; the one it left turns view-only (REQ-0222). */
+export const LeaseMoved = z
+  .object({ type: z.literal("lease_moved"), seq: z.number().int().positive() })
+  .strict();
+export const StreamMessage = z.discriminatedUnion("type", [
+  ExplanationReady,
+  LeaseMoved,
+]);
 export type StreamMessage = z.infer<typeof StreamMessage>;
 
 export const PollOut = z.object({ messages: z.array(StreamMessage) }).strict();
 
 /** «Сохранить и уйти», the page hidden, or no input for too long (SPC-0030). */
+export const HeartbeatIn = z.object({ clientSeq }).strict();
+export const HeartbeatOut = z.object({ status: z.literal("ok") }).strict();
+
 export const PauseIn = z
   .object({ reason: z.enum(["leave", "background", "idle"]), clientSeq })
   .strict();
