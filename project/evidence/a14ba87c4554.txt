@@ -1,0 +1,109 @@
+meow-verbs evidence 1
+record: a14ba87c4554
+verb: test
+command: npm test
+targets: none
+outcome: failed
+exit status: 1
+tree: 9ad4bbc19369995b1852b13974bbb8e2645eb972
+time: 2026-09-29T18:35:56Z
+
+
+> test
+> vitest run tests && playwright test
+
+
+ RUN  v5.0.2 /Users/retran/workspace/tower
+
+ ❯ tests/integration/lease.test.ts (4 tests | 4 failed) 163ms
+   ❯ REQ-0202: 45 seconds without a heartbeat leave the state a leave leaves (2)
+     × logs adventure_paused with lease_expired and session_ended as device server, and equals a leave's projection 64ms
+     × keeps the lease while the heartbeat comes every 15 seconds 27ms
+   ❯ REQ-0220: a device that lost the lease still has its answer logged (2)
+     × logs the answer as the attempt when the item has none, and the new holder's next packet carries the outcome 19ms
+     × logs attempt_late with no verdict when the item already has its attempt 36ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0202: 45 seconds without a heartbeat leave the state a leave leaves > logs adventure_paused with lease_expired and session_ended as device server, and equals a leave's projection
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/integration/lease.test.ts:117:20
+    115|
+    116|     const paused = lapsed.rows("adventure_paused");
+    117|     expect(paused).toHaveLength(1);
+       |                    ^
+    118|     expect(paused[0]?.payload).toMatchObject({ reason: "lease_expired"…
+    119|     expect(lapsed.rows("session_ended")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0202: 45 seconds without a heartbeat leave the state a leave leaves > keeps the lease while the heartbeat comes every 15 seconds
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/integration/lease.test.ts:138:76
+    136|     for (let i = 0; i < 6; i++) {
+    137|       w.advance(15_000);
+    138|       expect((await p.post(`/api/session/${sessionId}/heartbeat`)).sta…
+       |                                                                            ^
+    139|         200,
+    140|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0220: a device that lost the lease still has its answer logged > logs the answer as the attempt when the item has none, and the new holder's next packet carries the outcome
+AssertionError: expected 200 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 200
+
+ ❯ tests/integration/lease.test.ts:158:24
+    156|
+    157|     const res = await answer(old, sessionId, itemId);
+    158|     expect(res.status).toBe(409);
+       |                        ^
+    159|     expect(((await res.json()) as { error: string }).error).toBe("leas…
+    160|     expect(w.rows("attempt_submitted")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0220: a device that lost the lease still has its answer logged > logs attempt_late with no verdict when the item already has its attempt
+AssertionError: expected 200 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 200
+
+ ❯ tests/integration/lease.test.ts:176:24
+    174|
+    175|     const res = await answer(old, sessionId, itemId);
+    176|     expect(res.status).toBe(409);
+       |                        ^
+    177|     expect(w.rows("attempt_late")).toHaveLength(1);
+    178|     expect(w.rows("attempt_submitted")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 40 passed (41)
+      Tests  4 failed | 358 passed (362)
+   Start at  20:35:37
+   Duration  19.17s (tests 91%, import 6%, transform 3%)
+
