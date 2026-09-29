@@ -1,0 +1,61 @@
+meow-verbs evidence 1
+record: d16c328ccbf9
+verb: test
+command: npm test
+targets: none
+outcome: passed
+exit status: 0
+tree: d88f35be55537d3ae148d74352ef83c50026aa1a
+time: 2026-09-29T13:53:49Z
+
+
+> test
+> vitest run tests && playwright test
+
+
+ RUN  v5.0.2 /Users/retran/workspace/tower
+
+
+ Test Files  39 passed (39)
+      Tests  356 passed (356)
+   Start at  15:52:43
+   Duration  61.95s (tests 94%, import 3%, transform 2%)
+
+
+Running 16 tests using 6 workers
+
+  ✓   4 [computer] › tests/e2e/interface.spec.ts:25:1 › REQ-2536: the first start picks the interface from the device (123ms)
+  ✓   5 [computer] › tests/e2e/shell.spec.ts:3:1 › REQ-2504: the installable page reaches the client without the model key (139ms)
+  ✘   8 [computer] › tests/e2e/shell.spec.ts:14:6 › the recorder fails a response that carries the key (247ms)
+  ✓   7 [computer] › tests/e2e/interface.spec.ts:34:1 › REQ-2538: the switch in the settings holds after a reload and in the device's row (444ms)
+  ✓   2 [computer] › tests/e2e/parent.spec.ts:20:1 › REQ-2520: a device the parent revokes shows that it needs pairing (582ms)
+  ✓   6 [ipad] › tests/e2e/interface.spec.ts:25:1 › REQ-2536: the first start picks the interface from the device (431ms)
+  ✓   1 [ipad] › tests/e2e/shell.spec.ts:3:1 › REQ-2504: the installable page reaches the client without the model key (477ms)
+  ✘  12 [ipad] › tests/e2e/shell.spec.ts:14:6 › the recorder fails a response that carries the key (201ms)
+  ✓  10 [computer] › tests/e2e/parent.spec.ts:64:1 › REQ-2522: the pairing and PIN screens name when attempts resume (310ms)
+  ✓   3 [ipad] › tests/e2e/parent.spec.ts:20:1 › REQ-2520: a device the parent revokes shows that it needs pairing (833ms)
+  ✓  11 [ipad] › tests/e2e/interface.spec.ts:34:1 › REQ-2538: the switch in the settings holds after a reload and in the device's row (455ms)
+  -  15 [ipad] › tests/e2e/interface.spec.ts:67:1 › REQ-2540: every control of every route works from the keyboard with a focus ring
+  ✓  14 [ipad] › tests/e2e/parent.spec.ts:64:1 › REQ-2522: the pairing and PIN screens name when attempts resume (380ms)
+keyboard: 15 controls on 6 routes
+  / play: play
+  / open-settings: open-settings
+  / open-pair: open-pair
+  /settings interface-computer: interface-tablet
+  /settings back: back
+  /pair pair-code: pair-code
+  /pair pair-submit: pair-submit
+  /pair back: back
+  /parent parent-pin: parent-pin
+  /parent parent-login: parent-login
+  /parent back: back
+  /parent/devices open-parent: open-parent
+  /parent/devices back: back
+  /parent/settings open-parent: open-parent
+  /parent/settings back: back
+  ✓   9 [computer] › tests/e2e/interface.spec.ts:67:1 › REQ-2540: every control of every route works from the keyboard with a focus ring (894ms)
+  ✓  13 [computer] › tests/e2e/parent.spec.ts:99:1 › REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps the choice (617ms)
+  ✓  16 [ipad] › tests/e2e/parent.spec.ts:99:1 › REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps the choice (708ms)
+
+  1 skipped
+  15 passed (4.4s)

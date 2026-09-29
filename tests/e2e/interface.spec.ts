@@ -121,7 +121,8 @@ test("REQ-2540: every control of every route works from the keyboard with a focu
         () => document.body.dataset["lastAction"] ?? null,
       );
       // A radio group's arrow key operates the next choice in the group.
-      if (kind === "radio") expect(done).toMatch(/^interface-/);
+      if (kind === "radio")
+        expect(done).toMatch(new RegExp(`^${action.replace(/-[^-]+$/, "")}-`));
       else expect(done).toBe(action);
       report.push(`${route} ${action}: ${done}`);
     }

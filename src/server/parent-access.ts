@@ -79,24 +79,43 @@ export function pinMatches(db: Db, pin: string): boolean {
   return timingSafeEqual(scrypt(pin, row.salt), Buffer.from(row.hash, "hex"));
 }
 
+/** A parent session ends 30 minutes after its last request (REQ-2440). */
+export const PARENT_IDLE_MS = 30 * 60 * 1000;
+
+export type Held = "ok" | "expired" | "missing";
+
 /**
  * Parent sessions, each bound to the device that opened it. They live in
- * memory, so a restart asks for the PIN again; their idle expiry is
- * ADR-0030's (REQ-2440).
+ * memory, so a restart asks for the PIN again. A request within 30 minutes of
+ * the last one restarts the 30 minutes; a later one finds the session expired
+ * (REQ-2440).
  */
 export class ParentSessions {
-  private readonly sessions = new Map<string, string>();
+  private readonly sessions = new Map<
+    string,
+    { deviceId: string; lastMs: number }
+  >();
 
-  open(deviceId: string): string {
+  open(deviceId: string, now: number): string {
     const token = randomBytes(32).toString("base64url");
-    this.sessions.set(hashToken(token), deviceId);
+    this.sessions.set(hashToken(token), { deviceId, lastMs: now });
     return token;
   }
 
-  /** True when the token opened a session on this device. */
-  holds(token: string | undefined, deviceId: string): boolean {
-    return (
-      token !== undefined && this.sessions.get(hashToken(token)) === deviceId
-    );
+  /**
+   * Whether the token holds a live session on this device. A live one is
+   * touched, so its 30 minutes start again; an expired one is forgotten.
+   */
+  hold(token: string | undefined, deviceId: string, now: number): Held {
+    if (token === undefined) return "missing";
+    const key = hashToken(token);
+    const session = this.sessions.get(key);
+    if (!session || session.deviceId !== deviceId) return "missing";
+    if (now - session.lastMs >= PARENT_IDLE_MS) {
+      this.sessions.delete(key);
+      return "expired";
+    }
+    session.lastMs = now;
+    return "ok";
   }
 }

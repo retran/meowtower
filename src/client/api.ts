@@ -76,10 +76,46 @@ export interface ParentDevice {
   current: boolean;
 }
 
-/** The paired devices, or null without a parent session. */
-export async function parentDevices(): Promise<ParentDevice[] | null> {
+/**
+ * A Parent Room reply: the value, or the error that refused it. The error
+ * `parent_session_expired` means the 30 minutes ran out and a PIN entry
+ * reopens the session (REQ-2440).
+ */
+export type ParentReply<T> =
+  { ok: true; value: T } | { ok: false; error: string };
+
+const parentReply = <T>(
+  status: number,
+  body: Record<string, unknown>,
+  value: () => T,
+): ParentReply<T> =>
+  status === 200
+    ? { ok: true, value: value() }
+    : { ok: false, error: String(body["error"]) };
+
+export async function parentDevices(): Promise<ParentReply<ParentDevice[]>> {
   const { status, body } = await call("/api/parent/devices");
-  return status === 200 ? (body["devices"] as ParentDevice[]) : null;
+  return parentReply(status, body, () => body["devices"] as ParentDevice[]);
+}
+
+/** The parent settings; a null limit means the three-day rule is off (REQ-0234). */
+export interface ParentSettings {
+  threeDayLimit: number | null;
+}
+
+export async function parentSettings(): Promise<ParentReply<ParentSettings>> {
+  const { status, body } = await call("/api/parent/settings");
+  return parentReply(status, body, () => body as unknown as ParentSettings);
+}
+
+export async function saveParentSettings(
+  settings: ParentSettings,
+): Promise<ParentReply<ParentSettings>> {
+  const { status, body } = await call("/api/parent/settings", {
+    method: "PUT",
+    body: JSON.stringify(settings),
+  });
+  return parentReply(status, body, () => body as unknown as ParentSettings);
 }
 
 export async function revoke(id: string): Promise<boolean> {

@@ -268,3 +268,139 @@ describe("REQ-2522: 5 wrong entries in a row lock that kind for 15 minutes", () 
     }
   });
 });
+
+describe("REQ-2440: a parent session ends 30 minutes after its last request", () => {
+  it("expires at 30 and 31 minutes, and a request at 29 minutes restarts the 30", async () => {
+    const w = await world();
+    await w.setPin(PIN);
+    const parent = w.device();
+    const session = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
+    const page = () =>
+      w.app.request("/api/parent/devices", {
+        headers: { cookie: `${parent}; ${session}` },
+      });
+    const minute = 60 * 1000;
+    w.clock.ms += 29 * minute;
+    expect((await page()).status).toBe(200);
+    // 29 + 29 minutes after login, but 29 after the last request.
+    w.clock.ms += 29 * minute;
+    expect((await page()).status).toBe(200);
+    w.clock.ms += 31 * minute;
+    const late = await page();
+    expect(late.status).toBe(401);
+    expect(await late.json()).toEqual({ error: "parent_session_expired" });
+    // SPC-0030 puts the end at 30 minutes exactly: 29:59.999 still holds.
+    const again0 = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
+    const at = (cookie: string) =>
+      w.app.request("/api/parent/devices", {
+        headers: { cookie: `${parent}; ${cookie}` },
+      });
+    w.clock.ms += 30 * minute - 1;
+    expect((await at(again0)).status).toBe(200);
+    w.clock.ms += 30 * minute;
+    expect(await (await at(again0)).json()).toEqual({
+      error: "parent_session_expired",
+    });
+    // The session is gone; a new PIN entry opens another.
+    expect(await (await page()).json()).toEqual({
+      error: "parent_session_missing",
+    });
+    const again = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
+    expect(
+      (
+        await w.app.request("/api/parent/devices", {
+          headers: { cookie: `${parent}; ${again}` },
+        })
+      ).status,
+    ).toBe(200);
+  });
+});
+
+describe("TSK-0390 criterion 2: a parent session cookie on an unpaired device opens nothing", () => {
+  it("refuses every parent route with 401", async () => {
+    const w = await world();
+    await w.setPin(PIN);
+    const session = w.cookieOf(
+      await w.login(w.device(), PIN),
+      "meowtower_parent",
+    );
+    for (const device of ["", "meowtower_device=not-a-paired-token; "])
+      for (const [method, path] of [
+        ["GET", "/api/parent/devices"],
+        ["GET", "/api/parent/settings"],
+        ["PUT", "/api/parent/settings"],
+        ["POST", "/api/parent/pair-code"],
+      ] as const) {
+        const res = await w.app.request(path, {
+          method,
+          headers: {
+            "content-type": "application/json",
+            cookie: `${device}${session}`,
+          },
+          ...(method === "PUT"
+            ? { body: JSON.stringify({ threeDayLimit: 5 }) }
+            : {}),
+        });
+        expect(res.status, `${device || "no device"} ${method} ${path}`).toBe(
+          401,
+        );
+      }
+    expect(
+      w.db
+        .prepare(
+          "SELECT COUNT(*) AS n FROM events WHERE type = 'settings_changed'",
+        )
+        .get(),
+    ).toEqual({ n: 0 });
+  });
+});
+
+describe("REQ-0234: the parent sets the three-day limit", () => {
+  it("reads 3 by default, and logs each change that the next read returns", async () => {
+    const w = await world();
+    await w.setPin(PIN);
+    const parent = w.device();
+    const session = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
+    const cookie = `${parent}; ${session}`;
+    const read = async () =>
+      (await (
+        await w.app.request("/api/parent/settings", { headers: { cookie } })
+      ).json()) as { threeDayLimit: number | null };
+    const save = (threeDayLimit: unknown) =>
+      w.app.request("/api/parent/settings", {
+        method: "PUT",
+        headers: { "content-type": "application/json", cookie },
+        body: JSON.stringify({ threeDayLimit }),
+      });
+    const logged = () =>
+      (
+        w.db
+          .prepare(
+            "SELECT payload FROM events WHERE type = 'settings_changed' ORDER BY seq",
+          )
+          .all() as { payload: string }[]
+      ).map((r) => JSON.parse(r.payload));
+
+    expect(await read()).toEqual({ threeDayLimit: 3 });
+    expect((await save(5)).status).toBe(200);
+    expect(await read()).toEqual({ threeDayLimit: 5 });
+    expect((await save(null)).status).toBe(200);
+    expect(await read()).toEqual({ threeDayLimit: null });
+    expect(logged()).toEqual([
+      { key: "threeDayLimit", value: 5 },
+      { key: "threeDayLimit", value: null },
+    ]);
+    // Anything but a whole number of days from 1 to 7, or off, is refused unlogged.
+    for (const bad of [0, 8, 2.5, "5"])
+      expect((await save(bad)).status).toBe(400);
+    expect(logged()).toHaveLength(2);
+    // Without a parent session the settings stay shut.
+    expect(
+      (
+        await w.app.request("/api/parent/settings", {
+          headers: { cookie: parent },
+        })
+      ).status,
+    ).toBe(401);
+  });
+});

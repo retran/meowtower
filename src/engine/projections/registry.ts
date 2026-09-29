@@ -6,6 +6,7 @@ import type { StoredEvent } from "../events/read.js";
 import { flatViews } from "./flat-views.js";
 import { knowledge } from "./knowledge.js";
 import { lifecycle } from "./lifecycle.js";
+import { settings } from "./settings.js";
 import { prepared } from "./statements.js";
 
 type Db = Database.Database;
@@ -51,7 +52,12 @@ export function versionsChanged(db: Db): boolean {
   );
 }
 
-const registered: Projection[] = [...flatViews, ...lifecycle, ...knowledge];
+const registered: Projection[] = [
+  ...flatViews,
+  ...lifecycle,
+  ...settings,
+  ...knowledge,
+];
 
 export const PROJECTIONS: readonly Projection[] = registered;
 

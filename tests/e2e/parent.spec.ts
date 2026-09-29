@@ -1,5 +1,8 @@
 // TSK-0050 on screen: a revoked device says it needs pairing from the Parent
 // Room (REQ-2520), and a lockout names the time attempts resume (REQ-2522).
+// TSK-0390 on screen: an expired parent session asks for the PIN on the page
+// it expired on (REQ-2440), where the parent sets the three-day limit
+// (REQ-0234).
 // The lockout replies are routed here, so the shared e2e server never locks.
 import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures.js";
@@ -91,4 +94,67 @@ test("REQ-2522: the pairing and PIN screens name when attempts resume", async ({
   await expect(page.getByRole("status")).toHaveText(
     `Слишком много неверных PIN. Вход снова откроется в ${time}.`,
   );
+});
+
+test("REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps the choice", async ({
+  page,
+}) => {
+  await page.request.post(`${PARENT}/pin`, { data: { pin: PIN } });
+  const { code } = (await (
+    await page.request.post(`${PARENT}/pair-code`)
+  ).json()) as { code: string };
+  await ready(page, "/pair");
+  await page.locator("#pair-code").fill(code);
+  await page.locator('[data-action="pair-submit"]').click();
+  await expect(page.getByRole("status")).toHaveText(/Готово/);
+  await ready(page, "/parent");
+  await page.locator("#parent-pin").fill(PIN);
+  await page.locator('[data-action="parent-login"]').click();
+  await expect(page.locator("body")).toHaveAttribute(
+    "data-screen",
+    "/parent/devices",
+  );
+
+  // The e2e server is shared, so an earlier run may have changed the limit;
+  // the integration test proves the default.
+  // The body is read, because an unread one stays open.
+  await page.evaluate(async () => {
+    const res = await fetch("/api/parent/settings", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ threeDayLimit: 3 }),
+    });
+    await res.json();
+  });
+  await ready(page, "/parent/settings");
+  await expect(page.locator('[data-action="three-day-3"]')).toBeChecked();
+  // The server's own expiry takes 30 minutes; the first save here meets the
+  // reply it gives then.
+  let expired = false;
+  await page.route("**/api/parent/settings", (route) => {
+    if (route.request().method() !== "PUT" || expired) return route.continue();
+    expired = true;
+    return route.fulfill({
+      status: 401,
+      json: { error: "parent_session_expired" },
+    });
+  });
+  await page.locator('[data-action="three-day-5"]').check();
+  await expect(page.getByRole("status")).toHaveText(/Прошло 30 минут/);
+  await expect(page.locator("body")).toHaveAttribute(
+    "data-screen",
+    "/parent/settings",
+  );
+  await expect(page.locator('[data-action="three-day-5"]')).toBeChecked();
+  await page.locator("#parent-pin").fill(PIN);
+  await page.locator('[data-action="parent-login"]').click();
+  await expect(page.getByRole("status")).toHaveText("Сохранено.");
+  await expect(page.locator("#parent-pin")).toHaveCount(0);
+
+  await ready(page, "/parent/settings");
+  await expect(page.locator('[data-action="three-day-5"]')).toBeChecked();
+  await page.locator('[data-action="three-day-off"]').check();
+  await expect(page.getByRole("status")).toHaveText("Сохранено.");
+  await ready(page, "/parent/settings");
+  await expect(page.locator('[data-action="three-day-off"]')).toBeChecked();
 });
