@@ -55,7 +55,7 @@
   "ui.parentSettings.saved": "Сохранено.",
   "parent.room.title": "Комната родителя",
   "parent.notice.backupFailed": "Резервная копия не получилась ({at}). Следующая удачная копия снимет это сообщение.",
-  "parent.notice.storageCeiling": "Папка data/ заняла больше {gb} ГБ.",
+  "parent.notice.storageCeiling": "Папка data/ и база данных заняли больше {gb} ГБ.",
   "parent.notice.recomputeFailed": "Пересчёт не удался ({at}, {version}). Прежние данные остались на месте.",
   "parent.notice.recomputeSlow": "Пересчёт занял {seconds} с, дольше минуты.",
   "parent.notice.logLarge": "Журнал событий занял больше 1 ГБ.",

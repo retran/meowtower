@@ -248,7 +248,7 @@ cmd_status() {
     failed="$(sed -n 's/.*"backup_failed":{"at":"\([^"]*\)".*/\1/p' data/snapshots/notices.json)"
     ceiling="$(sed -n 's/.*"storage_ceiling":{"at":"[^"]*","gb":\([0-9]*\)}.*/\1/p' data/snapshots/notices.json)"
     [[ -n "$failed" ]] && echo "backup_failed: the snapshot at $failed failed; the next good one clears this."
-    [[ -n "$ceiling" ]] && echo "storage_ceiling: data/ holds more than $ceiling GB."
+    [[ -n "$ceiling" ]] && echo "storage_ceiling: data/ and the database hold more than $ceiling GB."
     local rfailed rslow large
     rfailed="$(sed -n 's/.*"recompute_failed":{"at":"\([^"]*\)","version":"\([^"]*\)".*/\1 (\2)/p' data/snapshots/notices.json)"
     rslow="$(sed -n 's/.*"recompute_slow":{"at":"[^"]*","ms":\([0-9]*\)}.*/\1/p' data/snapshots/notices.json)"

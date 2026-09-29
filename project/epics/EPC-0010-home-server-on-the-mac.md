@@ -109,8 +109,9 @@ A task is marked in the commit that advances it, never in a later pass, because 
       evidence: meow-verbs exit 0 at tree d12512c3b74a, 355 Vitest and 15 Playwright tests; both routes answer 404; version 0 events read back after a rebuild; crash test 100 of 100 answers kept (TSK-0440 Evidence)
       closes: none
       depends: TSK-0030 - its crash test writes through these routes
-- [+] T-017 TSK-0450 `storage_ceiling` counts the live database and its write-ahead log (`src/server/backups.ts`)
+- [x] T-017 TSK-0450 `storage_ceiling` counts the live database and its write-ahead log (`src/server/backups.ts`)
       added: ADR-0370 entry 1 widened what REQ-2530's ceiling counts after TSK-0080 was done
+      evidence: meow-verbs exit 0 at tree 1e5deb62e941, 358 Vitest and 15 Playwright tests; ceiling counts data/, the database and its write-ahead log; status line and page name both (TSK-0450 Evidence)
       closes: none; REQ-2530 stays with TSK-0080
       depends: TSK-0080 - it raises the notice and holds its thresholds
 

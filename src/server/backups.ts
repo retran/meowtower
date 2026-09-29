@@ -12,7 +12,7 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { join } from "node:path";
+import { isAbsolute, join, relative } from "node:path";
 import { snapshotName, takeSnapshot } from "./snapshots.js";
 
 export const KEEP_NEWEST = 30;
@@ -81,7 +81,10 @@ export function folderSize(root: string): number {
 export interface BackupOptions {
   live: string;
   dir: string;
-  /** The data folder whose size the storage notice watches. */
+  /**
+   * The data folder the storage notice counts, together with `live` and its
+   * write-ahead log (ADR-0370 entry 1).
+   */
   dataRoot: string;
   now: () => number;
   sizeOf?: (root: string) => number;
@@ -90,7 +93,8 @@ export interface BackupOptions {
 /**
  * Takes the snapshot, prunes, and updates both notices. A failure raises
  * `backup_failed` once and the next good snapshot clears it; the storage
- * notice rises at 20 GB and again at each further 10 GB.
+ * notice counts `data/`, the live database and its write-ahead log, and
+ * rises at 20 GB and again at each further 10 GB.
  */
 export async function backupAfterSession(o: BackupOptions): Promise<void> {
   const at = new Date(o.now());
@@ -114,14 +118,24 @@ export async function backupAfterSession(o: BackupOptions): Promise<void> {
     if (!notices.backup_failed) console.error(`backup_failed: ${reason}`);
     notices.backup_failed = { at: at.toISOString(), reason };
   }
-  const gb = (o.sizeOf ?? folderSize)(o.dataRoot) / GB;
+  const size = o.sizeOf ?? folderSize;
+  // The live database sits in its own volume on the same disk, and grows with
+  // every event; one inside data/ is already in the folder's size.
+  const inData = relative(o.dataRoot, o.live);
+  const database =
+    inData.startsWith("..") || isAbsolute(inData)
+      ? size(o.live) + size(`${o.live}-wal`)
+      : 0;
+  const gb = (size(o.dataRoot) + database) / GB;
   const reached =
     gb < STORAGE_FIRST_GB
       ? 0
       : STORAGE_FIRST_GB +
         Math.floor((gb - STORAGE_FIRST_GB) / STORAGE_STEP_GB) * STORAGE_STEP_GB;
   if (reached > (notices.storage_ceiling?.gb ?? 0)) {
-    console.error(`storage_ceiling: data/ holds ${gb.toFixed(1)} GB`);
+    console.error(
+      `storage_ceiling: data/ and the database hold ${gb.toFixed(1)} GB`,
+    );
     notices.storage_ceiling = { at: at.toISOString(), gb: reached };
   }
   writeNotices(o.dir, notices);

@@ -170,8 +170,84 @@ describe("the parent's notices", () => {
     expect(readNotices(w.dir).backup_failed).toBeNull();
   });
 
-  it("raises storage_ceiling at 20 GB and again only at each further 10 GB", async () => {
+  // TSK-0450: the ceiling counts data/ together with the live database and
+  // its write-ahead log, which sit in the volume outside data/ (ADR-0370 entry 1).
+  it("raises storage_ceiling on data/ and the database together, at 20 GB and each further 10 GB", async () => {
     const base = join(root, "size");
+    const data = join(base, "data");
+    mkdirSync(data, { recursive: true });
+    const live = join(base, "volume", "live.sqlite");
+    mkdirSync(join(base, "volume"), { recursive: true });
+    opened.push(openDatabase(live));
+    const dir = join(data, "snapshots");
+    const errors = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    let clock = Date.parse("2026-08-01T00:00:00Z");
+    const GiB = 1024 ** 3;
+    const raised: (number | null)[] = [];
+    // Each step: data/, the database file and its write-ahead log, in GB.
+    for (const [d, db, wal] of [
+      [14, 5.9, 0],
+      [15, 5, 1],
+      [20, 8, 1],
+      [22, 8, 1],
+      [30, 10, 1],
+    ] as const) {
+      clock += 60_000;
+      await backupAfterSession({
+        live,
+        dir,
+        dataRoot: data,
+        now: () => clock,
+        sizeOf: (path) =>
+          path === data
+            ? d * GiB
+            : path === live
+              ? db * GiB
+              : path === `${live}-wal`
+                ? wal * GiB
+                : 0,
+      });
+      raised.push(readNotices(dir).storage_ceiling?.gb ?? null);
+      // TSK-0450 criterion 2: the page names the threshold reached at 30.
+      if (raised.at(-1) === 30 && raised.at(-2) !== 30) {
+        const at30 = await (
+          await createParentApp({
+            db: opened.at(-1) as Db,
+            snapshots: dir,
+          }).request("/")
+        ).text();
+        expect(at30).toContain(
+          "Папка data/ и база данных заняли больше 30 ГБ.",
+        );
+      }
+    }
+    // 19.9 stays under; 21 raises 20; 29 doesn't rise again; 31 raises 30; 41 raises 40.
+    expect(raised).toEqual([null, 20, 20, 30, 40]);
+    const logged = errors.mock.calls
+      .map((c) => String(c[0]))
+      .filter((line) => line.startsWith("storage_ceiling"));
+    expect(logged).toHaveLength(3);
+    expect(logged[0]).toBe(
+      "storage_ceiling: data/ and the database hold 21.0 GB",
+    );
+    const page = await (
+      await createParentApp({
+        db: opened.at(-1) as Db,
+        snapshots: dir,
+      }).request("/")
+    ).text();
+    expect(page).toContain("Папка data/ и база данных заняли больше 40 ГБ.");
+    errors.mockRestore();
+    // Each session still took its snapshot.
+    expect(readdirSync(dir).filter((f) => f.endsWith(".sqlite"))).toHaveLength(
+      5,
+    );
+  });
+
+  it("raises one notice for a jump across two thresholds", async () => {
+    const base = join(root, "jump");
     mkdirSync(base, { recursive: true });
     const live = join(base, "live.sqlite");
     opened.push(openDatabase(live));
@@ -181,33 +257,40 @@ describe("the parent's notices", () => {
       .mockImplementation(() => undefined);
     let clock = Date.parse("2026-08-01T00:00:00Z");
     const raised: (number | null)[] = [];
-    for (const gb of [19.9, 20.4, 25, 29.9, 30.1, 31, 41]) {
+    for (const gb of [28, 41]) {
       clock += 60_000;
       await backupAfterSession({
         live,
         dir,
-        dataRoot: base,
+        dataRoot: join(base, "data"),
         now: () => clock,
-        sizeOf: () => gb * 1024 ** 3,
+        sizeOf: (path) => (path === live ? gb * 1024 ** 3 : 0),
       });
       raised.push(readNotices(dir).storage_ceiling?.gb ?? null);
     }
-    expect(raised).toEqual([null, 20, 20, 20, 30, 30, 40]);
+    expect(raised).toEqual([20, 40]);
     expect(
       errors.mock.calls.filter((c) =>
         String(c[0]).startsWith("storage_ceiling"),
       ),
-    ).toHaveLength(3);
-    const page = await (
-      await createParentApp({
-        db: opened.at(-1) as Db,
-        snapshots: dir,
-      }).request("/")
-    ).text();
-    expect(page).toContain("больше 40 ГБ");
+    ).toHaveLength(2);
     errors.mockRestore();
-    expect(readdirSync(dir).filter((f) => f.endsWith(".sqlite"))).toHaveLength(
-      7,
-    );
+  });
+
+  it("counts a database inside data/ once", async () => {
+    const base = join(root, "inside");
+    mkdirSync(base, { recursive: true });
+    const live = join(base, "live.sqlite");
+    opened.push(openDatabase(live));
+    const dir = join(base, "snapshots");
+    await backupAfterSession({
+      live,
+      dir,
+      dataRoot: base,
+      now: () => Date.parse("2026-08-01T00:00:00Z"),
+      // data/ at 12 GB already holds the database; counted twice it would pass 20.
+      sizeOf: (path) => (path === base ? 12 * 1024 ** 3 : 11 * 1024 ** 3),
+    });
+    expect(readNotices(dir).storage_ceiling).toBeNull();
   });
 });
