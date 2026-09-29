@@ -2,7 +2,7 @@
 id: SPC-0390
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-6700, REQ-6702, REQ-6704, REQ-6706, REQ-6708, REQ-6710, REQ-6712, REQ-6714, REQ-6716, REQ-6718, REQ-6720, REQ-6722, REQ-6724, REQ-6726, REQ-6728, REQ-6730, REQ-6732, REQ-6734, REQ-6736, REQ-6738, REQ-6740, REQ-6742, REQ-6744, REQ-6746, REQ-6748, REQ-6750, REQ-6752, REQ-6754, REQ-6756, REQ-6758, REQ-6760, REQ-6762, REQ-6764, REQ-6766, REQ-6768, REQ-6770, REQ-6772, REQ-6774, REQ-6776, REQ-6778, REQ-6780, REQ-6782, REQ-6784, REQ-6786, REQ-6788, REQ-6790, REQ-6792, REQ-6794, REQ-6798]
 ---
@@ -140,7 +140,7 @@ Plan labels enter model building only while the whole log holds at least 10 `cor
 
 The bar shows the share right on bare tasks minus the share right on context presentations, in percentage points, centred on zero, with Newcombe's 80 % hybrid score interval (REQ-6770). The context side pools Russian context tasks and tasks whose `forms` holds `bridge`. Both sides read only unassisted first attempts without a `factId` on nodes that have both a bare and a context template, whatever the node's tested state, and no attempt that the order of REQ-6740 gives to a bar other than computational accuracy (REQ-6772). The bar lists each presentation's share with its own 80 % interval: bare, Russian context and bridge keywords (REQ-6774). It reads «мало данных» when either side fails the floor of REQ-6714 (REQ-6718).
 
-The bar shows no Dutch presentation, and no row or placeholder for one, until the owner amends the rule in `CLAUDE.md` that the player sees text in Russian only (REQ-6776). Once the owner amends it and ADR-0430's probe is built, the Dutch presentations join the list; ADR-0430 states the `nl_probe` stream they come from.
+The bar shows no Dutch presentation, and no row or placeholder for one, until the owner amends the rule in `CLAUDE.md` that the player sees text in Russian only (REQ-6776). Once the owner amends it and ADR-0430's probe is built, the Dutch presentations join the list of presentation rows, each with its own share and 80 % interval, and never the pooled context side of REQ-6770. The profile then reads a probe letter's attempt, the one projection besides `nl_probe` that does; ADR-0430 states the stream and its letters. The mapping version that first lists `nl_probe` assigns the stream to the language and format bar.
 
 ### The observations list
 
@@ -205,11 +205,6 @@ SPC-0190's verify runs these checks on the profile:
 - The eight bar identifiers are mine, as snake-case forms of the bar names.
 - The side figures cover the current window only, because ADR-0390 draws the previous window as a thin bar with its own interval and names no side figure for it.
 
-## Open findings
-
-- ADR-0390 and ADR-0430 leave unsettled whether the Dutch presentations, once the owner allows them, join the pooled context side of the language and format bar or only its list of presentation rows, and which mapping version assigns the `nl_probe` stream. ADR-0430 says the dimension reads its stream, and its rule that every projection other than `nl_probe` skips a letter's attempt needs an exception for the profile. This document states the bar without Dutch rows, which is what holds until the amendment.
-
 ## Open review findings
 
 - An agent reviewer asked for ADR-0390's reasons beside seven rules: the empty previous window, the gap bar's missing change line, the one-window template, a stream over a template, `grouping`, the missing Dutch placeholder and the 6 decimals. I rejected it, because rule S8 of the spec step keeps reasons in the decision, and ADR-0390 holds each of them.
-- A second agent round found four gaps, which I fixed: the bars' filters apply at every step of the precedence and a claimed observation doesn't fall through, a Guardian problem with a surplus, missing or plan stream, the module that draws the change lines, and what each bar's stream line lists. I also took its four preferences: the bar identifiers, the side figures' window, the default floor of the smaller figures and REQ-6704 on the schema test. These fixes haven't had a third review, as the method's bound of two rounds sets.

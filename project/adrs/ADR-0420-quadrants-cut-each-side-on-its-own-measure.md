@@ -249,3 +249,5 @@ A `developing` status and a missing target level both reach `school_unplaced`, d
 - The LOVS categories' node lists. The building agent drafts them and a person confirms them.
 - Any Dutch text shown to the player. The probe's Dutch waits on the owner amending the Russian-only rule in `CLAUDE.md`, and nothing here adds player-facing Dutch.
 - The one-deviation margin of REQ-7030, which the owner revisits after a year of real data.
+
+Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

@@ -2,7 +2,7 @@
 id: SPC-0040
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-0701, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-3712, REQ-5096, REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5420, REQ-5428, REQ-5430, REQ-5432, REQ-5436, REQ-5442, REQ-5444, REQ-5450, REQ-5466, REQ-5472, REQ-7158, REQ-7160]
 ---
@@ -68,7 +68,7 @@ A word problem template adds its structure id, the role of each number placehold
 
 ### What the client receives
 
-The client receives a task only as the `Room` packet of SPC-0030: an `itemId`, the view as `ItemViewOut` and the `InputSpec`. `ItemViewOut` holds the text, the SVG picture, the options, the term spans and the input description. `InputSpec` holds the answer kind and its input constraints, and on a T1 to T4 word problem other than a Dutch probe letter `allowInsufficient: true` and the four "what's missing" options. Both schemas are zod `.strict()`, so a field outside them fails serialisation.
+The client receives a task only as the `Room` packet of SPC-0030: an `itemId`, the view as `ItemViewOut` and the `InputSpec`. `ItemViewOut` holds the text, the SVG picture, the options, the term spans and the input description. The term spans mark each term the template's `riskyTerms` lists and each glossary word the story frame adds. `InputSpec` holds the answer kind and its input constraints, and on a T1 to T4 word problem other than a Dutch probe letter `allowInsufficient: true` and the four "what's missing" options. Both schemas are zod `.strict()`, so a field outside them fails serialisation.
 
 ### Data this part keeps and fills
 
@@ -106,10 +106,10 @@ The `items` row and the `item_shown` event keep, on the server, the node, subtyp
 The server generates every maths task in daily play during play, from a template and a seed (REQ-1200), in this order:
 
 1. The item builder picks the template of the named subtype for the wanted answer kind, under the format hold, and for a side slot in a format already shown on the subtype when one fits. The item builder takes only a template whose structure has a frame the frame picker admits, and when the context hold leaves none, it takes another template of the subtype, then a bare template, and then the Director takes another subtype. ADR-0410 states the holds and the side slots, and ADR-0130 the frame picker and `transfer_hold_no_frame`.
-2. The base seed is SHA-256 over `sessionId`, `nodeId` and `slot`, except for a Dutch probe letter, whose seed ADR-0430 draws when the letter's family is created and logs in `probe_family_created`. Its first 128 bits seed xoshiro128**, and a state of all zeros is replaced by a fixed constant.
+2. The base seed is SHA-256 over `sessionId`, `nodeId` and `slot`, except for a Dutch probe letter, whose base seed is the seed ADR-0430 draws for that presentation when the letter's family is created and logs in `probe_family_created`. Steps 3 to 5 run on a letter's base seed as on any other. The base seed's first 128 bits seed xoshiro128**, and a state of all zeros is replaced by a fixed constant.
 3. The generator draws candidate `k` from `hash(baseSeed, k)`, for `k` from 0 to 999, and takes the first candidate that passes `valid()`, the distinctness test and the caller's reject predicate. `valid()` holds every constraint the subtype sets, such as the number of carries, zeros, divisibility and irreducibility (REQ-1206).
-4. After 1,000 candidates, the generator takes the first entry of the template's `fallback` list that the predicate accepts, or the first entry when it accepts none (REQ-1208). The build checks every fallback entry with `valid()` and the distinctness test, and on a T1 to T4 template also with the four-option fill and, on an unanswerable template, the withholding rule, so a fallback entry never fails. After the MVP, the generator asks the predicate about the task's nodes before step 3, and when it refuses a node held for a retention check, as ADR-0400 states, the generator draws no candidate and takes no fallback entry: it returns `held_node_refused`, and the caller takes its next candidate.
-5. The log stores the effective seed, `base/k` or `base/f<i>`. The same template, version and effective seed rebuild the same parameters, answer, traps and graphs byte for byte, whatever history shaped the predicate (REQ-1202). The view is the same too when the multiplication sign setting of ADR-0290 and the story frame of ADR-0130 are the same, because the seed fixes neither.
+4. After 1,000 candidates, the generator takes the first entry of the template's `fallback` list that the predicate accepts, or the first entry when it accepts none (REQ-1208). The build checks every fallback entry with `valid()` and the distinctness test, and on a T1 to T4 template also with the four-option fill and, on an unanswerable template, the withholding rule, so a fallback entry never fails. After the MVP, the generator asks the predicate about the task's nodes before it draws candidate 0, and when it refuses a node held for a retention check, as ADR-0400 states, the generator draws no candidate and takes no fallback entry: it returns `held_node_refused`, and the caller takes its next candidate.
+5. `item_shown` logs the effective seed, `base/k` or `base/f<i>`, for every task, a Dutch probe letter included. The same template, version and effective seed rebuild the same parameters, answer, traps and graphs byte for byte, whatever history shaped the predicate (REQ-1202). The view is the same too when the multiplication sign setting of ADR-0290 and the story frame of ADR-0130 are the same, because the seed fixes neither.
 6. `solve()` computes the answer and every trap's `apply()` its wrong answer, all in `Q`. A decimal is a fraction over 10^n, so 0,1 + 0,2 is exactly 0,3, and every solution, trap answer and answer check is exact (REQ-1204).
 7. The distinctness test compares values, never spellings: it rejects a candidate where a trap answer equals the correct answer or another trap answer (REQ-1210). A trap giving 2/4 against a correct 1/2 is therefore rejected.
 8. `render.ru` produces the view.
@@ -144,7 +144,7 @@ The option builder fills a choice task's wrong options with the traps' distinct 
 
 Every word problem takes its structure from the catalogue of seven: a chain, a fork followed by a comparison, «части и целое» (parts and whole), «на N больше / в N раз» (N more / N times as many), «цена · количество → сдача» (price times quantity to change), motion, or work (REQ-0780).
 
-The generator takes the set of nodes the knowledge model marks fluent or stable, and draws numbers so every step falls in a subtype of those nodes (REQ-0784). With no such node it returns `no_fluent_numbers` and builds nothing.
+The generator takes the set of nodes the knowledge model marks fluent or stable, leaves out every node held for a retention check as ADR-0400 states, and draws numbers so every step falls in a subtype of those nodes (REQ-0784). With no such node it returns `no_fluent_numbers` and builds nothing.
 
 A T4 problem, `T4.insufficient` included, holds exactly one given that no valid graph uses (REQ-0786). Every ordinary T4 problem is a surplus problem, and the skill graph holds no subtype `T4.surplus` (REQ-5436).
 
@@ -173,7 +173,7 @@ The skill graph names the unanswerable subtypes `T1.insufficient` to `T4.insuffi
 
 A surplus template for T1 to T3 adds exactly one given that no valid graph uses, as T4 does. Every surplus template, T4 included, declares one to three extra-data graphs: the valid graph with the unused number joined to or swapped into one step. The distinctness test also rejects a candidate where an extra-data graph's answer equals the correct answer or any trap's answer (REQ-5432).
 
-The generator builds an unanswerable problem as a complete problem first, with the pipeline above, and then withholds one leaf given that every valid graph uses, drawn from the stream `hash(baseSeed, "withhold")`. It never withholds a T4 problem's unused given. The frame renders the text without the clause that states that given. The generator rejects a candidate where the withheld value can be computed from the stated givens. The model choice, the step fields, the hint rungs and the plan cards come from the complete problem (REQ-5408). The step count is the complete problem's (REQ-5410), and the problem shows the same phases and fields as a solvable problem of its tier and answer form (REQ-5406).
+The generator builds an unanswerable problem as a complete problem first, with the pipeline above, and then withholds one leaf given that every valid graph uses, drawn from the stream `hash(baseSeed, "withhold")`. It never withholds a T4 problem's unused given. The frame renders the text without the clause that states that given. The generator rejects a candidate where the withheld value can be computed from the stated givens. The model choice, the step fields, the hint rungs, the plan cards and, on a T2 to T4 problem, the estimate step and its four options come from the complete problem (REQ-5408); ADR-0240 states the estimate step. The step count is the complete problem's (REQ-5410), and the problem shows the same phases and fields as a solvable problem of its tier and answer form (REQ-5406).
 
 On every T1 to T4 word problem, solvable or unanswerable, `hints(p)` names each given by its quantity, such as «сколько конфет в первой коробке» (how many sweets were in the first box), and prints no given's value in any rung, as ADR-0360 decides.
 
@@ -290,12 +290,6 @@ The generator builds a riddle's target with the purpose `compose`, and `judgeCom
 | An outgoing `ItemViewOut` or `InputSpec` carries an unlisted field | Serialisation fails, and the body never reaches the client. |
 | `COMPOSE_FREE` is on with no passing record for the configured `PARSE_MODEL` and prompt hash | Text riddles turn off, card riddles play, and `./meowtower status` shows `compose_flag_off`. |
 | The game day's parse bucket can't reserve two parses | The Director offers a card riddle. |
-
-## Open findings
-
-- ADR-0400 holds a node for a retention check out of every task that names it, and REQ-0784 draws a word problem's steps from every fluent or stable node. No decision says whether a held stable node still supplies a word problem's step numbers, which would show it without naming it. The generator's set stays as REQ-0784 states it until a decision settles this.
-- I chose to have the generator ask the predicate about the task's nodes before drawing a candidate, because no decision says how a refusal of a whole node reaches the generator, and a per-candidate refusal would end in an unaccepted fallback entry of a held node.
-- ADR-0430 draws a letter's seed at family creation, and no decision says whether steps 3 and 4 then run on that seed or what `item_shown` logs as a letter's effective seed.
 
 ## Open review findings
 

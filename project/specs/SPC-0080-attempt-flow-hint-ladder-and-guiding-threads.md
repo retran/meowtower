@@ -2,7 +2,7 @@
 id: SPC-0080
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552, REQ-5100, REQ-5102, REQ-5104, REQ-5106, REQ-5108, REQ-5110, REQ-5112, REQ-5114, REQ-5116, REQ-5118, REQ-5120, REQ-5122, REQ-5124, REQ-5126, REQ-5128, REQ-5132, REQ-5134, REQ-5158, REQ-5160, REQ-5162, REQ-5164, REQ-5166, REQ-5300, REQ-5302, REQ-5306, REQ-5308, REQ-5310, REQ-5312, REQ-5314, REQ-5316, REQ-5324, REQ-5326, REQ-5328, REQ-5330, REQ-5332, REQ-5334, REQ-5336, REQ-5338, REQ-5340, REQ-5342, REQ-5344, REQ-5346, REQ-5348, REQ-5350, REQ-5352, REQ-5370, REQ-6408, REQ-6410, REQ-7164]
 ---
@@ -49,7 +49,7 @@ The routes follow SPC-0030's contract, and this part adds the fields below.
 
 ### Events this part logs
 
-This part logs `item_shown`, `attempt_submitted`, `verdict`, `hint_shown`, `thread_granted`, `thread_spent`, `pocket_thread_given`, `solution_shown`, `explanation_bought`, `twin_unavailable`, `self_check_used`, `rung_framing_approved` and `rung_framing_removed`, all through `appendEvents`. SPC-0020 states the payloads and versions of all but three: SPC-0030 states `explanation_bought`'s payload, and ADR-0020's event catalogue lists `pocket_thread_given` and `twin_unavailable` with ADR-0080 as their owner and no payload (see Open findings). The `items` row holds each item's `hintMaxLevel`, and for an item with an estimate its four values and the index of the correct one.
+This part logs `item_shown`, `attempt_submitted`, `verdict`, `hint_shown`, `thread_granted`, `thread_spent`, `pocket_thread_given`, `solution_shown`, `explanation_bought`, `twin_unavailable`, `self_check_used`, `rung_framing_approved` and `rung_framing_removed`, all through `appendEvents`. SPC-0020 states the payloads and versions of all but three. SPC-0030 states `explanation_bought`'s payload. ADR-0020's event catalogue lists `pocket_thread_given` and `twin_unavailable` with ADR-0080 as their owner: `pocket_thread_given` carries `itemId`, `roomId` and `floorId`, with `roomId` null for a task outside any room, and `twin_unavailable` carries the `itemId` of the original task. The `items` row holds each item's `hintMaxLevel`, and for an item with an estimate its four values and the index of the correct one.
 
 ### Errors
 
@@ -196,13 +196,13 @@ The thread button stays visible and inactive at `disabled-alpha` when the stock 
 
 #### Where it appears
 
-A subtype carries an estimate when its catalogue row has `estimate: true`. The build sets the flag on multi-digit multiplication and division, decimals, percentages, area and volume, and T2 to T4 word problems. A word problem carries an estimate only when its correct result is 1000 or more; the other subtypes carry one at any size. A Dutch probe letter shows neither the estimate nor the inverse check, whatever its subtype's flags (ADR-0430). A build check fails a flagged subtype whose answer isn't a nonzero number.
+A subtype carries an estimate when its catalogue row has `estimate: true`. The build sets the flag on multi-digit multiplication and division, decimals, percentages, area and volume, and T2 to T4 word problems. A word problem carries an estimate only when the result of its complete problem is 1000 or more; the other subtypes carry one at any size. An unanswerable T2 to T4 problem follows the same rule, applied to the result of its complete problem, which the task hides, so the estimate step shows on solvable and unanswerable problems alike (ADR-0240, ADR-0250). A Dutch probe letter shows neither the estimate nor the inverse check, whatever its subtype's flags (ADR-0430). A build check fails a flagged subtype whose answer isn't a nonzero number.
 
 ADR-0070's draw gives an eligible item an estimate with probability `q = min(0.5, 0.15 / (1 - b))`, where `b` is the share of the subtype's last 200 eligible items that couldn't carry one. The draw reads neither `purpose` nor the scored flag, and the estimate appears on between 10 % and 20 % of the eligible scored tasks, counted over at least 200 (REQ-5300). A room asks for at most one estimate, and its estimate stays open until an item carries one (REQ-5302). Tasks outside any room share one estimate per floor.
 
 #### The options
 
-The option builder builds four options, each a rounded value of a different order, shown as separate buttons and never as intervals on a number line (REQ-5312). The correct option is the correct result rounded to one significant figure, `r · 10^e`. The other three sit at orders `e + j` for `j` in `{-1, 1, 2}` or `{-2, -1, 1}`, picked by a seeded coin, each with a leading digit drawn from 1 to 9. A draw is accepted when every two options are at least 0.6 apart in `log10` and the three errors of REQ-5316, stated below, each fall on an option other than the correct one.
+The option builder builds four options, each a rounded value of a different order, shown as separate buttons and never as intervals on a number line (REQ-5312). The correct option is the correct result rounded to one significant figure, `r · 10^e`; on an unanswerable problem the builder reads the hidden result of its complete problem as the correct result. The other three sit at orders `e + j` for `j` in `{-1, 1, 2}` or `{-2, -1, 1}`, picked by a seeded coin, each with a leading digit drawn from 1 to 9. A draw is accepted when every two options are at least 0.6 apart in `log10` and the three errors of REQ-5316, stated below, each fall on an option other than the correct one.
 
 An option is right when it is the option nearest to the correct result in `log10`, and a value falls on the option nearest to it. Ten times the correct result, a tenth of it and, when the final operation is multiplication, the sum of its operands each fall on an option other than the correct one (REQ-5316). For 38 · 47 = 1786 the correct option is 2000, and one accepted draw gives 300, 2000, 10,000 and 400,000: 17,860 falls on 10,000, and both 178.6 and the sum 85 fall on 300.
 
@@ -290,15 +290,9 @@ The fluency test and the rapid-guess test read no time spent in the estimate ste
 
 The decisions leave two details open, and this document fixes them. The flow and the ledger live in `src/engine/attempt/`, since the decisions name the engine's pure functions and not their folder. The error names `no_twin` and `check_not_offered` and their statuses follow SPC-0030's split of `400` for a malformed request and `409` for one the state refuses; ADR-0240 as ADR-0370 amends it sets the statuses of `estimate_missing`, `check_unparsed`, `check_late` and `check_limit_reached`.
 
-## Open findings
-
-- An estimate appears on a T2 to T4 word problem only when its correct result is 1000 or more, and an unanswerable problem has no correct result, so as written the estimate step tells her the problem can be solved before she reads it, and «Нельзя узнать» pressed in the step is always `false_insufficient`. ADR-0250 forbids a control that shows only on one kind of problem, and ADR-0240, ADR-0250 and ADR-0370 don't say whether an unanswerable problem carries an estimate. The rule in "Where it appears" leaks until a decision settles it: either an unanswerable problem carries an estimate built from its complete graph's hidden result, with a stated verdict after «Нельзя узнать», or the decision accepts the leak.
-- No decision or specification gives the payloads of `pocket_thread_given` and `twin_unavailable`. The ledger's limit of one pocket thread a room or floor needs the room or floor on `pocket_thread_given`. I leave the fields to SPC-0020's next revision or a decision, because this document doesn't own the event schemas.
-
 ## Open review findings
 
 - The second agent review asked to move the Dutch probe letter's MVP and `CLAUDE.md` condition from "The second attempt" to Scope. I keep it beside the twin rule, because the rule's exception for a letter holds only under that condition, and a reader of the rule alone would otherwise take the exception as live today.
-
 - The agent review asked for a reason beside the candidate queue's cap of 5 and its 60-day expiry, the rule that a change to the pocket changes CAN-0030 in the same commit, and the limit of 3 checks a task. I keep them without reasons, because a specification states what the system does and the reasons live in ADR-0220, ADR-0080 and ADR-0240.
 - The agent review asked for the parts this document requires to be named by their specifications, SPC-0040, SPC-0060, SPC-0070, ADR-0120, ADR-0140 and others, in place of their decisions. I keep the decisions, because each decision owns its rule and its `## Amends` sections hold the current text, while a pointer to a section of a specification goes stale whenever that specification is revised, as SPC-0040, SPC-0060 and SPC-0070 are in each addendum's pass. The `forms` sentence points to SPC-0040 and SPC-0020 because no decision this document cites defines that field.
 - A second agent review asked for the decision holding each reason to be cited beside several more rules, among them the framing hash, the pocket per floor, the inactive button during the estimate step, the bound of 1000, the formula for `q`, the 0.6 gap and the 20 draws. I cited the decision beside the charge key, the queue limits, the canon commit, the check limit and the check time, and left the rest, because each of the others sits in a section whose rules all come from one decision: the framing and the ladder from ADR-0220, the pocket from ADR-0080, and the estimate step, the bound, `q`, the gap and the draws from ADR-0240.

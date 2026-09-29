@@ -2,9 +2,9 @@
 id: SPC-0400
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
-states: [REQ-6800, REQ-6802, REQ-6804, REQ-6806, REQ-6808, REQ-6810, REQ-6812, REQ-6814, REQ-6816, REQ-6818, REQ-6820, REQ-6822, REQ-6824, REQ-6826, REQ-6828, REQ-6830, REQ-6832, REQ-6834, REQ-6836, REQ-6838, REQ-6840, REQ-6848, REQ-6850, REQ-6852, REQ-6854, REQ-6856, REQ-6858, REQ-6860, REQ-6862, REQ-6864, REQ-6866, REQ-6868, REQ-6870, REQ-6872, REQ-6874, REQ-6876, REQ-6878, REQ-6880, REQ-6882, REQ-6884, REQ-6886, REQ-6888, REQ-6890, REQ-6892, REQ-6894, REQ-6896, REQ-6898]
+states: [REQ-6800, REQ-6802, REQ-6804, REQ-6806, REQ-6808, REQ-6810, REQ-6812, REQ-6814, REQ-6816, REQ-6820, REQ-6822, REQ-6824, REQ-6826, REQ-6828, REQ-6830, REQ-6832, REQ-6834, REQ-6836, REQ-6838, REQ-6840, REQ-6848, REQ-6850, REQ-6852, REQ-6854, REQ-6856, REQ-6858, REQ-6860, REQ-6862, REQ-6864, REQ-6866, REQ-6868, REQ-6870, REQ-6872, REQ-6874, REQ-6876, REQ-6878, REQ-6880, REQ-6882, REQ-6884, REQ-6886, REQ-6888, REQ-6890, REQ-6892, REQ-6894, REQ-6896, REQ-6898, REQ-7502]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -45,6 +45,8 @@ It leaves out what other records state. The 80 % Wilson interval on every share,
 | `retention_observations` | every retention observation per node, with its date, its result, its gap in game days as `daysSinceLastExposure`, and whether it fell inside a series | the report, the profile's retention bar (ADR-0390) |
 | `retention_series` | per node, its plans keyed by node, its open series with its observations, its result, the due window as dates, the hold, a block owed and the restart rule waiting | the Director's `nextTask` and `planFloor`, the report |
 
+Both are `knowledge` projections under SPC-0020's split. After a retention check on which she opened the hint ladder, SPC-0060 sets the node's `nextReview` to the check's day plus 1 day.
+
 ### Report parts
 
 The weekly breakdown, the trajectory and the retention list sit on the dynamics screen, and the node card shows the breakdown split by subtype and the node's series. Both screens come after the MVP; report v1's nine screens don't change (SPC-0180).
@@ -78,7 +80,7 @@ The Russian string file `content/i18n/ru.json` holds, under `parent.*`, the four
 
 ### Increment 1: every walkthrough names its task
 
-`solution_shown` carries the `itemId` of its task as a required field from its first payload version (REQ-6890), and so does `hint_shown` (REQ-6892). Version 1 of both schemas in `src/shared/events.ts` has it, and every later version keeps it. Nothing else in this document enters the MVP. `explanation_shown` reaches its task through `explanation_bought`, as SPC-0120 states.
+`solution_shown` carries the `itemId` of its task as a required field from its first payload version (REQ-6890), and so does `hint_shown` (REQ-6892). Version 1 of both schemas in `src/shared/events.ts` already holds it as a required field, so the field needs no upcaster, and every later version keeps it. Nothing else in this document enters the MVP. `explanation_shown` reaches its task through `explanation_bought`, as SPC-0120 states.
 
 ### Counted first attempts
 
@@ -101,7 +103,7 @@ A count has no floor. The node card shows the same counts split by subtype (REQ-
 
 The trajectory draws one point per node for each week that holds at least one counted first attempt (REQ-6816). Each point carries three figures.
 
-The share «сама» is the unassisted counted first attempts that end `clean` over all unassisted counted first attempts (REQ-6824). When the week holds fewer than 5 unassisted counted first attempts, the share pools the week with the calendar weeks just before it, empty ones included, until the count reaches 5, over at most 4 weeks with the point's own week included, and names the weeks it pooled (REQ-6818). When those 4 weeks hold fewer than 5, the point shows «мало данных» with its count and no share. Otherwise it shows the count and ADR-0380's 80 % Wilson interval.
+The share «сама» is the unassisted counted first attempts that end `clean` over all unassisted counted first attempts (REQ-6824). When the week holds fewer than 5 unassisted counted first attempts, the share pools the week with the calendar weeks just before it, empty ones included, until the count reaches 5, over at most 4 weeks in all with the point's own week included, and names the weeks it pooled (REQ-7502). When those 4 weeks hold fewer than 5, the point shows «мало данных» with its count and no share. Otherwise it shows the count and ADR-0380's 80 % Wilson interval.
 
 The mean depth of help is the mean over the week's counted first attempts of a score per attempt: 0 for `clean` with no hint, the deepest rung from 1 to 3 for `clean` after hints, and 4 for `partial` or `alt` (REQ-6820). A `clean` answer after rung 1 on a one-rung ladder scores 1. The point shows the mean to one decimal with its count, and no floor.
 
@@ -220,14 +222,9 @@ A simulation over 90 simulated days in `tools/simulate.ts` asserts that no `item
 
 ## Choices made in this document
 
-- The weeks pooled for the share «сама» number at most 4 with the point's own week included, as ADR-0400 reads REQ-6818, and they are calendar weeks, empty ones included, since ADR-0400 speaks of a span of weeks.
+- The weeks pooled for the share «сама» are calendar weeks, empty ones included, since ADR-0400 speaks of a span of weeks.
 - When no subtype reaches weight 0.2, the check's draw runs over all the node's subtypes as REQ-6858 states, narrowed by ADR-0410's side-slot rule to subtypes she has been shown whenever one fits. ADR-0400 states the fallback as the shown subtypes alone; the two readings give the same draw, because a node reaches «устойчиво» only after she has been shown some of its subtypes.
 - A check is late when placed after its window's end, `toDays` game days after its start point. For a `latest_meeting` window that is more than 35 game days after the meeting, as REQ-6864 states. REQ-6864 doesn't cover a `plan_day` window, and ADR-0400 extends the late mark to its end, 7 game days after the plan.
-
-## Open findings
-
-- REQ-6818 says "as many earlier weeks, up to 4", which reads as up to 4 earlier weeks, 5 in all, while its reason speaks of a four-week span. ADR-0400 chose 4 in all and records the question for the person approving; this document follows ADR-0400 and leaves the question open.
-- ADR-0400 increment 1 says no code writes `solution_shown` or `hint_shown` yet, while `src/shared/events.ts` already holds both in version 1 with a required `itemId`, as ADR-0380 records. The obligation is met either way; the decision's sentence is out of date.
 
 ## Open review findings
 

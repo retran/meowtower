@@ -2,7 +2,7 @@
 id: SPC-0010
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-3714]
 ---
@@ -28,7 +28,7 @@ The system consists of two containers, one command and, when `LOCAL_JUDGES` name
 | `./meowtower setup` | Run once with administrator rights: creates the dedicated standard macOS account, without administrator rights, that the local judges run as. |
 | `./meowtower up` | Checks the network, runs `docker compose up -d` and `caffeinate`, starts the launchd daemon of each judge in `LOCAL_JUDGES`, loads the network watch, sets the containers' time zone to the Mac's, and prints the QR code for the iPad. ADR-0350 states what it checks and writes for the judges. |
 | `./meowtower down` | Stops the containers, stops each local judge's launchd daemon and unloads the network watch. It never passes `-v`, so the volume `meowtower-db` survives. |
-| `./meowtower status` | Reports in one line each whether Docker and both containers run, the last snapshot and how long it took, and every open notice in `data/snapshots/notices.json`, `backup_failed` and `storage_ceiling` and those ADR-0350 raises, and one line per local judge with its state and the game day's share of its checks answered elsewhere. |
+| `./meowtower status` | Reports in one line each whether Docker and both containers run, the last snapshot and how long it took, and every open notice in `data/snapshots/notices.json`, `backup_failed` and `storage_ceiling` and those ADR-0350 raises, one line per local judge with its state and the game day's share of its checks answered elsewhere, and the count of context templates that list fewer than 2 contexts, as ADR-0410 states. |
 | `./meowtower set-home-network` | Records the Mac's default gateway, as its IP address and the router's hardware address where the Mac can read it, in `data/home-gateway`. The first `./meowtower up` records it too. |
 | `./meowtower pair` | Prints a new 6-digit pairing code, asked for through `POST /pair-code` on the Parent Room's listener, so only the Mac issues codes. |
 | `POST /api/pair` | `{ code, kind }` on the game listener; on a live code it sets the device cookie and replies 200, otherwise 403 `pairing_code_invalid`, or `429 pairing_locked` with `retryAt` during a lockout. The only `/api` route that needs no token. |
@@ -41,6 +41,7 @@ The system consists of two containers, one command and, when `LOCAL_JUDGES` name
 | `./meowtower db-snapshot` | Takes one snapshot on demand, through `POST /snapshot` on the Parent Room's listener; the server records the file and its time in `data/snapshots/last.json`, which `./meowtower status` shows. |
 | `./meowtower restore` | Stops `meowtower`, runs `dist/server/restore.js` in its container to copy the newest snapshot over the live database, and starts it again. |
 | `./meowtower export` and `./meowtower recompute` | Run the export and the recompute ADR-0020 states, inside `meowtower`. |
+| `./meowtower model activate` | Runs the held-out gate ADR-0060 states on a candidate model version inside `meowtower`, and activates the candidate only when it passes. |
 | Docker volume `meowtower-db` | Holds the live SQLite database, `/var/lib/meowtower/meowtower.sqlite` inside `meowtower`. No Mac program can open it. |
 | `data/blobs/` | The blob store, write-once. |
 | `data/snapshots/meowtower-<UTC timestamp>.sqlite` | Snapshots. |
@@ -62,6 +63,7 @@ The system consists of two containers, one command and, when `LOCAL_JUDGES` name
 - ADR-0100 gives every call to a model a deadline, ADR-0350 supplies the local judges that `./meowtower up` starts and `./meowtower status` reports, and ADR-0110 supplies the texts the game continues on when the service fails.
 - ADR-0150 supplies the screens of both interfaces, ADR-0160 the player's strings, and ADR-0180 the Parent Room's pages.
 - ADR-0190 holds the budgets this part names, in its Baselines table.
+- ADR-0060 supplies the model gate that `./meowtower model activate` runs, and ADR-0410 the template check whose count `./meowtower status` shows.
 
 The permitted dependencies run one way. `proxy` depends on `meowtower`, the client depends only on the routes `meowtower` serves, and no part depends on the client. `meowtower` reaches a local judge only over HTTP at `host.docker.internal:<port>`, and a local judge depends on nothing in `meowtower`. Only `meowtower` opens the live database.
 
@@ -69,7 +71,7 @@ The permitted dependencies run one way. `proxy` depends on `meowtower`, the clie
 
 ### Names
 
-The game is Meowtower, «Мяубашня» (Meow tower) in the player's language, and every technical name carries it (REQ-3714): the repository `retran/meowtower`, the operator command `./meowtower`, the Compose project and the server service `meowtower`, the volume `meowtower-db`, the database directory `/var/lib/meowtower`, the database file `meowtower.sqlite` and the snapshot files `meowtower-<UTC timestamp>.sqlite` (REQ-3714). The proxy service is `proxy`. The Tower («Башня», the Tower) that the heroine climbs is a place in the story, and its name stays.
+The game is Meowtower, «Мяубашня» (Meow tower) in the player's language, and every technical name carries it (REQ-3714): the repository `retran/meowtower`, the operator command `./meowtower`, which carries every operator subcommand a decision names, the Compose project and the server service `meowtower`, the volume `meowtower-db`, the database directory `/var/lib/meowtower`, the database file `meowtower.sqlite` and the snapshot files `meowtower-<UTC timestamp>.sqlite` (REQ-3714). The proxy service is `proxy`. The Tower («Башня», the Tower) that the heroine climbs is a place in the story, and its name stays.
 
 ### Where it runs and where the data lives
 

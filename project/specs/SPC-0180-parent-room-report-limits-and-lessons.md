@@ -2,7 +2,7 @@
 id: SPC-0180
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364, REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-1426, REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378, REQ-3710, REQ-3814, REQ-5146, REQ-5148, REQ-5150, REQ-5360, REQ-5362, REQ-5364, REQ-5366, REQ-5368, REQ-5458, REQ-5460, REQ-5462, REQ-5464, REQ-6064, REQ-6600, REQ-6602, REQ-6604, REQ-6606, REQ-6608, REQ-6610, REQ-6612, REQ-6614, REQ-6616, REQ-6618, REQ-6620, REQ-6622, REQ-6624, REQ-6626, REQ-6628, REQ-6630, REQ-6632, REQ-6634, REQ-6638, REQ-6640, REQ-6642, REQ-6644, REQ-6648, REQ-6650, REQ-6796, REQ-7170, REQ-7174, REQ-7400]
 ---
@@ -31,6 +31,7 @@ Every route below needs a paired device. Every route other than `POST /api/paren
 | `POST /api/parent/tags` | Writes `parent_tag_added` for a lesson mark. |
 | `DELETE /api/parent/tags/:tagId` | Writes `parent_tag_removed` for that lesson mark. |
 | `POST /api/parent/items/:itemId/exclude` | Writes `item_excluded` in ADR-0340's version 2 with `source: "parent_room"` for that task. |
+| `DELETE /api/parent/items/:itemId/exclude` | Writes `item_included` for that task. |
 | `GET` and `PUT /api/parent/settings` | Reads and changes the settings, the player's real name, age and school group among them. |
 
 The query schemas of the `/api/parent/report*` routes are strict: they accept only `at=` and a page number, and answer `400` to any other parameter, so no request can hide a node, a dimension or a figure (REQ-6606).
@@ -47,7 +48,7 @@ The client's Parent Room is the `/parent` area of the Preact client, and it read
 | `src/parent/measures.ts` | The registry of every measure in addendum 2's report parts, each with its «мало данных» floor. |
 | `src/parent/contrasts.ts` | The contrasts that may draw an interpretation line, one for each entry of `verify/contrasts.json`. |
 | `verify/contrasts.json` | The fixed list of contrasts, each entry naming the decision that approved it. |
-| `excluded_attempts` | After the MVP, each `item_excluded` event joined to the attempts it removed, with its `source`. |
+| `excluded_attempts` | After the MVP, each `item_excluded` event that no later `item_included` for its task follows, joined to the attempts it removed, with its `source`. |
 | `limits` | One `LimitsResult` per session. |
 | `thresholds` | One fluency threshold per template and device type, iPad or computer, with its version. |
 | `parent_tags` | The lesson marks and their open recheck windows. |
@@ -65,6 +66,7 @@ The `meowtower` service mounts `content/` read-only.
 | `glossary_entry_approved` | the entry and the text the parent approved |
 | `parent_tag_removed` | the lesson mark the parent removed |
 | `item_excluded` | the task the parent excluded as ambiguous; version 2 carries `source`, as ADR-0340 states |
+| `item_included` | the excluded task the parent restored |
 | `settings_changed` | the setting and its new value |
 
 ### Failure states
@@ -110,7 +112,7 @@ The settings panel holds the player's real name, age and school group, and the p
 
 The glossary panel pairs each Russian term with its drafted Dutch word, and lists the bridge words beside the glossary entries with the count of approved ones. The parent approves, edits or rejects each entry. Approval writes `glossary_entry_approved`, and the term hint shows the Dutch word only for an entry whose latest approval matches its current text (REQ-0846).
 
-The lessons list shows every lesson mark with a remove control beside it, which calls `DELETE /api/parent/tags/:tagId`. The flagged-task list shows each task flagged for the parent with an exclude control beside it, which calls `POST /api/parent/items/:itemId/exclude`.
+The lessons list shows every lesson mark with a remove control beside it, which calls `DELETE /api/parent/tags/:tagId`. The flagged-task list shows each task flagged for the parent with an exclude control beside it, which calls `POST /api/parent/items/:itemId/exclude`, and each excluded task with a «вернуть» (restore) control beside it, which calls `DELETE /api/parent/items/:itemId/exclude`. The `item_included` event it writes starts the full recompute of SPC-0020, and from it every knowledge projection and report figure counts the task's attempts again, as ADR-0060 states.
 
 The calibration mode lets an adult solve 3 tasks of a node on a device type, and writes `calibration` events, as "Fluency thresholds" sets out.
 
@@ -222,7 +224,7 @@ An answer of «Нельзя узнать» never counts as «Не знаю». It
 
 The v1 limits screen shows one row for each of the twelve limits, with its current value, the number of sessions behind it and its flag where the limit has one (REQ-2356). When fewer than 3 sessions hold data for a limit, its row shows «мало данных» in place of the value (REQ-2358). The screen shows no charts and splits no limit by part of the session or by task kind (REQ-2360). Avoidance and anxiety read as observations with a prompt to talk with the player, never as grades, in wording the parent judges (REQ-1308).
 
-After the MVP the full limits screen shows these views over the same `LimitsResult`, adding views and no measures (REQ-1306):
+After the MVP the full limits screen shows these views (REQ-1306), and adds to `LimitsResult` the figures its views need, each named by the decision that builds that screen:
 
 - holding steps: the largest number of steps held, the share of answers that stop at an intermediate step, and the step at which mistakes happen;
 - endurance: growth of the control-fact median time from start to end, the accuracy flag, and each extension compared with the start and the end;
@@ -272,7 +274,7 @@ This section is at the level of the figures the report computes and the rules th
 
 Every share in addendum 2's report parts shows its right answers, its attempts and its 80 % Wilson interval over the raw, unweighted counts of the window it names beside it (REQ-6616). The parts are the profile, the trajectories, retention, transfer, the home-and-school quadrants, the probe and the hypotheses. A difference between two shares shows its 80 % Newcombe hybrid score interval, built from the two Wilson limits the screen shows (REQ-6618). A median time shows its distribution-free 80 % interval from order statistics: the values at ranks j and n + 1 - j, with j the largest rank for which a binomial count of n at one half falls below j with chance 0.10 or less (REQ-6620). ADR-0060's entropy uncertainty stays on report v1's node card and in the Director.
 
-`src/parent/intervals.ts` computes every one of these intervals. A group 2 test compares it with `tests/reference/intervals.json`, a table computed once with Python's `scipy.stats`, and fails with `interval_reference_mismatch` on any difference above 0.0005.
+`src/parent/intervals.ts` computes every one of these intervals. A group 2 test compares it with `tests/reference/intervals.json`, a table computed once with Python's `scipy.stats`, and fails with `interval_reference_mismatch` on any difference above 0.0005. The table holds the Wilson rows for every count from 0 of 1 to 1,000 of 1,000, and the test compares every row the table holds.
 
 #### «Мало данных» floors
 
@@ -358,16 +360,9 @@ It doesn't defend against a person with the Mac's user account, who can take a c
 
 - The observation «склонна отказываться от задачи» sits on the summary screen, and the note on the unanswerable streams on the graph map beside the word-problem matrix; ADR-0250 names no screen for either.
 
-## Open findings
-
-- ADR-0380 and ADR-0450 say report v1 keeps its eight screens, while REQ-6064, ADR-0300 and ADR-0390 give it nine, the ninth being «Работа с источниками». This document keeps the nine screens REQ-6064 states, and doesn't choose between the decisions; ADR-0380 and ADR-0450 need their text brought into line by whoever owns them.
-- This part writes `item_excluded` and offers no way to reverse it, while ADR-0060 and SPC-0060 drop an excluded attempt only while no later event re-included it, and ADR-0060 asks ADR-0020 for `item_excluded` and its reversal. No approved record names the reversal event, its route or its control, so this document states none, and the flagged-task list has no undo until a decision defines one.
-- ADR-0380 gives two ranges for `tests/reference/intervals.json`: its Decision section puts the Wilson rows at every count from 0 of 1 to 1,000 of 1,000, while its ceilings and its realisation check stop at 60. This document names the table and its 0.0005 tolerance and states no range until the decision settles one.
-
 ## Open review findings
 
 - An agent reviewer asked for a reason beside the placements under "Choices made in this document", the 50-row page, the two version sets in `report_cache` and the Director's narrow read of `parent_tags` and `thresholds`. I rejected it, because rule S8 of the spec step keeps reasons in the decision: ADR-0180 gives the reasons for the page size, the version sets and the Director's read, and the placements' reason belongs to the design step that settles them.
 - The same reviewer asked again for reasons beside the rules the first finding above names; the rejection under the first finding holds.
-- The agent reviews of 2026-09-28 for addendum 2 ran two rounds. I fixed the first round's findings on the language line's direction, the `lastEventSeq` phrase, the missing reversal of `item_excluded`, which is now under Open findings, and the failure names, now stated at the checks that raise them. The first round's request for reasons beside the page size, the version sets and the Director's read gets the rejection above.
-- Open after the second round: the full limits screen after the MVP is said to show its views "over the same `LimitsResult`, adding views and no measures", but several of its views, such as the share of answers stopping at an intermediate step, the part of the session a careless error fell in, "what helped" for anxiety and "whether reviews help", need figures the `LimitsResult` table doesn't compute. REQ-1306 asks only for views. The sentence predates addendum 2, and which fields `LimitsResult` gains is for ADR-0180 or the stage that builds the full limits screen to settle, so I left it unchanged.
+- The agent reviews of 2026-09-28 for addendum 2 ran two rounds. I fixed the first round's findings on the language line's direction, the `lastEventSeq` phrase, the missing reversal of `item_excluded`, and the failure names, now stated at the checks that raise them. The first round's request for reasons beside the page size, the version sets and the Director's read gets the rejection above.
 - The second round again asked for a reason beside the placement under "Choices made in this document"; the rejection under the first finding above holds.

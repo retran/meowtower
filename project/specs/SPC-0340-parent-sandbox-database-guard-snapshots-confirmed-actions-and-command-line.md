@@ -2,7 +2,7 @@
 id: SPC-0340
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-6300, REQ-6302, REQ-6304, REQ-6306, REQ-6308, REQ-6310, REQ-6312, REQ-6314, REQ-6316, REQ-6318, REQ-6320, REQ-6322, REQ-6324, REQ-6326, REQ-6328, REQ-6330, REQ-6336, REQ-6340, REQ-6342, REQ-6344, REQ-6346, REQ-6348, REQ-6350, REQ-6352, REQ-6354, REQ-6356, REQ-6358, REQ-6360, REQ-6362, REQ-6364, REQ-6366, REQ-6368, REQ-6370, REQ-6372, REQ-6374, REQ-6376, REQ-6378]
 ---
@@ -97,7 +97,7 @@ SPC-0100 states the money states the sandbox reaches: `sandbox_budget_spent`, `o
 
 ### Permitted dependencies
 
-The dependencies run one way. Only `main.ts` and the Parent Room's confirmed-action module import the player's read-write handle or call `openDatabase` on her file's path. `main.ts` constructs the sandbox module in `src/server/sandbox/` with the read-only handle to her file and the sandbox's own handles, and never with her read-write handle. The play handlers and the engine modules reach a database only through the engine context they are given, and hold no module-level handle. The play handlers keep SPC-0030's lease holder, heartbeat timers, event streams and answer queue per engine context, so the sandbox's play mount shares none of them with the player's. `main.ts` gives the confirmed-action module a function that returns the sandbox module's current handle to `sandbox.sqlite`, and the module calls it on each confirm and holds no sandbox handle between confirms. The sandbox module never calls the confirmed-action module; the client reaches it through the `sandbox-actions` routes. The client imports only `src/shared/`. A static check in group 1 fails on any other import of the read-write handle, in `src/server/sandbox/`, in a play handler or elsewhere.
+The dependencies run one way. Only `main.ts` and the Parent Room's confirmed-action module import the player's read-write handle or call `openDatabase` on her file's path. `main.ts` constructs the sandbox module in `src/server/sandbox/` with the read-only handle to her file and the sandbox's own handles, and never with her read-write handle. The play handlers and the engine modules reach a database only through the engine context they are given, and hold no module-level handle. The play handlers keep SPC-0030's lease holder, heartbeat timers, event streams and answer queue per engine context, so the sandbox's play mount shares none of them with the player's. `main.ts` gives the confirmed-action module a function that returns the sandbox module's current handle to `sandbox.sqlite`, and the module calls it on each confirm and holds no sandbox handle between confirms. The sandbox module never calls the confirmed-action module; the client reaches it through the `sandbox-actions` routes. The client imports only `src/shared/`. A static check in group 1 fails on any other import of the read-write handle, in `src/server/sandbox/`, in a play handler or elsewhere. A lint in group 1 fails a timer, an interval, `setImmediate` or a call to the job queue's API in `src/server/sandbox/`, and any import there of the module that holds the sandbox flag's storage.
 
 ## Behaviour
 
@@ -121,7 +121,7 @@ These checks guard her file, in the order an event meets them:
 2. `events_profile_guard` makes the player's file refuse a `sandbox` event whatever code sends it, over any connection, and makes a sandbox file refuse a `main` event (REQ-6312). A file with no `db_role` row refuses every insert.
 3. A nightly job on her file counts the events with the device identifier `sandbox` and reports any it finds once to the owner as `sandbox_leak_found`, with the event types and sequence numbers.
 
-The middleware `main.ts` mounts on the sandbox route trees sets a flag in Node's `AsyncLocalStorage`, and `appendEvents` writes the device identifier `sandbox` on every event appended while the flag is set, whatever context the caller built. Sandbox code can't clear the flag, because the router sets it outside the sandbox module. The router matches the game listener's tree on the prefix `/api/parent/sandbox/` with its trailing slash, so no request to `/api/parent/sandbox-actions/*` sets the flag. The confirmed actions carry the parent's device, so the nightly count is zero while the sandbox writes only its own file, and it finds an event written through a context `{ mainDb, profile: 'main' }` built inside sandbox code (REQ-6310).
+The middleware `main.ts` mounts on the sandbox route trees sets a flag in Node's `AsyncLocalStorage`, and `appendEvents` writes the device identifier `sandbox` on every event appended while the flag is set, whatever context the caller built. Sandbox code can't clear the flag, because the router sets it outside the sandbox module, and it starts no timer or job, so every append from sandbox code happens inside a sandbox request, where the flag marks it. The router matches the game listener's tree on the prefix `/api/parent/sandbox/` with its trailing slash, so no request to `/api/parent/sandbox-actions/*` sets the flag. The confirmed actions carry the parent's device, so the nightly count is zero while the sandbox writes only its own file, and it finds an event written through a context `{ mainDb, profile: 'main' }` built inside sandbox code (REQ-6310).
 
 `GUARDED_TRIGGERS` holds `events_profile_guard` and the two `db_role` triggers beside SPC-0020's guarded triggers on `events` and `blobs`, and `checkGuard` matches each trigger against its own expected message. When any of them is missing from her file, the server refuses to start with `log_guard_missing` naming it (REQ-6314). The migration runner refuses, before it applies anything, a migration that drops or replaces any guarded trigger (REQ-6316).
 
@@ -133,13 +133,13 @@ The builder creates a fresh file with role `sandbox` and attaches the temporary 
 
 The builder keeps three table lists: the copy list (`events`, `blobs`, `explain_cache`, `frames`), the empty list (the seven tables above) and the rebuilt list (`db_role` and `schema_migrations`, which the fresh file's open writes, and every table in the projection registry). A group 1 check fails, naming the table, when a table in the schema is on none of the three lists, so a table a later migration adds fails group 1 until someone lists it. When the builder meets a table on none of the three lists, one a migration added after the last group 1 run, it creates the table in the snapshot and leaves it empty.
 
-While a snapshot runs, the sandbox shows «Снимаю снимок…» (Taking the snapshot) with the stage it has reached: copy, scrub or rebuild. A snapshot of a 1 GB file takes at most 180 seconds, the budget in SPC-0190's Baselines table, and the full verify on the family Mac fails past it.
+While a snapshot runs, the sandbox shows «Снимаю снимок…» (Taking the snapshot) with the stage it has reached: copy, scrub or rebuild. A snapshot of a 1 GB file takes at most 180 seconds, the budget in SPC-0190's Baselines table. The full verify on the family Mac records a snapshot over 180 seconds as a baseline finding in the verify report and still passes.
 
 ### Resets
 
 The reset offers two starts: «Пустой профиль» (Empty profile) and «Копия игрока» (Copy of the player), a copy of `sandbox-snapshot.sqlite` (REQ-6326). When the parent chooses the copy and no sandbox snapshot exists yet, the reset takes one and starts from it (REQ-6378). A separate button, «Снять снимок заново» (Take the snapshot again), replaces the snapshot.
 
-A reset closes the sandbox handle, answers every sandbox request in flight with `409 sandbox_resetting`, builds the new file under a temporary name and renames it over `sandbox.sqlite`. A reset and a snapshot write only sandbox files and read her file only through `openReadOnly`, so neither changes her file, and her file's hash is the same before and after each when she doesn't play meanwhile (REQ-6324). While a reset runs, a confirm answers `409 sandbox_resetting` and appends nothing to either file.
+A reset closes the sandbox handle, answers every sandbox request in flight with `409 sandbox_resetting`, builds the new file under a temporary name and renames it over `sandbox.sqlite`. A reset and a snapshot write only sandbox files and read her file only through `openReadOnly`, so neither changes her file: a hash of each table's rows in her file is the same before and after each when she doesn't play meanwhile (REQ-6324). Every check of REQ-6324 compares these per-table hashes and never a hash of the file's bytes. While a reset runs, a confirm answers `409 sandbox_resetting` and appends nothing to either file.
 
 ### Model calls and money
 
@@ -179,7 +179,7 @@ The Parent Room's confirmed-action module serves the confirmed actions, and the 
 | restore one | `content_restored` |
 | approve a puzzle, or one of its statement variants | `puzzle_approved` for the hash of the variant approved, with the `source` SPC-0280 lists |
 
-One confirmation is one token. A repeated press or a retried request with the same token returns the original event with 200 and appends nothing to her file; it appends `sandbox_action_applied` to the sandbox's file only when that pointer is missing. A later confirmation of the same change, such as disabling a template again after restoring it, uses a new token and adds its own event (REQ-6352). A token is used only once its append commits, so a confirm that failed with `log_write_failed` can retry with the same token. Tokens live in memory, expire after 5 minutes and end with the parent session. A session holds at most 20 tokens, and a 21st prepare drops the oldest, which then confirms as `410 sandbox_action_expired`.
+One confirmation is one token. A repeated press or a retried request with the same token returns the original event with 200 and appends nothing to her file; it appends `sandbox_action_applied` to the sandbox's file only when that pointer is missing. A later confirmation of the same change, such as disabling a template again after restoring it, uses a new token and adds its own event (REQ-6352). At start-up the server appends `sandbox_action_applied` to the sandbox's file for every event in her file with `source: "sandbox"` that no pointer names. A token is used only once its append commits, so a confirm that failed with `log_write_failed` can retry with the same token. Tokens live in memory, expire after 5 minutes and end with the parent session. A session holds at most 20 tokens, and a 21st prepare drops the oldest, which then confirms as `410 sandbox_action_expired`.
 
 `item_excluded` v2 carries `source`, and its upcaster fills `source: "parent_room"` for every v1 event, so every parent event written before `source` existed is read with the same meaning on every fold and rebuild (REQ-6356). For a task generated in the sandbox, v2 carries `templateId`, `templateVersion` and `paramsHash` in place of `itemId`, and the exclusion also applies to her attempts on that template version and parameter hash.
 
@@ -195,7 +195,7 @@ The commands print their output and write it to no file; a copy in a file exists
 
 ### Ceilings
 
-- `sandbox.sqlite` over 2 GB: the sandbox header shows the marker `sandbox_large`, which stays until a reset drains the file.
+- `sandbox.sqlite` over 2 GB: the sandbox header shows the marker `sandbox_large` until a reset brings the file under 2 GB, and the marker shows nowhere else.
 - Temporary files: a `sandbox-cli-*` file is deleted when its command ends, and the snapshot builder's temporary copy and the reset's file under a temporary name are deleted when the snapshot or the reset ends; the server sweeps all three kinds at start.
 - `sandbox-spend.sqlite`: a nightly job deletes rows older than 13 months, keeping the current month and the same month a year earlier (REQ-6374).
 - The sandbox's `llm_log` bodies: SPC-0100's nightly deletion after 90 days runs on `sandbox.sqlite` as on her file (REQ-6328).
@@ -221,22 +221,20 @@ The commands print their output and write it to no file; a copy in a file exists
 | A confirm arrives twice with one token | The second returns the original event with 200; the log holds one event. |
 | The confirmed action's append to her file fails | `503 log_write_failed`; the token stays unused, and the parent retries with it. |
 | The append to her file succeeds and the `sandbox_action_applied` append fails | The confirm answers `503 log_write_failed`; the main event stands and the token is used. The client retries with the same token, and the retry finds the main event by its `idem_key`, writes the pointer and returns the main event with 200. |
+| The server restarts between the append to her file and the `sandbox_action_applied` append | A retry with the token gets `410 sandbox_action_expired`; at start-up the server writes the missing pointer for that event. |
+| Sandbox code starts a timer, an interval, `setImmediate` or a job, or imports the sandbox flag's storage module | The group 1 lint fails and names the file. |
 | A confirm arrives while a reset runs | `409 sandbox_resetting`; nothing is appended to either file, the token stays unused, and the client retries once the reset ends. |
 | A prepare or confirm request reaches the loopback listener | `404`. |
 | A confirmed disable leaves a node with no enabled template | The echo warned before the press; the generator treats the node as having no task, and the Parent Room lists the node once as `node_all_disabled`. |
-| `sandbox.sqlite` passes 2 GB | The sandbox header shows the marker `sandbox_large` until a reset. |
+| `sandbox.sqlite` passes 2 GB | The sandbox header shows the marker `sandbox_large` until a reset brings the file under 2 GB; no other screen and no notice shows it. |
 | `./meowtower sandbox batch --count N` with N outside 10 to 50 | The command prints `sandbox_batch_size` as JSON and exits 2; it clamps nothing. |
 | `./meowtower sandbox adventure --from-snapshot` with no snapshot | The command prints `sandbox_snapshot_missing` as JSON, exits 2 and takes no snapshot. |
 | A tracked file holds a `snap-` identifier or a value from `personal/player.md` | The group 1 scan fails and names the file. |
 | The sandbox bucket is spent, the offline key answers 402, or the gateway or the PIN is missing | SPC-0100's `sandbox_budget_spent` and `offline_key_refused`, and SPC-0190's `409 sandbox_models_unavailable`. |
-| A snapshot of a 1 GB file takes more than 180 seconds | The full verify on the family Mac fails against SPC-0190's Baselines table. |
+| A snapshot of a 1 GB file takes more than 180 seconds | The full verify on the family Mac records a baseline finding against SPC-0190's Baselines table in the verify report and passes. |
 
 ## Open review findings
 
 - The first agent review asked for the reason beside the 5-minute token expiry, the 20-token cap, the 3 x free-space factor, the 2 GB `sandbox_large` threshold and the rule that no player screen links to the sandbox. Rejected: the method's rule S8 keeps reasons in the decision, and ADR-0340 holds each of them.
 - The second agent review, first round, asked for the reasons behind the 5-minute token expiry and the 20-token cap, saying ADR-0340 gives none. Rejected: ADR-0340's section on confirmed actions gives both reasons beside the numbers, and rule S8 keeps them there.
 - The same round asked this document to state which routes the loopback listener serves before the PIN guards the sandbox. Rejected: SPC-0190 states that interim, and this document cites it in its scope.
-- The same round found that the `AsyncLocalStorage` flag marks only appends made inside a sandbox request, so a timer or job that sandbox code starts outside a request appends without the device identifier `sandbox`. It asked for a static check that keeps `src/server/sandbox/` from importing the flag's storage. Open: ADR-0340 names no such check and no rule on appends outside a request, so adding either needs an amendment to ADR-0340.
-- The same round suggested three changes. The first is per-table hashes in place of the whole-file hash for REQ-6324, because a WAL checkpoint changes the file's bytes. The second is a line saying that a restart between the main append and the pointer append leaves `sandbox_action_applied` unwritten after the retry's `410`. The third moves the acceptance test's steps to a task. Open: each changes a check or a failure path ADR-0340 fixes, so each waits for the owner.
-- The second round found that this document and ADR-0340's check 17 make a snapshot of a 1 GB file over 180 seconds fail the full verify, while SPC-0190 records a measurement past a baseline as a defect and lets verify pass. Open: two records in force disagree, and rule S11 leaves the choice to the owner.
-- The same round found that this document keeps `sandbox_large` in the sandbox header until a reset, while ADR-0340's Baselines row and its notices section say the parent sees `sandbox_large` once. Open: a lasting marker and a single notice differ, and the owner settles which one ADR-0340 means.

@@ -2,7 +2,7 @@
 id: SPC-0110
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032]
 ---
@@ -116,17 +116,23 @@ The forbidden-content checklist is the always-forbidden list below and these ite
 - it shows a Guardian defeated (REQ-1506);
 - it brings in a look-alike of the heroine other than the Reverse One (REQ-1570);
 - the Reverse One wants the heroine's place, name, home, family, room, familiars or friends (REQ-1562), or poses as her (REQ-1568);
+- a System line in it isn't short, formal and in the present tense (REQ-3300);
+- the System corrects itself inside the line it corrects, where the correction takes a line of its own after a pause (REQ-3304);
+- a System line in it speaks of the heroine's mind or abilities, where a System line describes an event in the world (REQ-3306);
+- a joke in it targets the heroine, where a joke targets the world, the System, the Tangles or the Guardians (REQ-3318);
 - it uses a phrase of guilt or attachment, such as «Ты нас подвела» (You let us down) (REQ-3316);
 - it calls a knot «узелок» (little knot), where a knot takes «узел» or «петелька» (REQ-3320);
 - from the autumn chapter's finale on, it calls the ally «Узелок» (Little Knot) where the ally is «Бантик» (Little Bow) (REQ-3330).
 
-The Master produces no item on the checklist, because a reply that holds one never shows (REQ-1812).
+The Master produces no item on the checklist, because a reply that holds one never shows (REQ-1812). The judge reads every generated reply against the whole checklist, so the four System and joke items bind every System line and joke a model writes, with no call of their own.
 
 Library scenes, branches, pool lines and the fallbacks of the addendum roles name a canon character only by its entity id, and the server resolves the id to the character's current name at use, so from the autumn chapter's finale on they call the ally «Бантик» (REQ-3330). A content test runs over every `content/*.ru.json` file and every string file, and fails the build on any form of «узелок» (REQ-3320) and on any phrase of the guilt list in `content/safety.ru.json` (REQ-3316). The planner's text passes the same checks, so it doesn't discuss her abilities either (REQ-2610). A labelled Russian test set holds positive lines for every checklist item, and a test counts them per item, so the safety test covers the whole list (REQ-1814).
 
 The `alt` branch and the `cunning` ending pass stricter checks: they must not end in a dead end, harm the heroine, make a familiar sad because of her or hint that she is at fault (REQ-1554). The parent judges each pool line for a loosened knot and for the other path against the same rule when approving it, and each library `alt` branch and `cunning` ending in `content/branches.ru.json` before the stage that ships it (REQ-1554).
 
 ### Retry, library and timing
+
+Each model call this part makes carries the timeout and the `max_tokens` cap that ADR-0190's Baselines table sets for its role. A `MASTER_MODEL`, `MASTER_FALLBACK_MODEL` or `FREE_PEN_MODEL` call times out at what remains of the 12 seconds since its order and returns at most 2,000 tokens. A `PLANNER_MODEL` call times out at 60 seconds with at most 4,000 tokens, and a `SAFETY_MODEL` call at 5 seconds with at most 200. A Master reply cut at its cap fails, and the retry below or the library covers it.
 
 A reply that fails a check gets one retry of the same order, whose request already names the fallback model. When the retry also fails, the scene comes from the library (REQ-1618). The library is `content/scenes.ru.json` and `content/branches.ru.json`. For every floor it holds at least 3 branch pairs and 3 Guardian ending triples before stage 0.4, and 20 pairs and 10 triples from stage 0.4, and a content test fails the build when a floor falls short (REQ-1620). The same test also counts each floor's pairs and triples at level 0. Every library scene and branch carries a minimum creepiness level, and the server never takes one whose minimum is above the level in force (REQ-1518, REQ-1544). Every library scene has a shortest form, which plays once the day's story time SPC-0090 states is spent. The library also holds the short ending SPC-0030 plays on a wrap-up.
 

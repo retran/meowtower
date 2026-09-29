@@ -2,7 +2,7 @@
 id: SPC-0300
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, REQ-5914, REQ-5916, REQ-5918, REQ-5920, REQ-5922, REQ-5924, REQ-5926, REQ-5928, REQ-5930, REQ-5932, REQ-5934, REQ-5936, REQ-5938, REQ-5940, REQ-5942, REQ-5944, REQ-5946, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-5956, REQ-5958, REQ-5960, REQ-5962, REQ-5964, REQ-5966, REQ-6428, REQ-5970, REQ-5972, REQ-5974, REQ-5976, REQ-5978, REQ-5980, REQ-5982, REQ-5984, REQ-5986, REQ-5988, REQ-5990, REQ-5992, REQ-6504, REQ-5996]
 ---
@@ -13,7 +13,7 @@ states: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, R
 
 ## Scope
 
-This document covers the Sources track «Карта Смотрителя» (the Keeper's Map) from end to end: the `tracks` part of the graph file, the track rows of the knowledge model, the Director's placement of track tasks on host floors and its track window, the `source` templates with their generators, checks and reading traps, the `region` answer kind, the `SourceView` component in the task window, the report screen «Работа с источниками» (Working with sources), and the simulation, acceptance and checklist items that test the track. It is written at the component level: modules, content files, events, projections, rules and checks. The first version of the game holds the whole track, its five nodes, its component and its screen (REQ-5990), and the track belongs to stage 0.2, whose acceptance SPC-0190 states. ADR-0300 holds the reasons for the rules this document states.
+This document covers the Sources track «Карта Смотрителя» (the Keeper's Map) from end to end: the `tracks` part of the graph file, the track rows of the knowledge model, the Director's placement of track tasks on host floors and its track window, the `source` templates with their generators, checks and reading traps, the `region` answer kind, the `SourceView` component in the task window, the report screen «Работа с источниками» (Working with sources), and the simulation, acceptance and checklist items that test the track. It is written at the component level: modules, content files, events, projections, rules and checks. The first version of the game holds the whole track, its five nodes, its component and its screen (REQ-5990), and the track belongs to stage 0.2, whose acceptance SPC-0190 states. ADR-0300 and ADR-0460 hold the reasons for the rules this document states.
 
 It leaves out what other documents state. SPC-0050 states the rest of the graph file and its validator, SPC-0060 the knowledge model's estimates, blocks and state rules, SPC-0070 the Director's slot sources, domain window and trim order, SPC-0040 the template contract, the answer kinds and the trap test, SPC-0080 the attempt flow, the hint ladder and the task window's list of controls, SPC-0150 the design system and its text-size check, SPC-0180 the report's other screens and its list of nine, SPC-0290 the order of a maths floor, SPC-0090 the game day and the clock check's `data-task-content` exclusion, and SPC-0190 the verify command, its stages and its baselines. ADR-0400 owns the retention check and its hold, ADR-0430 owns the Dutch probe letters, and ADR-0410 owns the check `source_in_track`. ADR-0210 owns the Dutch bridge's words in track tasks and whether a task that carries them counts toward its node.
 
@@ -29,7 +29,7 @@ It leaves out what other documents state. SPC-0050 states the rest of the graph 
 | `src/engine/director/` | the track window, the track node rule and the host-floor placement |
 | `content/director.v1.json` | the host domains S, M, G and P, as data |
 | `src/templates/sources/` | the track templates |
-| `src/render/source/` | the SVG renderer for tables, charts, timetables and maps |
+| `src/render/source/` | the SVG renderer for tables, charts, timetables and maps, which the server alone runs |
 | `src/shared/answer.ts` | the `region` answer kind |
 | `src/shared/` | the `SourceReader` interface through which `solve()` reads a source |
 | `content/catalogue.yaml` | the seven trap identifiers and each track template's fluency thresholds per device type |
@@ -91,7 +91,7 @@ This part adds no event type. It uses two payload versions that other parts own:
 - ADR-0430 supplies, after the MVP, the Dutch probe letters, which follow the track tasks on a floor, and the form `nl_probe`, which a track row skips.
 - ADR-0410 supplies the build check `source_in_track`, which fails a template with the input class `source` whose subtype belongs to a maths node.
 
-The permitted dependencies run one way. Track templates in `src/templates/sources/` import `src/shared/` and the template contract, and nothing in `src/ui/`. `src/render/source/` imports only the template's parameter types and `src/shared/`. `src/ui/source/` imports `src/shared/` and the design system, and nothing in `src/engine/` or `src/server/`. The knowledge model and the Director read track nodes only through `src/engine/graph.ts`, and no module outside `src/engine/` reads `node_estimates` rows of the track directly.
+The permitted dependencies run one way. Track templates in `src/templates/sources/` import `src/shared/` and the template contract, and nothing in `src/ui/`. `src/render/source/` imports only the template's parameter types and `src/shared/`. `src/ui/source/` imports `src/shared/` and the design system, and nothing in `src/engine/`, `src/server/` or `src/render/source/`; the view the server sends holds the source's SVG. The knowledge model and the Director read track nodes only through `src/engine/graph.ts`, and no module outside `src/engine/` reads `node_estimates` rows of the track directly.
 
 ## Behaviour
 
@@ -109,7 +109,7 @@ Each track template declares its fluency threshold per device type in `content/c
 
 ### Where track tasks sit
 
-A track task appears only on a floor of the S, M, G or P domain, the host domains `content/director.v1.json` lists (REQ-5918). It is a fixed part of the floor, after the warm-up and the 2 mental arithmetic tasks or the Volley, before the floor's Dutch probe letters and before the rooms, and it never takes a room slot (REQ-5922). The Dutch probe letters exist only after the MVP, and only once the owner has amended the Russian-only rule in `CLAUDE.md` (ADR-0430); until then a floor holds none. When `planDay` builds a route that holds at least one host floor, it plans 2 track tasks on the first host floor of the route (REQ-5912). If that floor ends before both its track tasks are shown, the next host floor of the same game day carries the ones not yet shown. When an adventure runs into a new game day and the rest of its plan is recomputed, the recompute is planning a new adventure day: it plans 2 track tasks on the first remaining host floor, and the track window's rule below runs in it too. A game day shows at most 2 track tasks, counted across sessions.
+A track task appears only on a floor of the S, M, G or P domain, the host domains `content/director.v1.json` lists (REQ-5918). It is a fixed part of the floor, after the warm-up and the 2 mental arithmetic tasks or the Volley, before the floor's Dutch probe letters and before the rooms, and it never takes a room slot (REQ-5922). The Dutch probe letters exist only after the MVP, and only once the owner has amended the Russian-only rule in `CLAUDE.md` (ADR-0430); until then a floor holds none. When `planDay` builds a route that holds at least one host floor, it plans 2 track tasks on the first host floor of the route (REQ-5912). If that floor ends before both its track tasks are shown, the next host floor of the same game day carries the ones not yet shown. When no host floor is left that game day, the unshown track tasks lapse, and the track window counts the day as it counts any other. When an adventure runs into a new game day and the rest of its plan is recomputed, the recompute is planning a new adventure day: it plans 2 track tasks on the first remaining host floor, and the track window's rule below runs in it too. A game day shows at most 2 track tasks, counted across sessions.
 
 ### The track window
 
@@ -119,11 +119,11 @@ The Director keeps a track window beside the domain window, so that in any 3 con
 
 The Director picks the node for the day's 2 track tasks by the first rule that yields one:
 
-1. A track node with an open block, 1 to 4 graded observations in the last 7 days, gets both tasks until its block completes.
+1. A track node with an open block, 1 to 4 graded observations in the last 7 days, gets both tasks until its block completes. When two track nodes have open blocks, the one whose block's first observation is older gets them, ties broken by identifier.
 2. Otherwise a node in «не проверено» (not checked), in the order I1, I2, I3, I4, then I5 once the I5 gate admits it.
 3. Otherwise the node whose `nextReview` is earliest, ties broken by identifier.
 
-The Director never offers a task on I5 until at least two of I1 to I4 hold a tested state of «понимает» (understands) or above (REQ-5920); while the gate is shut, every rule skips I5. After the MVP, every rule also skips a track node held for a retention check, and a due retention check on a track node takes the first of the day's 2 track tasks, on its node (ADR-0400). Within the node, it takes the subtype asked longest ago. When the `sources` track holds no node with a built template, the Director plans no track tasks.
+Every rule skips a track node with no built template, and such a node shows «не проверено» on the report screen. The Director never offers a task on I5 until at least two of I1 to I4 hold a tested state of «понимает» (understands) or above (REQ-5920); while the gate is shut, every rule skips I5. After the MVP, every rule also skips a track node held for a retention check, and a due retention check on a track node takes the first of the day's 2 track tasks, on its node (ADR-0400). Within the node, it takes the subtype asked longest ago. When every track node is skipped, the Director plans no track tasks for the day.
 
 ### Track attempts and the day's counts
 
@@ -184,7 +184,7 @@ The error-type limit takes each trap's kind with no change to its mapping. The S
 - Source text takes its size from the `task` type token through a CSS class, so it is at least 24 CSS px, or at least 28 CSS px with large text (REQ-5976). A lint rule in `src/render` rejects a `font-size` attribute on SVG text, and the renderer draws the source at a scale of 1 at zoom 1.
 - The automated text-size check measures SVG text inside sources as well as page text, at the `task` size or above (REQ-5978).
 - A pinch inside the source zooms it, over a range of 1 to 3 (REQ-5980). The container sets `touch-action: none`, reads two pointers and writes a CSS transform on the inner SVG on each pointer move, with no transition, so the zoom follows the fingers and `getAnimations()` stays empty (REQ-5982). The container has a fixed size, so the zoom moves no other part of the task window (REQ-5984).
-- One finger pans the source while it is zoomed. On a computer, a trackpad pinch arrives as a wheel event with `ctrlKey` and zooms the same way. The zoom returns to 1 when the task changes.
+- One finger pans the source while it is zoomed. A one-finger contact that moves less than 10 CSS px from its start before it lifts is a tap, and any longer move is a pan. On a computer, a trackpad pinch arrives as a wheel event with `ctrlKey` and zooms the same way. The zoom returns to 1 when the task changes.
 - On a computer, the regions take focus in reading order and Enter selects one.
 - A tapped region changes its look within 100 ms, with no transition.
 
@@ -221,6 +221,8 @@ Text the game writes into the report and the Parent Room never names a Studievaa
 | A tap lands on a label or a gap between regions | `region_tap_missed`: nothing is selected and nothing changes. |
 | The device gives no two-pointer input | `zoom_unavailable`: the source stays at zoom 1, where its text is at the `task` size. |
 | The first host floor ends before both its track tasks are shown | The next host floor of the same game day carries the ones not yet shown. |
+| A host floor ends before both its track tasks are shown and no host floor is left that game day | The unshown track tasks lapse, and the track window counts the day as it counts any other. |
+| A track node has no built template | Every node rule skips it, and the report screen shows it as «не проверено». |
 | 3 adventure days pass with no completed floor carrying a track task | `track_window_missed` is logged, and the next route puts a host floor first. |
 | No node of the `sources` track has a built template | The Director plans no track tasks, and the screen shows every node as «не проверено». |
 | A figure on the screen rests on fewer than 5 first attempts in 30 days | `too_little_data`: the figure shows «мало данных». |
@@ -229,8 +231,5 @@ Text the game writes into the report and the Parent Room never names a Studievaa
 ## Open review findings
 
 - Rejected: add a reason to each rule (the 1S prior, the fluency thresholds, the daily cap, the node order, the size ceilings, the minimum gap, `choice` only for labels, the zoom range and its reset). A specification states what the system does and never why (S8); the reasons live in ADR-0300.
-- Open from rounds 1 and 2: the node rules don't say what happens to a node or a level with no built template while other nodes have one. Read as written, rule 2 picks an unbuilt I1 every day and the track never reaches I2 to I5. ADR-0300 names only the case of no built template in the whole track, so the skip goes back to ADR-0300 through its own record before this document states it.
 - Rejected in round 1: widen the Studievaardigheden search to Russian names of the test and name a check for REQ-5924. ADR-0300 sets the check as a search for that word, and says ADR-0160's text gate can't hold the rule because it skips `parent.*` keys; a wider search or a new check changes the decision, so it goes back to ADR-0300 through its own record.
-- Open from rounds 1 and 2: rule 1 gives no order between two track nodes with open blocks. The MVP can bring this about, when I5's gate shuts on an open I5 block and reopens within 7 days after another block opened, and so can a retention check after the MVP. ADR-0300 and ADR-0400 set no order, so it goes back to ADR-0300 as an MVP question.
 - Rejected in round 1: say the fluency thresholds are the same on both device types, and whether a diagonal map square counts as adjacent. The first is already what the sentence states, one value per level until ADR-0180's calibration; the second is left to the template's trap mapping, which the property test's neighbour rule checks.
-- Open from round 2, preferences left to ADR-0300 or the implementer: what happens to unshown track tasks when the route's only host floor ends early, how a tap is told from a one-finger pan while zoomed, and whether `src/ui/source/` imports `src/render/source/` or the server alone renders. The reasons for each rule stay rejected under S8, as above.

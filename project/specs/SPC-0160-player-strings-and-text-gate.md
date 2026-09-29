@@ -2,7 +2,7 @@
 id: SPC-0160
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, REQ-3314, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-7172, REQ-5470]
 ---
@@ -15,7 +15,7 @@ states: [REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, R
 
 This document covers where every player-facing and parent-facing string lives, the function that reads it, the checks that keep strings out of the code, the content test for «узелок» (little knot) and the guilt list over every content and string file, the one forbidden-word list, the text gate that checks every line the heroine sees, the fixed labels the interface must carry, and the Dutch word bridge's keywords: their place in the lexicon, their count, their approval and their share of tasks. It is written at the level of files, keys, functions and checks.
 
-It leaves out the rules for generated text that a word list can't check. The voice of generated System lines, narration and jokes, the phrases of guilt and attachment in generated text, the guilt list itself, the word «узелок» in generated text and the ally's name belong to SPC-0110. How the Explainer's shared check module runs its other steps belongs to SPC-0120, and how a task's text is phrased and rendered to SPC-0040. Which Dutch words the player may see at all, and the bridge's events, belong to ADR-0190. The bridge's two gates, the node state and the parent's switch, belong to ADR-0290, and the term marks and tap explanation in the task window to SPC-0150. The parent's glossary panel belongs to ADR-0180. The Dutch probe, its letters, its text pairs and the checks its offline run makes belong to ADR-0430; this document states only the Dutch section of the forbidden list, how `textGate` checks Dutch text, and the string check's allowance for the probe's Dutch text.
+It leaves out the rules for generated text that a word list can't check. The voice of generated System lines, narration and jokes, the phrases of guilt and attachment in generated text, the guilt list itself, the word «узелок» in generated text, the ally's name, and the rules of REQ-3300, REQ-3304, REQ-3306 and REQ-3318 for generated System lines and jokes belong to SPC-0110. How the Explainer's shared check module runs its other steps belongs to SPC-0120, and how a task's text is phrased and rendered to SPC-0040. Which Dutch words the player may see at all, and the bridge's events, belong to ADR-0190. The bridge's two gates, the node state and the parent's switch, belong to ADR-0290, and the term marks and tap explanation in the task window to SPC-0150. The parent's glossary panel belongs to ADR-0180. The Dutch probe, its letters, its text pairs and the checks its offline run makes belong to ADR-0430; this document states only the Dutch section of the forbidden list, how `textGate` checks Dutch text, and the string check's allowance for the probe's Dutch text.
 
 ## Boundary
 
@@ -105,7 +105,7 @@ The parent reads the whole `system.*` section at the stage 0.3 acceptance and si
 `content/shaming.ru.json` is the one forbidden list, and every check against forbidden words reads it, so a word added once is blocked in every kind of text (REQ-3328). It holds:
 
 - the verdict and shame words, school words and praise of intelligence REQ-3314 names, from «неправильно» (wrong) and «ошибка» (mistake) to «ты самая умная» (you're the cleverest), each entry a lemma with every inflected form written out, diminutives such as «задачка» and «ошибочка» included (REQ-3314);
-- the test words ADR-0290 states;
+- the test words ADR-0290 states, among them the Latin phrases «Cito», «LVS» and «Leerling in beeld», which the gate matches on the raw text;
 - phrases matched as runs of tokens, among them «не получилось» (didn't work), «ты не поняла» (you didn't understand), «это же просто» (it's easy) and the shortage phrases «нити закончились» (the threads have run out), «нитей не осталось» (no threads are left), «нет нитей» (no threads) and their forms (REQ-3324);
 - the rejected labels of REQ-3312, in a section of their own that the set of forbidden forms leaves out, each matched only against a whole `label` value after trimming and folding case;
 - the forms of «узелок», in a section of their own that the set of forbidden forms leaves out, which the content test reads for every `content/*.ru.json` file and every string file;
@@ -117,7 +117,7 @@ A tool script generates the inflected forms once from the OpenCorpora dictionary
 
 ### The text gate
 
-`textGate` normalises the text: Unicode normalization form C (NFC), lower case, «ё» to «е», soft hyphens, zero-width characters and stress marks removed, and Latin letters that look like Cyrillic ones folded to Cyrillic. It splits the text into Cyrillic word tokens, looks each token up in the set of forms, and matches the phrases as token runs. Every kind is checked for the forbidden forms, the phrases and emoji; a `system` line is also checked for "!" and digits, and a `label` is also compared as a whole with the rejected labels. The gate doesn't check «узелок»; the content test above does.
+`textGate` normalises the text: Unicode normalization form C (NFC), lower case, «ё» to «е», soft hyphens, zero-width characters and stress marks removed, and Latin letters that look like Cyrillic ones folded to Cyrillic. It splits the text into Cyrillic word tokens, looks each token up in the set of forms, and matches the phrases as token runs. For every generated line, it also matches each Latin test phrase on the raw text, ignoring case and only as whole words, beside the Cyrillic tokens. Every kind is checked for the forbidden forms, the phrases and emoji; a `system` line is also checked for "!" and digits, and a `label` is also compared as a whole with the rejected labels. The gate doesn't check «узелок»; the content test above does.
 
 For `lang: "nl"`, `textGate` applies the same normalisation apart from the fold to Cyrillic, splits the text into Latin-script word tokens, and looks each token up in the section `nl`. The Dutch probe of ADR-0430 is the only caller that passes `lang: "nl"`. The section `nl`, this Dutch branch of `textGate` and the string check's allowance for probe text come after the MVP, with the probe, and only once the owner has amended the rule in `CLAUDE.md` that text the player sees is in Russian only. Until that amendment, none of the three is built.
 
@@ -125,7 +125,7 @@ The server calls `textGate` on every line before the line leaves for the client,
 
 A blocked line is never shown. The source's own fallback replaces it: the Master regenerates or takes a pool line, the Explainer falls back to its template, a template draws another seed, and a pool line that fails is retired from the pool. A source with no fallback yet gets the neutral `system.fallback.line` in place of the line. The gate takes under 1 ms per line, the budget ADR-0190's Baselines table holds.
 
-Each blocked line writes a `text_blocked` row to a server log table, outside the event log: the source, kind, rule, matched form and the line. The table holds at most 1,000 rows, oldest out first. At each change of game day the server computes each source's blocked share of the day from `text_blocked`, and `./meowtower status`, which SPC-0010 states, shows `text_blocked_high` once for each source above 5 % that day. The verify summary computes the same share from the rows of its own replayed and live runs, reports once when one source has more than 5 % of its lines blocked in a day, and again only when that rate changes by more than half.
+Each blocked line writes a `text_blocked` row to a server log table, outside the event log: the source, kind, rule, matched form and the line. The table holds at most 1,000 rows, oldest out first. Beside it, a counter table holds one row per source and game day with the lines the gate checked and the lines it blocked, and the server deletes counter rows older than 90 days. A source's blocked share for a day is its blocked count over its checked count in that row. At each change of game day the server computes each source's blocked share of the day from the counter table, and `./meowtower status`, which SPC-0010 states, shows `text_blocked_high` once for each source above 5 % that day. The verify summary computes the same share from the counter rows of its own replayed and live runs and reports once when one source has more than 5 % of its lines blocked in a day. It reports that source again only when the share rises above 1.5 times, or falls below half of, the share it last reported.
 
 ### The Dutch word bridge's keywords
 
@@ -151,11 +151,11 @@ While the bridge is on and at least 30 words are approved, the Director puts bri
 | A `content/*.ru.json` file or a string file holds a form of «узелок» or a phrase of the guilt list | The content test fails the build and names the file, the key and the form or phrase. |
 | A `ui.*` value equals a rejected label or holds a time phrase | Verify fails and names the key. |
 | A pinned label changes its value | The label test fails and names the key and both values. |
-| A generated line holds a forbidden form, a shortage phrase or emoji | `text_blocked`: the line is never shown, the source's fallback replaces it, and a row goes to the log table. |
+| A generated line holds a forbidden form, a shortage phrase, a Latin test phrase or emoji | `text_blocked`: the line is never shown, the source's fallback replaces it, and a row goes to the log table. |
 | A generated line hides a forbidden word behind Latin look-alike letters, soft hyphens or stress marks | Normalisation removes them, and the gate blocks the line. |
 | After the MVP, a Dutch text checked with `lang: "nl"` holds a form from the section `nl` | The gate returns the rule and the form, and ADR-0430 states what the probe does with the refusal. |
 | One source has more than 5 % of its lines blocked on a game day of play | `text_blocked_high`: `./meowtower status` shows it once for that source and day. |
-| One source has more than 5 % of its lines blocked in a day of verify's own runs | The verify summary reports it once. |
+| One source has more than 5 % of its lines blocked in a day of verify's own runs | The verify summary reports it once, and again only when the share rises above 1.5 times, or falls below half of, the share it last reported. |
 | The bridge list holds 29 or fewer, or 51 or more, entries | The group 1 check fails the build with the count. |
 | A bridge word has no `glossary_entry_approved` | The game doesn't show it. |
 | Fewer than 30 bridge words are approved | `bridge_below_minimum`: the bridge stays off, and the glossary panel shows the count. |
@@ -166,10 +166,6 @@ While the bridge is on and at least 30 words are approved, the Director puts bri
 - Rejected, round 1: give the log table's 1,000-row cap and the "more than half" re-report threshold their reasons. A specification states what the system does and never why (S8), and ADR-0160 holds the reasons.
 - Rejected, round 2: give reasons for blocking emoji, keeping the log table outside the event log, its cap and re-report threshold, retiring a failed pool line, and keeping the Dutch word in `lexicon.ru.json` with no Dutch locale file. Rule S8 applies again, and ADR-0160, ADR-0190 and ADR-0210 hold the reasons.
 - Rejected, round 2: name the key of each pinned world label. The test pins values, the building step chooses the keys, and the test names whatever key holds each value.
-- Open, round 1: the Russian gate splits only Cyrillic tokens, so the Latin test word «Cito» that ADR-0290 adds to the list never matches at run time. ADR-0290's group 1 check catches it in `src/templates/` and player strings at build, but not in generated text. Splitting Latin tokens in the Russian gate changes ADR-0160's tokenisation, a decision this spec can't make; the owner settles it through ADR-0160.
-- Open, round 1: REQ-3300, REQ-3304, REQ-3306 and REQ-3318 cover every System line and every joke, and this spec states them only for fixed `system.*` lines, while the pointer to SPC-0110 for generated lines leads to a spec that doesn't state them. Moving them between specs is outside this update, which applies addendum 2's swap alone.
 - Rejected, round 1: fold Latin look-alike letters only inside tokens that mix scripts, so a bridge word made of look-alike letters stays Latin. ADR-0160 states a whole-text fold, and the building step settles the case with the fixtures.
-- Open, round 2: the blocked share behind `text_blocked_high` and the verify summary needs a count of every line each source sent through the gate, and the log table holds only blocked rows under a 1,000-row cap. ADR-0160 names no such count; the owner settles the denominator through ADR-0160.
 - Rejected, round 2: name «день» as outside the time-word section. A person writes the section and the owner reviews it, and the label test on «Дней в Башне» fails the build at once if the section catches it.
-- Rejected, round 2: say whether "more than half" is relative or in percentage points. The text is ADR-0160's, which addendum 2 left unchanged, and this update applies addendum 2 alone.
 - Rejected, round 2: reword the header comment on reasons. Every record in the repository carries that comment, and S8 governs what a specification states.

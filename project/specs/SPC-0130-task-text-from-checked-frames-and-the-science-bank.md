@@ -2,7 +2,7 @@
 id: SPC-0130
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-1236, REQ-1238, REQ-1546, REQ-3600, REQ-3602, REQ-3604, REQ-3606, REQ-3608, REQ-3612, REQ-3614, REQ-3616, REQ-3618, REQ-3620, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3630, REQ-3632, REQ-3634, REQ-3636, REQ-3638, REQ-3640, REQ-3642, REQ-3644, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-6928]
 ---
@@ -105,7 +105,7 @@ Every request to a model goes through the gateway, which records the request and
 
 ### The frame library
 
-The library holds only frames the parent accepted, as written or as edited (REQ-3638). `npm run frames:generate` puts each variant that passed steps 1 to 5 into the candidates file. It holds at most the larger of 5 and one and a half times the structure's shortfall against the stage's target, 5 frames from stage 0.2 and 20 from stage 0.4, as candidates for a structure, counting the candidates already waiting, and reports `frame_candidates_full` when it stops. Each candidate records `candidateSince`, the day it entered the candidates file. At the first change of game day after a candidate turns 60 days old, the server writes `frame_candidate_expired` and the candidate leaves the file.
+The library holds only frames the parent accepted, as written or as edited (REQ-3638). `npm run frames:generate` puts each variant that passed steps 1 to 5 into the candidates file. It holds at most the larger of 5 and one and a half times the structure's shortfall against the stage's target, 5 frames from stage 0.2 and 20 from stage 0.4, as candidates for a structure, counting the candidates already waiting, and reports `frame_candidates_full` when it stops. Each candidate records `candidateSince`, the day it first entered the candidates file, and keeps it through every edit. At the first change of game day after a candidate turns 60 days old, the server writes `frame_candidate_expired` and the candidate leaves the file. A candidate waiting for the check of its edit doesn't expire until the first `frames:generate` after the edit has run steps 4 and 5 on it.
 
 The frame review screen offers accept, reject and edit on each candidate (REQ-3636). Rejection writes `frame_candidate_rejected`. An edit reruns step 3 at once and shows the parent in words what the edited text failed. An edit that passes step 3 shows as waiting for its check, with no accept control, until the next `frames:generate` runs steps 4 and 5, the safety check and the three blind solves, on it. When they pass, the screen offers accept on the edited candidate again; when they fail, it shows the failure in words and the edit stays a candidate. The Parent Room writes every acceptance: `frame_accepted` with the frame's text, hash and `context`, marked `as_written` or `as_edited`, and the candidate's `candidateSince`. The review time of any decision on a candidate is the day of its event minus its `candidateSince`.
 
@@ -125,17 +125,17 @@ A live frame serves only a task the Director adds to complete a node's full bloc
 
 While it runs, the server looks at the block top-up slots the Director has placed in the next 2 to 3 rooms. For each slot's structure it asks `LIVE_GEN_MODEL` for 5 variants set in a context already shown on the slot's subtype, puts them through steps 1 to 5, and keeps each passing one in the `frames` table as `ready`, ahead of the player's arrival in those rooms (REQ-3618). A `ready` frame turns `expired` at the end of the game day it was made for. When the slot's subtype has no shown context, the server makes no live frame for it, and the task takes a library frame (ADR-0410).
 
-When the server builds the task for a top-up slot, it fills the oldest `ready` frame of the structure whose context has been shown on the slot's subtype with the task's own numbers, and `LIVE_CHECK_MODEL` solves that exact problem blind once more (REQ-3632). If the solve passes, the frame turns `used` and the task shows it. If the solve fails, the frame turns `final_failed`, and the task takes a library frame, as it does when the queue holds no ready frame. The server builds each task, its final solve included, before the player enters the room.
+When the server builds the task for a top-up slot, it fills the oldest `ready` frame of the structure whose context has been shown on the slot's subtype with the task's own numbers, and `LIVE_CHECK_MODEL` solves that exact problem blind once more (REQ-3632). If the solve passes, the frame turns `used` and the task shows it. If the solve fails, the frame turns `final_failed`, and the task takes a library frame, as it does when the queue holds no ready frame. The server builds each task, its final solve included, before the player enters the room. A top-up task that takes a library frame is no side slot under ADR-0410's side-slot rule.
 
-The `frames` table keeps every live frame with its status and never deletes one (REQ-3642). At 50,000 rows it reports once to the owner. On the live frame list, «В библиотеку» writes the frame's `frame_accepted` event as written, with the context its request named, and marks the frame `moved`, in one action (REQ-3644).
+The `frames` table keeps every live frame with its status and never deletes one (REQ-3642). At 50,000 rows it reports once to the owner. On the live frame list, «В библиотеку» is offered only on a live frame in `ready`, `used` or `expired`. It writes the frame's `frame_accepted` event as written, with the context its request named and `candidateSince` set to the game day on which the frame was made, which its `frames` row holds, and marks the frame `moved`, in one action (REQ-3644).
 
-A live frame counts as checked when it has finished the pipeline or failed a step, the final solve included, and as rejected when it failed a step, so a `final_failed` frame counts as both. From the tenth checked live frame of a game day, when more than 30% of that day's checked live frames are rejected, the server writes `live_frames_paused` and takes every frame from the library until the game day ends; generation starts again the next game day (REQ-3640).
+A live frame counts as checked when it has finished the pipeline or failed a step, the final solve included, and as rejected when it failed a step, so a `final_failed` frame counts as both. A reply discarded whole at step 2 counts as 5 checked live frames, all rejected. From the tenth checked live frame of a game day, when more than 30% of that day's checked live frames are rejected, the server writes `live_frames_paused` and takes every frame from the library until the game day ends; generation starts again the next game day (REQ-3640).
 
 ### The science bank
 
 Natural science questions come only from `content/science.ru.json`, never from text generated during play (REQ-3660). An agent or a person drafts the questions offline into the file. Each wrong option names the misconception it tests (REQ-1238), and the parent judges each option on the science review screen. The verify command fails a build whose bank holds fewer than 40 questions in any topic (REQ-1236).
 
-A question reaches the player only when the log holds a `science_approved` event for its current hash, written when the parent approves it on the science review screen (REQ-3650). Rejecting a question there writes `science_rejected`. Both events carry `candidateSince`, the day the question entered `content/science.ru.json`. An edited question has a new hash and waits for a new approval.
+A question reaches the player only when the log holds a `science_approved` event for its current hash, written when the parent approves it on the science review screen (REQ-3650). Rejecting a question there writes `science_rejected`. Both events carry `candidateSince`, the day the question entered `content/science.ru.json`. An edited question has a new hash, keeps its first `candidateSince` and waits for a new approval.
 
 When the Director gives a science slot a topic, the question is the least recently shown approved question of that topic, never-shown first, with ties broken by the day's seed. The window is 45 game days before stage 0.5 (REQ-3652) and 90 game days from stage 0.5 (REQ-3654), and the verify command fails a build whose `repeatWindowDays` doesn't match its stage. When the topic has no approved question outside the window, the question shown longest ago comes (REQ-3656), and its `item_shown` carries `repeat: true` (REQ-3658).
 
@@ -147,7 +147,7 @@ Frames and science questions exist in Russian only: `content/frames.ru.json`, `c
 
 | Condition | What happens |
 | --- | --- |
-| The author model's reply is outside the schema | The server discards the whole reply. |
+| The author model's reply is outside the schema | The server discards the whole reply; a live one counts as 5 checked live frames, all rejected. |
 | A placeholder is missing or appears twice | Step 3 rejects the variant with `frame_rejected`. |
 | A variant holds a digit or a number word such as «дюжина» | Step 3 rejects it. |
 | A variant breaks the length, readability or forbidden-word limits | Step 3 rejects it. |
@@ -167,7 +167,8 @@ Frames and science questions exist in Russian only: `content/frames.ru.json`, `c
 | `content/frames.ru.json` holds a frame with no `frame_accepted` in the log | `frame_unaccepted`; the server never serves it and reports it once at start. |
 | An edited frame fails step 3 | `frame_edit_failed`; it stays a candidate, and the screen shows its failures in words. |
 | A structure's candidates reach the larger of 5 and one and a half times its shortfall | `frame_candidates_full`; `frames:generate` adds no more to it. |
-| A candidate turns 60 days old | At the next change of game day the server writes `frame_candidate_expired`, and the candidate leaves the file. |
+| A candidate turns 60 days old | At the next change of game day the server writes `frame_candidate_expired`, and the candidate leaves the file, unless it waits for the check of its edit, which it keeps until the first `frames:generate` after the edit has run steps 4 and 5 on it. |
+| The live frame is `rejected` or `final_failed` | The live frame list offers no «В библиотеку» on it. |
 | An edited candidate hasn't yet passed steps 4 and 5 | The review screen shows it as waiting for its check, with no accept control. |
 | The verify command finds no snapshot in `data/snapshots/` | `frames_acceptance_unchecked`; it counts every frame in the file. |
 | `content/frames.ru.json` holds a frame the newest snapshot has no acceptance for | The verify command doesn't count it. |
@@ -180,11 +181,6 @@ Frames and science questions exist in Russian only: `content/frames.ru.json`, `c
 
 ## Open review findings
 
-- Open: a live frame moved by «В библиотеку» was never in the candidates file, so its `frame_accepted` has no `candidateSince` to carry, and its review time is undefined. ADR-0130 doesn't settle what the event carries, so the owner decides.
-- Open: nothing says whether an edited frame candidate or an edited science question keeps its original `candidateSince`, so an edit made near day 60 can expire before `frames:generate` checks it. ADR-0130 doesn't settle it, so the owner decides.
-- Open: «В библиотеку» has no limit on the statuses it acts on, so as written a `rejected` or `final_failed` live frame could enter the library without passing steps 4 and 5. ADR-0130 doesn't limit it, so the owner decides which statuses it offers.
 - Rejected: count only approved questions towards the 40 a topic, and name the candidate target before stage 0.2. REQ-1236 counts the bank, and ADR-0130 names no target before stage 0.2, so either change would add a rule no decision made.
-- Open: nothing says whether a reply discarded whole at step 2 counts towards the day's live rejection share, or as one checked frame or five. ADR-0130 doesn't settle it, so the owner decides.
-
 - Rejected: bring the header comment's promise of a reason for each rule into line with rule S8. The comment is the repository's standard header, and the body now carries no reasons.
 - Rejected: add the reason to the rules on the candidate cap, the 60-day expiry, the 50,000-row report, the science module's import rule, the request holding no name of hers and the end-of-day expiry of `ready` frames. A spec states what the system does and never why (rule S8), and ADR-0130 holds the reasons.

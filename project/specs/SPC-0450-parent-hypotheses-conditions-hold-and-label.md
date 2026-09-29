@@ -2,9 +2,9 @@
 id: SPC-0450
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
-states: [REQ-7300, REQ-7302, REQ-7304, REQ-7306, REQ-7308, REQ-7310, REQ-7312, REQ-7314, REQ-7316, REQ-7318, REQ-7320, REQ-7322, REQ-7324, REQ-7326, REQ-7328, REQ-7330, REQ-7332, REQ-7334, REQ-7336, REQ-7338, REQ-7340, REQ-7342, REQ-7344, REQ-7346, REQ-7348, REQ-7350, REQ-7352, REQ-7354, REQ-7356, REQ-7358, REQ-7360, REQ-7362, REQ-7364, REQ-7366, REQ-7368, REQ-7370, REQ-7372, REQ-7374]
+states: [REQ-7300, REQ-7302, REQ-7304, REQ-7306, REQ-7308, REQ-7310, REQ-7312, REQ-7314, REQ-7316, REQ-7318, REQ-7320, REQ-7322, REQ-7324, REQ-7326, REQ-7328, REQ-7330, REQ-7332, REQ-7334, REQ-7336, REQ-7338, REQ-7340, REQ-7342, REQ-7344, REQ-7346, REQ-7348, REQ-7350, REQ-7352, REQ-7354, REQ-7356, REQ-7358, REQ-7504, REQ-7362, REQ-7364, REQ-7366, REQ-7368, REQ-7370, REQ-7372, REQ-7374]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -147,13 +147,13 @@ The computed label is «опровергается» (is being refuted) when eve
 
 `hypothesis_days` holds one row per hypothesis, play day and set of the four versions (REQ-7336). Each row holds each condition's state with its counts and interval, the computed label, the shown label, the model, threshold, rules and graph versions, and the cause of any change of the shown label: `play`, `version` or `criteria`. The report rebuild after each adventure writes the day's row for each open hypothesis with numeric conditions, and a later adventure on the same game day overwrites it; a hypothesis with text criteria alone gets no row. A closed hypothesis's last row is its close day's, and counts observations only up to the `seq` of its `closed` event, in the live rebuild and the full recompute alike; it gets no row for a later play day. On `reopened`, the judging window stays where it was and rows resume with the next adventure after the `reopened` event's `seq`. The hold starts afresh, and only play days after the reopen day count towards it, as for a version change.
 
-When `hypothesis_days` passes 500,000 rows, `./tower status` shows `hypothesis_days_large` once to the owner, and nothing is deleted. The rebuild after an adventure and the full recompute stay within SPC-0180's budgets of 5 and 60 seconds, measured on a fixture of a year of play with 20 open hypotheses.
+When `hypothesis_days` passes 500,000 rows, `./meowtower status` shows `hypothesis_days_large` once to the owner, and nothing is deleted. The rebuild after an adventure and the full recompute stay within SPC-0180's budgets of 5 and 60 seconds, measured on a fixture of a year of play with 20 open hypotheses.
 
 ### The hold, after the MVP
 
 The shown label changes, in any direction and back to «мало данных» too, only when the computed label has differed from it and been the same on each of the last H play days (REQ-7338). H is `hypothesis.holdDays` in `content/thresholds.json`, 7 until `tools/hypothesis-hold.ts` sets it, and a new H is a new threshold version.
 
-`tools/hypothesis-hold.ts` sets H to the shortest multiple of 7 play days, at most 56, at which synthetic logs of 180 play days at the probe's planned volume show a label other than «мало данных», on either side and on any day, in at most 10 % of at least 200 hypotheses whose true measures sit exactly at each condition's number, with one condition a side (REQ-7360). Half its hypotheses compare `probe.ru` minus `probe.nl` with 20, at true shares of 75 % and 55 %, and half compare `probe.bare` with 70, at a true share of 70 %, each with one condition a side at the same number. It reports the false-label rate for each H from 7 to 56. When no H up to 56 passes, verify fails as `hold_uncalibrated`, and the computed label, its screens and `hypothesis_days` don't ship. ADR-0450's own estimate predicts that outcome, so the tool runs before any screen of the label is built.
+`tools/hypothesis-hold.ts` sets H to the shortest multiple of 7 play days, at most 56, at which the upper limit of the 95 % Wilson interval of the false-label rate lies at or below 10 % (REQ-7504). It runs synthetic logs of 180 play days at the probe's planned volume for a fixed 2,000 hypotheses whose true measures sit exactly at each condition's number, with one condition a side, and reads the interval once for each H. A false label is one other than «мало данных», on either side and on any play day within the 180. Half its hypotheses compare `probe.ru` minus `probe.nl` with 20, at true shares of 75 % and 55 %, and half compare `probe.bare` with 70, at a true share of 70 %, each with one condition a side at the same number. It reports, for each H from 7 to 56, the false-label rate, its 95 % Wilson interval and the number of hypotheses run. When no H up to 56 passes, verify fails as `hold_uncalibrated`, and the computed label, its screens and `hypothesis_days` don't ship. The tool runs before any screen of the label is built.
 
 ### Version changes, after the MVP
 
@@ -167,7 +167,7 @@ A `criteria` change sets the shown label to «мало данных» until the 
 
 ### What the tab shows for each hypothesis, after the MVP
 
-After the MVP, the tab «Гипотезы» is the report's line «Гипотезы и их статус» (Hypotheses and their status), apart from the screens of report v1 that SPC-0180 lists. For each hypothesis it shows:
+After the MVP, the tab «Гипотезы» is the report's line «Гипотезы и их статус» (Hypotheses and their status), apart from the nine screens of report v1 that SPC-0180 lists. For each hypothesis it shows:
 
 - the shown label with the model, threshold, rules and graph versions it was computed under (REQ-7348), and, for a closed hypothesis, the label and versions its `closed` event holds beside the shown label of its last row under the active versions;
 - each condition's state beside the label, with each measure's right answers, attempts and 80 % interval in the window (REQ-7334);
@@ -195,7 +195,7 @@ The example states that the weakness in word problems comes from language, not m
 | Confirmation 2 | `probe.ru` minus `probe.nl_after_words` below 20 |
 | Refutation | `probe.ru` minus `probe.nl` below 20 |
 
-On the synthetic logs of check 5's maths-gap and language-gap players (REQ-6668), the hypothesis is recorded before the probe's first task and runs at the H `tools/hypothesis-hold.ts` set, or at 56 when none passed. A seed passes for the maths-gap player when the shown label is «опровергается» on some play day within 180 and never «подтверждается», and for the language-gap player when it is «подтверждается» on some play day within 180 and never «опровергается». The run passes with at least 15 of 20 seeds for each player (REQ-7362), and reports the count for each. `hypothesis_example_lock` keeps the conditions fixed: a new set needs a new approved decision named in the lock file.
+On the synthetic logs of check 5's maths-gap and language-gap players (REQ-7500), the hypothesis is recorded before the probe's first task and runs at the H `tools/hypothesis-hold.ts` set, or at 56 when none passed. A seed passes for the maths-gap player when the shown label is «опровергается» on some play day within 180 and never «подтверждается», and for the language-gap player when it is «подтверждается» on some play day within 180 and never «опровергается». The run passes with at least 15 of 20 seeds for each player (REQ-7362), and reports the count for each. `hypothesis_example_lock` keeps the conditions fixed: a new set needs a new approved decision named in the lock file.
 
 ## Failure paths
 
@@ -208,8 +208,8 @@ On the synthetic logs of check 5's maths-gap and language-gap players (REQ-6668)
 | `measure_retired` | a condition names a node or subtype the active graph no longer holds | the condition reads «открыто» with «этой меры больше нет — перепишите критерии» (this measure no longer exists; rewrite the criteria); a side that needs it can't be met until the criteria are rewritten | parent |
 | `measure_not_collected` | a condition names a measure whose source isn't built or unlocked, such as the probe | the condition reads «открыто» with «эта мера пока не собирается» (this measure isn't collected yet) | parent |
 | `open_hypotheses_many` | open hypotheses rise above 20 | one notice on the tab | parent |
-| `hypothesis_days_large` | `hypothesis_days` passes 500,000 rows | one line in `./tower status`; nothing is deleted | owner |
-| `hold_uncalibrated` | `tools/hypothesis-hold.ts` finds no H of 56 or less | verify fails at the stage that builds the label, and the label doesn't ship | owner |
+| `hypothesis_days_large` | `hypothesis_days` passes 500,000 rows | one line in `./meowtower status`; nothing is deleted | owner |
+| `hold_uncalibrated` | `tools/hypothesis-hold.ts` finds no H of 56 or less whose interval's upper limit lies at or below 10 % | verify fails at the stage that builds the label, and the label doesn't ship | owner |
 | `hypothesis_example_unlocked` | the example file's hash has no lock entry naming an approved record | verify fails and names the file | building agent |
 | `hypothesis_measures_versioned` fails | the measure list or ADR-0390's `content/profile.dimensions.json` changed with no new `RULES_VERSION`, or an identifier left the list | verify fails and names the file and whether the version or a removed identifier is at fault | building agent |
 | `hypothesis_closed` | a change other than `reopen` reaches a closed hypothesis | answers `409`, logs nothing; the tab offers the reopen action | parent |
@@ -230,12 +230,6 @@ ADR-0450 names the three routes and left their bodies to the specification step,
 - A closed hypothesis takes only `reopen`, and any other change answers `409 hypothesis_closed`, so every version change happens while the hypothesis is open and has rows; a repeated `close` or `reopen` logs nothing.
 - ADR-0450 counts a rebuild's rows per open hypothesis and restarts the hold of closed ones too, and doesn't say what a closed hypothesis's rows are. This document ends a closed hypothesis's rows at its `closed` event, shows its last row's label under the active versions beside its `closed` label, and starts its hold afresh after the reopen day, because a closed hypothesis has no rows to carry a hold across the gap, and play days before the close must not complete a hold that ends after the reopen.
 
-## Open findings
-
-- ADR-0450 and ADR-0380 say report v1 keeps its eight screens, and ADR-0300 amends ADR-0180 to nine, with «Работа с источниками» (Working with sources) as the ninth, which SPC-0180 states. This document states only that the tab is apart from report v1's screens, and doesn't choose between the counts. Open on 2026-09-28.
-- ADR-0450's own estimate predicts `hold_uncalibrated`: a false-label rate of about 16 % at H = 56 against REQ-7360's 10 %. If the measurement confirms it, REQ-7360 fails and nothing from "Condition states and the label" on ships. That is ADR-0450's first reversal condition, and it goes back to research. Open on 2026-09-28.
-
 ## Open review findings
 
 - Rejected, round 1: carry ADR-0450's reasons into this document for `confirmText` or `refuteText` counting as a `criteria` change, for the server deriving `change`, for the measure list only growing, for a met refutation outranking a met confirmation, for deleting no row, for the ceilings and for a hypothesis never being deleted. A specification states what the system does and never why (spec rule S8); each reason stays in ADR-0450, where a builder tempted to relax the rule reads it.
-- Round 2 raised three fixes and three preferences, and I applied all six: rows of a closed hypothesis end at its `closed` event's `seq` and the reopen day doesn't count towards the fresh hold, each `probe.*` measure counts SPC-0430's cell, the reason for the closed-hypothesis choice, the form's strings, no rows for text-only hypotheses, and the fixture that measures the budgets. They haven't had a third review, as the method's bound of two rounds sets.

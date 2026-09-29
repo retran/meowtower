@@ -228,3 +228,5 @@ The premortem, written as though it had happened: a year in, the transfer sectio
 ## Open review findings
 
 Two agent reviews ran on 2026-09-28. I fixed every finding of both, the preferences included, and rejected none. The fixes to the second round's findings haven't been reviewed again, because the method bounds review at two rounds. They are the start of the 90-day window at the first day with tested states, the condition numbers for `expected`, the context hold going off and back on under the frame-repeat condition, tagging only candidates still waiting, a reason for each reversal threshold, the reversal condition on far observations, "steps 1 and 2" in the picker and the reason for the context id pattern.
+
+Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

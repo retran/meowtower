@@ -3,7 +3,7 @@ id: REQ-7360
 artifact: requirement
 topic: measurement
 class: non-functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4270
 verification: evaluation

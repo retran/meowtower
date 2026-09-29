@@ -3,7 +3,7 @@ id: REQ-7192
 artifact: requirement
 topic: measurement
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4250
 verification: evaluation

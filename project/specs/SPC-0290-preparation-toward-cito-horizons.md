@@ -2,9 +2,9 @@
 id: SPC-0290
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
-states: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-6424, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-7148, REQ-5858, REQ-6426, REQ-5862, REQ-5864, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-7058, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898]
+states: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-6424, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-7148, REQ-5858, REQ-7510, REQ-5862, REQ-5864, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-7058, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -15,7 +15,7 @@ states: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, R
 
 This document covers how the game prepares the player for the Cito M7 and E7 tests without showing her a test. It covers the Cito facts file and its check, the horizons and the active horizon, the Cito block on every node and subtype, block readiness, the two value terms the Director gains, the basic facts and their states, the fact threshold, the «Залп» (Volley), the maths floor's order, the nodes ahead of school, the bare-task share, the home skill scale, the Parent Room's Cito panel and the report sections built on all of these, two parent settings, the multiplication sign and the Dutch bridge's switch, and the bridge's gate on the tested state. It is written at the level of files, commands, routes, events, projections and states.
 
-It leaves out what other parts define. The rest of the value formula, the flow corridor, the three-day window, the stretch gate and the slot sources belong to SPC-0070, and the estimates, the tested states and the full recompute to SPC-0060. The graph file's other fields and its validator belong to SPC-0050, templates, rendering and answer checking to SPC-0040, and the attempt flow and the hint ladder to SPC-0080. The route contract, idempotency and the lease belong to SPC-0030, the event log and its projections to SPC-0020, the forbidden-word list, the text gate and the bridge's keywords to SPC-0160, and grants, the streak and shards to SPC-0140. The Parent Room's screens and the report's nine screens belong to SPC-0180, the day plan to SPC-0090, the verify groups and the build stages, the fact stage among them, to SPC-0190, and the Sources track to ADR-0300. The school snapshots, the goal-mapping panel and the timeline of results belong to ADR-0310, and the day a new system such as the Volley first opens to ADR-0330. The format hold belongs to ADR-0410, what reads a Cito result's category entries and what values they take to ADR-0420, and the Dutch probe letters to ADR-0430.
+It leaves out what other parts define. The rest of the value formula, the flow corridor, the three-day window, the stretch gate and the slot sources belong to SPC-0070, and the estimates, the tested states and the full recompute to SPC-0060. The graph file's other fields and its validator belong to SPC-0050, templates, rendering and answer checking to SPC-0040, and the attempt flow and the hint ladder to SPC-0080. The route contract, idempotency and the lease belong to SPC-0030, the event log and its projections to SPC-0020, the forbidden-word list, the text gate and the bridge's keywords to SPC-0160, and grants, the streak and shards to SPC-0140. The Parent Room's screens and the report's nine screens belong to SPC-0180, the day plan to SPC-0090, the verify groups and the build stages, the fact stage among them, to SPC-0190, and the Sources track to ADR-0300. The school snapshots, the goals the parent enters, their import, the goal-mapping panel and the timeline of results belong to ADR-0310, whose part comes after the MVP, and the day a new system such as the Volley first opens to ADR-0330. The format hold belongs to ADR-0410, what reads a Cito result's category entries and what values they take to ADR-0420, and the Dutch probe letters to ADR-0430.
 
 ## Boundary
 
@@ -42,21 +42,21 @@ The routes follow SPC-0030's contract. Every `/api/parent/*` route needs the par
 
 | Route | What it does |
 | --- | --- |
-| `GET /api/parent/cito` | The Cito panel: horizons and the active one, entered results, Cito entries with their marks and last check, the pages the last check found changed, the fact threshold, the multiplication sign. The panel's school goals come from ADR-0310's `GET /api/parent/school/goals`, and its Dutch memo is the string `parent.cito.memo`. |
+| `GET /api/parent/cito` | The Cito panel: horizons and the active one, entered results, Cito entries with their marks and last check, the pages the last check found changed, the fact threshold, the multiplication sign. Its Dutch memo is the string `parent.cito.memo`. |
 | `PUT /api/parent/cito/horizons/:horizon` | `{ date }` sets, adds or, with `null`, removes a horizon; logs `horizon_set`. |
 | `POST /api/parent/cito/results` | `ExternalTestIn`; logs `external_test_recorded`. A correction names the result it replaces in `replaces`. |
 | `POST /api/parent/cito/check` | Starts the Cito check; logs `cito_rule_checked` when it ends. |
-| `POST /api/parent/school-goals/import` | The pasted goal list; logs `school_goals_imported`. Mounted only on the loopback listener. |
+| `POST /api/parent/school/goals/import` | After the MVP: the pasted goal list; logs `school_goals_imported`. Mounted only on the loopback listener. |
 | `PUT /api/parent/fact-threshold` | `{ ms }`; logs `fact_threshold_set`. |
 | `PUT /api/parent/settings` | SPC-0030's route; carries `notation.multiplicationSign` and `bridge.enabled`, and logs `settings_changed`. |
 
-The import route and the route that serves the Cito panel's goal list mount only on ADR-0010's loopback listener `http://localhost:8080`. The same paths through the home network answer `404`, and a Cito panel opened on another device shows no goal list and offers no import.
+In the MVP the Cito panel shows no goal list and offers no import, and neither goal route exists. After the MVP the import route and ADR-0310's `GET /api/parent/school/goals`, which serves the panel's goal list, mount only on ADR-0010's loopback listener `http://localhost:8080`. The same paths through the home network answer `404`, and a Cito panel opened on another device shows no goal list and offers no import.
 
 On the player's side the Volley adds one packet kind to `GET /api/session/:id/next`, `volley`, which carries `volleyId` and its rows, each with an `itemId` and a rendered `view`. Each row's answer goes to `POST /api/session/:id/answer`, and its `AnswerOut` carries the row's mark, the correct answer after a miss, the miss line, and after the last row the on-target result and the record line. No player packet or reply carries a horizon, a date, a result, a school goal, a `factId`, a time or any Cito field (REQ-5812).
 
 ### Events this part logs
 
-ADR-0290 owns all eight types, in the change that adds each schema.
+ADR-0290 owns all eight types, in the change that adds each schema. `school_goals_imported` and `school_goal_mapped` come with ADR-0310's part after the MVP, and no MVP code writes them.
 
 | Event, v1 | Payload |
 | --- | --- |
@@ -89,7 +89,7 @@ ADR-0290 owns all eight types, in the change that adds each schema.
 | `cito_rule_unconfirmed` | The report shows «не подтверждено» (unconfirmed) beside every text resting on the entry until a person updates the file. | the parent |
 | `cito_rules_stale` | The Summary shows one line once a school year until a check runs. | the parent |
 | `horizon_overdue` | The Summary shows one line asking for the result or a new date; the Director keeps the horizon. | the parent |
-| `goal_import_too_long` | The import refuses the list and says how many goals it read. | the parent |
+| `goal_import_too_long` | After the MVP, the import refuses the list and says how many goals it read. | the parent |
 | `fact_threshold_refused` | A value outside 1.5 s to 6 s isn't saved, and the field names the accepted range. | the parent |
 | `graph_block_invalid`, `fact_list_invalid` | The validator fails the build, naming the node, subtype or fact. | the owner |
 | `scale_refit_rejected` | The refit fails its acceptance test or doesn't converge; the active scale version stays. | the owner |
@@ -101,11 +101,11 @@ ADR-0290 owns all eight types, in the change that adds each schema.
 - SPC-0060 supplies the tested states, the motor correction per device type, the threshold versions and the full recompute.
 - SPC-0070 supplies the value formula this part extends, the candidate set, the flow share and the repeat window.
 - SPC-0040 supplies the item builder, the renderer and the answer parser; SPC-0160 the forbidden-word list, the text gate and `ru.json`.
-- SPC-0140 supplies the yarn grant; ADR-0310 the goal-mapping panel and its catalogue; ADR-0330 the day the Volley opens.
+- SPC-0140 supplies the yarn grant; ADR-0310, after the MVP, the goal list, the goal-mapping panel, its catalogue and `src/engine/school/keys.ts`; ADR-0330 the day the Volley opens.
 - ADR-0410 supplies the format hold; ADR-0420 the values of a category entry and the fold that reads `categories`; ADR-0430 the Dutch probe letters, after the MVP.
 - ADR-0190's Baselines table holds this part's budgets: the per-node model update of 50 ms, the answer reply of 300 ms, the report rebuild of 5 s, the Cito check within 60 s and the scale refit within 10 minutes.
 
-The permitted dependencies run one way. No module under `src/engine/` imports `src/parent/scale/`, and a lint rule fails the build when one does. The Director reads `fact_states`, `cito_blocks`, `horizons` and `school_goal_mapped`, and nothing else of this part. The Cito check reads only `content/cito.rules.json` and the pages it names, writes only `cito_rule_checked`, and calls no model. The home scale reads only the log and `content/scale.vN.json`. Player routes import no schema that holds a horizon, result, goal or Cito field. Of this part, only the results form's module reads the `categories` field of `external_test_recorded`, and ADR-0420's group 1 check `cito_categories_scope` fails the build when another module of this part reads it.
+The permitted dependencies run one way. No module under `src/engine/` imports `src/parent/scale/`, and a lint rule fails the build when one does. The Director reads `fact_states`, `cito_blocks` and `horizons`, and after the MVP `school_goal_mapped`, and nothing else of this part. The Cito check reads only `content/cito.rules.json` and the pages it names, writes only `cito_rule_checked`, and calls no model. The home scale reads only the log and `content/scale.vN.json`. Player routes import no schema that holds a horizon, result, goal or Cito field. Of this part, only the results form's module reads the `categories` field of `external_test_recorded`, and ADR-0420's group 1 check `cito_categories_scope` fails the build when another module of this part reads it.
 
 ## Behaviour
 
@@ -125,7 +125,7 @@ The horizons start as `cito:M7` on 2027-01-15 and `cito:E7` on 2027-05-15 with n
 
 ### What the player never sees
 
-The player sees no copy of a Cito item, no task laid out as one and no mock test (REQ-5810). Every task comes from a template tied to a node, and no template, string or data file quotes a Cito item. A group 1 check fails on the words "Cito", "LVS" or "Leerling in beeld" in `src/templates/`, `content/probe/`, `tools/probe/`, `src/shared/events.ts` or any player string, and the parent judges the layouts.
+The player sees no copy of a Cito item, no task laid out as one and no mock test (REQ-5810). Every task comes from a template tied to a node, and no template, string or data file quotes a Cito item. A group 1 check fails on the words "Cito", "LVS" or "Leerling in beeld", matched case-insensitively and as whole words, in `src/templates/`, `content/probe/`, `tools/probe/` or any player string, and the parent judges the layouts. In `src/shared/events.ts` the check covers the schemas of the probe's events and `item_shown`'s `probe` and `forms` values, and leaves out the parent-only schemas ADR-0290 and ADR-0420 own, `cito_rule_checked`, `horizon_set` and `external_test_recorded` among them.
 
 No player screen shows a test's date, the name Cito or a word naming a test (REQ-5812). The forbidden-word list holds «тест» (test), «контрольная» (test paper), «экзамен» (exam), «Cito» and «Цито» for every player text, and the text gate refuses a line holding one. The API schema test finds no horizon, result, goal or Cito field in any player response, and an end-to-end scan of the player's screens finds no test word and no horizon date.
 
@@ -147,11 +147,11 @@ value(v) = 2.0 * uncertainty(v) + 1.5 * staleness(v) + 1.5 * frontier(v)
          - 1.0 * recent_shows(v)
 ```
 
-`block_priority(v)` is `(7 - b) / 6`, where `b` is the node's own `citoBlock`. It is 0 when that block is ready, the node's `citoBlock` is `null`, or no horizon is active (REQ-5822). `school_goal(v)` is 1 when a goal the parent entered reaches the node through a link the parent confirmed in `school_goal_mapped`, and 0 for an unconfirmed link or a goal from a school snapshot (REQ-5824). A node reached by a confirmed goal and a fresh lesson mark scores the larger of the two terms, never both (REQ-5826). The weights live in `content/director.v2.json`.
+`block_priority(v)` is `(7 - b) / 6`, where `b` is the node's own `citoBlock`. It is 0 when that block is ready, the node's `citoBlock` is `null`, or no horizon is active (REQ-5822). `school_goal(v)` is 0 in the MVP, which has no goal the parent entered (REQ-5824). After the MVP it is 1 when a goal the parent entered reaches the node through a link the parent confirmed in `school_goal_mapped`, and 0 for an unconfirmed link or a goal from a school snapshot. A node reached by a confirmed goal and a fresh lesson mark scores the larger of the two terms, never both (REQ-5826). The weights live in `content/director.v2.json`.
 
 Neither term reads the expected chance of success. The flow share still decides only between frontier and review, and the three-day window and the stretch cap of 2 tasks a day stay as SPC-0070 states them. A 60-day simulation in ADR-0190's group 3 runs both terms on every profile and asserts the corridor, the window, the stretch cap and the honest-difficulty property (REQ-5828).
 
-A parent import holds at most 200 goals, and a new import replaces the previous parent-entered list. ADR-0310 states how a goal maps to nodes.
+After the MVP a parent import holds at most 200 goals, and a new import replaces the previous parent-entered list. ADR-0310 states how a goal maps to nodes.
 
 ### Nodes ahead of school
 
@@ -179,7 +179,7 @@ The fact threshold is 3 s plus the motor correction of the device type in use, m
 
 The minimum time of every fact in the file and of every control fact is the motor correction plus 600 ms, so `mul:7x100` answered 1 ms faster than that is a rapid guess and 1 ms slower isn't (REQ-5840). The repeat window exempts every item with a `factId` and every control fact, while every other generated task keeps the window of 30 days or 20 % of its subtype's parameter space, whichever ends first (REQ-5842).
 
-A fact returns on the next game day after a wrong answer or one slower than the fact threshold, and that answer restarts its ladder at 1 day, so the next answer right and within the threshold waits 1 day (REQ-6426). After an answer right and within the threshold, the fact returns after the next interval of 1, 3, 7 and 14 days, and every 14 days after that (REQ-6426).
+A fact returns on the next game day after a wrong answer or one slower than the fact threshold, and that answer restarts its intervals at 1 day, so the next answer right and within the threshold waits 1 day (REQ-7510). Each answer right and within the threshold since the last restart returns the fact after the next interval of 1, 3, 7 and 14 days, each longer than the one before, and every 14 days after that (REQ-7510).
 
 ### The Volley
 
@@ -187,7 +187,7 @@ The Volley is a form of mental arithmetic. It shows 8 to 10 facts in one task wi
 
 1. Three places go to facts that aren't automatic, or to every such fact when fewer than 3 exist. A Volley holds more than 3 such facts only when too few automatic facts exist to fill its other places (REQ-6424). Due facts come first, then «вычисляет» before «не знает», then the lower block number, with ties broken by the adventure's seed.
 2. The other places go to automatic facts, as far as they reach: those due by the review schedule first, then those with the oldest last show.
-3. The places automatic facts can't fill go to facts in «вычисляет», then to facts never shown, in the file's order.
+3. The places automatic facts can't fill go to facts in «вычисляет», then to facts never shown, in the file's order. A shown fact in «не знает» gets a place only in step 1 or step 4.
 4. While the Volley holds fewer than 8 facts, the places up to 8 go to any other fact of blocks 1 and 2, the least recently shown first.
 
 The seed sets the order of the rows, with no two facts that aren't automatic side by side where the mix allows it, and as few such pairs as it allows otherwise. `volley_started` records the list.
@@ -208,7 +208,7 @@ Each maths floor runs in this order: an entry scene, an unscored warm-up, either
 
 No floor carries a Dutch probe letter in the MVP. The letters come after the MVP, and only once the owner has amended the Russian-only rule of the principle `project_in_english` in `CLAUDE.md`; until then each floor runs the same order with no letters. ADR-0430 states which floors carry letters and how many a day.
 
-A Volley takes the place of the mental arithmetic tasks only while blocks 1 and 2 hold a fact that isn't automatic. It does so on 2 floors in 3 while `cito:M7` is the active horizon, and on 1 floor in 2 after it (REQ-5858). The Director counts, across game days, the maths floors on which a Volley could run: floors from the day the Volley opened, while blocks 1 and 2 hold a fact that isn't automatic. The count starts when the active horizon last changed, or at the first such floor for a default horizon, which has no `horizon_set`. The Director gives a floor a Volley when:
+A Volley takes the place of the mental arithmetic tasks only while blocks 1 and 2 hold a fact that isn't automatic. It does so on 2 floors in 3 while a `cito:M7` horizon is set, has no entered result and its date hasn't passed, and on 1 floor in 2 otherwise, whichever horizon is active (REQ-5858). The Director counts, across game days, the maths floors on which a Volley could run: floors from the day the Volley opened, while blocks 1 and 2 hold a fact that isn't automatic. The count starts when the active horizon last became another horizon, or at the first such floor for a default horizon, which has no `horizon_set`. A `horizon_set` that only moves the active horizon's date keeps the count. The Director gives a floor a Volley when:
 
 ```text
 volleys_so_far < round_half_up(share * (floors_so_far + 1))
@@ -220,7 +220,7 @@ Here `floors_so_far` and `volleys_so_far` count the earlier counted floors and l
 
 Every template declares `format: "bare"`, an expression with no story in the task window, or `format: "context"`, and the template schema refuses a template without it (REQ-5862). Mental arithmetic, the Volley and control facts are bare. `item_shown` records `format`.
 
-A subtype under ADR-0410's format hold takes a bare template whatever the count. Otherwise, in a node with templates of both formats, while the node's bare scored tasks of the last 30 days number no more than its context ones, the Director chooses among the node's subtypes that have a bare template, and the item builder takes a bare template (REQ-5864). A chosen subtype with templates of one format takes that format, and the count spans the whole node. The 60-day simulation asserts at least half bare tasks on every node with both formats.
+A subtype under ADR-0410's format hold takes a bare template whatever the count. Otherwise, in a node with templates of both formats, while the node's bare scored tasks of the last 30 days number no more than its context ones, counting only tasks whose template the item builder chose by format and leaving out Volley rows, mental arithmetic and control facts, the Director chooses among the node's subtypes that have a bare template, and the item builder takes a bare template (REQ-5864). A chosen subtype with templates of one format takes that format, and the count spans the whole node. The 60-day simulation asserts at least half bare tasks on every node with both formats.
 
 ### The home skill scale
 
@@ -275,37 +275,25 @@ A bridge word shows only in a task of a node whose tested state, computed withou
 | A node, subtype or fact breaks the block rules | `graph_block_invalid` or `fact_list_invalid` fails the build, naming it. |
 | `content/facts.yaml` is absent | No fact state exists, and every floor keeps its 2 mental arithmetic tasks. |
 | Every `citoBlock` is `null` | Block priority is 0 and the Director runs on its other terms. |
-| A school goal has no confirmed link, or comes from a snapshot | `school_goal` is 0. |
+| The MVP runs, or a school goal has no confirmed link, or comes from a snapshot | `school_goal` is 0. |
 | A Cito result sends more than 16 category entries, or a typed field over 80 characters | ADR-0420's `category_list_too_long`: the form refuses the save, names the limit and keeps what was typed. |
-| A goal list holds more than 200 goals | `goal_import_too_long`: the list is refused with the count read. |
+| After the MVP, a goal list holds more than 200 goals | `goal_import_too_long`: the list is refused with the count read. |
 | The parent enters a fact threshold outside 1.5 s to 6 s | `fact_threshold_refused`: nothing is saved, and the field names the range. |
 | A Volley row is answered faster than its minimum time | The row is a rapid guess and counts as a miss toward the on-target result, and it adds nothing to the day's count. |
 | The player leaves mid-Volley | `volley_interrupted`: the resume reopens the Volley at its first unanswered row as the same first attempt; that row's answer counts for accuracy and its time counts in no measure. |
 | A subtype is under the format hold | The item builder takes a bare template, whatever the node's bare and context counts. |
 | A node's subtype has templates of one format only | The item builder takes that format for the subtype; while the node's bare count doesn't exceed its context count, the Director chooses among subtypes with a bare template. |
 | Steps 1 to 3 of the Volley's pick find fewer than 8 facts | Step 4 fills the Volley to 8 with other facts of blocks 1 and 2, the least recently shown first. |
-| A goal-list route is called through the home network | It answers `404`; the route serves only the loopback listener. |
+| After the MVP, a goal-list route is called through the home network | It answers `404`; the route serves only the loopback listener. |
 | A scale refit fails its acceptance test or doesn't converge | `scale_refit_rejected`: the active scale version stays; with no refit the scale runs on the feature formula. |
 | A domain has fewer than 20 unassisted first attempts in 30 days | The scale shows «мало данных» for it. |
 | An engine module imports `src/parent/scale/` | The lint rule fails the build. |
 | The bridge is switched off | Rendering drops every bridge element; stored views of earlier tasks stay in the log, and a resumed task renders again from its seed without bridge words. |
 
-## Open findings
-
-- ADR-0290 and ADR-0360 item 76 key `school_goal_mapped` by the `goalKey` of `src/engine/school/keys.ts`, and this part's goal import, the Cito panel's goal list and REQ-5824's `school_goal` term are in the MVP. ADR-0310, as SPC-0190's scope guard applies it, keeps `src/engine/school/` and the goal-mapping panel out of the tree until the MVP ends. The two decisions contradict each other on whether entered goals can be keyed and mapped in the MVP. The owner decides between two ways: the import, the mapping and `school_goal` wait for ADR-0310's part, with `school_goal` at 0 in the MVP, or the key function and the panel for entered goals ship in the MVP with an exemption in the scope guard.
-- ADR-0430 extends ADR-0290's group 1 check on the words "Cito", "LVS" and "Leerling in beeld" to `src/shared/events.ts`, and its test 13 fails a build with "Cito" in an event schema value. ADR-0290 puts this part's own schemas in that file, `cito_rule_checked` among them, and SPC-0020 keeps every event schema there. The two decisions contradict each other on whether this part's own event names and Cito fields pass the check; the owner decides whether the match is case-sensitive, whole-word or exempts the schemas ADR-0290 owns.
-
 ## Open review findings
 
 - Agent review of addendum 2, round 1: rename `school_goal_mapped`'s field `source` to `proposedBy`, because other events use `source` for other values. Rejected: ADR-0290's Consequences name the field `source` with the values `catalogue` and `parent`, and a rename is a change to that decision.
 - Agent review of addendum 2, round 1, preference: point to ADR-0300, ADR-0310, ADR-0410 and ADR-0430 in place of ADR-0300, ADR-0310, ADR-0410 and ADR-0430. Rejected: this document cites only lower-numbered specifications and names a higher-numbered subject by its decision.
-- Agent review of addendum 2, round 2: "while `cito:M7` is the active horizon" drops the Volley share to 1/2 before M7 once the parent adds an earlier horizon, and it doesn't say which share applies once M7 is removed. Open: the text is ADR-0290's, and REQ-5858 says "before the M7 horizon"; the owner decides the reading.
-- Agent review of addendum 2, round 2: the bare-task count doesn't say whether Volley rows, mental arithmetic and control facts count toward a node's bare scored tasks. Open: ADR-0290 and ADR-0360 item 65 don't say, and the choice changes which tasks the Director picks.
-- Agent review of addendum 2, round 2, preference: say whether a `horizon_set` that only moves the active horizon's date restarts the Volley count. Open: ADR-0290 doesn't say.
-- Agent review of addendum 2, round 2, preference: step 3 of the Volley's pick skips shown «не знает» facts, which only step 4 admits. Open: the order is ADR-0290's, and whether it is intended is the owner's call.
-- Agent review of addendum 2, round 2, preference: REQ-6426 requires each interval to be longer than the one before, while a restart after a wrong answer waits 1 day again. Open: a wording gap in the requirement, which this document can't amend.
-- Agent review of addendum 2, round 2, preference: use one path prefix for the goal routes, `/api/parent/school/goals/import` in place of `/api/parent/school-goals/import`. Open: the path is this document's choice, and ADR-0310 depends on it, so the rename waits for both documents to change together.
-
 - Agent review, round 1: carry ADR-0290's reasons into the sentences for the 10 s timeout, the 10-minute cooldown, the 45 days, the 200-goal cap, the 1.5 s to 6 s range, the Volley's 10 facts and floor of 8, the spacing of weak facts, the 2 first attempts, the one corridor entry, the count across days, the 41 quadrature points and the 20 attempts. Rejected: a specification states what the system does and never why (spec rule S8), and each reason stays in ADR-0290.
 - Agent review, round 2, preference: remove or change the comment under the front matter, because this document gives no reasons. Rejected: every record in the repository carries the same comment naming the writing standard, and changing it is a change to the record template, outside this document.
 - Agent review, round 2, preference: carry ADR-0290's reasons for the numbers into the body. Rejected under spec rule S8, as in round 1.

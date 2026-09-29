@@ -2,7 +2,7 @@
 id: SPC-0280
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-5700, REQ-5702, REQ-5704, REQ-5706, REQ-5708, REQ-5710, REQ-5712, REQ-5714, REQ-5716, REQ-5718, REQ-5720, REQ-5722, REQ-5724, REQ-5725, REQ-5726, REQ-5728, REQ-5730, REQ-5731, REQ-5732, REQ-5734, REQ-5736, REQ-5738, REQ-5740, REQ-5742, REQ-5744, REQ-5746, REQ-5748, REQ-5750, REQ-5752, REQ-5754, REQ-5756, REQ-5758, REQ-5760, REQ-5762, REQ-5764, REQ-5766, REQ-5768, REQ-5770, REQ-5772, REQ-5774, REQ-5776, REQ-5778, REQ-5780, REQ-5782, REQ-5784, REQ-5786, REQ-5788, REQ-5790, REQ-5792, REQ-5794, REQ-5795, REQ-5796, REQ-5798]
 ---
@@ -41,7 +41,7 @@ The puzzle routes follow SPC-0030's contract: each needs the paired device's tok
 | Route | What it does |
 | --- | --- |
 | `POST /api/puzzle/:puzzleId/open` | `{ from: "diary" \| "rest_stop", clientSeq }`. Opens an open puzzle and returns its page: the filled statement, the figure's data, the widget's state and the rungs already taken. For a solved puzzle it returns the solution page. It refuses a puzzle in the box with `409 in_box` and a puzzle never offered with `404 not_offered`. |
-| `POST /api/puzzle/:puzzleId/move` | A widget move. Replies with the server's widget state. |
+| `POST /api/puzzle/:puzzleId/move` | A widget move, or past the move cap the widget's whole state. Replies with the server's widget state. |
 | `POST /api/puzzle/:puzzleId/answer` | An answer in the puzzle's format. Replies `accepted` or `not_accepted`, a line from the familiar, and on `accepted` the solution page and the grants. |
 | `POST /api/puzzle/:puzzleId/hint` | Takes the next rung. Replies with its text and the thread stock. |
 | `POST /api/puzzle/:puzzleId/free-thread` | Takes the familiar's free thread and replies with the next rung. |
@@ -69,7 +69,7 @@ Every puzzle event carries the puzzle's id and hash.
 | `puzzle_approved` | locale, `as_written` or `as_edited`, source `parent_room` or `sandbox`, the moment the run queued it, the seconds the review screen showed it |
 | `puzzle_rejected` | locale, source, the moment the run queued it, the seconds the review screen showed it |
 
-This part also logs, on its routes, types other parts own: `thread_spent` with the reason `hint_ladder` and the puzzle's id, and `rest_stop_ended` with the reason `puzzle_opened`. The soft stop's put-away on a puzzle logs `save_accepted` with the reason `puzzle` through SPC-0090's `POST /api/session/:id/save`. A puzzle's rung is logged as `puzzle_hint` alone and never as `hint_shown`.
+This part also logs, on its routes, types other parts own: `thread_spent` with the reason `hint_ladder` and the puzzle's id, and `rest_stop_ended` with the reason `puzzle_opened`. The soft stop's put-away on a puzzle logs `save_accepted` with the reason `puzzle` through SPC-0090's `POST /api/session/:id/save`, which for that reason closes that one puzzle and returns the puzzle branch, with no closing scene. A puzzle's rung is logged as `puzzle_hint` alone and never as `hint_shown`.
 
 ### States and their audience
 
@@ -89,7 +89,7 @@ This part also logs, on its routes, types other parts own: `thread_spent` with t
 - ADR-0020 supplies `appendEvents` and the event schemas, and ADR-0030 (SPC-0030) the lease, the answer queue, the offline state and idempotency by `clientSeq`.
 - ADR-0100 supplies the offline key, the roles `PUZZLE_MODEL`, `CHECK_MODEL`, `JUDGE_MODEL` and `SAFETY_MODEL` under `ContentRequest`, and the puzzle run's budget bucket.
 - ADR-0160 supplies `textGate` and the forbidden list, and ADR-0120 the numeral lexicon.
-- ADR-0090 (SPC-0090) supplies the game's active time, the eye count, the rest stop, the soft stop, «Закончить на сегодня» and `POST /api/session/:id/save` with `{ reason: "adventure" | "puzzle", clientSeq }`; ADR-0210 the game day and the taskless screens; ADR-0210 and ADR-0330 the schedule that unlocks the branch.
+- ADR-0090 (SPC-0090) supplies the game's active time, the eye count, the rest stop, the soft stop, «Закончить на сегодня» and `POST /api/session/:id/save` with `{ reason: "adventure" | "puzzle", clientSeq }`, which for the reason `puzzle` returns the puzzle branch and ends no play; ADR-0210 the game day and the taskless screens; ADR-0210 and ADR-0330 the schedule that unlocks the branch.
 - ADR-0140 supplies `content/economy.json`, the star yarn, the titles and the thread stock.
 - ADR-0340 supplies the `disabled_content` projection.
 - CAN-0080 supplies the campaign's checkpoints and running clues, and CAN-0090 the Diary's voice.
@@ -114,7 +114,7 @@ A check tests an answer against the puzzle's rules and never compares it with th
 
 ### Preparation, offline
 
-`npm run puzzles:prepare` runs outside any session and calls models only in offline roles on the offline key through ADR-0100's gateway (REQ-5748). It takes up a puzzle whose pair of files has a hash, as Approval defines it, that no `puzzle_approved`, no `puzzle_rejected` and no entry of `content/puzzles/queue.json`, queued or failed, holds. A failed puzzle therefore waits until a person changes its data or its text. When the Russian text is missing or its `dataHash` differs from the data file's current hash, the data changed, and the run drafts anew through all the steps below. Otherwise only the text changed, by the parent's edit or by hand, and the run skips step 2 and runs steps 1 and 3 to 5 on the words as they are. The steps run in order, and a puzzle that fails a step stops there:
+`npm run puzzles:prepare` runs outside any session and calls models only in offline roles on the offline key through ADR-0100's gateway (REQ-5748). It first removes every failed entry of `content/puzzles/queue.json` whose hash differs from its puzzle's current hash. It then takes up a puzzle whose pair of files has a hash, as Approval defines it, that no `puzzle_approved`, no `puzzle_rejected` and no entry of `content/puzzles/queue.json`, queued or failed, holds. A failed puzzle therefore waits until a person changes its data or its text. When the Russian text is missing or its `dataHash` differs from the data file's current hash, the data changed, and the run drafts anew through all the steps below. Otherwise only the text changed, by the parent's edit or by hand, and the run skips step 2 and runs steps 1 and 3 to 5 on the words as they are. The steps run in order, and a puzzle that fails a step stops there:
 
 1. Code runs the reference solution through the puzzle's check before any model call. A failure is `puzzle_reference_failed`, and the puzzle never reaches the review queue (REQ-5742).
 2. `PUZZLE_MODEL` receives a `ContentRequest` with the idea note, the placeholders and their roles, the rules in words, the Diary's voice from CAN-0090 filtered to the current checkpoint, and the length limits, and returns 3 variants of the statement, the three rungs, the solution and the title as JSON.
@@ -124,7 +124,7 @@ A check tests an answer against the puzzle's rules and never compares it with th
 
 The first variant that passes every step enters the parent's review queue, and the run adds the candidate to `content/puzzles/queue.json` with its hash and the moment. A text the run drafted in step 2 is written with the data file's current `dataHash` and `editedByParent` false; a text-only rerun leaves the text file as it is. A text with `editedByParent` true returns to the queue marked `as_edited`, and any other text marked `as_written`. A puzzle that stops at `puzzle_reference_failed` or `puzzle_blind_solve_failed` is added to `content/puzzles/queue.json` as failed with its hash; one that stops at `puzzle_draft_rejected` isn't, so the next run drafts it again.
 
-The run spends from a budget of its own, $20 a run on the offline key, apart from every other budget, and before the run the owner sets the key's limit so that what remains of it equals the run's budget, and after the run back to the sandbox's $20 a month (REQ-5750). A run that reaches the budget stops, keeps what passed and reports `budget_puzzle_run_spent`. The run adds candidates only while fewer than 60 candidates wait for review; failed entries don't count.
+The run spends from a budget of its own, $20 a run on the offline key, apart from every other budget, and before the run the owner sets the key's limit so that what remains of it equals the run's budget, and after the run to $20 plus what the month's offline runs have spent on the key (REQ-5750). A run that reaches the budget stops, keeps what passed and reports `budget_puzzle_run_spent`. The run adds candidates only while fewer than 60 candidates wait for review; failed entries don't count.
 
 ### Approval
 
@@ -166,7 +166,7 @@ The server owns the flow:
 
 The adventure's attempt flow, with its one parallel second attempt, runs on adventure tasks only, and the game gives no third attempt on an adventure task (REQ-5788); no rule of that flow runs on a puzzle.
 
-Widget moves are logged one by one up to 300 for each puzzle in a game day. Past that, the server stops replaying single moves and writes the widget's whole state in one `puzzle_move` with `capped: true`, at most once a minute and with every answer and close.
+Widget moves are logged one by one up to 300 for each puzzle in a game day. Past that, the client stops sending single moves and sends the widget's whole state on `POST /api/puzzle/:puzzleId/move`, at most once a minute and with every answer and close. The server checks the state with the rules module's validity test and logs a valid state as one `puzzle_move` with `capped: true`, or refuses an invalid one as `puzzle_move_refused`, logs it with `refused` and returns its last accepted state.
 
 ### The hint ladder and the free thread
 
@@ -192,9 +192,9 @@ A due eye exercise on a puzzle plays at the first moment outside a widget move.
 
 A boundary on a puzzle is the moment after the server's reply to an answer or a hint, and never the middle of a widget move. When the day's active time reaches the soft-stop point while she is on a puzzle, the soft stop plays at the puzzle's next boundary (REQ-5730):
 
-- Before the day's finale, on a puzzle she opened during the unfinished adventure, at a rest stop or from the Diary, the soft stop offers to save the adventure. Accepting closes the puzzle, saves the adventure and logs `save_accepted` with the reason `adventure`.
-- After the day's finale, the soft stop offers «Отложить головоломку» (Put the puzzle away) beside «Ещё один ряд» (One more row) (REQ-5731). «Ещё один ряд» moves the soft-stop point 20 minutes on. «Отложить головоломку» closes that one puzzle without moving it to the box and logs `save_accepted` with the reason `puzzle`, and the branch stays reachable.
-- A puzzle she opens once the soft-stop point has passed, after a put-away or after «Закончить на сегодня», brings the soft stop again at its first boundary with «Отложить головоломку», and with «Ещё один ряд» only when no `finish_today` came that game day.
+- Before the day's finale, on a puzzle she opened during the unfinished adventure, at a rest stop or from the Diary, the soft stop offers to save the adventure, with «Ещё один ряд» beside it. The same offer comes on a puzzle she opens from the Diary before the finale after a `save_accepted` that game day. Accepting closes the puzzle, saves the adventure and logs `save_accepted` with the reason `adventure`.
+- After the day's finale, the soft stop offers «Отложить головоломку» (Put the puzzle away) beside «Ещё один ряд» (One more row) (REQ-5731). «Ещё один ряд» moves the soft-stop point 20 minutes on. «Отложить головоломку» closes that one puzzle without moving it to the box, logs `save_accepted` with the reason `puzzle` and returns her to the puzzle branch, with no closing scene.
+- After the day's finale, a puzzle she opens once the soft-stop point has passed, after a put-away or after «Закончить на сегодня», brings the soft stop again at its first boundary with «Отложить головоломку», and with «Ещё один ряд» only when no `finish_today` came that game day.
 
 ### Events and the knowledge model
 
@@ -221,10 +221,10 @@ ADR-0190's verification fails on any puzzle whose reference solution fails its c
 | A puzzle file's hash differs from every approved hash | `puzzle_unapproved_hash`: the puzzle isn't served, and it returns to the review queue once a preparation run passes its blind solve. |
 | The sandbox has turned a puzzle off | The puzzle isn't served until `disabled_content` no longer lists it. |
 | No theme has an approved puzzle the offer rules allow | `puzzle_bank_exhausted`: no page appears, and the section shows the count of approved puzzles left. |
-| The server's replay refuses a move the client applied | `puzzle_move_refused`: the server logs the move with `refused`, returns its state, and the widget redraws it. |
+| The server's replay refuses a move the client applied, or the validity test refuses a whole state past the move cap | `puzzle_move_refused`: the server logs the move with `refused`, returns its last accepted state, and the widget redraws it. |
 | A check throws on an answer | `puzzle_check_error`: the answer is logged `not_judged`, the familiar says a neutral line, the puzzle stays open, and the answer counts neither towards the second miss of REQ-5786 nor in `puzzle_solved`'s attempts. |
 | A move or answer arrives twice with one `clientSeq` | The server appends nothing and returns the first result. |
-| The connection drops past 300 moves in a game day | A reconnect restores the board from the last `capped` state, at most a minute of moves behind. |
+| The connection drops past 300 moves in a game day | A reconnect restores the board from the last accepted `capped` state, at most a minute of moves behind. |
 | The client has no connection | SPC-0030's offline state: the hint and free-thread controls are inactive and the waiting scene shows. |
 | Another device holds the lease | `409 lease_moved`, as SPC-0030 states. |
 | She asks to open the ladder with no thread in her stock and no free thread offered | `409 no_threads`, and the puzzle stays open. |
@@ -235,10 +235,6 @@ ADR-0190's verification fails on any puzzle whose reference solution fails its c
 ## Open review findings
 
 - Round 1 asked for a reason beside each value, such as the word limits, $20, the queue of 60, 5 adventure days, 7 game days, 300 moves and the box line at 20, or a sentence pointing to ADR-0280 for them. Rejected: a specification states what the system does and never why (S8), and ADR-0280 holds each reason. Round 2 noted the same point and didn't reopen it.
-- The review of 2026-09-28 found, and this document leaves open, that no decision says how the server gets the widget's whole state for a `capped` `puzzle_move` past the 300-move cap, which route carries it, or whether the server checks it against the rules module, so whether `puzzle_move_refused` can happen past the cap is unsettled. ADR-0280 states only the cap and the once-a-minute write, and settling the rest needs an amendment to ADR-0280.
-- The same review found that no decision says when a failed entry of `content/puzzles/queue.json` under an old hash is removed. The queue's cap of 60 now counts only candidates waiting for review, as ADR-0280's "unapproved ones wait in a queue capped at 60" reads, and the removal rule stays open until an amendment to ADR-0280 sets it.
-- The same review asked to name the owner's run report as the audience of `puzzle_unapproved_hash` until a run passes. I rejected it: ADR-0280's state table names the parent, and the failure table already says the puzzle reaches the review queue only once a preparation run passes its blind solve.
+- The review of 2026-09-28 asked to name the owner's run report as the audience of `puzzle_unapproved_hash` until a run passes. I rejected it: ADR-0280's state table names the parent, and the failure table already says the puzzle reaches the review queue only once a preparation run passes its blind solve.
 - The same review repeated the request for a reason beside each value. I rejected it for the reason given under round 1 above: ADR-0280 holds the reasons, and a specification states none (S8).
-- The second review round found, and this document leaves open, that the soft stop's offer is unsettled for a puzzle she opens from the Diary before the finale after she has accepted a save of the adventure that game day: the bullet on puzzles opened during the unfinished adventure offers to save it, and the bullet on puzzles opened after the soft-stop point offers «Отложить головоломку». ADR-0360 entry 24 reopens a saved adventure, and neither it nor ADR-0280 says which offer that puzzle gets or which `save_accepted` reason it logs; an amendment to ADR-0280 settles it.
-- The second review round found that the put-away's route disagrees with SPC-0090: SPC-0090 says `POST /api/session/:id/save`, for either reason, returns the closing scene and ends the day's play, while ADR-0360 entry 23 keeps the puzzle branch reachable after «Отложить головоломку». This document states entry 23's rule and leaves SPC-0090's route text to its own owner, so the two stay open until SPC-0090 says what the route returns for the reason `puzzle`.
 - The second review round asked again for the reasons behind the values, or a pointer to them. I rejected it for the reason under round 1 above.

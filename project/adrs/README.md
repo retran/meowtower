@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-45 decisions in all: 45 approved.
+46 decisions in all: 46 approved.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
@@ -51,4 +51,5 @@
 | [ADR-0430](ADR-0430-dutch-probe-letters-from-checked-text-pairs-after-the-mvp.md) | The Dutch probe ships after the MVP and only once the owner allows Dutch probe text: families of letters on one ordinary template, each text written offline as a Russian and Dutch pair that three different models check and the parent approves, shown one presentation a game day in a balanced order, and read only in the stream `nl_probe` | approved |
 | [ADR-0440](ADR-0440-constructions-expand-into-the-four-operations-and-pass-per-family.md) | «Сплети загадку» takes the seven constructions by expanding each named operation into the four operations the verdict already judges, masking fraction words as tokens of their own, gating each construction on its nodes and letting each new number family play in text only after its own 50-text test | approved |
 | [ADR-0450](ADR-0450-hypotheses-logged-from-mvp-labelled-later-on-later-data.md) | The parent's hypotheses are two parent events from the first version, and after the MVP a label judges each only on later data by numeric conditions and a hold, with the build check's example conditions fixed here | approved |
+| [ADR-0460](ADR-0460-settle-what-the-addendum-2-records-still-leave-open.md) | Every gap the addendum 2 records still leave open settles by ADR-0360's defaults with the newer addendum 2 decision owning its own capability, rejected findings stay as records, and eight requirements get replacements | approved |
 <!-- /meow-flow index -->

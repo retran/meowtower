@@ -232,3 +232,5 @@ Amended by ADR-0230, ADR-0240, ADR-0250, ADR-0260, ADR-0290, ADR-0300, ADR-0330 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended by ADR-0380, ADR-0400, ADR-0410 and ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

@@ -2,9 +2,9 @@
 id: SPC-0270
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
-states: [REQ-5600, REQ-5602, REQ-5604, REQ-6422, REQ-5608, REQ-5610, REQ-5612, REQ-5614, REQ-5616, REQ-5618, REQ-5620, REQ-5622, REQ-5624, REQ-5626, REQ-5628, REQ-5630, REQ-5632, REQ-5634, REQ-5636, REQ-5638, REQ-5640, REQ-5642, REQ-5644, REQ-5646, REQ-5648, REQ-5650, REQ-5652, REQ-5654, REQ-5656, REQ-5658, REQ-5660, REQ-5662, REQ-5664, REQ-5666, REQ-5668, REQ-5670, REQ-5672]
+states: [REQ-5600, REQ-5602, REQ-5604, REQ-6422, REQ-5608, REQ-5610, REQ-5612, REQ-5614, REQ-5616, REQ-5618, REQ-5620, REQ-5622, REQ-5624, REQ-5626, REQ-5628, REQ-5630, REQ-5632, REQ-5634, REQ-7508, REQ-5638, REQ-5640, REQ-5642, REQ-5644, REQ-5646, REQ-5648, REQ-5650, REQ-5652, REQ-5654, REQ-5656, REQ-5658, REQ-5660, REQ-5662, REQ-5664, REQ-5666, REQ-5668, REQ-5670, REQ-5672]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -13,7 +13,7 @@ states: [REQ-5600, REQ-5602, REQ-5604, REQ-6422, REQ-5608, REQ-5610, REQ-5612, R
 
 ## Scope
 
-This document covers how a word problem opens and what the plan does: the cycle that gives each first-shown word problem its opening phase and its input form, the plan's cards and how code builds them from one graph, `PlanSpec` and `gradePlan`, the `plan` and `solve` phases of the task window, the `plan_submitted` and `plan_draft` events, the resume after a plan, the step rows that carry her cards, the two columns of the knot's scheme, and the report's planning errors and plan cross. It is written at the component level: modules, the view, events, projections and the rules each applies. ADR-0270, as ADR-0360 and ADR-0370 amend it, holds the reason for each rule here.
+This document covers how a word problem opens and what the plan does: the cycle that gives each first-shown word problem its opening phase and its input form, the plan's cards and how code builds them from one graph, `PlanSpec` and `gradePlan`, the `plan` and `solve` phases of the task window, the `plan_submitted` and `plan_draft` events, the resume after a plan, the step rows that carry her cards, the two columns of the knot's scheme, and the report's planning errors and plan cross. It is written at the component level: modules, the view, events, projections and the rules each applies. ADR-0270, as ADR-0360, ADR-0370 and ADR-0460 amend it, holds the reason for each rule here.
 
 It leaves out what other documents state. SPC-0040 states the template contract, the generator and the model choice's four models, SPC-0080 the attempt flow and the hint ladder, SPC-0030 the play API, the queue and the resume point, SPC-0020 the event log and its catalogue, SPC-0180 the rest of the report, and SPC-0060 the rule that keeps a new form's stream out of the estimate. What «Нельзя узнать» (Can't know) does to an attempt belongs to ADR-0250, the input of a Dutch probe letter to ADR-0430, and the profile's model building bar and the plan check that lets it read labels to ADR-0390.
 
@@ -131,7 +131,7 @@ The label is the first fault in the order `used_distractor`, `missing_step`, `ex
 
 A problem with a plan runs the `open` state in two phases, `plan` then `solve`. In `plan` the task window shows the problem text, the cards in an order the task's seeded stream shuffles, and a row where she lays them. The action row holds, in this order, «Не знаю» (I don't know), «Нельзя узнать», the thread button and «Готово» (Done), and «Готово» stays inactive while the row is empty. She can move and take back any card until she presses «Готово». The client sends the partly laid plan through the draft route and SPC-0030's event queue, at most once every 10 seconds while the row changes and at once when she leaves the task window or the page turns hidden, and the server logs it as `plan_draft`.
 
-«Готово» sends the laid sequence. The server logs `plan_submitted` with the full sequence she laid, before she answers the problem (REQ-5638, REQ-5640), and the window moves to `solve` with no word, mark or colour about the plan (REQ-5650). The log records the plan's `planChoice` as one of the five labels, apart from the answer, except when «Нельзя узнать» ends the plan, which carries no label (REQ-5636).
+«Готово» sends the laid sequence. The server logs `plan_submitted` with the full sequence she laid, before she answers the problem (REQ-5638, REQ-5640), and the window moves to `solve` with no word, mark or colour about the plan (REQ-5650). When she submits the plan, the log records its `planChoice` with the attempt as one of the five labels, apart from the answer (REQ-7508). A plan that «Нельзя узнать» ends before she submits it carries no label.
 
 «Не знаю» in `plan` ends the whole first attempt, and the server logs `plan_submitted` with the cards she had laid, possibly none, `endedBy: dont_know`, and the label `gradePlan` gives them. «Нельзя узнать» in `plan` opens its options, as it does in every phase, and the «Готово» inside those options ends the whole first attempt; the server logs `plan_submitted` with the cards she had laid, `endedBy: cant_know`, and no label. A plan she submitted with «Готово» keeps its label whatever ends the attempt in `solve`.
 
@@ -161,7 +161,7 @@ A planning error is a plan labelled anything but `correct`, counted apart from m
 
 | Condition | What happens |
 | --- | --- |
-| No candidate among the generator's 1,000 and its fallbacks yields a plan that passes the two plan rules | `plan_unavailable` is logged, the problem opens with no phase, and the plan moves to no other problem. The verify report names the template when its `plan_unavailable` share passes 1 % over 30 days, and again only if the share rises. |
+| No candidate among the generator's 1,000 and its fallbacks yields a plan that passes the two plan rules | `plan_unavailable` is logged, the problem opens with no phase, and the plan moves to no other problem. The verify report names the template when its `plan_unavailable` share passes 1 % over 30 days, and again only when its share over 30 days is higher than the share at the template's last report. |
 | A template lacks a quantity id, a stated quantity, an eligible decoy for its tier or a card wording | `plan_template_incomplete`: the build fails and names the template and the quantity. |
 | A sequence names an unknown card or a card twice, or no card with `endedBy: ready` | `400 plan_rejected`: the server writes nothing, and the phase stays open and unchanged. |
 | The same plan request arrives twice with one `clientSeq` | The server appends nothing and returns the state the first request left. |
@@ -170,17 +170,10 @@ A planning error is a plan labelled anything but `correct`, counted apart from m
 | The app closes while she lays cards | The resume shows the cards in the same order with the row as the newest `plan_draft` left it. |
 | She misses a step in her plan and then needs a row for it | She adds a row, up to 6. |
 
-## Open findings
-
-- REQ-5636 requires a label on every plan, but ADR-0360 logs no label when «Нельзя узнать» ends the plan, and this document follows ADR-0360. The requirement's text needs revising to allow that case; this document can't settle it.
-
 ## Open review findings
 
 - Rejected: give each rule its reason, for example why a `stated` decoy leaves out the given's number, why «Готово» stays inactive on an empty row, and why step rows stop at 6. A specification states what the system does, and ADR-0270 holds the reasons.
 - Rejected: upcast an older Guardian `item_shown` or `attempt_submitted` as `openingPhase: "model"`. ADR-0270 sets the upcaster to read every older event as `none`, and the repository holds no code, so no older event exists; changing the rule is a decision for ADR-0270.
 - Rejected: say "bought" for a rung, as ADR-0270 does, in place of "shown". SPC-0080 marks an attempt assisted when a rung is shown, whether the tap spent a thread or was free, and this document uses its term.
 - Rejected in part: drop the writing-standard comment at the top, which promises a reason with each rule. Every record carries that comment, so this document keeps it, and Scope now names ADR-0270 as the holder of the reasons.
-- Fixed in round 2: both counters now skip an `item_shown` whose `forms` holds `nl_probe`, under ADR-0430's rule that every projection but `nl_probe`'s skips a probe letter's attempt, which closes the round 1 open item on letters.
 - Rejected: cite the ADR-0360 or ADR-0370 entry beside each rule they changed. Scope names both as amending ADR-0270, and a specification cites requirements, not the entries of a decision.
-- Rejected: reword "again only if the share rises" in the `plan_unavailable` row. The row keeps ADR-0270's wording, and what the share is compared with is a decision for ADR-0270.
-- Not applied here: ADR-0270 and its quoted change to ADR-0040 print the cycle without a colon marking "plan" as its first slot, which a reader took for seven slots. Only this document is edited; it now reads "the cycle: plan, none, model, none, none, plan, none, model".

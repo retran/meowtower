@@ -3,7 +3,7 @@ id: REQ-6936
 artifact: requirement
 topic: event-log
 class: functional
-status: approved
+status: superseded
 revised: 2026-09-28
 elaborates: RES-4230
 verification: behavioural

@@ -217,3 +217,5 @@ The premortem, written as though it had happened. Three months after the item sh
 - An error class for an inverted fraction, or an additive class for a share of a total: no study RES-4260 read names either.
 - Dutch or English strings for the constructions: the owner's amendment of `CLAUDE.md` for Dutch, and ADR-0160 for any second language.
 - Which backlog item comes first after the MVP: the family's choice at the stage 0.3 review (ADR-0190).
+
+Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

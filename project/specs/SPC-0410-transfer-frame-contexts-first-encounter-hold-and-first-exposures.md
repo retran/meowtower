@@ -2,9 +2,9 @@
 id: SPC-0410
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
-states: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6930, REQ-6932, REQ-6934, REQ-6936, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980, REQ-6982]
+states: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6930, REQ-6932, REQ-6934, REQ-7512, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980, REQ-6982]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -29,6 +29,7 @@ It leaves out what other documents state. The frame pipeline, the frame library,
 | A template with `format: "context"` | `contexts`: a non-empty list of ids from `content/contexts.yaml` that the template's structure admits. |
 | A frame | `context`: exactly one id from `content/contexts.yaml`. |
 | `frame_accepted` | the field `context`, added under ADR-0380's rule for addendum 2's fields. |
+| `probe_text_approved` | `context`: the id from `content/contexts.yaml` the parent confirms when approving a Dutch probe pair, as ADR-0430 states. |
 | `item_shown` | `why` includes `transfer_hold` while a hold is active on the task's subtype. `item_shown` carries no context field and no `firstExposure`. |
 | The frame review screen | Each candidate's context by its Russian label, a control to change it to another context the structure's context templates list, and «нет подходящего сюжета» (no fitting setting). |
 
@@ -66,7 +67,7 @@ A context id carries no language, so a frame in English or Dutch can carry the s
 
 ### Permitted dependencies
 
-`first_exposures` reads the event log and the versioned content files and nothing else. The format hold, the context hold and the side-slot rule read the used sets of `first_exposures` and the node's tested state as the knowledge model recorded it. The report's transfer section reads only eligible rows of `first_exposures`. The knowledge model, the state rules, probes and full blocks read nothing of `first_exposures`, and `model_reads_no_transfer` fails an import that crosses this boundary. No API response carries `why`, a hold or a `first_exposures` row.
+`first_exposures` reads the event log and the content files at the versions its events record, and nothing else (REQ-7512). The format hold, the context hold and the side-slot rule read the used sets of `first_exposures` and the node's tested state as the knowledge model recorded it. The report's transfer section reads only eligible rows of `first_exposures`. The knowledge model, the state rules, probes and full blocks read nothing of `first_exposures`, and `model_reads_no_transfer` fails an import that crosses this boundary. No API response carries `why`, a hold or a `first_exposures` row.
 
 ## Behaviour
 
@@ -92,7 +93,7 @@ The frame review screen shows each candidate's context by its Russian label. The
 
 `frame_accepted` records the context of the frame it accepts (REQ-6914). The server writes `context` on every acceptance from the first accepted frame, so the log holds no untagged acceptance. `item_shown` records no context (REQ-6916): the context of a show is the context of the `frame_accepted` of its `frameId`.
 
-A live frame request names a context already shown on the slot's subtype. When the subtype has no shown context, the block top-up task takes a library frame. A live frame therefore never brings a new context. When the parent moves a live frame to the library, its `frame_accepted` records the context its request named.
+A live frame request names a context already shown on the slot's subtype. When the subtype has no shown context, the block top-up task takes a library frame. A live frame therefore never brings a new context. A block top-up on a library frame is no side slot, so its first show of a context is eligible when the conditions below hold. When the parent moves a live frame to the library, its `frame_accepted` records the context its request named.
 
 ### The holds
 
@@ -100,7 +101,7 @@ Both holds apply from the player's first adventure (REQ-6932).
 
 The format hold applies to a subtype with templates in both formats. From the subtype's first show, the first show included, the item builder takes only the subtype's bare templates. The hold ends when the node is fluent by a tested result or when the 14th game day after the first show's game day begins, whichever comes first (REQ-6924). The format hold runs before the half-bare rule of SPC-0290: a held subtype takes a bare template whatever the node's counts.
 
-The context hold applies to a subtype with at least 2 contexts that have an accepted frame of its structure. A subtype's contexts are the union of the `contexts` of its context templates, and a context counts only where an accepted frame of that template's structure carries it. While exactly one of those contexts hasn't been shown on the subtype, the game never shows a frame of that context on the subtype, until the node is fluent by a tested result (REQ-6926). The context hold has no time cap. Each hold ends on the subtype the first time its node is fluent by a tested result and doesn't return. While the context hold is active and the list or the library grows so that a second context becomes unshown on the subtype, neither is held until one of them is shown, so the active hold keeps exactly one unshown context while at least 2 exist.
+The context hold applies to a subtype with at least 2 contexts that have an accepted frame of its structure. A subtype's contexts are the union of the `contexts` of its context templates, and a context counts only where an accepted frame of that template's structure carries it. While exactly one of those contexts hasn't been shown on the subtype, the game never shows a frame of that context on the subtype, until the node is fluent by a tested result (REQ-6926). The context hold has no time cap. Each hold ends on the subtype the first time its node is fluent by a tested result and doesn't return, even when the node later drops below fluent or a context is added after the release. While the context hold is active and the list or the library grows so that a second context becomes unshown on the subtype, neither is held until one of them is shown, so the active hold keeps exactly one unshown context while at least 2 exist.
 
 While the format hold or the context hold is active on a subtype, the `why` field of every `item_shown` of that subtype includes `transfer_hold` (REQ-6930).
 
@@ -108,7 +109,7 @@ Before the knowledge model exists, no node is fluent by a tested result, so the 
 
 ### Side slots take what she has met
 
-A warm-up, a second attempt, a retention check, a Dutch probe presentation, a task with a non-empty `forms` and a task on a live frame are side slots. For a side slot, the Director chooses a subtype already shown to the player, and the item builder a format already shown on that subtype, whenever one fits the slot (REQ-6954). The frame picker then chooses a frame whose context has been shown on that subtype whenever one exists (REQ-6956). When nothing shown fits, as in the first warm-up of her first adventure, the slot takes a new one, and `first_exposures` marks it used and, when the show has a first attempt, ineligible with the reason `side_slot`. A context the context hold keeps back is never shown in a side slot.
+A warm-up, a second attempt, a retention check, a Dutch probe presentation, a task with a non-empty `forms` and a task on a live frame are side slots. For a side slot, the Director chooses a subtype already shown to the player, and the item builder a format already shown on that subtype, whenever one fits the slot (REQ-6954). The frame picker then chooses a frame whose context has been shown on that subtype whenever one exists (REQ-6956). For a Dutch probe presentation, a new family takes, among its template's approved pairs, one whose context has been shown on the family's subtype when one exists, and then ADR-0430's reuse rule. When nothing shown fits, as in the first warm-up of her first adventure, the slot takes a new one, and `first_exposures` marks it used and, when the show has a first attempt, ineligible with the reason `side_slot`. A context the context hold keeps back is never shown in a side slot.
 
 ### Choosing a frame under the holds
 
@@ -118,24 +119,24 @@ When every frame of a structure the player hasn't met is left out by the context
 
 ### The projection `first_exposures`
 
-`first_exposures` is computed from the event log and the versioned content files alone (REQ-6936). It reads the shows in `seq` order. For each show it takes the subtype and `format` from `item_shown`, and, for a library frame, the context from the `frame_accepted` of the show's `frameId`. A bare task and a live frame add no context. Pairs are keyed by the subtype id of the graph version active at the show, so a subtype id that a new graph version introduces counts as a new subtype.
+Every `firstExposure` is computed from the event log and the content files at the versions its events record, and takes its context from what the log recorded when the shown frame or probe pair was accepted (REQ-7512). The projection reads the shows in `seq` order. For each show it takes the subtype and `format` from `item_shown`, the context of a library frame from the `frame_accepted` of the show's `frameId`, and the context of a Dutch probe presentation from the `probe_text_approved` of its pair. A bare task and a live frame add no context. Pairs are keyed by the subtype id of the graph version active at the show, so a subtype id that a new graph version introduces counts as a new subtype.
 
-The projection gives a `firstExposure` on the first show of each subtype, of each subtype in each format and of each subtype in each context, at most once for each (REQ-6934). When a show is new on several counts, it gets one `firstExposure` of the highest kind, subtype before format before context, and the other pairs become used with no row of their own (REQ-6944). Every show marks its subtype, its subtype-and-format pair and, when it has a context, its subtype-and-context pair used, a side-slot show included.
+The projection gives a `firstExposure` on the first show of each subtype, of each subtype in each format and of each subtype in each context, at most once for each (REQ-6934). When a show is new on several counts, it gets one `firstExposure` of the highest kind, subtype before format before context, and the other pairs become used with no row of their own (REQ-6944). Every show marks its subtype, its subtype-and-format pair and, when it has a context, its subtype-and-context pair used, a side-slot show included. A Dutch probe presentation's show marks its subtype, format and context used, and its attempt gives no transfer observation.
 
 ### Which first encounters are eligible
 
 A first encounter is eligible only when every condition below holds, and `reason` names the first that fails, in this order (REQ-6946, REQ-6948, REQ-6950):
 
-1. `no_attempt`: the show has a first attempt.
-2. `side_slot`: the show fills none of the side slots, so its `forms` is empty too.
-3. `not_graded`: the first attempt is graded.
-4. `excluded`: the parent hasn't excluded the attempt through `item_excluded`.
-5. `rapid_guess`: the attempt's `verdict` carries no `rapidGuess: true`.
-6. `fatigue`: the attempt doesn't carry the fatigue weight of SPC-0060.
-7. `lesson_mark`: no lesson mark on the node falls in the 21 game days before the show.
-8. For `kind: subtype`, `no_prerequisites`: the node has at least one prerequisite, so a node with none, such as a Sources track node, gives no far observation. Then `prerequisites_not_fluent`: each prerequisite of the node is fluent by a tested result at the show (REQ-6948).
-9. For `kind: format` and `kind: context`, `node_not_fluent`: the node is fluent by a tested result at the show (REQ-6950).
-10. `version_missing`: the model file of the version active at the show loads.
+1. `version_missing`: the model file of the version active at the show loads, whenever a model version is active at the show.
+2. `no_attempt`: the show has a first attempt.
+3. `side_slot`: the show fills none of the side slots, so its `forms` is empty too.
+4. `not_graded`: the first attempt is graded.
+5. `excluded`: the parent hasn't excluded the attempt through `item_excluded`.
+6. `rapid_guess`: the attempt's `verdict` carries no `rapidGuess: true`.
+7. `fatigue`: the attempt doesn't carry the fatigue weight of SPC-0060.
+8. `lesson_mark`: no lesson mark on the node falls in the 21 game days before the show.
+9. For `kind: subtype`, `no_prerequisites`: the node has at least one prerequisite, so a node with none, such as a Sources track node, gives no far observation. Then `prerequisites_not_fluent`: each prerequisite of the node is fluent by a tested result at the show (REQ-6948).
+10. For `kind: format` and `kind: context`, `node_not_fluent`: the node is fluent by a tested result at the show (REQ-6950).
 
 A walkthrough shown to the player before the encounter keeps it eligible (REQ-6952).
 
@@ -147,7 +148,7 @@ A first-encounter attempt counts in the "on her own" estimate as an ordinary tas
 
 ### Versions and recompute
 
-`expected` and the tested states that conditions 8 and 9 read are taken under the model, threshold and graph versions active at the show (REQ-6942). The log records each version change as `model_activated`, `settings_changed` or `fact_threshold_set`, and `content/model.vN.json` holds each model version's parameters. A full recompute keeps the model-derived fields of every row whose show fell under an earlier version set and recomputes the rest from the log, as SPC-0020 does for `node_snapshots`. A rebuild after the table is lost replays each version set over the part of the log it governed. A show with no active model version, as before the knowledge model exists, gets `expected: null`, and, unless an earlier condition fails, it fails condition 8 or 9, since no node is fluent by a tested result; a recompute keeps these rows as they are. When a rebuild can't load a model file, every row whose show fell under that version reads, whatever conditions 1 to 9 give, `eligible: false`, `reason: version_missing` and `expected: null`.
+`expected` and the tested states that conditions 9 and 10 read are taken under the model, threshold and graph versions active at the show (REQ-6942). The log records each version change as `model_activated`, `settings_changed` or `fact_threshold_set`, and `content/model.vN.json` holds each model version's parameters. A full recompute keeps the model-derived fields of every row whose show fell under an earlier version set and recomputes the rest from the log, as SPC-0020 does for `node_snapshots`. A rebuild after the table is lost replays each version set over the part of the log it governed. A show with no active model version, as before the knowledge model exists, gets `expected: null`, and, unless an earlier condition fails, it fails condition 9 or 10, since no node is fluent by a tested result; a recompute keeps these rows as they are. When a rebuild can't load a model file, every row whose show fell under that version fails condition 1 and reads `eligible: false`, `reason: version_missing` and `expected: null`.
 
 The holds read the used sets, which depend on no version, and the node's tested state as the knowledge model recorded it at the time, so a replay releases a hold on the same show as play did.
 
@@ -192,18 +193,7 @@ The MVP holds the context list, the context on every accepted frame, `contexts` 
 
 The player sees none of these states, and every one ends in an ordinary task.
 
-## Open findings
-
-- REQ-6956 asks a Dutch probe presentation to take a frame whose context has been shown on the subtype. ADR-0430 gives a probe letter its frame from an approved probe pair, which is no library frame and which neither ADR-0410 nor ADR-0430 gives a context tag. This document states that a letter's show adds no context to `first_exposures`, as it does for any frame without a `frame_accepted`, and leaves open how a letter meets REQ-6956. Both parts come after the MVP.
-- ADR-0430 says every projection other than `nl_probe` skips an attempt whose `forms` holds `nl_probe`, and that transfer takes no observation from a letter. ADR-0410 marks every side-slot show used, a Dutch probe presentation included. This document reads the two together: the letter's show marks its subtype and format used, and its attempt gives no observation. If ADR-0430's rule means the projection skips the show as well, the two decisions disagree on whether a letter spends a first encounter, and I don't choose.
-- ADR-0410 names the operator command `./tower status`. SPC-0010 names the command `./meowtower`, and this document uses that name.
-
 ## Open review findings
 
 - The first agent review found that SPC-0130, SPC-0040, SPC-0070 and SPC-0290 don't yet hold REQ-6928, the frame picker's new steps, the format hold or `transfer_hold`, so this document's cross-references point at text not there yet, and asked me to amend them or state REQ-6928 here. I rejected it: those documents take ADR-0410's amendments in the same change of addendum 2, SPC-0130 takes REQ-6928 in place of REQ-3610, and stating REQ-6928 here would state one rule in two documents.
-- The first agent review asked what a show with no active model version holds. Neither ADR-0410 nor REQ-6942 says. I chose `expected: null` with condition 8 or 9 as its reason, because with no model no node is fluent by a tested result, and `version_missing` names a file a rebuild can't load.
-- The second agent review found that `version_missing` comes last in the eligibility order, while ADR-0410 also says a row whose model file can't load reads `version_missing`. I stated that such a row reads `version_missing` whatever conditions 1 to 9 give, because conditions 8 and 9 can't be read without the model file and ADR-0410's realisation test 7 expects `version_missing`. The eligibility order in ADR-0410 itself is unchanged.
-- The second agent review asked whether a hold ends for good. ADR-0410 says each hold "ends" when the node is fluent by a tested result. I read that as a one-time release, so a node that later drops below fluent, or a context added after the release, brings no hold back. A decision should confirm this reading.
-- The second agent review asked whether a block top-up that falls back to a library frame, because its subtype has no shown context, still counts as a side slot. Neither ADR-0410 nor REQ-6946 says, and the answer decides whether its new context can be an eligible near observation. I left it open for a decision.
-- The second agent review noted that REQ-6936 says `first_exposures` is computed from "the event log alone", while this document also reads the versioned content files, as ADR-0410 does for `expected` and the graph version. I kept ADR-0410's reading, and a check of REQ-6936 has to allow the content files.
 - The first agent review asked for the reasons behind the hold's rank above the side-slot fallback and the repeat rule, the 20,000-row ceiling and the 120-game-day report. I kept them without reasons, because a specification states what the system does and never why (S8), and ADR-0410 holds each reason.

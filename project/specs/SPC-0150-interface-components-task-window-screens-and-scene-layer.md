@@ -2,7 +2,7 @@
 id: SPC-0150
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-0712, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0738, REQ-0764, REQ-0840, REQ-0842, REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148, REQ-3200, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3218, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246, REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3514, REQ-3516, REQ-3522, REQ-3526, REQ-3528, REQ-3530]
 ---
@@ -93,7 +93,7 @@ Playwright tests on WebKit at the iPad's 1180 by 820 and at a 1440 by 900 deskto
 - SPC-0140 supplies the rank, the chest's rewards, the element names she gave, the creatures she has met and the quests; SPC-0110 supplies the scenes, the Underside flag and the dreamcore event; ADR-0170 supplies the scene art and each scene's still image.
 - ADR-0190 holds this part's budgets in its Baselines table: a screen change on the iPad within 100 ms, 200 story messages in the DOM, 30 entries each in `corrections.css` and `divergences.json`, and the sound loudness.
 
-The permitted dependencies run one way. Screens import the ports in `src/ui/ds/`, and the ports import only Preact, `t()` and `src/shared/`. Only `src/ui/scene/` imports `pixi.js`, and a port or a screen reaches the scene only through the scene element's props. The task window's components never import the audio module. Nothing in `src/` imports `design/` at run time, and only the build and `tools/ds-drift.ts` read it.
+The permitted dependencies run one way. Screens import the ports in `src/ui/ds/`, and the ports import only Preact, `t()` and `src/shared/`. Only `src/ui/scene/` imports `pixi.js`, and a port or a screen reaches the scene only through the scene element's props. The task window's components never import the audio module. `src/ui/source/` draws the SVG of a source from the task view the server sends and never imports `src/render/source/`, so the server alone renders a source, as ADR-0300 states. Nothing in `src/` imports `design/` at run time, and only the build and `tools/ds-drift.ts` read it.
 
 ## Behaviour
 
@@ -175,7 +175,11 @@ When `check()` returns `unparsed`, the field takes a soft outline from the desig
 
 ### Term hints
 
-The task view carries a span for each maths term the template lists, and the task window draws every span with a glossary entry as a `TermHint`: a button with a dotted underline (REQ-0840). A tap opens a popover inside the task window with the term's Russian explanation and its picture from `lexicon.ru.json`, and the Dutch word only when the parent has approved it, and logs `glossary_opened` with the term and the `itemId` (REQ-0842). A span with no glossary entry shows as plain text.
+The task view carries a span for each maths term the template lists and for each glossary word its story frame adds, at most 2 (SPC-0040), and the task window draws every span with a glossary entry as a `TermHint`: a button with a dotted underline (REQ-0840). A tap opens a popover inside the task window with the term's Russian explanation and its picture from `lexicon.ru.json`, and the Dutch word only when the parent has approved it, and logs `glossary_opened` with the term and the `itemId` (REQ-0842). A span with no glossary entry shows as plain text.
+
+### Taps and pans
+
+A one-finger contact that moves less than 10 CSS px from its start before it lifts is a tap, and a longer move is a pan, as ADR-0300 states. A Playwright test on the iPad viewport lifts a contact after a 9 px move and finds a tap, and after an 11 px move and finds a pan.
 
 ### Outcomes and the review
 
@@ -226,4 +230,3 @@ PixiJS draws the scene picture, sprites and effects inside the scene column and 
 - Rejected, round 1: drop the plain-text rendering of a term span with no glossary entry, since SPC-0040's build check refuses such a template. The rule still defines what the task window draws for a span that reaches it by any other path, and it can be tested with a fixture task view.
 - Rejected, round 1: move the post-MVP bar token and the letter case of the «Нельзя узнать» test out to ADR-0390 and ADR-0430. The spec states post-MVP parts it offers, marked as after the MVP, and the letter case depends on the owner amending the Russian-only rule, which the paragraph states.
 - Rejected, round 1: settle the keypad-cell test's viewport or the keypad's place on the computer. The paragraph names the iPad viewport for that test, and REQ-3206 places the keypad on the tablet only; the computer layout follows SPC-0010.
-- Open, round 2: REQ-0840 marks every maths term with a glossary entry in a task's text, while this document gives a span only to each term the template lists; the up to 2 glossary words a story frame may add, as SPC-0040 allows, get no span in either spec. Settling it needs SPC-0040's owner to say whether frame risk terms become spans, so it stays open here.

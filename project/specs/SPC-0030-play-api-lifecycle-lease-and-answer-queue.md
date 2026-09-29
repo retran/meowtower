@@ -2,7 +2,7 @@
 id: SPC-0030
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, REQ-0214, REQ-0216, REQ-0218, REQ-0220, REQ-0222, REQ-0224, REQ-0226, REQ-0228, REQ-0230, REQ-0232, REQ-0234, REQ-0236, REQ-2400, REQ-2402, REQ-2404, REQ-2406, REQ-2408, REQ-2410, REQ-2412, REQ-2414, REQ-2416, REQ-2418, REQ-2420, REQ-2422, REQ-2424, REQ-2426, REQ-2428, REQ-2430, REQ-2432, REQ-2434, REQ-2436, REQ-2438, REQ-2440, REQ-2442, REQ-2444, REQ-5414]
 ---
@@ -44,7 +44,7 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 | `POST /api/session/:id/pause` | `{ reason: "leave" \| "background" \| "idle", clientSeq }`; replies `{ status: "paused" }`. |
 | `POST /api/session/:id/break` | The rest-stop button: `{ action: "start" \| "end", clientSeq }`; replies `{ status: "resting" \| "playing" }`. |
 | `POST /api/session/:id/extend` | «Ещё один ряд» after a `stop_offer`. |
-| `POST /api/session/:id/save` | `{ reason: "adventure" \| "puzzle", clientSeq }`: she accepts the soft stop's offer to save; logs `save_accepted` and returns the closing scene. |
+| `POST /api/session/:id/save` | `{ reason: "adventure" \| "puzzle", clientSeq }`: she accepts an offer to save, and the server logs `save_accepted` with the reason. With `adventure` it returns the closing scene. With `puzzle` it closes that one puzzle and returns the puzzle branch, with no closing scene, and play goes on. |
 | `GET /api/session/:id/events` | The SSE stream. |
 | `GET /api/session/:id/poll?after=<seq>` | The stream's messages after `seq`, for a client whose stream dropped. |
 | `POST /api/parent/login` | The PIN; opens a parent session. |

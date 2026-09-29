@@ -2,7 +2,7 @@
 id: SPC-0100
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688]
 ---
@@ -34,7 +34,7 @@ The gateway lives in `src/server/gateway/`, a path I chose. A caller hands it on
 
 ### Roles
 
-Each role takes its model id from `.env` (REQ-1642). The code fixes each role's privacy tier, key, budget bucket, request classes and timeout, and `.env` changes only the model.
+Each role takes its model id from `.env` (REQ-1642). The code fixes each role's privacy tier, key, budget bucket, request classes, timeout and `max_tokens`, and `.env` changes only the model.
 
 | Role | Tier | Key | Bucket | Default model |
 | --- | --- | --- | --- | --- |
@@ -110,6 +110,21 @@ The dependencies run one way. Only `src/server/gateway/` opens a connection to a
 
 Each role's model comes from `.env`, so switching a model needs a restart of the server container and no code change and no rebuild (REQ-1642). The server reads `.env` only at start, so every changed model passes the start-up check before a call uses it (REQ-1646). A model enters the play configuration only when an owner-approved decision record in `project/adrs/` names it, whether it is the bake-off's choice or a substitute (REQ-1656). That record's list of approved Master models is `MASTER_MODEL_CHOICES`.
 
+Every call carries its role's `max_tokens` and ends at its role's timeout. Both values are rows of ADR-0190's Baselines table, which `verify/baselines.json` carries:
+
+| Role | Timeout | `max_tokens` |
+| --- | --- | --- |
+| `MASTER_MODEL`, `MASTER_FALLBACK_MODEL`, `FREE_PEN_MODEL` | what remains of the 12 seconds since the order | 2,000 |
+| `PLANNER_MODEL` | 60 s | 4,000 |
+| `LIVE_GEN_MODEL` | 30 s | 4,000 |
+| `LIVE_CHECK_MODEL` | 10 s | 1,000 |
+| `EXPLAIN_MODEL` | 15 s | 2,000 |
+| `SAFETY_MODEL` | 5 s | 200 |
+| `JUDGE_MODEL` | 1500 ms | 200 |
+| `PARSE_MODEL` | 10 s | 4,000 |
+| every offline text role | 120 s | 8,000 |
+| every art role | 300 s | none; the reservation is one image at its listed price |
+
 ### The start-up check
 
 Before the server listens, it reads OpenRouter's two catalogue listings, the default one and the image-output one, and `GET /api/v1/endpoints/zdr`. The server refuses to start as `model_config_invalid` when a configured model, text, image or judge, is missing from the catalogue (REQ-1644). It also refuses when a player-tier model, each entry of `MASTER_MODEL_CHOICES` and `PARSE_MODEL` included, has no zero-retention endpoint at a provider on the player-tier list (REQ-2628). It refuses when `JUDGE_CHECKS` names a check with no passing test-set record for the configured `JUDGE_MODEL` in the `bakeoff` table (REQ-1688). It refuses when a provider on either tier list has no row in `content/providers.json`, the table that gives each provider's OpenRouter slug, company, country and retention (REQ-2648). The refusal names the role or provider, the model and the missing fact. When a configured local judge's `/props` names a model file other than the configured one, the server refuses to start as `judge_file_mismatch`, naming both files (REQ-1644).
@@ -176,7 +191,7 @@ Every other request is in the content tier and carries `provider: { data_collect
 
 The gateway holds two OpenRouter keys. The play key carries a spending limit of $60 that resets each month (REQ-2718), and the play roles spend from it. Offline runs spend from the offline key (REQ-2728). The gateway refuses an offline role on the play key. It refuses a play role on the offline key, apart from `verify` mode, `bakeoff` mode and a call marked as a sandbox call, which only the sandbox's own routes can make. The framing of hint rungs and the retelling of puzzles run under `FRAMING_MODEL` and `PUZZLE_MODEL`, offline roles on the offline key, and never under `PLANNER_MODEL` (REQ-5034). The sandbox's model features spend from the offline key and never from the play key (REQ-5050).
 
-Between runs, the offline key's limit is the sandbox's $20 a month, reset at 00:00 UTC on the 1st. Before each offline run, the owner sets the limit so that what remains of it equals that run's budget, and after the run sets it back to $20 (REQ-6412). `verify --live`'s budget is what remains of the limit during that run. After the MVP, a probe text run's budget is $20 a run, set on the offline key's limit the same way (ADR-0430).
+Between runs, the offline key's limit is the sandbox's $20 a month, reset at 00:00 UTC on the 1st. Before each offline run, the owner sets the limit so that what remains of it equals that run's budget (REQ-6412), and after the run sets it to $20 plus what the month's offline runs have spent on the key, so the sandbox keeps its $20 a month. `verify --live`'s budget is what remains of the limit during that run. After the MVP, a probe text run's budget is $20 a run, set on the offline key's limit the same way (ADR-0430).
 
 ### Budgets
 
@@ -195,11 +210,11 @@ The gateway counts spend in buckets. Each call first reserves its worst-case cos
 
 A game day ends at 04:00, and the explanation and parse buckets reset then. «Свободное перо» (Free Pen) has no bucket of its own: it spends from the current adventure's bucket, which is the open adventure, or after the finale the one that finished that game day (REQ-5054). SPC-0090 states how «Свободное перо» closes when that bucket runs out. ADR-0280 states the puzzle run's bucket, ADR-0430 the probe text run's $20 under "Keys", and ADR-0190 the `verify --live` budget.
 
-The daily buckets on the play key, the adventure's $1.5, the explanations' $0.3 and the parse's $0.1, sum to $1.9 a day, or $58.90 over a 31-day month, below the $60 monthly limit (REQ-5048). A group 1 check reads the play-key bucket of every role that is on from `verify/baselines.json`, multiplies each by 31 and fails as `bucket_sum_over_limit` when the sum reaches the monthly limit. The check counts a bucket set per adventure as daily, since at most one adventure starts in a game day, as SPC-0090 states. The live art bucket joins the sum when `LIVE_ART_MODEL` turns on.
+From 00:00 UTC on the 1st to the end of the game day then in progress, the gateway treats every daily bucket on the play key, the adventure bucket included, as spent, so the fallbacks run and a calendar month in UTC holds the buckets of at most 31 game days. The daily buckets on the play key, the adventure's $1.5, the explanations' $0.3 and the parse's $0.1, sum to $1.9 a day, or $58.90 over those 31 game days, below the $60 monthly limit (REQ-5048). A group 1 check reads the play-key bucket of every role that is on from `verify/baselines.json`, multiplies each by 31 and fails as `bucket_sum_over_limit` when the sum reaches the monthly limit. The check counts a bucket set per adventure as daily, since at most one adventure starts in a game day, as SPC-0090 states. The live art bucket joins the sum when `LIVE_ART_MODEL` turns on.
 
 When the month of play reaches $60, by the gateway's own count or because OpenRouter refuses a call on the play key with HTTP 402, the gateway refuses every later play call to the end of the month and appends `budget_month_spent` once (REQ-2720). The Parent Room shows its notice until the month ends (REQ-2722).
 
-When any bucket runs out, the gateway answers each pending check with `BudgetExhausted`, and the caller discards every generated text whose checks haven't passed, so the game shows only text that passed a safety check (REQ-2726).
+When any bucket runs out, a check whose cost was reserved with its Master reply runs on that reservation. The gateway answers each pending check that holds no reservation with `BudgetExhausted`, and the caller discards every generated text whose checks haven't passed, so the game shows only text that passed a safety check (REQ-2726).
 
 ### The log
 
@@ -251,7 +266,8 @@ Three rules bind both parts. A local call carries no OpenRouter key and reserves
 | The Master's model fails an order | OpenRouter moves it to `MASTER_FALLBACK_MODEL`; if both fail, `provider_failed` and the caller falls back. |
 | The judge errs, times out after 1500 ms or gives a refused answer | `judge_fell_back`: the same question goes to `SAFETY_MODEL`. |
 | The parent's Master pick fails its check | The adventure runs on `MASTER_MODEL`, and `master_pick_rejected` shows in the Parent Room. |
-| A reservation would pass a bucket's limit | `BudgetExhausted`; unchecked generated text is dropped, and the caller falls back. |
+| A reservation would pass a bucket's limit | `BudgetExhausted`; a check reserved with its Master reply still runs, unchecked generated text is dropped, and the caller falls back. |
+| A play-key call to a daily bucket between 00:00 UTC on the 1st and the end of that game day | The bucket counts as spent, and the caller falls back. |
 | OpenRouter answers HTTP 402 on the play key | The month counts as spent: fallbacks to the month's end and one `budget_month_spent`. |
 | OpenRouter answers HTTP 402 on the offline key | `offline_key_refused`: the call falls back and the run or the sandbox reports it. |
 | An offline role is sent on the play key, or a play role on the offline key outside `verify` mode, `bakeoff` mode and a sandbox call | The gateway refuses the call. |
@@ -267,10 +283,6 @@ Three rules bind both parts. A local call carries no OpenRouter key and reserves
 - The reviewer asked for a reason beside each egress pattern. Rejected under S8; the patterns are choices this document records, and ADR-0100 names their test set.
 - The reviewer asked for a start-up check that `MASTER_MODEL` and `MASTER_FALLBACK_MODEL` are among `MASTER_MODEL_CHOICES`. Rejected: no decision sets that check, and REQ-1656 is met by the owner-approved record the configuration follows.
 - The reviewer noted that `parse_budget_spent` breaks the `budget_*_spent` naming. Rejected: ADR-0210 names the state, and a rename belongs in that decision.
-- The reviewer asked for a timeout and a `max_tokens` for every role, because the worst-case reservation needs `max_tokens`. Still open: ADR-0100 fixes only the judge's 1500 ms and the parse call's values, and the other roles' values need a decision before this document can state them.
-- The reviewer noted that a check reserved with its Master reply can't then be refused with `BudgetExhausted` when a bucket runs out. Still open: ADR-0100 states both rules without saying which pending checks the refusal reaches, and that choice belongs in the decision.
 - The reviewer suggested stating the `verify --live` budget in one place. Rejected: ADR-0190 and ADR-0190 own that budget, and this document states only how the gateway applies it.
 - The reviewer noted that the header comment asks for a reason beside each rule while this document rejects reasons under S8. Rejected: the comment is the marker every record carries, and S8 governs what a specification states.
-- The reviewer noted that setting the offline key's limit back to $20 after a run leaves it below the month's usage, so every sandbox call gets HTTP 402 until the month ends. Still open: ADR-0360 item 31 fixes that wording, and the correction belongs in a decision before this document can change it.
 - The reviewer asked to name ADR-0350 as the child and the other party of the contract with the local judge, in place of ADR-0350. Rejected: this document cites only lower-numbered specifications and names a higher-numbered subject by its decision; ADR-0350 names this document as its parent.
-- The reviewer noted that a game day ending at 04:00 local time can cross the month's reset at 00:00 UTC, so a month can hold part of a 32nd day's buckets, up to $60.80. Still open: REQ-5048 and ADR-0100 set the bound over a 31-day month, and changing the multiplier or the reset time needs a decision.

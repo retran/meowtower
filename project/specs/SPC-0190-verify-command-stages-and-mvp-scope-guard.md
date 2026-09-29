@@ -2,9 +2,9 @@
 id: SPC-0190
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
-states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5076, REQ-5078, REQ-5080, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6668, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402]
+states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5076, REQ-5078, REQ-5080, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -37,8 +37,10 @@ It leaves out what each check tests inside another part. The templates and their
 | `artifacts/verify-report.html` | The report for a person: every group, each check's result, each threshold beside its measured value, and each group not yet required, by name. |
 | `artifacts/verify-report.json` | The same report for a program. |
 | `artifacts/handoff.md` | The handoff that ends every run of the building agent. |
-| `verify/baselines.json` | Every budget of ADR-0190's Baselines table, as its amending decisions extend it, each with its source record. |
+| `verify/baselines.json` | Every budget of ADR-0190's Baselines table, as its amending decisions extend it, each model role's timeout and `max_tokens` included, each with its source record. |
 | `verify/scope-guard.json` | The traces a deferred item leaves in the tree. |
+| `verify/check5/example-hypothesis.json` | The example hypothesis of ADR-0450's example run. |
+| `verify/check5/example-hypothesis.lock` | The lock file of that example hypothesis, as ADR-0450 states. |
 | `verify/model-metrics/<version>.json` | The simulation's accuracy metrics for each approved knowledge-model version. |
 | `verify/parser-eval.json` | The last `verify --live --compose` result for each pair of parse model and prompt hash, as ADR-0440 keys it. |
 | `artifacts/check5-rates.json` | The last `verify --check5-rates` result, overwritten on each run. |
@@ -100,13 +102,13 @@ The parts are the verify runner, the check groups it calls, the reference solver
 
 One command, `docker compose run --rm tools npm run verify`, runs every group and writes `artifacts/verify-report.html` and `artifacts/verify-report.json` (REQ-2900). Each check declares its own first stage, the stage at which the stage table builds the item it checks, and before that stage the report lists the check as `not_required_yet` by name, so a check nobody ran never reads as passed. A group is required once any of its checks is, and the command exits 0 only when every check required at the current stage passes.
 
-Verify reads the current stage from the project record: the first stage, in the order 0, 0.1, 0.15, 0.2, 0.3 and then each backlog item's epic in the order the family chooses, whose epic has no approved review record. A check on a part after the MVP names as its first stage the backlog item whose epic builds that part. No file holds the stage, so the building agent can't set it, and only the owner's approval of a stage's review record moves it. The report also shows each text source's share of blocked lines from verify's own replayed and live runs, as SPC-0160 states.
+Verify reads the current stage from the project record: the first stage, in the order 0, 0.1, 0.15, 0.2, 0.3 and then the backlog items in the latest recorded order, whose epic has no approved review record, so two epics without one never both count as current. A check on a part after the MVP names as its first stage the backlog item whose epic builds that part. No file holds the stage, so the building agent can't set it, and only the owner's approval of a stage's review record moves it. The report also shows each text source's share of blocked lines from verify's own replayed and live runs, as SPC-0160 states.
 
 Other decisions add checks to the groups, and the check's content belongs to the decision that names it. Group 1 carries, among them, ADR-0040's template checks, ADR-0100's gateway lint rule, ADR-0140's content checks, ADR-0180's report and threshold checks, ADR-0210's budget-sum, event-owner and vendor-name checks, ADR-0290's `citoBlock`, fact, format and Cito-entry validators with its test-word search, scale import lint and moment-identifier check, ADR-0310's `school_events_in_model`, `school_data_to_gateway`, `school_snapshot_in_director` and `school_export_scope`, and ADR-0340's import check on `src/server/sandbox/` and its snapshot table-list check. Group 1 counts the frames of `content/frames.ru.json` as SPC-0130 states, and counts a frame only when the newest snapshot in `data/snapshots/` holds its `frame_accepted` and no later `frame_removed`; with no snapshot it counts the file and reports `frames_acceptance_unchecked`. Group 2 carries ADR-0220's rung and ladder-length checks and ADR-0260's grouping tests.
 
-The second addendum's decisions add checks in the same way. Group 1 carries ADR-0380's floor registry, contrast list and label checks, ADR-0390's validator of `content/profile.dimensions.json` and its import lint on `src/parent/profile/`, ADR-0410's `contexts_append_only` and its other static checks, ADR-0420's `cito_categories_scope` and its category file test, and ADR-0450's four `hypothesis_*` static checks. Group 2 carries ADR-0380's interval reference test and ADR-0390's profile tests, group 3 carries ADR-0410's first-encounter simulation and ADR-0450's `tools/hypothesis-hold.ts` with its example run, and group 4 carries ADR-0390's Playwright test of the profile screen and its scan of the player's screens, which fails on any string under `parent.profile.*`. Each check is required from the stage that builds the part it checks, so a check on a part after the MVP reports `not_required_yet` until then.
+The second addendum's decisions add checks in the same way. Group 1 carries ADR-0380's floor registry, contrast list and label checks, ADR-0390's validator of `content/profile.dimensions.json` and its import lint on `src/parent/profile/`, ADR-0410's `contexts_append_only` and its other static checks, ADR-0420's `cito_categories_scope` and its category file test, and ADR-0450's four `hypothesis_*` static checks. Group 2 carries ADR-0380's interval reference test and ADR-0390's profile tests, group 3 carries ADR-0410's first-encounter simulation and ADR-0450's `tools/hypothesis-hold.ts` with its example run, which runs a fixed 2,000 synthetic hypotheses, reads the 95 % Wilson interval of their false-label rate once and accepts the hold only when the interval's upper limit lies at or below 10 %, and group 4 carries ADR-0390's Playwright test of the profile screen and its scan of the player's screens, which fails on any string under `parent.profile.*`. Each check is required from the stage that builds the part it checks, so a check on a part after the MVP reports `not_required_yet` until then.
 
-A group 1 check fails when a value in `verify/baselines.json` differs from ADR-0190's Baselines table as its amending decisions extend it. The report prints each baseline beside its measured value, and a measurement past a baseline is recorded as a defect while the baseline stays. Group 8 has no baseline yet, so it reports its measurements and fails nothing.
+A group 1 check fails when a value in `verify/baselines.json` differs from ADR-0190's Baselines table as its amending decisions extend it. The report prints each baseline beside its measured value, and a measurement past a baseline is recorded as a baseline finding and a defect while the baseline stays and the full verify still passes. ADR-0340's check 17 records a sandbox snapshot of a 1 GB file that takes over 180 seconds as such a finding. Group 8 has no baseline yet, so it reports its measurements and fails nothing.
 
 When `personal/player.md` exists, group 1 scans every tracked file for the values it holds, and it also fails on a tracked file matching `snap-[0-9A-HJKMNP-TV-Z]{26}`. Recordings are made from synthetic inputs only.
 
@@ -140,7 +142,7 @@ Group 3 runs build check 5 from the backlog stage that builds the Dutch probe, a
 | No gap | 90 % | 90 % | 90 % |
 | Both gaps | 55 % | 15 % | 50 % |
 
-Each seed runs the Director, the engine and the report over simulated game days, with the student playing every game day and answering each probe task at its presentation's rate, until the `ru`, `nl` and `nl_after_words` cells each hold at least 20 graded first attempts (REQ-6668), and the `bare` cell as well, as ADR-0380 adds. Bare tasks follow the probe's own schedule, and the run goes on past the probe's first phase until all four cells reach 20. Check 5 then reads the report `report_cache` holds at the first rebuild at which all four cells hold 20, and counts the language line or the maths line on a seed when the report shows it there, by ADR-0380's contrasts. The report records each seed's game days.
+Each seed runs the Director, the engine and the report over simulated game days, with the student playing every game day and answering each probe task at its presentation's rate, until the `bare`, `ru`, `nl` and `nl_after_words` cells each hold at least 20 graded first attempts (REQ-7500). Bare tasks follow the probe's own schedule, and the run goes on past the probe's first phase until all four cells reach 20. Check 5 then reads the report `report_cache` holds at the first rebuild at which all four cells hold 20, and counts the language line or the maths line on a seed when the report shows it there, by ADR-0380's contrasts. The report records each seed's game days.
 
 Check 5 passes only when every bar holds:
 
@@ -206,7 +208,7 @@ The parent's sandbox is available from stage 0.1, with the first templates (REQ-
 
 The MVP is accepted only after two weeks of daily play in which the player wants to come back, spends guiding threads without fear and isn't upset by the other path, as the parent judges from watching her play (REQ-3012). Over those two weeks, fast guesses stay below 15 % of her scored first attempts, read from the rapid-guess row of the Parent Room's limits table (REQ-3014).
 
-After the MVP, work starts on a backlog item only once the item before it has been accepted (REQ-3016). A backlog item is accepted after a week of play in which the signal "the story is stopping being hers" didn't rise and she passed at most 80 % of free-action points with «Дальше» (Next) and no send, as the parent judges (REQ-3018). The family chooses the first backlog item at the stage 0.3 review.
+After the MVP, work starts on a backlog item only once the item before it has been accepted (REQ-3016). A backlog item is accepted after a week of play in which the signal "the story is stopping being hers" didn't rise and she passed at most 80 % of free-action points with «Дальше» (Next) and no send, as the parent judges (REQ-3018). The family records its order of backlog items as a numbered list in the acceptance notes of the stage 0.3 epic's review record, and each later backlog item's review record may reorder the items not yet begun.
 
 ### The nine open questions of the draft
 
@@ -257,7 +259,7 @@ The scope guard in group 1 reads `verify/scope-guard.json` and fails as `scope_g
 - the directory `content/probe/` or `tools/probe/`, a schema for any event type ADR-0430 owns, or the route `/parent/probe`;
 - a `hypothesis_days` table, `content/hypothesis-measures.json`, or a version 2 schema of `hypothesis_recorded` or `hypothesis_updated`.
 
-The Dutch locale traces and the probe's traces leave `verify/scope-guard.json` only in a change that follows the owner's amendment of the Russian-only rule in `CLAUDE.md`, at the stage that builds the probe. The weekly breakdown and trajectories, the transfer report and the extension of «Сплети загадку» leave no trace the guard reads, so the owner's judgement at the stage 0.3 acceptance alone keeps them out.
+Each trace in `verify/scope-guard.json` names the backlog item whose epic builds its part, and the first task of that epic removes the trace, so the guard loses a trace only in the change that starts building its part. The Dutch locale traces and the probe's traces leave only in a change that follows the owner's amendment of the Russian-only rule in `CLAUDE.md`. The weekly breakdown and trajectories, the transfer report and the extension of «Сплети загадку» leave no trace the guard reads, so the owner's judgement at the stage 0.3 acceptance alone keeps them out.
 
 Every text and task the player sees is in Russian, apart from the Dutch keywords of the word bridge and the Dutch equivalent a term hint shows, each once the parent has approved it (REQ-5080). Both Dutch words live as fields of `lexicon.ru.json` beside a Russian term, a bridge entry marked `bridge: true`, so the scope guard allows them and no Dutch locale file exists. The parent's Dutch memo is parent-facing and outside this rule. SPC-0160 states the string check that enforces it on player screens.
 
@@ -275,7 +277,7 @@ At each stage's review the agent reads `canon/` against the specification on met
 | A template's answer differs from its reference solver on one seed | Group 2 fails and names the template and the seed. |
 | A replayed request has no recording | The check fails as `recording_missing` with no network call; `verify --record` fills it outside the gate. |
 | A value in `verify/baselines.json` differs from ADR-0190's Baselines table as its amending decisions extend it | Group 1 fails. |
-| A measurement passes its baseline | The report shows both values, the case is recorded as a defect, and the baseline stays. |
+| A measurement passes its baseline | The report shows both values as a baseline finding, the case is recorded as a defect, the baseline stays, and the full verify still passes. |
 | `docs/decisions.md`, `docs/questions.md` or another decision log appears | Group 1 fails. |
 | A deferred item's trace appears in the tree | Group 1 fails as `scope_guard_hit` and names it. |
 | A tracked file holds a value from `personal/player.md` or matches `snap-[0-9A-HJKMNP-TV-Z]{26}` | Group 1 fails. |
@@ -301,7 +303,3 @@ An agent reviewer raised these on 2026-09-28.
 - Rejected: the reviewer asked for file-name patterns the decision-log check matches. ADR-0190 names `docs/decisions.md` and `docs/questions.md` and no pattern, and the check's author sets the patterns in the check.
 - Rejected: the reviewer asked to send each part of the second addendum and the sandbox to its specification. ADR-0340 to ADR-0450 have higher numbers than this document, and this repository cites a higher-numbered subject by its decision, so the parts stay with ADR-0340 and ADR-0380 to ADR-0450.
 - Rejected: the reviewer asked to drop the template's header comment, or add a reason beside each rule. The comment comes from `paw template spec`, and the reasons stay in ADR-0190 for the reason given above.
-- Open: the reviewer asked when a trace of a part after the MVP, other than the Dutch and probe traces, leaves `verify/scope-guard.json`, and who removes it. ADR-0190 and ADR-0380 to ADR-0450 say only that the probe's traces stay until the probe's stage, so the rule for the rest needs a decision.
-- Open: the reviewer asked where the order of backlog epics after the first is recorded and which epic is current when two lack an approved review. ADR-0190 records only the first choice, at the stage 0.3 review, so the rule for the current stage past that needs a decision.
-- Open: the reviewer asked to list `verify/check5/example-hypothesis.json` and its lock file among the files. ADR-0450 owns both, and they join the table when ADR-0450's example run is specified at a number this document can cite.
-- Open: ADR-0420's Consequences call the scope guard "ADR-0210's", while ADR-0190 owns it and ADR-0210 amended it. This document reads it as ADR-0190's guard.

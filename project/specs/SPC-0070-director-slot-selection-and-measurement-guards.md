@@ -2,7 +2,7 @@
 id: SPC-0070
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
 states: [REQ-0820, REQ-6404, REQ-0832, REQ-0956, REQ-6406, REQ-0966, REQ-0970, REQ-0972, REQ-0974, REQ-6844, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-6846, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-6400, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-6402, REQ-1114, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132, REQ-5304, REQ-5434, REQ-5438, REQ-5440, REQ-5446, REQ-5448, REQ-7176]
 ---
@@ -72,7 +72,7 @@ The dependencies run one way. `src/engine/director/` imports `src/engine/graph.t
 
 ### The day plan and the domain window
 
-A maths domain is one of the 8 domains with a floor of their own: N, A, F, D, P, M, G and S. Word problems (T) reach play through the Guardian and, after the MVP, as Dutch probe letters, which take the final answer only (ADR-0430). The letters, and every Dutch text in them, wait until the owner amends the Russian-only rule of the principle `project_in_english` in `CLAUDE.md`; until then the game shows no letter. `planDay` builds routes A and B of 3 floors, or 4 when the forecast leaves time, and the one the player picks is the one the window counts; ADR-0330 states how route B differs from route A.
+A maths domain is one of the 8 domains with a floor of their own: N, A, F, D, P, M, G and S. Word problems (T) have no floor and reach play through the Guardian and, after the MVP, as Dutch probe letters, which take the final answer only (ADR-0430). A room slot names a node of its floor's own domain, so no room slot names a T1 to T4 node. The letters, and every Dutch text in them, wait until the owner amends the Russian-only rule of the principle `project_in_english` in `CLAUDE.md`; until then the game shows no letter. `planDay` builds routes A and B of 3 floors, or 4 when the forecast leaves time, and the one the player picks is the one the window counts; ADR-0330 states how route B differs from route A.
 
 The route first takes each domain that has had no completed floor for 2 adventure days in a row, before any other floor except a host floor that the Sources track's window brings to the first place (REQ-6400). When that window is due, a host floor goes first, a due domain that is also a host domain preferred, and the due domains follow (ADR-0300). The route fills its remaining places with the domains whose last completed floor is oldest, a domain never completed counting as oldest, and each domain's total node value, due reviews and parent topics included, breaks ties. The window counts only floors the player completed, read from `floor_outcome` (REQ-1054), and counts adventure days, the game days on which an adventure ran. When each adventure day completes 3 floors, these rules give each of the 8 domains its floor in any 3 consecutive adventure days (REQ-1024).
 
@@ -120,11 +120,11 @@ value(v) = 2.0 * uncertainty(v) + 1.5 * staleness(v) + 1.5 * frontier(v)
          - 1.0 * recent_shows(v)
 ```
 
-`staleness` is the days since `lastSeen` divided by 7 for a frontier node and by 14 for every other node, capped at 1. `escalation` is 1 for every obligation row that asks for evidence on the node: an open escalation, an owed probe or a queued island failure, and after the MVP a full block owed after a retention series ended not confirmed (ADR-0400). `recheck` rises with a due lesson recheck and `parent_topic` with a fresh lesson mark, and a node scores the largest of the three terms in the `max`, never more than one. `recent_shows` counts the node's shows in the last 3 days (REQ-1002). `block_priority` reads the node's own `citoBlock`, and ADR-0290 states its values and `school_goal`.
+`staleness` is the days since `lastSeen` divided by 7 for a frontier node and by 14 for every other node, capped at 1. `escalation` is 1 for every obligation row that asks for evidence on the node: an open escalation, an owed probe or a queued island failure, and after the MVP a full block owed after a retention series ended not confirmed (ADR-0400). `recheck` rises with a due lesson recheck and `parent_topic` with a fresh lesson mark, and a node scores the largest of the three terms in the `max`, never more than one. `recent_shows` counts the node's shows in the last 3 days (REQ-1002). `block_priority` reads the node's own `citoBlock`, and ADR-0290 states its values and `school_goal`, which is 0 in the MVP.
 
 The candidate set holds the frontier nodes, the uncertain nodes, the nodes with obligations, the admitted stretch nodes and every stale node. It leaves out every node cut off by a node X until X is tested again, except for an island check probe (REQ-0966). A parent-topic slot takes a node with a fresh lesson mark, at most 4 such tasks a day for the first `parentTopicDays` days after the mark, a whole number from 1 to 3 in `content/director.v1.json`, and a recheck block arrives through `recheck` as frontier tasks with `purpose: recheck`, outside that cap.
 
-The Director keeps a chosen node for 2 to 5 tasks, the probe or block it owes, and may alternate those tasks with a neighbouring node's. While a node's bare scored tasks of the last 30 days number no more than its scored tasks in context, `nextTask` chooses among the node's subtypes that have a bare template, when any has one (ADR-0290).
+The Director keeps a chosen node for 2 to 5 tasks, the probe or block it owes, and may alternate those tasks with a neighbouring node's. While a node's bare scored tasks of the last 30 days number no more than its scored tasks in context, counting only tasks whose template the item builder chose by format and leaving out Volley rows, mental arithmetic and control facts, `nextTask` chooses among the node's subtypes that have a bare template, when any has one (ADR-0290).
 
 ### The retention hold
 
@@ -157,7 +157,7 @@ Let k be the largest number for which T_k is «Бегло» (fluent) or «Уст
 
 ### Word-problem forms
 
-For every slot that names a T1 to T4 node, a Guardian's or a room's, a second draw from `hash(baseSeed, "form")` gives `u` in [0, 1). With `p = 0.05`, a T1 to T3 slot is unanswerable when `u < p`, surplus when `u < p + 0.10`, and ordinary otherwise; a T4 slot is unanswerable when `u < p` and ordinary otherwise. About 10 % of the T1 to T3 problems are then surplus (REQ-5434) and about 5 % of the T1 to T4 problems unanswerable (REQ-5438). The draw reads nothing from her history, so the kinds follow no cadence (REQ-5440).
+For every Guardian slot, each of which names a T1 to T4 node, a second draw from `hash(baseSeed, "form")` gives `u` in [0, 1). With `p = 0.05`, a T1 to T3 slot is unanswerable when `u < p`, surplus when `u < p + 0.10`, and ordinary otherwise; a T4 slot is unanswerable when `u < p` and ordinary otherwise. About 10 % of the T1 to T3 problems are then surplus (REQ-5434) and about 5 % of the T1 to T4 problems unanswerable (REQ-5438). The draw reads nothing from her history, so the kinds follow no cadence (REQ-5440).
 
 The draw applies only when the node's ordinary subtype is «понимает» (understands) or above, inferred states included: the new subtypes carry `requires: { atLeast: understands }`, and below that state the slot is ordinary (REQ-5446). A Dutch probe letter is no Guardian or room slot, so the draw never runs for it, and a T1 to T4 letter always uses an ordinary subtype (ADR-0430).
 
@@ -175,7 +175,7 @@ Cold start lasts from the first adventure until fewer than half of the 1F and 1S
 
 Before each floor, `planFloor` recomputes the forecast of the adventure's volume from the player's actual pace (REQ-1048). When the forecast shows the adventure won't fit before the soft stop, the Director trims first the number of rooms on a floor, down to one, then the length of new rooms, down to 3 tasks, and only then moves the route's fourth floor to the next day (REQ-1050). It never trims below 25 planned graded first attempts, and an adventure that still doesn't fit plays to the soft stop and resumes the next game day. It never trims mental arithmetic, a Volley, track tasks, control facts, or the last room on a floor with an open probe or escalation (REQ-1052).
 
-The plan aims at 30 graded first attempts on graph tasks and never plans fewer than 28, or 25 once rooms are trimmed for a slow pace (REQ-1040). A Volley counts as 2 graded first attempts towards these counts, the 2 mental arithmetic tasks it replaces, as it counts for buttons (REQ-1040, ADR-0290). Grouping-task, riddle, track and Dutch probe letter attempts count towards none of them. After the MVP, in the probe's first phase, the plan never trims letters below 3 a day, and it plans 3 letters where 4 would leave fewer than 28 graded first attempts on graph tasks (ADR-0430). An adventure that stops before its plan is done, at the soft stop or by «Закончить на сегодня» (Finish for today), isn't complete and resumes the next game day from the same place.
+The plan aims at 30 graded first attempts on graph tasks and never plans fewer than 28, or 25 once rooms are trimmed for a slow pace (REQ-1040). A Volley counts as 2 graded first attempts towards these counts, the 2 mental arithmetic tasks it replaces, as it counts for buttons (REQ-1040, ADR-0290). Grouping-task, riddle, track and Dutch probe letter attempts count towards none of them. After the MVP, in the probe's first phase, the plan never trims letters below 3 a day, and it plans 3 letters where 4 would leave fewer than 28 graded first attempts on graph tasks (ADR-0430). When the forecast shows that 25 graded first attempts on graph tasks and 3 letters can't both fit before the soft stop, the plan keeps both, and the adventure plays to the soft stop and resumes the next game day. An adventure that stops before its plan is done, at the soft stop or by «Закончить на сегодня» (Finish for today), isn't complete and resumes the next game day from the same place.
 
 Story takes at most 10 minutes of the adventure's active time (REQ-1042). The Director measures story time from the scene events in the log and gives each scene order a duration budget from what remains after it reserves the shortest forms of the scenes still planned. Once only that reserve is left, every remaining scene takes its shortest form.
 
@@ -226,18 +226,13 @@ Raised mode replaces the in-corridor rule with review when the adventure's revie
 | k is 0 after a non-clean Guardian outcome | The next Guardian task has 1 step. |
 | A T node's ordinary subtype is below «понимает» | The form draw doesn't run, and the slot is ordinary. |
 | Only the reserve for the shortest forms of the planned scenes is left of the story's 10 minutes | Every remaining scene takes its shortest form. |
-| The forecast shows the adventure won't fit before the soft stop | The Director trims in the fixed order, keeping the protected parts and at least 25 planned graded first attempts; what still doesn't fit plays to the soft stop and resumes the next game day. |
+| The forecast shows the adventure won't fit before the soft stop | The Director trims in the fixed order, keeping the protected parts, at least 25 planned graded first attempts and, after the MVP, 3 letters in the probe's first phase; what still doesn't fit plays to the soft stop and resumes the next game day. |
 | A device type has no Session 0 | The motor correction is 0, and minimum times are lower. |
 | An attempt is `interrupted`, `crossDevice` or carries an estimate | It is never a rapid guess, and its time counts in no measure. |
 | An answer is a rapid guess | It stays out of every estimate and block, and a task of the same node follows later in the session. |
 | Rapid guesses pass 15 % of a session, or the help share passes its test | Raised mode runs, and the report shows the flag once. |
 
-## Open findings
-
-- ADR-0070 keeps at least 25 planned graded first attempts on graph tasks once rooms are trimmed for a slow pace, and never trims below that. ADR-0430 never trims Dutch probe letters below 3 a day in the probe's first phase. At a pace slow enough, both can't hold on one adventure, and neither decision says which yields. ADR-0430's reversal conditions give that choice to the owner, and this document doesn't make it.
-
 ## Open review findings
 
 - Round 1 asked for a reason beside four rules: a Guardian task on about one floor in three, a node kept for 2 to 5 tasks, cold start's end at half the 1F and 1S nodes or the 10th adventure, and the replacement task after a rapid guess. Rejected: a specification states what the system does and never why (spec rule S8), and ADR-0070 holds the reasons. Round 2 repeated this as a preference, asking for a pointer to ADR-0070 in Scope; rejected for the same rule, because the requirements each statement cites lead to ADR-0070.
-- Addendum 2 revision, round 1, asked that the Scope say whether a room slot can name a T node, since the day plan says word problems reach play through the Guardian while the form draw runs on "a Guardian's or a room's" slot. Rejected here: addendum 2 changed neither sentence, ADR-0250 and ADR-0070 as amended word them this way, and settling the room case is a decision for ADR-0070, not for this revision.
 - Addendum 2 revision, round 1, asked again for reasons beside the new limits: 2 letters a floor, 3 checks a day, no check after a fatigue signal and the 3-letter floor. Rejected under spec rule S8, as in the earlier rounds; ADR-0400 and ADR-0430 hold the reasons.

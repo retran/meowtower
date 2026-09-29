@@ -2,9 +2,9 @@
 id: SPC-0060
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-09-29
 checked-at:
-states: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976, REQ-0980, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0992, REQ-0994, REQ-5024, REQ-5026, REQ-5028, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5318, REQ-5320, REQ-5322, REQ-5354, REQ-5424, REQ-5452, REQ-6842]
+states: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0992, REQ-0994, REQ-5024, REQ-5026, REQ-5028, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5318, REQ-5320, REQ-5322, REQ-5354, REQ-5424, REQ-5452, REQ-6842, REQ-7506]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -43,8 +43,8 @@ The reasons behind the values and rules here, such as the fatigue weight, the `p
 
 | Command | What it does |
 | --- | --- |
-| `./tower model activate` | Runs `tools/eval-model.ts` on a candidate model version, writes `model_activated` when the candidate passes, and refuses it otherwise. |
-| `./tower status` | Shows `recompute_slow` and `snapshot_ceiling` to the owner. |
+| `./meowtower model activate` | Runs `tools/eval-model.ts` on a candidate model version, writes `model_activated` when the candidate passes, and refuses it otherwise. |
+| `./meowtower status` | Shows `recompute_slow` and `snapshot_ceiling` to the owner. |
 
 The refit tool `tools/fit-model.ts` doesn't exist during the MVP.
 
@@ -77,7 +77,7 @@ Four versions govern every result, and every row of `node_estimates` and `node_s
 
 | Version | Where it lives | What changes it |
 | --- | --- | --- |
-| model | `content/model.vN.json` plus the prior row in use | `./tower model activate`, which writes `model_activated`, or a change of the school-group setting, which logs `settings_changed` |
+| model | `content/model.vN.json` plus the prior row in use | `./meowtower model activate`, which writes `model_activated`, or a change of the school-group setting, which logs `settings_changed` |
 | rules | `RULES_VERSION` | a code change to the state or inference rules; after the MVP, also a change to `content/hypothesis-measures.json` or to ADR-0390's `content/profile.dimensions.json` |
 | thresholds | the version in `content/versions.json` joined by `+` with the `seq` of the latest `fact_threshold_set`, or with `0` when the log holds none, such as `3+0` or `3+18204` | a threshold file change, a threshold change by a person or the monthly motor recalibration |
 | graph | `content/graph.yaml` | a graph edit |
@@ -96,7 +96,7 @@ The "on her own" estimate takes an attempt as an observation only when it is a g
 - it is a riddle, of either form;
 - its `item_shown.forms` holds a form that the active model version doesn't list in `admittedForms`, which also keeps it out of the fluency estimate, the "with help" estimate and the shares by depth of help, while it still feeds its stream (REQ-5026).
 
-An `attempt_late` event is never an observation. An attempt with `interrupted: true` or `crossDevice: true`, or on an item that carries an estimate, counts for accuracy, and its time counts in no measure: it stays out of the fluency estimate, and its time enters no block's median (REQ-0926). Every other attempt's time excludes `checkMs`.
+An `attempt_late` event is never an observation. An attempt with `interrupted: true` or `crossDevice: true`, or on an item that carries an estimate, counts for accuracy, and its time counts in no measure: it stays out of the fluency estimate, and its time enters no block's median (REQ-0926). Every other attempt's time excludes `checkMs`. The time of an answer to a problem that opened with a plan runs from `plan_submitted` to the answer, less `checkMs`, and enters the fluency estimate and the block median as any other time does.
 
 Each observation carries a score `c` and a weight `w`. The score is 1 for right, 0.5 for partially right and 0 for wrong or «Не знаю» (I don't know), so a partially right answer counts as half right and half wrong (REQ-0918). The verdict `insufficient_correct` scores 1, `insufficient_partial` 0.5 and `false_insufficient` 0 (REQ-5424). The weight is 1, or 0.5 when ADR-0070's fatigue signal marks the attempt.
 
@@ -122,9 +122,9 @@ Each stream reads its own events:
 
 The answer to a problem that opened with a plan counts in "on her own", in the blocks, the probes and the states as the answer to a problem that opened with no phase does (REQ-5024).
 
-The `estimate` stream is the number-sense stream: one BKT estimate per pair of node and subtype, with the forgetting and priors of the "on her own" estimate, `pSlip` 0.10 and each `attempt_submitted` with an `estimate` field as one observation (REQ-5318). It treats an estimate as a choice of four, with `pGuess` 0.25 (REQ-5320). During the MVP an estimate feeds neither the "on her own" estimate, the fluency estimate nor the estimate of node N4 (REQ-5322). An item with an estimate keeps `forms` empty, so its exact answer still feeds the "on her own" estimate as an ordinary first attempt.
+The `estimate` stream is the number-sense stream: one BKT estimate per pair of node and subtype, with the forgetting and priors of the "on her own" estimate, `pSlip` 0.10 and each `attempt_submitted` with an `estimate` field as one observation (REQ-5318). It treats an estimate as a choice of four, with `pGuess` 0.25 (REQ-5320). The stream takes the "on her own" estimate's `pLearnFeedback` and `pLearnPractice` for its pair and runs all four steps of that estimate. During the MVP an estimate feeds neither the "on her own" estimate, the fluency estimate nor the estimate of node N4 (REQ-5322). An item with an estimate keeps `forms` empty, so its exact answer still feeds the "on her own" estimate as an ordinary first attempt.
 
-The word-problem subtypes with a surplus or a missing number are new forms: `T1.surplus` to `T3.surplus` write `surplus`, `T1.insufficient` to `T4.insufficient` write `missing`, and ordinary T4 writes neither (REQ-5028). Each keeps its own estimate, and the unanswerable subtypes take `pGuess` 0.06. These subtypes carry `form: new` and weight 0.1 in the graph. The node aggregate ignores a `form: new` subtype until its stream is in `admittedForms`, so its observations stay out of the estimates of nodes T1 to T4 and out of "on her own" until a model version that uses them passes the held-out comparison and is activated (REQ-5452). From activation its weight counts, and the ordinary subtypes' weights are scaled by 1 minus the admitted new weights, so the weights still sum to 1.
+The word-problem subtypes with a surplus or a missing number are new forms: `T1.surplus` to `T3.surplus` write `surplus`, `T1.insufficient` to `T4.insufficient` write `missing`, and ordinary T4 writes neither (REQ-5028). These subtypes carry `form: new` and weight 0.1 in the graph. While a `form: new` subtype's stream isn't in `admittedForms`, its `node_estimates` row holds only its prior, and its attempts feed only its stream. The activation that admits the stream runs a full recompute, which builds the subtype's own BKT estimate from the whole log, with `pGuess` 0.06 for the unanswerable subtypes. The node aggregate ignores a `form: new` subtype until its stream is in `admittedForms`, so its observations stay out of the estimates of nodes T1 to T4 and out of "on her own" until a model version that uses them passes the held-out comparison and is activated (REQ-5452). From activation its weight counts, and the ordinary subtypes' weights are scaled by 1 minus the admitted new weights, so the weights still sum to 1.
 
 ### The "on her own" estimate
 
@@ -167,9 +167,9 @@ Model v1 reads the depth of help in no estimate other than these shares, and the
 
 Each estimate carries these derived fields:
 
-- `uncertainty = entropy(pKnow) * 3 / (3 + nEff)`, where `entropy` is the binary entropy in bits and `nEff` is the sum of the node's observation weights, each times `2^(-age / H)` with the pair's current half-life. It falls as fresh observations accumulate, three fresh observations halve it, and a node with none keeps its full entropy (REQ-0988).
-- `lastSeen` is the date of the last unassisted first attempt, and `stale` is true when that date is more than 30 days old.
-- `nextReview` is `lastSeen` plus 1, 3, 7, 14 or 30 days after the 1st to 5th unassisted success in a row, and plus 30 days after each further success (REQ-6842). After an unassisted failure it is `lastSeen` plus 1 day (REQ-0992). After the MVP, a retention check stands in for any review that falls while ADR-0400 holds the node, and the ladder resumes from the check's result, which counts as a success or a failure like any other observation (REQ-6842). The model still computes `nextReview` and `stale` for a held node, and the Director doesn't act on them. So a node that reaches «устойчиво» (stable) at its 4th success gets ADR-0400's check 28 to 35 game days after its latest meeting, in place of the review 14 days after `lastSeen`. A success is an observation with `c = 1`, and a partially right answer ends the run and counts as a failure.
+- `uncertainty = entropy(pKnow) * 3 / (3 + nEff)`, where `entropy` is the binary entropy in bits. On a node row, `nEff` is the sum of the node's observation weights, each times `2^(-age / H)` with the observing pair's current half-life; on a row per node and subtype, it sums that subtype's observations alone, with that pair's half-life. It falls as fresh observations accumulate, three fresh observations halve it, and a node with none keeps its full entropy (REQ-0988).
+- `lastSeen` is the date of the node's last observation of the "on her own" estimate, so an attempt the Observations list drops, such as a warm-up, a rapid guess or an excluded task, leaves it where it was, and `stale` is true when that date is more than 30 days old.
+- `nextReview` is `lastSeen` plus 1, 3, 7, 14 or 30 days after the 1st to 5th unassisted success in a row, and plus 30 days after each further success (REQ-6842). After an unassisted failure it is `lastSeen` plus 1 day (REQ-0992). After the MVP, a retention check stands in for any review that falls while ADR-0400 holds the node, and the ladder resumes from the check's result, which counts as a success or a failure like any other observation (REQ-6842). A retention check on which she opened the hint ladder sets `nextReview` to the check's day plus 1 day, as an unassisted failure does, and leaves `lastSeen` unchanged. The model still computes `nextReview` and `stale` for a held node, and the Director doesn't act on them. So a node that reaches «устойчиво» (stable) at its 4th success gets ADR-0400's check 28 to 35 game days after its latest meeting, in place of the review 14 days after `lastSeen`. A success is an observation with `c = 1`, and a partially right answer ends the run and counts as a failure.
 - `confidence` is high for a full block within 14 days, medium for a full block 15 to 30 days old and for a probe or an island check within 30 days, and low for an inferred state or evidence older than 30 days.
 
 ### States from explicit rules
@@ -189,7 +189,7 @@ The rule engine gives each node a state by explicit rules applied to the listed 
 
 When several complete checks match, the newest by the `seq` of its last observation sets the tested state, and `stable` reads the whole history (REQ-0934). A complete probe that isn't `probe-fast` escalates as ADR-0070 states. A block's score counts a partially right answer as 0.5. A check for `stable` is a full block, or an Ascent anchor form once Ascents exist, and never a probe (REQ-0944).
 
-A full block is the node's last 5 graded observations, unassisted first attempts only, within 7 days, covering every subtype of weight 0.2 or more (REQ-0950). It never spans a lesson mark for its node, a `parent_tag_added` event: observations before the mark don't enter a block after it (REQ-0952). A mark the parent removes, `parent_tag_removed`, counts as never set from the recompute the removal triggers. A control fact never enters a full block or a probe (REQ-0932), and ADR-0290 states the same for a Volley fact. A probe is 2 observations of different subtypes with `purpose: probe`, or, for a node the graph tests only by choice tasks, 3 choice observations with at least 4 options each (REQ-0954).
+A full block is the node's last 5 graded observations, unassisted first attempts only, within 7 days, covering every subtype whose weight in `content/graph.yaml` is 0.2 or more, before any scaling for admitted forms (REQ-0950). It never spans a lesson mark for its node, a `parent_tag_added` event: observations before the mark don't enter a block after it (REQ-0952). A mark the parent removes, `parent_tag_removed`, counts as never set from the recompute the removal triggers. A control fact never enters a full block or a probe (REQ-0932), and ADR-0290 states the same for a Volley fact. A probe is 2 observations of different subtypes with `purpose: probe`, or, for a node the graph tests only by choice tasks, 3 choice observations with at least 4 options each (REQ-0954).
 
 The state carries a label key whose string lives in the per-language file. The state "not mastered" has the key `state.not_mastered`, whose Russian string is «Пока не освоено» (not mastered yet) (REQ-0946).
 
@@ -211,7 +211,7 @@ Each run writes `node_obligations`, which holds seven kinds: open escalations, b
 
 The full recompute at the end of an adventure writes one snapshot of every node estimate and state for the game day of that adventure, keyed by the game day and the four versions (REQ-0906). A later adventure on the same game day overwrites that day's row, and a game day without play gets no row.
 
-When a version changes, the full recompute writes new rows for every past play day under the new versions and keeps every row of the earlier versions for comparison (REQ-0904). It deletes only rows of the active versions before it rewrites them. After the MVP, the server's full recompute then runs ADR-0450's rebuild of `hypothesis_days` under the same four versions, which rewrites its rows the same way and counts its hold only over play days after the day of the change. Code under `src/engine/model/` and `src/engine/states/` doesn't write `hypothesis_days`. When `node_snapshots` exceeds 2 million rows, the model reports `snapshot_ceiling` once in `./tower status` and deletes nothing.
+When a version changes, the full recompute writes new rows for every past play day under the new versions and keeps every row of the earlier versions for comparison (REQ-0904). It deletes only rows of the active versions before it rewrites them. After the MVP, the server's full recompute then runs ADR-0450's rebuild of `hypothesis_days` under the same four versions, which rewrites its rows the same way and counts its hold only over play days after the day of the change. Code under `src/engine/model/` and `src/engine/states/` doesn't write `hypothesis_days`. When `node_snapshots` exceeds 2 million rows, the model reports `snapshot_ceiling` once in `./meowtower status` and deletes nothing.
 
 ### Scope of the model and its priors
 
@@ -219,17 +219,17 @@ The model keeps a row for every node of the graph up to the end of group 8, leve
 
 ### Accepting a new model version
 
-A new model version replaces the active one only through `./tower model activate`, which runs `tools/eval-model.ts` first (REQ-0980). The tool replays the log with the candidate and with the active version and predicts each unassisted first attempt of the held-out days, the last 20 % of play days, from the events before it. It computes log-loss and expected calibration error over 10 equal-width bins, and refuses the activation unless the candidate is lower on both. Model v1 is exempt, because it has no predecessor. The gate tests a parameter file with all its prior rows, and a change of the school-group setting runs no gate. The same gate admits a form into `admittedForms` (REQ-5026) and a version that reads the depth of help (REQ-5144), and a new prior row reaches the estimates only as a new model version (REQ-0984).
+A new parameter file replaces the active one only when it predicts the next unassisted first attempt on held-out days better, by log-loss and by calibration, and only through `./meowtower model activate`, which runs `tools/eval-model.ts` first (REQ-7506). The tool replays the log with the candidate and with the active version and predicts each unassisted first attempt of the held-out days, the last 20 % of play days, from the events before it. It computes log-loss and expected calibration error over 10 equal-width bins, and refuses the activation unless the candidate is lower on both. Model v1 is exempt, because it has no predecessor. The gate tests a parameter file with all its prior rows, and a change of the school-group setting runs no gate. The same gate admits a form into `admittedForms` (REQ-5026) and a version that reads the depth of help (REQ-5144), and a new prior row reaches the estimates only as a new model version (REQ-0984).
 
 ## Failure paths
 
 | Condition | What happens |
 | --- | --- |
 | A parameter file breaks `pGuess + pSlip < 1` or the learning-rate bound for one template | `model_params_invalid`: the validator refuses the file, the server keeps the active version, and the command exits non-zero naming the template and the bound. |
-| A candidate is not lower than the active version on both held-out log-loss and calibration | `model_candidate_rejected`: `./tower model activate` refuses and prints both figures. |
+| A candidate is not lower than the active version on both held-out log-loss and calibration | `model_candidate_rejected`: `./meowtower model activate` refuses and prints both figures. |
 | The full recompute fails | `recompute_failed`: the previous projections stay, the report shows «Отчёт обновлён <date>» (Report updated <date>) with the last good time, and the server retries at the next adventure end and at the next start. |
-| The full recompute takes longer than its budget | `recompute_slow`: the recompute finishes, and the server logs the duration once per version set in `./tower status`. |
-| `node_snapshots` exceeds 2 million rows | `snapshot_ceiling`, reported once in `./tower status`; no row is deleted. |
+| The full recompute takes longer than its budget | `recompute_slow`: the recompute finishes, and the server logs the duration once per version set in `./meowtower status`. |
+| `node_snapshots` exceeds 2 million rows | `snapshot_ceiling`, reported once in `./meowtower status`; no row is deleted. |
 | The per-node update fails during play | `node_update_failed`: the Director keeps the node's last estimate for the rest of the adventure, and the full recompute at its end replaces it. |
 | The rule engine's states change and `RULES_VERSION` didn't | The golden test fails and names the fixture. |
 | Code under `src/engine/model/` or `src/engine/states/` reads a `school_snapshot_*` event | The lint check `school_events_in_model` fails the build. |
@@ -243,14 +243,4 @@ A new model version replaces the active one only through `./tower model activate
 
 ## Open review findings
 
-The reviews of 2026-09-28 found these gaps. Each stays open because it asks for a rule no decision in force sets, and choosing one here would make a decision in a specification.
-
-- The surplus and unanswerable subtypes: the Observations list drops an attempt whose `forms` holds an unadmitted form from every estimate, while the paragraph on these subtypes says each keeps its own estimate with `pGuess` 0.06. Whether `node_estimates` holds a BKT estimate for `T1.surplus` during the MVP, or only its prior, needs ADR-0210 or ADR-0250 to say.
-- `lastSeen` is the date of the last unassisted first attempt, as ADR-0060 words it, and that wording doesn't say whether a warm-up or a rapid guess moves it. Narrowing it to the last observation of the "on her own" estimate needs an amendment to ADR-0060.
-- The time of an answer after a plan: ADR-0270 and REQ-5646 count the answer as one after no phase, and no decision says whether the time from `item_shown` to `plan_submitted` stays out of the fluency estimate and the block median.
-- A change of school group is a new model version that passes no held-out gate, while REQ-0980 lets a new model version replace the current one only through the gate. ADR-0060 states both; reconciling them needs an amendment to ADR-0060 or an exception in REQ-0980.
-- The `estimate` stream names its forgetting, priors, `pSlip` and `pGuess`, and REQ-5318 names no learning rates, so whether its feedback and practice steps run is unset.
-- After a new subtype is admitted, the ordinary subtypes' weights are scaled, and the full block's coverage of "every subtype of weight 0.2 or more" doesn't say whether it reads the graph weight or the scaled one. This applies only after the MVP.
-- `nEff` on a subtype row: ADR-0060 defines it as the sum of the node's observation weights with the node's half-life, and no decision says whether a row per node and subtype sums that subtype's observations alone or the whole node's, which give different numbers.
-- A retention check on which she opened the hint ladder: ADR-0400 counts it as a wrong retention observation, while this specification makes it an assisted attempt, which moves neither `lastSeen` nor the review ladder. No decision says whether the ladder treats it as an unassisted failure dated at the check, so the date of the next review after it is unset.
 - Rejected: a reviewer asked for a reason or a decision next to rules such as "No route accepts an estimate or a state from a client". A specification states what the system does, and the reasons stay in the decisions the Scope names.
