@@ -1,0 +1,854 @@
+meow-verbs evidence 1
+record: 55ea4a151fde
+verb: test
+command: npm test
+targets: none
+outcome: failed
+exit status: 1
+tree: 7a96a4c9367ba8c1e23d0b6cf9e718cc06d12afa
+time: 2026-09-29T18:43:10Z
+
+
+> test
+> vitest run tests && playwright test
+
+
+ RUN  v5.0.2 /Users/retran/workspace/tower
+
+ ❯ tests/unit/projection-class.test.ts (12 tests | 9 failed) 26ms
+   ❯ REQ-2224: each registry entry declares its class (2)
+     × gives every entry a class and the classes SPC-0020 lists 4ms
+     × gives every entry the module that holds it 1ms
+   ❯ REQ-2224: a module that mixes classes fails (2)
+     × names projection_class_mixed for one module with a game and a knowledge entry 2ms
+   ❯ REQ-2224: the import rule follows the declared class, through a helper (3)
+     × names the entry and the chain through the helper for a game projection 4ms
+     × fails a game projection that imports either versions.ts 3ms
+     × passes all three declared knowledge 3ms
+   ❯ REQ-2224: no projection's code names llm_log (2)
+     × names the file for an identifier or a string, of either class 1ms
+   ❯ REQ-2224: the check keeps no list of projection modules (3)
+     × drops NOT_GAME 3ms
+     × forbids both versions.ts modules for a game projection 2ms
+ ❯ tests/integration/lease.test.ts (4 tests | 4 failed) 256ms
+   ❯ REQ-0202: 45 seconds without a heartbeat leave the state a leave leaves (2)
+     × logs adventure_paused with lease_expired and session_ended as device server, and equals a leave's projection 72ms
+     × keeps the lease while the heartbeat comes every 15 seconds 10ms
+   ❯ REQ-0220: a device that lost the lease still has its answer logged (2)
+     × logs the answer as the attempt when the item has none, and the new holder's next packet carries the outcome 23ms
+     × logs attempt_late with no verdict when the item already has its attempt 142ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0202: 45 seconds without a heartbeat leave the state a leave leaves > logs adventure_paused with lease_expired and session_ended as device server, and equals a leave's projection
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/integration/lease.test.ts:117:20
+    115|
+    116|     const paused = lapsed.rows("adventure_paused");
+    117|     expect(paused).toHaveLength(1);
+       |                    ^
+    118|     expect(paused[0]?.payload).toMatchObject({ reason: "lease_expired"…
+    119|     expect(lapsed.rows("session_ended")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0202: 45 seconds without a heartbeat leave the state a leave leaves > keeps the lease while the heartbeat comes every 15 seconds
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/integration/lease.test.ts:138:76
+    136|     for (let i = 0; i < 6; i++) {
+    137|       w.advance(15_000);
+    138|       expect((await p.post(`/api/session/${sessionId}/heartbeat`)).sta…
+       |                                                                            ^
+    139|         200,
+    140|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0220: a device that lost the lease still has its answer logged > logs the answer as the attempt when the item has none, and the new holder's next packet carries the outcome
+AssertionError: expected 200 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 200
+
+ ❯ tests/integration/lease.test.ts:158:24
+    156|
+    157|     const res = await answer(old, sessionId, itemId);
+    158|     expect(res.status).toBe(409);
+       |                        ^
+    159|     expect(((await res.json()) as { error: string }).error).toBe("leas…
+    160|     expect(w.rows("attempt_submitted")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  tests/integration/lease.test.ts > REQ-0220: a device that lost the lease still has its answer logged > logs attempt_late with no verdict when the item already has its attempt
+AssertionError: expected 200 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 200
+
+ ❯ tests/integration/lease.test.ts:176:24
+    174|
+    175|     const res = await answer(old, sessionId, itemId);
+    176|     expect(res.status).toBe(409);
+       |                        ^
+    177|     expect(w.rows("attempt_late")).toHaveLength(1);
+    178|     expect(w.rows("attempt_submitted")).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: each registry entry declares its class > gives every entry a class and the classes SPC-0020 lists
+AssertionError: expected { items_view: undefined, …(5) } to deeply equal { adventures: 'game', …(5) }
+
+- Expected
++ Received
+
+  {
+-   "adventures": "game",
+-   "attempts_view": "game",
+-   "items_view": "game",
+-   "node_snapshots": "knowledge",
+-   "parent_settings": "game",
+-   "sessions": "game",
++   "adventures": undefined,
++   "attempts_view": undefined,
++   "items_view": undefined,
++   "node_snapshots": undefined,
++   "parent_settings": undefined,
++   "sessions": undefined,
+  }
+
+ ❯ tests/unit/projection-class.test.ts:64:21
+     62|       PROJECTIONS.map((p) => [p.name, (p as { class?: string }).class]…
+     63|     );
+     64|     expect(classes).toEqual({
+       |                     ^
+     65|       adventures: "game",
+     66|       sessions: "game",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: each registry entry declares its class > gives every entry the module that holds it
+TypeError: .toMatch() expects to receive a string, but got undefined
+ ❯ tests/unit/projection-class.test.ts:75:49
+     73|   it("gives every entry the module that holds it", () => {
+     74|     for (const p of PROJECTIONS)
+     75|       expect((p as { module?: string }).module).toMatch(
+       |                                                 ^
+     76|         /^file:\/\/.*\/src\/engine\/projections\/[a-z-]+\.ts$/,
+     77|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: a module that mixes classes fails > names projection_class_mixed for one module with a game and a knowledge entry
+AssertionError: expected [] to include 'projection_class_mixed'
+ ❯ tests/unit/projection-class.test.ts:88:39
+     86|       entry(root, "b", "knowledge", "both.ts"),
+     87|     ]);
+     88|     expect(found.map((f) => f.check)).toContain("projection_class_mixe…
+       |                                       ^
+     89|   });
+     90|   it("passes a module whose entries share a class, and a helper with n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: the import rule follows the declared class, through a helper > names the entry and the chain through the helper for a game projection
+AssertionError: expected { …(3) } to match object { …(3) }
+
+- Expected
++ Received
+
+  {
+    "check": "game_projection_imports",
+-   "file": "src/engine/projections/quests.ts",
+-   "match": "src/engine/projections/quests.ts -> src/engine/projections/helper.ts -> src/engine/model/estimate.ts",
++   "file": "src/engine/projections/helper.ts",
++   "match": "src/engine/projections/helper.ts -> src/engine/model/estimate.ts",
+  }
+
+ ❯ tests/unit/projection-class.test.ts:117:19
+    115|     const root = repo(files);
+    116|     const [found] = run(root, [entry(root, "quests", "game")]);
+    117|     expect(found).toMatchObject({
+       |                   ^
+    118|       check: "game_projection_imports",
+    119|       file: join(P, "quests.ts"),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: the import rule follows the declared class, through a helper > fails a game projection that imports either versions.ts
+AssertionError: expected [ { …(3) }, { …(3) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/unit/projection-class.test.ts:129:62
+    127|   it("fails a game projection that imports either versions.ts", () => {
+    128|     const root = repo(files);
+    129|     expect(run(root, [entry(root, "reads-server", "game")])).toHaveLen…
+       |                                                              ^
+    130|     expect(run(root, [entry(root, "reads-engine", "game")])).toHaveLen…
+    131|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: the import rule follows the declared class, through a helper > passes all three declared knowledge
+AssertionError: expected [ { …(3) }, { …(3) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "check": "game_projection_imports",
++     "file": "src/engine/projections/helper.ts",
++     "match": "src/engine/projections/helper.ts -> src/engine/model/estimate.ts",
++   },
++   {
++     "check": "game_projection_imports",
++     "file": "src/engine/projections/quests.ts",
++     "match": "src/engine/projections/quests.ts -> src/engine/projections/helper.ts -> src/engine/model/estimate.ts",
++   },
++ ]
+
+ ❯ tests/unit/projection-class.test.ts:140:7
+    138|         entry(root, "reads-engine", "knowledge"),
+    139|       ]),
+    140|     ).toEqual([]);
+       |       ^
+    141|   });
+    142| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: no projection's code names llm_log > names the file for an identifier or a string, of either class
+AssertionError: expected [] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+- [
+-   "src/engine/projections/ident.ts",
+-   "src/engine/projections/text.ts",
+- ]
++ []
+
+ ❯ tests/unit/projection-class.test.ts:155:47
+    153|         entry(root, "text", cls),
+    154|       ]).filter((f) => f.check === "projection_reads_llm_log");
+    155|       expect(found.map((f) => f.file).sort()).toEqual([
+       |                                               ^
+    156|         join(P, "ident.ts"),
+    157|         join(P, "text.ts"),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: the check keeps no list of projection modules > drops NOT_GAME
+AssertionError: expected '// Static checks of ADR-0190\'s verif…' not to contain 'NOT_GAME'
+
+- Expected
++ Received
+
+- NOT_GAME
++ // Static checks of ADR-0190's verify group 1, run by the lint verb.
++ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
++ import { join, relative, sep } from "node:path";
++
++ export interface Finding {
++   check: string;
++   file: string;
++   match: string;
++ }
++
++ const SKIP = new Set([
++   "node_modules",
++   "dist",
++   ".git",
++   "data",
++   "design",
++   "personal",
++   "project",
++   "canon",
++   "fixtures",
++ ]);
++
++ function files(root: string, dir = root): string[] {
++   if (!existsSync(dir)) return [];
++   return readdirSync(dir).flatMap((name) => {
++     if (SKIP.has(name)) return [];
++     const path = join(dir, name);
++     return statSync(path).isDirectory() ? files(root, path) : [path];
++   });
++ }
++
++ function scan(
++   check: string,
++   paths: string[],
++   root: string,
++   pattern: RegExp,
++ ): Finding[] {
++   return paths.flatMap((path) => {
++     const hit = pattern.exec(readFileSync(path, "utf8"));
++     return hit ? [{ check, file: relative(root, path), match: hit[0] }] : [];
++   });
++ }
++
++ /** REQ-2504: no model-service key in anything a client receives. */
++ export function checkNoKeyInClient(root: string): Finding[] {
++   const clientDirs = ["dist/client", "src/client", "content"].map((d) =>
++     join(root, d),
++   );
++   const paths = clientDirs.flatMap((d) => (existsSync(d) ? files(d) : []));
++   return scan("key_in_client", paths, root, /sk-or-[A-Za-z0-9-]*/);
++ }
++
++ /** REQ-2544, REQ-2546: the MVP holds no push code at all. */
++ export function checkNoPush(root: string): Finding[] {
++   const self = join(root, "tools", "static-checks.ts");
++   const tests = join(root, "tests");
++   const paths = files(root).filter((p) => p !== self && !p.startsWith(tests));
++   return scan(
++     "push_code",
++     paths,
++     root,
++     /push_subscriptions|vapid|web-push|push\.apple\.com|pushManager|PushSubscription/i,
++   );
++ }
++
++ /**
++  * REQ-2226: SQL naming the log lives only in appendEvents' module and in the
++  * migrations, so no other code can write around it. Tests are exempt, because
++  * the guard's own test must try the forbidden statements.
++  */
++ export function checkEventsSqlConfined(root: string): Finding[] {
++   const allowed = ["src/engine/events", "migrations", "tests"].map((d) =>
++     join(root, d),
++   );
++   const self = join(root, "tools", "static-checks.ts");
++   const paths = files(root).filter(
++     (p) =>
++       /\.(?:[cm]?[jt]s|sql)$/.test(p) &&
++       p !== self &&
++       !allowed.some((d) => p.startsWith(d + sep)),
++   );
++   return scan(
++     "events_sql",
++     paths,
++     root,
++     /\b(?:FROM|INTO|UPDATE|JOIN|TABLE|ON)\s+["`]?events\b/,
++   );
++ }
++
++ /** REQ-2532: only the blob store writes into data/blobs, and nothing deletes there. */
++ export function checkBlobWritesConfined(root: string): Finding[] {
++   const store = join(root, "src", "engine", "blobs", "store.ts");
++   const tests = join(root, "tests");
++   const self = join(root, "tools", "static-checks.ts");
++   const paths = files(root).filter(
++     (p) =>
++       /\.(ts|js|mjs|sh)$/.test(p) &&
++       p !== store &&
++       p !== self &&
++       !p.startsWith(tests),
++   );
++   return paths.flatMap((path) =>
++     readFileSync(path, "utf8")
++       .split("\n")
++       .filter(
++         (line) =>
++           /blobs/.test(line) &&
++           /\b(unlink|unlinkSync|rmSync|rm\s*\(|writeFile|appendFile|renameSync|truncate)/.test(
++             line,
++           ),
++       )
++       .map((line) => ({
++         check: "blob_write",
++         file: relative(root, path),
++         match: line.trim(),
++       })),
++   );
++ }
++
++ /**
++  * REQ-3816: only the explanation request, in src/server/explain/, reads
++  * \`explain_cache\`, so no projection, report or export can depend on it and
++  * emptying it loses no fact about play. Migrations create it; tests fill it.
++  */
++ export function checkExplainCacheConfined(root: string): Finding[] {
++   const allowed = join(root, "src", "server", "explain") + sep;
++   const skipped = [
++     join(root, "tests") + sep,
++     join(root, "migrations") + sep,
++     allowed,
++   ];
++   const self = join(root, "tools", "static-checks.ts");
++   const paths = files(root).filter(
++     (p) =>
++       /\.(ts|js|mjs|sh|sql)$/.test(p) &&
++       p !== self &&
++       !skipped.some((d) => p.startsWith(d)),
++   );
++   return scan("explain_cache", paths, root, /\bexplain_cache\b/);
++ }
++
++ /** Projections are pure folds: no clock, random source or network (SPC-0020). */
++ export function checkProjectionsPure(root: string): Finding[] {
++   const dir = join(root, "src", "engine", "projections");
++   return scan(
++     "projection_purity",
++     existsSync(dir) ? files(dir) : [],
++     root,
++     /Date\.now|new Date\(|Math\.random|performance\.now|from "node:(crypto|http|https|net|dgram)"|\bfetch\(/,
++   );
++ }
++
++ /** REQ-2414: no answer reply says «верно» or «неверно», in any case. */
++ export const REPLY_KEYS = /^(battle\.|standin\.task\.\d+\.solution)/;
++ export function checkNoVerdictWords(root: string): Finding[] {
++   const path = join(root, "content", "i18n", "ru.json");
++   if (!existsSync(path)) return [];
++   const strings = JSON.parse(readFileSync(path, "utf8")) as Record<
++     string,
++     string
++   >;
++   const word = /(?<!\p{L})(не)?верно(?!\p{L})/iu;
++   return Object.entries(strings)
++     .filter(([key, text]) => REPLY_KEYS.test(key) && word.test(text))
++     .map(([key, text]) => ({
++       check: "verdict_words",
++       file: relative(root, path),
++       match: `${key}: ${text}`,
++     }));
++ }
++
++ /**
++  * REQ-2224 (ADR-0020): no game projection reaches the knowledge model, the
++  * Director or the answer check, directly or through any module between,
++  * helpers both sides share included, so a recompute under new versions can't
++  * change a logged outcome, reward or branch. Type-only imports are skipped:
++  * they leave nothing at run time.
++  */
++ export const FORBIDDEN_FOR_GAME = [
++   "src/engine/model/",
++   "src/engine/states/",
++   "src/engine/director/",
++   "src/shared/answer.ts",
++ ];
++ /** Projection modules that aren't game projections: the knowledge ones and the registry, which imports every projection by design. */
++ const NOT_GAME = new Set(["knowledge.ts", "registry.ts"]);
++
++ function runtimeImports(path: string): string[] {
++   const text = readFileSync(path, "utf8");
++   const found: string[] = [];
++   const pattern =
++     /^\s*(?:import|export)\s+(?!type\b)(?:[^;]*?\sfrom\s+)?["'](\.{1,2}\/[^"']+)["']/gm;
++   for (const m of text.matchAll(pattern)) {
++     const spec = m[1];
++     if (!spec) continue;
++     const target = join(path, "..", spec.replace(/\.js$/, ".ts"));
++     if (existsSync(target)) found.push(target);
++   }
++   return found;
++ }
++
++ export function checkGameProjectionImports(root: string): Finding[] {
++   const dir = join(root, "src", "engine", "projections");
++   if (!existsSync(dir)) return [];
++   const games = readdirSync(dir)
++     .filter((f) => f.endsWith(".ts") && !NOT_GAME.has(f))
++     .map((f) => join(dir, f));
++   const forbidden = (path: string): boolean => {
++     const rel = relative(root, path).split(sep).join("/");
++     return FORBIDDEN_FOR_GAME.some((f) =>
++       f.endsWith("/") ? rel.startsWith(f) : rel === f,
++     );
++   };
++   const findings: Finding[] = [];
++   for (const start of games) {
++     // Breadth-first, so the chain reported is a shortest one.
++     const from = new Map<string, string | null>([[start, null]]);
++     const queue = [start];
++     while (queue.length) {
++       const at = queue.shift() as string;
++       if (forbidden(at)) {
++         const chain: string[] = [];
++         for (let p: string | null = at; p; p = from.get(p) ?? null)
++           chain.unshift(relative(root, p));
++         findings.push({
++           check: "game_projection_imports",
++           file: relative(root, start),
++           match: chain.join(" -> "),
++         });
++         break;
++       }
++       for (const next of runtimeImports(at))
++         if (!from.has(next)) {
++           from.set(next, at);
++           queue.push(next);
++         }
++     }
++   }
++   return findings;
++ }
++
++ if (import.meta.url === `file://${process.argv[1]}`) {
++   const root = process.cwd();
++   const { checkParamsLanguageFree, loadTemplateSchemas } =
++     await import("./params-language-free.js");
++   const templates = await loadTemplateSchemas(root);
++   const findings = [
++     ...checkNoKeyInClient(root),
++     ...checkNoPush(root),
++     ...checkEventsSqlConfined(root),
++     ...checkBlobWritesConfined(root),
++     ...checkProjectionsPure(root),
++     ...checkNoVerdictWords(root),
++     ...checkGameProjectionImports(root),
++     ...checkExplainCacheConfined(root),
++     ...checkParamsLanguageFree(templates),
++   ];
++   console.log(
++     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
++       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
++       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
++       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
++       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
++       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
++       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
++       "game_projection_imports followed the runtime imports of each game projection in src/engine/projections to the knowledge model, the Director and the answer check; " +
++       "explain_cache searched the code outside src/server/explain, migrations and tests for the explanation cache",
++   );
++   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
++   process.exit(findings.length ? 1 : 0);
++ }
++
+
+ ❯ tests/unit/projection-class.test.ts:175:24
+    173|   );
+    174|   it("drops NOT_GAME", () => {
+    175|     expect(source).not.toContain("NOT_GAME");
+       |                        ^
+    176|   });
+    177|   it("names no file under src/engine/projections/ but versions.ts", ()…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ FAIL  tests/unit/projection-class.test.ts > REQ-2224: the check keeps no list of projection modules > forbids both versions.ts modules for a game projection
+AssertionError: expected '// Static checks of ADR-0190\'s verif…' to contain 'src/engine/projections/versions.ts'
+
+- Expected
++ Received
+
+- src/engine/projections/versions.ts
++ // Static checks of ADR-0190's verify group 1, run by the lint verb.
++ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
++ import { join, relative, sep } from "node:path";
++
++ export interface Finding {
++   check: string;
++   file: string;
++   match: string;
++ }
++
++ const SKIP = new Set([
++   "node_modules",
++   "dist",
++   ".git",
++   "data",
++   "design",
++   "personal",
++   "project",
++   "canon",
++   "fixtures",
++ ]);
++
++ function files(root: string, dir = root): string[] {
++   if (!existsSync(dir)) return [];
++   return readdirSync(dir).flatMap((name) => {
++     if (SKIP.has(name)) return [];
++     const path = join(dir, name);
++     return statSync(path).isDirectory() ? files(root, path) : [path];
++   });
++ }
++
++ function scan(
++   check: string,
++   paths: string[],
++   root: string,
++   pattern: RegExp,
++ ): Finding[] {
++   return paths.flatMap((path) => {
++     const hit = pattern.exec(readFileSync(path, "utf8"));
++     return hit ? [{ check, file: relative(root, path), match: hit[0] }] : [];
++   });
++ }
++
++ /** REQ-2504: no model-service key in anything a client receives. */
++ export function checkNoKeyInClient(root: string): Finding[] {
++   const clientDirs = ["dist/client", "src/client", "content"].map((d) =>
++     join(root, d),
++   );
++   const paths = clientDirs.flatMap((d) => (existsSync(d) ? files(d) : []));
++   return scan("key_in_client", paths, root, /sk-or-[A-Za-z0-9-]*/);
++ }
++
++ /** REQ-2544, REQ-2546: the MVP holds no push code at all. */
++ export function checkNoPush(root: string): Finding[] {
++   const self = join(root, "tools", "static-checks.ts");
++   const tests = join(root, "tests");
++   const paths = files(root).filter((p) => p !== self && !p.startsWith(tests));
++   return scan(
++     "push_code",
++     paths,
++     root,
++     /push_subscriptions|vapid|web-push|push\.apple\.com|pushManager|PushSubscription/i,
++   );
++ }
++
++ /**
++  * REQ-2226: SQL naming the log lives only in appendEvents' module and in the
++  * migrations, so no other code can write around it. Tests are exempt, because
++  * the guard's own test must try the forbidden statements.
++  */
++ export function checkEventsSqlConfined(root: string): Finding[] {
++   const allowed = ["src/engine/events", "migrations", "tests"].map((d) =>
++     join(root, d),
++   );
++   const self = join(root, "tools", "static-checks.ts");
++   const paths = files(root).filter(
++     (p) =>
++       /\.(?:[cm]?[jt]s|sql)$/.test(p) &&
++       p !== self &&
++       !allowed.some((d) => p.startsWith(d + sep)),
++   );
++   return scan(
++     "events_sql",
++     paths,
++     root,
++     /\b(?:FROM|INTO|UPDATE|JOIN|TABLE|ON)\s+["`]?events\b/,
++   );
++ }
++
++ /** REQ-2532: only the blob store writes into data/blobs, and nothing deletes there. */
++ export function checkBlobWritesConfined(root: string): Finding[] {
++   const store = join(root, "src", "engine", "blobs", "store.ts");
++   const tests = join(root, "tests");
++   const self = join(root, "tools", "static-checks.ts");
++   const paths = files(root).filter(
++     (p) =>
++       /\.(ts|js|mjs|sh)$/.test(p) &&
++       p !== store &&
++       p !== self &&
++       !p.startsWith(tests),
++   );
++   return paths.flatMap((path) =>
++     readFileSync(path, "utf8")
++       .split("\n")
++       .filter(
++         (line) =>
++           /blobs/.test(line) &&
++           /\b(unlink|unlinkSync|rmSync|rm\s*\(|writeFile|appendFile|renameSync|truncate)/.test(
++             line,
++           ),
++       )
++       .map((line) => ({
++         check: "blob_write",
++         file: relative(root, path),
++         match: line.trim(),
++       })),
++   );
++ }
++
++ /**
++  * REQ-3816: only the explanation request, in src/server/explain/, reads
++  * \`explain_cache\`, so no projection, report or export can depend on it and
++  * emptying it loses no fact about play. Migrations create it; tests fill it.
++  */
++ export function checkExplainCacheConfined(root: string): Finding[] {
++   const allowed = join(root, "src", "server", "explain") + sep;
++   const skipped = [
++     join(root, "tests") + sep,
++     join(root, "migrations") + sep,
++     allowed,
++   ];
++   const self = join(root, "tools", "static-checks.ts");
++   const paths = files(root).filter(
++     (p) =>
++       /\.(ts|js|mjs|sh|sql)$/.test(p) &&
++       p !== self &&
++       !skipped.some((d) => p.startsWith(d)),
++   );
++   return scan("explain_cache", paths, root, /\bexplain_cache\b/);
++ }
++
++ /** Projections are pure folds: no clock, random source or network (SPC-0020). */
++ export function checkProjectionsPure(root: string): Finding[] {
++   const dir = join(root, "src", "engine", "projections");
++   return scan(
++     "projection_purity",
++     existsSync(dir) ? files(dir) : [],
++     root,
++     /Date\.now|new Date\(|Math\.random|performance\.now|from "node:(crypto|http|https|net|dgram)"|\bfetch\(/,
++   );
++ }
++
++ /** REQ-2414: no answer reply says «верно» or «неверно», in any case. */
++ export const REPLY_KEYS = /^(battle\.|standin\.task\.\d+\.solution)/;
++ export function checkNoVerdictWords(root: string): Finding[] {
++   const path = join(root, "content", "i18n", "ru.json");
++   if (!existsSync(path)) return [];
++   const strings = JSON.parse(readFileSync(path, "utf8")) as Record<
++     string,
++     string
++   >;
++   const word = /(?<!\p{L})(не)?верно(?!\p{L})/iu;
++   return Object.entries(strings)
++     .filter(([key, text]) => REPLY_KEYS.test(key) && word.test(text))
++     .map(([key, text]) => ({
++       check: "verdict_words",
++       file: relative(root, path),
++       match: `${key}: ${text}`,
++     }));
++ }
++
++ /**
++  * REQ-2224 (ADR-0020): no game projection reaches the knowledge model, the
++  * Director or the answer check, directly or through any module between,
++  * helpers both sides share included, so a recompute under new versions can't
++  * change a logged outcome, reward or branch. Type-only imports are skipped:
++  * they leave nothing at run time.
++  */
++ export const FORBIDDEN_FOR_GAME = [
++   "src/engine/model/",
++   "src/engine/states/",
++   "src/engine/director/",
++   "src/shared/answer.ts",
++ ];
++ /** Projection modules that aren't game projections: the knowledge ones and the registry, which imports every projection by design. */
++ const NOT_GAME = new Set(["knowledge.ts", "registry.ts"]);
++
++ function runtimeImports(path: string): string[] {
++   const text = readFileSync(path, "utf8");
++   const found: string[] = [];
++   const pattern =
++     /^\s*(?:import|export)\s+(?!type\b)(?:[^;]*?\sfrom\s+)?["'](\.{1,2}\/[^"']+)["']/gm;
++   for (const m of text.matchAll(pattern)) {
++     const spec = m[1];
++     if (!spec) continue;
++     const target = join(path, "..", spec.replace(/\.js$/, ".ts"));
++     if (existsSync(target)) found.push(target);
++   }
++   return found;
++ }
++
++ export function checkGameProjectionImports(root: string): Finding[] {
++   const dir = join(root, "src", "engine", "projections");
++   if (!existsSync(dir)) return [];
++   const games = readdirSync(dir)
++     .filter((f) => f.endsWith(".ts") && !NOT_GAME.has(f))
++     .map((f) => join(dir, f));
++   const forbidden = (path: string): boolean => {
++     const rel = relative(root, path).split(sep).join("/");
++     return FORBIDDEN_FOR_GAME.some((f) =>
++       f.endsWith("/") ? rel.startsWith(f) : rel === f,
++     );
++   };
++   const findings: Finding[] = [];
++   for (const start of games) {
++     // Breadth-first, so the chain reported is a shortest one.
++     const from = new Map<string, string | null>([[start, null]]);
++     const queue = [start];
++     while (queue.length) {
++       const at = queue.shift() as string;
++       if (forbidden(at)) {
++         const chain: string[] = [];
++         for (let p: string | null = at; p; p = from.get(p) ?? null)
++           chain.unshift(relative(root, p));
++         findings.push({
++           check: "game_projection_imports",
++           file: relative(root, start),
++           match: chain.join(" -> "),
++         });
++         break;
++       }
++       for (const next of runtimeImports(at))
++         if (!from.has(next)) {
++           from.set(next, at);
++           queue.push(next);
++         }
++     }
++   }
++   return findings;
++ }
++
++ if (import.meta.url === `file://${process.argv[1]}`) {
++   const root = process.cwd();
++   const { checkParamsLanguageFree, loadTemplateSchemas } =
++     await import("./params-language-free.js");
++   const templates = await loadTemplateSchemas(root);
++   const findings = [
++     ...checkNoKeyInClient(root),
++     ...checkNoPush(root),
++     ...checkEventsSqlConfined(root),
++     ...checkBlobWritesConfined(root),
++     ...checkProjectionsPure(root),
++     ...checkNoVerdictWords(root),
++     ...checkGameProjectionImports(root),
++     ...checkExplainCacheConfined(root),
++     ...checkParamsLanguageFree(templates),
++   ];
++   console.log(
++     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
++       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
++       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
++       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
++       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
++       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
++       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
++       "game_projection_imports followed the runtime imports of each game projection in src/engine/projections to the knowledge model, the Director and the answer check; " +
++       "explain_cache searched the code outside src/server/explain, migrations and tests for the explanation cache",
++   );
++   for (const f of findings) console.log(`${f.check}: ${f.file}: ${f.match}`);
++   process.exit(findings.length ? 1 : 0);
++ }
++
+
+ ❯ tests/unit/projection-class.test.ts:184:20
+    182|   });
+    183|   it("forbids both versions.ts modules for a game projection", () => {
+    184|     expect(source).toContain("src/engine/projections/versions.ts");
+       |                    ^
+    185|     expect(source).toContain("src/server/versions.ts");
+    186|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/13]⎯
+
+
+ Test Files  2 failed | 40 passed (42)
+      Tests  13 failed | 361 passed (374)
+   Start at  20:42:51
+   Duration  19.25s (tests 91%, import 6%, transform 3%)
+
