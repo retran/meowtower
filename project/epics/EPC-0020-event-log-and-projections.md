@@ -113,19 +113,21 @@ The smallest set of tasks that would test the decision is TSK-0200, TSK-0250 and
 
 ## Verification
 
-Verified on 2026-09-27 (UTC) at tree `092a38220b07` on `main`, which merges no pull requests: realised in part, with the gaps below, which the owner accepted on 2026-09-28 as waiting on their own epics. `meow-verbs evidence` exited 0 for format, lint, check, test and build, with test record `3848d07ed77c` (39 test files, 353 Vitest tests, 13 Playwright tests), and `paw check coverage` found nothing.
+Verified again on 2026-09-29 (UTC) at tree `1958de356213` on `main`, which merges no pull requests: realised in part. `meow-verbs evidence --keep` recorded format `d9e98a908e15`, lint `d279fd6e3cd7`, check `28689cf40361`, test `b4cfb10ddfda` (40 test files, 358 Vitest tests, 23 Playwright tests) and build `334394dd7ae3`, all passed, and `paw check coverage` found nothing. The first verification, on 2026-09-27 at tree `092a38220b07`, found the same criteria met and the criterion gaps below, which the owner accepted on 2026-09-28 as waiting on their own epics.
 
-Met: criteria 1, 2, 7, 8, 9, 10, 11 and 12, each by its task's evidence and the run above; criterion 3 on the synthetic 30-day log, which stands for ADR-0190's simulated run until that exists, as this epic allows.
+Met: criteria 1, 2, 7, 8, 9, 10, 11 and 12, each by its task's evidence and the run above. Criterion 3 is met on the synthetic 30-day log, which stands for ADR-0190's simulated run until that exists, as this epic allows. TSK-0295, added after approval, is done: a failed log write replies 503 on every route and reaches the parent as `log_write_failed`.
 
 Open, worst first:
 
-- Criterion 6 isn't met: no report exists until ADR-0180's epic registers `report_cache`; TSK-0280's test walks the projection registry and covers it then. REQ-3816 is realised in part.
-- Criterion 4 isn't met: `inventory`, `progress`, `outcomes`, `threads`, `familiars` and `reward_queue` don't exist; TSK-0270's test holds for the four game tables that do, and REQ-2224 is realised in part until those tables exist and ADR-0190's simulated run fills them.
+- ADR-0370 amended ADR-0020 on 2026-09-28, after this epic's tasks were done, and two of its changes fall in this epic's part without being built. The projection registry gives no entry a class, `game` or `knowledge`, and `src/engine/projections/` defines none. Nothing recovers a blob file that has no `blobs` row, which entry 3 requires by hashing the file at the write and at start-up, and `src/` has no such path. REQ-2210 and REQ-2228 are realised in part until both exist. Remediation: add a task to this epic for each, as EPC-0010 did for ADR-0010's amendments.
+- ADR-0340 amended ADR-0020's triggers and envelope on 2026-09-28: the triggers `events_profile_guard` and the two `db_role` triggers, a guarded start-up check for each, the table `db_role`, and the envelope field `profile`. None exists in `src/` or `migrations/`. They serve the parent's sandbox, so ADR-0340's epic may build them. Until an epic names them, REQ-2226 is realised only for the two triggers this epic built. Remediation: name them in ADR-0340's epic when it is written, or add a task here.
+- Criterion 6 isn't met: no report exists until ADR-0180's epic registers `report_cache`. TSK-0280's test walks the projection registry and covers it then. REQ-3816 is realised in part.
+- Criterion 4 isn't met: `inventory`, `progress`, `outcomes`, `threads`, `familiars` and `reward_queue` don't exist. TSK-0270's test holds for the game tables that do, and REQ-2224 is realised in part until those tables exist and ADR-0190's simulated run fills them.
 - Criterion 5 is met in part: `blobs`, `devices` and `explain_cache` stay unchanged through a recompute; `llm_log`, `art_jobs`, `frames` and `bakeoff` come with their epics, and REQ-2242 is realised in part.
 - A change of graph version triggers no recompute; ADR-0050's epic, which gives the graph its version, adds it.
-- The verification found `log_write_failed` reaching only the server's log and a play route answering 500 on a failed write; TSK-0295, added after approval, fixed both.
+- ADR-0310's changes to the blob store, school snapshot files with their media type, and its second export belong to ADR-0310's epic. They are listed because they amend ADR-0020, and they don't hold this epic open.
 
-ADR-0020's reversal conditions: a synthetic year recomputes in 568 ms against the 10-minute condition, and TSK-0200's guard test found no trigger bypass, so neither holds. Nobody needs to erase a fact about the player today, so the third doesn't hold; it returns when the family asks for an erasure.
+ADR-0020 postpones no requirement. Its reversal conditions: the first verification measured a synthetic year recomputing in 568 ms against the 10-minute condition, and TSK-0200's guard test found no trigger bypass, so neither holds. Nobody needs to erase a fact about the player today, so the third doesn't hold; it returns when the family asks for an erasure.
 
 ## Not covered
 

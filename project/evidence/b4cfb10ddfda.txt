@@ -1,0 +1,70 @@
+meow-verbs evidence 1
+record: b4cfb10ddfda
+verb: test
+command: npm test
+targets: none
+outcome: passed
+exit status: 0
+tree: 1958de35621351f3a43c8870f94b74cf66bbf14a
+time: 2026-09-29T18:07:36Z
+
+
+> test
+> vitest run tests && playwright test
+
+
+ RUN  v5.0.2 /Users/retran/workspace/tower
+
+
+ Test Files  40 passed (40)
+      Tests  358 passed (358)
+   Start at  20:07:07
+   Duration  23.65s (tests 87%, transform 6%, import 6%)
+
+
+Running 24 tests using 8 workers
+
+  ✓   3 [computer] › tests/e2e/interface.spec.ts:25:1 › REQ-2536: the first start picks the interface from the device (245ms)
+  ✓   6 [computer] › tests/e2e/shell.spec.ts:3:1 › REQ-2504: the installable page reaches the client without the model key (303ms)
+  ✘  10 [computer] › tests/e2e/shell.spec.ts:14:6 › the recorder fails a response that carries the key (98ms)
+  ✓   5 [ipad] › tests/e2e/interface.spec.ts:25:1 › REQ-2536: the first start picks the interface from the device (409ms)
+  ✓   2 [ipad] › tests/e2e/shell.spec.ts:3:1 › REQ-2504: the installable page reaches the client without the model key (437ms)
+  ✓   9 [computer] › tests/e2e/interface.spec.ts:34:1 › REQ-2538: the switch in the settings holds after a reload and in the device's row (395ms)
+  ✓   1 [computer] › tests/e2e/parent.spec.ts:20:1 › REQ-2520: a device the parent revokes shows that it needs pairing (743ms)
+  ✘  12 [ipad] › tests/e2e/shell.spec.ts:14:6 › the recorder fails a response that carries the key (212ms)
+  ✓   8 [computer] › tests/e2e/play.spec.ts:60:1 › REQ-2402: the client refuses a letter, sends a wrong number raw and shows no verdict of its own (750ms)
+  ✓   7 [ipad] › tests/e2e/parent.spec.ts:20:1 › REQ-2520: a device the parent revokes shows that it needs pairing (838ms)
+  ✓  15 [computer] › tests/e2e/play.spec.ts:102:1 › REQ-2406: a hidden page sends the pause with background through a keepalive fetch (237ms)
+  ✓  11 [ipad] › tests/e2e/interface.spec.ts:34:1 › REQ-2538: the switch in the settings holds after a reload and in the device's row (506ms)
+  ✓  14 [computer] › tests/e2e/parent.spec.ts:64:1 › REQ-2522: the pairing and PIN screens name when attempts resume (297ms)
+  ✓   4 [ipad] › tests/e2e/play.spec.ts:60:1 › REQ-2402: the client refuses a letter, sends a wrong number raw and shows no verdict of its own (971ms)
+  -  18 [ipad] › tests/e2e/interface.spec.ts:67:1 › REQ-2540: every control of every route works from the keyboard with a focus ring
+  ✓  16 [ipad] › tests/e2e/parent.spec.ts:64:1 › REQ-2522: the pairing and PIN screens name when attempts resume (386ms)
+  ✓  20 [ipad] › tests/e2e/play.spec.ts:102:1 › REQ-2406: a hidden page sends the pause with background through a keepalive fetch (343ms)
+keyboard: 16 controls on 7 routes
+  / play: play
+  / open-settings: open-settings
+  / open-pair: open-pair
+  /settings interface-computer: interface-tablet
+  /settings back: back
+  /pair pair-code: pair-code
+  /pair pair-submit: pair-submit
+  /pair back: back
+  /parent parent-pin: parent-pin
+  /parent parent-login: parent-login
+  /parent back: back
+  /parent/devices open-parent: open-parent
+  /parent/devices back: back
+  /parent/settings open-parent: open-parent
+  /parent/settings back: back
+  /play back: back
+  ✓  13 [computer] › tests/e2e/interface.spec.ts:67:1 › REQ-2540: every control of every route works from the keyboard with a focus ring (966ms)
+  ✓  19 [computer] › tests/e2e/parent.spec.ts:99:1 › REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps the choice (685ms)
+  ✓  17 [computer] › tests/e2e/play.spec.ts:140:1 › REQ-2408, REQ-2410: no input pauses after 5 minutes with a task open and after 90 seconds outside it (933ms)
+  ✓  21 [ipad] › tests/e2e/parent.spec.ts:99:1 › REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps the choice (743ms)
+  ✓  23 [computer] › tests/e2e/play.spec.ts:183:1 › REQ-2430: a scored and an unscored task render the same apart from the task's text (309ms)
+  ✓  22 [ipad] › tests/e2e/play.spec.ts:140:1 › REQ-2408, REQ-2410: no input pauses after 5 minutes with a task open and after 90 seconds outside it (1.2s)
+  ✓  24 [ipad] › tests/e2e/play.spec.ts:183:1 › REQ-2430: a scored and an unscored task render the same apart from the task's text (430ms)
+
+  1 skipped
+  23 passed (5.3s)
