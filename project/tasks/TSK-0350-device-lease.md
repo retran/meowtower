@@ -29,6 +29,13 @@ Take the lease in `POST /api/session/start` and `POST /api/adventure/resume` and
 
 TSK-0320, because `lease_moved` travels on its SSE stream. TSK-0340, because the view-only screen replaces its play screen.
 
+## Cover
+
+- Checks: tests/integration/lease.test.ts, tests/e2e/lease.spec.ts
+- Failing run: project/evidence/a14ba87c4554.txt
+- Landed in: 978ffc1
+- Judgement: none
+
 ## Evidence
 
 Not yet.
