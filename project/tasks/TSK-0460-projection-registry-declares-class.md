@@ -41,6 +41,13 @@ TSK-0250, because it built the registry. TSK-0270, because it built the import c
 
 Not yet.
 
+## Open review findings
+
+An agent reviewed this record; a person has not. Neither finding is fixed, because each changes the approved acceptance criteria and only the person who approved the task can change those.
+
+1. Criterion 2 has no evidence that a real entry's `module` names the file that defines it; `tests/unit/projection-class.test.ts` builds its `module` values by hand and checks only the path's shape. An entry in `lifecycle.ts` marked with `flat-views.ts` would send the import rule down the wrong file and exempt a `game` projection. Fix: add that every registered entry's `module` equals the URL of its defining file, closed by a test that imports each module's own export.
+2. Criterion 4 does not say whether `projection_reads_llm_log` scans only modules that hold entries or everything they import at run time. A query in a shared helper such as `statements.ts` would pass a check that scans entry modules only, against SPC-0020's "No projection reads `llm_log`". Fix: say which, with the reason, and add a helper fixture if the rule follows imports.
+
 ## Left alone
 
 The classes of projections that don't exist yet, which their own epics give when they register them.
