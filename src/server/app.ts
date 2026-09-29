@@ -5,7 +5,6 @@ import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
 import { mountPlay } from "./play.js";
 import { mountShell } from "./shell.js";
-import { mountStage0 } from "./stage0.js";
 import { createStream, type Stream } from "./stream.js";
 import { raise, writeSucceeded } from "./failures.js";
 
@@ -42,7 +41,6 @@ export function createApp({
       : c.json({ status: "unavailable", database: "closed" }, 503),
   );
   mountShell(app);
-  mountStage0(app, db);
   mountPlay(app, db, {
     now,
     stream,

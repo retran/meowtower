@@ -31,7 +31,22 @@ TSK-0030, because its crash test writes through these routes.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-29 on the Mac. Every criterion holds.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0 at tree `d12512c3b74a`: 39 test files and 355 Vitest tests passed, 15 Playwright tests passed, and the build made both images. `meow-verbs evidence --keep` kept the records: format `66b21c37748e`, lint `1476f4f1ef4d`, check `3acfbbdff2bc`, test `f3527d97dc7f`, build `2afd29135b63`, under `project/evidence/`.
+- Seen failing first: before the routes were removed, `tests/integration/stage0-retired.test.ts` failed criterion 1 with `expected 201 to be 404`. Its criterion 2 test passed before and after, because it guards the reading of version 0 events, which this task mustn't break.
+- Criterion 1: that file sends a paired device's `POST /api/stage0/write` and `GET /api/stage0/write/w1`, and both answer 404 with no event logged. `tests/unit/pairing.test.ts` still lists both routes and still gets 401 without a token, because the `/api/*` device check runs before routing.
+- Criterion 2: three version 0 `attempt_submitted` events are appended through `appendEvents` as the routes wrote them, every projection table is dropped, and `rebuildMissing` rebuilds all of them from the log. `eventByIdemKey` then returns each event unchanged, with payloads `{raw:"12"}`, `{raw:""}` and `{raw:"3/4"}`.
+- Criterion 3: the crash test's stage 0 `describe` is deleted, and its port check moved into the answer-route `describe`, which printed `crash test (answer): 100 of 100 answers kept, 0 lost`.
+- Criterion 4: `src/server/stage0.ts` and `tests/unit/stage0.test.ts` are deleted, `tests/integration/log-write-failure.test.ts` passes in the test verb, and TSK-0200's Evidence gained the line saying its criterion 8 is now proved there.
+
+### Open review findings
+
+An agent reviewed this record after the work. These findings stay open, with the reason. They sit under Evidence because the frozen check lets an approved task change only this section.
+
+- What to do's last sentence reads as though this task changed the Docker virtual machine variant of the crash test. It didn't: that variant is still unwritten and runs by hand from the stage 0 checklist (TSK-0030, EPC-0010's Not covered). The sentence is guidance for it: with no other write route left, it has to write through the answer route. Not changed: What to do is frozen.
+- Depends on gives TSK-0030's stage 0 writes as the reason, which this task removed. The dependencies the criteria rest on are TSK-0030's answer-route `describe` and TSK-0295's `log-write-failure.test.ts`, both done. Not changed: Depends on is frozen, and the order of work is unaffected.
+- Criterion 3 puts the deletion in its "when" slot; the event under test is the kill after each reply. Not changed: the criterion is frozen, and the evidence above covers the kills.
 
 ## Left alone
 

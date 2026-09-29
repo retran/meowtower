@@ -1,0 +1,10 @@
+meow-verbs evidence 1
+record: 3acfbbdff2bc
+verb: check
+command: npx tsc --noEmit
+targets: none
+outcome: passed
+exit status: 0
+tree: d12512c3b74a6181580bf00e0ac9a22fb69423c3
+time: 2026-09-29T17:28:32Z
+

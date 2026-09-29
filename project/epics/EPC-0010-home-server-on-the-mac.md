@@ -104,8 +104,9 @@ A task is marked in the commit that advances it, never in a later pass, because 
       added: ADR-0360 entry 2 amended REQ-2510's behaviour after TSK-0060 was done
       closes: none; REQ-2510 stays with TSK-0060
       depends: TSK-0060 - it records the gateway and checks it at `up`
-- [+] T-016 TSK-0440 The stage 0 write routes answer 404 from stage 0.1 on (`src/server/stage0.ts`, `src/server/app.ts`)
+- [x] T-016 TSK-0440 The stage 0 write routes answer 404 from stage 0.1 on (`src/server/stage0.ts`, `src/server/app.ts`)
       added: ADR-0360 entry 3 retired the routes after TSK-0030 was done
+      evidence: meow-verbs exit 0 at tree d12512c3b74a, 355 Vitest and 15 Playwright tests; both routes answer 404; version 0 events read back after a rebuild; crash test 100 of 100 answers kept (TSK-0440 Evidence)
       closes: none
       depends: TSK-0030 - its crash test writes through these routes
 - [+] T-017 TSK-0450 `storage_ceiling` counts the live database and its write-ahead log (`src/server/backups.ts`)

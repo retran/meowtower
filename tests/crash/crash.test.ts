@@ -55,47 +55,13 @@ async function kill(child: ChildProcess): Promise<void> {
   await done;
 }
 
-describe("REQ-2508: no committed write is lost when the process dies", () => {
+// TSK-0030 criterion 3, and since TSK-0440 the only write route the crash test
+// uses: the answer request of ADR-0030.
+describe("REQ-2508: no answer whose reply was sent is lost when the process dies", () => {
   it("finds no server already on the test port", async () => {
     await expect(fetch("http://127.0.0.1:3917/health")).rejects.toThrow();
   });
 
-  it(
-    `keeps the write ${RUNS} times out of ${RUNS}`,
-    async () => {
-      const seed = openDatabase(env.MEOWTOWER_DB);
-      const cookie = `meowtower_device=${registerDevice(seed, "tablet")}`;
-      seed.close();
-      let lost = 0;
-      for (let i = 0; i < RUNS; i++) {
-        const id = `w${i}`;
-        let child = await start();
-        const res = await fetch("http://127.0.0.1:3917/api/stage0/write", {
-          method: "POST",
-          headers: { "content-type": "application/json", cookie },
-          body: JSON.stringify({ id }),
-        });
-        expect(res.status).toBe(201);
-        await kill(child);
-        child = await start();
-        const found = await fetch(
-          `http://127.0.0.1:3917/api/stage0/write/${id}`,
-          { headers: { cookie } },
-        );
-        if (found.status !== 200) lost++;
-        await kill(child);
-      }
-      console.log(
-        `crash test: ${RUNS - lost} of ${RUNS} writes kept, ${lost} lost`,
-      );
-      expect(lost).toBe(0);
-    },
-    RUNS * 8000,
-  );
-});
-
-// TSK-0030 criterion 3: the same test against the answer request of ADR-0030.
-describe("REQ-2508: no answer whose reply was sent is lost when the process dies", () => {
   it(
     `keeps the answer ${RUNS} times out of ${RUNS}`,
     async () => {

@@ -57,6 +57,7 @@ Collected on 2026-09-27 on the Mac. Every criterion holds; the notice surface of
 - Criterion 8: `tests/unit/stage0.test.ts` passes: with an insert that aborts, the route replies 503 `{"error":"log_write_failed"}`, logs `log_write_failed: ...` and writes nothing. With the route's catch removed, it replied 500 and the test failed.
 - Open: `log_write_failed` goes to the server's log (`src/server/failures.ts`) because the Parent Room notices and their place in `./meowtower status` come with TSK-0080.
 - Deviation, stage-0 only: the route takes `deviceId`, `clientMs` and `answer` from the request body; a body without them, such as the crash test's, is logged under the device `unpaired` with the server time and an empty raw answer, until TSK-0040 pairs devices. The event is `attempt_submitted` at version 0, the task's default; the owner hasn't named another type.
+- 2026-09-29, TSK-0440: the stage-0 route that criterion 8 names no longer exists, and `tests/unit/stage0.test.ts` went with it. TSK-0295's `tests/integration/log-write-failure.test.ts` now proves criterion 8: a failed log write on a play route replies `503 {"error":"log_write_failed"}`, writes nothing and raises the notice.
 
 ## Left alone
 

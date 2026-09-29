@@ -1,0 +1,12 @@
+meow-verbs evidence 1
+record: 66b21c37748e
+verb: format
+command: npx prettier --check .
+targets: none
+outcome: passed
+exit status: 0
+tree: d12512c3b74a6181580bf00e0ac9a22fb69423c3
+time: 2026-09-29T17:28:29Z
+
+Checking formatting...
+All matched files use Prettier code style!
