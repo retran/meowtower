@@ -1,5 +1,6 @@
 // The routes the shell calls. The device token and the parent session travel
 // as HttpOnly cookies. Every body is read, because an unread one stays open.
+import type { AnswerIn, AnswerOut, Room } from "../shared/api.js";
 import type { Interface } from "./interface.js";
 
 export type DeviceState =
@@ -139,4 +140,64 @@ export async function newPairingCode(): Promise<{
         expiresAt: new Date(String(body["expiresAt"])),
       }
     : null;
+}
+
+// The play API (SPC-0030). The client imports only types from src/shared, and
+// never compares an answer: it sends the raw text and draws the reply.
+
+/** The packets the server sends today; later tasks add scene, chest, break and stop_offer. */
+export type Packet = Room | { kind: "end" };
+
+// Each state-changing request carries the device's own counter, and a repeat
+// with the same value appends nothing. It starts from the clock, so a reload
+// never reuses a value the server has seen.
+let seq = Date.now();
+export const nextSeq = (): number => ++seq;
+
+export async function startSession(): Promise<string | null> {
+  const { status, body } = await call("/api/session/start", {
+    method: "POST",
+    body: JSON.stringify({ mode: "daily", clientSeq: nextSeq() }),
+  });
+  return status === 200 ? String(body["sessionId"]) : null;
+}
+
+export async function nextPacket(sessionId: string): Promise<Packet | null> {
+  const { status, body } = await call(
+    `/api/session/${encodeURIComponent(sessionId)}/next`,
+  );
+  return status === 200 ? (body as unknown as Packet) : null;
+}
+
+export async function answer(
+  sessionId: string,
+  sent: Omit<AnswerIn, "clientSeq">,
+): Promise<AnswerOut | null> {
+  const { status, body } = await call(
+    `/api/session/${encodeURIComponent(sessionId)}/answer`,
+    { method: "POST", body: JSON.stringify({ ...sent, clientSeq: nextSeq() }) },
+  );
+  return status === 200 ? (body as unknown as AnswerOut) : null;
+}
+
+/**
+ * Pauses the adventure. The request uses `keepalive`, so it still leaves when
+ * the page is being hidden or closed (REQ-2406).
+ */
+export function pause(
+  sessionId: string,
+  reason: "leave" | "background" | "idle",
+): Promise<boolean> {
+  return fetch(`/api/session/${encodeURIComponent(sessionId)}/pause`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ reason, clientSeq: nextSeq() }),
+    keepalive: true,
+  }).then(
+    async (res) => {
+      await res.json().catch(() => null);
+      return res.ok;
+    },
+    () => false,
+  );
 }

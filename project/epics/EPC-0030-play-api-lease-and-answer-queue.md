@@ -60,7 +60,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-005 [P] TSK-0390 The parent session expires after 30 minutes, and the parent sets the three-day limit
       closes: REQ-0234, REQ-2440
       depends: TSK-0050 - the PIN check and its lockout open the session; TSK-0220 - `settings_changed` needs its schema
-- [ ] T-006 TSK-0340 The client draws packets, checks only the input format, and pauses on background and idle
+- [>] T-006 TSK-0340 The client draws packets, checks only the input format, and pauses on background and idle
       closes: REQ-2402, REQ-2406, REQ-2408, REQ-2410, REQ-2430
       depends: TSK-0310 - it draws the final packet shapes; TSK-0330 - the pause route; TSK-0100 - the client shell it draws in
 - [ ] T-007 [P] TSK-0350 One device holds the adventure through a lease, and the displaced device turns view-only

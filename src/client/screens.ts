@@ -14,6 +14,7 @@ import {
 } from "./api.js";
 import { act, button, choice, el, heading, link, status } from "./controls.js";
 import { applyInterface, type Interface } from "./interface.js";
+import { playScreen } from "./play.js";
 import { clock, t } from "./strings.js";
 
 export interface Shell {
@@ -46,7 +47,7 @@ const home: Screen = {
     const nav = el("nav", { className: "actions" });
     nav.append(
       button("ui.home.play", "play", () => {
-        note.textContent = t("ui.home.playSoon");
+        location.hash = "#/play";
       }),
       link("ui.nav.settings", "open-settings", "/settings"),
     );
@@ -403,4 +404,5 @@ export const SCREENS: readonly Screen[] = [
   parentLoginScreen,
   parentDevicesScreen,
   parentSettingsScreen,
+  playScreen,
 ];

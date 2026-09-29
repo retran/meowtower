@@ -39,6 +39,14 @@ export const STANDIN_ADVENTURE_TASKS = 60;
 /** The rooms on each stand-in floor, for where play stopped. */
 export const STANDIN_ROOMS_PER_FLOOR = 5;
 
+/**
+ * Why the stand-in shows a task: task 2 is an unscored warm-up and the others
+ * are scored, so the parent can play both side by side (REQ-2430). Only the
+ * server's log holds it; no packet carries it (REQ-2428).
+ */
+export const standinPurpose = (task: StandinTask): string =>
+  task.n === 2 ? "warmup" : "standin";
+
 /** The guiding threads a session starts with, until ADR-0080's epic. */
 export const STANDIN_THREADS = 5;
 

@@ -33,7 +33,35 @@ TSK-0310, because it draws the final packet shapes. TSK-0330, because the trigge
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-29 on the Mac. Criteria 1 to 3 hold, and so does the Playwright half of criterion 4. The parent's signed-off judgement for criterion 4 is still open, so the task stays in progress.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0 at tree `1563d2d70306`: 40 test files and 358 Vitest tests passed, 23 Playwright tests passed in the `ipad` and `computer` projects, and the build made both images. `meow-verbs evidence --keep` kept the records: format `9fe8044303e5`, lint `30280092ac6c`, check `e590fe192abb`, test `6407b25a6362`, build `f9398e0c8b83`, under `project/evidence/`. The keyboard test now walks 7 routes and 16 controls, `/play` included.
+- Seen failing: the tests were written after the screen, so each was shown to catch its requirement by breaking one mechanism, running the test on the `computer` project and restoring the code:
+  - with the format check accepting any text, REQ-2402 failed on `Expected: "" Received: "a"`;
+  - with `keepalive: false`, and again with the `visibilitychange` handler doing nothing, REQ-2406 failed;
+  - with 90 seconds inside a task, and again with 5 minutes outside one, the idle test failed;
+  - with a class given only to the warm-up task's text, REQ-2430 failed on the two tasks' markup.
+- Criterion 1, REQ-2402: `tests/e2e/play.spec.ts` pairs a device and opens `/play`. The digits-only field refuses a typed `a` and takes `99`. The answer request carries `raw: "99"` and `dontKnow: false`. While the test holds the server's reply, the screen shows no badge and none of the badge words. Once the reply is released, the badge shows the word for the server's `outcome`.
+- Criterion 2, REQ-2406: with `document.visibilityState` reporting `hidden`, the client sends one `POST /api/session/:id/pause` with `reason: "background"` through `fetch` with `keepalive: true`, and the session's log holds `adventure_paused` `{reason: "background"}`.
+- Criterion 3, REQ-2408 and REQ-2410: on Playwright's fake clock, with a task open, nothing is sent at 91 seconds or at 4:59. At 5:01 the client sends the pause with `idle`, and the log holds `adventure_paused` `{reason: "idle"}`. After «Продолжить» starts a new session and an answer closes the task, nothing is sent at 89 seconds, and the pause with `idle` goes at 91.
+- Criterion 4, REQ-2430, Playwright half: the stand-in marks task 2 as the unscored warm-up in `item_shown`'s `purpose`, which only the log holds (`standinPurpose` in `src/server/standin.ts`). The test plays until it has met a scored and a warm-up task, reading each one's purpose from the log by `itemId`, and answers both with `0`. The room's markup and the outcome's markup are identical once the text content of the task's text, the battle line and the solution's lines is blanked. Blanking sets only their text content, so their tags, classes and attributes are still compared.
+- Criterion 4, the parent's half: not yet. The parent plays `/play` on the iPad and on the computer without being told which task is the warm-up, and signs off that the two can't be told apart. The log's `item_shown` names each task's purpose afterwards.
+- Also: `playwright.config.ts` now keeps the e2e snapshots in `/tmp/meowtower-e2e-data/snapshots`. The storage notice counts the snapshots folder's parent, which had been `/tmp` itself. Its synchronous walk blocked the server after the first session end any e2e test caused, and these are the first tests that end one.
+
+Choices this task made, where the task or SPC-0030 left a gap:
+
+- The screen draws `room` and `end`, the two packets `src/shared/api.ts` defines today. `scene`, `chest`, `break` and `stop_offer` have no schema yet, so the client can't draw them until TSK-0370, TSK-0410 and the epic realising ADR-0090 add them.
+- The badge maps `clean` to «Чисто!», `partial` to «Почти!», `alt` to «Другая тропа», and `alt` after «Не знаю» to «Принято», SPC-0150's word for it. `AnswerOut` carries no `critical` yet, so the `crit` view waits for it.
+- The task window is open from the moment a room is drawn until the answer's reply arrives, because the player is still inside the task until she sees its outcome. An answer sent with no reply yet therefore keeps the 5-minute limit; TSK-0380's queue, which can hold an answer offline, inherits this rule. Any key press, pointer press or input restarts the idle limit, because each shows the player is at the screen, which is what REQ-2408 and REQ-2410 measure.
+- `clientSeq` starts from the clock at page load and counts up, so a reload never repeats a value the server has seen.
+
+### Open review findings
+
+An agent reviewed this record after the work. These findings stay open or were rejected, each with the reason. They sit under Evidence because the frozen check lets an approved task change only this section.
+
+- What to do asks for `scene`, `chest`, `break` and `stop_offer` to be drawn and for `critical` to reach the badge, and Depends on says TSK-0310 drew the final packet shapes. The Choices above record that neither exists yet: the four packets belong in Left alone, with TSK-0370, TSK-0410 and the epic realising ADR-0090, which add them. Not changed: What to do, Depends on and Left alone are frozen. The task stays in progress for criterion 4 alone; the missing packets don't hold it open, because no criterion names them.
+- Criterion 4 says the markup "differs only in the task's text", and the check also blanks the battle line and the solution, which come from the task too. The evidence now says only their text content is blanked. Not changed: the criterion is frozen.
+- Rejected: that the storage notice's synchronous walk of `data/` is a defect to record. In production `data/` holds tens to a few hundred files, and the walk takes milliseconds after a session ends. The block came from the e2e setup, which pointed the data root at `/tmp`. The test verb caught it, and this change fixed it, so under I15 it needs no defect record.
 
 ## Left alone
 
