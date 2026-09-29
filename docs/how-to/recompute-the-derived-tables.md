@@ -20,8 +20,8 @@ For the parent on the Mac, comfortable with a terminal. Every table apart from t
 The command prints the tables it rebuilt, the last event it read and the time it took:
 
 ```text
-Recomputed: items_view, attempts_view, adventures, sessions, node_snapshots
-Up to event 2077, in 10 ms.
+Recomputed: items_view, attempts_view, adventures, sessions, parent_settings, node_snapshots
+Up to event 103, in 4 ms.
 ```
 
 The server builds the new tables beside the old ones and swaps them in at the end, in one step.
