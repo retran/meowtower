@@ -29,7 +29,9 @@ Create the event queue's IndexedDB store, which owns its schema for all five ent
 
 ## Depends on
 
-TSK-0100, because the storage it restricts belongs to the client shell. Criterion 4 also waits on TSK-0380 in EPC-0030, which fills and flushes the queue, and on a simulated day, which needs the epics realising ADR-0030 and ADR-0040.
+TSK-0100, because the storage it restricts belongs to the client shell. Criterion 4 runs once EPC-0030's queue task fills and flushes the store and a simulated day exists, which needs the epics realising ADR-0030 and ADR-0040. That queue task builds on this task's store, so it is no dependency of this one.
+
+Amended by ADR-0370, entry 45, on 2026-09-29: the queue task that builds on this store was named here as a dependency, which made the two tasks wait on each other.
 
 ## Evidence
 

@@ -99,7 +99,8 @@ A task is marked in the commit that advances it, never in a later pass, because 
 - [+] T-014 TSK-0420 A device keeps no game data except the unsent entries of its event queue (`src/client/`, `tests/e2e/`)
       added: REQ-6506 superseded REQ-2542, which TSK-0110 closed, so the storage check has to allow the wider queue ADR-0370 defines
       closes: REQ-6506
-      depends: TSK-0100 - the storage it restricts belongs to the client shell; outside this epic, TSK-0380 in EPC-0030, which fills the queue, and a simulated day, which needs the epics realising ADR-0030 and ADR-0040
+      depends: TSK-0100 - the storage it restricts belongs to the client shell
+      waits: criterion 4 runs once EPC-0030's queue task fills the store and a simulated day exists, which needs the epics realising ADR-0030 and ADR-0040; that queue task builds on this one's store, so it is no dependency
 - [+] T-015 TSK-0430 `up` refuses an unverified gateway, and a network watch stops the containers when the gateway changes (`meowtower`, a launchd plist)
       added: ADR-0360 entry 2 amended REQ-2510's behaviour after TSK-0060 was done
       closes: none; REQ-2510 stays with TSK-0060
