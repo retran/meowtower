@@ -27,6 +27,10 @@ This epic realises ADR-0020: the append-only `events` table and its triggers, `a
 10. A request to `/api/parent/export/events.jsonl` through `https://<mac-name>.local` gets 404, and the same path on `http://localhost:8080` returns the file. Evidence: both requests' output, from TSK-0290.
 11. The static check finds a string-typed field in no template's parameter schema. Evidence: the lint verb's output, from TSK-0230.
 12. Every requirement ADR-0020 addresses lands in exactly one closed task. Evidence: `paw check coverage` with no finding.
+13. Every projection in the registry declares its class, `game` or `knowledge`, and the import check reads the class. Evidence: the registry test and the static check's fixtures, from TSK-0460.
+14. A blob file with no `blobs` row gets its row when it hashes to its name, at a write and at start-up, and is refused with `blob_changed` when it doesn't. Evidence: the recovery tests' report, from TSK-0470.
+
+**Amended by ADR-0370.** Entries 2 and 3 amended ADR-0020 after this epic's tasks were done, so criteria 13 and 14 and the tasks TSK-0460 and TSK-0470 were added. ADR-0340's triggers and envelope field go to the epic realising ADR-0340, as Not covered says.
 
 The epic can measure two things before it is finished. The recompute of TSK-0260 reports how long a full recompute of one simulated year takes, against the 60-second budget in ADR-0190's Baselines table; above 10 minutes, ADR-0020 reverses to checkpointed projections. TSK-0200's guard test tries `VACUUM` and every schema change the migration runner allows against the triggers, and a bypass is ADR-0020's third reversal condition.
 
@@ -84,6 +88,14 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       closes: none - it realises ADR-0020's failure table for `log_write_failed`
       depends: TSK-0200 - it raises `LogWriteFailed`; TSK-0080 - the notices live in its file
       why added: the epic's verification on 2026-09-28 found `log_write_failed` only in the server's log and a play route answering 500, and the owner asked to fix it
+- [+] T-012 TSK-0460 Every projection declares its class, and the import check reads it (`src/engine/projections/`, `tools/static-checks.ts`)
+      added: ADR-0370 entry 2 gave every registry entry a class after TSK-0250 and TSK-0270 were done
+      closes: none; REQ-2224 stays with TSK-0270
+      depends: TSK-0250 - it built the registry; TSK-0270 - it built the import check
+- [+] T-013 [P] TSK-0470 The blob store recovers a file that has no row (`src/engine/blobs/store.ts`, `src/server/main.ts`)
+      added: ADR-0370 entry 3 added the recovery after TSK-0240 was done
+      closes: none; REQ-2210 stays with TSK-0240
+      depends: TSK-0240 - it built the store
 
 These tasks can run in parallel once their dependencies are done:
 
@@ -131,6 +143,7 @@ ADR-0020 postpones no requirement. Its reversal conditions: the first verificati
 
 ## Not covered
 
+- ADR-0340's changes to the log's guard: the triggers `events_profile_guard` and the two `db_role` triggers with a start-up check for each, the table `db_role`, and the envelope field `profile`. They only matter once a sandbox file exists, so the epic realising ADR-0340, which builds the sandbox, adds them.
 - The routes that write play events, idempotency per request and the resume point's contents, because ADR-0030 defines them; this epic only offers `appendEvents` and `idem_key`.
 - Each event type's payload beyond the facts the requirements name, because the owning decision in ADR-0020's Event catalogue defines it; TSK-0210 and TSK-0220 write the fields the requirements require.
 - The knowledge projections' contents and the model, because ADR-0060 defines them; TSK-0270 fixes only how `node_snapshots` stores rows under several versions.
