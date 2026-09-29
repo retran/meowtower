@@ -15,10 +15,10 @@ instructions outrank it.
 <project>
 Meowtower ("Мяубашня") is a daily adventure game for one
 primary-school girl. It checks her maths up to the end of Dutch group 8 and
-gives the parent a map of what she knows. The repository holds no code yet:
-`project/` keeps the research record, `canon/` keeps the world, and the
-untracked `design/` keeps the design system, screen mock-ups and a clickable
-prototype.
+gives the parent a map of what she knows. `src/` and `tests/` hold the
+TypeScript server, client and their tests, `project/` keeps the method's
+record, `canon/` keeps the world, and the untracked `design/` keeps the design
+system, screen mock-ups and a clickable prototype.
 </project>
 
 <principles>
@@ -28,7 +28,10 @@ Write the project itself in English: code, comments, commit messages and
 project documents. The owner asked for this on 2026-09-26. Text the player
 sees is in Russian only for now, with one exception the owner added on
 2026-09-28: the Dutch bridge's 30 to 50 keywords, kept as data beside the
-Russian text and approved by the parent word by word (REQ-5080). Build the game so that English and Dutch can
+Russian text and approved by the parent word by word (REQ-5080). A second
+exception, added on 2026-09-29, lets the Dutch diagnostic probe of ADR-0430
+show its letters in Dutch after the MVP, from text pairs the parent approves;
+its story, hints and explanations stay Russian. Build the game so that English and Dutch can
 be added later and the player can switch between the three languages: keep
 every player-facing string out of the code in a per-language file, because a
 string hard-coded in a component has to be found and moved before a second
@@ -58,7 +61,9 @@ styles.
 </principles>
 
 <gate>
-The repository has no checks yet. It holds no code, and
-`.meowpaw/profile.toml` declares no command for format, lint, check, test or
-build.
+`.meowpaw/profile.toml` declares a command for each verb: format
+(`npx prettier --check .`), lint (`npm run lint`), check (`npx tsc --noEmit`),
+test (`npm test`) and build (`npm run build && docker compose build`).
+`meow-verbs run format lint check test build` runs them, and every change
+passes all five before it is committed.
 </gate>
