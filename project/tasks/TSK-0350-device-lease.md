@@ -36,6 +36,20 @@ TSK-0320, because `lease_moved` travels on its SSE stream. TSK-0340, because the
 - Landed in: 978ffc1
 - Judgement: none
 
+## Open review findings
+
+An agent reviewed this record; a person has not. None is fixed, because each one changes the approved acceptance criteria and only the person who approved the task can change those.
+
+1. REQ-0220 has no criterion showing a displaced device's `next`, hint or `pause` refused with `409 lease_moved` and nothing logged; "What to do" should name `next` beside "every state-changing route".
+2. Criterion 1 checks the sentence only, not that the play controls are gone and the button to continue is shown; it also has the view-only device send "its next answer", which the screen should not allow. `tests/e2e/lease.spec.ts` posts the late answer from outside the screen.
+3. No criterion says the heartbeat keeps the lease; a lease that runs out 45 seconds after the tap passes all four. `tests/integration/lease.test.ts` has the test.
+4. Criterion 3 covers a stopped heartbeat only, not the change of device within 45 seconds that SPC-0030 gives its own path: the old session's pause with `lease_expired` first, then `device_lease_taken`.
+5. Criterion 2 does not say what is open or which sessions count. `tests/e2e/lease.spec.ts` counts the first session only and never opens the second context's play screen.
+6. Criterion 4 leaves out SPC-0030's second late-answer case, where the lease has expired and no device holds it; neither Left alone nor TSK-0380 owns it.
+7. Preference: criteria 2 and 4 name no requirement, though both files their evidence under REQ-0220.
+8. Preference: the tap-only lease, the 15-second heartbeat and the 45-second expiry are stated without reasons or a citation of ADR-0030.
+9. Preference: criterion 3 does not name the projections it compares.
+
 ## Evidence
 
 Not yet.
