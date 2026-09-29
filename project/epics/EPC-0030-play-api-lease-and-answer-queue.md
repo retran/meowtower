@@ -68,7 +68,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       depends: TSK-0320 - `lease_moved` travels on its SSE stream; TSK-0340 - the view-only screen replaces its play screen
 - [ ] T-008 [P] TSK-0380 The client queues every answer before sending it, and plays no task while offline
       closes: REQ-2400, REQ-2434, REQ-2436, REQ-2438
-      depends: TSK-0320 - a resent answer must be recorded once; TSK-0340 - the controls and screens it disables; TSK-0110 - the unsent-answer store
+      depends: TSK-0320 - a resent answer must be recorded once; TSK-0340 - the controls and screens it disables; TSK-0420 - the event-queue store, which replaced TSK-0110's unsent-answer store under ADR-0370 entry 45
 - [ ] T-009 TSK-0360 Resume returns the exact step from `resume_snapshot`, and attempt flags keep broken times out of every measure
       closes: REQ-0204, REQ-0206, REQ-0210, REQ-0212, REQ-0214, REQ-0224
       depends: TSK-0350 - resume takes the lease; TSK-0320 - the charge keys it tests across a resume; TSK-0250 - `resume_snapshot` is a registered projection

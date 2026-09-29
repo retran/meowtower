@@ -27,7 +27,7 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 
 | Route | What it does |
 | --- | --- |
-| `POST /api/session/start` | `{ mode: "zero" \| "daily", clientSeq }`. Opens a session and takes the lease for the calling device; replies `{ sessionId, adventureId }`. `daily` continues the open adventure or plans a new one; a Session 0 (`zero`) belongs to no adventure, and its `adventureId` is null. |
+| `POST /api/session/start` | `{ mode: "zero" \| "daily", clientSeq }`. Opens a session and takes the lease for the calling device; replies `{ sessionId, adventureId, wrapUp }`, where `wrapUp` is true as for `ResumeOut` when the session continues an adventure that has reached `threeDayLimit`. `daily` continues the open adventure or plans a new one; a Session 0 (`zero`) belongs to no adventure, and its `adventureId` is null. |
 | `GET /api/adventure/current` | The open adventure, `planned`, `active` or `paused`, with where play stopped (floor, room, slot), or `null` when none is open. |
 | `POST /api/adventure/resume` | `{ clientSeq }`. Opens a new session, takes the lease for the calling device and returns `ResumeOut` with the new `sessionId`. |
 | `POST /api/session/:id/heartbeat` | The lease holder's heartbeat. |
@@ -48,7 +48,7 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 | `GET /api/session/:id/events` | The SSE stream. |
 | `GET /api/session/:id/poll?after=<seq>` | The stream's messages after `seq`, for a client whose stream dropped. |
 | `POST /api/parent/login` | The PIN; opens a parent session. |
-| `GET` and `PUT /api/parent/settings` | The parent settings, among them `threeDayLimit`. |
+| `GET` and `PUT /api/parent/settings` | The parent settings, among them `threeDayLimit`: a whole number of adventure days from 1 to 7, or `null` when the rule is off. |
 | `POST /api/parent/finish-today` | «Закончить на сегодня». |
 
 `POST /api/game/forge`, `POST /api/game/shop/buy` and the other `/api/parent/*` routes follow the same contract, and their contents belong to ADR-0140 and ADR-0180. The API has no push route, no session resume route and no session mode `checkpoint` or `free`.
@@ -73,11 +73,11 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 
 ### SSE messages
 
-The stream `GET /api/session/:id/events` carries five messages, each with the `seq` of the log event it reports: `scene_ready`, `explanation_ready`, `lease_moved`, `safety_pause` and `settings`, whose sound channels ADR-0320 states. This part sends `explanation_ready` and `lease_moved`; the parts ADR-0110 defines send `scene_ready` and `safety_pause`. `explanation_ready` carries the `seq` of `explanation_bought`, the `itemId`, the source, `model` or `template`, and the text. The server keeps each session's messages in memory for the poll route, and the explanation's text never enters the log; after a restart the resume packet brings a client back, and a repeated explanation request delivers the text again.
+The stream `GET /api/session/:id/events` carries five messages, each with the `seq` of the log event it reports: `scene_ready`, `explanation_ready`, `lease_moved`, `safety_pause` and `settings`, whose sound channels ADR-0320 states. This part sends `explanation_ready` and `lease_moved`; the parts ADR-0110 defines send `scene_ready` and `safety_pause`; the part ADR-0320 defines sends `settings` when the parent changes a sound channel. A change of `threeDayLimit` sends no message, because the server reads it only at the next new game day. `explanation_ready` carries the `seq` of `explanation_bought`, the `itemId`, the source, `model` or `template`, and the text. The server keeps each session's messages in memory for the poll route, and the explanation's text never enters the log; after a restart the resume packet brings a client back, and a repeated explanation request delivers the text again.
 
 ### Events this part logs
 
-`adventure_planned`, `adventure_started`, `adventure_paused` with the reason `leave`, `background`, `idle` or `lease_expired`, `adventure_resumed`, `adventure_completed`, `adventure_wrapped_up`, `session_started`, `session_ended`, `device_lease_taken`, `settings_changed`, `scene_prepared`, `text_draft_saved`, `rewards_delivered`, `attempt_late` and `item_focus`, all through `appendEvents`. It also logs, on the routes it serves, the types other decisions own: `attempt_submitted`, `verdict`, `hint_shown` with `ladderOpenedBy`, `thread_spent` with the reason `hint_ladder` or `explanation`, `explanation_bought`, `self_check_used`, `save_accepted`, `finish_today` and `plan_draft`. SPC-0020 holds their payload versions. Every event of a daily session carries the adventure in its envelope.
+`adventure_planned`, `adventure_started`, `adventure_paused` with the reason `leave`, `background`, `idle` or `lease_expired`, `adventure_resumed`, `adventure_completed`, `adventure_wrapped_up`, `session_started`, `session_ended`, `device_lease_taken`, `settings_changed`, `scene_prepared`, `text_draft_saved`, `rewards_delivered`, `attempt_late` and `item_focus`, all through `appendEvents`. It also logs, on the routes it serves, the types other decisions own: `attempt_submitted`, `verdict`, `hint_shown` with `ladderOpenedBy`, `thread_spent` with the reason `hint_ladder` or `explanation`, `explanation_bought`, `self_check_used`, `save_accepted`, `finish_today`, `plan_draft`, and `rest_stop_started` and `rest_stop_ended` from the `break` route, which ADR-0090 owns. SPC-0020 holds their payload versions. Every event of a daily session carries the adventure in its envelope.
 
 | Event, v1 | Payload |
 | --- | --- |
@@ -92,9 +92,11 @@ The stream `GET /api/session/:id/events` carries five messages, each with the `s
 | --- | --- | --- |
 | `409 lease_moved` | the player, on the device she left | another device holds the lease |
 | `409 day_finished` | the player | `extend` after `finish_today`, until 04:00 |
-| `401 parent_session_expired` | the parent | a parent request 30 minutes after the last one |
+| `401 parent_session_expired` | the parent | a parent request 30 minutes or more after the last one |
+| `401 parent_session_missing` | the parent | a parent request with no parent session, with one that has already expired, or from a device other than the one that opened it |
+| `400 settings_invalid` | the parent | a settings change outside its range, such as a `threeDayLimit` of 0, 8 or 2.5 |
 | `409 adventure_closed` | the developer | an event would move an adventure out of `complete` or `wrapped_up` |
-| `409 session_ended` | the player | `next`, `pause` or `break` on a session that has ended; the client shows the button to continue |
+| `409 session_ended` | the player | any request on a session that has ended other than an answer or another entry of the event queue, among them `next`, `pause`, `break`, `heartbeat`, `extend`, a hint, a check, an explanation, a second attempt, a chest and a scene input; the client shows the button to continue |
 | `409 attempt_open` | the developer | a second attempt asked for before the first attempt's verdict |
 | `409 not_a_first_attempt` | the developer | a second attempt asked for on a second attempt |
 | `409 no_threads` | the player | a ladder opening or an explanation with no thread left |
@@ -109,13 +111,14 @@ The stream `GET /api/session/:id/events` carries five messages, each with the `s
 | `500` | the developer | an outgoing body failed its `.strict()` schema |
 | `server_unreachable` | the player | the client can't reach the server and shows the waiting scene |
 | `attempt_late` | the parent | an answer arrived for a task that already had its attempt |
-| `queue_stuck` | the parent | an answer has stayed unsent on a device for 24 hours |
+| `queue_stuck` | the parent | an entry of the event queue has stayed unsent on a device for 24 hours, or the server refused it with a final reply |
 
 ### What this part requires from other parts
 
 - ADR-0020 supplies `appendEvents`, the unique `idem_key` column, the projections `adventures`, `sessions`, `reward_queue` and `resume_snapshot`, and the event schemas in `src/shared/events.ts`.
 - SPC-0010 supplies the device token, the device's kind, `tablet` or `computer`, set at pairing and switched in the settings, the PIN check and its lockout, and the durable commit before a reply.
 - ADR-0040, ADR-0250 and ADR-0070 supply the tasks, the answer check, the "what's missing" options and the next packet; ADR-0080 and ADR-0220 the threads, the hint ladder, its framing lines and second attempts; ADR-0240 the estimate options, the check's target and its verdicts; ADR-0090 the game day, the breaks and the soft stop; ADR-0110 the scenes, the short ending and the waiting scene; ADR-0120 the explanation text; ADR-0140 the grants, chests and secrets; ADR-0270 the plan draft's contents.
+- ADR-0150 and ADR-0370 entry 45 supply the routes and events of the queue's other entries: grouping sets, `looks_set` and `glossary_opened`.
 - ADR-0190 holds this part's budgets in its Baselines table.
 
 The permitted dependencies run one way. The client imports only `src/shared/`, and nothing in `src/server/` or `src/engine/`. Route code writes to the log only through `appendEvents`. `src/shared/api.ts` imports only zod and `src/shared/`.
@@ -166,11 +169,11 @@ The client sends `POST /api/session/:id/pause` with `leave` from «Сохран�
 
 `POST /api/session/start` and `POST /api/adventure/resume` open a session, log `session_started`, take the lease for the calling device and log `device_lease_taken`. The client calls them only when the player taps to play or to continue, never when it opens. The holder sends a heartbeat every 15 seconds. After 45 seconds without one, the server logs `adventure_paused` with the reason `lease_expired` and `session_ended`, as device `server`, or `session_ended` alone on a finished adventure, and the state equals the one «Сохранить и уйти» leaves, so a closed app, a flat battery or a change of device keeps the same state (REQ-0202). When another device takes the lease before then, the server logs the same events for the old session first, with the reason `lease_expired`, and then `device_lease_taken`.
 
-The server accepts state-changing requests and `next` only from the lease holder. While another device holds the lease, it answers any other device `409 lease_moved`, except that it still logs an answer, as below (REQ-0220). When the lease moves, the server sends `lease_moved` on the old device's stream, and that device turns view-only and shows «Приключение продолжено в другом месте» with a button to continue there (REQ-0222).
+The server accepts state-changing requests and `next` only from the lease holder. While another device holds the lease, it answers any other device `409 lease_moved`, except that it still logs an answer, as below, and every other entry of the event queue, a grouping set, `looks_set`, `glossary_opened` or `plan_draft`, which it logs as it arrives (REQ-0220). When the lease moves, the server sends `lease_moved` on the old device's stream, and that device turns view-only and shows «Приключение продолжено в другом месте» with a button to continue there (REQ-0222).
 
 An answer from a device that lost the lease to another device is still logged, and its reply is `409 lease_moved`. When the item has no attempt yet, the server records the answer as that attempt, and the new holder gets the outcome with its next packet. When the item has one, the server logs `attempt_late` with the raw answer, and it gets no verdict, no grants and no weight in the estimate.
 
-An answer from a device whose lease expired while no device holds the lease is recorded the same way, as the attempt or as `attempt_late`, and gets its `AnswerOut` with the outcome and the grants (REQ-2438). The device takes no lease, its next `next` gets `409 session_ended`, and the client shows the button to continue.
+An answer from a device whose lease expired while no device holds the lease is recorded the same way, as the attempt or as `attempt_late`, and gets its `AnswerOut` with the outcome and the grants (REQ-2434, REQ-2438). Every other entry of the event queue that reaches a session after it ended, a grouping set, `looks_set`, `glossary_opened` or `plan_draft`, is logged in that session as it arrives and gets `2xx`, so no entry blocks the answers queued behind it. The device takes no lease, its next `next` gets `409 session_ended`, and the client shows the button to continue.
 
 ### Resume
 
@@ -182,19 +185,19 @@ A task left unanswered comes back as the same first attempt, and its answer coun
 
 ### Adventures across days
 
-An adventure day is a game day, from 04:00 to 04:00, on which a task or a scene of that adventure was shown; a game day on which none was shown doesn't count (REQ-0236). `threeDayLimit` is 3 by default and can be switched off, and `PUT /api/parent/settings` changes it and logs `settings_changed` (REQ-0234).
+An adventure day is a game day, from 04:00 to 04:00, on which a task or a scene of that adventure was shown; a game day on which none was shown doesn't count (REQ-0236). `threeDayLimit` is 3 by default and can be set from 1 to 7 or switched off with `null`, and `PUT /api/parent/settings` changes it and logs `settings_changed` with the key `threeDayLimit` (REQ-0234). The `parent_settings` projection keeps each setting's latest logged value; a setting with no `settings_changed` event holds its default, which `GET /api/parent/settings` supplies, so a projection row exists only for a value the parent chose.
 
-When the first session of a new game day starts on an adventure that already has `threeDayLimit` adventure days, `ResumeOut.wrapUp` is true. The server lets the open task and room finish, plays the short ending from the scene library and logs `adventure_wrapped_up` with the secrets she didn't open (REQ-0228). `reward_queue` takes those secrets (REQ-0232). The wrap-up logs no reversing grant and removes no event, so she keeps everything she earned (REQ-0230).
+When the first session of a new game day starts on an adventure that already has at least `threeDayLimit` adventure days, `ResumeOut.wrapUp` is true; a limit the parent lowers below the days an open adventure already has wraps that adventure up at the next new game day. The server lets the open task and room finish, plays the short ending from the scene library and logs `adventure_wrapped_up` with the secrets she didn't open (REQ-0228). `reward_queue` takes those secrets (REQ-0232). The wrap-up logs no reversing grant and removes no event, so she keeps everything she earned (REQ-0230).
 
 ### The event queue and the offline state
 
-The client's queue is an event queue: it holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order she made them, and sends them in that order, none dropped. The client writes each entry to its IndexedDB queue and waits for the write to commit before it sends the entry. It retries from 1 second, doubling to at most 30 seconds, and on launch it flushes the queue before it asks to resume, so every answer reaches the log through a dropped connection, a closed app or a restart (REQ-2434). The client queues an answer only once it passes its `InputSpec` check and, on an item with an estimate, carries a pick, «Не знаю» or `insufficient`. It removes an entry from the queue on a `2xx` reply or `409 lease_moved`, and keeps it and retries on any other reply or none. The queue holds at most one answer per device. An answer unsent for 24 hours shows as `queue_stuck` in that device's settings, with the answer's time and a retry button.
+The client's queue is an event queue: it holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order she made them, and sends them in that order, none dropped. The client writes each entry to its IndexedDB queue and waits for the write to commit before it sends the entry. It retries from 1 second, doubling to at most 30 seconds, and on launch it flushes the queue before it asks to resume, so every answer reaches the log through a dropped connection, a closed app or a restart (REQ-2434). The client queues an answer only once it passes its `InputSpec` check and, on an item with an estimate, carries a pick, «Не знаю» or `insufficient`. It removes an entry from the queue on a `2xx` reply or `409 lease_moved`. A `4xx` reply other than `401`, `408` and `429` is final: the client removes the entry and lists it under `queue_stuck` in the device's settings at once, with the reply's error name, so it blocks nothing queued behind it. The client keeps the entry and retries on any other reply or none. The queue holds at most one answer per device. An entry unsent for 24 hours shows as `queue_stuck` in that device's settings, with the entry's time and a retry button.
 
 While the client has no connection, the hint, explanation and second-attempt controls are inactive (REQ-2436), and so is «Проверить нить» (Check the thread). An estimate pick waits in the queue inside its answer. After an answer goes into the queue with no connection, the client shows the waiting scene «Туман над тропой, фамильяр ищет дорогу» and no new task until the server answers; the outcome and the grants then arrive together (REQ-2438).
 
 ### The parent's session and the end of the day
 
-`POST /api/parent/login` with the PIN opens a parent session with its own `HttpOnly` cookie, apart from the device token. Every parent route needs both the parent session and a paired device. The parent session expires 30 minutes after its last request (REQ-2440).
+`POST /api/parent/login` with the PIN opens a parent session with its own `HttpOnly` cookie, apart from the device token. Every parent route except `POST /api/parent/login` needs both the parent session and a paired device; the login needs only a paired device. The parent session expires 30 minutes after its last request (REQ-2440). Every request the parent's own action sends counts, a read included, and restarts the 30 minutes. Today only the parent's own actions send requests to parent routes. A page that adds a request the client sends by itself, a poll or an SSE stream, must mark it so the server counts it not as activity, and defines that marker with the page. The first request 30 minutes or more after the last one gets `401 parent_session_expired`, and the server forgets the session, so later requests with its cookie get `401 parent_session_missing`. The client shows the PIN form on the page it is on for either code, keeps what the parent chose on the page, and after the PIN sends the refused request again.
 
 `POST /api/parent/finish-today` logs `finish_today`. At the next boundary, after an answer with its review or after a scene, `GET /api/session/:id/next` returns `stop_offer` with `canExtend: false`. For the rest of that game day the client offers no «Ещё один ряд», and the server answers `extend` with `409 day_finished` (REQ-2444).
 
@@ -225,9 +228,12 @@ While the client has no connection, the hint, explanation and second-attempt con
 | The server restarts after an explanation is bought and before `explanation_ready` | `ResumeOut` lists the item, and a repeated explanation request spends nothing and sends the text as `explanation_ready`. |
 | The server can't be reached | The client keeps the answer in its queue, shows the waiting scene (`server_unreachable`), keeps the three help controls inactive and shows no new task. |
 | The page is killed after the tap and before the send | The answer is already in IndexedDB, and the next launch sends it before resuming. |
-| An answer stays unsent for 24 hours | `queue_stuck` shows in the device's settings with the answer's time and a retry button. |
+| An entry stays unsent for 24 hours | `queue_stuck` shows in the device's settings with the entry's time and a retry button. |
+| The server refuses a queued entry with a final `4xx` | The client removes it, and `queue_stuck` shows it at once with its time and the reply's error name. |
 | The log write fails | The server replies `503` (`log_write_failed`, ADR-0020), and the client keeps the answer in its queue. |
-| A parent request comes 30 minutes after the last one | `401 parent_session_expired`; the client shows the PIN screen again and keeps the page. |
+| A parent request comes 30 minutes after the last counted one | `401 parent_session_expired`; the client shows the PIN screen again and keeps the page. |
+| A parent request carries the cookie of a session that has already expired | `401 parent_session_missing`; the client shows the PIN screen again and keeps the page. |
+| `PUT /api/parent/settings` carries a `threeDayLimit` outside 1 to 7 and not `null` | `400 settings_invalid`, and nothing is logged. |
 | `extend` after `finish_today` on the same game day | `409 day_finished` until 04:00. |
 | The answer or check reply takes longer than 300 ms at the 95th percentile | The verify report shows the measure against ADR-0190's Baselines table. |
 
@@ -236,3 +242,4 @@ While the client has no connection, the hint, explanation and second-attempt con
 - Round 1, the reasons for the import rules, the rate limit, the tap-only lease, the one-answer queue and the draft interval: rejected, because a specification states what the system does and never why (S8); ADR-0030 holds the reasons.
 - Rounds 1 and 2, `background` and `idle` on a finished adventure getting `409 adventure_closed` while a leave logs `session_ended` alone: rejected as a change. TSK-0330 built this contract and gives its reason, and the spec states it without the reason (S8).
 - Round 2, the reason for the parent session's own cookie: rejected under S8.
+- 2026-09-29 review, the reasons for the 1-to-7 range, the parent session's activity rule and the default held by the route: rejected under S8. A specification states no reasons; TSK-0390's Evidence records these choices with their reasons, and ADR-0030 is approved and holds the decision they serve.

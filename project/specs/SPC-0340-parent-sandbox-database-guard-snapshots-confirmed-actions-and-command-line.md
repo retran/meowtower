@@ -149,7 +149,7 @@ The gateway reserves each sandbox call against the sandbox bucket by reading the
 
 ### Access, the entry link and the parent session
 
-Every sandbox route on the game listener sits under `/api/parent/`, so each request needs a parent session opened with the PIN on a paired device, and the same device on every request of that session (REQ-6342). A request from another paired device, or with no parent session, gets SPC-0030's `401 parent_session_expired`. No player screen links to the sandbox.
+Every sandbox route on the game listener sits under `/api/parent/`, so each request needs a parent session opened with the PIN on a paired device, and the same device on every request of that session (REQ-6342). A request from another paired device, or with no parent session, gets SPC-0030's `401 parent_session_missing`, and the first request after 30 idle minutes gets `401 parent_session_expired`. No player screen links to the sandbox.
 
 The sandbox's entry link takes an optional list of nodes. When the link carries nodes, the sandbox lists them at its head, each linking to that node's templates in the sandbox; without nodes it opens as the Parent Room's entry opens it. Opening the sandbox from the link writes no event to either file. The check for low at home and high at school on SPC-0310's "home and school" screen opens the link with the row's nodes.
 
@@ -216,7 +216,8 @@ The commands print their output and write it to no file; a copy in a file exists
 | A write is attempted on the read-only handle | The handle throws, and her file is unchanged. |
 | Free space is below 3 x (her live file plus its `-wal` file), or `VACUUM INTO` or the copy fails | `sandbox_snapshot_failed`: the old snapshot and sandbox stay, and the sandbox shows «Снимок не получился, песочница осталась прежней» (The snapshot didn't work, the sandbox stayed as it was). |
 | A sandbox request arrives during a reset | `409 sandbox_resetting`; the client waits and retries once the reset ends. |
-| A sandbox request comes without a parent session, after 30 idle minutes, or from another device than the session's | `401 parent_session_expired`; the client shows the PIN screen. |
+| A sandbox request comes without a parent session, or from another device than the session's | `401 parent_session_missing`; the client shows the PIN screen. |
+| A sandbox request comes 30 idle minutes or more after the last parent request | `401 parent_session_expired`; the client shows the PIN screen. |
 | A confirm arrives with an unknown or expired token, or with one a 21st prepare dropped | `410 sandbox_action_expired`; the sandbox shows «Подтверждение устарело, выберите действие ещё раз» (The confirmation has lapsed, choose the action again). |
 | A confirm arrives twice with one token | The second returns the original event with 200; the log holds one event. |
 | The confirmed action's append to her file fails | `503 log_write_failed`; the token stays unused, and the parent retries with it. |

@@ -46,12 +46,12 @@ Choices this task made, where SPC-0030 left a gap:
 - A setting with no event holds its default, which the route supplies. `parent_settings` keeps only the values the parent chose, so a later change of the default reaches every parent who never set it.
 - A choice on the settings page saves at once and says «Сохранено.», as the device settings do.
 
-### Open review findings
+### Review findings, settled
 
-An agent reviewed this record. This finding stays open, with the reason. It sits under Evidence because the frozen check lets an approved task change only this section.
+An agent reviewed this record twice. On 2026-09-29 the owner asked for every finding to be fixed, and each is now settled in the specification it belongs to. This section sits under Evidence because the frozen check lets an approved task change only this section.
 
-- The choices above are contracts SPC-0030 doesn't state. For the limit: the range 1 to 7, null for off, `400 settings_invalid`, and the route supplying the default. For the session: every parent request counts as activity for REQ-2440, a poll or SSE request must not restart the 30 minutes, and an expired session is forgotten, so later requests read `parent_session_missing`. The poll rule binds a future page, so it belongs beside SPC-0030's statement of REQ-2440, where that page's author will read it. SPC-0030 line 185 says only that `threeDayLimit` is 3 by default and can be switched off. The cap narrows REQ-0234, so the parent may change the limit only within a week. TSK-0400, which builds the rule, reads SPC-0030 and won't see the cap there. Not changed here: SPC-0030 is approved, and stating these in it is an amendment the owner approves. Until the owner approves one, the owner decides whether the cap holds or is removed. The reason for a week is weak: the page this task built offers those choices, and no record says what goes wrong with a longer limit.
-- SPC-0340, lines 152 and 219, names `401 parent_session_expired` for a sandbox request with no session, after 30 idle minutes, or from another device. SPC-0010 line 146 and this task give `parent_session_missing` for no session and for another device, and `parent_session_expired` only for the first request after the idle limit. The client opens the PIN form for both codes, so the parent sees the same thing either way, but the sandbox task that builds against SPC-0340 would expect the wrong code. The conflict lies between the specifications. The same amendment should settle which code SPC-0340 names.
+- SPC-0030 now states the contracts the choices above made. For the limit: the range 1 to 7, `null` for off, `400 settings_invalid`, and the route supplying the default. For the session: which requests count as activity, the rule that a poll or SSE request doesn't restart the 30 minutes, and the forgotten session that later reads `parent_session_missing`. With the cap stated in the specification, TSK-0400 sees it too.
+- SPC-0340's two lines now match SPC-0010 and SPC-0030. `parent_session_missing` answers a request with no session and one from another device. `parent_session_expired` answers the first request after 30 idle minutes.
 
 ## Left alone
 

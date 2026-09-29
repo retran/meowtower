@@ -3,7 +3,7 @@ id: ADR-0010
 artifact: adr
 status: approved
 revised: 2026-09-27
-addresses: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-2542, REQ-2544, REQ-2546]
+addresses: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546]
 supersedes: []
 ---
 
@@ -123,3 +123,5 @@ Amended by ADR-0340 and ADR-0350, approved on 2026-09-28, whose `## Amends` sect
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-0370, entry 45, approved on 2026-09-28: the event queue holds more than answers, so REQ-6506, which supersedes REQ-2542, replaces it in `addresses`, and where the text above says REQ-2542 or the queue of unsent answers, it means REQ-6506 and the unsent entries of the event queue.

@@ -1,10 +1,10 @@
 ---
 id: TSK-0110
 artifact: task
-status: approved
-revised: 2026-09-27
+status: superseded
+revised: 2026-09-29
 epic: EPC-0010
-closes: [REQ-2542]
+closes: []
 issue:
 ---
 
@@ -35,3 +35,5 @@ Not yet.
 ## Left alone
 
 How the queue sends, retries and flushes, which ADR-0030 defines.
+
+Superseded by TSK-0420, under ADR-0370 entry 45: REQ-6506 superseded REQ-2542, because the event queue holds more than answers. This task closed REQ-2542 until then, and TSK-0420 closes REQ-6506 in its place.

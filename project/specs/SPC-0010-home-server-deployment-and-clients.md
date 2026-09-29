@@ -29,7 +29,7 @@ The system consists of two containers, one command and, when `LOCAL_JUDGES` name
 | `./meowtower up` | Checks the network, runs `docker compose up -d` and `caffeinate`, starts the launchd daemon of each judge in `LOCAL_JUDGES`, loads the network watch, sets the containers' time zone to the Mac's, and prints the QR code for the iPad. ADR-0350 states what it checks and writes for the judges. |
 | `./meowtower down` | Stops the containers, stops each local judge's launchd daemon and unloads the network watch. It never passes `-v`, so the volume `meowtower-db` survives. |
 | `./meowtower status` | Reports in one line each whether Docker and both containers run, the last snapshot and how long it took, and every open notice in `data/snapshots/notices.json`, `backup_failed` and `storage_ceiling` and those ADR-0350 raises, one line per local judge with its state and the game day's share of its checks answered elsewhere, and the count of context templates that list fewer than 2 contexts, as ADR-0410 states. |
-| `./meowtower set-home-network` | Records the Mac's default gateway, as its IP address and the router's hardware address where the Mac can read it, in `data/home-gateway`. The first `./meowtower up` records it too. |
+| `./meowtower set-home-network` | Pings the Mac's default gateway so the ARP table holds it, then records the gateway, as its IP address and the router's hardware address, in `data/home-gateway`; when the gateway doesn't answer, it records nothing and prints `gateway_unverified`. The first `./meowtower up` records it too. |
 | `./meowtower pair` | Prints a new 6-digit pairing code, asked for through `POST /pair-code` on the Parent Room's listener, so only the Mac issues codes. |
 | `POST /api/pair` | `{ code, kind }` on the game listener; on a live code it sets the device cookie and replies 200, otherwise 403 `pairing_code_invalid`, or `429 pairing_locked` with `retryAt` during a lockout. The only `/api` route that needs no token. |
 | `GET` and `PUT /api/device` | The calling device's interface, `{ kind: "tablet" \| "computer" }`, read and switched. |
@@ -146,7 +146,7 @@ The device stores in IndexedDB only the unsent entries of its event queue, and a
 | A parent request comes without a parent session opened on the calling device | `401 parent_session_missing`; the client shows the PIN screen. |
 | The Mac's default gateway differs from the recorded one | `./meowtower up` prints `wrong_network` with the recorded gateway and the current one, and starts nothing. |
 | The hardware address of the recorded or the current gateway is unknown | `./meowtower up` prints `gateway_unverified` and starts nothing. |
-| The Mac's default gateway changes while the containers run | Within 60 seconds the network watch stops both containers, and `./meowtower status` shows `wrong_network` with the recorded gateway and the current one. |
+| The Mac's default gateway changes while the containers run | Within 70 seconds, a 60-second tick and the stop, the network watch stops both containers, and `./meowtower status` shows `wrong_network` with the recorded gateway and the current one. |
 | A local judge's process runs as root or as a member of `admin` | `meowtower` routes none of its checks to it; they take their standby route, as ADR-0350 states. |
 | The Parent Room's port is taken by another program | `./meowtower up` prints `port_in_use` and starts nothing. |
 | The Docker engine isn't running | `./meowtower up` and `status` print `docker_not_running`. |

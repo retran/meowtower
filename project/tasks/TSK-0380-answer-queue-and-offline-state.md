@@ -23,11 +23,11 @@ After this task, the client commits each answer to IndexedDB before it sends it,
 
 ## What to do
 
-Build the queue on TSK-0110's unsent-answer store: write, wait for the transaction to commit, then send; retry from 1 second, doubling to at most 30 seconds; flush on launch before resume; hold at most one answer; remove an answer once the server replies, `409 lease_moved` included. Add the offline state, the waiting scene for `server_unreachable` and `queue_stuck`, as SPC-0030 states them. The waiting scene's text sits in the `ru` language file as a stand-in until ADR-0110's epic writes it. ADR-0190's definition of done applies; the iPad checklist it names also covers 0 lost answers after 30 seconds without Wi-Fi.
+Build the queue on TSK-0420's event-queue store: write, wait for the transaction to commit, then send; retry from 1 second, doubling to at most 30 seconds; flush on launch before resume; hold at most one answer; remove an answer once the server replies, `409 lease_moved` included. Add the offline state, the waiting scene for `server_unreachable` and `queue_stuck`, as SPC-0030 states them. The waiting scene's text sits in the `ru` language file as a stand-in until ADR-0110's epic writes it. ADR-0190's definition of done applies; the iPad checklist it names also covers 0 lost answers after 30 seconds without Wi-Fi.
 
 ## Depends on
 
-TSK-0320, because a resent answer must be recorded once. TSK-0340, because it disables controls and replaces screens that task draws. TSK-0110, because the queue lives in its unsent-answer store.
+TSK-0320, because a resent answer must be recorded once. TSK-0340, because it disables controls and replaces screens that task draws. TSK-0420, because the queue lives in its event-queue store.
 
 ## Evidence
 
@@ -36,3 +36,5 @@ Not yet.
 ## Left alone
 
 A service worker with Background Sync and prefetched tasks, which ADR-0030's reversal conditions hold back.
+
+Amended by ADR-0370, entry 45, approved on 2026-09-28: TSK-0420 replaced TSK-0110, so this task builds on TSK-0420's event-queue store.

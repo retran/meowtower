@@ -25,8 +25,13 @@ This epic realises ADR-0010: the server in Docker on the Mac, the `./tower` comm
 8. With OpenRouter blocked at the network, a simulated adventure day plays to its finale on library and pool texts. Evidence: the simulation's report, from TSK-0130.
 9. After 40 simulated sessions spread over three months, `data/snapshots/` holds 30 rolling snapshots plus the first of each month, and each snapshot opens in a SQLite client and lists its events. Evidence: the retention test's report, from TSK-0080.
 10. Playwright at 1280x720 with no mouse reaches and operates every control on every screen by keyboard, with a visible focus ring; the parent judges both interfaces screen by screen for REQ-2534. Evidence: the Playwright report and the parent's screen-by-screen judgement, from TSK-0100.
-11. After a device plays a day, its IndexedDB holds at most the unsent-answer store, and its `localStorage` holds no game data. Evidence: the storage inspection test's report, from TSK-0110.
-12. Every requirement ADR-0010 addresses lands in exactly one closed task. Evidence: `meow-method check coverage` with no finding.
+11. After a device plays a day, its IndexedDB holds at most the unsent entries of its event queue, and its `localStorage` holds no game data. Evidence: the storage inspection test's report, from TSK-0420, once play and the event queue from the epic realising ADR-0030 exist.
+12. `./meowtower up` refuses with `gateway_unverified` when the hardware address of the recorded or the current gateway is unknown, and the network watch stops both containers within 70 seconds of a gateway change, which `./meowtower status` shows as `wrong_network`. Evidence: the script's and the watch's tests, from TSK-0430.
+13. `POST /api/stage0/write` and `GET /api/stage0/write/:id` answer 404, and the version 0 events they wrote still read back. Evidence: the route test and the rebuild test, from TSK-0440.
+14. `storage_ceiling` counts `data/` together with the live database and its write-ahead log. Evidence: the size check's test, from TSK-0450.
+15. Every requirement ADR-0010 addresses lands in exactly one closed task. Evidence: `meow-method check coverage` with no finding.
+
+**Amended by ADR-0360 and ADR-0370.** Names follow ADR-0200's table: `./tower` means `./meowtower`, `tower` the container `meowtower`, `tower-db` the volume `meowtower-db`, and `tower.sqlite` the file `meowtower.sqlite`. ADR-0370 entry 45 widened the event queue from answers to answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft`, so REQ-6506 superseded REQ-2542, and TSK-0420 replaced TSK-0110 for criterion 11. ADR-0360 entries 2 and 3 and ADR-0370 entry 1 changed what ADR-0010 delivers after TSK-0060, TSK-0030 and TSK-0080 were done, so criteria 12 to 14 and the tasks TSK-0430, TSK-0440 and TSK-0450 were added. ADR-0350's change to `up` and `status` for the local judges, and ADR-0360 entry 1, go to the epic realising ADR-0350, as Not covered says. ADR-0340 changes nothing this epic delivers: its sandbox files sit in the volume `storage_ceiling` already counts once TSK-0450 is done.
 
 The epic can measure two things before it is finished. The crash test of TSK-0030 reports how many of 100 kills lose a committed write, and ADR-0010 reverses to Node under `launchd` if that number is above 0. `./tower status` reports how long a snapshot of a 1 GB database takes, against the 60-second budget in ADR-0190's Baselines table.
 
@@ -37,7 +42,7 @@ The epic can measure two things before it is finished. The crash test of TSK-003
 [~] dropped, with the reason        [+] added after approval, with why
 ```
 
-A task is marked in the commit that advances it, never in a later pass.
+A task is marked in the commit that advances it, never in a later pass, because the mark and its evidence then share one commit, and a mark added later claims work no commit shows.
 
 ## Tasks
 
@@ -58,6 +63,7 @@ A task is marked in the commit that advances it, never in a later pass.
       closes: REQ-2516, REQ-2518
       depends: TSK-0030 - the `devices` table lives in the database it opens
 - [x] T-005 TSK-0050 The PIN guards the Parent Room, both lockouts hold, and the parent revokes a device
+      evidence: meow-verbs exit 0, 326 Vitest and 13 Playwright tests; revoked device refused on 19 /api routes; both lockouts; owner confirmed on the iPad 2026-09-27 (TSK-0050 Evidence)
       closes: REQ-2520, REQ-2522
       depends: TSK-0040 - revocation and the pairing lockout act on pairing; TSK-0100 - the devices page is a client screen in both interfaces
 - [x] T-006 TSK-0060 The server answers only on the home network, and the Parent Room listener only on the Mac
@@ -69,15 +75,18 @@ A task is marked in the commit that advances it, never in a later pass.
       closes: REQ-2524, REQ-2528, REQ-2532
       depends: TSK-0030 - a snapshot copies the database it opens
 - [x] T-008 TSK-0080 A snapshot after each session, retention, and the backup and storage notices
+      evidence: meow-verbs exit 0, 331 Vitest and 13 Playwright tests; snapshot after each session, 30 rolling plus monthly kept, both notices (TSK-0080 Evidence)
       closes: REQ-2526, REQ-2530
       depends: TSK-0070 - it reuses the snapshot worker; TSK-0050 - the notices show in the Parent Room
 - [>] T-009 TSK-0090 The OpenRouter key never reaches a client
       closes: REQ-2504
       depends: TSK-0010 - the key's `.env` and the client bundle must exist
 - [x] T-010 TSK-0100 One client shell with a tablet and a computer interface, chosen by the device and switchable
+      evidence: meow-verbs exit 0, 318 Vitest and 9 Playwright tests in the ipad and computer projects; keyboard walk with focus ring (TSK-0100 Evidence)
       closes: REQ-2534, REQ-2536, REQ-2538, REQ-2540
       depends: TSK-0040 - the choice is stored in the device's `devices` row
-- [ ] T-011 TSK-0110 A device keeps no game data except unsent answers
+- [~] T-011 TSK-0110 A device keeps no game data except unsent answers
+      dropped: REQ-6506 superseded REQ-2542 on 2026-09-28, when ADR-0370 widened the event queue beyond answers, so TSK-0420 does this work against the wider queue
       closes: REQ-2542
       depends: TSK-0100 - the storage it restricts belongs to the client shell
 - [x] T-012 TSK-0120 The server sends no push in the MVP, and a check keeps it so
@@ -87,18 +96,35 @@ A task is marked in the commit that advances it, never in a later pass.
 - [ ] T-013 TSK-0130 The adventure plays on without the model service
       closes: REQ-2506
       depends: TSK-0050 - the `model_service_down` line shows in the Parent Room; outside this epic, a simulated adventure day, which needs the epics realising ADR-0030, ADR-0040, ADR-0100 and ADR-0110
+- [+] T-014 TSK-0420 A device keeps no game data except the unsent entries of its event queue (`src/client/`, `tests/e2e/`)
+      added: REQ-6506 superseded REQ-2542, which TSK-0110 closed, so the storage check has to allow the wider queue ADR-0370 defines
+      closes: REQ-6506
+      depends: TSK-0100 - the storage it restricts belongs to the client shell; outside this epic, TSK-0380 in EPC-0030, which fills the queue, and a simulated day, which needs the epics realising ADR-0030 and ADR-0040
+- [+] T-015 TSK-0430 `up` refuses an unverified gateway, and a network watch stops the containers when the gateway changes (`meowtower`, a launchd plist)
+      added: ADR-0360 entry 2 amended REQ-2510's behaviour after TSK-0060 was done
+      closes: none; REQ-2510 stays with TSK-0060
+      depends: TSK-0060 - it records the gateway and checks it at `up`
+- [+] T-016 TSK-0440 The stage 0 write routes answer 404 from stage 0.1 on (`src/server/stage0.ts`, `src/server/app.ts`)
+      added: ADR-0360 entry 3 retired the routes after TSK-0030 was done
+      closes: none
+      depends: TSK-0030 - its crash test writes through these routes
+- [+] T-017 TSK-0450 `storage_ceiling` counts the live database and its write-ahead log (`src/server/backups.ts`)
+      added: ADR-0370 entry 1 widened what REQ-2530's ceiling counts after TSK-0080 was done
+      closes: none; REQ-2530 stays with TSK-0080
+      depends: TSK-0080 - it raises the notice and holds its thresholds
 
 These tasks can run in parallel once their dependencies are done:
 
 - After TSK-0010: TSK-0020, TSK-0030, TSK-0060, TSK-0090 and TSK-0120.
 - After TSK-0030: TSK-0040 and TSK-0070.
 - After TSK-0040: TSK-0100, beside TSK-0070 if that is still running.
-- After TSK-0100: TSK-0050 and TSK-0110.
+- After TSK-0100: TSK-0050 and TSK-0420, whose criterion 4 also waits on EPC-0030's TSK-0380 and a simulated day.
+- Now, all three being done on their dependencies: TSK-0430, TSK-0440 and TSK-0450.
 - After TSK-0050: TSK-0080, once TSK-0070 is also done, and TSK-0130, once its outside dependencies exist.
 
 ## Coverage
 
-Every one of the 24 requirements ADR-0010 addresses lands in exactly one task above, and none is deferred.
+Every one of the 24 requirements ADR-0010 addresses lands in exactly one task above, and none is deferred. REQ-2542 is superseded by REQ-6506, which TSK-0420 closes.
 
 | Task | Requirements |
 | --- | --- |
@@ -112,7 +138,7 @@ Every one of the 24 requirements ADR-0010 addresses lands in exactly one task ab
 | TSK-0080 | REQ-2526, REQ-2530 |
 | TSK-0090 | REQ-2504 |
 | TSK-0100 | REQ-2534, REQ-2536, REQ-2538, REQ-2540 |
-| TSK-0110 | REQ-2542 |
+| TSK-0420 | REQ-6506 |
 | TSK-0120 | REQ-2544, REQ-2546 |
 | TSK-0130 | REQ-2506 |
 
@@ -120,6 +146,8 @@ The smallest set of tasks that would test the decision is TSK-0010, TSK-0020 and
 
 ## Not covered
 
+- ADR-0350's change to `./meowtower up`, `down` and `status`, a launchd daemon for each local judge and one status line per judge, and ADR-0360 entry 1, the dedicated standard account that runs each judge and the `./meowtower setup` that creates it, because both belong to the local judges, which the epic realising ADR-0350 builds.
+- The crash test's variant that restarts the Docker virtual machine, which ADR-0010's first reversal condition also counts: TSK-0030 didn't run it, because it needs Docker Desktop restarted by hand. The owner runs it from the stage 0 checklist, and the reversal condition stays unsettled until that run is recorded in TSK-0030's Evidence.
 - A copy of the data off the Mac, because no decision makes one; ADR-0010 leaves it to the owner.
 - Web push after the MVP: the `push_subscriptions` table, the permission button, the service worker's push handler and VAPID keys, because ADR-0010 places them in a later item and REQ-2544 allows no push in the MVP.
 - The event log's tables, the migrations' content, the export and the recompute behind `./tower export` and `./tower recompute`, because ADR-0020 defines them and its own epic realises them.
