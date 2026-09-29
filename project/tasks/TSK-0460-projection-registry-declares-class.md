@@ -39,7 +39,10 @@ TSK-0250, because it built the registry. TSK-0270, because it built the import c
 
 ## Evidence
 
-Not yet.
+Collected on 2026-09-29 on the Mac. Every criterion is met.
+
+- Verbs: `meow-verbs run format lint check test build` exited 0 at tree b66cc28d4ed8, records format 3d41ebd9d638, lint 324b876fed6f, check 593473c56e0e, test 770367ba68cb and build 98a85cd26cf3, kept as project/evidence/<record>.txt. Vitest 379 tests and Playwright 27 tests passed.
+- Criteria 1 to 5, REQ-2224: `tests/unit/projection-class.test.ts` reads the classes, each entry's `module` against its defining file, the mixed-module, versions and `llm_log` fixtures, and the source of `tools/static-checks.ts`; `tests/unit/static-checks.test.ts` keeps the older import fixtures, now passed as registry entries.
 
 ## Left alone
 

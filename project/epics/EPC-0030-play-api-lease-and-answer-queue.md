@@ -64,7 +64,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs exit 0 at tree 1563d2d70306, 358 Vitest and 23 Playwright tests; format check, keepalive pause, both idle limits, identical markup; parent's sign-off «works» on 2026-09-29 (TSK-0340 Evidence)
       closes: REQ-2402, REQ-2406, REQ-2408, REQ-2410, REQ-2430
       depends: TSK-0310 - it draws the final packet shapes; TSK-0330 - the pause route; TSK-0100 - the client shell it draws in
-- [ ] T-007 [P] TSK-0350 One device holds the adventure through a lease, and the displaced device turns view-only
+- [x] T-007 [P] TSK-0350 One device holds the adventure through a lease, and the displaced device turns view-only
+      evidence: meow-verbs exit 0 at tree b66cc28d4ed8, 379 Vitest and 27 Playwright tests; view-only screen, expiry equal to a leave, both late-answer cases
       closes: REQ-0202, REQ-0220, REQ-0222
       depends: TSK-0320 - `lease_moved` travels on its SSE stream; TSK-0340 - the view-only screen replaces its play screen
 - [ ] T-008 [P] TSK-0380 The client queues every answer before sending it, and plays no task while offline

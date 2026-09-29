@@ -88,7 +88,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       closes: none - it realises ADR-0020's failure table for `log_write_failed`
       depends: TSK-0200 - it raises `LogWriteFailed`; TSK-0080 - the notices live in its file
       why added: the epic's verification on 2026-09-28 found `log_write_failed` only in the server's log and a play route answering 500, and the owner asked to fix it
-- [+] T-012 TSK-0460 Every projection declares its class, and the import check reads it (`src/engine/projections/`, `tools/static-checks.ts`)
+- [x] T-012 TSK-0460 Every projection declares its class, and the import check reads it (`src/engine/projections/`, `tools/static-checks.ts`)
+      evidence: meow-verbs exit 0 at tree b66cc28d4ed8, 379 Vitest and 27 Playwright tests; registry classes, module identity, chain through a helper, `llm_log`
       added: ADR-0370 entry 2 gave every registry entry a class after TSK-0250 and TSK-0270 were done
       closes: none; REQ-2224 stays with TSK-0270
       depends: TSK-0250 - it built the registry; TSK-0270 - it built the import check
