@@ -9,6 +9,8 @@ None yet: the project is at the research stage.
 | Identifier | What it requires | Status |
 | --- | --- | --- |
 | [REQ-0100](REQ-0100-adventure-lasts-sixty-minutes.md) | The adventure of the day MUST be planned to take about 60 minutes of the player's active time. | approved |
+| [REQ-0105](REQ-0105-adventure-ahead-of-time-preparation.md) | The game MUST allow the parent to prepare the adventure of the day in advance from the Parent Room or by a command on the Mac, previewing its planned route, story scenes, math task statements, and answers before the player plays. | approved |
+| [REQ-0107](REQ-0107-adventure-served-from-approved-plan.md) | When an adventure has been prepared and approved by the parent in advance, the game MUST serve the approved adventure to the player on the next game day from the unplayed pool without requiring live model calls during play. | approved |
 | [REQ-0102](REQ-0102-adventure-runs-in-fixed-order.md) | The adventure of the day MUST run in this order: «В прошлый раз…» (Last time…) with the daily quests, then 3 maths floors, or 4 when the forecast leaves time, then a finale that ends on a cliffhanger. | superseded |
 | [REQ-0104](REQ-0104-floor-runs-in-fixed-order.md) | Each maths floor MUST run in this order: an entry scene, an unscored warm-up, 2 mental arithmetic tasks, 1 or 2 rooms of trials, sometimes a Guardian, then the floor chest. | superseded |
 | [REQ-0106](REQ-0106-task-window-separate-panel.md) | Every task MUST open in the task window, a flat panel separate from System windows. | approved |
@@ -301,7 +303,7 @@ None yet: the project is at the research stage.
 | [REQ-1034](REQ-1034-cold-start-top-down.md) | During cold start, which lasts from the first adventure until fewer than half of the 1F and 1S nodes remain unchecked or the 10th adventure ends, whichever comes first, the Director MUST probe each domain's prerequisite chain from a typical node of group 7-8 downwards, going lower only after a probe escalates. | approved |
 | [REQ-1036](REQ-1036-cold-start-bottom-review.md) | During cold start, which lasts from the first adventure until fewer than half of the 1F and 1S nodes remain unchecked or the 10th adventure ends, whichever comes first, the Director MUST use the nodes N1 to N3, A1 to A4 and F1 as review tasks. | approved |
 | [REQ-1038](REQ-1038-opening-closing-control-facts.md) | Each adventure MUST hold 2 control facts at its start and 2 at its end. | approved |
-| [REQ-1040](REQ-1040-graded-attempt-minimum.md) | An adventure the player completes MUST hold at least 28 graded first attempts, or at least 25 when the Director has trimmed rooms for a slow pace. | approved |
+| [REQ-1040](REQ-1040-graded-attempt-minimum.md) | The Director MUST target 30 to 40 graded first attempts in an adventure of 60 minutes, calibrated to task difficulty, and an adventure the player completes MUST hold at least 28 graded first attempts, or at least 25 when the Director has trimmed rooms for a slow pace. | approved |
 | [REQ-1042](REQ-1042-story-time-cap.md) | Story MUST take no more than 10 minutes of an adventure's active time. | approved |
 | [REQ-1044](REQ-1044-extension-rooms-by-value.md) | Each extension MUST add only rooms chosen by value. | approved |
 | [REQ-1046](REQ-1046-extension-no-new-floor.md) | An extension MUST NOT open a new floor. | approved |

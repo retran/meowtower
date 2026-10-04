@@ -37,7 +37,7 @@ The 60-minute length is a soft target. The Director plans the adventure's volume
 
 ### The MVP adventure has a fixed order of parts
 
-«В прошлый раз…» (Last time…) and the daily quests, then a route of 3 maths floors (4 if the forecast leaves time), then on each floor: an entry scene, an unscored warm-up, mental arithmetic of 2 tasks, 1-2 rooms of 3-5 tasks each, sometimes a Guardian, the floor chest, then a finale with a cliffhanger. The Observatory gets a short visit (2-3 questions) once every three adventure days. The guide figure is 25-35 first attempts per adventure, plus second attempts after reviews.
+«В прошлый раз…» (Last time…) and the daily quests, then a route of 3 maths floors (4 if the forecast leaves time), then on each floor: an entry scene, an unscored warm-up, mental arithmetic of 2 tasks, 1-2 rooms of 3-5 tasks each, sometimes a Guardian, the floor chest, then a finale with a cliffhanger. The Observatory gets a short visit (2-3 questions) once every three adventure days. The guide figure is 30-40 graded first attempts per adventure, calibrated to domain difficulty (30–32 for multi-step tasks, up to 38–42 for rapid arithmetic), plus second attempts after reviews. An adventure can also be prepared and previewed by the parent in advance.
 
 ### The MVP section repeats the eye exercise and the soft stop
 
@@ -180,6 +180,8 @@ The draft's Session 0 has the player choose her heroine's appearance. The owner'
 20. Every first attempt must show as a spell with one of three outcomes, clean, almost or loosened, as RES-1700 sets out.
 21. The System must announce a knot in a System window before the task and speak the outcome line after it, and must never hold the task itself.
 22. Session 0 must let the player choose the heroine's name, cloak colour and focus, and must offer no choice of look.
+23. The adventure of the day must target 30 to 40 graded first attempts calibrated to task difficulty, maintaining the minimum floor of at least 28 (25 when trimmed for slow pace).
+24. The game must allow the parent to prepare the adventure in advance from the Parent Room or by command on the Mac to preview story scenes, math tasks, and answers beforehand, and serve approved unplayed adventures without requiring live generation during play.
 
 ## Sources
 

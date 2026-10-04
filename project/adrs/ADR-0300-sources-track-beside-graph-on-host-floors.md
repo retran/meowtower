@@ -195,7 +195,7 @@ The premortem, written as though it had happened: by the third month the parent 
 - ADR-0070: "The route first takes each domain that has had no completed floor for 2 adventure days in a row" becomes: when the track window is due, a host floor goes first, a due domain that is a host domain preferred, and the due domains follow.
 - ADR-0070: the success share "over the last 10 graded first attempts" becomes: over the last 10 graded first attempts on graph tasks.
 - ADR-0070: "It never trims mental arithmetic, control facts, or the last room" becomes: it never trims mental arithmetic, track tasks, control facts, or the last room.
-- ADR-0070: "The plan aims at 30 graded first attempts and never plans fewer than 28, or 25" becomes: those counts hold for graph first attempts only.
+- ADR-0070: "The plan targets 30 to 40 graded first attempts and never plans fewer than 28, or 25" becomes: those counts hold for graph first attempts only.
 - ADR-0080: `attempt_submitted` admits a `region` index as its raw answer in a new payload version.
 - ADR-0150: the text-size check "at least 13 px everywhere, story 20 px and task 24 px" becomes: it also measures SVG text inside sources, at the `task` size or above.
 - ADR-0180: "It has the eight screens of report v1" becomes nine screens, with «Работа с источниками» as the ninth.

@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-29
 checked-at:
-states: [REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032]
+states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -157,11 +157,13 @@ The canon data sets the MVP's eerie-cute Tangles as «Шепотун» (the Whis
 
 ### Story memory and the planner
 
-Story memory sends the last 7 session summaries, one summary for each earlier chapter and at most 200 facts. When the facts pass 200, the prompt drops the facts used least recently, and every fact stays stored. The dynamic part of a request stays under about 3,000 tokens. ADR-0330 states the kinds and scopes of fact it adds.
+Story memory sends the last 7 session summaries, one summary for each earlier chapter and at most 200 facts. When the facts pass 200, the prompt drops the facts used least recently, and every fact stays stored in the append-only event log. Facts record significant player actions (`player_action`), character relations and impressions, and running jokes, enabling characters and narrators to refer back to earlier events and player choices. The dynamic part of a request stays under about 3,000 tokens. ADR-0330 states the kinds and scopes of fact it adds.
 
 After each session, `PLANNER_MODEL` receives the filtered canon, story memory, the session's summary outcome events, her cleaned text and choices, the checkpoint and the creepiness level's name. It returns a session summary and the next session's plan of 5 to 7 beats, which pass the same checks as a reply, and the service logs `plan_written` (REQ-1640). When the planner fails twice, the next session plays the unused beats of the last accepted plan and a library opening, and the owner gets one report.
 
 The opening scene «В прошлый раз…» (Last time…) is a Master scene ordered from the planner's latest session summary, and when that order fails, the library opening plays in its place.
+
+When an advance preparation request is submitted by the parent (`REQ-0105`), the Master service pre-generates and checks the scenes for the planned adventure, writing `adventure_prepared`. Upon parent approval in the Parent Room, `adventure_approved` is logged, and the adventure enters the unplayed approved pool served on the next game day without live model generation (REQ-0107).
 
 ### The safety pipeline on her text
 

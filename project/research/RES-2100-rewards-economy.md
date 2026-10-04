@@ -138,7 +138,7 @@ Decided on 2026-09-27 by research, on the owner's instruction to answer the open
 
 Proposed by research on 2026-09-26; the owner approves it with this record.
 
-The draft left every amount blank. I sized them against the figures other records already give: 25-35 scored first attempts an adventure plus about 3 unscored warm-ups (RES-0100), 3 maths floors a day with 1-2 rooms each, so about 4-5 room chests and 3 floor chests, about one Guardian an adventure, a room clean share near 0.6-0.7 (RES-1700), 8-10 guiding threads a day with a cap of 30 (RES-0500), and this record's own pace of one or two notable items a week. All amounts are starting values in versioned content files (`content/shop.ru.json`, `content/recipes.ru.json`, RES-2500), to be checked against the two weeks of play in stage 0.3.
+The draft left every amount blank. I sized them against the figures other records already give: 30-40 scored first attempts an adventure (target 30–40, minimum 28; RES-0100, RES-1000) plus about 3 unscored warm-ups, 3 maths floors a day with 1-2 rooms each, so about 4-5 room chests and 3 floor chests, about one Guardian an adventure, a room clean share near 0.6-0.7 (RES-1700), 8-10 guiding threads a day with a cap of 30 (RES-0500), and this record's own pace of one or two notable items a week. All amounts are starting values in versioned content files (`content/shop.ru.json`, `content/recipes.ru.json`, RES-2500), to be checked against the two weeks of play in stage 0.3.
 
 Two ways to pay buttons were weighed:
 

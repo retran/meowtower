@@ -9,7 +9,7 @@ revised: 2026-09-26
 
 ## Summary
 
-The owner's draft proposes that the Director fills every room slot from three sources: the frontier, spaced review and the parent's lesson topics. A weighted value formula ranks frontier candidates, and a flow rule keeps the share of successful first attempts near 70-80 % by switching slots between frontier and review. The adventure visits three floors a day, four when time allows, and every one of the 8 maths domains gets its floor at least once in any 3 adventure days. A cold start of 7-10 adventures probes each domain's prerequisite chain from the top down. The draft sizes the day at about 25-35 graded first attempts, but it computes that budget for a 40-minute adventure, and the owner has since set the adventure at 60 minutes of active time and decided that the budget needs no recomputing. The Director plans the volume in advance from the last 5 days' pace and trims rooms in a fixed order when the pace is slow. This record covers task selection and the session budget. Ascents, anchor forms, fatigue and measurement protection are in RES-1100, limits in RES-1300 and lesson marks and dynamics in RES-1400.
+The owner's draft proposes that the Director fills every room slot from three sources: the frontier, spaced review and the parent's lesson topics. A weighted value formula ranks frontier candidates, and a flow rule keeps the share of successful first attempts near 70-80 % by switching slots between frontier and review. The adventure visits three floors a day, four when time allows, and every one of the 8 maths domains gets its floor at least once in any 3 adventure days. A cold start of 7-10 adventures probes each domain's prerequisite chain from the top down. The draft sizes the day at about 25-35 graded first attempts, but it computes that budget for a 40-minute adventure. On 2026-09-28 the owner settled a target guideline of 30 to 40 graded first attempts per 60-minute session calibrated by task difficulty (30–32 for multi-step domains, up to 38–42 for rapid arithmetic and place-value facts), maintaining the floor of 28 (25 when trimmed for slow pace). The Director plans the volume in advance from the last 5 days' pace and trims rooms in a fixed order when the pace is slow. The parent may also prepare and preview the adventure ahead of time. This record covers task selection and the session budget. Ascents, anchor forms, fatigue and measurement protection are in RES-1100, limits in RES-1300 and lesson marks and dynamics in RES-1400.
 
 ## The question
 
@@ -158,11 +158,14 @@ Story takes at most 8-10 minutes an adventure. An extension adds rooms chosen by
 
 The budget opens with "примерно 25-35 первых попыток" (about 25-35 first attempts), target about 30. The arithmetic ends with "≈ 28-44 оцениваемых" (about 28-44 graded). The table totals "26-44". All three assume a 40-minute adventure.
 
-### Resolved: The session budget stays as the draft computed it, and an extension adds 20 minutes
+### Resolved: The session budget targets 30 to 40 graded first attempts, and an extension adds 20 minutes
 
-The owner decided on 2026-09-26: the session budget, the minimums of 28 and 25 scored first attempts and the cost estimates don't need recomputing for the one-hour adventure. The 40-minute figures above stay as the draft's estimate. The Director still plans volume from her real pace, and the simulation (stage 0.1) and the adult session (stage 0.2) check the minimums on a 60-minute adventure, which a longer adventure makes easier to meet.
+The owner decided on 2026-09-26 that the adventure of the day lasts 60 minutes of active time and the soft stop comes at 60 minutes. On 2026-09-28, the owner decided that the Director targets 30 to 40 graded first attempts per 60-minute session, calibrated to task difficulty:
+- 30 to 32 tasks for heavy, multi-step word problems, fractions, and geometry;
+- 34 to 36 tasks for a standard balanced route;
+- 38 to 42 tasks for rapid arithmetic, place-value, and single-step operations.
 
-The owner also decided that the soft stop comes at 60 minutes of active time. Research on the same day set each extension at 20 minutes, the MVP section's figure, over the 15 minutes this range gives; RES-0300 holds the comparison. Proposed by research on 2026-09-26; the owner approves it with this record.
+The minimum floor of 28 scored first attempts at 1.0 times fluency threshold (and 25 when trimmed for slow pace) remains in force (REQ-1040, REQ-2912, REQ-2914). Research on 2026-09-26 set each extension at 20 minutes (RES-0300). On 2026-09-28, the owner also decided that the parent can trigger adventure generation ahead of time from the Parent Room or command line to preview both story scenes and math tasks in advance.
 
 ### The Director keeps the adventure inside its planned volume
 
@@ -189,11 +192,13 @@ Reviews and second attempts take about a fifth of task time, and the flow rule g
 9. The Guardian must set its task's number of steps by the ladder-of-the-day rule, starting at T1 when no T node is fluent and during cold start.
 10. During cold start, the first 7-10 adventures or while half of the mandatory nodes are unchecked, the Director must probe each domain's prerequisite chain from the top down by binary search, using N1-N3, A1-A4 and F1 as review tasks.
 11. The adventure must include 2 control facts at the start and 2 at the end, and science questions (2-3) once every three days.
-12. The Director must plan the session budget for an adventure of 60 minutes of active time, the owner's decision, and must meet at least the draft's minimums of scored first attempts; the owner doesn't need the draft's 40-minute figures recomputed.
+12. The Director must plan the session budget targeting 30 to 40 graded first attempts for a 60-minute adventure, calibrated to task difficulty, while meeting the floor of at least 28 scored first attempts (25 when trimmed for slow pace).
 13. Story must take no more than 8-10 minutes an adventure, and the 20-minute extension must add only rooms chosen by value, never a new floor.
 14. The Director must plan volume from the last 5 days' pace, recompute before each floor and trim rooms in the order stated in this record, never trimming mental arithmetic, control facts or the last room on a floor with an open probe or escalation.
 15. An adventure that does not fit before the soft stop must resume the next day from the same place, and the domain window must count only floors actually completed.
 16. The simulation must show that node classification accuracy over 30 days stays above the thresholds under the reduced frontier budget.
+17. The game must allow the parent to prepare the adventure in advance from the Parent Room or a command on the Mac, previewing the route, scenes, tasks, and answers before the player plays.
+18. When an adventure is approved in advance by the parent, the game must serve the approved adventure without requiring live generation during play.
 
 ## Sources
 

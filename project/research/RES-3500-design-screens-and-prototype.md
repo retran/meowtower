@@ -63,7 +63,7 @@ The guideline's scenarios and the sheets that draw them:
 | --- | --- | --- | --- |
 | 1 «Пробуждение» (Awakening) | the player with a parent, once, 20-25 minutes, no knowledge check | 01, 02, 03, first chest, training, 04, first scene, 17 | 01a, 01b, 02, 03, 04 |
 | 2 «Приключение дня» (the adventure of the day) | the player alone, daily, about 30-45 minutes | 05, 06, 07, 08, trials, 11, 12, 17 | 05, 06, 07, 08 |
-| 3 «Испытание» (the trial) | the core, 25-35 first attempts per adventure | 09 lead-in, task window, knot scheme, similar knot, spell, 11 | 09a, 09b, 09c, 09d, 10a, 10b, 11, 12 |
+| 3 «Испытание» (the trial) | the core, 30-40 first attempts per adventure (calibrated by difficulty) | 09 lead-in, task window, knot scheme, similar knot, spell, 11 | 09a, 09b, 09c, 09d, 10a, 10b, 11, 12 |
 | 4 «Время без часов» (time without clocks) | measured quietly, arrives as story | 14 every 20 minutes, 15 by button, 16 at about 45 minutes, 21 on return | 14, 15, 16a, 16b, 17, 21 |
 | 5 «Рост и особые моменты» (growth and special moments) | levels, new familiars, the Underside, safety | 13, 18 egg and name, 19, 20 | 13, 18a, 18b, 19, 20 |
 | 6 «Башня без заданий» (the Tower without tasks) | after the finale, until the day ends at 04:00 (the draft said within the daily maximum, which the owner removed on 2026-09-27) | 05, then 22, 23, 24 or 25, then 05 | 22, 23, 24, 25 |

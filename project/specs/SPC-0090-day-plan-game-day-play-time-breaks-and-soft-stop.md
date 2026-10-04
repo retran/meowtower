@@ -4,7 +4,7 @@ artifact: spec
 status: live
 revised: 2026-09-29
 checked-at:
-states: [REQ-0100, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0148, REQ-0300, REQ-0302, REQ-0304, REQ-0308, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364, REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5022, REQ-5056]
+states: [REQ-0100, REQ-0105, REQ-0107, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0148, REQ-0300, REQ-0302, REQ-0304, REQ-0308, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364, REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5022, REQ-5056]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -56,7 +56,7 @@ The parent settings hold the eye-exercise skip switch, off by default (REQ-0316)
 
 | Constant | Value |
 | --- | --- |
-| The adventure's target | about 60 minutes of active time |
+| The adventure's target | about 60 minutes of active time, targeting 30 to 40 graded first attempts (REQ-0100, REQ-1040) |
 | The pace window | the median over the last 5 adventure days |
 | The pace default with no history | 75 seconds per first attempt with its review |
 | A room's length | 3 to 5 tasks, at most 3 when SPC-0070 trims new rooms |
@@ -88,7 +88,9 @@ The dependencies run one way. `src/engine/day/` imports nothing from `src/server
 
 ### The day plan
 
-When a game day opens with no adventure in progress, the planner builds a seeded plan sized to about 60 minutes of her active time (REQ-0100). The forecast uses her pace, the median over her last 5 adventure days of three durations: a first attempt with its review, a second attempt, and a scene. It adds the story and the expected eye exercises, 3 an hour at the median of her logged exercise lengths, or 35 seconds each before any are logged. A fourth floor joins the plan only when the forecast with it stays within 60 minutes. With fewer than 5 adventure days, the median covers the days there are, and with none the forecast takes 75 seconds per first attempt with its review.
+When a game day opens with no adventure in progress, the server first checks whether an approved adventure prepared in advance (`adventure_approved`) exists in the unplayed pool. If an approved adventure exists, it loads that adventure directly, serving its pre-planned route, rooms, tasks, and pre-checked scenes without live model generation during play (REQ-0105, REQ-0107).
+
+Otherwise, the planner builds a seeded plan sized to about 60 minutes of her active time (REQ-0100), targeting 30 to 40 graded first attempts calibrated to task difficulty (REQ-1040). The forecast uses her pace, the median over her last 5 adventure days of three durations: a first attempt with its review, a second attempt, and a scene. It adds the story and the expected eye exercises, 3 an hour at the median of her logged exercise lengths, or 35 seconds each before any are logged. A fourth floor joins the plan only when the forecast with it stays within 60 minutes. With fewer than 5 adventure days, the median covers the days there are, and with none the forecast takes 75 seconds per first attempt with its review.
 
 An adventure that stops at the soft stop continues on the next game day from the same slot, with the rest of the plan recomputed from her pace. The planner starts a new adventure only after the previous finale.
 

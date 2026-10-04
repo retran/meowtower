@@ -51,7 +51,7 @@ Group 3 simulates the ten profiles of RES-2900, from «всё знает» (know
 
 - at least 90 % of nodes classified correctly on every profile, including the 30-day run under the reduced frontier budget (REQ-2908, RES-3900);
 - over 30 days, each node's estimate converges towards the profile's true state (REQ-2910). I chose the test: for every node observed at least 5 times, the absolute error at day 30 is no larger than at day 10 and below 0.3;
-- a 60-minute adventure yields at least 28 scored first attempts at 1.0 times the fluency threshold and at least 25 at 1.5 times (REQ-2912, REQ-2914). These minimums are imposed by the owner's decision of 2026-09-26;
+- a 60-minute adventure targets 30 to 40 graded first attempts calibrated by task difficulty and yields at least 28 scored first attempts at 1.0 times the fluency threshold and at least 25 at 1.5 times (REQ-1040, REQ-2912, REQ-2914). The guideline was set by the owner's decision of 2026-09-28, and the minimums were imposed by the owner's decision of 2026-09-26;
 - on mixed profiles after the cold start, every session's success share stays between 0.65 and 0.85 and the mean lies between 0.70 and 0.80 (REQ-2916, REQ-2918);
 - after 30 days the knowledge model tells "knows" from "doesn't know" with at least 90 % accuracy (REQ-2920);
 - a new version of the knowledge model scores no lower than the version before it on any accuracy metric (REQ-2922). The metrics of each approved version are kept in `verify/model-metrics/<version>.json`, and the check compares against the latest one.

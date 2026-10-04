@@ -127,7 +127,7 @@ Every rule skips a track node with no built template, and such a node shows «н
 
 ### Track attempts and the day's counts
 
-A first attempt on a track task doesn't count toward the minimum of 28 scored first attempts in an adventure (REQ-5926), toward the minimum of 25 at 1.5 times the threshold, or toward the plan target of 30. Track attempts stay out of the flow corridor's success share, which reads the last 10 graded first attempts on graph tasks. The trim order never trims a track task.
+A first attempt on a track task doesn't count toward the minimum of 28 scored first attempts in an adventure (REQ-5926), toward the minimum of 25 at 1.5 times the threshold, or toward the plan target of 30 to 40. Track attempts stay out of the flow corridor's success share, which reads the last 10 graded first attempts on graph tasks. The trim order never trims a track task.
 
 ### Track templates
 

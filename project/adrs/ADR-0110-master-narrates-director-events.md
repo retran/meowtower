@@ -3,7 +3,7 @@ id: ADR-0110
 artifact: adr
 status: approved
 revised: 2026-09-27
-addresses: [REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1626, REQ-1628, REQ-1630, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1840, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-2610, REQ-2714, REQ-2726, REQ-3316, REQ-3320, REQ-3330, REQ-3712]
+addresses: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1626, REQ-1628, REQ-1630, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1840, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-2610, REQ-2714, REQ-2726, REQ-3316, REQ-3320, REQ-3330, REQ-3712]
 supersedes: []
 ---
 
@@ -70,7 +70,10 @@ waits and never shows unchecked text.
 
    Story memory sends the last 7 session summaries, one summary for each
    earlier chapter and at most 200 facts. The prompt drops the facts used
-   least recently, and every fact stays stored. I chose these caps to keep the
+   least recently, and every fact stays stored in the append-only event log.
+   The session summary feeds the opening «В прошлый раз…» (Last time…) of the
+   following adventure, and characters refer back to past interactions, choices,
+   and running jokes recorded in story memory. I chose these caps to keep the
    dynamic part of a request under about 3,000 tokens, the size RES-2700
    costed. The entity list names characters by the campaign calendar, so from
    the autumn chapter's finale every order calls the ally «Бантик»
@@ -250,7 +253,17 @@ waits and never shows unchecked text.
     (REQ-1640). After a second failure, the next session plays the unused
     beats of the last accepted plan and a library opening, and the owner gets
     one report.
-12. After the MVP. Items and creatures the game invents arrive only through a
+12. Ahead-of-time adventure preparation and parent preview. The parent can
+    trigger advance preparation of the day's adventure from the Parent Room
+    or by command on the Mac (`./meowtower adventure plan --preview`). The
+    Director plans the route and task slots (30–40 tasks), and the Master
+    drafts and checks the scene orders in advance. The Parent Room shows the
+    full prepared adventure: the route, story scenes, math task statements, and
+    answers. The parent can approve it (`adventure_approved`) or swap
+    individual tasks. When the player starts the adventure, the server serves
+    the pre-approved adventure from the unplayed pool, running without live
+    model calls during play (REQ-0105, REQ-0107).
+13. After the MVP. Items and creatures the game invents arrive only through a
     `reward_hint`. The Director sets each one's type, rarity and limits
     (REQ-1674), and the Parent Room lets the parent hide or redraw each one
     (REQ-1676).

@@ -124,7 +124,7 @@ Group 3 simulates the ten synthetic profiles of RES-2900, from «всё знае
 
 - at least 90 % of nodes classified correctly on every profile, the 30-day run under the reduced frontier budget included (REQ-2908);
 - over 30 days, for every node observed at least 5 times, an absolute error at day 30 no larger than at day 10 and below 0.3 (REQ-2910);
-- a 60-minute adventure yields at least 28 graph first attempts at 1.0 times the fluency threshold (REQ-2912) and at least 25 at 1.5 times (REQ-2914), with the estimate and inverse-check times of ADR-0240 added to the profiles' answer times, and the report counts track first attempts apart;
+- a 60-minute adventure targets 30 to 40 graded first attempts calibrated by task difficulty and yields at least 28 graph first attempts at 1.0 times the fluency threshold (REQ-1040, REQ-2912) and at least 25 at 1.5 times (REQ-2914), with the estimate and inverse-check times of ADR-0240 added to the profiles' answer times, and the report counts track first attempts apart;
 - on mixed profiles after the cold start, every session's success share lies between 0.65 and 0.85 (REQ-2916), and the mean between 0.70 and 0.80 (REQ-2918);
 - after 30 days, the knowledge model tells "knows" from "doesn't know" with at least 90 % accuracy (REQ-2920);
 - a new knowledge-model version scores no lower than the latest file in `verify/model-metrics/` on any accuracy metric (REQ-2922).
