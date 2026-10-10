@@ -28,7 +28,7 @@ The definition of done in ADR-0190 applies as well and isn't restated here.
 
 Add the validator to `src/engine/graph.ts`'s loader: rule 1 of SPC-0050, which is the schema, the field checks of the node table, `level` agreeing with the subtypes, and an acyclic prerequisite graph by topological sort. Wire it into the server start so a failure takes TSK-0500's `graph_invalid` and `graph_unloadable` paths, and add `./meowtower graph check`. Its report names each rule and each failure; the verify command of ADR-0190's epic runs the same validator when it exists.
 
-Add `typicalGroup(node)` to the query module and the lint rules: `no-restricted-imports` with `importNames` for `typicalGroup`, and `no-restricted-syntax` for a string literal that matches `graph(\.[a-z]+)?\.yaml` outside `src/engine/graph.ts`. SPC-0050 allows `typicalGroup` only under `src/parent/`, and SPC-0070 has the Director's cold start read it. I chose to keep the allowed folders in one list in the lint configuration, holding `src/parent/` and `src/engine/director/cold-start.ts`, so the cold-start task adds no second rule and the report names the contradiction for the owner to settle.
+Add `typicalGroup(node)` to the query module and the lint rules: `no-restricted-imports` with `importNames` for `typicalGroup`, and `no-restricted-syntax` for a string literal that matches `graph(\.[a-z]+)?\.yaml` outside `src/engine/graph.ts`. SPC-0050 allows `typicalGroup` under `src/parent/` and in the Director's cold start. The allowed folders are one list in the lint configuration, holding `src/parent/` and `src/engine/director/cold-start.ts`, so the cold-start task adds no second rule.
 
 The rules for counts, the fixture and the 17 split nodes need the full file and come with TSK-0502 and TSK-0505.
 

@@ -2,7 +2,7 @@
 id: SPC-0050
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-10-10
 states: [REQ-0800, REQ-0802, REQ-0804, REQ-0806, REQ-0808, REQ-0810, REQ-0812, REQ-0814, REQ-0816, REQ-0818, REQ-0850, REQ-0852, REQ-0854, REQ-1244, REQ-3812]
 ---
 
@@ -53,7 +53,7 @@ The server reads `content/graph.yaml` from `content/`, which the `tower` contain
 | `changes()` | every `changes` line of the served version, each marked new when the previous stored version lacked it |
 | `trackNodes()` | the track nodes of `tracks`, apart from the maths nodes, as ADR-0300 states |
 
-`form` and `requires` hold what SPC-0040 and ADR-0070 state for them. Only modules under `src/parent/` import `typicalGroup`; ESLint `no-restricted-imports` with `importNames` fails any other module that imports it.
+`form` and `requires` hold what SPC-0040 and ADR-0070 state for them. Only modules under `src/parent/` and the Director's cold-start module `src/engine/director/cold-start.ts` import `typicalGroup`; ESLint `no-restricted-imports` with `importNames` fails any other module that imports it. The cold start reads it to order its probes (REQ-1034, SPC-0070) and drops no node by it, which is what REQ-0854 forbids.
 
 ### Failure states
 
@@ -141,7 +141,7 @@ The validator runs in `npm run verify`, in `./tower graph check` and at every se
 3. The fixture: each base maths node's domain, level and prerequisites equal `tests/fixtures/res-0800.yaml`, unless a `changes` line names that node and field. N3, N6, N7, A11, A13, A14, F3, F4, F5, F6, F7, D4, D6, P5, P6, M4 and S5 are 1F/1S (REQ-0814), and each holds at least one 1F and one 1S subtype (REQ-0850).
 4. Measurement: every subtype of M4, M5 and M7 carries a `method` its node allows, a subtype marked `method: formula` is 1S, and a 1F subtype is marked `squares` or `sides` on M4 and M5 and `cubes` on M7 (REQ-0816). The limit of 1F to rectangular figures with simple numbers is held by the review of each template's parameter ranges, not by the validator. M4 holds the 1F subtypes `rect-squares` and `rect-sides` for the perimeter of a rectangle, and the 1S subtypes `not-rect` for the perimeter of a figure that isn't a rectangle, `side-from-perimeter` and `same-area` for "one area, different perimeters" (REQ-0818). This spec chose these five ids, since no record names them.
 5. SLO goals: every `sloGoals` entry is named by at least one subtype, and every `slo` reference names an existing goal (REQ-0812). A reviewing agent judges the goal list and the mapping against the SLO document when `sloGoals` is first written and whenever `sloGoals` or any subtype's `slo` field changes, and its report names every goal with at least one subtype.
-6. Scope: every node up to the end of group 8, level 1S, stays in the graph, whatever the player's current school group, which `personal/player.md` holds (REQ-0854). The validator has no filter by `typicalGroup`, and no module outside `src/parent/` can read `typicalGroup`, since the lint rule under Query module fails the import.
+6. Scope: every node up to the end of group 8, level 1S, stays in the graph, whatever the player's current school group, which `personal/player.md` holds (REQ-0854). The validator has no filter by `typicalGroup`, and no module outside `src/parent/` and the Director's cold start can read `typicalGroup`, since the lint rule under Query module fails the import.
 7. Overlays: a curriculum overlay file `content/graph.<curriculum>.yaml`, such as `content/graph.nl.yaml`, is on when it exists, and the loader reads every such file beside `content/graph.yaml`. The first version ships none. An overlay adds nodes of its own, with their subtypes and prerequisites, and those prerequisites may name base nodes. The validator fails an overlay entry that reuses a base node id, adds a subtype or a prerequisite to a base node, or removes or changes a base field, so the weights, prerequisites and descent targets of base nodes stay as the base file gives them (REQ-3812). Rules 1, 4, 5 and 6 run on the base and the overlays together, and rules 2 and 3 on the base file alone.
 
 The validator also warns once for each node with more than 5 subtypes at equal weights, since none of them reaches the weight of 0.2 a full block must cover.
@@ -176,6 +176,6 @@ The loader parses and validates the file within 1 second at start-up, the budget
 | A graph subtype has no template | The subtype is `not_generatable`, and verify and the Parent Room list it; what the Director does with it is ADR-0070's. |
 | An overlay reuses a base id or changes a base field | Rule 7 fails, naming the overlay entry. |
 | A module outside `src/engine/graph.ts` names `graph.yaml` or an overlay file | Lint fails the build. |
-| A module outside `src/parent/` imports `typicalGroup` | Lint fails the build. |
+| A module outside `src/parent/` and `src/engine/director/cold-start.ts` imports `typicalGroup` | Lint fails the build. |
 | The file holds an alias bomb | The `yaml` parser stops at 100 aliases and the file fails as invalid. |
 | Loading and validation take longer than 1 second | The verify report prints the measure beside ADR-0190's baseline and records a defect, as ADR-0190 states; the load goes on. |
