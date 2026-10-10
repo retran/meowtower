@@ -2,39 +2,56 @@
 id: onboarding
 artifact: onboarding
 status: approved
-revised: 2026-09-27
+revised: 2026-10-10
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with what was found, give each figure its source, and state a gap as plainly as a finding. -->
 
 # Onboarding Tower Chronicles
 
-Tower Chronicles holds no code yet: only the owner's draft design, a design
-system and a clickable prototype, none of them committed. Onboarding moved the
-draft design into 33 research records, one per topic, and the world bible into
-13 canon records, and the design into 5 research records, so `draft/` can
-be deleted once this report is approved. It records no requirement and no
-decision, because the owner asked for research only.
+Meowtower (first named Tower Chronicles) was onboarded on 2026-09-27, when it
+held only the owner's draft design, a design system and a clickable prototype,
+none of them committed. Onboarding moved the draft design into research
+records, the world bible into canon records, and the design into five more
+research records. It recorded no requirement and no decision, because the
+owner asked for research only. The method then ran on that research, and this
+report was revised on 2026-10-10 to describe the repository as it is now.
+
+Today the repository holds the TypeScript server, client and engine in `src/`,
+its tests in `tests/`, and a record in `project/` of 1 vision, 63 research
+records, 1,885 requirements in force (102 more superseded), 46 decisions, 35
+specifications, 3 epics and 42 tasks, as `paw count` reports. `draft/` is
+deleted. `canon/` and `docs/` hold the world bible and the parent's pages, and
+`design/` stays untracked, as `CLAUDE.md` says.
+
+**Amended by the owner's instruction of 2026-10-10**, which asked for this report to match the repository as it is.
 
 ## Verbs
 
-None of the five verbs resolves. `meow-verbs status` reports fmt, lint,
-typecheck, test and build as "undeclared: the profile doesn't name it",
-because the repository has no code, no package manifest and no task runner.
-RES-2900 records the one command the draft plans, `npm run verify`, which
-doesn't exist yet.
+All five verbs resolve, as `meow-checks status` reports, each from
+`.meowpaw/profile.toml`: format `npx prettier --check .`, lint
+`npm run lint`, check `npx tsc --noEmit`, test `npm test` and build
+`npm run build && docker compose build`. None has a subset form, so each runs
+on the whole repository. RES-2900 records `npm run verify`, the command the
+draft planned; ADR-0190 and SPC-0190 now govern it, and it doesn't exist yet.
 
 ## Conventions
 
-The repository shows no convention to adopt yet. The branch `main` has no
-commits, so it has no commit convention. Nothing is committed, so it has no
-file-naming or layout convention beyond what `design/README.txt` describes
-for `design/`.
+The history holds 87 commits. Their subjects use four types: `docs` 52,
+`feat` 31, `fix` 2 and `test` 2. Subject lengths run up to 153 characters, and
+no commit carries a trailer. Only 1 of the 87 subjects has a scope, the
+squash of pull request 1. The repository requires a signed commit on `main`,
+and the profile declares the types, the record root `project` and the GitHub
+tracker. The only code-host history is pull request 1; `meow-github history`
+reports no issues, comments or closed pull requests beyond it, so it holds no
+requirement or rejected alternative to recover.
 
-The owner has set four rules this session, which `CLAUDE.md` and
-`.meowpaw/profile.toml` record: the project is kept in English; player-facing
-text is Russian only for now but must allow English and Dutch and a language
-switch; `draft/` and `design/` are never committed; every commit is signed.
+The owner has set four rules, which `CLAUDE.md` and `.meowpaw/profile.toml`
+record: the project is kept in English; player-facing text is Russian only
+for now but must allow English and Dutch and a language switch; `design/` is
+never committed; every commit is signed. A fifth, added on 2026-09-28 and
+2026-09-29, lets the Dutch bridge's keywords and the Dutch probe show Dutch
+text the parent approves.
 
 ## Documents
 
@@ -43,6 +60,7 @@ switch; `draft/` and `design/` are never committed; every commit is signed.
 | `draft/khroniki-bashni-specifikaciya.md` | migrated | The draft specification, moved into RES-0010, RES-0100, RES-0200, RES-0300, RES-0400, RES-0500, RES-0600, RES-0700, RES-0720, RES-0800, RES-0900, RES-1000, RES-1100, RES-1200, RES-1300, RES-1400, RES-1500, RES-1600, RES-1700, RES-1800, RES-1900, RES-2000, RES-2100, RES-2200, RES-2300, RES-2400, RES-2500, RES-2550, RES-2600, RES-2700, RES-2800, RES-2900 and RES-3000, indexed by RES-0001 |
 | `draft/khroniki-bashni-setting-i-kanon.md` | discarded | Its content now lives in the canon records CAN-0010 to CAN-0130 in `canon/`, a kind meow-method does not resolve |
 | `draft/khroniki-bashni-summary.md`, the family summary (its real file name is not kept) | discarded | The summary for the family; the owner said the project doesn't need it, and its facts on scope and goal are also in RES-0010 |
+| `narration.md` | cited | The Master's narration style prompt in Russian, added in commit bb27a6a; no record cites it yet, so it stays where it is |
 | `CLAUDE.md` | cited | The existing harness, left untouched; the vision cites its language rule and the player's age |
 | `canon/README.md` | cited | Defines the project-local canon kind that holds the world bible; placed by onboarding and kept |
 | `canon/CAN-0010-logline-and-tone.md` | cited | A chapter of the world bible: Logline and tone; placed by onboarding and kept |
@@ -122,8 +140,10 @@ until the last chapter (CAN-0080). No question is left for the owner.
 
 Two items wait for work, not for an answer: the 17 nodes that moved to
 1F/1S need their subtypes named by level (RES-0800), and the outcome
-thresholds need the stage 0.1 simulation (RES-1700). The forge history is
-empty: `meow-github history` reports "no git remotes found".
+thresholds need the stage 0.1 simulation (RES-1700). The forge history
+holds one merged pull request and nothing to recover (see Conventions).
+The two items above were open on 2026-09-27, and the 2026-10-10 revision did
+not re-check them.
 
 ## Adoption
 
@@ -137,6 +157,6 @@ empty: `meow-github history` reports "no git remotes found".
    step.
 3. The owner approves the canon records, starting with CAN-0010. The Master
    and the art pipeline can then rely on them.
-4. Once this report is approved, `meow-method onboarding remove` removes what
-   onboarding placed, and `draft/` can be deleted, because nothing in
+4. Once this report is approved, `paw onboarding remove` removes what
+   onboarding placed. `draft/` is already deleted, because nothing in
    `project/` or `canon/` refers to it. `design/` stays until its assets move.
