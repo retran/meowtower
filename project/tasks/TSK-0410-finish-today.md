@@ -29,7 +29,7 @@ TSK-0390, because the parent session guards the route. TSK-0330, because the off
 
 ## Evidence
 
-Collected on 2026-10-10 on the Mac, at commit d730d97 of the branch `tsk-0410-finish-today`; the pull request is not opened yet. Both criteria are met; the stop screen's Playwright test hands the client the packet and doesn't finish a real day, for the reason below.
+Collected on 2026-10-10 on the Mac, at commit d730d97 of the branch `tsk-0410-finish-today`, in pull request #7. Both criteria are met; the stop screen's Playwright test hands the client the packet and doesn't finish a real day, for the reason below.
 
 - Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (48 Vitest files with 432 tests, and 43 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
 - Criterion 1, REQ-2444: `tests/integration/finish-today.test.ts` logs `finish_today` through the parent route with a parent session. Mid-task, `next` returns the open task, and after its answer `stop_offer` with `canExtend: false`, again on a repeat. With a scene open it returns the scene first and the offer after the choice. Without a parent session the route gets `401 parent_session_missing` and logs nothing.
