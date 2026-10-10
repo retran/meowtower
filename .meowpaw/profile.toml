@@ -3,9 +3,9 @@
 # place. Fill each value from what the repository already does, never from what
 # it might do.
 
-# One command per verification verb, each run by the shell from the
+# One command per verification stage, each run by the shell from the
 # repository's root.
-[verbs]
+[stages]
 format = "npx prettier --check ."
 lint = "npm run lint"
 check = "npx tsc --noEmit"

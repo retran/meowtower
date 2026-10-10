@@ -53,7 +53,7 @@ The server reads `content/graph.yaml` from `content/`, which the `tower` contain
 | `changes()` | every `changes` line of the served version, each marked new when the previous stored version lacked it |
 | `trackNodes()` | the track nodes of `tracks`, apart from the maths nodes, as ADR-0300 states |
 
-`form` and `requires` hold what SPC-0040 and ADR-0070 state for them. Only modules under `src/parent/` and the Director's cold-start module `src/engine/director/cold-start.ts` import `typicalGroup`; ESLint `no-restricted-imports` with `importNames` fails any other module that imports it. The cold start reads it to order its probes (REQ-1034, SPC-0070) and drops no node by it, which is what REQ-0854 forbids.
+`form` and `requires` hold what SPC-0040 and ADR-0070 state for them. Only modules under `src/parent/` and the Director's cold-start module `src/engine/director/cold-start.ts` import `typicalGroup`; ESLint `no-restricted-imports` with `importNames` fails any other module that imports it. The cold start reads it to order its probes (REQ-1034) and drops no node by it, which is what REQ-0854 forbids.
 
 ### Failure states
 
