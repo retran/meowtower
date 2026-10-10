@@ -19,7 +19,3 @@ A wrong or slow fact is still weak, so it comes back while the miss is fresh. A 
 
 Written from RES-4080 on the owner's instruction of 2026-09-28.
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-- Agent review, preference: split the next-day return after a miss and the growing interval after a hit into two requirements. Rejected: the two halves form one review schedule for one fact, and the block REQ-5800 to REQ-5898 has no even number left for a second file.

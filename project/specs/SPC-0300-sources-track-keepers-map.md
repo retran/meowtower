@@ -3,7 +3,6 @@ id: SPC-0300
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, REQ-5914, REQ-5916, REQ-5918, REQ-5920, REQ-5922, REQ-5924, REQ-5926, REQ-5928, REQ-5930, REQ-5932, REQ-5934, REQ-5936, REQ-5938, REQ-5940, REQ-5942, REQ-5944, REQ-5946, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-5956, REQ-5958, REQ-5960, REQ-5962, REQ-5964, REQ-5966, REQ-6428, REQ-5970, REQ-5972, REQ-5974, REQ-5976, REQ-5978, REQ-5980, REQ-5982, REQ-5984, REQ-5986, REQ-5988, REQ-5990, REQ-5992, REQ-6504, REQ-5996]
 ---
 
@@ -227,9 +226,3 @@ Text the game writes into the report and the Parent Room never names a Studievaa
 | No node of the `sources` track has a built template | The Director plans no track tasks, and the screen shows every node as «не проверено». |
 | A figure on the screen rests on fewer than 5 first attempts in 30 days | `too_little_data`: the figure shows «мало данных». |
 | The build's search finds Studievaardigheden in a string file or a Parent Room schema | The build fails. |
-
-## Open review findings
-
-- Rejected: add a reason to each rule (the 1S prior, the fluency thresholds, the daily cap, the node order, the size ceilings, the minimum gap, `choice` only for labels, the zoom range and its reset). A specification states what the system does and never why (S8); the reasons live in ADR-0300.
-- Rejected in round 1: widen the Studievaardigheden search to Russian names of the test and name a check for REQ-5924. ADR-0300 sets the check as a search for that word, and says ADR-0160's text gate can't hold the rule because it skips `parent.*` keys; a wider search or a new check changes the decision, so it goes back to ADR-0300 through its own record.
-- Rejected in round 1: say the fluency thresholds are the same on both device types, and whether a diagonal map square counts as adjacent. The first is already what the sentence states, one value per level until ADR-0180's calibration; the second is left to the template's trap mapping, which the property test's neighbour rule checks.

@@ -21,7 +21,3 @@ Fact measurement comes first so that measurement starts well before the M7 horiz
 Written from RES-4000 on the owner's instruction of 2026-09-28.
 
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-- The agent reviewer asked to move the build order into a decision or an epic, because an order is a plan and not a property of the game. Rejected: RES-4000 conclusion 21 and the owner's addendum state the order as an obligation on the build; the design step may carry it into ADR-0190. The reason and the acceptance point the reviewer also asked for are now in the text.

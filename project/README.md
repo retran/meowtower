@@ -51,11 +51,13 @@ The record of Meowtower: the vision in `vision.md`, the onboarding report in `on
 
 <!-- meow-flow index -->
 
-3 epics in all: 3 draft.
+3 epics in all: 2 approved, 1 done.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
-| [EPC-0010](epics/EPC-0010-home-server-on-the-mac.md) | The home server on the Mac serves the game shell to a paired iPad and computer over HTTPS | draft |
-| [EPC-0020](epics/EPC-0020-event-log-and-projections.md) | The append-only event log is the only truth, and every projection rebuilds from it | draft |
-| [EPC-0030](epics/EPC-0030-play-api-lease-and-answer-queue.md) | The server decides play through HTTP and SSE, one device holds an adventure, and the client queue loses no answer | draft |
+| [EPC-0010](epics/EPC-0010-home-server-on-the-mac.md) | The home server on the Mac serves the game shell to a paired iPad and computer over HTTPS | approved |
+| [EPC-0020](epics/EPC-0020-event-log-and-projections.md) | The append-only event log is the only truth, and every projection rebuilds from it | done |
+| [EPC-0030](epics/EPC-0030-play-api-lease-and-answer-queue.md) | The server decides play through HTTP and SSE, one device holds an adventure, and the client queue loses no answer | approved |
+
+Amended: EPC-0010 by ADR-0360; EPC-0020 by ADR-0370.
 <!-- /meow-flow index -->

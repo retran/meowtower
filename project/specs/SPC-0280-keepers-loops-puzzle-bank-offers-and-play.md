@@ -3,7 +3,6 @@ id: SPC-0280
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-5700, REQ-5702, REQ-5704, REQ-5706, REQ-5708, REQ-5710, REQ-5712, REQ-5714, REQ-5716, REQ-5718, REQ-5720, REQ-5722, REQ-5724, REQ-5725, REQ-5726, REQ-5728, REQ-5730, REQ-5731, REQ-5732, REQ-5734, REQ-5736, REQ-5738, REQ-5740, REQ-5742, REQ-5744, REQ-5746, REQ-5748, REQ-5750, REQ-5752, REQ-5754, REQ-5756, REQ-5758, REQ-5760, REQ-5762, REQ-5764, REQ-5766, REQ-5768, REQ-5770, REQ-5772, REQ-5774, REQ-5776, REQ-5778, REQ-5780, REQ-5782, REQ-5784, REQ-5786, REQ-5788, REQ-5790, REQ-5792, REQ-5794, REQ-5795, REQ-5796, REQ-5798]
 ---
 
@@ -231,10 +230,3 @@ ADR-0190's verification fails on any puzzle whose reference solution fails its c
 | A puzzle is taken out of the box while 3 are open | `409 open_limit`, and the puzzle stays in the box. |
 | A boxed puzzle is opened without being taken out of the box | `409 in_box`, and the puzzle stays in the box. |
 | The parent's edit fails step 3's code checks | The edit isn't saved, the review screen names the failing check, and the puzzle stays in the queue as it was. |
-
-## Open review findings
-
-- Round 1 asked for a reason beside each value, such as the word limits, $20, the queue of 60, 5 adventure days, 7 game days, 300 moves and the box line at 20, or a sentence pointing to ADR-0280 for them. Rejected: a specification states what the system does and never why (S8), and ADR-0280 holds each reason. Round 2 noted the same point and didn't reopen it.
-- The review of 2026-09-28 asked to name the owner's run report as the audience of `puzzle_unapproved_hash` until a run passes. I rejected it: ADR-0280's state table names the parent, and the failure table already says the puzzle reaches the review queue only once a preparation run passes its blind solve.
-- The same review repeated the request for a reason beside each value. I rejected it for the reason given under round 1 above: ADR-0280 holds the reasons, and a specification states none (S8).
-- The second review round asked again for the reasons behind the values, or a pointer to them. I rejected it for the reason under round 1 above.

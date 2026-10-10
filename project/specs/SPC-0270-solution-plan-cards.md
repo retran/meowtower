@@ -3,7 +3,6 @@ id: SPC-0270
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-5600, REQ-5602, REQ-5604, REQ-6422, REQ-5608, REQ-5610, REQ-5612, REQ-5614, REQ-5616, REQ-5618, REQ-5620, REQ-5622, REQ-5624, REQ-5626, REQ-5628, REQ-5630, REQ-5632, REQ-5634, REQ-7508, REQ-5638, REQ-5640, REQ-5642, REQ-5644, REQ-5646, REQ-5648, REQ-5650, REQ-5652, REQ-5654, REQ-5656, REQ-5658, REQ-5660, REQ-5662, REQ-5664, REQ-5666, REQ-5668, REQ-5670, REQ-5672]
 ---
 
@@ -169,11 +168,3 @@ A planning error is a plan labelled anything but `correct`, counted apart from m
 | The client has no connection while she lays cards | SPC-0030's event queue holds each `plan_draft` in order and sends it when the connection returns. |
 | The app closes while she lays cards | The resume shows the cards in the same order with the row as the newest `plan_draft` left it. |
 | She misses a step in her plan and then needs a row for it | She adds a row, up to 6. |
-
-## Open review findings
-
-- Rejected: give each rule its reason, for example why a `stated` decoy leaves out the given's number, why «Готово» stays inactive on an empty row, and why step rows stop at 6. A specification states what the system does, and ADR-0270 holds the reasons.
-- Rejected: upcast an older Guardian `item_shown` or `attempt_submitted` as `openingPhase: "model"`. ADR-0270 sets the upcaster to read every older event as `none`, and the repository holds no code, so no older event exists; changing the rule is a decision for ADR-0270.
-- Rejected: say "bought" for a rung, as ADR-0270 does, in place of "shown". SPC-0080 marks an attempt assisted when a rung is shown, whether the tap spent a thread or was free, and this document uses its term.
-- Rejected in part: drop the writing-standard comment at the top, which promises a reason with each rule. Every record carries that comment, so this document keeps it, and Scope now names ADR-0270 as the holder of the reasons.
-- Rejected: cite the ADR-0360 or ADR-0370 entry beside each rule they changed. Scope names both as amending ADR-0270, and a specification cites requirements, not the entries of a decision.

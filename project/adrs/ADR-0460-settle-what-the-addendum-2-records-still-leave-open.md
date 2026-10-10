@@ -205,8 +205,3 @@ The premortem, written as though it had happened: two months into stage 0.3, `ll
 - The figures the full limits screen adds to `LimitsResult` (entry 36): the decision that builds that screen.
 - Whether the hypothesis label ships at all, which ADR-0450's first reversal condition sends back to research.
 - REQ-7404's open finding on the tested and mapped counts, which waits for the owner as its own requirement.
-
-## Open review findings
-
-- The first agent review suggested splitting entry 62 into three entries, so the owner can reject the 10 CSS px tap threshold alone. I kept one entry per finding, because the classification maps each finding to one entry; the owner rejects one of its three rules by deleting that sentence and listing it under What this does not settle, as the Why section describes for a whole entry.
-- The second agent review found six points, and I fixed all six: entry 3 now reads a fixed 2,000 hypotheses once, the account of which entries the addendum 2 rule decides and its reason, ADR-0430's test 13 in Amends, the reasons for the lapse and the 10 px threshold in entry 62, the reasons for the 90 days and the once-a-minute cadence, and an alternative for entry 69. These fixes haven't had a third review, as the method's bound of two rounds sets.

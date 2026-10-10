@@ -2,12 +2,12 @@
 
 <!-- meow-flow index -->
 
-46 decisions in all: 46 approved.
+46 decisions in all: 45 approved, 1 done.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
 | [ADR-0010](ADR-0010-one-typescript-server-on-the-mac.md) | One TypeScript server in Docker on the family Mac serves the game as a web app to an iPad home-screen app and a desktop browser over HTTPS on the home network | approved |
-| [ADR-0020](ADR-0020-append-only-event-log-is-the-only-truth.md) | An append-only event log in SQLite is the only truth, and every other table is a projection rebuilt from it | approved |
+| [ADR-0020](ADR-0020-append-only-event-log-is-the-only-truth.md) | An append-only event log in SQLite is the only truth, and every other table is a projection rebuilt from it | done |
 | [ADR-0030](ADR-0030-server-decides-through-http-and-sse.md) | The server decides everything through an HTTP and SSE API, with one active device per adventure and a client queue that loses no answer | approved |
 | [ADR-0040](ADR-0040-tasks-from-templates-seeds-exact-arithmetic.md) | Code generates every task from a versioned template, a seed and exact arithmetic, and one solution graph drives checking, hints and solutions | approved |
 | [ADR-0050](ADR-0050-skill-graph-one-versioned-data-file.md) | The skill graph is one versioned data file, the single source of nodes, levels, prerequisites, subtypes and weights | approved |

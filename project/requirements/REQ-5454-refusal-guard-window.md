@@ -19,7 +19,3 @@ The guard applies only once 20 such problems exist. At 7 to 9 word problems a we
 
 Written from RES-4040 on the owner's instruction of 2026-09-28.
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-A reviewer asked when the observation clears. I kept the rule as written, because "when" already bounds it to the windows that hold 3 or more refusals, and a separate clearing rule would be a second obligation.

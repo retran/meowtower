@@ -173,10 +173,6 @@ Nothing addendum 2 adds leaves the Mac. The profile, the hypotheses and the prob
 16. The owner must amend the Russian-only rule in `CLAUDE.md` before any Dutch probe text is built. The probe's texts must be written under the offline role `PROBE_TEXT_MODEL` on the offline key and the content tier, never under `PLANNER_MODEL`'s play role, which the gateway refuses on that key.
 17. Nothing the addendum adds may leave the Mac: the profile, the hypotheses and the probe results stay in the Parent Room, and the probe's texts are written without her data.
 
-## Open review findings
-
-Two agent review rounds ran on 2026-09-28, and I fixed every finding of both. None is rejected. The fixes to the second round's findings haven't had a third review, as the method's bound of two rounds sets. They are: the interval family moved from Jeffreys to Wilson with Newcombe's gap interval, to match RES-4210; the probe floor of 12 and the hypothesis floor of 20; check 5's volume, its gap sizes and its cross-side and both-gaps bars; and the role name `PROBE_TEXT_MODEL`. A later edit on 2026-09-28, also unreviewed, aligned this record with RES-4210 to RES-4270: the MVP's log-shaping parts from RES-4220, RES-4230 and RES-4240, the bin name «хватило первой ступени», `firstExposure` as a field, and a «мало данных» floor owned by each measure. A reader approving this record should check those against RES-4210, RES-4250 and RES-4270, which are drafts that may still change.
-
 ## Sources
 
 - The owner's addendum 2 to the specification, 2026-09-28, read 2026-09-28 - item 1, «События», «Отчёт: что добавляется», «Проверка при сборке», and the parts of items 2 to 8 those rest on.

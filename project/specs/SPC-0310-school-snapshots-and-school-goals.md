@@ -3,7 +3,6 @@ id: SPC-0310
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-5058, REQ-5060, REQ-6000, REQ-6002, REQ-6004, REQ-6006, REQ-6008, REQ-6010, REQ-6012, REQ-6014, REQ-6016, REQ-6018, REQ-6020, REQ-6022, REQ-6024, REQ-6026, REQ-6028, REQ-6030, REQ-6032, REQ-6034, REQ-6036, REQ-6038, REQ-6040, REQ-6044, REQ-6046, REQ-6048, REQ-6050, REQ-6052, REQ-6054, REQ-6056, REQ-6058, REQ-6060, REQ-6062, REQ-6066, REQ-6068, REQ-6070, REQ-6072, REQ-6074, REQ-6076, REQ-6078, REQ-6080, REQ-6082, REQ-6084, REQ-6086, REQ-6088, REQ-6090, REQ-6092, REQ-7000, REQ-7002, REQ-7004, REQ-7006, REQ-7008, REQ-7010, REQ-7012, REQ-7014, REQ-7016, REQ-7018, REQ-7020, REQ-7022, REQ-7024, REQ-7026, REQ-7028, REQ-7030, REQ-7032, REQ-7036, REQ-7038, REQ-7040, REQ-7042, REQ-7044, REQ-7046, REQ-7048, REQ-7050, REQ-7052, REQ-7054, REQ-7056, REQ-7060, REQ-7062, REQ-7064, REQ-7066, REQ-7068, REQ-7070, REQ-7072, REQ-7074, REQ-7076, REQ-7404]
 ---
 
@@ -381,10 +380,3 @@ ADR-0420 left these to the specification step, and this document chose them:
 - Without a Cito result, the screen shows no Cito section.
 - A Cito row's horizon date comes from folding `horizon_set` up to the result's `seq`, because SPC-0290's `horizons` projection holds only the horizons as they stand now.
 - A goal row reads the latest snapshot that holds its key and isn't withdrawn, so a goal missing from the latest snapshot keeps its last values and shows their date.
-
-## Open review findings
-
-- Rejected, round 1: give a reason beside each limit (25 MB, 20 pages, 400 goals, 120 seconds, 1 GB of memory, 300 dpi, the one-hour sweep, the 1 GB `school_files_large` threshold, the 30-second preview baseline, one to five nodes per link). A specification states what the system does and never why (spec rule S8); the reasons belong in ADR-0310.
-- Rejected, round 2: reword REQ-6074's "event or file" as "keeps any file". The wording belongs to the requirement, not to this document, which already states that the preview writes only the temporary file and no kept file.
-- Rejected, round 1 of 2026-09-28: cite ADR-0340, ADR-0400, ADR-0430 and ADR-0450 in place of their decisions. This document cites only lower-numbered specifications and names a higher-numbered subject by its decision.
-- Rejected, round 1 of 2026-09-28: give a reason, or a pointer to where it lives, beside each limit. As in the earlier round, the reasons live in ADR-0310 and ADR-0420, and a specification states no reason (spec rule S8).

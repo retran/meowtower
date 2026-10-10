@@ -21,7 +21,3 @@ A puzzle page can come every day, so a clue on each one would run it faster than
 Written from RES-4070 on the owner's instruction of 2026-09-28.
 
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-- Finding 8 (give the pace as a number and show the parent when the last clue came): I cited CAN-0080 by identifier and rejected the rest, because the canon states the pace as "no more often than once every several sessions" with no number, and adding a clue history to the review screen is a design choice RES-4070 didn't make.

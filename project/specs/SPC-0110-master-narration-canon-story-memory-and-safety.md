@@ -3,7 +3,6 @@ id: SPC-0110
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032]
 ---
 
@@ -283,9 +282,3 @@ The player never sees a model failure, because each one ends in a library or poo
 ## Defaults chosen here
 
 The decisions leave three details open, and this document chose them on 2026-09-28. The numeral check runs as a content test (REQ-1548). The parent judges the loosened-knot and other-path pool lines at approval, and the library `alt` branches and `cunning` endings before the stage that ships them (REQ-1554). A dreamcore library scene carries a familiar and an exit (REQ-1536, REQ-1538).
-
-## Open review findings
-
-- Rejected: add reasons for the trigger level standing when the judge can't answer and for the 200-phrase trigger test, because a spec states what the system does and never why (S8); the reasons stay in ADR-0110.
-- Rejected: cite ADR-0110 beside each limit (one `title` a session, 12 lines of 280 characters, 7 summaries and 200 facts, 100 pending candidates and 30 days, 30 flagged scenes, 25 %) and give reasons for the three defaults, because the spec traces to requirements, and reasons live in the decision (S8).
-- Rejected: move the length, speaker and Score checks into the check module, because ADR-0110 places only steps 1, 4, 5 and the safety check there, and the spec states that split as decided.

@@ -3,7 +3,6 @@ id: SPC-0050
 artifact: spec
 status: live
 revised: 2026-09-28
-checked-at:
 states: [REQ-0800, REQ-0802, REQ-0804, REQ-0806, REQ-0808, REQ-0810, REQ-0812, REQ-0814, REQ-0816, REQ-0818, REQ-0850, REQ-0852, REQ-0854, REQ-1244, REQ-3812]
 ---
 
@@ -180,8 +179,3 @@ The loader parses and validates the file within 1 second at start-up, the budget
 | A module outside `src/parent/` imports `typicalGroup` | Lint fails the build. |
 | The file holds an alias bomb | The `yaml` parser stops at 100 aliases and the file fails as invalid. |
 | Loading and validation take longer than 1 second | The verify report prints the measure beside ADR-0190's baseline and records a defect, as ADR-0190 states; the load goes on. |
-
-## Open review findings
-
-- Rejected: give the reason for the 1,000-version notice and for the query module's import limit. A spec states what the system does and never why (S8); the reasons belong in the decision. The notice now has its failure state, `graph_versions_many`.
-- Rejected (round 2): name the reason for the 1,000-version notice and the import limit, or the decision that holds it. A spec states no reasons (S8), and no decision found names 1,000 stored versions.

@@ -3,7 +3,6 @@ id: SPC-0190
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5076, REQ-5078, REQ-5080, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500]
 ---
 
@@ -293,13 +292,3 @@ At each stage's review the agent reads `canon/` against the specification on met
 | The measured joint rate for check 5's student with both gaps falls below 0.825 | `check5_rate_low`: the bar goes back to the owner in the stage's review record. |
 | The canon contradicts the specification on method, time, rewards or safety | A `canon_contradiction` defect against the canon, which is corrected. |
 | Group 8 measures a slow load, a large bundle or a low frame rate | The report shows the measurement, and group 8 fails nothing until its baselines exist. |
-
-## Open review findings
-
-An agent reviewer raised these on 2026-09-28.
-
-- Rejected: the reviewer asked to move five gaps into ADR-0190 and ADR-0210 as open questions. An approved decision changes only through a new record, and ADR-0370 is that record.
-- Rejected: the reviewer asked for the reason beside the draft ceiling, the spike's place first, the real-iPad checklist, verify's own data directory, synthetic recordings and the retention of reports and recordings. A specification states what the system does and never why (S8), and ADR-0190 keeps those reasons.
-- Rejected: the reviewer asked for file-name patterns the decision-log check matches. ADR-0190 names `docs/decisions.md` and `docs/questions.md` and no pattern, and the check's author sets the patterns in the check.
-- Rejected: the reviewer asked to send each part of the second addendum and the sandbox to its specification. ADR-0340 to ADR-0450 have higher numbers than this document, and this repository cites a higher-numbered subject by its decision, so the parts stay with ADR-0340 and ADR-0380 to ADR-0450.
-- Rejected: the reviewer asked to drop the template's header comment, or add a reason beside each rule. The comment comes from `paw template spec`, and the reasons stay in ADR-0190 for the reason given above.

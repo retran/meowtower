@@ -20,7 +20,3 @@ A hypothesis written during the MVP keeps its date and its written prediction on
 Written from RES-4200 on the owner's instruction of 2026-09-28 to process addendum 2.
 
 Imposed by the owner's addendum 2 of 2026-09-28.
-
-## Open review findings
-
-The agent review of 2026-09-28 noted that REQ-6676 also names these two event types. I kept both: REQ-6676 is the owner's scope judgement and this one is the behavioural check that the log holds them.

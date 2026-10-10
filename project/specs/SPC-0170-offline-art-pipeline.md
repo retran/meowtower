@@ -3,7 +3,6 @@ id: SPC-0170
 artifact: spec
 status: live
 revised: 2026-09-28
-checked-at:
 states: [REQ-1510, REQ-2800, REQ-2802, REQ-2804, REQ-2806, REQ-2808, REQ-2810, REQ-2812, REQ-2814, REQ-2816, REQ-2818, REQ-2820, REQ-2822, REQ-2824, REQ-2826, REQ-2828, REQ-2830, REQ-2832, REQ-2834, REQ-2836, REQ-2838, REQ-2840, REQ-3400, REQ-3402, REQ-6418, REQ-3406, REQ-3408, REQ-3410, REQ-3412, REQ-3414, REQ-3416, REQ-3418, REQ-3420, REQ-3422]
 ---
 
@@ -217,9 +216,3 @@ Unchosen variants stay in `data/art/variants/` and drain 30 days after their ass
 - The fringe check's hue distance is 20 degrees, because ADR-0170 says "a set distance" and gives no value.
 - An `error` job returns to `waiting` at the next run, a familiar's stage waits for its chosen previous stage, a draft carries a seen mark, and an opaque pixel near the key hue fails the fringe check, because ADR-0170 leaves each case without a rule.
 - A 402 on the offline key stops new generations and counts as no job error, because ADR-0210 says only that the run reports `offline_key_refused`, and the refusal comes from the key, not the job.
-
-## Open review findings
-
-- Round 1 asked to give the reasons for the model check reading both listings and for the one-way dependencies, and the reason keyart-heroine isn't shown before the style check. Rejected: a spec states what the system does and never why (S8), and ADR-0170 holds these reasons.
-- Round 1 asked to say where the values 3 errors, 30 days and 400 variants come from. Rejected for the same rule (S8): ADR-0170 marks them as chosen values.
-- Round 2, finding 13: the header comment asks each rule to carry its reason. Rejected: the comment is the writing standard's header, and a spec states no reasons (S8).

@@ -3,7 +3,6 @@ id: SPC-0410
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6930, REQ-6932, REQ-6934, REQ-7512, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980, REQ-6982]
 ---
 
@@ -192,8 +191,3 @@ The MVP holds the context list, the context on every accepted frame, `contexts` 
 | `first_exposures_ceiling`: the projection passes 20,000 rows | nothing is deleted; reported once | the owner, in `./meowtower status` |
 
 The player sees none of these states, and every one ends in an ordinary task.
-
-## Open review findings
-
-- The first agent review found that SPC-0130, SPC-0040, SPC-0070 and SPC-0290 don't yet hold REQ-6928, the frame picker's new steps, the format hold or `transfer_hold`, so this document's cross-references point at text not there yet, and asked me to amend them or state REQ-6928 here. I rejected it: those documents take ADR-0410's amendments in the same change of addendum 2, SPC-0130 takes REQ-6928 in place of REQ-3610, and stating REQ-6928 here would state one rule in two documents.
-- The first agent review asked for the reasons behind the hold's rank above the side-slot fallback and the repeat rule, the 20,000-row ceiling and the 120-game-day report. I kept them without reasons, because a specification states what the system does and never why (S8), and ADR-0410 holds each reason.

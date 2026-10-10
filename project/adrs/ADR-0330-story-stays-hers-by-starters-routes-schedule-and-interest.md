@@ -224,11 +224,3 @@ The security boundary protects her text and the measurement. The threats, most l
 - The clean-row garland, which stays as ADR-0140 draws it, by the research decision of 2026-09-28.
 
 The premortem, written as though it had already happened. Six weeks in, the parent found she had stopped writing, and the signal had never risen. The starters had taken two taps where the old options took one, so she had learned to press «Дальше» at every point. Her own words per adventure fell to nothing, but she sent nothing either, so the share of unchanged starters never rose and REQ-6292's signal, which needs both, stayed down. A second failure sat in the freshness list: the familiar's greeting wasn't tagged `catchphrase` in the canon, so after two weeks the list struck it, and the familiar lost its one line. A third came from the routes: on most days B differed from A only in order, and the teasers said so plainly, so she stopped reading them and pressed «Дальше». The reversal conditions on points passed with no send and on routes taken with «Дальше» watch the first and third failures, and check 12 watches the second.
-
-## Open review findings
-
-- An agent reviewer suggested citing SPC-0020 in place of the event payload table and the failure-states table. I kept both, because ADR-0210 makes this decision the owner of the 14 event types, and SPC-0020 gains them only after the owner approves this record; the failure table follows the house style of ADR-0080 and ADR-0110.
-- A second agent reviewer suggested comparing a small pen bucket paid from the month's slack. I didn't add it, because RES-4120 and ADR-0210 already decided the pen gets no bucket of its own, and this decision can't reopen that.
-- The same reviewer suggested merging the paragraph on order-only routes into the one on route B. I left them apart, because the first gives the reason for the swap and the second the cost the reader weighs beside the objection.
-
-Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

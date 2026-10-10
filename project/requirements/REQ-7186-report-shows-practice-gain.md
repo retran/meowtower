@@ -18,7 +18,3 @@ Beside the Dutch-to-after-words gap and the word list, both marked as including 
 The after-words presentation always comes after the Dutch one, and after a wrong Dutch answer she has read its short solution, so its gain includes practice and coaching as well as the words. The balanced presentations measure the practice gain with the language held fixed.
 
 Written from RES-4250 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-1. Round 2, a fix: split showing the practice gain from marking the gap and list as including practice and coaching. I kept them in one record with one obligation keyword, because the mark and the gain are one display, and the identifier block REQ-7100 to REQ-7198 has no free number left.

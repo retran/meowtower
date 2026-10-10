@@ -19,7 +19,3 @@ The frame rule shows never-shown frames first, so without this hold every contex
 
 Written from RES-4230 on the owner's instruction of 2026-09-28 to process addendum 2.
 Imposed by the owner's addendum 2 of 2026-09-28.
-
-## Open review findings
-
-The fixes made after the second agent review, here and in REQ-6910, REQ-6914, REQ-6928, REQ-6930, REQ-6936, REQ-6946, REQ-6954, REQ-6956 and REQ-6982, haven't been reviewed again, because the method bounds review at two rounds. Two of them are defaults the requirements step chose: a first encounter in any slot REQ-6954 lists is ineligible, and a frame REQ-6956 keeps out of a slot is treated like a held frame by the repeat rule.

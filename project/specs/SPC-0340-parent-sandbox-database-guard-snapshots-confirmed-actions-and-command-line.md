@@ -3,7 +3,6 @@ id: SPC-0340
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-6300, REQ-6302, REQ-6304, REQ-6306, REQ-6308, REQ-6310, REQ-6312, REQ-6314, REQ-6316, REQ-6318, REQ-6320, REQ-6322, REQ-6324, REQ-6326, REQ-6328, REQ-6330, REQ-6336, REQ-6340, REQ-6342, REQ-6344, REQ-6346, REQ-6348, REQ-6350, REQ-6352, REQ-6354, REQ-6356, REQ-6358, REQ-6360, REQ-6362, REQ-6364, REQ-6366, REQ-6368, REQ-6370, REQ-6372, REQ-6374, REQ-6376, REQ-6378]
 ---
 
@@ -233,9 +232,3 @@ The commands print their output and write it to no file; a copy in a file exists
 | A tracked file holds a `snap-` identifier or a value from `personal/player.md` | The group 1 scan fails and names the file. |
 | The sandbox bucket is spent, the offline key answers 402, or the gateway or the PIN is missing | SPC-0100's `sandbox_budget_spent` and `offline_key_refused`, and SPC-0190's `409 sandbox_models_unavailable`. |
 | A snapshot of a 1 GB file takes more than 180 seconds | The full verify on the family Mac records a baseline finding against SPC-0190's Baselines table in the verify report and passes. |
-
-## Open review findings
-
-- The first agent review asked for the reason beside the 5-minute token expiry, the 20-token cap, the 3 x free-space factor, the 2 GB `sandbox_large` threshold and the rule that no player screen links to the sandbox. Rejected: the method's rule S8 keeps reasons in the decision, and ADR-0340 holds each of them.
-- The second agent review, first round, asked for the reasons behind the 5-minute token expiry and the 20-token cap, saying ADR-0340 gives none. Rejected: ADR-0340's section on confirmed actions gives both reasons beside the numbers, and rule S8 keeps them there.
-- The same round asked this document to state which routes the loopback listener serves before the PIN guards the sandbox. Rejected: SPC-0190 states that interim, and this document cites it in its scope.

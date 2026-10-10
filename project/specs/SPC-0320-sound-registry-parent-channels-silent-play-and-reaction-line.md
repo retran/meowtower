@@ -3,7 +3,6 @@ id: SPC-0320
 artifact: spec
 status: live
 revised: 2026-09-28
-checked-at:
 states: [REQ-6100, REQ-6102, REQ-6104, REQ-6106, REQ-6108, REQ-6110, REQ-6112, REQ-6114, REQ-6116, REQ-6118, REQ-6120, REQ-6122, REQ-6124, REQ-6126, REQ-6128, REQ-6130, REQ-6430, REQ-6432, REQ-6136, REQ-6138, REQ-6140, REQ-6142, REQ-6144, REQ-6146, REQ-6148, REQ-6150, REQ-6152, REQ-6154, REQ-6156, REQ-6158, REQ-6160, REQ-6162, REQ-6164]
 ---
 
@@ -223,8 +222,3 @@ The stage 0 spike carries a sound test page with a music switch and an effects s
 | No reaction line reaches the client within 2 seconds of her tap | `reaction_late`: the waiting animation goes on and the Master's reply follows; the client sends its measured time from tap to first character in a client report after each free text, and the p95 of those reports shows the miss. |
 | The server can't be reached when she sends free text | The request can't leave, and SPC-0030's waiting scene shows. |
 | A free-text request is resent with the same `clientSeq` | The same reaction line returns, and nothing new is logged. |
-
-## Open review findings
-
-- Round 1 asked to carry ADR-0320's reasons into eight rules (the `/sound/` cache, dropping events, the 334 ms period, no sound when «Готово» turns active, the idle clock, no reaction line before a trigger, the no-judging rule, the waiting shapes). Rejected: a specification states what the system does, and the reasons stay in ADR-0320.
-- Round 2 asked to add the reason beside the no-judging rule for reaction lines and the ban on filling, counting or circling waiting shapes, or to cite ADR-0320 beside the five mechanical rules. Rejected: a specification states what the system does, and ADR-0320, which this document follows, holds the reasons.

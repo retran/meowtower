@@ -3,7 +3,6 @@ id: SPC-0070
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-0105, REQ-0107, REQ-0820, REQ-6404, REQ-0832, REQ-0956, REQ-6406, REQ-0966, REQ-0970, REQ-0972, REQ-0974, REQ-6844, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-6846, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-6400, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-6402, REQ-1114, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132, REQ-5304, REQ-5434, REQ-5438, REQ-5440, REQ-5446, REQ-5448, REQ-7176]
 ---
 
@@ -231,8 +230,3 @@ Raised mode replaces the in-corridor rule with review when the adventure's revie
 | An attempt is `interrupted`, `crossDevice` or carries an estimate | It is never a rapid guess, and its time counts in no measure. |
 | An answer is a rapid guess | It stays out of every estimate and block, and a task of the same node follows later in the session. |
 | Rapid guesses pass 15 % of a session, or the help share passes its test | Raised mode runs, and the report shows the flag once. |
-
-## Open review findings
-
-- Round 1 asked for a reason beside four rules: a Guardian task on about one floor in three, a node kept for 2 to 5 tasks, cold start's end at half the 1F and 1S nodes or the 10th adventure, and the replacement task after a rapid guess. Rejected: a specification states what the system does and never why (spec rule S8), and ADR-0070 holds the reasons. Round 2 repeated this as a preference, asking for a pointer to ADR-0070 in Scope; rejected for the same rule, because the requirements each statement cites lead to ADR-0070.
-- Addendum 2 revision, round 1, asked again for reasons beside the new limits: 2 letters a floor, 3 checks a day, no check after a fatigue signal and the 3-letter floor. Rejected under spec rule S8, as in the earlier rounds; ADR-0400 and ADR-0430 hold the reasons.

@@ -3,7 +3,6 @@ id: SPC-0080
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552, REQ-5100, REQ-5102, REQ-5104, REQ-5106, REQ-5108, REQ-5110, REQ-5112, REQ-5114, REQ-5116, REQ-5118, REQ-5120, REQ-5122, REQ-5124, REQ-5126, REQ-5128, REQ-5132, REQ-5134, REQ-5158, REQ-5160, REQ-5162, REQ-5164, REQ-5166, REQ-5300, REQ-5302, REQ-5306, REQ-5308, REQ-5310, REQ-5312, REQ-5314, REQ-5316, REQ-5324, REQ-5326, REQ-5328, REQ-5330, REQ-5332, REQ-5334, REQ-5336, REQ-5338, REQ-5340, REQ-5342, REQ-5344, REQ-5346, REQ-5348, REQ-5350, REQ-5352, REQ-5370, REQ-6408, REQ-6410, REQ-7164]
 ---
 
@@ -289,10 +288,3 @@ The fluency test and the rapid-guess test read no time spent in the estimate ste
 ## Choices made in writing this document
 
 The decisions leave two details open, and this document fixes them. The flow and the ledger live in `src/engine/attempt/`, since the decisions name the engine's pure functions and not their folder. The error names `no_twin` and `check_not_offered` and their statuses follow SPC-0030's split of `400` for a malformed request and `409` for one the state refuses; ADR-0240 as ADR-0370 amends it sets the statuses of `estimate_missing`, `check_unparsed`, `check_late` and `check_limit_reached`.
-
-## Open review findings
-
-- The second agent review asked to move the Dutch probe letter's MVP and `CLAUDE.md` condition from "The second attempt" to Scope. I keep it beside the twin rule, because the rule's exception for a letter holds only under that condition, and a reader of the rule alone would otherwise take the exception as live today.
-- The agent review asked for a reason beside the candidate queue's cap of 5 and its 60-day expiry, the rule that a change to the pocket changes CAN-0030 in the same commit, and the limit of 3 checks a task. I keep them without reasons, because a specification states what the system does and the reasons live in ADR-0220, ADR-0080 and ADR-0240.
-- The agent review asked for the parts this document requires to be named by their specifications, SPC-0040, SPC-0060, SPC-0070, ADR-0120, ADR-0140 and others, in place of their decisions. I keep the decisions, because each decision owns its rule and its `## Amends` sections hold the current text, while a pointer to a section of a specification goes stale whenever that specification is revised, as SPC-0040, SPC-0060 and SPC-0070 are in each addendum's pass. The `forms` sentence points to SPC-0040 and SPC-0020 because no decision this document cites defines that field.
-- A second agent review asked for the decision holding each reason to be cited beside several more rules, among them the framing hash, the pocket per floor, the inactive button during the estimate step, the bound of 1000, the formula for `q`, the 0.6 gap and the 20 draws. I cited the decision beside the charge key, the queue limits, the canon commit, the check limit and the check time, and left the rest, because each of the others sits in a section whose rules all come from one decision: the framing and the ladder from ADR-0220, the pocket from ADR-0080, and the estimate step, the bound, `q`, the gap and the draws from ADR-0240.

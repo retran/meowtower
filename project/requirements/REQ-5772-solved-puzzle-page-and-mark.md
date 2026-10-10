@@ -20,7 +20,3 @@ The page shows her the idea behind the solution, and the mark shows her collecti
 Written from RES-4070 on the owner's instruction of 2026-09-28.
 
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-- Finding 22 (split the page and the mark into two requirements): rejected, because both come from the one event of solving a puzzle and a test checks both in one step.
