@@ -1,7 +1,7 @@
 ---
 id: TSK-0350
 artifact: task
-status: approved
+status: done
 revised: 2026-09-29
 epic: EPC-0030
 closes: [REQ-0202, REQ-0220, REQ-0222]

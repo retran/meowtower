@@ -1,7 +1,7 @@
 ---
 id: TSK-0460
 artifact: task
-status: approved
+status: done
 revised: 2026-09-29
 epic: EPC-0020
 closes: []
