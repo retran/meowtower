@@ -32,7 +32,7 @@ TSK-0060, because it records the gateway at setup and checks it at `up`.
 
 ## Evidence
 
-Collected on 2026-10-10 on the Mac, at commit 507a341 of the branch `tsk-0430-gateway-verified-and-watch`; the pull request is not opened yet. Every criterion is met by the script's tests, and the transcripts the criteria also ask for are named below as resting on the owner.
+Collected on 2026-10-10 on the Mac, at commit 507a341 of the branch `tsk-0430-gateway-verified-and-watch`, in pull request #9. Every criterion is met by the script's tests, and the transcripts the criteria also ask for are named below as resting on the owner.
 
 - Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (49 Vitest files with 446 tests, and 43 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
 - Criterion 1: `tests/smoke/gateway-watch.test.ts` runs the script with `route`, `ping`, `arp`, `docker` and `launchctl` stubbed. With no ARP entry after the ping, and with a recorded hardware address `unknown`, `up` prints `gateway_unverified`, names `./meowtower set-home-network` and runs no `compose up`; a first read that misses and a read after the ping that hits start the stack.
