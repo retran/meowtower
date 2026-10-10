@@ -33,7 +33,7 @@ TSK-0360, because `wrapUp` travels in `ResumeOut`. TSK-0390, because the rule re
 
 ## Evidence
 
-Collected on 2026-10-10 on the Mac, at commit 5602b8b of the branch `tsk-0400-three-day-rule`; the pull request is not opened yet. Every criterion is met.
+Collected on 2026-10-10 on the Mac, at commit 5602b8b of the branch `tsk-0400-three-day-rule`, in pull request #6. Every criterion is met.
 
 - Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (47 Vitest files with 426 tests, and 37 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
 - Criterion 1, REQ-0236: `tests/integration/three-day-rule.test.ts` sets the clock with fake timers. Play on days 1, 3 and 6 gives `wrapUp` true on day 7 and false before; sessions that started and showed nothing count no day; 03:00 and 05:00 of one calendar day are two game days; `POST /api/adventure/resume` returns the same flag. `tests/unit/game-day.test.ts` covers the 04:00 boundary, a zone and a clock change.
