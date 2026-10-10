@@ -82,7 +82,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: the five verbs exit 0 at commit 5602b8b; `tests/integration/three-day-rule.test.ts`, `tests/unit/game-day.test.ts`
       closes: REQ-0228, REQ-0230, REQ-0232, REQ-0236
       depends: TSK-0360 - `ResumeOut.wrapUp`; TSK-0390 - `threeDayLimit`
-- [ ] T-012 TSK-0410 «Закончить на сегодня» brings a stop offer with no extension for the rest of the game day
+- [x] T-012 TSK-0410 «Закончить на сегодня» brings a stop offer with no extension for the rest of the game day
+      evidence: the five verbs exit 0 at commit d730d97; `tests/integration/finish-today.test.ts`, `tests/e2e/stop-offer.spec.ts`
       closes: REQ-2444
       depends: TSK-0390 - the parent session guards the route; TSK-0330 - the `next` boundary; TSK-0400 - the game day that ends at 04:00
 
