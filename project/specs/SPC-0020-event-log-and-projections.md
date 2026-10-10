@@ -2,7 +2,7 @@
 id: SPC-0020
 artifact: spec
 status: live
-revised: 2026-09-29
+revised: 2026-10-10
 states: [REQ-2200, REQ-2202, REQ-2204, REQ-2206, REQ-2208, REQ-2210, REQ-2212, REQ-2214, REQ-2216, REQ-2218, REQ-2220, REQ-2222, REQ-2224, REQ-2226, REQ-2228, REQ-2230, REQ-2232, REQ-2234, REQ-2236, REQ-2238, REQ-2240, REQ-2242, REQ-3800, REQ-3802, REQ-3804, REQ-3808, REQ-3816, REQ-5062, REQ-5064, REQ-5066, REQ-5068, REQ-5070, REQ-5072, REQ-5074, REQ-5152, REQ-5154, REQ-5156, REQ-5168, REQ-5356, REQ-5358, REQ-5426, REQ-6646, REQ-6652, REQ-6654, REQ-6658, REQ-6660, REQ-6690]
 ---
 
@@ -78,9 +78,9 @@ No event type, schema field or code path names the vendor of the school's learni
 
 A new payload version adds a schema and an upcaster from the version before it. Stored events are never rewritten, and projections read an old payload through the upcasters. At start-up `meowtower` refuses to start when the log holds a type or version that has no schema.
 
-`item_shown`, `attempt_submitted` and `verdict` each have one payload version 2 that holds every field the owner's addendum 1 adds, each field optional, with an upcaster from version 1, so a version 1 event reads as a version 2 one and a stage that hasn't built an item leaves its field absent (REQ-5066). The upcaster fills `forms` with an empty list, `openingPhase` with `none` and `hintMaxLevel` with 3, and leaves the estimate fields absent (REQ-5066, REQ-5156). The version 2 fields are:
+`item_shown`, `attempt_submitted` and `verdict` each have one payload version that holds every field the owner's addendum 1 adds, each field optional, with an upcaster from the version before it, so an older event reads as one of that version and a stage that hasn't built an item leaves its field absent (REQ-5066). That version is 2 for `item_shown` and `verdict`. `attempt_submitted` already has a version 2, which carries `interrupted` and `crossDevice` (SPC-0030), so the addendum's fields are its version 3, with an upcaster from version 2. The upcaster fills `forms` with an empty list, `openingPhase` with `none` and `hintMaxLevel` with 3, and leaves the estimate fields absent (REQ-5066, REQ-5156). The fields are:
 
-| Type | Version 2 fields | Owner of the field |
+| Type | Fields | Owner of the field |
 | --- | --- | --- |
 | `item_shown` | `forms`, the list of new forms the task uses, empty for an ordinary task and for an estimate | ADR-0210 |
 | `item_shown` | the estimate's four option values and the index of the correct one | ADR-0240 |
@@ -107,6 +107,7 @@ Other types have a version 2 of their own, each with an upcaster:
 | `thread_spent` | a guiding thread spent on opening a task's or a Diary puzzle's hint ladder, reason `hint_ladder`, or on an explanation, reason `explanation`, with the task's `itemId`, or the puzzle's id when the spend is for a puzzle (REQ-5070, REQ-5154) | reads version 1's reason `hint` as `hint_ladder`; the server never writes `hint` again |
 | `free_text` | adds `origin` (`own`, `starter_edited` or `starter_unchanged`) and `ownWords` | sets `origin: "own"` and counts `ownWords` |
 | `item_excluded` | adds `source` (`parent_room` or `sandbox`), and `templateId`, `templateVersion` and `paramsHash` in place of an `itemId` for a task generated in the sandbox | sets `source: "parent_room"` |
+| `session_started` | adds `zone`, the device's IANA time zone name or null, which the game day follows (SPC-0030) | sets `zone: null` |
 
 `rest_stop_ended` carries a reason, `tap`, `timeout`, `puzzle_opened` or `screen_opened` with the screen's name, and `save_accepted` a reason, `adventure` or `puzzle`, each in a new payload version (ADR-0280). The upcaster reads a version 1 `save_accepted` as the reason `adventure`, and a version 1 `rest_stop_ended` as the reason `unrecorded`, which only the upcaster writes (ADR-0280). `settings_changed` records a sound change with the key `sound.music` or `sound.effects` and the value `{ on, volume }`, and after the MVP the Dutch probe's switch with the key `probe.enabled` (ADR-0430), and `looks_set` refuses a sound field (ADR-0320). `school_goal_mapped` is keyed by `goalKey` (ADR-0310). The review screens write `frame_candidate_rejected` and `science_rejected`, and the server writes `frame_candidate_expired` at the first change of game day after a frame candidate turns 60 days old; `frame_accepted`, `science_approved` and these three carry `candidateSince`, the day the candidate or question entered its file (ADR-0130). The server writes `context`, the frame's situation from `content/contexts.yaml`, on every `frame_accepted` from the first accepted frame (ADR-0410). `pocket_thread_given` carries `itemId`, `roomId` and `floorId`, with `roomId` null for a task outside any room, and `twin_unavailable` carries the `itemId` of the original task (ADR-0080).
 

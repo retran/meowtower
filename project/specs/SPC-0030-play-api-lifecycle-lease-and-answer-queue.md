@@ -2,7 +2,7 @@
 id: SPC-0030
 artifact: spec
 status: live
-revised: 2026-09-29
+revised: 2026-10-10
 states: [REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, REQ-0214, REQ-0216, REQ-0218, REQ-0220, REQ-0222, REQ-0224, REQ-0226, REQ-0228, REQ-0230, REQ-0232, REQ-0234, REQ-0236, REQ-2400, REQ-2402, REQ-2404, REQ-2406, REQ-2408, REQ-2410, REQ-2412, REQ-2414, REQ-2416, REQ-2418, REQ-2420, REQ-2422, REQ-2424, REQ-2426, REQ-2428, REQ-2430, REQ-2432, REQ-2434, REQ-2436, REQ-2438, REQ-2440, REQ-2442, REQ-2444, REQ-5414]
 ---
 
@@ -26,9 +26,9 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 
 | Route | What it does |
 | --- | --- |
-| `POST /api/session/start` | `{ mode: "zero" \| "daily", clientSeq }`. Opens a session and takes the lease for the calling device; replies `{ sessionId, adventureId, wrapUp }`, where `wrapUp` is true as for `ResumeOut` when the session continues an adventure that has reached `threeDayLimit`. `daily` continues the open adventure or plans a new one; a Session 0 (`zero`) belongs to no adventure, and its `adventureId` is null. |
+| `POST /api/session/start` | `{ mode: "zero" \| "daily", zone?, clientSeq }`, where `zone` is the device's IANA time zone name, which the game day follows; an unknown name gets `400 bad_request`, and a device that sends none gets the server's own zone. Opens a session and takes the lease for the calling device; replies `{ sessionId, adventureId, wrapUp }`, where `wrapUp` is true as for `ResumeOut` when the session continues an adventure that has reached `threeDayLimit`. `daily` continues the open adventure or plans a new one; a Session 0 (`zero`) belongs to no adventure, and its `adventureId` is null. |
 | `GET /api/adventure/current` | The open adventure, `planned`, `active` or `paused`, with where play stopped (floor, room, slot), or `null` when none is open. |
-| `POST /api/adventure/resume` | `{ clientSeq }`. Opens a new session, takes the lease for the calling device and returns `ResumeOut` with the new `sessionId`. |
+| `POST /api/adventure/resume` | `{ zone?, clientSeq }`, with `zone` as for `start`. Opens a new session, takes the lease for the calling device and returns `ResumeOut` with the new `sessionId`. Without an open adventure it answers `404 no_open_adventure`. |
 | `POST /api/session/:id/heartbeat` | The lease holder's heartbeat. |
 | `GET /api/session/:id/next` | The next packet: `room`, `scene`, `chest`, `break`, `stop_offer` or `end`. While the packet it last returned is still open, it returns that packet again. |
 | `POST /api/session/:id/answer` | `AnswerIn` for a first or second attempt; replies `AnswerOut`. |
@@ -37,12 +37,12 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 | `POST /api/item/:itemId/explain` | Buys a detailed explanation, or on an item already charged produces its text again; replies `ExplainOut` with `status: "pending"`. |
 | `POST /api/item/:itemId/plan/draft` | `{ laid, clientSeq }`: her partly laid solution plan; logs `plan_draft`, whose contents ADR-0270 defines. |
 | `POST /api/item/:itemId/second-attempt` | `{ clientSeq }`, after the first attempt's verdict. Returns the parallel task for the second attempt as a `room` packet with an `itemId` of its own. |
-| `POST /api/session/:id/chest` | `{ chestId, rewardId }`: her pick of one of the chest's three options. |
-| `POST /api/session/:id/scene/input` | A scene choice, her free text, or a free-text draft. |
-| `POST /api/session/:id/rewards/delivered` | The client's acknowledgement that it showed a grant or a ceremony. |
+| `POST /api/session/:id/chest` | `{ chestId, rewardId, clientSeq }`: her pick of one of the chest's three options. It logs `chest_chosen` and the grant, and replies `{ grants }`. A chest that isn't the open one gets `409 chest_not_open`, and a reward that isn't one of its three options gets `400 bad_request`. |
+| `POST /api/session/:id/scene/input` | `{ kind, sceneId, ... , clientSeq }` for the open scene: `kind: "choice"` with a `choiceId` of one of its branches, `kind: "text"` with her free text, or `kind: "draft"` with the text she has typed so far. A choice logs `choice_made` and a text `free_text`, each answering the scene, and the reply is `{ status: "done", grants }`; a draft logs `text_draft_saved`, answers nothing, and the reply is `{ status: "saved", grants: [] }`. A scene that isn't the open one gets `409 scene_not_open`, and a choice that isn't one of its branches `400 bad_request`. |
+| `POST /api/session/:id/rewards/delivered` | `{ rewardIds, clientSeq }`: the client's acknowledgement that it showed these grants. It logs `rewards_delivered` for the ids still pending, appends nothing for ids already acknowledged, and replies `{ status: "ok" }`. |
 | `POST /api/session/:id/pause` | `{ reason: "leave" \| "background" \| "idle", clientSeq }`; replies `{ status: "paused" }`. |
 | `POST /api/session/:id/break` | The rest-stop button: `{ action: "start" \| "end", clientSeq }`; replies `{ status: "resting" \| "playing" }`. |
-| `POST /api/session/:id/extend` | «Ещё один ряд» after a `stop_offer`. |
+| `POST /api/session/:id/extend` | «Ещё один ряд» after a `stop_offer`: `{ clientSeq }`. It logs `extension`, and replies `{ status: "extended" }`; after `finish_today` on the same game day it gets `409 day_finished`. |
 | `POST /api/session/:id/save` | `{ reason: "adventure" \| "puzzle", clientSeq }`: she accepts an offer to save, and the server logs `save_accepted` with the reason. With `adventure` it returns the closing scene. With `puzzle` it closes that one puzzle and returns the puzzle branch, with no closing scene, and play goes on. |
 | `GET /api/session/:id/events` | The SSE stream. |
 | `GET /api/session/:id/poll?after=<seq>` | The stream's messages after `seq`, for a client whose stream dropped. |
@@ -65,7 +65,9 @@ Every route needs a paired device's token, as SPC-0010 states. Every request tha
 | `CheckIn` | `preliminaryRaw`, `checkRaw` and `clientSeq`. |
 | `CheckOut` | `match` and `checksLeft`. |
 | `ExplainOut` | `status: "pending"` and the thread stock. |
-| `ResumeOut` | `sessionId`, `adventureId`, the packet to continue on with the rungs already shown and their framing lines, the rewards not yet delivered, the `itemId`s of the open room whose explanation she bought, and `wrapUp`. |
+| `Scene` | `kind: "scene"`, the `sceneId`, the `lines`, each with its `speaker` and `text`, the `branches`, each with a `choiceId` and its `text`, and the `draft` she last typed, or null. The lines and branches are the ones `scene_prepared` holds, as they passed the safety checks. |
+| `Chest` | `kind: "chest"`, the `chestId` and its three `options`, each with a `kind`, a `rewardId` and a `quality`: the three `chest_offered` holds, the same each time the chest is shown. |
+| `ResumeOut` | `sessionId`, `adventureId`, where play stopped as `floor`, `room` and `slot`, the open task as `itemId`, `view`, `attemptNo` and the rungs already shown as `hintLevels` with their framing lines, the `itemId`s of the open room whose explanation she bought, the open `scene` with her last draft or null, the open `chest` or null, the `rewards` not yet delivered, and `wrapUp`. |
 | `stop_offer` | `canExtend`. |
 | `end` | `{ kind: "end" }`: the adventure has reached its finale or its short ending; a new session plans the next one. |
 | `PollOut` | `messages`: the stream's messages after the `seq` asked for. |
@@ -84,6 +86,11 @@ The stream `GET /api/session/:id/events` carries five messages, each with the `s
 | `adventure_wrapped_up` | `adventureId` and `unopenedSecrets` |
 | `session_ended` | `sessionId` and the pause reason |
 | `explanation_bought` | `itemId` and `attemptNo` |
+| `session_started`, v2 | `sessionId`, `mode` and `zone`, the device's time zone or null where it sent none; version 1 had no `zone` |
+| `scene_prepared` | `sceneId`, `lines` and `branches` as shown |
+| `text_draft_saved` | `sceneId` and `text`, her draft as she held it |
+| `rewards_delivered` | `rewardIds`, the grants the client showed |
+| `finish_today` | nothing; its time says which game day it closes |
 
 ### Statuses and error names
 
@@ -91,6 +98,8 @@ The stream `GET /api/session/:id/events` carries five messages, each with the `s
 | --- | --- | --- |
 | `409 lease_moved` | the player, on the device she left | another device holds the lease |
 | `409 day_finished` | the player | `extend` after `finish_today`, until 04:00 |
+| `409 scene_not_open` | the developer | a scene input for a scene that isn't the open one |
+| `409 chest_not_open` | the developer | a chest pick for a chest that isn't the open one |
 | `401 parent_session_expired` | the parent | a parent request 30 minutes or more after the last one |
 | `401 parent_session_missing` | the parent | a parent request with no parent session, with one that has already expired, or from a device other than the one that opened it |
 | `400 settings_invalid` | the parent | a settings change outside its range, such as a `threeDayLimit` of 0, 8 or 2.5 |
@@ -186,7 +195,7 @@ A task left unanswered comes back as the same first attempt, and its answer coun
 
 An adventure day is a game day, from 04:00 to 04:00, on which a task or a scene of that adventure was shown; a game day on which none was shown doesn't count (REQ-0236). `threeDayLimit` is 3 by default and can be set from 1 to 7 or switched off with `null`, and `PUT /api/parent/settings` changes it and logs `settings_changed` with the key `threeDayLimit` (REQ-0234). The `parent_settings` projection keeps each setting's latest logged value; a setting with no `settings_changed` event holds its default, which `GET /api/parent/settings` supplies, so a projection row exists only for a value the parent chose.
 
-When the first session of a new game day starts on an adventure that already has at least `threeDayLimit` adventure days, `ResumeOut.wrapUp` is true; a limit the parent lowers below the days an open adventure already has wraps that adventure up at the next new game day. The server lets the open task and room finish, plays the short ending from the scene library and logs `adventure_wrapped_up` with the secrets she didn't open (REQ-0228). `reward_queue` takes those secrets (REQ-0232). The wrap-up logs no reversing grant and removes no event, so she keeps everything she earned (REQ-0230).
+When a session starts on an adventure that has at least `threeDayLimit` adventure days before the current game day, `ResumeOut.wrapUp` is true, and it stays true for the whole of that game day whatever she is shown on it; a limit the parent lowers below the days an open adventure already has wraps that adventure up at the next new game day. A session's game days follow the zone it started in. The server lets the open task and room finish, plays the short ending from the scene library and logs `adventure_wrapped_up` with the secrets she didn't open (REQ-0228). `reward_queue` takes those secrets (REQ-0232). The wrap-up logs no reversing grant and removes no event, so she keeps everything she earned (REQ-0230).
 
 ### The event queue and the offline state
 

@@ -25,7 +25,7 @@ The definition of done in ADR-0190 applies as well and isn't restated here.
 
 ## What to do
 
-Add `src/engine/director/cold-start.ts`. It reads each node's typical group through `typicalGroup` of the graph's query module. SPC-0050 allows that import only under `src/parent/`, and SPC-0070 has this Director module read it, so TSK-0501's lint configuration lists `src/engine/director/cold-start.ts` as the one other importer; keep the import in this file alone.
+Add `src/engine/director/cold-start.ts`. It reads each node's typical group through `typicalGroup` of the graph's query module. SPC-0050 allows that import under `src/parent/` and in this module alone, so TSK-0501's lint configuration lists `src/engine/director/cold-start.ts` as the one other importer; keep the import in this file alone.
 
 ## Depends on
 
@@ -38,4 +38,4 @@ Not yet.
 
 ## Left alone
 
-The contradiction between SPC-0050's lint rule and this module, which the owner settles, and the Guardian's use of the cold-start flag, which TSK-0540 reads.
+The Guardian's use of the cold-start flag, which TSK-0540 reads.

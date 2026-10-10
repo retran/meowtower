@@ -2,7 +2,7 @@
 id: SPC-0010
 artifact: spec
 status: live
-revised: 2026-09-29
+revised: 2026-10-10
 states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-3714]
 ---
 
@@ -84,7 +84,7 @@ When `meowtower` receives an answer, it commits the transaction that stores it b
 
 ### Network boundary and trust
 
-The Mac forwards no router port, and every request except pairing needs a device token (REQ-2510). `./meowtower up` compares the Mac's default gateway with the one recorded at setup and starts nothing when they differ, or when the hardware address of the recorded or the current gateway is unknown (REQ-2510). While the containers run, the network watch compares the gateway every 60 seconds and stops both containers on a difference (REQ-2510). The loopback listener refuses every connection that doesn't come from the Mac itself (REQ-2510).
+The Mac forwards no router port, and every request except pairing needs a device token (REQ-2510). `./meowtower up` compares the Mac's default gateway with the one recorded at setup and starts nothing when they differ, or when the hardware address of the recorded or the current gateway is unknown (REQ-2510). While the containers run, the network watch compares the gateway every 60 seconds and stops both containers on a difference (REQ-2510). The watch is the launchd agent `local.meowtower.watch`, whose plist `./meowtower up` writes into `~/Library/LaunchAgents` with `RunAtLoad` and `./meowtower down` removes; it runs `./meowtower watch` in the parent's user session, checks at once when it loads, pings the gateway before each hardware address read, and writes `wrong_network` with both gateways into `data/snapshots/notices.json`, which a start on the home network clears. The loopback listener refuses every connection that doesn't come from the Mac itself (REQ-2510).
 
 The iPad trusts Caddy's certificate authority through the profile `./meowtower ipad-setup` installs, done once per iPad, so `https://<mac-name>.local` opens with no certificate warning (REQ-2514). Downloading the profile is the one time Safari shows the warning, because the iPad doesn't yet trust the authority that signed the page. The page links a web app manifest and a 512-pixel icon, so Safari's Add to Home Screen installs the game as a standalone app (REQ-2500); its name comes from the language file (ADR-0160). `./meowtower up` restarts `proxy` so a changed `Caddyfile` applies.
 
@@ -126,7 +126,7 @@ The client holds no text of its own: it reads the `ui.` keys of the language fil
 
 On the computer interface every control on every screen works from the keyboard alone, with a visible focus ring (REQ-2540).
 
-The device stores in IndexedDB only the unsent entries of its event queue, and asks for `navigator.storage.persist()` on first launch. The event queue holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order the player made them, with at most one answer per device, and ADR-0030 states how the queue sends them. Its service worker caches code and pictures, and caches sound files only while a sound channel is on (ADR-0320), and `localStorage` holds no game data (REQ-6506).
+The device stores in IndexedDB only the unsent entries of its event queue, in the database `meowtower-queue`, store `entries`, and asks for `navigator.storage.persist()` on launch. The event queue holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order the player made them, with at most one answer per device, and ADR-0030 states how the queue sends them. Its service worker, served at `/sw.js`, asks the network first and keeps a copy of the code, the language file and the pictures it fetched, and no `/api` reply; it caches sound files only while a sound channel is on (ADR-0320), and `localStorage` holds no game data (REQ-6506). A lint check keeps IndexedDB in the queue's module, the Cache API in the service worker, and every `localStorage` or `sessionStorage` write, cookie write and origin-private file system call out of the client.
 
 ### Push
 
