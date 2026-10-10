@@ -102,8 +102,9 @@ A task is marked in the commit that advances it, never in a later pass, because 
       closes: REQ-6506
       depends: TSK-0100 - the storage it restricts belongs to the client shell
       amended: criterion 4 moved to TSK-0380 on 2026-10-10, so this task closes on its first three criteria and TSK-0380 can start
-- [+] T-015 TSK-0430 `up` refuses an unverified gateway, and a network watch stops the containers when the gateway changes (`meowtower`, a launchd plist)
+- [x] T-015 TSK-0430 `up` refuses an unverified gateway, and a network watch stops the containers when the gateway changes (`meowtower`, a launchd plist)
       added: ADR-0360 entry 2 amended REQ-2510's behaviour after TSK-0060 was done
+      evidence: the five verbs exit 0 at commit 507a341; `tests/smoke/gateway-watch.test.ts`; the transcripts from the Mac rest on the owner (TSK-0430 Evidence)
       closes: none; REQ-2510 stays with TSK-0060
       depends: TSK-0060 - it records the gateway and checks it at `up`
 - [x] T-016 TSK-0440 The stage 0 write routes answer 404 from stage 0.1 on (`src/server/stage0.ts`, `src/server/app.ts`)

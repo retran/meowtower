@@ -1,7 +1,7 @@
 ---
 id: TSK-0430
 artifact: task
-status: approved
+status: done
 revised: 2026-09-29
 epic: EPC-0010
 closes: []
@@ -32,7 +32,23 @@ TSK-0060, because it records the gateway at setup and checks it at `up`.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-10-10 on the Mac, at commit 507a341 of the branch `tsk-0430-gateway-verified-and-watch`; the pull request is not opened yet. Every criterion is met by the script's tests, and the transcripts the criteria also ask for are named below as resting on the owner.
+
+- Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (49 Vitest files with 446 tests, and 43 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
+- Criterion 1: `tests/smoke/gateway-watch.test.ts` runs the script with `route`, `ping`, `arp`, `docker` and `launchctl` stubbed. With no ARP entry after the ping, and with a recorded hardware address `unknown`, `up` prints `gateway_unverified`, names `./meowtower set-home-network` and runs no `compose up`; a first read that misses and a read after the ping that hits start the stack.
+- Criterion 2: `set-home-network` pings, records the hardware address and the next `up` starts; with no answer it records nothing, keeps the old record and prints `gateway_unverified`.
+- Criterion 3: `up` writes `local.meowtower.watch.plist` with `RunAtLoad` into `~/Library/LaunchAgents` and loads it; `down` unloads it and removes the file.
+- Criterion 4: the watch ticks before it sleeps, and on an unverified gateway with running containers it stops both.
+- Criterion 5: a different IP address, and the same IP address with another hardware address, each stop both containers once and write `wrong_network` with both gateways to `data/snapshots/notices.json`, which `./meowtower status` prints; the watch pings before each read, stops nothing while the containers are down or the gateway is the recorded one, and `up` on the home network clears the notice.
+
+Resting on the owner, because no program here can change the router: the transcripts criteria 2, 4 and 5 ask for from the Mac, that is `set-home-network` run at home against the gateway that reads `unknown` today, a login on another network, and a gateway change with the stack running. The 70-second bound is the 60-second tick plus `docker stop`, as ADR-0360 states, and no test times it.
+
+Choices made here, because the approved records left them open:
+
+- The watch is the subcommand `./meowtower watch`, which the agent runs with `KeepAlive`; `--once` ends after one tick, and `MEOWTOWER_WATCH_TICKS` and `MEOWTOWER_WATCH_SLEEP` bound the loop for tests.
+- The agent loads with `launchctl load -w` and unloads with `launchctl unload -w`, so `launchctl list` shows its label.
+- A gateway whose IP address differs reads `wrong_network` even when a hardware address is unknown; `gateway_unverified` is for the same IP address with an unknown hardware address on either side.
+- The watch stops on an unverified gateway as well as on a changed one, as criterion 4 asks.
 
 ## Left alone
 
