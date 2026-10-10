@@ -1,7 +1,7 @@
 ---
 id: TSK-0420
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0010
 closes: [REQ-6506]
@@ -37,7 +37,21 @@ Amended on 2026-10-10: the criterion that inspects the store after a played day 
 
 ## Evidence
 
-Not yet.
+Collected on 2026-10-10 on the Mac, at commit 2f47113 of the branch `tsk-0420-event-queue-store`; the pull request is not opened yet. Criteria 1 to 3 are met.
+
+- Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (49 Vitest files with 454 tests, and 49 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
+- Criterion 1, REQ-6506: `tests/e2e/storage.spec.ts` replaces `navigator.storage.persist` and finds it called on the first launch, in the ipad and computer projects.
+- Criterion 2, REQ-6506: `tools/static-checks.ts` gains `client_storage`, which runs in the lint verb and passes here. `tests/unit/static-checks.test.ts` gives it one fixture for each banned use, IndexedDB outside `src/client/event-queue.ts`, `localStorage` and `sessionStorage` writes, `caches` outside `src/client/sw.ts`, a `document.cookie` write and `getDirectory(`, and each fixture fails the check; comments naming them don't.
+- Criterion 3, REQ-6506: after the spec pairs a device, answers a task and reloads, IndexedDB holds the one database `meowtower-queue` with the one store `entries` and no entry, `localStorage` and `sessionStorage` are empty, `document.cookie` is empty, and the service worker's cache holds `/`, the manifest, `/client/*.js` and `/i18n/ru.json` and no `/api` path. On the computer project the origin-private file system is empty; WebKit won't open it for a test, so there that part rests on the static check. The device's sound channels are all off, as no channel can be switched on yet.
+- The queue's store, `src/client/event-queue.ts`, keeps the five entry kinds in the order made, and the spec writes one of each, reads them back in that order and removes them; every write resolves once its transaction has committed.
+
+Moved out: the criterion that inspects the store after a played day is criterion 5 of the queue task of EPC-0030, because only that task fills and flushes the store.
+
+Choices made here, because the approved records left them open:
+
+- The service worker is `src/client/sw.ts`, registered at `/sw.js` as a module worker, asks the network first and keeps a copy of each code, language and picture file it fetches. It keeps no `/api` reply and no sound file.
+- `./client/*.js` and the page's other files come from the same server routes as before; `/sw.js` is a new route beside them.
+- The e2e config blocks service workers for every spec except the storage one, because a running worker answers requests before a test's routes see them.
 
 ## Left alone
 

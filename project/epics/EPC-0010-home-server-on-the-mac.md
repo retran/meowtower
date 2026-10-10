@@ -97,7 +97,8 @@ A task is marked in the commit that advances it, never in a later pass, because 
       dropped: its simulated day through the gateway needs the epics realising ADR-0040, ADR-0100 and ADR-0110, none of which is written, so the task could not be done and held the chain; the epic realising ADR-0100 takes its text, and REQ-2506 sits under Not covered until then
       closes: REQ-2506
       depends: TSK-0050 - the `model_service_down` line shows in the Parent Room
-- [+] T-014 TSK-0420 A device keeps no game data except the unsent entries of its event queue (`src/client/`, `tests/e2e/`)
+- [x] T-014 TSK-0420 A device keeps no game data except the unsent entries of its event queue (`src/client/`, `tests/e2e/`)
+      evidence: the five verbs exit 0 at commit 2f47113; `tests/e2e/storage.spec.ts`, `tests/unit/static-checks.test.ts` (TSK-0420 Evidence)
       added: REQ-6506 superseded REQ-2542, which TSK-0110 closed, so the storage check has to allow the wider queue ADR-0370 defines
       closes: REQ-6506
       depends: TSK-0100 - the storage it restricts belongs to the client shell
