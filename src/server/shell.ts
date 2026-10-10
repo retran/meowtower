@@ -48,6 +48,15 @@ export function mountShell(app: Hono): void {
       "content-type": "text/javascript; charset=utf-8",
     });
   });
+  // The service worker sits at the root, so its scope is the whole origin.
+  app.get("/sw.js", (c) => {
+    const path = new URL("sw.js", CLIENT);
+    if (!existsSync(path)) return c.notFound();
+    return c.body(readFileSync(path, "utf8"), 200, {
+      "content-type": "text/javascript; charset=utf-8",
+      "cache-control": "no-cache",
+    });
+  });
   app.get("/i18n/:file", (c) =>
     c.req.param("file") === `${lang}.json` ? c.json(uiStrings()) : c.notFound(),
   );

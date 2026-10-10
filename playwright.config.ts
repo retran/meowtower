@@ -8,7 +8,9 @@ export default defineConfig({
   // One device holds the adventure at a time (REQ-0220), and the tests share
   // one server, so tests run one at a time or they take the lease from each other.
   workers: 1,
-  use: { baseURL: `http://127.0.0.1:${PORT}` },
+  // The service worker would answer requests before a test's routes see them;
+  // only the storage spec lets it run.
+  use: { baseURL: `http://127.0.0.1:${PORT}`, serviceWorkers: "block" },
   // The two interfaces (SPC-0010): an iPad in WebKit, and a computer in
   // Chromium at 1280x720.
   projects: [

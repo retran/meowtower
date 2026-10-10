@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  checkClientStorage,
   checkEventsSqlConfined,
   checkExplainCacheConfined,
   checkGameProjectionImports,
@@ -267,5 +268,44 @@ describe("REQ-3816: only the explanation request reads explain_cache", () => {
       "tests/x.test.ts": "explain_cache\n",
     });
     expect(checkExplainCacheConfined(root)).toEqual([]);
+  });
+});
+
+describe("REQ-6506: a device keeps only its event queue", () => {
+  it("passes this repository", () => {
+    expect(checkClientStorage(process.cwd())).toEqual([]);
+  });
+  it("allows IndexedDB in the queue's module and caches in the service worker", () => {
+    const root = repo({
+      "src/client/event-queue.ts": "const open = indexedDB.open('q');",
+      "src/client/sw.ts": "const c = await caches.open('code');",
+      "src/client/play.ts":
+        "// the queue uses indexedDB, the worker uses caches\nconst x = 1;",
+    });
+    expect(checkClientStorage(root)).toEqual([]);
+  });
+  it.each([
+    ["src/client/play.ts", "const db = indexedDB.open('x');", "indexedDB"],
+    [
+      "src/client/play.ts",
+      "localStorage.setItem('k', '1');",
+      "localStorage.setItem(",
+    ],
+    [
+      "src/client/play.ts",
+      "sessionStorage.setItem('k', '1');",
+      "sessionStorage.setItem(",
+    ],
+    ["src/client/main.ts", "const c = await caches.open('x');", "caches"],
+    ["src/client/play.ts", "document.cookie = 'a=b';", "document.cookie ="],
+    [
+      "src/client/play.ts",
+      "const root = await navigator.storage.getDirectory();",
+      "getDirectory(",
+    ],
+  ])("names %s for %s", (file, text, match) => {
+    expect(checkClientStorage(repo({ [file]: text }))).toEqual([
+      { check: "client_storage", file, match },
+    ]);
   });
 });
