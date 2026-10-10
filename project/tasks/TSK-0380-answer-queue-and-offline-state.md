@@ -2,7 +2,7 @@
 id: TSK-0380
 artifact: task
 status: approved
-revised: 2026-09-27
+revised: 2026-10-10
 epic: EPC-0030
 closes: [REQ-2400, REQ-2434, REQ-2436, REQ-2438]
 issue:
@@ -20,6 +20,7 @@ After this task, the client commits each answer to IndexedDB before it sends it,
 2. Given the network cut after an answer, when the client is closed and reopened and the network restored, then the answer is in the log exactly once; while the network was down the waiting scene «Туман над тропой, фамильяр ищет дорогу» showed, no new task appeared, and the hint, explanation and second-attempt controls were inactive (REQ-2434, REQ-2436, REQ-2438). Closed by: the Playwright report.
 3. Given no connection, when the player answers, then the client shows no outcome, no correct answer and no next task until the server replies, and the outcome and grants then arrive together (REQ-2400). Closed by: the same Playwright test, which checks the screen before and after the network returns.
 4. Given an answer unsent for 24 hours, when the parent opens that device's settings, then `queue_stuck` shows with the answer's time and a retry button. Closed by: a Playwright test with a fake clock.
+5. Given a device that has played a day of the stand-in adventure through this queue, when the storage inspection of TSK-0420 runs, then its result holds as for a fresh device, and no entry the server acknowledged is left in the store (REQ-6506). Closed by: the storage inspection test's report of that run. Moved here from TSK-0420 on 2026-10-10.
 
 ## What to do
 
