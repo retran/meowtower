@@ -30,6 +30,8 @@
   "ui.reward.star": "Звёздочка",
   "ui.reward.thread": "Путеводная нить",
   "ui.reward.feather": "Перо",
+  "ui.stop.title": "На сегодня хватит. Всё сохранено.",
+  "ui.stop.extend": "Ещё один ряд",
   "ui.play.failed": "Башня не ответила. Попробуй ещё раз.",
   "ui.nav.settings": "Настройки",
   "ui.nav.pair": "Познакомить устройство",

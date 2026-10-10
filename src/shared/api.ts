@@ -101,6 +101,15 @@ export const Grant = z
   .strict();
 export type Grant = z.infer<typeof Grant>;
 
+/**
+ * The day's play is over for now. `canExtend` is false once the parent has
+ * finished the day, and then the client offers no extra row (REQ-2444).
+ */
+export const StopOffer = z
+  .object({ kind: z.literal("stop_offer"), canExtend: z.boolean() })
+  .strict();
+export type StopOffer = z.infer<typeof StopOffer>;
+
 /** The adventure has reached its finale; a new session plans the next one. */
 export const End = z.object({ kind: z.literal("end") }).strict();
 
@@ -211,6 +220,9 @@ export const HintOut = z
     threads: z.number().int().nonnegative(),
   })
   .strict();
+
+/** «Ещё один ряд»: the reply once the extension is logged. */
+export const ExtendOut = z.object({ status: z.literal("extended") }).strict();
 
 /** The body of the explain and second-attempt requests. */
 export const ItemActionIn = z.object({ clientSeq }).strict();

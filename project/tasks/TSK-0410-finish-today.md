@@ -1,7 +1,7 @@
 ---
 id: TSK-0410
 artifact: task
-status: approved
+status: done
 revised: 2026-09-27
 epic: EPC-0030
 closes: [REQ-2444]
@@ -29,7 +29,18 @@ TSK-0390, because the parent session guards the route. TSK-0330, because the off
 
 ## Evidence
 
-Not yet.
+Collected on 2026-10-10 on the Mac, at commit d730d97 of the branch `tsk-0410-finish-today`, in pull request #7. Both criteria are met; the stop screen's Playwright test hands the client the packet and doesn't finish a real day, for the reason below.
+
+- Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (48 Vitest files with 432 tests, and 43 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
+- Criterion 1, REQ-2444: `tests/integration/finish-today.test.ts` logs `finish_today` through the parent route with a parent session. Mid-task, `next` returns the open task, and after its answer `stop_offer` with `canExtend: false`, again on a repeat. With a scene open it returns the scene first and the offer after the choice. Without a parent session the route gets `401 parent_session_missing` and logs nothing.
+- Criterion 2, REQ-2444: with fake timers `extend` gets `409 day_finished` at 10:00 and at 03:59 the next calendar day, and at 04:00 it is accepted, logs `extension` and `next` returns a task again. Outside a finished day `extend` logs `extension` and nothing else. `tests/e2e/stop-offer.spec.ts` hands the client the offer: with `canExtend: false` the screen has no «Ещё один ряд» and «Сохранить и уйти» sends the pause with `leave`; with `canExtend: true` the button asks the server, and a `409 day_finished` leaves the screen without it.
+
+Choices made here, because the approved records left them open:
+
+- The stop screen's Playwright test serves the packet from the test, because a real `finish_today` closes the shared e2e server's game day for every later test; the server rule has the fake-clock tests above.
+- `finish_today` has an empty payload, and the game day it closes is the one its time falls on in the zone of the session asking, as TSK-0400's `gameDayOf` computes it.
+- `extend` logs `extension` with 20 minutes, the length SPC-0090 gives an extension, until ADR-0090's epic adds the soft stop.
+- No `soft_stop` event is logged for this offer, because it has no active time to carry.
 
 ## Left alone
 

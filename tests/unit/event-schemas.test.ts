@@ -116,6 +116,7 @@ const valid: Record<string, Record<string, unknown>> = {
   rest_stop_ended: { durationMs: 300000 },
   soft_stop: { activeMs: 3600000 },
   extension: { minutes: 20 },
+  finish_today: {},
   parent_tag_added: { node: "F2", subtype: null },
   parent_tag_removed: { node: "F2", subtype: null },
   item_flagged: { itemId: "i-1", note: null },

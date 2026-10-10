@@ -38,6 +38,7 @@ import {
   ChestOut,
   End,
   ExplainOut,
+  ExtendOut,
   HeartbeatIn,
   HeartbeatOut,
   HintIn,
@@ -55,6 +56,7 @@ import {
   SceneInputOut,
   SessionStartIn,
   SessionStartOut,
+  StopOffer,
 } from "../shared/api.js";
 import { t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
@@ -68,6 +70,7 @@ import {
   resumePoint,
   sessionRow,
 } from "./lifecycle.js";
+import { finishedToday } from "./finish-today.js";
 import { sessionZone, wrapUpDue } from "./three-day.js";
 import {
   ROOM_LENGTH,
@@ -622,6 +625,16 @@ export function mountPlay(
     }
 
     const index = firsts.length;
+    // After «Закончить на сегодня» the next boundary is the stop offer, once an
+    // open scene or chest is done, and it takes no extension (REQ-2444).
+    if (finishedToday(db, Date.now(), sessionZone(db, sessionId))) {
+      const point = resumeFromLog(played);
+      if (point?.scene)
+        return send(c, Scene, { kind: "scene", ...point.scene });
+      if (point?.chest)
+        return send(c, Chest, { kind: "chest", ...point.chest });
+      return send(c, StopOffer, { kind: "stop_offer", canExtend: false });
+    }
     // The three-day rule: the open task is done and, with the room finished,
     // the stand-in short ending plays and the adventure wraps up, queueing the
     // secrets she didn't open (REQ-0228, REQ-0232). A room left half done
@@ -1048,6 +1061,41 @@ export function mountPlay(
         ),
       );
     return send(c, RewardsDeliveredOut, { status: "ok" });
+  });
+
+  app.post("/api/session/:id/extend", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = ItemActionIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
+    const sessionId = c.req.param("id");
+    const key = `extend:${deviceId}:${body.data.clientSeq}`;
+    if (requestEvents(db, key).length)
+      return send(c, ExtendOut, { status: "extended" });
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    if (session.state === "ended")
+      return c.json({ error: "session_ended" }, 409);
+    if (finishedToday(db, Date.now(), sessionZone(db, sessionId)))
+      return c.json({ error: "day_finished" }, 409);
+    // Until ADR-0090's epic adds the soft stop, an extension is only logged.
+    appendEvents(
+      db,
+      keyed(
+        [
+          {
+            type: "extension",
+            v: 1,
+            payload: { minutes: 20 },
+            origin: { deviceId, clientMs: Date.now() },
+            ...within(sessionId),
+          },
+        ],
+        key,
+      ),
+    );
+    return send(c, ExtendOut, { status: "extended" });
   });
 
   app.post("/api/session/:id/answer", async (c) => {
