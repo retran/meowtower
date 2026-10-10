@@ -8,6 +8,7 @@ import type {
   ResumeOut,
   Room,
   Scene,
+  StopOffer,
 } from "../shared/api.js";
 import type { Interface } from "./interface.js";
 
@@ -153,8 +154,8 @@ export async function newPairingCode(): Promise<{
 // The play API (SPC-0030). The client imports only types from src/shared, and
 // never compares an answer: it sends the raw text and draws the reply.
 
-/** The packets the server sends today; later tasks add break and stop_offer. */
-export type Packet = Room | Scene | Chest | { kind: "end" };
+/** The packets the server sends today; later tasks add break. */
+export type Packet = Room | Scene | Chest | StopOffer | { kind: "end" };
 
 // Each state-changing request carries the device's own counter, and a repeat
 // with the same value appends nothing. It starts from the clock, so a reload
@@ -295,4 +296,17 @@ export async function deliverRewards(
     },
   );
   return status === 200;
+}
+
+/** «Ещё один ряд»: the server refuses with `day_finished` once the parent ended the day. */
+export async function extend(
+  sessionId: string,
+): Promise<"ok" | "day_finished" | Moved | null> {
+  const { status, body } = await call(
+    `/api/session/${encodeURIComponent(sessionId)}/extend`,
+    { method: "POST", body: JSON.stringify({ clientSeq: nextSeq() }) },
+  );
+  if (isMoved(status, body)) return MOVED;
+  if (status === 409 && body["error"] === "day_finished") return "day_finished";
+  return status === 200 ? "ok" : null;
 }

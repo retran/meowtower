@@ -10,10 +10,12 @@ import type {
   Grant,
   Room,
   Scene,
+  StopOffer,
 } from "../shared/api.js";
 import {
   answer,
   deliverRewards,
+  extend,
   heartbeat,
   MOVED,
   nextPacket,
@@ -186,6 +188,7 @@ export const playScreen: Screen = {
       if (packet.kind === "room") drawRoom(packet);
       else if (packet.kind === "scene") drawScene(packet);
       else if (packet.kind === "chest") drawChest(packet);
+      else if (packet.kind === "stop_offer") drawStop(packet);
       else {
         taskOpen = false;
         draw(
@@ -410,6 +413,34 @@ export const playScreen: Screen = {
           }),
           button("ui.play.leave", "play-leave", () => stop("leave")),
         ),
+      );
+      restartIdle();
+    }
+
+    /** The day's play is over for now; the extra row only where the server allows it. */
+    function drawStop(offer: StopOffer): void {
+      taskOpen = false;
+      const note = status();
+      const actions: Node[] = [];
+      if (offer.canExtend)
+        actions.push(
+          button("ui.stop.extend", "stop-extend", async () => {
+            if (!sessionId) return;
+            const reply = await extend(sessionId);
+            if (gone()) return;
+            if (reply === MOVED) return viewOnly();
+            if (reply === "ok") return advance();
+            // The day was finished meanwhile: the offer stays, without the row.
+            if (reply === "day_finished")
+              return drawStop({ kind: "stop_offer", canExtend: false });
+            note.textContent = t("ui.play.failed");
+          }),
+        );
+      actions.push(button("ui.play.leave", "stop-leave", () => stop("leave")));
+      draw(
+        el("div", { className: "stop" }, el("p", {}, t("ui.stop.title"))),
+        note,
+        el("nav", { className: "actions" }, ...actions),
       );
       restartIdle();
     }
