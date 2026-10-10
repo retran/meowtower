@@ -223,6 +223,13 @@ describe("REQ-0228: the open task and room finish, then the short ending plays",
     expect(ending.lines.length).toBeGreaterThan(0);
     expect(w.events("adventure_wrapped_up")).toHaveLength(1);
     expect(w.adventureState()).toBe("wrapped_up");
+    // The ending stays until she leaves it, and then the adventure is over.
+    expect(Scene.parse(await w.next(sessionId)).sceneId).toBe(ending.sceneId);
+    await w.post(`/api/session/${sessionId}/scene/input`, {
+      kind: "choice",
+      sceneId: ending.sceneId,
+      choiceId: ending.branches[0]?.choiceId,
+    });
     expect(await w.next(sessionId)).toEqual({ kind: "end" });
   });
 
@@ -230,12 +237,26 @@ describe("REQ-0228: the open task and room finish, then the short ending plays",
     const w = world();
     await playDay(w, 1, 1);
     await playDay(w, 2, 1);
-    await playDay(w, 3, 1);
+    // A task shown on day 3 and left unanswered.
+    day(3);
+    const left = await w.start();
+    const shown = Room.parse(await w.next(left.sessionId));
+    await w.leave(left.sessionId);
     day(4);
-    const { sessionId } = await w.start();
+    const { sessionId, wrapUp } = await w.start();
+    expect(wrapUp).toBe(true);
     const open = Room.parse(await w.next(sessionId));
-    expect(Room.parse(await w.next(sessionId)).itemId).toBe(open.itemId);
+    expect(open.itemId).toBe(shown.itemId);
     expect(w.events("adventure_wrapped_up")).toHaveLength(0);
+    // Answered, the room is whole, and the ending follows.
+    await w.post(`/api/session/${sessionId}/answer`, {
+      itemId: open.itemId,
+      raw: "7",
+      dontKnow: false,
+      input,
+    });
+    Scene.parse(await w.next(sessionId));
+    expect(w.events("adventure_wrapped_up")).toHaveLength(1);
   });
 
   it("plays the ending at once when the room is already complete", async () => {
