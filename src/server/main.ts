@@ -6,13 +6,14 @@ import { snapshotNow } from "./snapshots.js";
 import { backupAfterSession } from "./backups.js";
 import { checkLogSize, runRecompute } from "./recompute.js";
 import { readContentVersions } from "./versions.js";
-import { useNoticesDir } from "./failures.js";
+import { raise, useNoticesDir } from "./failures.js";
+import { recoverBlobs } from "../engine/blobs/store.js";
 import {
   useVersions,
   versionLabel,
   versionsChanged,
 } from "../engine/projections/registry.js";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 
 const dbPath =
   process.env["MEOWTOWER_DB"] ?? "/var/lib/meowtower/meowtower.sqlite";
@@ -49,6 +50,12 @@ if (versionsChanged(db)) {
     // runRecompute has raised recompute_failed.
   }
 }
+
+// A file in data/blobs/ with no row gets its row, or `blob_changed` in the log;
+// the start goes on either way (REQ-2210).
+recoverBlobs(db, join(dirname(snapshots), "blobs"), (file) =>
+  raise("blob_changed", file),
+);
 
 // A snapshot after each session (REQ-2526); data/ is the snapshots folder's parent.
 const onSessionEnded = (): void => {

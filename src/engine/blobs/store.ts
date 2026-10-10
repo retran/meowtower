@@ -6,7 +6,10 @@ import {
   fchmodSync,
   fsyncSync,
   mkdirSync,
+  existsSync,
   openSync,
+  readdirSync,
+  readFileSync,
   writeSync,
 } from "node:fs";
 import { join } from "node:path";
@@ -18,7 +21,7 @@ type Db = Database.Database;
 export const BLOB_LIMIT_BYTES = 512 * 1024;
 
 export class BlobRefused extends Error {
-  constructor(reason: "blob_too_large" | "blob_not_webp") {
+  constructor(reason: "blob_too_large" | "blob_not_webp" | "blob_changed") {
     super(reason);
     this.name = "BlobRefused";
   }
@@ -28,6 +31,40 @@ const isWebp = (b: Buffer): boolean =>
   b.length > 12 &&
   b.toString("ascii", 0, 4) === "RIFF" &&
   b.toString("ascii", 8, 12) === "WEBP";
+
+const hasRow = (db: Db, sha256: string): boolean =>
+  db.prepare("SELECT 1 FROM blobs WHERE sha256 = ?").get(sha256) !== undefined;
+
+/**
+ * At start-up, inserts the row of every `.webp` file in `dir` that has none
+ * and hashes to its name, and reports the one that doesn't through `onChanged`
+ * without a row. A file of another extension is left as it is.
+ */
+export function recoverBlobs(
+  db: Db,
+  dir: string,
+  onChanged: (file: string) => void,
+): { inserted: string[]; changed: string[] } {
+  const done = { inserted: [] as string[], changed: [] as string[] };
+  if (!existsSync(dir)) return done;
+  const insert = db.prepare(
+    "INSERT INTO blobs (sha256, bytes, created_at) VALUES (?, ?, ?)",
+  );
+  for (const file of readdirSync(dir).sort()) {
+    if (!file.endsWith(".webp")) continue;
+    const name = file.slice(0, -".webp".length);
+    if (hasRow(db, name)) continue;
+    const bytes = readFileSync(join(dir, file));
+    if (createHash("sha256").update(bytes).digest("hex") === name) {
+      insert.run(name, bytes.length, new Date().toISOString());
+      done.inserted.push(file);
+    } else {
+      done.changed.push(file);
+      onChanged(file);
+    }
+  }
+  return done;
+}
 
 export interface ScratchContext {
   itemId: string;
@@ -40,7 +77,9 @@ export interface ScratchContext {
  * Stores the image and logs `scratch_snapshot` naming its hash (REQ-2210).
  * The order is the guarantee: the file is created exclusively and synced, the
  * row inserted, and only then is the event committed, so no event can name a
- * file that isn't on disk. An existing file for the hash is never rewritten.
+ * file that isn't on disk. An existing file for the hash is never rewritten;
+ * one with no row is hashed, and refused with `blob_changed` when it no longer
+ * hashes to its name (a crash between sync and insert leaves such a file).
  */
 export function storeScratch(
   db: Db,
@@ -76,6 +115,12 @@ export function storeScratch(
     }
   }
   hooks.afterFileSynced?.();
+  if (fd === undefined && !hasRow(db, sha256)) {
+    const onDisk = createHash("sha256")
+      .update(readFileSync(join(dir, `${sha256}.webp`)))
+      .digest("hex");
+    if (onDisk !== sha256) throw new BlobRefused("blob_changed");
+  }
   db.prepare(
     "INSERT OR IGNORE INTO blobs (sha256, bytes, created_at) VALUES (?, ?, ?)",
   ).run(sha256, image.length, new Date().toISOString());
