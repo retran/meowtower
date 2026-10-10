@@ -29,7 +29,9 @@ async function pairDevice(page: Page): Promise<void> {
 async function play(
   page: Page,
 ): Promise<{ sessionId: string; itemId: string }> {
-  const started = page.waitForResponse("**/api/session/start");
+  const started = page.waitForResponse((r) =>
+    /\/api\/(session\/start|adventure\/resume)$/.test(r.url()),
+  );
   const packet = page.waitForResponse("**/next");
   await ready(page, "/play");
   const { sessionId } = (await (await started).json()) as {

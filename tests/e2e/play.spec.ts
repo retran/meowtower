@@ -29,7 +29,9 @@ async function pairDevice(page: Page): Promise<void> {
 
 /** Opens the play screen and returns the session it started. */
 async function play(page: Page): Promise<string> {
-  const started = page.waitForResponse("**/api/session/start");
+  const started = page.waitForResponse((r) =>
+    /\/api\/(session\/start|adventure\/resume)$/.test(r.url()),
+  );
   await ready(page, "/play");
   const { sessionId } = (await (await started).json()) as {
     sessionId: string;
@@ -160,7 +162,9 @@ test("REQ-2408, REQ-2410: no input pauses after 5 minutes with a task open and a
     .toEqual([{ reason: "idle" }]);
 
   // Outside the task window, after an answer, the limit is 90 seconds.
-  const started = page.waitForResponse("**/api/session/start");
+  const started = page.waitForResponse((r) =>
+    /\/api\/(session\/start|adventure\/resume)$/.test(r.url()),
+  );
   await page.locator('[data-action="play-continue"]').click();
   const { sessionId } = (await (await started).json()) as {
     sessionId: string;

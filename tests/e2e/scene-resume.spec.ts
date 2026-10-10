@@ -37,11 +37,22 @@ interface Packet {
   sceneId: string;
   chestId: string;
   attemptNo: number;
+  slot: number;
   hintLevels: number[];
   view: { text: string };
   lines: { speaker: string; text: string }[];
   branches: { choiceId: string }[];
   options: { rewardId: string }[];
+}
+
+/**
+ * The device cookie as a header. The request context of a page leaves out a
+ * cookie the shell marks `Secure` on this plain-HTTP test server, so the
+ * tests send it themselves.
+ */
+async function deviceCookie(page: Page): Promise<string> {
+  const cookies = await page.context().cookies();
+  return cookies.map((c) => `${c.name}=${c.value}`).join("; ");
 }
 
 let counter = Date.now();
@@ -56,15 +67,20 @@ const input = {
 };
 
 /** The play API as the first context calls it, with the context's device cookie. */
-function api(request: APIRequestContext) {
+function api(request: APIRequestContext, cookie: string) {
+  const headers = { cookie };
+  // A device may send 20 state-changing requests a second (SPC-0030), so a
+  // refused one waits and goes again with the same clientSeq.
   const post = async (path: string, body: object = {}): Promise<Packet> => {
-    const res = await request.post(path, {
-      data: { ...body, clientSeq: ++counter },
-    });
-    return res.json();
+    const data = { ...body, clientSeq: ++counter };
+    for (;;) {
+      const res = await request.post(path, { data, headers });
+      if (res.status() !== 429) return res.json();
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
   };
   const get = async (path: string): Promise<Packet> =>
-    (await request.get(path)).json();
+    (await request.get(path, { headers })).json();
   return {
     post,
     get,
@@ -154,11 +170,13 @@ test("REQ-0208: a second context resumes each attempt state on the same task and
   browser,
 }) => {
   await pairDevice(page);
-  const a = api(page.request);
+  const a = api(page.request, await deviceCookie(page));
   const second = await secondDevice(browser);
   const llm = count("llm_call");
 
   let s = await a.start();
+  // The task's own session: a verdict goes to the session the task was shown in.
+  const home = s;
   const first = await a.next(s);
   expect(first.kind).toBe("room");
 
@@ -190,21 +208,29 @@ test("REQ-0208: a second context resumes each attempt state on the same task and
   there = await resumed();
   expect(there.packet.itemId).toBe(first.itemId);
 
-  // answered_feedback_pending and solution_shown: the verdict is in the log
+  // answered_feedback_pending, solution_shown and second_attempt_shown: the
+  // verdict is in the log, and the parallel task is the step left open.
   s = await a.start();
-  await a.answer(s, first.itemId);
-  const afterAnswer = await a.next(s);
-  there = await resumed();
-  expect(there.packet).toEqual(afterAnswer);
-  expect(there.packet.itemId).not.toBe(first.itemId);
-
-  // second_attempt_shown
-  s = await a.start();
+  await a.answer(home, first.itemId);
   const twin = await a.post(`/api/item/${first.itemId}/second-attempt`);
   expect(twin.attemptNo).toBe(2);
   there = await resumed();
-  expect(there.packet).toEqual(await a.next(s));
-  expect(there.packet.itemId).toBe(twin.itemId);
+  expect(there.packet).toMatchObject({
+    kind: "room",
+    itemId: twin.itemId,
+    attemptNo: 2,
+    view: twin.view,
+    slot: twin.slot,
+  });
+  expect(there.text).toBe(twin.view.text);
+
+  // The twin answered: the next first attempt is the step.
+  s = await a.start();
+  await a.answer(home, twin.itemId);
+  there = await resumed();
+  expect(there.packet).toMatchObject({ kind: "room", attemptNo: 1 });
+  expect(there.packet.itemId).not.toBe(first.itemId);
+  expect(there.packet.itemId).not.toBe(twin.itemId);
 
   expect(count("llm_call")).toBe(llm);
   await a.finish(await a.start());
@@ -215,7 +241,7 @@ test("REQ-0216: a second context resumes the scene on the same line and branches
   browser,
 }) => {
   await pairDevice(page);
-  const a = api(page.request);
+  const a = api(page.request, await deviceCookie(page));
   const second = await secondDevice(browser);
   const llm = count("llm_call");
   const prepared = count("scene_prepared");
@@ -245,16 +271,20 @@ test("REQ-0218: a second context resumes the chest with the same three options",
   browser,
 }) => {
   await pairDevice(page);
-  const a = api(page.request);
+  const a = api(page.request, await deviceCookie(page));
   const second = await secondDevice(browser);
   const offered = count("chest_offered");
 
   const s = await a.start();
   const scene = await a.toScene(s);
-  await a.post(`/api/session/${s}/scene/input`, {
+  const done = (await a.post(`/api/session/${s}/scene/input`, {
     kind: "choice",
     sceneId: scene.sceneId,
     choiceId: scene.branches[0]?.choiceId,
+  })) as unknown as { grants: { rewardId: string }[] };
+  // The first context showed the scene's grant, so the resume brings no grant.
+  await a.post(`/api/session/${s}/rewards/delivered`, {
+    rewardIds: done.grants.map((g) => g.rewardId),
   });
   const chest = await a.next(s);
   expect(chest.kind).toBe("chest");
@@ -279,7 +309,7 @@ test("REQ-0208: the draft typed in a scene returns as last held and is sent at m
   page,
 }) => {
   await pairDevice(page);
-  const a = api(page.request);
+  const a = api(page.request, await deviceCookie(page));
   const s0 = await a.start();
   const scene = await a.toScene(s0);
   expect(scene.kind).toBe("scene");
@@ -307,11 +337,46 @@ test("REQ-0208: the draft typed in a scene returns as last held and is sent at m
   await page.clock.fastForward(1_500);
   await expect.poll(() => sent.length).toBe(2);
   expect(sent[1]).toBe("Я иду");
-  expect(draftsOf(sessionId)).toEqual(["Я", "Я иду"]);
+  await expect.poll(() => draftsOf(sessionId)).toEqual(["Я", "Я иду"]);
 
   // Leave and come back: the draft is the one the log last held.
   await page.goto("about:blank");
   await ready(page, "/play");
   await expect(page.locator("#scene-draft")).toHaveValue("Я иду");
+  await a.finish(await a.start());
+});
+
+test("REQ-0208: a grant no device showed is shown after a resume and acknowledged once", async ({
+  page,
+  browser,
+}) => {
+  await pairDevice(page);
+  const a = api(page.request, await deviceCookie(page));
+  const second = await secondDevice(browser);
+  const s = await a.start();
+  const scene = await a.toScene(s);
+  await a.post(`/api/session/${s}/scene/input`, {
+    kind: "choice",
+    sceneId: scene.sceneId,
+    choiceId: scene.branches[0]?.choiceId,
+  });
+  const delivered = count("rewards_delivered");
+
+  const resumed = second.waitForResponse("**/api/adventure/resume");
+  await ready(second, "/play");
+  const out = (await (await resumed).json()) as {
+    rewards: { rewardId: string }[];
+  };
+  expect(out.rewards).toHaveLength(1);
+  await expect(second.locator(".grants li")).toHaveCount(1);
+  await expect.poll(() => count("rewards_delivered")).toBe(delivered + 1);
+
+  // A later resume lists nothing, because the grant was acknowledged.
+  const again = second.waitForResponse("**/api/adventure/resume");
+  await ready(second, "/play");
+  const next = (await (await again).json()) as {
+    rewards: unknown[];
+  };
+  expect(next.rewards).toEqual([]);
   await a.finish(await a.start());
 });
