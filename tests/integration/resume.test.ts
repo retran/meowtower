@@ -342,7 +342,8 @@ describe("REQ-0214: a paid action repeated after a resume charges nothing", () =
 
     expect(w.events("thread_spent").length).toBe(spent);
     expect(w.events("hint_shown")).toHaveLength(1);
-    expect(hintAgain).toEqual(hint);
+    // The same rung and text, and the stock as it stands after both payments.
+    expect(hintAgain).toEqual({ ...hint, threads: explained.threads });
     expect(explainAgain.threads).toBe(explained.threads);
     expect(twinAgain.itemId).toBe(twin.itemId);
   });
