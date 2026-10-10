@@ -61,3 +61,9 @@ The record of Meowtower: the vision in `vision.md`, the onboarding report in `on
 
 Amended: EPC-0010 by ADR-0360; EPC-0020 by ADR-0370.
 <!-- /meow-flow index -->
+
+## Open epics
+
+| Identifier | What it realises | Status |
+| --- | --- | --- |
+| [EPC-0040](epics/EPC-0040-tasks-from-templates-seeds-exact-arithmetic.md) | Code generates every task from a versioned template, a seed and exact arithmetic | draft |
