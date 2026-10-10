@@ -124,7 +124,26 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
       let room = (await call(`/api/session/${sessionId}/next`)) as {
         itemId: string;
         kind: string;
+        sceneId: string;
+        chestId: string;
+        branches: { choiceId: string }[];
+        options: { rewardId: string }[];
       };
+      // The finale shows the scene and then the chest before the end.
+      while (room.kind === "scene" || room.kind === "chest") {
+        if (room.kind === "scene")
+          await post(`/api/session/${sessionId}/scene/input`, {
+            kind: "choice",
+            sceneId: room.sceneId,
+            choiceId: room.branches[0]?.choiceId,
+          });
+        else
+          await post(`/api/session/${sessionId}/chest`, {
+            chestId: room.chestId,
+            rewardId: room.options[0]?.rewardId,
+          });
+        room = (await call(`/api/session/${sessionId}/next`)) as typeof room;
+      }
       // After the finale a new session plans the next adventure.
       if (room.kind === "end") {
         ends++;
@@ -153,10 +172,10 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
   );
   // A day: the start, 20 tasks shown and answered, 2 hints, 2 rounds of
   // explanation, second attempt, its answer and a poll, and the leave. Each
-  // finale adds the end packet and a new start: 600 tasks in adventures of
-  // 60 reach 9 finales.
+  // finale adds the scene, its reply, the chest, its reply, the end packet and
+  // a new start: 600 tasks in adventures of 60 reach 9 finales.
   expect(ends).toBe(9);
-  expect(packets.length).toBe(30 * (1 + 20 * 2 + 2 + 2 * 4 + 1) + 2 * ends);
+  expect(packets.length).toBe(30 * (1 + 20 * 2 + 2 + 2 * 4 + 1) + 6 * ends);
   expect(refused).toEqual([]);
   expect(leaks).toEqual([]);
   expect(earlyAnswers).toEqual([]);

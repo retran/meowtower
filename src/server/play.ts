@@ -25,12 +25,16 @@ import {
   sessionEvents,
   type StoredEvent,
 } from "../engine/events/read.js";
+import { resumeFromLog } from "../engine/projections/resume.js";
 import {
   AdventureCurrentOut,
   AnswerIn,
   AnswerOut,
   BreakIn,
   BreakOut,
+  Chest,
+  ChestIn,
+  ChestOut,
   End,
   ExplainOut,
   HeartbeatIn,
@@ -42,7 +46,12 @@ import {
   PauseOut,
   ResumeIn,
   ResumeOut,
+  RewardsDeliveredIn,
+  RewardsDeliveredOut,
   Room,
+  Scene,
+  SceneInputIn,
+  SceneInputOut,
   SessionStartIn,
   SessionStartOut,
 } from "../shared/api.js";
@@ -61,9 +70,14 @@ import {
 import {
   ROOM_LENGTH,
   STANDIN_ADVENTURE_TASKS,
+  STANDIN_CHEST_ID,
+  STANDIN_CHEST_OPTIONS,
+  STANDIN_SCENE_ID,
+  STANDIN_SCENE_REWARD,
   STANDIN_ROOMS_PER_FLOOR,
   STANDIN_TASKS,
   standinPurpose,
+  standinScene,
   STANDIN_THREADS,
   standinVerdict,
   taskExplanation,
@@ -158,7 +172,8 @@ function roomFor(
     roomLength: ROOM_LENGTH,
     attemptNo: shown.attemptNo,
     threads: stockAt(log),
-    hintLevels: hintLevels(log, shown.itemId),
+    // The rungs bought in an earlier session of the adventure stay shown (REQ-0204).
+    hintLevels: hintLevels(played, shown.itemId),
   };
 }
 
@@ -453,6 +468,9 @@ export function mountPlay(
         (id) =>
           Math.floor((point?.positions[id] ?? -1) / ROOM_LENGTH) === roomIndex,
       ),
+      scene: point?.scene ? { kind: "scene", ...point.scene } : null,
+      chest: point?.chest ? { kind: "chest", ...point.chest } : null,
+      rewards: point?.rewards ?? [],
     };
   }
 
@@ -563,16 +581,64 @@ export function mountPlay(
     const played = playLog(sessionId);
     const firsts = firstsOf(played);
     const answered = answeredIn(played);
-    // An open task is shown again as it was, never replaced.
-    const open = firsts.find((s) => !answered.has(s.itemId));
+    // An open task is shown again as it was, never replaced: a first attempt
+    // and a second attempt left open alike (REQ-0204).
+    const open = played
+      .filter((e) => e.type === "item_shown")
+      .map((e) => payloadOf<ItemShown>(e))
+      .find((s) => !answered.has(s.itemId));
     if (open) {
       if (lifecycle.length) appendEvents(db, lifecycle);
       return send(c, Room, roomFor(open, sessionEvents(db, sessionId), played));
     }
 
     const index = firsts.length;
-    // The stand-in adventure's finale.
+    // The stand-in adventure's finale: its scene, then its chest, then the end.
+    // An open scene or chest is shown again as it was, never prepared anew
+    // (REQ-0216, REQ-0218).
     if (session.adventureId && index >= STANDIN_ADVENTURE_TASKS) {
+      const point = resumeFromLog(played);
+      if (point?.scene) {
+        if (lifecycle.length) appendEvents(db, lifecycle);
+        return send(c, Scene, { kind: "scene", ...point.scene });
+      }
+      if (point?.chest) {
+        if (lifecycle.length) appendEvents(db, lifecycle);
+        return send(c, Chest, { kind: "chest", ...point.chest });
+      }
+      const at = { sessionId, adventureId: session.adventureId };
+      if (!played.some((e) => e.type === "scene_prepared")) {
+        const scene = standinScene();
+        appendEvents(db, [
+          ...lifecycle,
+          {
+            type: "scene_prepared",
+            v: 1,
+            payload: scene,
+            origin,
+            ...at,
+          },
+        ]);
+        return send(c, Scene, { kind: "scene", ...scene, draft: null });
+      }
+      if (!played.some((e) => e.type === "chest_offered")) {
+        const options = [...STANDIN_CHEST_OPTIONS];
+        appendEvents(db, [
+          ...lifecycle,
+          {
+            type: "chest_offered",
+            v: 1,
+            payload: { chestId: STANDIN_CHEST_ID, options },
+            origin,
+            ...at,
+          },
+        ]);
+        return send(c, Chest, {
+          kind: "chest",
+          chestId: STANDIN_CHEST_ID,
+          options,
+        });
+      }
       appendEvents(db, [
         ...lifecycle,
         {
@@ -733,6 +799,191 @@ export function mountPlay(
       ),
     );
     return send(c, BreakOut, { status });
+  });
+
+  /** The reply a scene input or a chest pick gets: its grants, as the log holds them. */
+  const grantsOf = (events: StoredEvent[]) =>
+    events
+      .filter((e) => e.type === "reward_granted")
+      .map((e) =>
+        payloadOf<{ rewardId: string; kind: string; amount: number }>(e),
+      )
+      .map(({ rewardId, kind, amount }) => ({ rewardId, kind, amount }));
+
+  app.post("/api/session/:id/scene/input", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = SceneInputIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
+    const sessionId = c.req.param("id");
+    const input = body.data;
+    const key = `scene-input:${deviceId}:${input.clientSeq}`;
+    const prior = requestEvents(db, key);
+    if (prior.length)
+      return send(c, SceneInputOut, {
+        status: input.kind === "draft" ? "saved" : "done",
+        grants: grantsOf(prior),
+      });
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    if (session.state === "ended")
+      return c.json({ error: "session_ended" }, 409);
+    const scene = resumeFromLog(playLog(sessionId))?.scene;
+    if (!scene || scene.sceneId !== input.sceneId)
+      return c.json({ error: "scene_not_open" }, 409);
+    const origin = { deviceId, clientMs: Date.now() };
+    const at = within(sessionId);
+    const events: NewEvent[] = [];
+    if (input.kind === "draft") {
+      events.push({
+        type: "text_draft_saved",
+        v: 1,
+        payload: { sceneId: scene.sceneId, text: input.text },
+        origin,
+        ...at,
+      });
+    } else {
+      if (
+        input.kind === "choice" &&
+        !scene.branches.some((b) => b.choiceId === input.choiceId)
+      )
+        return c.json({ error: "bad_request" }, 400);
+      events.push(
+        input.kind === "choice"
+          ? {
+              type: "choice_made",
+              v: 1,
+              payload: { sceneId: scene.sceneId, choiceId: input.choiceId },
+              origin,
+              ...at,
+            }
+          : {
+              type: "free_text",
+              v: 1,
+              payload: { sceneId: scene.sceneId, cleaned: input.text },
+              origin,
+              ...at,
+            },
+        {
+          type: "reward_granted",
+          v: 1,
+          payload: {
+            source: "scene",
+            kind: STANDIN_SCENE_REWARD.kind,
+            rewardId: `${STANDIN_SCENE_ID}-reward`,
+            amount: STANDIN_SCENE_REWARD.amount,
+          },
+          origin: "server",
+          ...at,
+        },
+      );
+    }
+    appendEvents(db, keyed(events, key));
+    return send(c, SceneInputOut, {
+      status: input.kind === "draft" ? "saved" : "done",
+      grants:
+        input.kind === "draft"
+          ? []
+          : [
+              {
+                rewardId: `${STANDIN_SCENE_ID}-reward`,
+                ...STANDIN_SCENE_REWARD,
+              },
+            ],
+    });
+  });
+
+  app.post("/api/session/:id/chest", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = ChestIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
+    const sessionId = c.req.param("id");
+    const key = `chest:${deviceId}:${body.data.clientSeq}`;
+    const prior = requestEvents(db, key);
+    if (prior.length) return send(c, ChestOut, { grants: grantsOf(prior) });
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    if (session.state === "ended")
+      return c.json({ error: "session_ended" }, 409);
+    const chest = resumeFromLog(playLog(sessionId))?.chest;
+    if (!chest || chest.chestId !== body.data.chestId)
+      return c.json({ error: "chest_not_open" }, 409);
+    const picked = chest.options.find((o) => o.rewardId === body.data.rewardId);
+    if (!picked) return c.json({ error: "bad_request" }, 400);
+    const origin = { deviceId, clientMs: Date.now() };
+    const at = within(sessionId);
+    appendEvents(
+      db,
+      keyed(
+        [
+          {
+            type: "chest_chosen",
+            v: 1,
+            payload: { chestId: chest.chestId, rewardId: picked.rewardId },
+            origin,
+            ...at,
+          },
+          {
+            type: "reward_granted",
+            v: 1,
+            payload: {
+              source: "chest",
+              kind: picked.kind,
+              rewardId: picked.rewardId,
+              amount: 1,
+            },
+            origin: "server",
+            ...at,
+          },
+        ],
+        key,
+      ),
+    );
+    return send(c, ChestOut, {
+      grants: [{ rewardId: picked.rewardId, kind: picked.kind, amount: 1 }],
+    });
+  });
+
+  app.post("/api/session/:id/rewards/delivered", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = RewardsDeliveredIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (displaced(deviceId)) return leaseMoved(c);
+    const sessionId = c.req.param("id");
+    const key = `rewards-delivered:${deviceId}:${body.data.clientSeq}`;
+    if (requestEvents(db, key).length)
+      return send(c, RewardsDeliveredOut, { status: "ok" });
+    const session = sessionRow(db, sessionId);
+    if (!session) return c.json({ error: "session_unknown" }, 404);
+    // Only a grant still pending counts, so a repeat under a new clientSeq
+    // appends nothing.
+    const pending = new Set(
+      (resumeFromLog(playLog(sessionId))?.rewards ?? []).map((r) => r.rewardId),
+    );
+    const rewardIds = [...new Set(body.data.rewardIds)].filter((id) =>
+      pending.has(id),
+    );
+    if (rewardIds.length)
+      appendEvents(
+        db,
+        keyed(
+          [
+            {
+              type: "rewards_delivered",
+              v: 1,
+              payload: { rewardIds },
+              origin: { deviceId, clientMs: Date.now() },
+              ...within(sessionId),
+            },
+          ],
+          key,
+        ),
+      );
+    return send(c, RewardsDeliveredOut, { status: "ok" });
   });
 
   app.post("/api/session/:id/answer", async (c) => {

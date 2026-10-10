@@ -74,7 +74,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: the five verbs exit 0 at tree 2918a03661af; `tests/integration/resume.test.ts`
       closes: REQ-0204, REQ-0206, REQ-0210, REQ-0212, REQ-0214, REQ-0224
       depends: TSK-0350 - resume takes the lease; TSK-0320 - the charge keys it tests across a resume; TSK-0250 - `resume_snapshot` is a registered projection
-- [ ] T-010 [P] TSK-0370 Scenes, drafts, chests and pending rewards resume from the log alone
+- [x] T-010 [P] TSK-0370 Scenes, drafts, chests and pending rewards resume from the log alone
+      evidence: the five verbs exit 0 at commit c37443f; `tests/e2e/scene-resume.spec.ts`, `tests/integration/scene-resume.test.ts`
       closes: REQ-0208, REQ-0216, REQ-0218
       depends: TSK-0360 - it adds these items to the snapshot and the resume that task builds
 - [ ] T-011 [P] TSK-0400 The three-day rule wraps up an adventure after its adventure days and queues its secrets

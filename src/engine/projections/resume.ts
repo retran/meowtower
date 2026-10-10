@@ -24,6 +24,27 @@ export interface OpenItem {
   hintLevels: number[];
 }
 
+/** The scene on the screen: as prepared, with the draft she last typed. */
+export interface OpenScene {
+  sceneId: string;
+  lines: { speaker: string; text: string }[];
+  branches: { choiceId: string; text: string }[];
+  draft: string | null;
+}
+
+/** The chest she has not yet picked from, with the three options it offered. */
+export interface OpenChest {
+  chestId: string;
+  options: { kind: string; rewardId: string; quality: string }[];
+}
+
+/** A grant the client has not yet shown. */
+export interface PendingReward {
+  rewardId: string;
+  kind: string;
+  amount: number;
+}
+
 export interface ResumePoint {
   adventureId: string;
   /** How many first-attempt tasks the adventure has shown. */
@@ -35,6 +56,12 @@ export interface ResumePoint {
   positions: Record<string, number>;
   /** The tasks whose explanation she bought. */
   explained: string[];
+  /** The scene prepared and not yet answered, or none. */
+  scene: OpenScene | null;
+  /** The chest offered and not yet picked from, or none. */
+  chest: OpenChest | null;
+  /** The grants no `rewards_delivered` has covered, in the order granted. */
+  rewards: PendingReward[];
   /** The log position of the last event folded in. */
   seq: number;
 }
@@ -48,19 +75,27 @@ export function foldResume(
 ): ResumePoint | null {
   if (!e.adventureId) return point;
   const p = e.payload as P;
-  const base: ResumePoint = point ?? {
-    adventureId: e.adventureId,
-    firstsShown: 0,
-    index: 0,
-    open: null,
-    positions: {},
-    explained: [],
-    seq: e.seq,
+  // A row written before the scene, chest and rewards joined the point has
+  // none of the three; the defaults come first so a stored value overrides them.
+  const base: ResumePoint = {
+    scene: null,
+    chest: null,
+    rewards: [],
+    ...(point ?? {
+      adventureId: e.adventureId,
+      firstsShown: 0,
+      index: 0,
+      open: null,
+      positions: {},
+      explained: [],
+      seq: e.seq,
+    }),
   };
   const next: ResumePoint = {
     ...base,
     positions: { ...base.positions },
     explained: [...base.explained],
+    rewards: [...base.rewards],
     seq: e.seq,
   };
   const itemId = p["itemId"] as string | undefined;
@@ -103,6 +138,43 @@ export function foldResume(
         if (base.open.attemptNo === 1) next.index = base.firstsShown;
       }
       return next;
+    case "scene_prepared":
+      next.scene = {
+        sceneId: p["sceneId"] as string,
+        lines: p["lines"] as OpenScene["lines"],
+        branches: p["branches"] as OpenScene["branches"],
+        draft: null,
+      };
+      return next;
+    case "text_draft_saved":
+      if (base.scene && base.scene.sceneId === p["sceneId"])
+        next.scene = { ...base.scene, draft: p["text"] as string };
+      return next;
+    case "choice_made":
+    case "free_text":
+      if (base.scene && base.scene.sceneId === p["sceneId"]) next.scene = null;
+      return next;
+    case "chest_offered":
+      next.chest = {
+        chestId: p["chestId"] as string,
+        options: p["options"] as OpenChest["options"],
+      };
+      return next;
+    case "chest_chosen":
+      if (base.chest && base.chest.chestId === p["chestId"]) next.chest = null;
+      return next;
+    case "reward_granted":
+      next.rewards.push({
+        rewardId: p["rewardId"] as string,
+        kind: p["kind"] as string,
+        amount: p["amount"] as number,
+      });
+      return next;
+    case "rewards_delivered": {
+      const shown = new Set(p["rewardIds"] as string[]);
+      next.rewards = base.rewards.filter((r) => !shown.has(r.rewardId));
+      return next;
+    }
     default:
       return point === null ? null : next;
   }

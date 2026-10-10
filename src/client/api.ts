@@ -1,6 +1,14 @@
 // The routes the shell calls. The device token and the parent session travel
 // as HttpOnly cookies. Every body is read, because an unread one stays open.
-import type { AnswerIn, AnswerOut, Room } from "../shared/api.js";
+import type {
+  AnswerIn,
+  AnswerOut,
+  Chest,
+  Grant,
+  ResumeOut,
+  Room,
+  Scene,
+} from "../shared/api.js";
 import type { Interface } from "./interface.js";
 
 export type DeviceState =
@@ -145,8 +153,8 @@ export async function newPairingCode(): Promise<{
 // The play API (SPC-0030). The client imports only types from src/shared, and
 // never compares an answer: it sends the raw text and draws the reply.
 
-/** The packets the server sends today; later tasks add scene, chest, break and stop_offer. */
-export type Packet = Room | { kind: "end" };
+/** The packets the server sends today; later tasks add break and stop_offer. */
+export type Packet = Room | Scene | Chest | { kind: "end" };
 
 // Each state-changing request carries the device's own counter, and a repeat
 // with the same value appends nothing. It starts from the clock, so a reload
@@ -160,6 +168,18 @@ export async function startSession(): Promise<string | null> {
     body: JSON.stringify({ mode: "daily", clientSeq: nextSeq() }),
   });
   return status === 200 ? String(body["sessionId"]) : null;
+}
+
+/**
+ * Opens a session on the open adventure and says where play stopped, with the
+ * grants no device has shown yet (REQ-0204); null when no adventure is open.
+ */
+export async function resumeAdventure(): Promise<ResumeOut | null> {
+  const { status, body } = await call("/api/adventure/resume", {
+    method: "POST",
+    body: JSON.stringify({ clientSeq: nextSeq() }),
+  });
+  return status === 200 ? (body as unknown as ResumeOut) : null;
 }
 
 /** Another device holds the lease: this one turns view-only (REQ-0222). */
@@ -223,4 +243,53 @@ export function pause(
     },
     () => false,
   );
+}
+
+/** Sends her pick, her text or a draft of it; a draft changes nothing she sees. */
+export async function sceneInput(
+  sessionId: string,
+  input:
+    | { kind: "choice"; sceneId: string; choiceId: string }
+    | { kind: "text" | "draft"; sceneId: string; text: string },
+): Promise<{ grants: Grant[] } | Moved | null> {
+  const { status, body } = await call(
+    `/api/session/${encodeURIComponent(sessionId)}/scene/input`,
+    {
+      method: "POST",
+      body: JSON.stringify({ ...input, clientSeq: nextSeq() }),
+    },
+  );
+  if (isMoved(status, body)) return MOVED;
+  return status === 200 ? (body as unknown as { grants: Grant[] }) : null;
+}
+
+export async function pickChest(
+  sessionId: string,
+  chestId: string,
+  rewardId: string,
+): Promise<{ grants: Grant[] } | Moved | null> {
+  const { status, body } = await call(
+    `/api/session/${encodeURIComponent(sessionId)}/chest`,
+    {
+      method: "POST",
+      body: JSON.stringify({ chestId, rewardId, clientSeq: nextSeq() }),
+    },
+  );
+  if (isMoved(status, body)) return MOVED;
+  return status === 200 ? (body as unknown as { grants: Grant[] }) : null;
+}
+
+/** Tells the server the client showed these grants, so no resume lists them again. */
+export async function deliverRewards(
+  sessionId: string,
+  rewardIds: string[],
+): Promise<boolean> {
+  const { status } = await call(
+    `/api/session/${encodeURIComponent(sessionId)}/rewards/delivered`,
+    {
+      method: "POST",
+      body: JSON.stringify({ rewardIds, clientSeq: nextSeq() }),
+    },
+  );
+  return status === 200;
 }
