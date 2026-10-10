@@ -2,8 +2,8 @@
 id: ADR-0220
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-5100, REQ-5102, REQ-5104, REQ-5106, REQ-5108, REQ-5110, REQ-5112, REQ-5114, REQ-5116, REQ-5118, REQ-5120, REQ-5122, REQ-5124, REQ-5126, REQ-5128, REQ-5130, REQ-5132, REQ-5134, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5146, REQ-5148, REQ-5150, REQ-5152, REQ-5154, REQ-5156, REQ-5158, REQ-5160, REQ-5162, REQ-5164, REQ-5166, REQ-5168]
+revised: 2026-10-10
+addresses: [REQ-5100, REQ-5102, REQ-5104, REQ-5106, REQ-5108, REQ-5110, REQ-5112, REQ-5114, REQ-5116, REQ-5118, REQ-5120, REQ-5122, REQ-5124, REQ-5126, REQ-5128, REQ-5132, REQ-5134, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5146, REQ-5148, REQ-5150, REQ-5152, REQ-5154, REQ-5156, REQ-5158, REQ-5160, REQ-5162, REQ-5164, REQ-5166, REQ-5168]
 supersedes: []
 ---
 
@@ -205,3 +205,5 @@ The premortem, written as though it had happened: three months in, the report sh
 - Whether a knowledge model version reads the depth: the refit and ADR-0060's gate decide, with play data.
 - The look of the portrait and line in `TaskWindow`: ADR-0150 and the design system.
 - The thread economy's grants: ADR-0080 keeps them, and the first reversal condition above reopens only the price.
+
+Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5130 (superseded by REQ-7164, which ADR-0430 addresses).

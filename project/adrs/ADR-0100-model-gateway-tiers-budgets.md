@@ -2,8 +2,8 @@
 id: ADR-0100
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-2646, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2636, REQ-2638, REQ-2640, REQ-2642, REQ-2644, REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2724, REQ-2726, REQ-2728, REQ-2730, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696]
+revised: 2026-10-10
+addresses: [REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2726, REQ-2728, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696]
 supersedes: []
 ---
 
@@ -429,3 +429,5 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 6 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-2646 (superseded by REQ-5042, which ADR-0210 addresses); REQ-2636 (superseded by REQ-5044, which ADR-0210 addresses); REQ-2640 (superseded by REQ-5212, which ADR-0230 addresses); REQ-2642 (superseded by REQ-2648, which ADR-0350, ADR-0370 addresses); REQ-2724 (superseded by REQ-2732, which ADR-0350 addresses); REQ-2730 (superseded by REQ-6412, which ADR-0360, ADR-0460 addresses).

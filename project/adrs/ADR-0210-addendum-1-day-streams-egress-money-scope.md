@@ -2,8 +2,8 @@
 id: ADR-0210
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5018, REQ-5020, REQ-5022, REQ-5024, REQ-5026, REQ-5028, REQ-5030, REQ-5032, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-5056, REQ-5058, REQ-5060, REQ-5062, REQ-5064, REQ-5066, REQ-5068, REQ-5070, REQ-5072, REQ-5074, REQ-5076, REQ-5078, REQ-5080, REQ-5082, REQ-5084, REQ-5086, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5096, REQ-5098]
+revised: 2026-10-10
+addresses: [REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5018, REQ-5020, REQ-5022, REQ-5024, REQ-5026, REQ-5028, REQ-5030, REQ-5032, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-5056, REQ-5058, REQ-5060, REQ-5062, REQ-5064, REQ-5066, REQ-5068, REQ-5070, REQ-5072, REQ-5074, REQ-5076, REQ-5078, REQ-5080, REQ-5082, REQ-5086, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5096, REQ-5098]
 supersedes: []
 ---
 
@@ -325,3 +325,5 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0380, ADR-0420, ADR-0430 and ADR-0440, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5084 (superseded by REQ-6416, which ADR-0360 addresses).

@@ -2,8 +2,8 @@
 id: ADR-0450
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-7300, REQ-7302, REQ-7304, REQ-7306, REQ-7308, REQ-7310, REQ-7312, REQ-7314, REQ-7316, REQ-7318, REQ-7320, REQ-7322, REQ-7324, REQ-7326, REQ-7328, REQ-7330, REQ-7332, REQ-7334, REQ-7336, REQ-7338, REQ-7340, REQ-7342, REQ-7344, REQ-7346, REQ-7348, REQ-7350, REQ-7352, REQ-7354, REQ-7356, REQ-7358, REQ-7360, REQ-7362, REQ-7364, REQ-7366, REQ-7368, REQ-7370, REQ-7372, REQ-7374]
+revised: 2026-10-10
+addresses: [REQ-7300, REQ-7302, REQ-7304, REQ-7306, REQ-7308, REQ-7310, REQ-7312, REQ-7314, REQ-7316, REQ-7318, REQ-7320, REQ-7322, REQ-7324, REQ-7326, REQ-7328, REQ-7330, REQ-7332, REQ-7334, REQ-7336, REQ-7338, REQ-7340, REQ-7342, REQ-7344, REQ-7346, REQ-7348, REQ-7350, REQ-7352, REQ-7354, REQ-7356, REQ-7358, REQ-7362, REQ-7364, REQ-7366, REQ-7368, REQ-7370, REQ-7372, REQ-7374]
 supersedes: []
 ---
 
@@ -239,3 +239,5 @@ The premortem, written as though it had happened: a year after the label shipped
 - ADR-0060: "When a version changes, the full recompute writes new rows for every past play day under the new versions and leaves every row of the earlier versions in place" gains "and rewrites `hypothesis_days` the same way, whose hold counts only play days after the day of the change".
 - ADR-0060: the rules version gains the content of `content/hypothesis-measures.json`, which `hypothesis_measures_versioned` ties to `RULES_VERSION`.
 - ADR-0310: once its two screens exist, a hypothesis may link to a school goal for display beside that goal's values, and the link never enters a hypothesis label.
+
+Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-7360 (superseded by REQ-7504, which ADR-0460 addresses).

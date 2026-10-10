@@ -2,8 +2,8 @@
 id: ADR-0330
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-6064, REQ-6200, REQ-6202, REQ-6204, REQ-6206, REQ-6208, REQ-6210, REQ-6212, REQ-6214, REQ-6216, REQ-6218, REQ-6220, REQ-6221, REQ-6222, REQ-6224, REQ-6226, REQ-6228, REQ-6230, REQ-6232, REQ-6233, REQ-6234, REQ-6236, REQ-6238, REQ-6240, REQ-6242, REQ-6243, REQ-6244, REQ-6245, REQ-6246, REQ-6248, REQ-6250, REQ-6252, REQ-6254, REQ-6256, REQ-6258, REQ-6260, REQ-6262, REQ-6264, REQ-6266, REQ-6268, REQ-6270, REQ-6272, REQ-6274, REQ-6276, REQ-6278, REQ-6279, REQ-6280, REQ-6282, REQ-6284, REQ-6286, REQ-6288, REQ-6290, REQ-6292, REQ-6294, REQ-6296, REQ-6298]
+revised: 2026-10-10
+addresses: [REQ-6064, REQ-6202, REQ-6204, REQ-6206, REQ-6210, REQ-6212, REQ-6214, REQ-6216, REQ-6218, REQ-6221, REQ-6222, REQ-6224, REQ-6226, REQ-6228, REQ-6230, REQ-6232, REQ-6233, REQ-6234, REQ-6236, REQ-6238, REQ-6240, REQ-6242, REQ-6243, REQ-6244, REQ-6245, REQ-6246, REQ-6248, REQ-6250, REQ-6252, REQ-6254, REQ-6256, REQ-6258, REQ-6260, REQ-6262, REQ-6264, REQ-6266, REQ-6268, REQ-6270, REQ-6272, REQ-6274, REQ-6276, REQ-6278, REQ-6279, REQ-6280, REQ-6282, REQ-6284, REQ-6286, REQ-6288, REQ-6290, REQ-6292, REQ-6294, REQ-6296, REQ-6298]
 supersedes: []
 ---
 
@@ -224,3 +224,5 @@ The security boundary protects her text and the measurement. The threats, most l
 - The clean-row garland, which stays as ADR-0140 draws it, by the research decision of 2026-09-28.
 
 The premortem, written as though it had already happened. Six weeks in, the parent found she had stopped writing, and the signal had never risen. The starters had taken two taps where the old options took one, so she had learned to press «Дальше» at every point. Her own words per adventure fell to nothing, but she sent nothing either, so the share of unchanged starters never rose and REQ-6292's signal, which needs both, stayed down. A second failure sat in the freshness list: the familiar's greeting wasn't tagged `catchphrase` in the canon, so after two weeks the list struck it, and the familiar lost its one line. A third came from the routes: on most days B differed from A only in order, and the teasers said so plainly, so she stopped reading them and pressed «Дальше». The reversal conditions on points passed with no send and on routes taken with «Дальше» watch the first and third failures, and check 12 watches the second.
+
+Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6200 (superseded by REQ-6438, which ADR-0360 addresses); REQ-6208 (superseded by REQ-6436, which ADR-0360 addresses); REQ-6220 (superseded by REQ-6434, which ADR-0360 addresses).

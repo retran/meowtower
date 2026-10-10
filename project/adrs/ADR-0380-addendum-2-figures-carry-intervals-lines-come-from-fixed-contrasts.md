@@ -2,8 +2,8 @@
 id: ADR-0380
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-6600, REQ-6602, REQ-6604, REQ-6606, REQ-6608, REQ-6610, REQ-6612, REQ-6614, REQ-6616, REQ-6618, REQ-6620, REQ-6622, REQ-6624, REQ-6626, REQ-6628, REQ-6630, REQ-6632, REQ-6634, REQ-6636, REQ-6638, REQ-6640, REQ-6642, REQ-6644, REQ-6646, REQ-6648, REQ-6650, REQ-6652, REQ-6654, REQ-6656, REQ-6658, REQ-6660, REQ-6664, REQ-6666, REQ-6668, REQ-6670, REQ-6672, REQ-6674, REQ-6676, REQ-6682, REQ-6684, REQ-6686, REQ-6688, REQ-6690]
+revised: 2026-10-10
+addresses: [REQ-6600, REQ-6602, REQ-6604, REQ-6606, REQ-6608, REQ-6610, REQ-6612, REQ-6614, REQ-6616, REQ-6618, REQ-6620, REQ-6622, REQ-6624, REQ-6626, REQ-6628, REQ-6630, REQ-6632, REQ-6634, REQ-6638, REQ-6640, REQ-6642, REQ-6644, REQ-6646, REQ-6648, REQ-6650, REQ-6652, REQ-6654, REQ-6656, REQ-6658, REQ-6660, REQ-6664, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-6684, REQ-6686, REQ-6688, REQ-6690, REQ-7400, REQ-7402]
 supersedes: []
 ---
 
@@ -270,3 +270,5 @@ The premortem, written as though it had happened. At the first probe stage check
 - Hypotheses, their conditions, labels, holds and the numeric conditions REQ-7362 asks for: ADR-0450.
 - The wording of every line and label the parent reads, which the parent judges at each stage's acceptance.
 - Whether the owner allows Dutch probe text at all: the owner's amendment to `CLAUDE.md`.
+
+Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6636 (superseded by REQ-7400, which this record now addresses); REQ-6668 (superseded by REQ-7500, which ADR-0460 addresses); REQ-6672 (superseded by REQ-7402, which this record now addresses).
