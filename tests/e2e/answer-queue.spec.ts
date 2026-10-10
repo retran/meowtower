@@ -216,3 +216,28 @@ test("REQ-2434: an answer unsent for 24 hours shows as queue_stuck in the settin
   await expect.poll(() => attempts(itemId)).toBe(1);
   await expect(page.locator("[data-queue-stuck]")).toHaveCount(0);
 });
+
+test("REQ-6506: after a played day no entry the server acknowledged is left, and nothing else is stored", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  await ready(page, "/play");
+  // Eight tasks through the queue, each answered and reviewed.
+  for (let i = 0; i < 8; i++) {
+    await expect(page.locator(".play .task")).toBeVisible();
+    await answerOnce(page);
+    await expect(page.locator(".play .badge")).toBeVisible();
+    await page.locator('[data-action="play-next"]').click();
+  }
+  expect(await queued(page)).toEqual([]);
+  const held = await page.evaluate(async () => ({
+    dbs: (await indexedDB.databases()).map((d) => d.name),
+    localStorage: localStorage.length,
+    sessionStorage: sessionStorage.length,
+    cookie: document.cookie,
+  }));
+  expect(held.dbs.filter(Boolean)).toEqual(["meowtower-queue"]);
+  expect(held.localStorage).toBe(0);
+  expect(held.sessionStorage).toBe(0);
+  expect(held.cookie).toBe("");
+});
