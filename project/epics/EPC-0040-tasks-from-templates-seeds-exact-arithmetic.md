@@ -1,7 +1,7 @@
 ---
 id: EPC-0040
 artifact: epic
-status: draft
+status: approved
 revised: 2026-10-10
 realises: ADR-0040
 ---
