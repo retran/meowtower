@@ -230,10 +230,3 @@ ADR-0190's verification fails on any puzzle whose reference solution fails its c
 | A puzzle is taken out of the box while 3 are open | `409 open_limit`, and the puzzle stays in the box. |
 | A boxed puzzle is opened without being taken out of the box | `409 in_box`, and the puzzle stays in the box. |
 | The parent's edit fails step 3's code checks | The edit isn't saved, the review screen names the failing check, and the puzzle stays in the queue as it was. |
-
-## Open review findings
-
-- Round 1 asked for a reason beside each value, such as the word limits, $20, the queue of 60, 5 adventure days, 7 game days, 300 moves and the box line at 20, or a sentence pointing to ADR-0280 for them. Rejected: a specification states what the system does and never why (S8), and ADR-0280 holds each reason. Round 2 noted the same point and didn't reopen it.
-- The review of 2026-09-28 asked to name the owner's run report as the audience of `puzzle_unapproved_hash` until a run passes. I rejected it: ADR-0280's state table names the parent, and the failure table already says the puzzle reaches the review queue only once a preparation run passes its blind solve.
-- The same review repeated the request for a reason beside each value. I rejected it for the reason given under round 1 above: ADR-0280 holds the reasons, and a specification states none (S8).
-- The second review round asked again for the reasons behind the values, or a pointer to them. I rejected it for the reason under round 1 above.

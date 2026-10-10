@@ -20,7 +20,3 @@ The teacher's printout is the only copy of the category analysis, and the M7 res
 
 Written from RES-4240 on the owner's instruction of 2026-09-28 to process addendum 2.
 Imposed by the owner's addendum 2 of 2026-09-28.
-
-## Open review findings
-
-- The second agent reviewer asked to keep the line that addendum 1 imposed the original fields and that they rest on RES-4080. The superseded REQ-5882 keeps that origin in the record, and this requirement adds only the categories RES-4240 found.

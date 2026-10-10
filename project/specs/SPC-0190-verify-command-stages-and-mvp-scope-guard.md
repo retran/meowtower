@@ -292,13 +292,3 @@ At each stage's review the agent reads `canon/` against the specification on met
 | The measured joint rate for check 5's student with both gaps falls below 0.825 | `check5_rate_low`: the bar goes back to the owner in the stage's review record. |
 | The canon contradicts the specification on method, time, rewards or safety | A `canon_contradiction` defect against the canon, which is corrected. |
 | Group 8 measures a slow load, a large bundle or a low frame rate | The report shows the measurement, and group 8 fails nothing until its baselines exist. |
-
-## Open review findings
-
-An agent reviewer raised these on 2026-09-28.
-
-- Rejected: the reviewer asked to move five gaps into ADR-0190 and ADR-0210 as open questions. An approved decision changes only through a new record, and ADR-0370 is that record.
-- Rejected: the reviewer asked for the reason beside the draft ceiling, the spike's place first, the real-iPad checklist, verify's own data directory, synthetic recordings and the retention of reports and recordings. A specification states what the system does and never why (S8), and ADR-0190 keeps those reasons.
-- Rejected: the reviewer asked for file-name patterns the decision-log check matches. ADR-0190 names `docs/decisions.md` and `docs/questions.md` and no pattern, and the check's author sets the patterns in the check.
-- Rejected: the reviewer asked to send each part of the second addendum and the sandbox to its specification. ADR-0340 to ADR-0450 have higher numbers than this document, and this repository cites a higher-numbered subject by its decision, so the parts stay with ADR-0340 and ADR-0380 to ADR-0450.
-- Rejected: the reviewer asked to drop the template's header comment, or add a reason beside each rule. The comment comes from `paw template spec`, and the reasons stay in ADR-0190 for the reason given above.

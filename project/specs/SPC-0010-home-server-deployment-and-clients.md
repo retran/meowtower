@@ -157,8 +157,3 @@ The device stores in IndexedDB only the unsent entries of its event queue, and a
 | The volume `meowtower-db` is deleted, for example by `docker compose down -v` or a Docker Desktop reset | The live database is gone; `./meowtower restore` loads the newest snapshot, and events after it are lost. |
 | A local judge is down or not yet verified | `./meowtower status` names its state; its checks take their standby route, as ADR-0350 states, and play goes on. |
 | A device's storage is wiped | The device loses its token and needs pairing again. The entries still in its IndexedDB event queue are lost; everything the server acknowledged is kept, because the server holds it. |
-
-## Open review findings
-
-- The agent review asked to state the parent session in one place, since ADR-0030 also states it. I keep the cookie, device binding and memory here as the deployment's view and leave the idle expiry to ADR-0030; the two agree today.
-- The agent review asked for reasons beside the lockout's refusal of a correct entry, the player's ability to start the PIN lockout, and the snapshot name collision rule. I keep them without reasons, because a specification states what the system does and never why (S8).

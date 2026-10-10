@@ -182,10 +182,6 @@ A confirmed series ends the planned checks for that node, a check attempt with n
 
 The trajectory's share pools up to 4 weeks until it reaches 5 first attempts. At her pace a single week rarely holds 5, and 4 weeks is the span the owner's profile uses for its dynamics. Decided on 2026-09-28 by research, on the owner's instruction to process addendum 2 through to the specifications.
 
-## Open review findings
-
-Two rounds of agent review ran on 2026-09-28. I fixed every finding of both rounds, and rejected none. The fixes to the second round's findings haven't been reviewed by an agent: the rule for series triggers and confirmed nodes (conclusions 6 and 11), the void and hinted check (conclusion 10), the pooled trajectory share (conclusion 3), the reason the stored gap is never read (conclusion 14), the order of two checks due on one floor (conclusion 9), the adaptive-gap option and the restated ASSISTments claim. A person approving this record should read those first.
-
 ## Sources
 
 - The owner's addendum 2 to the specification, 2026-09-28, read 2026-09-28 - item 3 in full, item 1 on intervals and «мало данных», the event list, the report list and acceptance test 1.

@@ -279,9 +279,3 @@ The player sees none of these. `probe_texts_short`, `probe_text_blocked` and `pr
 - The style guide's text, the Dutch forbidden forms and the Dutch numeral list, which a person writes.
 - The English and Dutch interface and the rest of the Dutch layer, which stay deferred.
 - Which templates carry `probeFamily`, beyond the rule of 1 to 2 for each group; the owner approves the list at the stage acceptance.
-
-## Open review findings
-
-Two agent review rounds ran on 2026-09-28, and I fixed all 18 findings, preferences included, and rejected none. The second round's fixes haven't had a third review, because the method stops at two rounds. They are: how a moved letter finds a floor with space, `probe_text_removed` with `reason: "blocked"`, the reversal condition on the native-reviewed share, the Russian naturalness item in step 5, naming the principle `project_in_english`, and the first phase's minutes.
-
-Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

@@ -287,8 +287,3 @@ The bestiary is a projection. It shows a page for each creature she has met (REQ
 - Where REQ-1748 or the assisted-attempt rule and REQ-1750 both meet one `alt` first attempt, the streak stays unchanged: the listed cases name that attempt and REQ-1750 names every `alt`.
 - The daily rewards REQ-5018 names are read as the grants of a met daily quest; the morning's guiding threads belong to SPC-0080.
 - The shop and forge refusals are named `409 not_enough_buttons` and `409 not_enough_materials`, and log nothing; no decision names them.
-
-## Open review findings
-
-- The agent reviewer asked for the reason of the assisted-attempt rule beside it. Rejected: the method's rule S8 keeps a decision's reasons in the decision, and the sentence now names ADR-0140, which holds this one.
-- The second agent review read the name-folding rule as this document's choice. Rejected: ADR-0140 sets it.

@@ -159,7 +159,3 @@ Explanations exist in Russian only. The prompt, the forbidden list and the numer
 | `EXPLAIN_MODEL` is unset | Every explanation comes from a stored variant or the template. |
 | The parent hides a variant | The server never shows it, and the group may take a new variant in its place. |
 | `explain_cache` reaches 10,000 rows | `explain_cache_ceiling` reports once; serving goes on. |
-
-## Open review findings
-
-- Rejected: give each rule its reason (the $0.03 reserve, «ты», the order of the checks, the solve on every reuse, the 7-second split, the short-solution fallback, "never deletes", the 10,000-row ceiling and the 30-day drain). A specification states what the system does and never why (S8); ADR-0120 holds these reasons.

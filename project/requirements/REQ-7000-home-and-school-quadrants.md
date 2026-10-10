@@ -19,7 +19,3 @@ A row goes in no quadrant when either side supports no cut, because a wrong cell
 
 Written from RES-4240 on the owner's instruction of 2026-09-28 to process addendum 2.
 Imposed by the owner's addendum 2 of 2026-09-28.
-
-## Open review findings
-
-- The agent reviewer noted that no requirement carries the replacement of ADR-0310's two marks by the quadrants. Rejected: no approved requirement fixes the two marks, so the replacement is the design step's amendment of ADR-0310 and SPC-0310.

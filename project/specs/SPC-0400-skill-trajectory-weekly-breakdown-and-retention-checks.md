@@ -224,9 +224,3 @@ A simulation over 90 simulated days in `tools/simulate.ts` asserts that no `item
 - The weeks pooled for the share «сама» are calendar weeks, empty ones included, since ADR-0400 speaks of a span of weeks.
 - When no subtype reaches weight 0.2, the check's draw runs over all the node's subtypes as REQ-6858 states, narrowed by ADR-0410's side-slot rule to subtypes she has been shown whenever one fits. ADR-0400 states the fallback as the shown subtypes alone; the two readings give the same draw, because a node reaches «устойчиво» only after she has been shown some of its subtypes.
 - A check is late when placed after its window's end, `toDays` game days after its start point. For a `latest_meeting` window that is more than 35 game days after the meeting, as REQ-6864 states. REQ-6864 doesn't cover a `plan_day` window, and ADR-0400 extends the late mark to its end, 7 game days after the plan.
-
-## Open review findings
-
-- Round 1, adding REQ-6842, REQ-6844 and REQ-6846 to `states:`: rejected. The addendum 2 spec map gives REQ-6842 to SPC-0060 and REQ-6844 and REQ-6846 to SPC-0070, and this document cites those specs under The hold in place of stating the requirements twice.
-- Round 1, reasons for the recompute and restart rules, the `void_limit` count and its 35-day rest, the order of two checks on one floor and the Sources track slot: rejected, because a specification states what the system does and never why (S8); ADR-0400 holds the reasons.
-- Round 2, the header comment's promise of a reason beside each rule: kept as the template ships it, since every spec in `project/specs/` carries it; Scope now names ADR-0400 as the holder of the reasons (S8).

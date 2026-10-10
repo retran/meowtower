@@ -156,8 +156,3 @@ I lead with the named operations expanded into the four. It is the only option t
 - RES-0800's node tables, SPC-0050's domains, SPC-0060's state rules and SPC-0230, read 2026-09-28 - the nodes each construction needs, the states at or above "understands", and the riddle as specified.
 - The approved requirements on masking, the parse's tokens, the verdicts, the error-type limit, the Director's gate and the riddle's floor, read 2026-09-28 - the rules the findings name.
 - The repository at 89d15d6, `src/` searched 2026-09-28 - no compose module or masker exists yet.
-
-## Open review findings
-
-- The second agent review asked for an agreement floor on the division kind the parser labels, within the 10 texts per meaning. Left open after the second round: 10 texts give no useful bound, and the requirements step sets the floor with the set's composition, as it set the 2 % bound on `match` from RES-4020.
-- The second agent review asked for a reason on conclusions 1, 5, 12, 13 and 15. Rejected: each rests on the finding above it or on the decision it names, ADR-0210 for the masked number and ADR-0230 for the stream, the exclusion and the frames, and a reason repeated in the conclusion would state it twice.

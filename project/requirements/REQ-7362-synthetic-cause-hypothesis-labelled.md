@@ -20,8 +20,3 @@ The example is the addendum's own, so the check shows the rule can tell the two 
 Written from RES-4270 on the owner's instruction of 2026-09-28 to process addendum 2.
 
 Imposed by the owner's addendum 2 of 2026-09-28.
-
-## Open review findings
-
-- The requirements step found, while fixing the first review's findings, that the addendum's refutation, Russian problems 20 points below bare ones, is never met by REQ-6668's maths-gap player, whose every presentation sits at 55 %, and a condition that Russian and Dutch differ by less than a number needs far more than 20 observations a side to be met at 80 %. The design step must choose numeric conditions that can separate the two players within the stated days, or research must revise conclusion 15. Open on 2026-09-28.
-- The second review noted that leaving the numeric conditions to the design step lets whoever writes the check tune them until it passes. I kept the conditions out, because RES-4270 gives no numbers for the example and the requirements step must not invent them; the design step must fix and record them before the check's first run. Open on 2026-09-28.

@@ -235,10 +235,3 @@ While the client has no connection, the hint, explanation and second-attempt con
 | `PUT /api/parent/settings` carries a `threeDayLimit` outside 1 to 7 and not `null` | `400 settings_invalid`, and nothing is logged. |
 | `extend` after `finish_today` on the same game day | `409 day_finished` until 04:00. |
 | The answer or check reply takes longer than 300 ms at the 95th percentile | The verify report shows the measure against ADR-0190's Baselines table. |
-
-## Open review findings
-
-- Round 1, the reasons for the import rules, the rate limit, the tap-only lease, the one-answer queue and the draft interval: rejected, because a specification states what the system does and never why (S8); ADR-0030 holds the reasons.
-- Rounds 1 and 2, `background` and `idle` on a finished adventure getting `409 adventure_closed` while a leave logs `session_ended` alone: rejected as a change. TSK-0330 built this contract and gives its reason, and the spec states it without the reason (S8).
-- Round 2, the reason for the parent session's own cookie: rejected under S8.
-- 2026-09-29 review, the reasons for the 1-to-7 range, the parent session's activity rule and the default held by the route: rejected under S8. A specification states no reasons; TSK-0390's Evidence records these choices with their reasons, and ADR-0030 is approved and holds the decision they serve.

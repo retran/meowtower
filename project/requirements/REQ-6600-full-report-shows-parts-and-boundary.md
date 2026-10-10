@@ -21,9 +21,3 @@ The owner's addendum 2 restates the project's goal as this profile and boundary,
 Written from RES-4200 on the owner's instruction of 2026-09-28 to process addendum 2.
 
 Imposed by the owner's addendum 2 of 2026-09-28.
-
-## Open review findings
-
-The agent review of 2026-09-28 noted that nothing tracks the owner rewording the vision, as RES-4200 conclusion 1 asks. I kept the rewording out of the requirements, because it changes a project document the owner edits, not the game; the gate report names it for the owner.
-
-The second agent review of 2026-09-28 suggested naming a case for the parent to judge against, here and in REQ-6602 and REQ-6604. I kept the judgement open, because the profile's dimensions are RES-4210's and a fixed case now would decide what the design step hasn't.

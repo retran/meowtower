@@ -277,16 +277,3 @@ The player sees no other failure state, because every state above leaves her a t
 The strongest objection is that this is drilling for a test with the word taken out. Cito's pages say practice that builds skill is welcome and training on its items isn't, and this decision's defence is that it copies no item and shows no date. Yet the Volley before M7 is the heaviest practice in the game, timed by a hidden clock and scheduled by the test date. A child who meets ten times-table facts on two floors in three for fifteen weeks feels the drill whether or not the word appears. I keep it, because automatic facts are a skill in their own right, which Cito itself tests apart, and the owner asked for it. The Volley still pays nothing for speed, and its share falls after M7. The third reversal condition watches for the preparation showing through.
 
 The premortem, written as though it had failed. By February the report showed blocks 1 and 2 stuck at 70 % automatic, and the parent read it as her failing, while the cause was supply. She played 2 floors most days, so two Volleys a day became one, and the 14-day rule expired facts faster than one Volley refreshed them. The Director then lifted A and N nodes every day, which made her days feel alike, and she asked why the Tower always counted. A second cause sat in the Cito facts: a check in November marked the claim about the adaptive second part unconfirmed after a page moved. Nobody updated the file, and the mark sat beside the readiness text for months until the parent stopped reading marks. The capacity numbers under the costs, the second reversal condition and the yearly line exist for these.
-
-## Open review findings
-
-- REQ-5846 can't hold while fewer facts are automatic than a Volley's places, which is every Volley of the first weeks. This decision fills those places with facts in «вычисляет», then facts never shown, and the requirement needs an amendment that names this case. It stays open for the owner, because a decision can't change an approved requirement.
-- Agent review, preference: cap the fact review ladder at 12 or 13 days so an automatic fact has slack before its 14-day limit. Rejected: a 13-day cap raises the fresh shows needed from about 20 to about 21 a day and a 12-day cap to about 23, above what the Volley supplies after M7, and the Volley already takes the oldest automatic facts first.
-
-Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
-
-Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
-
-Amended by ADR-0410, ADR-0420 and ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
-
-Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

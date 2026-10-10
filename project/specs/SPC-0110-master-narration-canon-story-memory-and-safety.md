@@ -282,9 +282,3 @@ The player never sees a model failure, because each one ends in a library or poo
 ## Defaults chosen here
 
 The decisions leave three details open, and this document chose them on 2026-09-28. The numeral check runs as a content test (REQ-1548). The parent judges the loosened-knot and other-path pool lines at approval, and the library `alt` branches and `cunning` endings before the stage that ships them (REQ-1554). A dreamcore library scene carries a familiar and an exit (REQ-1536, REQ-1538).
-
-## Open review findings
-
-- Rejected: add reasons for the trigger level standing when the judge can't answer and for the 200-phrase trigger test, because a spec states what the system does and never why (S8); the reasons stay in ADR-0110.
-- Rejected: cite ADR-0110 beside each limit (one `title` a session, 12 lines of 280 characters, 7 summaries and 200 facts, 100 pending candidates and 30 days, 30 flagged scenes, 25 %) and give reasons for the three defaults, because the spec traces to requirements, and reasons live in the decision (S8).
-- Rejected: move the length, speaker and Score checks into the check module, because ADR-0110 places only steps 1, 4, 5 and the safety check there, and the spec states that split as decided.

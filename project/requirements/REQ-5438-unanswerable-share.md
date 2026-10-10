@@ -19,7 +19,3 @@ An unanswerable problem is a T1 to T4 word problem of a subtype `T1.insufficient
 
 Written from RES-4040 on the owner's instruction of 2026-09-28.
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-A reviewer suggested a tolerance and a sample size for "about 5 %". I left both to the author of the evaluation, because the owner's addendum and RES-4040 give neither and inventing one would add a decision research didn't make.

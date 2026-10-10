@@ -185,10 +185,6 @@ A probe letter gets no twin, and a wrong answer brings the short solution only. 
 
 Every presentation, bare and Russian included, writes `nl_probe` and stays out of «сама», the language-risk limit and the bridge's share. A letter is a new form: it arrives outside the Director's slots, and a T letter drops the Guardian's model choice and steps, so ADR-0210 keeps it out of «сама» until a refit admits it. Letters would otherwise swamp the language-risk limit meant for Russian tasks, and push the bridge's measured share out of its band. Decided on 2026-09-28 by research, on the owner's instruction to process addendum 2 through to the specifications.
 
-## Open review findings
-
-1. Round 1, a preference: list the twelve decided questions as a numbered list. I rejected it, because each decided paragraph opens with its answer and a list beside them would say each decision twice.
-
 ## Sources
 
 - The owner's addendum 2 to the specification, 2026-09-28, read 2026-09-28 - item 6 in full, items 1, 2, 5 and 8 where they meet the probe, the event list, the report list and acceptance test 4.

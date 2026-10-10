@@ -226,9 +226,3 @@ Text the game writes into the report and the Parent Room never names a Studievaa
 | No node of the `sources` track has a built template | The Director plans no track tasks, and the screen shows every node as «не проверено». |
 | A figure on the screen rests on fewer than 5 first attempts in 30 days | `too_little_data`: the figure shows «мало данных». |
 | The build's search finds Studievaardigheden in a string file or a Parent Room schema | The build fails. |
-
-## Open review findings
-
-- Rejected: add a reason to each rule (the 1S prior, the fluency thresholds, the daily cap, the node order, the size ceilings, the minimum gap, `choice` only for labels, the zoom range and its reset). A specification states what the system does and never why (S8); the reasons live in ADR-0300.
-- Rejected in round 1: widen the Studievaardigheden search to Russian names of the test and name a check for REQ-5924. ADR-0300 sets the check as a search for that word, and says ADR-0160's text gate can't hold the rule because it skips `parent.*` keys; a wider search or a new check changes the decision, so it goes back to ADR-0300 through its own record.
-- Rejected in round 1: say the fluency thresholds are the same on both device types, and whether a diagonal map square counts as adjacent. The first is already what the sentence states, one value per level until ADR-0180's calibration; the second is left to the template's trap mapping, which the property test's neighbour rule checks.

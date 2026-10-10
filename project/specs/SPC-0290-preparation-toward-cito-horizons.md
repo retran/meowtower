@@ -288,11 +288,3 @@ A bridge word shows only in a task of a node whose tested state, computed withou
 | A domain has fewer than 20 unassisted first attempts in 30 days | The scale shows «мало данных» for it. |
 | An engine module imports `src/parent/scale/` | The lint rule fails the build. |
 | The bridge is switched off | Rendering drops every bridge element; stored views of earlier tasks stay in the log, and a resumed task renders again from its seed without bridge words. |
-
-## Open review findings
-
-- Agent review of addendum 2, round 1: rename `school_goal_mapped`'s field `source` to `proposedBy`, because other events use `source` for other values. Rejected: ADR-0290's Consequences name the field `source` with the values `catalogue` and `parent`, and a rename is a change to that decision.
-- Agent review of addendum 2, round 1, preference: point to ADR-0300, ADR-0310, ADR-0410 and ADR-0430 in place of ADR-0300, ADR-0310, ADR-0410 and ADR-0430. Rejected: this document cites only lower-numbered specifications and names a higher-numbered subject by its decision.
-- Agent review, round 1: carry ADR-0290's reasons into the sentences for the 10 s timeout, the 10-minute cooldown, the 45 days, the 200-goal cap, the 1.5 s to 6 s range, the Volley's 10 facts and floor of 8, the spacing of weak facts, the 2 first attempts, the one corridor entry, the count across days, the 41 quadrature points and the 20 attempts. Rejected: a specification states what the system does and never why (spec rule S8), and each reason stays in ADR-0290.
-- Agent review, round 2, preference: remove or change the comment under the front matter, because this document gives no reasons. Rejected: every record in the repository carries the same comment naming the writing standard, and changing it is a change to the record template, outside this document.
-- Agent review, round 2, preference: carry ADR-0290's reasons for the numbers into the body. Rejected under spec rule S8, as in round 1.

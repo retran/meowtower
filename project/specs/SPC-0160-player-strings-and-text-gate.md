@@ -159,12 +159,3 @@ While the bridge is on and at least 30 words are approved, the Director puts bri
 | A bridge word has no `glossary_entry_approved` | The game doesn't show it. |
 | Fewer than 30 bridge words are approved | `bridge_below_minimum`: the bridge stays off, and the glossary panel shows the count. |
 | The simulated bridge share, over tasks other than Dutch probe letters on nodes at «Понимает» or above, leaves 15 % to 25 % in a 14-game-day window | `bridge_share_out_of_band`: the build fails and names the window. |
-
-## Open review findings
-
-- Rejected, round 1: give the log table's 1,000-row cap and the "more than half" re-report threshold their reasons. A specification states what the system does and never why (S8), and ADR-0160 holds the reasons.
-- Rejected, round 2: give reasons for blocking emoji, keeping the log table outside the event log, its cap and re-report threshold, retiring a failed pool line, and keeping the Dutch word in `lexicon.ru.json` with no Dutch locale file. Rule S8 applies again, and ADR-0160, ADR-0190 and ADR-0210 hold the reasons.
-- Rejected, round 2: name the key of each pinned world label. The test pins values, the building step chooses the keys, and the test names whatever key holds each value.
-- Rejected, round 1: fold Latin look-alike letters only inside tokens that mix scripts, so a bridge word made of look-alike letters stays Latin. ADR-0160 states a whole-text fold, and the building step settles the case with the fixtures.
-- Rejected, round 2: name «день» as outside the time-word section. A person writes the section and the owner reviews it, and the label test on «Дней в Башне» fails the build at once if the section catches it.
-- Rejected, round 2: reword the header comment on reasons. Every record in the repository carries that comment, and S8 governs what a specification states.

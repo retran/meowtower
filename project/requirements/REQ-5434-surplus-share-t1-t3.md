@@ -19,7 +19,3 @@ I chose to measure the share over the problems the Director draws, with no time 
 
 Written from RES-4040 on the owner's instruction of 2026-09-28.
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-A reviewer suggested a tolerance and a sample size for "about 10 %". I left both to the author of the evaluation, because the owner's addendum and RES-4040 give neither and inventing one would add a decision research didn't make.

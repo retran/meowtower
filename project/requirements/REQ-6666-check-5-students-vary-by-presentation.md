@@ -18,7 +18,3 @@ The synthetic students of build check 5 MUST vary their accuracy by the presenta
 None of the ten synthetic profiles of REQ-2908 varies with the presentation, so none can play a student with a language gap.
 
 Written from RES-4200 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-The agent review of 2026-09-28 suggested merging this into REQ-6668, whose per-presentation rates imply it. I kept it apart, because it states the break from REQ-2908's ten profiles, which REQ-6668 doesn't.

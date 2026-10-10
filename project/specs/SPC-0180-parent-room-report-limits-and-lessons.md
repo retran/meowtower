@@ -361,10 +361,3 @@ It doesn't defend against a person with the Mac's user account, who can take a c
 ## Choices made in this document
 
 - The observation «склонна отказываться от задачи» sits on the summary screen, and the note on the unanswerable streams on the graph map beside the word-problem matrix; ADR-0250 names no screen for either.
-
-## Open review findings
-
-- An agent reviewer asked for a reason beside the placements under "Choices made in this document", the 50-row page, the two version sets in `report_cache` and the Director's narrow read of `parent_tags` and `thresholds`. I rejected it, because rule S8 of the spec step keeps reasons in the decision: ADR-0180 gives the reasons for the page size, the version sets and the Director's read, and the placements' reason belongs to the design step that settles them.
-- The same reviewer asked again for reasons beside the rules the first finding above names; the rejection under the first finding holds.
-- The agent reviews of 2026-09-28 for addendum 2 ran two rounds. I fixed the first round's findings on the language line's direction, the `lastEventSeq` phrase, the missing reversal of `item_excluded`, and the failure names, now stated at the checks that raise them. The first round's request for reasons beside the page size, the version sets and the Director's read gets the rejection above.
-- The second round again asked for a reason beside the placement under "Choices made in this document"; the rejection under the first finding above holds.

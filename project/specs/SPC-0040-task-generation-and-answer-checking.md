@@ -289,12 +289,3 @@ The generator builds a riddle's target with the purpose `compose`, and `judgeCom
 | An outgoing `ItemViewOut` or `InputSpec` carries an unlisted field | Serialisation fails, and the body never reaches the client. |
 | `COMPOSE_FREE` is on with no passing record for the configured `PARSE_MODEL` and prompt hash | Text riddles turn off, card riddles play, and `./meowtower status` shows `compose_flag_off`. |
 | The game day's parse bucket can't reserve two parses | The Director offers a card riddle. |
-
-## Open review findings
-
-- The round-one reviewer asked to add `src/shared/readability.ts` to the modules barred from the model gateway or to exclude it by name. Rejected: no decision in force bars that module, so either statement would be a rule no decision makes.
-- The round-one reviewer asked to give the client-import ban its reason by tying it to REQ-1220. Rejected: a specification states what the system does, never why, and ADR-0040 cites no requirement for that ban.
-- The round-two reviewer asked to cite ADR-0040's reading of "stable" beside REQ-0784's word «бегло» in the word-problem numbers rule. Rejected: that reading is a reason, which lives in ADR-0040, and ADR-0060 defines stable as a state past fluent.
-- The round-three reviewer, on the addendum 2 update, asked to cite REQ-5416, REQ-5418 and REQ-5422 in place of ADR-0140 in the verdict table. Rejected: those requirements aren't in this document's `states`, and the column names where each verdict's outcome is stated, which ADR-0140 holds.
-- The round-three reviewer asked again to give the client-import ban, the sign-comparison purposes and the plural mapping their reasons. Rejected for the reason given for the round-one finding: a specification states what the system does, never why.
-- The round-four reviewer, on the addendum 2 update, asked again for the reasons of the client-import ban, the sign-comparison purposes, the plural mapping and the 1 % fallback threshold. Rejected for the reason above.

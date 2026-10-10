@@ -19,7 +19,3 @@ Any other difference between two presentations, a harder number, another subtype
 
 Written from RES-4250 on the owner's instruction of 2026-09-28 to process addendum 2.
 Imposed by the owner's addendum 2 of 2026-09-28.
-
-## Open review findings
-
-1. Round 2, a fix: add a requirement for how the Russian probe text is written and checked (blind solve, forbidden words, parent approval). I left it open, because the identifier block has no free number; the Russian text is ordinary Russian task text, which the approved frame pipeline and REQ-3326 already cover, and the design step should confirm that.

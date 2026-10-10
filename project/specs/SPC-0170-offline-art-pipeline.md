@@ -216,9 +216,3 @@ Unchosen variants stay in `data/art/variants/` and drain 30 days after their ass
 - The fringe check's hue distance is 20 degrees, because ADR-0170 says "a set distance" and gives no value.
 - An `error` job returns to `waiting` at the next run, a familiar's stage waits for its chosen previous stage, a draft carries a seen mark, and an opaque pixel near the key hue fails the fringe check, because ADR-0170 leaves each case without a rule.
 - A 402 on the offline key stops new generations and counts as no job error, because ADR-0210 says only that the run reports `offline_key_refused`, and the refusal comes from the key, not the job.
-
-## Open review findings
-
-- Round 1 asked to give the reasons for the model check reading both listings and for the one-way dependencies, and the reason keyart-heroine isn't shown before the style check. Rejected: a spec states what the system does and never why (S8), and ADR-0170 holds these reasons.
-- Round 1 asked to say where the values 3 errors, 30 days and 400 variants come from. Rejected for the same rule (S8): ADR-0170 marks them as chosen values.
-- Round 2, finding 13: the header comment asks each rule to carry its reason. Rejected: the comment is the writing standard's header, and a spec states no reasons (S8).

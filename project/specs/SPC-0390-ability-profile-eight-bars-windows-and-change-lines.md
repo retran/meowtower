@@ -203,7 +203,3 @@ SPC-0190's verify runs these checks on the profile:
 - The stream line of a bar without streams names the bar's one source, and model building splits by `plan`. ADR-0390 names streams per bar only for conceptual understanding and the gap bar's presentations.
 - The eight bar identifiers are mine, as snake-case forms of the bar names.
 - The side figures cover the current window only, because ADR-0390 draws the previous window as a thin bar with its own interval and names no side figure for it.
-
-## Open review findings
-
-- An agent reviewer asked for ADR-0390's reasons beside seven rules: the empty previous window, the gap bar's missing change line, the one-window template, a stream over a template, `grouping`, the missing Dutch placeholder and the 6 decimals. I rejected it, because rule S8 of the spec step keeps reasons in the decision, and ADR-0390 holds each of them.

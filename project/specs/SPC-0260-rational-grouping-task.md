@@ -192,10 +192,3 @@ When a week closes as the second in a row above 60 star yarn, the server raises 
 | An answer carries a `lastGroupingSeq` that names no `grouping_submitted` of its attempt, or `null` while the attempt has one | `grouping_out_of_order`: the server refuses it, the queue sends the attempt's held sets in order, and the answer follows with the `clientSeq` the reply names. |
 | The app closes with a set unsent | The set stays in the event queue in IndexedDB and goes out when the app opens again. |
 | `spell.short_loop` has no art yet | The scene plays a placeholder animation drawn in code from the design tokens. |
-
-## Open review findings
-
-- Round 1, the reasons for the cap of 40 changes, the 6 templates, the 1,000 seeds, the room slot and the technique the Director picks, the exclusion from the success share, the threshold of 5 attempts and weeks from Monday: rejected, because a specification states what the system does and never why (S8); ADR-0260 holds the reasons.
-- Round 1, `admissible` as a declared field that is always every pair and every number: rejected, because REQ-5512 names the field and ADR-0260 fixes its value.
-- Round 1, the build check shutting out a rounding expression with mixed operations such as `503 − 198`, which REQ-5524 would allow: rejected, because ADR-0260 fails every mixed expression, and a template that meets the narrower check still meets REQ-5524.
-- Round 2, the comment on line 10 promising a reason beside each rule: rejected as a change, because the comment is the spec template's standard line; the Scope now names ADR-0260 as the holder of the reasons.

@@ -30,13 +30,6 @@ In `src/engine/projections/registry.ts`, add `class: "game" | "knowledge"` and `
 
 TSK-0250, because it built the registry. TSK-0270, because it built the import check.
 
-## Cover
-
-- Checks: tests/unit/projection-class.test.ts
-- Failing run: project/evidence/55ea4a151fde.txt
-- Landed in: cb45124
-- Judgement: none
-
 ## Evidence
 
 Collected on 2026-09-29 on the Mac. Every criterion is met.

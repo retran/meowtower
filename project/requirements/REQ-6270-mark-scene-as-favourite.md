@@ -20,7 +20,3 @@ A favourite tells the parent, and the Show cards, which moments she liked.
 Written from RES-4120 on the owner's instruction of 2026-09-28.
 
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-- The reviewer asked where favourites show. Rejected: RES-4120 doesn't say, and choosing a screen is the design step's job.

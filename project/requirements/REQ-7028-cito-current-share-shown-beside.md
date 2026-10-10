@@ -18,7 +18,3 @@ Each Cito row MUST show the share of the category's currently tested nodes at a 
 The parent sees both what the row compared and where the category stands now.
 
 Written from RES-4240 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-- The second agent reviewer suggested showing the outside share and the margin beside the inside share, and asked what a row with no mapped nodes shows. Left to the design step, which lays out the row; a row with no mapped nodes is in no quadrant and shows its reason (REQ-7036).

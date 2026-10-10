@@ -230,8 +230,3 @@ Raised mode replaces the in-corridor rule with review when the adventure's revie
 | An attempt is `interrupted`, `crossDevice` or carries an estimate | It is never a rapid guess, and its time counts in no measure. |
 | An answer is a rapid guess | It stays out of every estimate and block, and a task of the same node follows later in the session. |
 | Rapid guesses pass 15 % of a session, or the help share passes its test | Raised mode runs, and the report shows the flag once. |
-
-## Open review findings
-
-- Round 1 asked for a reason beside four rules: a Guardian task on about one floor in three, a node kept for 2 to 5 tasks, cold start's end at half the 1F and 1S nodes or the 10th adventure, and the replacement task after a rapid guess. Rejected: a specification states what the system does and never why (spec rule S8), and ADR-0070 holds the reasons. Round 2 repeated this as a preference, asking for a pointer to ADR-0070 in Scope; rejected for the same rule, because the requirements each statement cites lead to ADR-0070.
-- Addendum 2 revision, round 1, asked again for reasons beside the new limits: 2 letters a floor, 3 checks a day, no check after a fatigue signal and the 3-letter floor. Rejected under spec rule S8, as in the earlier rounds; ADR-0400 and ADR-0430 hold the reasons.

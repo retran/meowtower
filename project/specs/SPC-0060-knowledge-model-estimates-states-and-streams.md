@@ -239,7 +239,3 @@ A new parameter file replaces the active one only when it predicts the next unas
 | A lesson mark falls inside a run of 5 observations | No block forms across it; the block completes only after 5 graded observations follow the mark. |
 | The `node_snapshots` table is deleted | A full recompute rebuilds the active versions' rows; earlier versions' rows come back only from the database snapshots or an old checkout. |
 | Any model failure during play | The player sees nothing, and play continues on the last estimates. |
-
-## Open review findings
-
-- Rejected: a reviewer asked for a reason or a decision next to rules such as "No route accepts an estimate or a state from a client". A specification states what the system does, and the reasons stay in the decisions the Scope names.

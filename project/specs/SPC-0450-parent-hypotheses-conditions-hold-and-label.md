@@ -228,7 +228,3 @@ ADR-0450 names the three routes and left their bodies to the specification step,
 - A save with no difference returns the current version, with no error, so a double tap on save costs the parent nothing.
 - A closed hypothesis takes only `reopen`, and any other change answers `409 hypothesis_closed`, so every version change happens while the hypothesis is open and has rows; a repeated `close` or `reopen` logs nothing.
 - ADR-0450 counts a rebuild's rows per open hypothesis and restarts the hold of closed ones too, and doesn't say what a closed hypothesis's rows are. This document ends a closed hypothesis's rows at its `closed` event, shows its last row's label under the active versions beside its `closed` label, and starts its hold afresh after the reopen day, because a closed hypothesis has no rows to carry a hold across the gap, and play days before the close must not complete a hold that ends after the reopen.
-
-## Open review findings
-
-- Rejected, round 1: carry ADR-0450's reasons into this document for `confirmText` or `refuteText` counting as a `criteria` change, for the server deriving `change`, for the measure list only growing, for a met refutation outranking a met confirmation, for deleting no row, for the ceilings and for a hypothesis never being deleted. A specification states what the system does and never why (spec rule S8); each reason stays in ADR-0450, where a builder tempted to relax the rule reads it.

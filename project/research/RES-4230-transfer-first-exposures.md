@@ -154,10 +154,6 @@ The report shows transfer pooled by the graph and by domain, never by node, with
 
 The hold, the context tags on frames, `contexts` on templates and the projection `first_exposures` with its `firstExposure` join the MVP, and the report section and the profile dimension go to the post-MVP backlog. A first encounter spent in training can't be recovered and a context tag is costly to rebuild, while the report reads only the log. Decided on 2026-09-28 by research, on the owner's instruction to process addendum 2 through to the specifications.
 
-## Open review findings
-
-Two agent reviews ran on 2026-09-28, and I fixed every finding of both, the preferences included, and rejected none. The fixes to the second round's findings haven't been reviewed again, because the method bounds review at two rounds. They are the context read through `frameId` in place of a field on `item_shown`, the hold ranked above the frame repeat rule, the loss of far observations in cold start and the per-subtype reading of the owner's two weeks.
-
 ## Sources
 
 - The owner's addendum 2 to the specification, 2026-09-28, read 2026-09-28 - item 4 in full, items 1, 2, 3 and 6 where they meet transfer, the event list, the report list and acceptance test 2.

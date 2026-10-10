@@ -168,11 +168,3 @@ A planning error is a plan labelled anything but `correct`, counted apart from m
 | The client has no connection while she lays cards | SPC-0030's event queue holds each `plan_draft` in order and sends it when the connection returns. |
 | The app closes while she lays cards | The resume shows the cards in the same order with the row as the newest `plan_draft` left it. |
 | She misses a step in her plan and then needs a row for it | She adds a row, up to 6. |
-
-## Open review findings
-
-- Rejected: give each rule its reason, for example why a `stated` decoy leaves out the given's number, why «Готово» stays inactive on an empty row, and why step rows stop at 6. A specification states what the system does, and ADR-0270 holds the reasons.
-- Rejected: upcast an older Guardian `item_shown` or `attempt_submitted` as `openingPhase: "model"`. ADR-0270 sets the upcaster to read every older event as `none`, and the repository holds no code, so no older event exists; changing the rule is a decision for ADR-0270.
-- Rejected: say "bought" for a rung, as ADR-0270 does, in place of "shown". SPC-0080 marks an attempt assisted when a rung is shown, whether the tap spent a thread or was free, and this document uses its term.
-- Rejected in part: drop the writing-standard comment at the top, which promises a reason with each rule. Every record carries that comment, so this document keeps it, and Scope now names ADR-0270 as the holder of the reasons.
-- Rejected: cite the ADR-0360 or ADR-0370 entry beside each rule they changed. Scope names both as amending ADR-0270, and a specification cites requirements, not the entries of a decision.

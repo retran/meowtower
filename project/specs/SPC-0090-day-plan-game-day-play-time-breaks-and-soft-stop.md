@@ -236,7 +236,3 @@ The Parent Room holds the memo on how to talk with the child about the game, fro
 | Code outside `src/engine/day/` and the task renderer reads an hour | The lint rule fails the build. | the developer |
 | A clock, a countdown or a minute count shows outside `data-task-content` | The screen check fails. | the developer |
 | The adventure's budget runs out while «Свободное перо» is open | The pen closes through a story scene from the library. | the player |
-
-## Open review findings
-
-- The agent reviewer asked for the reasons behind the zone-change rule, the wall-clock «Привал» wait, the adventure staying closed after «Закончить на сегодня», the planner reading no `puzzle_*` event and the order of timed events. Rejected: a specification states what the part does and never why, and ADR-0090, ADR-0210 and ADR-0280 hold those reasons; ADR-0090 gives none for the order, so this document can't supply one.

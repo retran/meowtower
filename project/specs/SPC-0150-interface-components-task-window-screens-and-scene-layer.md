@@ -221,11 +221,3 @@ PixiJS draws the scene picture, sprites and effects inside the scene column and 
 | An entry doesn't parse | The field takes the soft outline, «Готово» stays inactive, and the clock keeps running. | player |
 | A glossary entry's Dutch word isn't approved | The popover shows the Russian explanation and the picture only. | player |
 | A term span has no glossary entry | The span shows as plain text. | player |
-
-
-## Open review findings
-
-- Rejected, round 1: add a reason beside the gap before «Нельзя узнать», the live region present from the first paint, the textures destroyed on a floor change and the 380 px scene column. A specification states what the system does and never why (spec rule S8); the reasons stay in ADR-0150, ADR-0250 and ADR-0190. The 200-message limit now names ADR-0190 as the budget that holds it.
-- Rejected, round 1: drop the plain-text rendering of a term span with no glossary entry, since SPC-0040's build check refuses such a template. The rule still defines what the task window draws for a span that reaches it by any other path, and it can be tested with a fixture task view.
-- Rejected, round 1: move the post-MVP bar token and the letter case of the «Нельзя узнать» test out to ADR-0390 and ADR-0430. The spec states post-MVP parts it offers, marked as after the MVP, and the letter case depends on the owner amending the Russian-only rule, which the paragraph states.
-- Rejected, round 1: settle the keypad-cell test's viewport or the keypad's place on the computer. The paragraph names the iPad viewport for that test, and REQ-3206 places the keypad on the tablet only; the computer layout follows SPC-0010.

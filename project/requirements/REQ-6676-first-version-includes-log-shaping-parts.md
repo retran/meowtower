@@ -19,7 +19,3 @@ The first version MUST include addendum 2's parts that shape the log: the event 
 Each holds a fact a later report can't rebuild: a hypothesis written after the MVP can't be judged on the MVP's data, a first encounter spent in training can't be recovered, a short solution or a rung with no task can't be placed on a node, and the teacher's printout is the only copy of the category results. REQ-5076 stays as approved, and this list adds to it. The owner judges it at the stage 0.3 acceptance.
 
 Written from RES-4200 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-The agent review of 2026-09-28 suggested one requirement per part, so stage 0.3 could accept each part apart. I kept one list, as REQ-5076 does for addendum 1's parts, because the owner accepts the first version's contents as one list; each part also has its own requirement in RES-4220, RES-4230, RES-4240 and RES-4270's blocks.

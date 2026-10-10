@@ -18,7 +18,3 @@ The four Leerling in beeld domains MUST map to nodes as the skill graph's resear
 The skill graph's research already maps each domain from its published content, so a second mapping would only let the two drift apart, and a word problem draws on several domains at once.
 
 Written from RES-4240 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-- The second agent reviewer noted that listing RES-0800's table here is itself a second copy. Kept, so the requirement can be checked on its own; if RES-0800 changes, this requirement is superseded with it.
