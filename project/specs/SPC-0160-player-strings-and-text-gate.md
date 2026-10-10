@@ -3,7 +3,6 @@ id: SPC-0160
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, REQ-3314, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-7172, REQ-5470]
 ---
 

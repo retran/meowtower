@@ -3,7 +3,6 @@ id: SPC-0350
 artifact: spec
 status: live
 revised: 2026-09-28
-checked-at:
 states: [REQ-2648, REQ-2732, REQ-3910, REQ-3912, REQ-3914, REQ-3916, REQ-3918, REQ-3920, REQ-3922, REQ-3924]
 ---
 
