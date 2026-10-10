@@ -1,7 +1,7 @@
 ---
 id: TSK-0380
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0030
 closes: [REQ-2400, REQ-2434, REQ-2436, REQ-2438]
@@ -32,7 +32,24 @@ TSK-0320, because a resent answer must be recorded once. TSK-0340, because it di
 
 ## Evidence
 
-Not yet.
+Collected on 2026-10-10 on the Mac, at commit 34c45cc of the branch `tsk-0380-answer-queue-and-offline`, in pull request #11. Every criterion is met, with the one limit named below.
+
+- Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (49 Vitest files with 454 tests, and 57 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
+- Criterion 1, REQ-2434: `tests/e2e/answer-queue.spec.ts` aborts the answer request and reads the queue's store from inside the request's route: the entry is already there when the request leaves. The page is then closed; the next launch sends the answer before its resume request, the log holds the attempt once, and the store is empty.
+- Criterion 2, REQ-2434, REQ-2436 and REQ-2438: with the context offline the waiting scene «Туман над тропой, фамильяр ищет дорогу» shows and no task, outcome, correct answer, submit or next control does; a closed client's answer reaches the log exactly once when the network is back.
+- Criterion 3, REQ-2400: in the same run the outcome and its short solution arrive together after the network returns, with the waiting scene gone.
+- Criterion 4: with Playwright's clock, an answer unsent for 24 hours and one minute shows as `queue_stuck` in the device's settings with its time and a retry button, nothing shows before that, and the retry sends it and clears the row.
+- Criterion 5 (moved from TSK-0420), REQ-6506: after eight tasks played through the queue the store holds no entry, the device holds only the database `meowtower-queue`, and `localStorage`, `sessionStorage` and `document.cookie` are empty. The service worker's cache and the origin-private file system are checked by TSK-0420's spec on a played device.
+
+Resting on judgement: criterion 2 also asks that the hint, explanation and second-attempt controls be inactive while offline. The stand-in play screen draws none of them, so no program can check it; the waiting scene replaces the whole screen, which leaves no control to press. The iPad checklist's 0 lost answers after 30 seconds without Wi-Fi is a run on the iPad, which the owner makes.
+
+Choices made here, because the approved records left them open:
+
+- An entry's key is `answer:<clientSeq>` in the store, and its body keeps the session it was made in, so a launch sends it to that session and the server records it as the attempt, as SPC-0030 states for a lapsed lease.
+- A send gets a new wait of 1 second doubling to 30, and an `online` event ends the wait at once.
+- With no connection at launch, or on the next packet, the waiting scene shows and the client goes on trying; no screen asks her to retry.
+- Answers the server refused for good leave the store at once and are listed in the settings until the page is closed.
+- `call` in the client returns status 0 for a request that got no usable reply, so no screen needs a handler for a thrown fetch.
 
 ## Left alone
 

@@ -1,7 +1,7 @@
 ---
 id: EPC-0030
 artifact: epic
-status: approved
+status: done
 revised: 2026-09-27
 realises: ADR-0030
 ---
@@ -67,7 +67,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: meow-verbs exit 0 at tree b66cc28d4ed8, 379 Vitest and 27 Playwright tests; view-only screen, expiry equal to a leave, both late-answer cases
       closes: REQ-0202, REQ-0220, REQ-0222
       depends: TSK-0320 - `lease_moved` travels on its SSE stream; TSK-0340 - the view-only screen replaces its play screen
-- [ ] T-008 [P] TSK-0380 The client queues every answer before sending it, and plays no task while offline
+- [x] T-008 [P] TSK-0380 The client queues every answer before sending it, and plays no task while offline
+      evidence: the five verbs exit 0 at commit 34c45cc; `tests/e2e/answer-queue.spec.ts` (TSK-0380 Evidence)
       closes: REQ-2400, REQ-2434, REQ-2436, REQ-2438
       depends: TSK-0320 - a resent answer must be recorded once; TSK-0340 - the controls and screens it disables; TSK-0420 - the event-queue store, which replaced TSK-0110's unsent-answer store under ADR-0370 entry 45
 - [x] T-009 TSK-0360 Resume returns the exact step from `resume_snapshot`, and attempt flags keep broken times out of every measure
