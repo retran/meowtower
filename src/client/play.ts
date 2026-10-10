@@ -3,13 +3,24 @@
 // every task and outcome the same way whether the server scores it or not
 // (REQ-2430), and pauses the adventure on background (REQ-2406) and on idle
 // (REQ-2408, REQ-2410). ADR-0150's epic replaces the screen.
-import type { AnswerIn, AnswerOut, Room } from "../shared/api.js";
+import type {
+  AnswerIn,
+  AnswerOut,
+  Chest,
+  Grant,
+  Room,
+  Scene,
+} from "../shared/api.js";
 import {
   answer,
+  deliverRewards,
   heartbeat,
   MOVED,
   nextPacket,
   pause,
+  pickChest,
+  resumeAdventure,
+  sceneInput,
   startSession,
 } from "./api.js";
 import { act, button, el, heading, link, status } from "./controls.js";
@@ -23,6 +34,9 @@ export const IDLE_IN_TASK_MS = 5 * 60 * 1000;
 
 /** The holder tells the server it is alive this often; 45 seconds without one ends the lease. */
 export const HEARTBEAT_MS = 15 * 1000;
+
+/** A typed draft goes to the server at most this often (SPC-0030). */
+export const DRAFT_EVERY_MS = 10 * 1000;
 
 /** What each InputSpec kind lets into the field; everything else is refused. */
 const ACCEPTS: Record<Room["input"]["kind"], RegExp> = { integer: /^\d*$/ };
@@ -152,9 +166,13 @@ export const playScreen: Screen = {
 
     async function begin(): Promise<void> {
       section.dataset["busy"] = "1";
-      sessionId = await startSession();
+      // An open adventure resumes, which also brings the grants no device has
+      // shown yet (REQ-0204); with none open a session starts one.
+      const resumed = await resumeAdventure();
+      sessionId = resumed?.sessionId ?? (await startSession());
       if (!sessionId) return refused("ui.play.refused");
       hold(sessionId);
+      if (resumed?.rewards.length) return showGrants(resumed.rewards);
       await advance();
     }
 
@@ -166,6 +184,8 @@ export const playScreen: Screen = {
       if (packet === MOVED) return viewOnly();
       if (!packet) return refused("ui.play.failed");
       if (packet.kind === "room") drawRoom(packet);
+      else if (packet.kind === "scene") drawScene(packet);
+      else if (packet.kind === "chest") drawChest(packet);
       else {
         taskOpen = false;
         draw(
@@ -266,6 +286,173 @@ export const playScreen: Screen = {
         ),
       );
       field.focus();
+    }
+
+    /** Shows the grants, tells the server they were shown, then goes on. */
+    function showGrants(grants: Grant[]): void {
+      taskOpen = false;
+      if (sessionId)
+        void deliverRewards(
+          sessionId,
+          grants.map((g) => g.rewardId),
+        );
+      draw(
+        el("p", {}, t("ui.reward.title")),
+        el(
+          "ul",
+          { className: "grants" },
+          ...grants.map((g) =>
+            el("li", {}, `${t(`ui.reward.${g.kind}`)} × ${g.amount}`),
+          ),
+        ),
+        el(
+          "nav",
+          { className: "actions" },
+          button("ui.play.next", "play-next", advance),
+          button("ui.play.leave", "play-leave", () => stop("leave")),
+        ),
+      );
+      restartIdle();
+    }
+
+    function drawScene(scene: Scene): void {
+      taskOpen = false;
+      const note = status();
+      const field = el("textarea", {
+        id: "scene-draft",
+        rows: 3,
+        maxLength: 500,
+        value: scene.draft ?? "",
+      });
+      field.dataset["action"] = "scene-draft";
+      // The draft goes out at once when none went in the last 10 seconds and
+      // otherwise once the 10 seconds are up, so the last text isn't lost.
+      let sentAt = -Infinity;
+      let sentText = field.value;
+      let waiting: ReturnType<typeof setTimeout> | undefined;
+      const sendDraft = (): void => {
+        waiting = undefined;
+        if (!sessionId || field.value === sentText) return;
+        sentAt = Date.now();
+        sentText = field.value;
+        void sceneInput(sessionId, {
+          kind: "draft",
+          sceneId: scene.sceneId,
+          text: field.value,
+        }).then((reply) => {
+          if (reply === MOVED && !gone()) viewOnly();
+        });
+      };
+      field.addEventListener("input", () => {
+        act("scene-draft");
+        if (waiting !== undefined) return;
+        const due = sentAt + DRAFT_EVERY_MS - Date.now();
+        if (due <= 0) sendDraft();
+        else waiting = setTimeout(sendDraft, due);
+      });
+      async function done(
+        input:
+          | { kind: "choice"; sceneId: string; choiceId: string }
+          | { kind: "text"; sceneId: string; text: string },
+      ): Promise<void> {
+        if (!sessionId) return;
+        clearTimeout(waiting);
+        const reply = await sceneInput(sessionId, input);
+        if (gone()) return;
+        if (reply === MOVED) return viewOnly();
+        if (!reply) {
+          note.textContent = t("ui.play.failed");
+          return;
+        }
+        if (reply.grants.length) showGrants(reply.grants);
+        else await advance();
+      }
+      const lines = el(
+        "div",
+        { className: "scene" },
+        ...scene.lines.map((line) => {
+          const p = el("p", { className: "scene-line" });
+          p.append(
+            el("strong", {}, `${t(`ui.speaker.${line.speaker}`)}: `),
+            line.text,
+          );
+          return p;
+        }),
+      );
+      const choices = scene.branches.map((branch) => {
+        const b = el("button", { type: "button", className: "control" });
+        b.textContent = branch.text;
+        b.dataset["action"] = `scene-choice-${branch.choiceId}`;
+        b.dataset["choiceId"] = branch.choiceId;
+        b.addEventListener("click", () => {
+          act(`scene-choice-${branch.choiceId}`);
+          void done({
+            kind: "choice",
+            sceneId: scene.sceneId,
+            choiceId: branch.choiceId,
+          });
+        });
+        return b;
+      });
+      draw(
+        lines,
+        el("nav", { className: "actions" }, ...choices),
+        el("label", { htmlFor: "scene-draft" }, t("ui.scene.draft")),
+        field,
+        note,
+        el(
+          "nav",
+          { className: "actions" },
+          button("ui.scene.send", "scene-send", () => {
+            const text = field.value.trim();
+            if (text)
+              return done({ kind: "text", sceneId: scene.sceneId, text });
+          }),
+          button("ui.play.leave", "play-leave", () => stop("leave")),
+        ),
+      );
+      restartIdle();
+    }
+
+    function drawChest(chest: Chest): void {
+      taskOpen = false;
+      const note = status();
+      const options = chest.options.map((option) => {
+        const b = el("button", { type: "button", className: "control" });
+        b.textContent = t(`ui.reward.${option.kind}`);
+        b.dataset["action"] = "chest-pick";
+        b.dataset["rewardId"] = option.rewardId;
+        b.addEventListener("click", () => {
+          act("chest-pick");
+          void (async () => {
+            if (!sessionId) return;
+            const reply = await pickChest(
+              sessionId,
+              chest.chestId,
+              option.rewardId,
+            );
+            if (gone()) return;
+            if (reply === MOVED) return viewOnly();
+            if (!reply) {
+              note.textContent = t("ui.play.failed");
+              return;
+            }
+            showGrants(reply.grants);
+          })();
+        });
+        return b;
+      });
+      draw(
+        el("p", {}, t("ui.chest.title")),
+        el("nav", { className: "actions" }, ...options),
+        note,
+        el(
+          "nav",
+          { className: "actions" },
+          button("ui.play.leave", "play-leave", () => stop("leave")),
+        ),
+      );
+      restartIdle();
     }
 
     function drawOutcome(reply: AnswerOut, dontKnow: boolean): void {

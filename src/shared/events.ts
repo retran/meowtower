@@ -599,6 +599,51 @@ const sessionDefs: EventDef[] = [
         .describe("the answer as entered, from a device that lost the lease"),
     }),
   },
+  // What the resume point holds besides the task (SPC-0030): the scene as it
+  // passed the safety checks, her free-text draft, and the grants the client
+  // showed.
+  {
+    type: "scene_prepared",
+    v: 1,
+    schema: obj({
+      sceneId: id("the scene prepared"),
+      lines: z
+        .array(
+          obj({
+            speaker: id("who speaks the line"),
+            text: z.string().describe("the line as it passed the checks"),
+          }),
+        )
+        .min(1)
+        .describe("the scene's lines"),
+      branches: z
+        .array(
+          obj({
+            choiceId: id("the option"),
+            text: z.string().describe("the option as it passed the checks"),
+          }),
+        )
+        .describe("the options the scene offers"),
+    }),
+  },
+  {
+    type: "text_draft_saved",
+    v: 1,
+    schema: obj({
+      sceneId: id("the scene the draft belongs to"),
+      text: z.string().describe("her free-text draft as she held it"),
+    }),
+  },
+  {
+    type: "rewards_delivered",
+    v: 1,
+    schema: obj({
+      rewardIds: z
+        .array(id("a reward"))
+        .min(1)
+        .describe("the grants the client showed"),
+    }),
+  },
   {
     type: "session_ended",
     v: 1,

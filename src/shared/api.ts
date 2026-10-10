@@ -38,6 +38,56 @@ export const Room = z
   .strict();
 export type Room = z.infer<typeof Room>;
 
+/** One line of a scene: who speaks it and what is said. */
+const SceneLine = z.object({ speaker: z.string(), text: z.string() }).strict();
+
+/**
+ * A scene as it passed the safety checks, with the draft she last typed in it
+ * (REQ-0216). The stand-in scene's lines and branches are fixed.
+ */
+export const Scene = z
+  .object({
+    kind: z.literal("scene"),
+    sceneId: z.string(),
+    lines: z.array(SceneLine).min(1),
+    branches: z.array(
+      z.object({ choiceId: z.string(), text: z.string() }).strict(),
+    ),
+    draft: z.string().nullable(),
+  })
+  .strict();
+export type Scene = z.infer<typeof Scene>;
+
+/** A chest of three options, the same three each time it is shown (REQ-0218). */
+export const Chest = z
+  .object({
+    kind: z.literal("chest"),
+    chestId: z.string(),
+    options: z
+      .array(
+        z
+          .object({
+            kind: z.string(),
+            rewardId: z.string(),
+            quality: z.string(),
+          })
+          .strict(),
+      )
+      .length(3),
+  })
+  .strict();
+export type Chest = z.infer<typeof Chest>;
+
+/** A grant the client shows and then acknowledges. */
+export const Grant = z
+  .object({
+    rewardId: z.string(),
+    kind: z.string(),
+    amount: z.number().int().positive(),
+  })
+  .strict();
+export type Grant = z.infer<typeof Grant>;
+
 /** The adventure has reached its finale; a new session plans the next one. */
 export const End = z.object({ kind: z.literal("end") }).strict();
 
@@ -83,6 +133,59 @@ export const AnswerOut = z
   })
   .strict();
 export type AnswerOut = z.infer<typeof AnswerOut>;
+
+/**
+ * What she does in a scene: picks an option, sends her free text, or lets the
+ * client save a draft of it. The text a model would clean first is ADR-0110's
+ * to clean; the stand-in trims it.
+ */
+export const SceneInputIn = z.discriminatedUnion("kind", [
+  z
+    .object({
+      kind: z.literal("choice"),
+      sceneId: z.string().min(1),
+      choiceId: z.string().min(1),
+      clientSeq,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("text"),
+      sceneId: z.string().min(1),
+      text: z.string().trim().min(1).max(500),
+      clientSeq,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("draft"),
+      sceneId: z.string().min(1),
+      text: z.string().max(500),
+      clientSeq,
+    })
+    .strict(),
+]);
+export const SceneInputOut = z
+  .object({ status: z.enum(["saved", "done"]), grants: z.array(Grant) })
+  .strict();
+
+/** Her pick of one of the chest's three options. */
+export const ChestIn = z
+  .object({
+    chestId: z.string().min(1),
+    rewardId: z.string().min(1),
+    clientSeq,
+  })
+  .strict();
+export const ChestOut = z.object({ grants: z.array(Grant) }).strict();
+
+/** The client's acknowledgement that it showed these grants. */
+export const RewardsDeliveredIn = z
+  .object({ rewardIds: z.array(z.string().min(1)).min(1), clientSeq })
+  .strict();
+export const RewardsDeliveredOut = z
+  .object({ status: z.literal("ok") })
+  .strict();
 
 /** A hint request names the rung it buys, so a repeat can't buy the next one. */
 export const HintIn = z
@@ -162,6 +265,12 @@ export const ResumeOut = z
     hintLevels: z.array(z.number().int()),
     /** The tasks of the open room whose explanation she bought. */
     explainedItemIds: z.array(z.string()),
+    /** The scene left open with her last draft, or null (REQ-0216). */
+    scene: Scene.nullable(),
+    /** The chest left open with its three options, or null (REQ-0218). */
+    chest: Chest.nullable(),
+    /** The grants the client has not yet shown. */
+    rewards: z.array(Grant),
   })
   .strict();
 export type ResumeOut = z.infer<typeof ResumeOut>;
