@@ -394,3 +394,24 @@ describe("ADR-0020: attempt_submitted gains a version with the two flags", () =>
     registry.validate("attempt_submitted", 2, lifted.payload);
   });
 });
+
+describe("REQ-0204: next shows an open second attempt again", () => {
+  it("returns the parallel task a device left open, not the next first attempt", async () => {
+    const w = world();
+    const a = await w.start("tablet");
+    const first = await w.next("tablet", a);
+    await w.answer("tablet", a, first.itemId);
+    const twin = Room.parse(
+      await (
+        await w.post("tablet", `/api/item/${first.itemId}/second-attempt`)
+      ).json(),
+    );
+    await w.leave("tablet", a);
+    const b = await w.resume("computer");
+    expect(b.itemId).toBe(twin.itemId);
+    expect(await w.next("computer", b.sessionId)).toEqual({
+      ...twin,
+      threads: expect.any(Number),
+    });
+  });
+});
