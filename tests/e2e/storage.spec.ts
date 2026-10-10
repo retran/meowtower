@@ -9,6 +9,9 @@ import { expect, test } from "./fixtures.js";
 
 const PARENT = "http://127.0.0.1:3925";
 
+// This spec is the one that needs the service worker running.
+test.use({ serviceWorkers: "allow" });
+
 async function ready(page: Page, route: string): Promise<void> {
   await page.goto("about:blank");
   await page.goto(`/#${route}`);
@@ -84,14 +87,21 @@ test("REQ-6506: a device that has played holds only the queue's store and code a
       }
       db.close();
     }
+    // A browser that has no origin-private file system, or won't open it for
+    // a test, reports null, and the check then rests on the static check.
     let opfs: string[] | null = null;
-    if (navigator.storage.getDirectory) {
-      const root = await navigator.storage.getDirectory();
-      opfs = [];
-      for await (const key of (
-        root as unknown as { keys(): AsyncIterable<string> }
-      ).keys())
-        opfs.push(key);
+    try {
+      if (navigator.storage.getDirectory) {
+        const root = await navigator.storage.getDirectory();
+        const found: string[] = [];
+        for await (const key of (
+          root as unknown as { keys(): AsyncIterable<string> }
+        ).keys())
+          found.push(key);
+        opfs = found;
+      }
+    } catch {
+      opfs = null;
     }
     const cached: string[] = [];
     for (const name of await caches.keys()) {
@@ -99,7 +109,9 @@ test("REQ-6506: a device that has played holds only the queue's store and code a
       for (const req of await cache.keys())
         cached.push(new URL(req.url).pathname);
     }
+    const controlled = Boolean(navigator.serviceWorker?.controller);
     return {
+      controlled,
       dbs,
       stores,
       entries,
@@ -124,6 +136,8 @@ test("REQ-6506: a device that has played holds only the queue's store and code a
       /^(\/|\/client\/[a-z-]+\.js|\/i18n\/[a-z]+\.json|\/manifest\.webmanifest|\/icon-512\.png)$/,
     );
   expect(held.cached.some((p) => p.startsWith("/api/"))).toBe(false);
+  // Where the worker controls the page it has kept the client's code.
+  if (held.controlled) expect(held.cached).toContain("/client/main.js");
 });
 
 test("REQ-6506: the queue's store keeps each of the five entry kinds in the order made", async ({
