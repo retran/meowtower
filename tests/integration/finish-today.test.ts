@@ -50,7 +50,10 @@ let worlds = 0;
 async function world() {
   const db = openDatabase(join(root, `w${++worlds}.sqlite`));
   opened.push(db);
-  const now = () => Date.now();
+  // The server's own clock for leases and the rate cap moves on each call;
+  // the events' time is the fake `Date`.
+  let tick = 0;
+  const now = () => (tick += 100);
   const app = createApp({ db, now });
   const mac = createParentApp({ db, now });
   await mac.request("/pin", {
