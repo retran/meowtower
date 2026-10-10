@@ -2,8 +2,8 @@
 id: ADR-0070
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-0820, REQ-0822, REQ-0832, REQ-0956, REQ-0958, REQ-0966, REQ-0970, REQ-0972, REQ-0974, REQ-0978, REQ-1000, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-1014, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-1026, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056, REQ-1100, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-1112, REQ-1114, REQ-1116, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132]
+revised: 2026-10-10
+addresses: [REQ-0820, REQ-0832, REQ-0956, REQ-0966, REQ-0970, REQ-0972, REQ-0974, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-1114, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132]
 supersedes: []
 ---
 
@@ -234,3 +234,5 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0380, ADR-0400, ADR-0410 and ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 9 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0822 (superseded by REQ-6404, which ADR-0360 addresses); REQ-0958 (superseded by REQ-6406, which ADR-0360 addresses); REQ-0978 (superseded by REQ-6844, which ADR-0400 addresses); REQ-1000 (superseded by REQ-5554, which ADR-0260 addresses); REQ-1014 (superseded by REQ-6846, which ADR-0400 addresses); REQ-1026 (superseded by REQ-6400, which ADR-0360 addresses); REQ-1100 (superseded by REQ-5842, which ADR-0290 addresses); REQ-1112 (superseded by REQ-6402, which ADR-0360, ADR-0370 addresses); REQ-1116 (superseded by REQ-5840, which ADR-0290 addresses).

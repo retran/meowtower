@@ -2,8 +2,8 @@
 id: ADR-0080
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-0106, REQ-0108, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0414, REQ-0416, REQ-0418, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0500, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0526, REQ-0528, REQ-0530, REQ-0532, REQ-0534, REQ-0536, REQ-0538, REQ-0540, REQ-0542, REQ-0544, REQ-0546, REQ-0548, REQ-0550, REQ-0552]
+revised: 2026-10-10
+addresses: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552]
 supersedes: []
 ---
 
@@ -151,3 +151,5 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended on 2026-10-10: this record no longer addresses 12 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0108 (superseded by REQ-5120, which ADR-0220, ADR-0300 addresses); REQ-0414 (superseded by REQ-5130, which ADR-0220 addresses); REQ-0416 (superseded by REQ-5788, which ADR-0280 addresses); REQ-0418 (superseded by REQ-5132, which ADR-0220 addresses); REQ-0500 (superseded by REQ-6248, which ADR-0330 addresses); REQ-0526 (superseded by REQ-5100, which ADR-0220 addresses); REQ-0532 (superseded by REQ-5106, which ADR-0220, ADR-0360 addresses); REQ-0534 (superseded by REQ-5758, which ADR-0280 addresses); REQ-0538 (superseded by REQ-5112, which ADR-0220, ADR-0360 addresses); REQ-0540 (superseded by REQ-6408, which ADR-0360 addresses); REQ-0542 (superseded by REQ-6410, which ADR-0360 addresses); REQ-0548 (superseded by REQ-6250, which ADR-0330, ADR-0360 addresses).

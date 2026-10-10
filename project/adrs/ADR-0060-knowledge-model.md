@@ -2,8 +2,8 @@
 id: ADR-0060
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976, REQ-0980, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0990, REQ-0992, REQ-0994, REQ-3712]
+revised: 2026-10-10
+addresses: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0992, REQ-0994, REQ-3712]
 supersedes: []
 ---
 
@@ -259,3 +259,5 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0390, ADR-0400 and ADR-0450, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0980 (superseded by REQ-7506, which ADR-0460 addresses); REQ-0990 (superseded by REQ-6842, which ADR-0400, ADR-0460 addresses).

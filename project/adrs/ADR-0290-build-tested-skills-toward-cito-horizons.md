@@ -2,8 +2,8 @@
 id: ADR-0290
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-5846, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-5856, REQ-5858, REQ-5860, REQ-5862, REQ-5864, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-5882, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898, REQ-6064]
+revised: 2026-10-10
+addresses: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-5858, REQ-5862, REQ-5864, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898, REQ-6064]
 supersedes: []
 ---
 
@@ -277,3 +277,5 @@ The player sees no other failure state, because every state above leaves her a t
 The strongest objection is that this is drilling for a test with the word taken out. Cito's pages say practice that builds skill is welcome and training on its items isn't, and this decision's defence is that it copies no item and shows no date. Yet the Volley before M7 is the heaviest practice in the game, timed by a hidden clock and scheduled by the test date. A child who meets ten times-table facts on two floors in three for fifteen weeks feels the drill whether or not the word appears. I keep it, because automatic facts are a skill in their own right, which Cito itself tests apart, and the owner asked for it. The Volley still pays nothing for speed, and its share falls after M7. The third reversal condition watches for the preparation showing through.
 
 The premortem, written as though it had failed. By February the report showed blocks 1 and 2 stuck at 70 % automatic, and the parent read it as her failing, while the cause was supply. She played 2 floors most days, so two Volleys a day became one, and the 14-day rule expired facts faster than one Volley refreshed them. The Director then lifted A and N nodes every day, which made her days feel alike, and she asked why the Tower always counted. A second cause sat in the Cito facts: a check in November marked the claim about the adaptive second part unconfirmed after a page moved. Nobody updated the file, and the mark sat beside the readiness text for months until the parent stopped reading marks. The capacity numbers under the costs, the second reversal condition and the yearly line exist for these.
+
+Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5846 (superseded by REQ-6424, which ADR-0360, ADR-0460 addresses); REQ-5856 (superseded by REQ-7148, which ADR-0430, ADR-0460 addresses); REQ-5860 (superseded by REQ-6426, which ADR-0360, ADR-0460 addresses); REQ-5882 (superseded by REQ-7058, which ADR-0420 addresses).

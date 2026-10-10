@@ -2,8 +2,8 @@
 id: ADR-0300
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, REQ-5914, REQ-5916, REQ-5918, REQ-5920, REQ-5922, REQ-5924, REQ-5926, REQ-5928, REQ-5930, REQ-5932, REQ-5934, REQ-5936, REQ-5938, REQ-5940, REQ-5942, REQ-5944, REQ-5946, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-5956, REQ-5958, REQ-5960, REQ-5962, REQ-5964, REQ-5966, REQ-5968, REQ-5970, REQ-5972, REQ-5974, REQ-5976, REQ-5978, REQ-5980, REQ-5982, REQ-5984, REQ-5986, REQ-5988, REQ-5990, REQ-5992, REQ-5994, REQ-5996, REQ-6064, REQ-5856, REQ-5120]
+revised: 2026-10-10
+addresses: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, REQ-5914, REQ-5916, REQ-5918, REQ-5920, REQ-5922, REQ-5924, REQ-5926, REQ-5928, REQ-5930, REQ-5932, REQ-5934, REQ-5936, REQ-5938, REQ-5940, REQ-5942, REQ-5944, REQ-5946, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-5956, REQ-5958, REQ-5960, REQ-5962, REQ-5964, REQ-5966, REQ-5970, REQ-5972, REQ-5974, REQ-5976, REQ-5978, REQ-5980, REQ-5982, REQ-5984, REQ-5986, REQ-5988, REQ-5990, REQ-5992, REQ-5996, REQ-6064, REQ-5120]
 supersedes: []
 ---
 
@@ -237,3 +237,5 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0400 and ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5968 (superseded by REQ-6428, which ADR-0360 addresses); REQ-5994 (superseded by REQ-6504, which ADR-0370 addresses); REQ-5856 (superseded by REQ-7148, which ADR-0430, ADR-0460 addresses).
