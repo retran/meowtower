@@ -12,7 +12,12 @@ import { createApp } from "../../src/server/app.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { STANDIN_ADVENTURE_TASKS } from "../../src/server/standin.js";
-import { AdventureCurrentOut, Room } from "../../src/shared/api.js";
+import {
+  AdventureCurrentOut,
+  Chest,
+  Room,
+  Scene,
+} from "../../src/shared/api.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-lifecycle-"));
 const opened: Db[] = [];
@@ -159,6 +164,18 @@ describe("REQ-0226: a daily start continues the open adventure", () => {
       const room = Room.parse(await w.next(sessionId));
       await w.answer(sessionId, room.itemId);
     }
+    // The finale shows the scene and then the chest before the end.
+    const scene = Scene.parse(await w.next(sessionId));
+    await w.post(`/api/session/${sessionId}/scene/input`, {
+      kind: "choice",
+      sceneId: scene.sceneId,
+      choiceId: scene.branches[0]?.choiceId,
+    });
+    const chest = Chest.parse(await w.next(sessionId));
+    await w.post(`/api/session/${sessionId}/chest`, {
+      chestId: chest.chestId,
+      rewardId: chest.options[0]?.rewardId,
+    });
     expect(await w.next(sessionId)).toEqual({ kind: "end" });
     expect(w.adventures()[0]?.state).toBe("complete");
     expect(await w.current()).toBeNull();

@@ -83,3 +83,32 @@ export function standinVerdict(
   if (given === "") return "unparsed";
   return given === normalise(answer) ? "correct" : "wrong";
 }
+
+/** The stand-in adventure's one scene, shown after its last task (EPC-0030). */
+export const STANDIN_SCENE_ID = "standin-scene";
+/** The grant the scene's answer gives. */
+export const STANDIN_SCENE_REWARD = { kind: "star", amount: 1 } as const;
+
+export const standinScene = (): {
+  sceneId: string;
+  lines: { speaker: string; text: string }[];
+  branches: { choiceId: string; text: string }[];
+} => ({
+  sceneId: STANDIN_SCENE_ID,
+  lines: [
+    { speaker: "narrator", text: t("standin.scene.line.1") },
+    { speaker: "narrator", text: t("standin.scene.line.2") },
+  ],
+  branches: [
+    { choiceId: "left", text: t("standin.scene.branch.left") },
+    { choiceId: "right", text: t("standin.scene.branch.right") },
+  ],
+});
+
+/** The stand-in adventure's one chest, with three fixed options. */
+export const STANDIN_CHEST_ID = "standin-chest";
+export const STANDIN_CHEST_OPTIONS = [
+  { kind: "thread", rewardId: "standin-chest-1", quality: "common" },
+  { kind: "star", rewardId: "standin-chest-2", quality: "common" },
+  { kind: "feather", rewardId: "standin-chest-3", quality: "common" },
+] as const;
