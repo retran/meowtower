@@ -13,18 +13,20 @@ import type {
   StopOffer,
 } from "../shared/api.js";
 import {
-  answer,
   deliverRewards,
   extend,
   heartbeat,
   MOVED,
   nextPacket,
+  nextSeq,
   pause,
   pickChest,
   resumeAdventure,
   sceneInput,
   startSession,
+  UNREACHABLE,
 } from "./api.js";
+import { flushOnce, retryClock, submitAnswer } from "./answer-queue.js";
 import { act, button, el, heading, link, status } from "./controls.js";
 import type { Screen } from "./screens.js";
 import { t } from "./strings.js";
@@ -166,22 +168,65 @@ export const playScreen: Screen = {
         el("nav", { className: "actions" }, link("ui.nav.back", "back", "/")),
       );
 
+    /** The waiting scene: no outcome, no task and no control until the server answers (REQ-2438). */
+    function showWaiting(): void {
+      taskOpen = false;
+      if (section.querySelector("[data-waiting]")) return;
+      const scene = el("p", { className: "waiting" }, t("ui.play.waiting"));
+      scene.dataset["waiting"] = "1";
+      draw(scene);
+    }
+
     async function begin(): Promise<void> {
       section.dataset["busy"] = "1";
-      // An open adventure resumes, which also brings the grants no device has
-      // shown yet (REQ-0204); with none open a session starts one.
-      const resumed = await resumeAdventure();
-      sessionId = resumed?.sessionId ?? (await startSession());
+      const wait = retryClock();
+      // Answers a closed client left unsent go first, then the resume asks
+      // where play stopped (REQ-2434). An open adventure resumes, which also
+      // brings the grants no device has shown yet (REQ-0204); with none open a
+      // session starts one. Without a connection the waiting scene shows.
+      let resumed: Awaited<ReturnType<typeof resumeAdventure>> = null;
+      for (;;) {
+        // `gone` is only told after an await: the screen is attached once
+        // `render` has returned, and `begin` starts inside it.
+        const flushed = await flushOnce();
+        if (gone()) return;
+        if (!flushed) {
+          showWaiting();
+          await wait();
+          continue;
+        }
+        resumed = await resumeAdventure();
+        if (gone()) return;
+        if (resumed !== UNREACHABLE) {
+          const started = resumed ? resumed.sessionId : await startSession();
+          if (gone()) return;
+          if (started !== UNREACHABLE) {
+            sessionId = started;
+            break;
+          }
+        }
+        showWaiting();
+        await wait();
+      }
       if (!sessionId) return refused("ui.play.refused");
       hold(sessionId);
-      if (resumed?.rewards.length) return showGrants(resumed.rewards);
+      if (resumed && resumed.rewards.length) return showGrants(resumed.rewards);
       await advance();
     }
 
     async function advance(): Promise<void> {
       if (!sessionId) return;
       section.dataset["busy"] = "1";
-      const packet = await nextPacket(sessionId);
+      const wait = retryClock();
+      let packet = await nextPacket(sessionId);
+      // No task shows while the server can't be reached.
+      while (packet === UNREACHABLE) {
+        if (gone()) return;
+        showWaiting();
+        await wait();
+        if (!sessionId) return;
+        packet = await nextPacket(sessionId);
+      }
       if (gone()) return;
       if (packet === MOVED) return viewOnly();
       if (!packet) return refused("ui.play.failed");
@@ -260,20 +305,21 @@ export const playScreen: Screen = {
         if (!dontKnow && !raw) return;
         sending = true;
         input.submittedMs = since();
-        const reply = await answer(sessionId, {
-          itemId: room.itemId,
-          raw,
-          dontKnow,
-          input,
-        });
+        // Committed to the queue's store first, then sent until it is logged.
+        const delivery = await submitAnswer(
+          sessionId,
+          { itemId: room.itemId, raw, dontKnow, input },
+          nextSeq(),
+          showWaiting,
+        );
         sending = false;
         if (gone()) return;
-        if (reply === MOVED) return viewOnly();
-        if (!reply) {
-          note.textContent = t("ui.play.failed");
+        if (delivery.kind === "moved") return viewOnly();
+        if (delivery.kind === "refused") {
+          refused("ui.play.failed");
           return;
         }
-        drawOutcome(reply, dontKnow);
+        drawOutcome(delivery.reply, dontKnow);
       }
       draw(
         el("p", { className: "task" }, room.view.text),

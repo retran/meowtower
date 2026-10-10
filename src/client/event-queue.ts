@@ -15,6 +15,8 @@ export interface QueueEntry {
   kind: QueueKind;
   /** Position in the order the player made the entries. */
   order: number;
+  /** When the entry was made, in milliseconds, so the settings can tell a stuck one. */
+  queuedAt: number;
   body: unknown;
 }
 
@@ -72,6 +74,7 @@ export async function enqueue(
     idemKey,
     kind,
     order: (last?.order ?? 0) + 1,
+    queuedAt: Date.now(),
     body,
   };
   store.put(entry);

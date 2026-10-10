@@ -12,6 +12,7 @@ import {
   type ParentReply,
   type Tried,
 } from "./api.js";
+import { flushOnce, refusedAnswers, stuckEntries } from "./answer-queue.js";
 import { act, button, choice, el, heading, link, status } from "./controls.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
@@ -87,12 +88,52 @@ const settings: Screen = {
         pick("computer"),
       ),
     );
+    // Answers the device couldn't send for 24 hours, and ones the server
+    // refused for good, are listed with their time and a retry (SPC-0030).
+    const stuck = el("div", { className: "queue" });
+    const showStuck = async (): Promise<void> => {
+      const rows: Node[] = [];
+      const time = (at: number): HTMLTimeElement => {
+        const node = el("time", {}, clock(new Date(at)));
+        node.dateTime = new Date(at).toISOString();
+        return node;
+      };
+      for (const entry of await stuckEntries()) {
+        const row = el("p", {});
+        row.dataset["queueStuck"] = entry.idemKey;
+        const [before = "", after = ""] = t("ui.settings.queueStuck", {
+          time: "\u0000",
+        }).split("\u0000");
+        row.append(before, time(entry.queuedAt), after);
+        rows.push(row);
+      }
+      for (const refused of refusedAnswers()) {
+        const row = el("p", {});
+        row.dataset["queueStuck"] = `refused-${refused.at}`;
+        const [before = "", after = ""] = t("ui.settings.queueRefused", {
+          time: "\u0000",
+          error: refused.error,
+        }).split("\u0000");
+        row.append(before, time(refused.at), after);
+        rows.push(row);
+      }
+      if (rows.length)
+        rows.push(
+          button("ui.settings.queueRetry", "queue-retry", async () => {
+            await flushOnce();
+            await showStuck();
+          }),
+        );
+      stuck.replaceChildren(...rows);
+    };
+    void showStuck();
     return el(
       "section",
       {},
       heading("ui.settings.title"),
       group,
       note,
+      stuck,
       el("nav", { className: "actions" }, link("ui.nav.back", "back", "/")),
     );
   },

@@ -2,7 +2,6 @@
 // as HttpOnly cookies. Every body is read, because an unread one stays open.
 import type {
   AnswerIn,
-  AnswerOut,
   Chest,
   Grant,
   ResumeOut,
@@ -17,18 +16,25 @@ export type DeviceState =
   | { state: "unpaired" }
   | { state: "revoked" };
 
+/** The status of a request that got no usable reply: no connection, or no JSON. */
+export const UNREACHABLE = 0;
+
 async function call(
   path: string,
   init: RequestInit = {},
 ): Promise<{ status: number; body: Record<string, unknown> }> {
-  const res = await fetch(path, {
-    ...init,
-    headers: { "content-type": "application/json" },
-  });
-  return {
-    status: res.status,
-    body: (await res.json()) as Record<string, unknown>,
-  };
+  try {
+    const res = await fetch(path, {
+      ...init,
+      headers: { "content-type": "application/json" },
+    });
+    return {
+      status: res.status,
+      body: (await res.json()) as Record<string, unknown>,
+    };
+  } catch {
+    return { status: UNREACHABLE, body: {} };
+  }
 }
 
 export async function device(): Promise<DeviceState> {
@@ -166,11 +172,14 @@ export const nextSeq = (): number => ++seq;
 /** The device's IANA time zone, which the game day follows (SPC-0090). */
 const zone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-export async function startSession(): Promise<string | null> {
+export async function startSession(): Promise<
+  string | null | typeof UNREACHABLE
+> {
   const { status, body } = await call("/api/session/start", {
     method: "POST",
     body: JSON.stringify({ mode: "daily", zone: zone(), clientSeq: nextSeq() }),
   });
+  if (status === UNREACHABLE) return UNREACHABLE;
   return status === 200 ? String(body["sessionId"]) : null;
 }
 
@@ -178,11 +187,14 @@ export async function startSession(): Promise<string | null> {
  * Opens a session on the open adventure and says where play stopped, with the
  * grants no device has shown yet (REQ-0204); null when no adventure is open.
  */
-export async function resumeAdventure(): Promise<ResumeOut | null> {
+export async function resumeAdventure(): Promise<
+  ResumeOut | null | typeof UNREACHABLE
+> {
   const { status, body } = await call("/api/adventure/resume", {
     method: "POST",
     body: JSON.stringify({ zone: zone(), clientSeq: nextSeq() }),
   });
+  if (status === UNREACHABLE) return UNREACHABLE;
   return status === 200 ? (body as unknown as ResumeOut) : null;
 }
 
@@ -195,10 +207,11 @@ const isMoved = (status: number, body: Record<string, unknown>): boolean =>
 
 export async function nextPacket(
   sessionId: string,
-): Promise<Packet | Moved | null> {
+): Promise<Packet | Moved | null | typeof UNREACHABLE> {
   const { status, body } = await call(
     `/api/session/${encodeURIComponent(sessionId)}/next`,
   );
+  if (status === UNREACHABLE) return UNREACHABLE;
   if (isMoved(status, body)) return MOVED;
   return status === 200 ? (body as unknown as Packet) : null;
 }
@@ -215,16 +228,19 @@ export async function heartbeat(
   return status === 200 ? "ok" : "failed";
 }
 
-export async function answer(
+/**
+ * One send of a queued answer. The body carries its `clientSeq`, so a resend
+ * after a lost reply is recorded once (REQ-2432). `status` is `UNREACHABLE`
+ * when no reply came.
+ */
+export function postAnswer(
   sessionId: string,
-  sent: Omit<AnswerIn, "clientSeq">,
-): Promise<AnswerOut | Moved | null> {
-  const { status, body } = await call(
-    `/api/session/${encodeURIComponent(sessionId)}/answer`,
-    { method: "POST", body: JSON.stringify({ ...sent, clientSeq: nextSeq() }) },
-  );
-  if (isMoved(status, body)) return MOVED;
-  return status === 200 ? (body as unknown as AnswerOut) : null;
+  sent: AnswerIn,
+): Promise<{ status: number; body: Record<string, unknown> }> {
+  return call(`/api/session/${encodeURIComponent(sessionId)}/answer`, {
+    method: "POST",
+    body: JSON.stringify(sent),
+  });
 }
 
 /**
