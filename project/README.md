@@ -2,7 +2,7 @@
 
 The record of Meowtower: the vision in `vision.md`, the onboarding report in `onboarding.md`, decisions in `adrs/`, specifications in `specs/`, epics in `epics/` and tasks in `tasks/`.
 
-The generated indexes live in [specs](specs/README.md), [epics](epics/README.md) and [defects](bugs/README.md). Check this record with `MEOW_LAYOUT=.meowpaw/layout.toml meow record check`.
+The generated indexes live in [specs](specs/README.md), [epics](epics/README.md) and [defects](bugs/README.md). Check this record with `MEOW_LAYOUT=.meowpaw/layout.toml paw record check`.
 
 ## Specifications
 
