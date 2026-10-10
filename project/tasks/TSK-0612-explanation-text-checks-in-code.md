@@ -30,7 +30,7 @@ Add the module, the sentence splitter, the lemma matcher over the numeral lexico
 
 ## Depends on
 
-Nothing in this epic. The epic realising ADR-0040 supplies the solution graph with each step's operation, operands and result; until it exists the checks run on fixture graphs written for this task. The epic realising ADR-0160 supplies the forbidden-word checker, which TSK-0613 uses.
+Nothing in this epic. The epic realising ADR-0040 supplies the solution graph with each step's operation, operands and result; until it exists the checks run on fixture graphs written for this task. The epic realising ADR-0160 supplies the forbidden-word checker, which the word and safety check task of this epic uses.
 
 ## Evidence
 
