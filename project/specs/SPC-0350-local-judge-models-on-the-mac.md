@@ -3,7 +3,6 @@ id: SPC-0350
 artifact: spec
 status: live
 revised: 2026-09-28
-checked-at:
 states: [REQ-2648, REQ-2732, REQ-3910, REQ-3912, REQ-3914, REQ-3916, REQ-3918, REQ-3920, REQ-3922, REQ-3924]
 ---
 
@@ -179,8 +178,3 @@ The Parent Room's page on what leaves the Mac lists each check on her text, buil
 | A device other than the Mac sends a judge a request | the connection is refused, the reply is `401`, or `GET /health` gives a status; no reply carries a model answer (REQ-3910) | nobody |
 
 The player sees none of these states: a check on a standby or fallback route reads the same to her.
-
-## Open review findings
-
-- The agent review asked for the reasons behind `n_probs` 100 and the one-slot checks. I keep them without reasons, as S8 asks.
-- The agent review asked for each rule's reason in its sentence: the 8-label limit, the refusal while an adventure is open, the 30-second warm-up, the 3 errors in a row and the 50 GB ceiling. I keep them without reasons, because a specification states what the system does and never why (S8), and ADR-0350 holds each reason.

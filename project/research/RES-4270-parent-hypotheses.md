@@ -163,7 +163,3 @@ Hypotheses never leave the Mac, no model call on any route reads them, and the e
 - [Simmons, Nelson and Simonsohn, "False-Positive Psychology", Psychological Science, 2011](https://dmg5c1valy4me.cloudfront.net/wp-content/uploads/2020/09/08145800/simmons-nelson-simonsohn-false_positive_statistics-psycholsci2011.pdf), read 2026-09-28 - 22 % false positives under testing after every observation, and the requirements to fix a stopping rule and to collect 20 observations per cell.
 - [Council for Exceptional Children, Division for Research, "Preregistration for Research", Brief 4, February 2022](https://cecdr.org/sites/default/files/2022-02/04_open_science_brief_4._preregistration_draft_237.pdf), read 2026-09-28 - timestamped plans, dated and explained updates, and use in single-case research.
 - [Johnson and Cook, "Preregistration in Single-Case Design Research", Exceptional Children, 2019](https://eric.ed.gov/?id=EJ1229455), not reached on 2026-09-28 - cited only as the brief above cites it.
-
-## Open review findings
-
-- The second review noted that «мало данных» means fewer than 3 sessions in ADR-0180's limit rows and fewer than 20 observations here, so one label carries two thresholds on the same report. I kept the label, because the addendum names «мало данных» as one of the three labels, and each place states its own count beside the label, so the parent reads the threshold that applies. Rejected on 2026-09-28.

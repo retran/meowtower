@@ -18,7 +18,3 @@ Every story frame the game accepts MUST carry exactly one context, the situation
 Whether a context is new to the player can be decided only against a fixed list, and the log can tell a first context only if each frame names its context when it is accepted. Motion by boat and motion on foot are two contexts of one problem type.
 
 Written from RES-4230 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-The first agent review preferred naming the file that holds the list of contexts. I rejected it, because a requirement states what must be true and a file name is the design step's choice.

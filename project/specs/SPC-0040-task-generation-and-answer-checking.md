@@ -3,7 +3,6 @@ id: SPC-0040
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-0701, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-3712, REQ-5096, REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5420, REQ-5428, REQ-5430, REQ-5432, REQ-5436, REQ-5442, REQ-5444, REQ-5450, REQ-5466, REQ-5472, REQ-7158, REQ-7160]
 ---
 
@@ -290,12 +289,3 @@ The generator builds a riddle's target with the purpose `compose`, and `judgeCom
 | An outgoing `ItemViewOut` or `InputSpec` carries an unlisted field | Serialisation fails, and the body never reaches the client. |
 | `COMPOSE_FREE` is on with no passing record for the configured `PARSE_MODEL` and prompt hash | Text riddles turn off, card riddles play, and `./meowtower status` shows `compose_flag_off`. |
 | The game day's parse bucket can't reserve two parses | The Director offers a card riddle. |
-
-## Open review findings
-
-- The round-one reviewer asked to add `src/shared/readability.ts` to the modules barred from the model gateway or to exclude it by name. Rejected: no decision in force bars that module, so either statement would be a rule no decision makes.
-- The round-one reviewer asked to give the client-import ban its reason by tying it to REQ-1220. Rejected: a specification states what the system does, never why, and ADR-0040 cites no requirement for that ban.
-- The round-two reviewer asked to cite ADR-0040's reading of "stable" beside REQ-0784's word «бегло» in the word-problem numbers rule. Rejected: that reading is a reason, which lives in ADR-0040, and ADR-0060 defines stable as a state past fluent.
-- The round-three reviewer, on the addendum 2 update, asked to cite REQ-5416, REQ-5418 and REQ-5422 in place of ADR-0140 in the verdict table. Rejected: those requirements aren't in this document's `states`, and the column names where each verdict's outcome is stated, which ADR-0140 holds.
-- The round-three reviewer asked again to give the client-import ban, the sign-comparison purposes and the plural mapping their reasons. Rejected for the reason given for the round-one finding: a specification states what the system does, never why.
-- The round-four reviewer, on the addendum 2 update, asked again for the reasons of the client-import ban, the sign-comparison purposes, the plural mapping and the 1 % fallback threshold. Rejected for the reason above.

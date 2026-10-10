@@ -3,7 +3,6 @@ id: SPC-0390
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-6700, REQ-6702, REQ-6704, REQ-6706, REQ-6708, REQ-6710, REQ-6712, REQ-6714, REQ-6716, REQ-6718, REQ-6720, REQ-6722, REQ-6724, REQ-6726, REQ-6728, REQ-6730, REQ-6732, REQ-6734, REQ-6736, REQ-6738, REQ-6740, REQ-6742, REQ-6744, REQ-6746, REQ-6748, REQ-6750, REQ-6752, REQ-6754, REQ-6756, REQ-6758, REQ-6760, REQ-6762, REQ-6764, REQ-6766, REQ-6768, REQ-6770, REQ-6772, REQ-6774, REQ-6776, REQ-6778, REQ-6780, REQ-6782, REQ-6784, REQ-6786, REQ-6788, REQ-6790, REQ-6792, REQ-6794, REQ-6798]
 ---
 
@@ -204,7 +203,3 @@ SPC-0190's verify runs these checks on the profile:
 - The stream line of a bar without streams names the bar's one source, and model building splits by `plan`. ADR-0390 names streams per bar only for conceptual understanding and the gap bar's presentations.
 - The eight bar identifiers are mine, as snake-case forms of the bar names.
 - The side figures cover the current window only, because ADR-0390 draws the previous window as a thin bar with its own interval and names no side figure for it.
-
-## Open review findings
-
-- An agent reviewer asked for ADR-0390's reasons beside seven rules: the empty previous window, the gap bar's missing change line, the one-window template, a stream over a template, `grouping`, the missing Dutch placeholder and the 6 decimals. I rejected it, because rule S8 of the spec step keeps reasons in the decision, and ADR-0390 holds each of them.

@@ -3,7 +3,6 @@ id: SPC-0100
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688]
 ---
 
@@ -274,15 +273,3 @@ Three rules bind both parts. A local call carries no OpenRouter key and reserves
 | A call to `LIVE_ART_MODEL` in the MVP | The gateway refuses it. |
 | The play-key daily buckets times 31 reach $60 | `bucket_sum_over_limit`: the build fails. |
 | A `replay` request has no recording | `recording_missing`: the request fails. |
-
-## Open review findings
-
-- The reviewer asked for reasons beside the 90-day deletion of `llm_log` bodies, the `tower` service's `play`-only start, the 1500 ms judge timeout, the parse call's 10 s timeout and 4,000 `max_tokens`, and the 1 GB body-store report. Rejected: a specification states what the system does and never why (S8), and ADR-0100, ADR-0230 and ADR-0350 hold those reasons.
-- The reviewer suggested a named failure state for an `ExplainRequest` refused for a missing `thread_spent` event. Rejected: no decision names one, and the caller gets `ProviderFailed`, as the failure paths state.
-- The reviewer asked for the order of cleaning and masking in a riddle, mask first. Rejected: ADR-0230 cleans the names first and then masks, and ADR-0230 states that order.
-- The reviewer asked for a reason beside each egress pattern. Rejected under S8; the patterns are choices this document records, and ADR-0100 names their test set.
-- The reviewer asked for a start-up check that `MASTER_MODEL` and `MASTER_FALLBACK_MODEL` are among `MASTER_MODEL_CHOICES`. Rejected: no decision sets that check, and REQ-1656 is met by the owner-approved record the configuration follows.
-- The reviewer noted that `parse_budget_spent` breaks the `budget_*_spent` naming. Rejected: ADR-0210 names the state, and a rename belongs in that decision.
-- The reviewer suggested stating the `verify --live` budget in one place. Rejected: ADR-0190 and ADR-0190 own that budget, and this document states only how the gateway applies it.
-- The reviewer noted that the header comment asks for a reason beside each rule while this document rejects reasons under S8. Rejected: the comment is the marker every record carries, and S8 governs what a specification states.
-- The reviewer asked to name ADR-0350 as the child and the other party of the contract with the local judge, in place of ADR-0350. Rejected: this document cites only lower-numbered specifications and names a higher-numbered subject by its decision; ADR-0350 names this document as its parent.

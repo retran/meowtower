@@ -3,7 +3,6 @@ id: SPC-0020
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-2200, REQ-2202, REQ-2204, REQ-2206, REQ-2208, REQ-2210, REQ-2212, REQ-2214, REQ-2216, REQ-2218, REQ-2220, REQ-2222, REQ-2224, REQ-2226, REQ-2228, REQ-2230, REQ-2232, REQ-2234, REQ-2236, REQ-2238, REQ-2240, REQ-2242, REQ-3800, REQ-3802, REQ-3804, REQ-3808, REQ-3816, REQ-5062, REQ-5064, REQ-5066, REQ-5068, REQ-5070, REQ-5072, REQ-5074, REQ-5152, REQ-5154, REQ-5156, REQ-5168, REQ-5356, REQ-5358, REQ-5426, REQ-6646, REQ-6652, REQ-6654, REQ-6658, REQ-6660, REQ-6690]
 ---
 
@@ -250,10 +249,3 @@ The Parent Room offers the same export through `GET /api/parent/export/<file>` o
 | A resume restores a hint rung she already saw | No `hint_shown` and no `thread_spent` is written for it. |
 | A template's parameter schema has a string-typed field | The lint verb's static check fails, naming the template and field. |
 | An export is requested through `https://<mac-name>.local` | `meowtower` answers 404. |
-
-## Open review findings
-
-- The reviewer asked for a reason beside the 512 KB, 25 MB, 20-page and 500-event limits, the export's `VACUUM INTO` copy, and the refusal of a sound field in `looks_set`. I kept them without reasons, because a specification states what the system does and the reasons live in the decisions.
-- The reviewer asked for REQ-6656, the `probe` field on `item_shown`, in `states`. I left it out, because ADR-0430 states REQ-6656, and this record names the field only to state the version 3 rule of REQ-6660 and cites ADR-0430 for its content.
-- The reviewer asked for a decision reference beside the 500-event chunk and the export's `VACUUM INTO` copy. I left them as they are, because the chunk's effect is stated beside it and ADR-0020 holds both.
-- The second reviewer asked to move the sentence on the owner's amendment of the Russian-only rule to ADR-0430. I kept it, because the brief for this update asks this record to state that condition beside the `probe` field, and it names the owner's act the probe's events wait on.

@@ -18,7 +18,3 @@ When any of the nodes of a row on the "home and school" screen, a goal's linked 
 A pupil who answers 80 % of tasks right scores 3 or fewer in about one block in four, so a state from one block changes class with no change in her. The mark will be common, since every row with no stable node carries it, and on a Cito row of 10 or more nodes almost always.
 
 Written from RES-4240 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-- The agent reviewer noted that no requirement applies item 1's interval rule to the row, as RES-4240 conclusion 9 asks. Rejected here: the interval rule belongs to RES-4200's requirements, which apply it to every figure the report shows.

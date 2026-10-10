@@ -168,14 +168,6 @@ The clean-row garland inside an adventure stays as RES-1700 has it, because it n
 
 Daily rewards and daily quests stay every game day once their system has opened, and the two routes add to them, because they keep the player coming back each day. Nothing counts consecutive days or punishes a gap, so the addendum's rule against day streaks holds. The owner decided on 2026-09-28.
 
-## Open review findings
-
-The agent reviewers raised three findings I didn't adopt:
-
-- It asked for the twelve requirements by identifier. `paw check rules` refuses a requirement identifier in a research record, so the record names each by its rule and by the research or decision it comes from, and the hand-back to the owner lists the identifiers.
-- A second reviewer asked for the addendum's location. The owner's instruction was to cite it by title and date with no path, and it lives outside the repository.
-- It suggested moving the named amendments and the event list out of the conclusions into the decision that follows. The owner asked this record to state which approved records must be amended, so the conclusions keep them; the decision step still decides how each amendment is made.
-
 ## Sources
 
 - The owner's addendum 1 to the specification, 2026-09-28 - section 12 without risk 6, the general rule removing time-of-day windows, the event list and acceptance test 17.

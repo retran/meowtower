@@ -16,10 +16,3 @@ verification: behavioural
 Acceptance test 3 MUST run the parser on masked text, in the live verification run, on the offline key.
 
 The flag turns on only on the text the parser will get in play, and the test's spending stays off the play key.
-
-## Open review findings
-
-- Finding 20 (split masked text, live run and offline key): rejected, because one live run of acceptance test 3 verifies all three together.
-
-Written from RES-4020 on the owner's instruction of 2026-09-28.
-Imposed by the owner's addendum 1 of 2026-09-28.

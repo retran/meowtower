@@ -3,7 +3,6 @@ id: SPC-0330
 artifact: spec
 status: live
 revised: 2026-09-28
-checked-at:
 states: [REQ-6438, REQ-6202, REQ-6204, REQ-6206, REQ-6436, REQ-6210, REQ-6212, REQ-6214, REQ-6216, REQ-6218, REQ-6434, REQ-6221, REQ-6222, REQ-6224, REQ-6226, REQ-6228, REQ-6230, REQ-6232, REQ-6233, REQ-6234, REQ-6236, REQ-6238, REQ-6240, REQ-6242, REQ-6243, REQ-6244, REQ-6245, REQ-6246, REQ-6248, REQ-6250, REQ-6252, REQ-6254, REQ-6256, REQ-6258, REQ-6260, REQ-6262, REQ-6264, REQ-6266, REQ-6268, REQ-6270, REQ-6272, REQ-6274, REQ-6276, REQ-6278, REQ-6279, REQ-6280, REQ-6282, REQ-6284, REQ-6286, REQ-6288, REQ-6290, REQ-6292, REQ-6294, REQ-6296, REQ-6298]
 ---
 
@@ -337,10 +336,3 @@ Before acceptance, ADR-0190's simulation group runs 60 simulated days (REQ-6296)
 - Switching `freePen` off while the pen is open closes it with `reason: "parent_off"`, the value ADR-0330's `free_pen_ended` payload holds.
 - The answers of the pen routes when the pen can't open or has ended, including `budget` when the bucket can't pay a turn: `409 pen_unavailable` with its reasons and `409 pen_closed`.
 - A pen open when the gateway goes off closes with `reason: "gateway_off"`.
-
-## Open review findings
-
-- The reviewer asked for ADR-0330's reason beside thirteen rules. Rejected: a specification states what the system does and never why (S8), and the reasons stay in ADR-0330.
-- The reviewer suggested "at the first contact of the game day" for the thread grant. Rejected: the text keeps REQ-6248's wording and already states that the first grant comes with the unlock.
-- The reviewer suggested pointing the chest categories and the return-phrase list's approval to other documents. Rejected: REQ-6252 and REQ-6233 are in this document's `states:`, so it states both.
-- The second reviewer suggested "all 4" in place of "at least 3 of them not tied to a trial". Rejected: the sentence states ADR-0330 part 5's bound as written.

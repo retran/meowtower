@@ -19,7 +19,3 @@ An eye exercise MUST last at least 30 seconds, and at most 40 seconds when it ke
 An exercise that takes her eyes off the screen ends when she taps «Готово» (Done), so it can run past 40 seconds.
 
 Written from RES-4110 on the owner's instruction of 2026-09-28.
-
-## Open review findings
-
-- Rejected: "add RES-0300's reason for the 30- and 40-second bounds". RES-0300 records the 30-to-40-second length without a reason, so any reason written here would be invented; the bounds carry over from REQ-0306 unchanged.

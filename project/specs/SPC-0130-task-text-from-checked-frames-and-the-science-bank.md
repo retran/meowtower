@@ -3,7 +3,6 @@ id: SPC-0130
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-1236, REQ-1238, REQ-1546, REQ-3600, REQ-3602, REQ-3604, REQ-3606, REQ-3608, REQ-3612, REQ-3614, REQ-3616, REQ-3618, REQ-3620, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3630, REQ-3632, REQ-3634, REQ-3636, REQ-3638, REQ-3640, REQ-3642, REQ-3644, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-6928]
 ---
 
@@ -178,9 +177,3 @@ Frames and science questions exist in Russian only: `content/frames.ru.json`, `c
 | The science module imports the gateway | The verify command fails the build. |
 | A topic holds fewer than 40 questions, or `repeatWindowDays` doesn't match the stage | The verify command fails the build. |
 | The `frames` table passes 50,000 rows | It reports once to the owner and keeps every row. |
-
-## Open review findings
-
-- Rejected: count only approved questions towards the 40 a topic, and name the candidate target before stage 0.2. REQ-1236 counts the bank, and ADR-0130 names no target before stage 0.2, so either change would add a rule no decision made.
-- Rejected: bring the header comment's promise of a reason for each rule into line with rule S8. The comment is the repository's standard header, and the body now carries no reasons.
-- Rejected: add the reason to the rules on the candidate cap, the 60-day expiry, the 50,000-row report, the science module's import rule, the request holding no name of hers and the end-of-day expiry of `ready` frames. A spec states what the system does and never why (rule S8), and ADR-0130 holds the reasons.

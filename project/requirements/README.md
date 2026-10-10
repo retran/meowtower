@@ -4,16 +4,16 @@ None yet: the project is at the research stage.
 
 <!-- meow-flow index -->
 
-1985 requirements in all: 1883 approved, 102 superseded.
+1987 requirements in all: 1885 approved, 102 superseded.
 
 | Identifier | What it requires | Status |
 | --- | --- | --- |
 | [REQ-0100](REQ-0100-adventure-lasts-sixty-minutes.md) | The adventure of the day MUST be planned to take about 60 minutes of the player's active time. | approved |
-| [REQ-0105](REQ-0105-adventure-ahead-of-time-preparation.md) | The game MUST allow the parent to prepare the adventure of the day in advance from the Parent Room or by a command on the Mac, previewing its planned route, story scenes, math task statements, and answers before the player plays. | approved |
-| [REQ-0107](REQ-0107-adventure-served-from-approved-plan.md) | When an adventure has been prepared and approved by the parent in advance, the game MUST serve the approved adventure to the player on the next game day from the unplayed pool without requiring live model calls during play. | approved |
 | [REQ-0102](REQ-0102-adventure-runs-in-fixed-order.md) | The adventure of the day MUST run in this order: «В прошлый раз…» (Last time…) with the daily quests, then 3 maths floors, or 4 when the forecast leaves time, then a finale that ends on a cliffhanger. | superseded |
 | [REQ-0104](REQ-0104-floor-runs-in-fixed-order.md) | Each maths floor MUST run in this order: an entry scene, an unscored warm-up, 2 mental arithmetic tasks, 1 or 2 rooms of trials, sometimes a Guardian, then the floor chest. | superseded |
+| [REQ-0105](REQ-0105-adventure-ahead-of-time-preparation.md) | The game MUST allow the parent to prepare the adventure of the day in advance from the Parent Room or by a command on the Mac, previewing its planned route, story scenes, math task statements, and answers before the player plays. | approved |
 | [REQ-0106](REQ-0106-task-window-separate-panel.md) | Every task MUST open in the task window, a flat panel separate from System windows. | approved |
+| [REQ-0107](REQ-0107-adventure-served-from-approved-plan.md) | When an adventure has been prepared and approved by the parent in advance, the game MUST serve the approved adventure to the player on the next game day from the unplayed pool without requiring live model calls during play. | approved |
 | [REQ-0108](REQ-0108-task-window-holds-only-controls.md) | The task window MUST hold only the task, the answer field or options, the keypad, «Не знаю» (I don't know), the guiding thread button and «Готово» (Done), with no sprite, effect or story text. | superseded |
 | [REQ-0110](REQ-0110-task-window-shows-no-verdict.md) | The task window MUST NOT show the words «верно» (correct), «неверно» (incorrect) or «ошибка» (mistake), or a tick or a cross. | approved |
 | [REQ-0112](REQ-0112-review-named-knot-scheme.md) | The task window MUST title the review after an attempt «Схема узла» (The knot's scheme). | approved |
@@ -303,7 +303,7 @@ None yet: the project is at the research stage.
 | [REQ-1034](REQ-1034-cold-start-top-down.md) | During cold start, which lasts from the first adventure until fewer than half of the 1F and 1S nodes remain unchecked or the 10th adventure ends, whichever comes first, the Director MUST probe each domain's prerequisite chain from a typical node of group 7-8 downwards, going lower only after a probe escalates. | approved |
 | [REQ-1036](REQ-1036-cold-start-bottom-review.md) | During cold start, which lasts from the first adventure until fewer than half of the 1F and 1S nodes remain unchecked or the 10th adventure ends, whichever comes first, the Director MUST use the nodes N1 to N3, A1 to A4 and F1 as review tasks. | approved |
 | [REQ-1038](REQ-1038-opening-closing-control-facts.md) | Each adventure MUST hold 2 control facts at its start and 2 at its end. | approved |
-| [REQ-1040](REQ-1040-graded-attempt-minimum.md) | The Director MUST target 30 to 40 graded first attempts in an adventure of 60 minutes, calibrated to task difficulty, and an adventure the player completes MUST hold at least 28 graded first attempts, or at least 25 when the Director has trimmed rooms for a slow pace. | approved |
+| [REQ-1040](REQ-1040-graded-attempt-minimum.md) | The Director MUST target 30 to 40 graded first attempts in an adventure of 60 minutes, calibrated to task difficulty (30–32 for multi-step or heavy domains, up to 38–42 for rapid arithmetic and place-value facts), and an adventure the player completes MUST hold at least 28 graded first attempts, or at least 25 when the Director has trimmed rooms for a slow pace. | approved |
 | [REQ-1042](REQ-1042-story-time-cap.md) | Story MUST take no more than 10 minutes of an adventure's active time. | approved |
 | [REQ-1044](REQ-1044-extension-rooms-by-value.md) | Each extension MUST add only rooms chosen by value. | approved |
 | [REQ-1046](REQ-1046-extension-no-new-floor.md) | An extension MUST NOT open a new floor. | approved |
@@ -1998,7 +1998,7 @@ None yet: the project is at the research stage.
 
 By topic:
 
-- adventure: REQ-0100, REQ-0102, REQ-0104, REQ-0106, REQ-0108, REQ-0110, REQ-0112, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0148, REQ-5004, REQ-5006, REQ-5014, REQ-5056, REQ-5120, REQ-5122, REQ-5264, REQ-5270, REQ-5308, REQ-5346, REQ-5348, REQ-5844, REQ-5856, REQ-6204, REQ-6234, REQ-6242, REQ-6276, REQ-7148
+- adventure: REQ-0100, REQ-0102, REQ-0104, REQ-0105, REQ-0106, REQ-0107, REQ-0108, REQ-0110, REQ-0112, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0148, REQ-5004, REQ-5006, REQ-5014, REQ-5056, REQ-5120, REQ-5122, REQ-5264, REQ-5270, REQ-5308, REQ-5346, REQ-5348, REQ-5844, REQ-5856, REQ-6204, REQ-6234, REQ-6242, REQ-6276, REQ-7148
 - answer-input: REQ-0700, REQ-0701, REQ-0702, REQ-0703, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0711, REQ-0712, REQ-0713, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0738, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0764, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-5096, REQ-5250, REQ-5292, REQ-5300, REQ-5302, REQ-5312, REQ-5314, REQ-5316, REQ-5324, REQ-5326, REQ-5328, REQ-5330, REQ-5332, REQ-5336, REQ-5338, REQ-5340, REQ-5342, REQ-5400, REQ-5402, REQ-5404, REQ-5420, REQ-5500, REQ-5502, REQ-5560, REQ-5564, REQ-5600, REQ-5602, REQ-5612, REQ-5614, REQ-5616, REQ-5618, REQ-5620, REQ-5622, REQ-5624, REQ-5626, REQ-5628, REQ-5630, REQ-5632, REQ-5634, REQ-5654, REQ-5656, REQ-5672, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-7154, REQ-7158, REQ-7264, REQ-7266, REQ-7270
 - api: REQ-2400, REQ-2402, REQ-2404, REQ-2406, REQ-2408, REQ-2410, REQ-2412, REQ-2414, REQ-2416, REQ-2418, REQ-2420, REQ-2422, REQ-2424, REQ-2426, REQ-2428, REQ-2430, REQ-2432, REQ-2434, REQ-2436, REQ-2438, REQ-2440, REQ-2442, REQ-2444, REQ-5306, REQ-5344, REQ-5370, REQ-5414, REQ-5562, REQ-6342, REQ-6344, REQ-6362, REQ-6364, REQ-6376, REQ-7306
 - art: REQ-3400, REQ-3402, REQ-3404, REQ-3406, REQ-3408, REQ-3410, REQ-3412, REQ-3414, REQ-3416, REQ-3418, REQ-3420, REQ-3422, REQ-6418

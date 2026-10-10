@@ -16,11 +16,3 @@ verification: behavioural
 Acceptance test 1 MUST show that the check is planned due 28 to 35 game days after the node's latest meeting when it first reaches «устойчиво» (stable), that no held node appears on any path the hold covers before its check, that an observation after a lesson mark inside the interval doesn't count, that a lesson mark cancels the plan, that a recompute under a new threshold version leaves each series' observations unchanged, and that fixtures ending at 2 of 2, 0 of 2, 1 of 3, 2 of 4 and 3 of 4 each reach their result.
 
 The owner's acceptance test 1 names the first, second and third checks; research added the rest.
-
-## Open review findings
-
-A second reviewer found that the test leaves the void check, the hinted check, the next-day review and the exempt nodes untested; I rejected adding them, because RES-4220 conclusion 21 names the checks this test must add, and widening it is research's call.
-
-Written from RES-4220 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-Imposed by the owner's addendum 2 of 2026-09-28.

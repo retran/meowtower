@@ -3,7 +3,6 @@ id: SPC-0430
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-6656, REQ-6664, REQ-6684, REQ-7100, REQ-7102, REQ-7104, REQ-7106, REQ-7108, REQ-7110, REQ-7112, REQ-7114, REQ-7116, REQ-7118, REQ-7120, REQ-7122, REQ-7124, REQ-7126, REQ-7128, REQ-7130, REQ-7132, REQ-7134, REQ-7136, REQ-7138, REQ-7140, REQ-7142, REQ-7144, REQ-7146, REQ-7150, REQ-7152, REQ-7154, REQ-7156, REQ-7162, REQ-7166, REQ-7168, REQ-7178, REQ-7180, REQ-7182, REQ-7184, REQ-7186, REQ-7188, REQ-7190, REQ-7194, REQ-7196, REQ-7198, REQ-7514]
 ---
 
@@ -214,9 +213,3 @@ Every reading the section draws is the language line or the maths line SPC-0180 
 | A cell or a gap side holds fewer than 12 observations | The report shows «мало данных» with the count. |
 
 The player sees none of these states: each one ends in fewer letters and a normal floor.
-
-## Open review findings
-
-- Rejected, round 1: name the reason or the ADR-0430 section for the 28-game-day pair reuse, the candidate fill and the 60-day expiry. A specification states what the system does and never why (S8), and the Scope sends the reader to ADR-0430 for every reason.
-- Rejected, round 2: shorten the pair-reuse rule to "the least recently used approved pair". The rule's 28-game-day clause is ADR-0430's wording, and a later change to the reuse order would need it.
-- Rejected, round 2: reword the writing-standard comment under the front matter. The template puts that comment in every record, and every other specification keeps it as it stands.

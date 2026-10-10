@@ -510,20 +510,3 @@ month. The test had measured an idle Mac. The notice now names the day's local
 p95 and the hours the fallbacks fell in, which points at the load on the Mac,
 and the reversal on a fallback share above 5 % in the first month returns the
 checks to their hosted route if the load can't be moved.
-
-## Open review findings
-
-- The second agent review asked for a shorter title, with the fallback
-  binding moved into Decision. I keep the title, because a list of decisions
-  reads as a list of positions (D3) and the approved decisions ADR-0080 and
-  ADR-0100 carry titles of the same length.
-- The second agent review asked to move the `judge_route_changed` payload, the
-  `bakeoff` columns and the Russian line of the Parent Room page to the
-  specification. I keep the payload, because the decision that needs a new
-  event type names it and its fields and owns it. The columns and the line
-  stay as the smallest statement of what the table and the page must hold;
-  the specification may rename them.
-
-Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
-
-Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.

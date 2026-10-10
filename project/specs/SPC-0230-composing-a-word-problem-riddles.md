@@ -3,7 +3,6 @@ id: SPC-0230
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-5200, REQ-7202, REQ-5204, REQ-7210, REQ-5208, REQ-5210, REQ-5212, REQ-5214, REQ-5216, REQ-6420, REQ-5220, REQ-5222, REQ-5224, REQ-5226, REQ-5228, REQ-5230, REQ-5232, REQ-5234, REQ-5236, REQ-5238, REQ-5240, REQ-5242, REQ-5244, REQ-5246, REQ-5248, REQ-5250, REQ-5252, REQ-5254, REQ-5256, REQ-5258, REQ-5260, REQ-5262, REQ-5264, REQ-5266, REQ-5268, REQ-5270, REQ-5272, REQ-5274, REQ-5276, REQ-5278, REQ-5280, REQ-5282, REQ-5284, REQ-5286, REQ-5288, REQ-5290, REQ-5292, REQ-5294, REQ-5296, REQ-5298, REQ-7200, REQ-7204, REQ-7206, REQ-7208, REQ-7212, REQ-7214, REQ-7216, REQ-7218, REQ-7220, REQ-7222, REQ-7224, REQ-7226, REQ-7228, REQ-7230, REQ-7232, REQ-7234, REQ-7236, REQ-7238, REQ-7240, REQ-7242, REQ-7244, REQ-7246, REQ-7248, REQ-7250, REQ-7252, REQ-7254, REQ-7256, REQ-7258, REQ-7260, REQ-7262, REQ-7264, REQ-7266, REQ-7268, REQ-7270, REQ-7272, REQ-7274, REQ-7276, REQ-7278, REQ-7280, REQ-7282]
 ---
 
@@ -270,11 +269,3 @@ After the MVP, every player-facing string the construction riddles add is in Rus
 | After the MVP, no construction's nodes pass the gate | The Director draws from the problem types alone, or offers no riddle when none passes there either (`construction_gate_closed`). |
 | The reference set holds more than 420 texts | The content test fails the build. |
 | The day already holds 2 riddles, or the floor has no word problems | The Director places no riddle (REQ-5258, REQ-6420). |
-
-## Open review findings
-
-- The first agent review of an earlier revision asked to give reasons for the 600-character cap, the inactive thread button, the 2 distractors, «Не знаю» adding no count, the 12-second wait, the split of counts by form and the $4 run budget, or a sentence pointing to ADR-0230 for them. Rejected: a specification states what the system does and never why, and those reasons stand in ADR-0230. The 12 seconds are tied to the story's fallback moment in SPC-0110, which is a fact about the system and no reason.
-- The second agent review of an earlier revision asked to drop either the Director's skip of a template with no card frames or the build failure (`card_frames_missing`). Rejected: ADR-0230's failure table states both, and a spec doesn't choose between guards a decision in force sets.
-- The agent review of this revision asked for reasons, or a pointer to ADR-0440, beside the post-MVP rules such as the 28-game-day window, the 5 pairs, the 420-text cap and the class order, and noted that the header comment names a standard that gives each rule its reason. Rejected: a specification states what the system does and never why, and ADR-0440 holds each reason. The header comment is the one every record carries from the template.
-- The agent review of this revision asked to move this section to the commit message or the review thread. Rejected: the method keeps each rejected or open review finding in the record, where the person approving it reads it.
-- The second agent review of this revision asked to run the egress guard's `mask_incomplete` check before the safety check, so a hosted judge call isn't spent on a riddle that then turns into cards. Rejected: ADR-0230 sets the order of the five steps and puts the guard on the `ParseRequest`, and a specification doesn't reorder what a decision in force sets. The safety check's text is already masked by step 3.

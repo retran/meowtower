@@ -18,7 +18,3 @@ The "home and school" screen MUST show, for every row in no quadrant, the reason
 With the guards on both sides many rows land in no quadrant, and an unexplained empty cell reads as missing data or as agreement.
 
 Written from RES-4240 on the owner's instruction of 2026-09-28 to process addendum 2.
-
-## Open review findings
-
-- The agent reviewer asked for fixed wording for each reason. Left to the design step, which writes the player-facing and parent-facing strings into the per-language file.

@@ -3,7 +3,6 @@ id: SPC-0120
 artifact: spec
 status: live
 revised: 2026-09-28
-checked-at:
 states: [REQ-0600, REQ-0602, REQ-0604, REQ-0606, REQ-6500, REQ-0610, REQ-0612, REQ-0614, REQ-0616, REQ-0618, REQ-0620, REQ-0622, REQ-0624, REQ-6502, REQ-0628, REQ-0630, REQ-0632, REQ-0634, REQ-0636, REQ-0638]
 ---
 
@@ -160,7 +159,3 @@ Explanations exist in Russian only. The prompt, the forbidden list and the numer
 | `EXPLAIN_MODEL` is unset | Every explanation comes from a stored variant or the template. |
 | The parent hides a variant | The server never shows it, and the group may take a new variant in its place. |
 | `explain_cache` reaches 10,000 rows | `explain_cache_ceiling` reports once; serving goes on. |
-
-## Open review findings
-
-- Rejected: give each rule its reason (the $0.03 reserve, «ты», the order of the checks, the solve on every reuse, the 7-second split, the short-solution fallback, "never deletes", the 10,000-row ceiling and the 30-day drain). A specification states what the system does and never why (S8); ADR-0120 holds these reasons.

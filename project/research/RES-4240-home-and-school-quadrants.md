@@ -127,10 +127,6 @@ The case against the lead is its cost in clarity. The parent must read three dif
 7. No quadrant triggers anything in play: each check is a link the parent follows, because ADR-0310 keeps snapshot data out of the Director and a quadrant is built from it. Decided on 2026-09-28 by research, on the owner's instruction to process addendum 2 through to the specifications.
 8. The screen reads the home state at the snapshot's document date and shows the current state beside it, because a state from after the snapshot would compare two different moments. Decided on 2026-09-28 by research, on the owner's instruction to process addendum 2 through to the specifications.
 
-## Open review findings
-
-- The first agent review asked for the requirements that conclusions 7 and 10 amend to be named by identifier. I name each by its rule instead, because `paw check rules` refuses a requirement identifier in research, and the decision step that amends them cites them by identifier.
-
 ## Sources
 
 - The owner's addendum 2 to the specification, 2026-09-28 - item 5 in full; items 1, 3 and 6 where item 5 points to them.

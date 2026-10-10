@@ -28,13 +28,6 @@ Keep each key in `.env`, pass it only to the services that spend it, and add the
 
 TSK-0010, because the key's `.env` and the client bundle must exist.
 
-## Cover
-
-- Checks: none
-- Failing run: none
-- Landed in: none
-- Judgement: 1: its check landed with the implementation in 2c9325c before this cover step, so no failing run exists, and Evidence records a passing run after the build, because the lint verb runs before the build and skips a missing `dist/client`; 2: same, the recorder in tests/e2e/fixtures.ts landed in 2c9325c, and its self-test fails when a key leaks; 3: it needs a simulated day through ADR-0100's gateway, which the epics realising ADR-0030, ADR-0040 and ADR-0100 have not built
-
 ## Evidence
 
 Collected on 2026-09-27 on the Mac, and criterion 1 again on 2026-09-29. Criteria 1 and 2 are met; criterion 3 waits for a simulated day from the epics realising ADR-0030, ADR-0040 and ADR-0100.

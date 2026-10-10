@@ -3,7 +3,6 @@ id: SPC-0090
 artifact: spec
 status: live
 revised: 2026-09-29
-checked-at:
 states: [REQ-0100, REQ-0105, REQ-0107, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0148, REQ-0300, REQ-0302, REQ-0304, REQ-0308, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364, REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5022, REQ-5056]
 ---
 
@@ -237,7 +236,3 @@ The Parent Room holds the memo on how to talk with the child about the game, fro
 | Code outside `src/engine/day/` and the task renderer reads an hour | The lint rule fails the build. | the developer |
 | A clock, a countdown or a minute count shows outside `data-task-content` | The screen check fails. | the developer |
 | The adventure's budget runs out while «Свободное перо» is open | The pen closes through a story scene from the library. | the player |
-
-## Open review findings
-
-- The agent reviewer asked for the reasons behind the zone-change rule, the wall-clock «Привал» wait, the adventure staying closed after «Закончить на сегодня», the planner reading no `puzzle_*` event and the order of timed events. Rejected: a specification states what the part does and never why, and ADR-0090, ADR-0210 and ADR-0280 hold those reasons; ADR-0090 gives none for the order, so this document can't supply one.

@@ -21,7 +21,3 @@ Opening one new thing a day gives her something new to find on each of the first
 Written from RES-4120 on the owner's instruction of 2026-09-28.
 
 Imposed by the owner's addendum 1 of 2026-09-28.
-
-## Open review findings
-
-- The reviewer asked for one system on each day of play. Rejected: RES-4120 conclusion 12 keeps the addendum's order, which opens some systems together on one day, and splitting them would change the research decision.
