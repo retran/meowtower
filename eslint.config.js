@@ -12,4 +12,20 @@ export default tseslint.config(
     ],
   },
   ...tseslint.configs.strict,
+  {
+    // A task rebuilds from its seed (REQ-1202), so `src/` draws only from the
+    // seeded source in `src/math/rng.ts`.
+    files: ["src/**/*.ts"],
+    rules: {
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "Math",
+          property: "random",
+          message:
+            "Draw from the seeded source in src/math/rng.ts; a task must rebuild from its seed.",
+        },
+      ],
+    },
+  },
 );
