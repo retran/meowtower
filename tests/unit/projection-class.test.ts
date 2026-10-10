@@ -64,6 +64,7 @@ describe("REQ-2224: each registry entry declares its class", () => {
     expect(classes).toEqual({
       adventures: "game",
       sessions: "game",
+      resume_snapshot: "game",
       items_view: "game",
       attempts_view: "game",
       parent_settings: "game",
@@ -83,6 +84,7 @@ describe("REQ-2224: each entry's module is the file that defines it", () => {
     const own = {
       "flat-views": await import("../../src/engine/projections/flat-views.js"),
       lifecycle: await import("../../src/engine/projections/lifecycle.js"),
+      resume: await import("../../src/engine/projections/resume.js"),
       settings: await import("../../src/engine/projections/settings.js"),
       knowledge: await import("../../src/engine/projections/knowledge.js"),
     };
