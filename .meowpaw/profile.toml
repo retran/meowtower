@@ -12,8 +12,17 @@ check = "npx tsc --noEmit"
 test = "npm test"
 build = "npm run build && docker compose build"
 
-# [commits] is absent: branch main has no commits, so there is no convention
-# to read.
+# Types the history uses, counted over 87 commits: docs 52, feat 31, fix 2,
+# test 2. No commit carries a trailer. Subjects run up to 153 characters with
+# no consistent ceiling, so no subject_limit is declared.
+[commits]
+trailers = []
+
+[commits.types]
+feat = "minor"
+fix = "patch"
+docs = "none"
+test = "none"
 
 # The branch nobody commits to directly, and whether every pushed commit must
 # carry a verified signature.
@@ -21,8 +30,12 @@ build = "npm run build && docker compose build"
 trunk = "main"
 require_signatures = true
 
-# [record] and [tracker] are absent: the repository keeps no record directory
-# and has no remote.
+# The record lives in project/, and its pull requests are on GitHub.
+[record]
+root = "project"
+
+[tracker]
+kind = "github"
 
 # [prose] is absent: the owner asked for the project to be kept in English
 # (2026-09-26), which is the default. The Russian texts in draft/ and design/
