@@ -112,3 +112,25 @@ export const STANDIN_CHEST_OPTIONS = [
   { kind: "star", rewardId: "standin-chest-2", quality: "common" },
   { kind: "feather", rewardId: "standin-chest-3", quality: "common" },
 ] as const;
+
+/** The stand-in adventure's secrets, none of which can be opened yet (ADR-0140). */
+export const STANDIN_SECRETS = [
+  "standin-secret-1",
+  "standin-secret-2",
+  "standin-secret-3",
+] as const;
+
+/** The stand-in short ending the three-day rule plays, for the library's (ADR-0110). */
+export const STANDIN_ENDING_ID = "standin-ending";
+export const standinEnding = (): {
+  sceneId: string;
+  lines: { speaker: string; text: string }[];
+  branches: { choiceId: string; text: string }[];
+} => ({
+  sceneId: STANDIN_ENDING_ID,
+  lines: [
+    { speaker: "narrator", text: t("standin.ending.line.1") },
+    { speaker: "narrator", text: t("standin.ending.line.2") },
+  ],
+  branches: [{ choiceId: "continue", text: t("standin.ending.branch") }],
+});

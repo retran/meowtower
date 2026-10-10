@@ -590,6 +590,21 @@ const sessionDefs: EventDef[] = [
     }),
   },
   {
+    type: "session_started",
+    v: 2,
+    schema: obj({
+      sessionId: id("the session"),
+      mode: z.enum(["zero", "daily"]).describe("Session 0 or a daily session"),
+      zone: z
+        .string()
+        .nullable()
+        .describe(
+          "the IANA time zone of the device, or null where it sent none",
+        ),
+    }),
+    upcastFrom: (payload) => ({ ...(payload as object), zone: null }),
+  },
+  {
     type: "attempt_late",
     v: 1,
     schema: obj({

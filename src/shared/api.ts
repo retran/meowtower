@@ -7,9 +7,22 @@ import { z } from "zod";
 const clientSeq = z.number().int().nonnegative();
 
 export const SessionStartIn = z
-  .object({ mode: z.enum(["zero", "daily"]), clientSeq })
+  .object({
+    mode: z.enum(["zero", "daily"]),
+    /** The device's IANA time zone, which the game day follows (SPC-0090). */
+    zone: z.string().min(1).max(64).optional(),
+    clientSeq,
+  })
   .strict();
-export const SessionStartOut = z.object({ sessionId: z.string() }).strict();
+export const SessionStartOut = z
+  .object({
+    sessionId: z.string(),
+    /** The adventure the session continues, or null for Session 0. */
+    adventureId: z.string().nullable(),
+    /** True when the adventure has reached its limit of adventure days (REQ-0228). */
+    wrapUp: z.boolean(),
+  })
+  .strict();
 
 const View = z
   .object({
@@ -250,7 +263,9 @@ export const BreakOut = z
   .strict();
 
 /** Opens a session on the open adventure; the reply says where play stopped (REQ-0204). */
-export const ResumeIn = z.object({ clientSeq }).strict();
+export const ResumeIn = z
+  .object({ zone: z.string().min(1).max(64).optional(), clientSeq })
+  .strict();
 export const ResumeOut = z
   .object({
     sessionId: z.string(),
@@ -271,6 +286,8 @@ export const ResumeOut = z
     chest: Chest.nullable(),
     /** The grants the client has not yet shown. */
     rewards: z.array(Grant),
+    /** True when the adventure has reached its limit of adventure days (REQ-0228). */
+    wrapUp: z.boolean(),
   })
   .strict();
 export type ResumeOut = z.infer<typeof ResumeOut>;

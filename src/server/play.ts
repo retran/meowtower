@@ -26,6 +26,7 @@ import {
   type StoredEvent,
 } from "../engine/events/read.js";
 import { resumeFromLog } from "../engine/projections/resume.js";
+import { isZone } from "../shared/game-day.js";
 import {
   AdventureCurrentOut,
   AnswerIn,
@@ -67,9 +68,12 @@ import {
   resumePoint,
   sessionRow,
 } from "./lifecycle.js";
+import { sessionZone, wrapUpDue } from "./three-day.js";
 import {
   ROOM_LENGTH,
   STANDIN_ADVENTURE_TASKS,
+  STANDIN_SECRETS,
+  standinEnding,
   STANDIN_CHEST_ID,
   STANDIN_CHEST_OPTIONS,
   STANDIN_SCENE_ID,
@@ -381,6 +385,7 @@ export function mountPlay(
     deviceId: string,
     mode: "zero" | "daily",
     key: string,
+    zone: string | null,
   ): string {
     const sessionId = randomUUID();
     const origin = { deviceId, clientMs: Date.now() };
@@ -407,8 +412,8 @@ export function mountPlay(
     }
     events.push({
       type: "session_started",
-      v: 1,
-      payload: { sessionId, mode: mode },
+      v: 2,
+      payload: { sessionId, mode: mode, zone },
       origin,
       sessionId,
       ...(adventureId ? { adventureId } : {}),
@@ -436,16 +441,30 @@ export function mountPlay(
     const body = SessionStartIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     const key = `session-start:${deviceId}:${body.data.clientSeq}`;
+    const { zone } = body.data;
+    if (zone !== undefined && !isZone(zone))
+      return c.json({ error: "bad_request" }, 400);
     const prior = requestEvents(db, key).find(
       (e) => e.type === "session_started",
     );
-    if (prior)
-      return send(c, SessionStartOut, {
-        sessionId: payloadOf<{ sessionId: string }>(prior).sessionId,
-      });
-    const sessionId = openSession(deviceId, body.data.mode, key);
-    return send(c, SessionStartOut, { sessionId });
+    const sessionId = prior
+      ? payloadOf<{ sessionId: string }>(prior).sessionId
+      : openSession(deviceId, body.data.mode, key, zone ?? null);
+    return send(c, SessionStartOut, {
+      sessionId,
+      adventureId: sessionRow(db, sessionId)?.adventureId ?? null,
+      wrapUp: wrapUpOf(sessionId),
+    });
   });
+
+  /** True when the session's adventure wraps up today (REQ-0228, REQ-0236). */
+  function wrapUpOf(sessionId: string): boolean {
+    const adventureId = sessionRow(db, sessionId)?.adventureId;
+    if (!adventureId) return false;
+    const state = adventureState(db, adventureId)?.state;
+    if (state === "complete" || state === "wrapped_up") return false;
+    return wrapUpDue(db, adventureId, sessionZone(db, sessionId), Date.now());
+  }
 
   /** Where play stopped, as `ResumeOut` carries it (REQ-0204). */
   function resumeOut(sessionId: string): z.input<typeof ResumeOut> | null {
@@ -471,6 +490,7 @@ export function mountPlay(
       scene: point?.scene ? { kind: "scene", ...point.scene } : null,
       chest: point?.chest ? { kind: "chest", ...point.chest } : null,
       rewards: point?.rewards ?? [],
+      wrapUp: wrapUpOf(sessionId),
     };
   }
 
@@ -485,10 +505,12 @@ export function mountPlay(
       (e) => e.type === "session_started",
     );
     let sessionId = prior && payloadOf<{ sessionId: string }>(prior).sessionId;
+    if (body.data.zone !== undefined && !isZone(body.data.zone))
+      return c.json({ error: "bad_request" }, 400);
     if (!sessionId) {
       if (!openAdventure(db))
         return c.json({ error: "no_open_adventure" }, 404);
-      sessionId = openSession(deviceId, "daily", key);
+      sessionId = openSession(deviceId, "daily", key, body.data.zone ?? null);
     }
     const out = resumeOut(sessionId);
     return out
@@ -549,6 +571,13 @@ export function mountPlay(
     const adventure = session.adventureId
       ? adventureState(db, session.adventureId)
       : undefined;
+    if (adventure?.state === "wrapped_up" && session.adventureId) {
+      // The short ending stays on the screen until she leaves it (REQ-0228).
+      const ending = resumeFromLog(
+        adventureEvents(db, session.adventureId),
+      )?.scene;
+      if (ending) return send(c, Scene, { kind: "scene", ...ending });
+    }
     if (
       adventure &&
       (adventure.state === "complete" || adventure.state === "wrapped_up")
@@ -593,6 +622,40 @@ export function mountPlay(
     }
 
     const index = firsts.length;
+    // The three-day rule: the open task is done and, with the room finished,
+    // the stand-in short ending plays and the adventure wraps up, queueing the
+    // secrets she didn't open (REQ-0228, REQ-0232). A room left half done
+    // goes on until it is whole.
+    if (
+      session.adventureId &&
+      index % ROOM_LENGTH === 0 &&
+      wrapUpOf(sessionId)
+    ) {
+      const ending = standinEnding();
+      appendEvents(db, [
+        ...lifecycle,
+        {
+          type: "scene_prepared",
+          v: 1,
+          payload: ending,
+          origin,
+          sessionId,
+          adventureId: session.adventureId,
+        },
+        {
+          type: "adventure_wrapped_up",
+          v: 1,
+          payload: {
+            adventureId: session.adventureId,
+            unopenedSecrets: [...STANDIN_SECRETS],
+          },
+          origin,
+          sessionId,
+          adventureId: session.adventureId,
+        },
+      ]);
+      return send(c, Scene, { kind: "scene", ...ending, draft: null });
+    }
     // The stand-in adventure's finale: its scene, then its chest, then the end.
     // An open scene or chest is shown again as it was, never prepared anew
     // (REQ-0216, REQ-0218).
@@ -865,7 +928,10 @@ export function mountPlay(
               origin,
               ...at,
             },
-        {
+      );
+      // Only the finale's scene gives the stand-in grant, not the short ending.
+      if (scene.sceneId === STANDIN_SCENE_ID)
+        events.push({
           type: "reward_granted",
           v: 1,
           payload: {
@@ -876,21 +942,19 @@ export function mountPlay(
           },
           origin: "server",
           ...at,
-        },
-      );
+        });
     }
     appendEvents(db, keyed(events, key));
     return send(c, SceneInputOut, {
       status: input.kind === "draft" ? "saved" : "done",
-      grants:
-        input.kind === "draft"
-          ? []
-          : [
-              {
-                rewardId: `${STANDIN_SCENE_ID}-reward`,
-                ...STANDIN_SCENE_REWARD,
-              },
-            ],
+      grants: !events.some((e) => e.type === "reward_granted")
+        ? []
+        : [
+            {
+              rewardId: `${STANDIN_SCENE_ID}-reward`,
+              ...STANDIN_SCENE_REWARD,
+            },
+          ],
     });
   });
 

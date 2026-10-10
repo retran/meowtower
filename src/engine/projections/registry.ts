@@ -7,6 +7,7 @@ import { flatViews } from "./flat-views.js";
 import { knowledge } from "./knowledge.js";
 import { lifecycle } from "./lifecycle.js";
 import { resume } from "./resume.js";
+import { rewards } from "./rewards.js";
 import { settings } from "./settings.js";
 import { prepared } from "./statements.js";
 
@@ -64,6 +65,7 @@ const registered: Projection[] = [
   ...flatViews,
   ...lifecycle,
   ...resume,
+  ...rewards,
   ...settings,
   ...knowledge,
 ];
