@@ -32,7 +32,7 @@ TSK-0320, because a resent answer must be recorded once. TSK-0340, because it di
 
 ## Evidence
 
-Collected on 2026-10-10 on the Mac, at commit 34c45cc of the branch `tsk-0380-answer-queue-and-offline`; the pull request is not opened yet. Every criterion is met, with the one limit named below.
+Collected on 2026-10-10 on the Mac, at commit 34c45cc of the branch `tsk-0380-answer-queue-and-offline`, in pull request #11. Every criterion is met, with the one limit named below.
 
 - Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (49 Vitest files with 454 tests, and 57 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
 - Criterion 1, REQ-2434: `tests/e2e/answer-queue.spec.ts` aborts the answer request and reads the queue's store from inside the request's route: the entry is already there when the request leaves. The page is then closed; the next launch sends the answer before its resume request, the log holds the attempt once, and the store is empty.
