@@ -40,17 +40,24 @@ import {
   ItemActionIn,
   PauseIn,
   PauseOut,
+  ResumeIn,
+  ResumeOut,
   Room,
   SessionStartIn,
   SessionStartOut,
 } from "../shared/api.js";
 import { t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
-import { DEVICE_COOKIE, deviceForToken } from "./devices.js";
+import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
 import { createRateCap } from "./rate.js";
 import { send } from "./send.js";
 import { mountStream, type Stream } from "./stream.js";
-import { adventureState, openAdventure, sessionRow } from "./lifecycle.js";
+import {
+  adventureState,
+  openAdventure,
+  resumePoint,
+  sessionRow,
+} from "./lifecycle.js";
 import {
   ROOM_LENGTH,
   STANDIN_ADVENTURE_TASKS,
@@ -301,13 +308,23 @@ export function mountPlay(
   function item(
     c: Context,
     itemId: string,
-  ): { shown: ItemShown; sessionId: string; log: StoredEvent[] } | Response {
+  ):
+    | {
+        shown: ItemShown;
+        sessionId: string;
+        log: StoredEvent[];
+        shownBy: string;
+        shownSeq: number;
+      }
+    | Response {
     const event = itemEvents(db, itemId).find((e) => e.type === "item_shown");
     if (!event?.sessionId) return c.json({ error: "item_unknown" }, 404);
     return {
       shown: payloadOf<ItemShown>(event),
       sessionId: event.sessionId,
       log: sessionEvents(db, event.sessionId),
+      shownBy: event.deviceId,
+      shownSeq: event.seq,
     };
   }
 
@@ -340,19 +357,16 @@ export function mountPlay(
     return deviceId instanceof Response ? deviceId : null;
   });
 
-  app.post("/api/session/start", async (c) => {
-    const deviceId = writer(c);
-    if (deviceId instanceof Response) return deviceId;
-    const body = SessionStartIn.safeParse(await c.req.json());
-    if (!body.success) return c.json({ error: "bad_request" }, 400);
-    const key = `session-start:${deviceId}:${body.data.clientSeq}`;
-    const prior = requestEvents(db, key).find(
-      (e) => e.type === "session_started",
-    );
-    if (prior)
-      return send(c, SessionStartOut, {
-        sessionId: payloadOf<{ sessionId: string }>(prior).sessionId,
-      });
+  /**
+   * Opens a session for the device and moves the lease to it: another device's
+   * session ends first. A daily session continues the open adventure and plans
+   * one only when none is open (REQ-0226); Session 0 belongs to no adventure.
+   */
+  function openSession(
+    deviceId: string,
+    mode: "zero" | "daily",
+    key: string,
+  ): string {
     const sessionId = randomUUID();
     const origin = { deviceId, clientMs: Date.now() };
     // Another device's tap takes the lease: the old session ends first, then
@@ -363,7 +377,7 @@ export function mountPlay(
     // none is open (REQ-0226). Session 0 belongs to no adventure.
     const events: NewEvent[] = [];
     let adventureId: string | undefined;
-    if (body.data.mode === "daily") {
+    if (mode === "daily") {
       adventureId = openAdventure(db)?.adventureId;
       if (!adventureId) {
         adventureId = randomUUID();
@@ -379,7 +393,7 @@ export function mountPlay(
     events.push({
       type: "session_started",
       v: 1,
-      payload: { sessionId, mode: body.data.mode },
+      payload: { sessionId, mode: mode },
       origin,
       sessionId,
       ...(adventureId ? { adventureId } : {}),
@@ -398,7 +412,70 @@ export function mountPlay(
     const taken = written[written.length - 1];
     if (left && taken)
       stream.publish(left.sessionId, { type: "lease_moved", seq: taken.seq });
+    return sessionId;
+  }
+
+  app.post("/api/session/start", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = SessionStartIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const key = `session-start:${deviceId}:${body.data.clientSeq}`;
+    const prior = requestEvents(db, key).find(
+      (e) => e.type === "session_started",
+    );
+    if (prior)
+      return send(c, SessionStartOut, {
+        sessionId: payloadOf<{ sessionId: string }>(prior).sessionId,
+      });
+    const sessionId = openSession(deviceId, body.data.mode, key);
     return send(c, SessionStartOut, { sessionId });
+  });
+
+  /** Where play stopped, as `ResumeOut` carries it (REQ-0204). */
+  function resumeOut(sessionId: string): z.input<typeof ResumeOut> | null {
+    const adventureId = sessionRow(db, sessionId)?.adventureId;
+    if (!adventureId) return null;
+    const point = resumePoint(db, adventureId);
+    const index = point?.index ?? 0;
+    const roomIndex = Math.floor(index / ROOM_LENGTH);
+    return {
+      sessionId,
+      adventureId,
+      floor: Math.floor(roomIndex / STANDIN_ROOMS_PER_FLOOR) + 1,
+      room: (roomIndex % STANDIN_ROOMS_PER_FLOOR) + 1,
+      slot: index % ROOM_LENGTH,
+      itemId: point?.open?.itemId ?? null,
+      view: point?.open ? { ...point.open.view, locale: "ru" } : null,
+      attemptNo: point?.open?.attemptNo ?? null,
+      hintLevels: point?.open?.hintLevels ?? [],
+      explainedItemIds: (point?.explained ?? []).filter(
+        (id) =>
+          Math.floor((point?.positions[id] ?? -1) / ROOM_LENGTH) === roomIndex,
+      ),
+    };
+  }
+
+  app.post("/api/adventure/resume", async (c) => {
+    const deviceId = writer(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = ResumeIn.safeParse(await c.req.json());
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const key = `adventure-resume:${deviceId}:${body.data.clientSeq}`;
+    // A repeat opens no second session and gets the point as it stands.
+    const prior = requestEvents(db, key).find(
+      (e) => e.type === "session_started",
+    );
+    let sessionId = prior && payloadOf<{ sessionId: string }>(prior).sessionId;
+    if (!sessionId) {
+      if (!openAdventure(db))
+        return c.json({ error: "no_open_adventure" }, 404);
+      sessionId = openSession(deviceId, "daily", key);
+    }
+    const out = resumeOut(sessionId);
+    return out
+      ? send(c, ResumeOut, out)
+      : c.json({ error: "no_open_adventure" }, 404);
   });
 
   app.post("/api/session/:id/heartbeat", async (c) => {
@@ -726,6 +803,16 @@ export function mountPlay(
     );
     const outcome: Outcome = verdict === "correct" ? "clean" : "alt";
     const hints = hintLevels(found.log, a.itemId);
+    // A pause between showing the task and this answer, or a device of another
+    // kind than the one that showed it, keeps the attempt's time out of every
+    // measure (REQ-0212, REQ-0224). A rest stop pauses nothing (REQ-2412).
+    const interrupted = playLog(sessionId).some(
+      (e) =>
+        e.seq > found.shownSeq &&
+        (e.type === "adventure_paused" || e.type === "session_ended"),
+    );
+    const crossDevice =
+      deviceInterface(db, found.shownBy) !== deviceInterface(db, deviceId);
     const origin = { deviceId, clientMs: Date.now() };
     const [, written] = appendEvents(
       db,
@@ -733,7 +820,7 @@ export function mountPlay(
         [
           {
             type: "attempt_submitted",
-            v: 1,
+            v: 2,
             payload: {
               itemId: a.itemId,
               attemptNo: shown.attemptNo,
@@ -744,6 +831,8 @@ export function mountPlay(
               },
               assisted: hints.length > 0,
               hintLevel: Math.max(0, ...hints),
+              interrupted,
+              crossDevice,
             },
             origin,
             ...within(sessionId),

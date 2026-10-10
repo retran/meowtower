@@ -212,6 +212,19 @@ const attemptSubmittedV1 = z
   })
   .strict();
 
+// Version 2 adds the two flags that keep an attempt's time out of every
+// measure (REQ-0212, REQ-0224); an earlier attempt had neither.
+const attemptSubmittedV2 = attemptSubmittedV1
+  .extend({
+    interrupted: z
+      .boolean()
+      .describe("whether a pause lay between showing the task and the answer"),
+    crossDevice: z
+      .boolean()
+      .describe("whether the answer came from another kind of device"),
+  })
+  .strict();
+
 const verdictV1 = z
   .object({
     itemId,
@@ -651,6 +664,16 @@ export const EVENT_DEFS: readonly EventDef[] = [
   { type: "item_shown", v: 1, schema: itemShownV1 },
   { type: "attempt_submitted", v: 0, schema: attemptSubmittedV0 },
   { type: "attempt_submitted", v: 1, schema: attemptSubmittedV1 },
+  {
+    type: "attempt_submitted",
+    v: 2,
+    schema: attemptSubmittedV2,
+    upcastFrom: (payload) => ({
+      ...(payload as object),
+      interrupted: false,
+      crossDevice: false,
+    }),
+  },
   { type: "verdict", v: 1, schema: verdictV1 },
   { type: "hint_shown", v: 1, schema: hintShownV1 },
   { type: "thread_spent", v: 1, schema: threadSpentV1 },
