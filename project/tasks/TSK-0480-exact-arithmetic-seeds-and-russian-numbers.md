@@ -1,7 +1,7 @@
 ---
 id: TSK-0480
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-1204, REQ-1226]
@@ -33,7 +33,21 @@ Nothing.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-10-10 on the Mac, at commit 3aa57cd of the branch `tsk-0480-exact-arithmetic`, in pull request #16. Every criterion is met.
+
+- Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (53 Vitest files with 475 tests, and 59 Playwright tests passed; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
+- Criterion 1, REQ-1204: `tests/unit/math-q.test.ts` adds 0,1 and 0,2 to exactly `3/10`, divides 79 by 10 to `79/10` and multiplies back to 79, and adds 0,1 a thousand times to exactly 100, which the float sum fails.
+- Criterion 2, REQ-1202: `tests/unit/math-rng.test.ts` holds the base seed of a fixed session, node and slot, the seed of candidate 7, the first six draws and the hash of the first 1,000 draws. The values come from a separate script that follows the reference C implementation. A state of all zeros draws as the fixed constant does.
+- Criterion 3, REQ-1226: `tests/unit/math-format.test.ts` writes `12 500`, `4 003`, `2 400`, `0,5`, `3,5` and `12 345,67` with a no-break space and a comma, reads `·`, `:` and the minus from the language file's `notation.` keys, and finds no point as a decimal sign and no ungrouped number of 4 digits or more in 1,000 seeded numbers.
+- Criterion 4, REQ-1202: ESLint's `no-restricted-properties` bans `Math.random` in `src/`; the lint verb reports none, and `tests/unit/lint-math-random.test.ts` makes a fixture that calls it fail.
+
+Choices made here, because the approved records left them open:
+
+- The seed of candidate `k` or of a named stream is the first 128 bits of SHA-256 over the base seed, a zero byte and the label; the base seed's fields are joined with zero bytes so one field can't run into the next.
+- The fixed state for all zeros is the four words `0x9e3779b9`, `0x243f6a88`, `0xb7e15162`, `0xdeadbeef`.
+- The minus sign of a negative number is U+2212, as the catalogue's solutions write it, and the checker still reads the hyphen (TSK-0482).
+- `formatQ` refuses a fraction with no finite decimal; the renderer writes those as fractions.
+- The profile is in `content/i18n/ru.json` under `notation.`, which the client doesn't receive because only `ui.` keys go to it.
 
 ## Left alone
 

@@ -40,7 +40,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0480 Exact arithmetic, a seeded generator source and Russian number formatting
+- [x] T-001 TSK-0480 Exact arithmetic, a seeded generator source and Russian number formatting
+      evidence: the five verbs exit 0 at commit 3aa57cd; `tests/unit/math-q.test.ts`, `tests/unit/math-rng.test.ts`, `tests/unit/math-format.test.ts` (TSK-0480 Evidence)
       closes: REQ-1204, REQ-1226
       depends: none
 - [ ] T-002 [P] TSK-0481 The template contract and the seeded generator with its fallback
