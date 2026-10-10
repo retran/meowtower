@@ -93,7 +93,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       added: ADR-0370 entry 2 gave every registry entry a class after TSK-0250 and TSK-0270 were done
       closes: none; REQ-2224 stays with TSK-0270
       depends: TSK-0250 - it built the registry; TSK-0270 - it built the import check
-- [+] T-013 [P] TSK-0470 The blob store recovers a file that has no row (`src/engine/blobs/store.ts`, `src/server/main.ts`)
+- [x] T-013 [P] TSK-0470 The blob store recovers a file that has no row (`src/engine/blobs/store.ts`, `src/server/main.ts`)
+      evidence: the five verbs exit 0 at tree 8251f6512ddd, 384 Vitest and 27 Playwright tests; `tests/integration/blob-recovery.test.ts`
       added: ADR-0370 entry 3 added the recovery after TSK-0240 was done
       closes: none; REQ-2210 stays with TSK-0240
       depends: TSK-0240 - it built the store
