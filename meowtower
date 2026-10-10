@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, pair, db-snapshot, restore and export.
+# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, watch, pair, db-snapshot, restore and export.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -87,36 +87,182 @@ cmd_ipad_setup() {
 
 HOME_GATEWAY_FILE="${MEOWTOWER_HOME_GATEWAY_FILE:-data/home-gateway}"
 
+# The router's hardware address for `ip`, or `unknown` when the ARP table has none.
+arp_mac() {
+  local mac
+  mac="$(arp -n "$1" 2>/dev/null | awk '{print $4}' || true)"
+  [[ $mac =~ ^[0-9a-f:]+$ ]] && echo "$mac" || echo unknown
+}
+
 # The current default gateway, as "IP hardware-address", or "IP unknown" when
-# the Mac can't read the router's hardware address.
+# the Mac can't read the router's hardware address. A router's ARP entry often
+# lapses after a reboot or a long sleep, so a read that misses is followed by a
+# ping and a second read; `--ping` pings before the first read (REQ-2510).
 gateway_id() {
   if [[ -n ${MEOWTOWER_GATEWAY_ID:-} ]]; then echo "$MEOWTOWER_GATEWAY_ID"; return; fi
   local ip mac
   ip="$(route -n get default 2>/dev/null | awk '/gateway:/{print $2}' || true)"
-  mac="$(arp -n "$ip" 2>/dev/null | awk '{print $4}' || true)"
-  [[ $mac =~ ^[0-9a-f:]+$ ]] || mac=unknown
-  echo "${ip:-none} $mac"
+  if [[ -z $ip ]]; then echo "none unknown"; return; fi
+  if [[ ${1:-} == --ping ]]; then ping -c 1 -t 2 "$ip" >/dev/null 2>&1 || true; fi
+  mac="$(arp_mac "$ip")"
+  if [[ $mac == unknown && ${1:-} != --ping ]]; then
+    ping -c 1 -t 2 "$ip" >/dev/null 2>&1 || true
+    mac="$(arp_mac "$ip")"
+  fi
+  echo "$ip $mac"
 }
 
+# Pings the gateway so the ARP table holds it, then records it. A gateway that
+# doesn't answer records nothing and keeps the old record (REQ-2510).
 cmd_set_home_network() {
   mkdir -p "$(dirname "$HOME_GATEWAY_FILE")"
   local id
-  id="$(gateway_id)"
+  id="$(gateway_id --ping)"
+  if [[ ${id#* } == unknown ]]; then
+    echo "gateway_unverified: the router's hardware address can't be read from here, so nothing was recorded."
+    echo "At home, with the router on, run ./meowtower set-home-network again."
+    exit 1
+  fi
   echo "$id" > "$HOME_GATEWAY_FILE"
   echo "Home network recorded: $(cat "$HOME_GATEWAY_FILE")"
 }
 
+# What the recorded and the current gateway say: ok, wrong_network (the IP
+# address differs, or it matches and the hardware address differs) or
+# gateway_unverified (either hardware address is unknown).
+network_state() {
+  local recorded=$1 current=$2
+  local r_ip=${recorded% *} r_mac=${recorded#* } c_ip=${current% *} c_mac=${current#* }
+  if [[ $r_ip != "$c_ip" ]]; then echo wrong_network
+  elif [[ $r_mac == unknown || $c_mac == unknown ]]; then echo gateway_unverified
+  elif [[ $r_mac != "$c_mac" ]]; then echo wrong_network
+  else echo ok
+  fi
+}
+
 # REQ-2510: start only on the home network. The first up records it.
 check_home_network() {
-  local current recorded
+  local current recorded state
   current="$(gateway_id)"
   if [[ ! -s $HOME_GATEWAY_FILE ]]; then cmd_set_home_network; return; fi
   recorded="$(cat "$HOME_GATEWAY_FILE")"
-  local r_ip=${recorded% *} r_mac=${recorded#* } c_ip=${current% *} c_mac=${current#* }
-  if [[ $r_ip != "$c_ip" ]] || { [[ $r_mac != unknown && $c_mac != unknown ]] && [[ $r_mac != "$c_mac" ]]; }; then
+  state="$(network_state "$recorded" "$current")"
+  if [[ $state == wrong_network ]]; then
     echo "wrong_network: this isn't the home network (recorded gateway $recorded, current $current)."
     echo "Nothing started. After changing routers, run ./meowtower set-home-network at home."
     exit 1
+  fi
+  if [[ $state == gateway_unverified ]]; then
+    echo "gateway_unverified: the router's hardware address is unknown (recorded gateway $recorded, current $current)."
+    echo "Nothing started. At home, with the router on, run ./meowtower set-home-network."
+    exit 1
+  fi
+}
+
+NOTICES_FILE=data/snapshots/notices.json
+
+# Removes the `wrong_network` key from the notices the server keeps beside the
+# snapshots, so a start on the home network clears it.
+clear_wrong_network_notice() {
+  [[ -s $NOTICES_FILE ]] || return 0
+  local body
+  body="$(sed -E 's/"wrong_network":\{[^}]*\},?//; s/,\}/}/' "$NOTICES_FILE")"
+  printf '%s\n' "$body" > "$NOTICES_FILE"
+}
+
+# Adds `wrong_network` with the recorded and the current gateway to the notices.
+write_wrong_network_notice() {
+  mkdir -p "$(dirname "$NOTICES_FILE")"
+  local notice body
+  notice="\"wrong_network\":{\"at\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"recorded\":\"$1\",\"current\":\"$2\"}"
+  if [[ -s $NOTICES_FILE ]]; then
+    body="$(sed -E 's/"wrong_network":\{[^}]*\},?//; s/,\}/}/' "$NOTICES_FILE")"
+  else
+    body="{}"
+  fi
+  if [[ $body == "{}" ]]; then
+    printf '{%s}\n' "$notice" > "$NOTICES_FILE"
+  else
+    printf '%s\n' "$body" | sed "s/^{/{$notice,/" > "$NOTICES_FILE"
+  fi
+}
+
+# The network watch: one tick compares the gateway, pinging it before the read,
+# and stops both containers while they run when it differs from the record or
+# can't be verified (REQ-2510).
+watch_tick() {
+  [[ -s $HOME_GATEWAY_FILE ]] || return 0
+  docker_running || return 0
+  local recorded current state
+  recorded="$(cat "$HOME_GATEWAY_FILE")"
+  current="$(gateway_id --ping)"
+  state="$(network_state "$recorded" "$current")"
+  [[ $state == ok ]] && return 0
+  # Nothing further to stop while the containers are down.
+  compose ps --format '{{.Name}}' 2>/dev/null | grep -q . || return 0
+  compose stop >/dev/null 2>&1 || true
+  write_wrong_network_notice "$recorded" "$current"
+}
+
+# Ticks at once and then every 60 seconds; `--once` ends after the first tick.
+cmd_watch() {
+  local once=0 limit="${MEOWTOWER_WATCH_TICKS:-0}" nap="${MEOWTOWER_WATCH_SLEEP:-60}" n=0
+  [[ ${1:-} == --once ]] && once=1
+  while true; do
+    watch_tick || true
+    n=$((n + 1))
+    (( once )) && return 0
+    (( limit > 0 && n >= limit )) && return 0
+    sleep "$nap"
+  done
+}
+
+WATCH_LABEL=local.meowtower.watch
+LAUNCH_AGENTS="${MEOWTOWER_LAUNCH_AGENTS:-$HOME/Library/LaunchAgents}"
+WATCH_PLIST="$LAUNCH_AGENTS/$WATCH_LABEL.plist"
+
+# The launchd agent runs in the parent's user session, because `docker` needs
+# that user's context, and loads again at her login (RunAtLoad).
+load_watch() {
+  mkdir -p "$LAUNCH_AGENTS" data
+  cat > "$WATCH_PLIST" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>$WATCH_LABEL</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>$PWD/meowtower</string>
+		<string>watch</string>
+	</array>
+	<key>WorkingDirectory</key>
+	<string>$PWD</string>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>$PATH</string>
+	</dict>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>$PWD/data/watch.log</string>
+	<key>StandardErrorPath</key>
+	<string>$PWD/data/watch.log</string>
+</dict>
+</plist>
+PLIST
+  launchctl unload "$WATCH_PLIST" >/dev/null 2>&1 || true
+  launchctl load -w "$WATCH_PLIST"
+}
+
+unload_watch() {
+  if [[ -f $WATCH_PLIST ]]; then
+    launchctl unload -w "$WATCH_PLIST" >/dev/null 2>&1 || true
+    rm -f "$WATCH_PLIST"
   fi
 }
 
@@ -206,6 +352,7 @@ cmd_up() {
   if ! docker_running; then echo "docker_not_running: Docker isn't running (Docker Desktop or OrbStack)."; exit 1; fi
   check_parent_port
   mkdir -p data/blobs data/snapshots data/exports data/caddy data/setup
+  clear_wrong_network_notice
   compose up -d --build
   # Caddy reads its bind-mounted Caddyfile only at start, so apply any change.
   compose restart proxy >/dev/null
@@ -215,12 +362,14 @@ cmd_up() {
     nohup caffeinate -ims >/dev/null 2>&1 &
     echo $! > "$CAFFEINATE_PID"
   fi
+  load_watch
   local url="https://$(host_name)"
   echo "Meowtower is up at $url; the Parent Room is at http://localhost:$PARENT_PORT on this Mac"
   if command -v qrencode >/dev/null; then qrencode -t ansiutf8 "$url"; fi
 }
 
 cmd_down() {
+  unload_watch
   # Never pass -v: the volume meowtower-db holds the live database.
   if docker_running; then compose down; fi
   if [[ -f $CAFFEINATE_PID ]]; then
@@ -259,6 +408,10 @@ cmd_status() {
     local wfailed
     wfailed="$(sed -n 's/.*"log_write_failed":{"at":"\([^"]*\)".*/\1/p' data/snapshots/notices.json)"
     [[ -n "$wfailed" ]] && echo "log_write_failed: a write to the event log failed at $wfailed; check the free space on the Mac."
+    local wrong_r wrong_c
+    wrong_r="$(sed -n 's/.*"wrong_network":{"at":"[^"]*","recorded":"\([^"]*\)".*/\1/p' data/snapshots/notices.json)"
+    wrong_c="$(sed -n 's/.*"wrong_network":{"at":"[^"]*","recorded":"[^"]*","current":"\([^"]*\)".*/\1/p' data/snapshots/notices.json)"
+    [[ -n "$wrong_r" ]] && echo "wrong_network: the containers were stopped because the gateway changed (recorded $wrong_r, current $wrong_c). Run ./meowtower set-home-network at home after changing routers, or ./meowtower up on the home network."
   fi
   return 0
 }
@@ -269,11 +422,12 @@ case "${1:-}" in
   status) cmd_status ;;
   ipad-setup) shift; cmd_ipad_setup "$@" ;;
   set-home-network) cmd_set_home_network ;;
+  watch) shift; cmd_watch "$@" ;;
   pair) cmd_pair ;;
   set-pin) cmd_set_pin ;;
   recompute) cmd_recompute ;;
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
   export) cmd_export ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|pair|set-pin|recompute|db-snapshot|restore|export" >&2; exit 2 ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|export" >&2; exit 2 ;;
 esac

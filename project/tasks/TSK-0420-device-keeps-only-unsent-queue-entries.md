@@ -33,7 +33,7 @@ TSK-0100, because the storage it restricts belongs to the client shell. That que
 
 Amended by ADR-0370, entry 45, on 2026-09-29: the queue task that builds on this store was named here as a dependency, which made the two tasks wait on each other.
 
-Amended on 2026-10-10: the criterion that inspects the store after a played day moved to TSK-0380 as its criterion 5, because only that task fills and flushes the store, and TSK-0380 depends on this task being done. Left here it made the two tasks wait on each other again.
+Amended on 2026-10-10: the criterion that inspects the store after a played day moved to the queue task of EPC-0030 as its criterion 5, because only that task fills and flushes the store, and it depends on this task being done. Left here it made the two tasks wait on each other again.
 
 ## Evidence
 
