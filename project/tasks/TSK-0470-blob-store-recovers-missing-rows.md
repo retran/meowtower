@@ -30,7 +30,11 @@ TSK-0240, because it built the store.
 
 ## Evidence
 
-Not yet.
+Collected on 2026-10-10 on the Mac. Every criterion is met.
+
+- Verbs: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` and `npm run build && docker compose build` each exited 0 at tree 8251f6512ddd, run one by one because `meow-verbs` isn't installed on this Mac. Vitest 384 tests and Playwright 27 tests passed.
+- Criteria 1 to 3, REQ-2210: `tests/integration/blob-recovery.test.ts` fails before the change in 4 of its 5 tests and passes after. Criterion 1 inserts the row with the hash and size and leaves the file's bytes and time. Criterion 2 writes a file that differs from its name and sees `blob_changed` with no row and no event. Criterion 3 runs `recoverBlobs` over a folder with a matching `.webp`, a damaged `.webp` and a `.pdf`, and a source check shows the call stands before `serve({` in `src/server/main.ts`.
+- Criterion 3 runs `recoverBlobs` and not a started server, so the start itself rests on that source-order check.
 
 ## Left alone
 
