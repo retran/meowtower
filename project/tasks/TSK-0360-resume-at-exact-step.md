@@ -32,7 +32,18 @@ TSK-0350, because the resume takes the lease. TSK-0320, because it tests those c
 
 ## Evidence
 
-Not yet.
+Collected on 2026-10-10 on the Mac. Every criterion is met, and the first is met by a synthetic log and a played script, which the notes below say.
+
+- Verbs: `meow-checks run format lint check test build` exited 0 at tree 2918a03661af, with every record current at that tree. Vitest and Playwright both passed; the `test.fail()` self-tests of the response recorder account for the two `✘` lines.
+- Criterion 1, REQ-0206: `tests/integration/resume.test.ts` compares the stored `resume_snapshot` with `resumeFromLog` after each of 12 requests of a played script (0 differences) and after a rebuild from the log alone, and compares the final row of every adventure of the 30-day synthetic log (`tests/helpers/synthetic-log.ts`, 20 tasks a day) with the point derived from its events. It does not compare after every event of that log, because the stored row exists only at the end; the projection and the derivation share the one fold `foldResume`.
+- Criterion 2, REQ-0204: the same file resumes on a computer a task a tablet left with rung 1 shown, and finds the floor, room, slot, `itemId`, view, attempt number and hint levels `GET /api/adventure/current` and the log give.
+- Criteria 3, REQ-0210 and REQ-0212: a task left across a leave and a resume is answered as attempt 1 with the verdict `clean` and `interrupted: true`; an uninterrupted answer and one split only by a rest stop carry `interrupted: false`.
+- Criterion 4, REQ-0214: after a leave and a resume on another device, a hint, an explanation and a second attempt asked again with new `clientSeq` values append no `thread_spent` and no second `hint_shown`, and return the same rung, stock and twin.
+- Criterion 5, REQ-0224: a computer submitting a tablet's task carries `crossDevice: true`, and the device that showed it `false`.
+- `attempt_submitted` gains version 2 with the two flags and an upcast from version 1 that sets both to false (ADR-0020); the test lifts a version 1 payload through it.
+- `POST /api/session/:id/resume`, which the task text names, doesn't exist: ADR-0370 removed it, and SPC-0030 lists only `POST /api/adventure/resume`, so that route alone returns `ResumeOut`. `ResumeOut` leaves out the rewards and `wrapUp`, which TSK-0370 and TSK-0400 add.
+- `tests/unit/projection-class.test.ts` lists `resume_snapshot` among the registered projections, in a commit of its own.
+- No user-facing page changes: nothing in `docs/` describes the resume.
 
 ## Left alone
 
