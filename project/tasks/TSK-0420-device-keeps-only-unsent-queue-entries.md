@@ -37,7 +37,7 @@ Amended on 2026-10-10: the criterion that inspects the store after a played day 
 
 ## Evidence
 
-Collected on 2026-10-10 on the Mac, at commit 2f47113 of the branch `tsk-0420-event-queue-store`; the pull request is not opened yet. Criteria 1 to 3 are met.
+Collected on 2026-10-10 on the Mac, at commit 2f47113 of the branch `tsk-0420-event-queue-store`, in pull request #10. Criteria 1 to 3 are met.
 
 - Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (49 Vitest files with 454 tests, and 49 Playwright tests passed, 1 skipped; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
 - Criterion 1, REQ-6506: `tests/e2e/storage.spec.ts` replaces `navigator.storage.persist` and finds it called on the first launch, in the ipad and computer projects.
