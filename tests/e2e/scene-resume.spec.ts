@@ -108,12 +108,12 @@ function api(request: APIRequestContext) {
           await post(`/api/session/${s}/scene/input`, {
             kind: "choice",
             sceneId: packet.sceneId,
-            choiceId: packet.branches[0].choiceId,
+            choiceId: packet.branches[0]?.choiceId,
           });
         else if (packet.kind === "chest")
           await post(`/api/session/${s}/chest`, {
             chestId: packet.chestId,
-            rewardId: packet.options[0].rewardId,
+            rewardId: packet.options[0]?.rewardId,
           });
       }
       throw new Error("the adventure did not end");
@@ -254,7 +254,7 @@ test("REQ-0218: a second context resumes the chest with the same three options",
   await a.post(`/api/session/${s}/scene/input`, {
     kind: "choice",
     sceneId: scene.sceneId,
-    choiceId: scene.branches[0].choiceId,
+    choiceId: scene.branches[0]?.choiceId,
   });
   const chest = await a.next(s);
   expect(chest.kind).toBe("chest");
