@@ -78,7 +78,8 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: the five verbs exit 0 at commit c37443f; `tests/e2e/scene-resume.spec.ts`, `tests/integration/scene-resume.test.ts`
       closes: REQ-0208, REQ-0216, REQ-0218
       depends: TSK-0360 - it adds these items to the snapshot and the resume that task builds
-- [ ] T-011 [P] TSK-0400 The three-day rule wraps up an adventure after its adventure days and queues its secrets
+- [x] T-011 [P] TSK-0400 The three-day rule wraps up an adventure after its adventure days and queues its secrets
+      evidence: the five verbs exit 0 at commit 5602b8b; `tests/integration/three-day-rule.test.ts`, `tests/unit/game-day.test.ts`
       closes: REQ-0228, REQ-0230, REQ-0232, REQ-0236
       depends: TSK-0360 - `ResumeOut.wrapUp`; TSK-0390 - `threeDayLimit`
 - [ ] T-012 TSK-0410 «Закончить на сегодня» brings a stop offer with no extension for the rest of the game day
