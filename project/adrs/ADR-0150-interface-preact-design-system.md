@@ -2,8 +2,8 @@
 id: ADR-0150
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148, REQ-3200, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3218, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3236, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246, REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3512, REQ-3514, REQ-3516, REQ-3520, REQ-3522, REQ-3524, REQ-3526, REQ-3528, REQ-3530, REQ-0712, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0738, REQ-0764, REQ-0840, REQ-0842]
+revised: 2026-10-10
+addresses: [REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148, REQ-3200, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3218, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246, REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3514, REQ-3516, REQ-3522, REQ-3526, REQ-3528, REQ-3530, REQ-0712, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0738, REQ-0764, REQ-0840, REQ-0842]
 supersedes: []
 ---
 
@@ -140,3 +140,5 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
+
+Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3236 (superseded by REQ-6212, which ADR-0330 addresses); REQ-3512 (superseded by REQ-5604, which ADR-0270 addresses); REQ-3520 (superseded by REQ-6346, which ADR-0340 addresses); REQ-3524 (superseded by REQ-6108, which ADR-0320 addresses).

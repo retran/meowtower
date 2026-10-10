@@ -2,8 +2,8 @@
 id: ADR-0130
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-3600, REQ-3602, REQ-3604, REQ-3606, REQ-3608, REQ-3610, REQ-3612, REQ-3614, REQ-3616, REQ-3618, REQ-3620, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3630, REQ-3632, REQ-3634, REQ-3636, REQ-3638, REQ-3640, REQ-3642, REQ-3644, REQ-3646, REQ-3660, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-1236, REQ-1238, REQ-1546]
+revised: 2026-10-10
+addresses: [REQ-3600, REQ-3602, REQ-3604, REQ-3606, REQ-3608, REQ-3612, REQ-3614, REQ-3616, REQ-3618, REQ-3620, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3630, REQ-3632, REQ-3634, REQ-3636, REQ-3638, REQ-3640, REQ-3642, REQ-3644, REQ-3646, REQ-3660, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-1236, REQ-1238, REQ-1546]
 supersedes: []
 ---
 
@@ -159,3 +159,5 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0410 and ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3610 (superseded by REQ-6928, which ADR-0410 addresses).

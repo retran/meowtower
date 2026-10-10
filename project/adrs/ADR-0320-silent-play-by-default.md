@@ -2,8 +2,8 @@
 id: ADR-0320
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-6100, REQ-6102, REQ-6104, REQ-6106, REQ-6108, REQ-6110, REQ-6112, REQ-6114, REQ-6116, REQ-6118, REQ-6120, REQ-6122, REQ-6124, REQ-6126, REQ-6128, REQ-6130, REQ-6132, REQ-6134, REQ-6136, REQ-6138, REQ-6140, REQ-6142, REQ-6144, REQ-6146, REQ-6148, REQ-6150, REQ-6152, REQ-6154, REQ-6156, REQ-6158, REQ-6160, REQ-6162, REQ-6164]
+revised: 2026-10-10
+addresses: [REQ-6100, REQ-6102, REQ-6104, REQ-6106, REQ-6108, REQ-6110, REQ-6112, REQ-6114, REQ-6116, REQ-6118, REQ-6120, REQ-6122, REQ-6124, REQ-6126, REQ-6128, REQ-6130, REQ-6136, REQ-6138, REQ-6140, REQ-6142, REQ-6144, REQ-6146, REQ-6148, REQ-6150, REQ-6152, REQ-6154, REQ-6156, REQ-6158, REQ-6160, REQ-6162, REQ-6164]
 supersedes: []
 ---
 
@@ -174,3 +174,5 @@ The premortem, written as though it had happened: at stage 0.3 the silent test w
 - Whether she actually rests during an eyes-off exercise. Nothing on the screen can tell, and the reversal condition on quick taps is the only watch.
 
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6132 (superseded by REQ-6430, which ADR-0360 addresses); REQ-6134 (superseded by REQ-6432, which ADR-0360 addresses).

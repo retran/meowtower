@@ -2,8 +2,8 @@
 id: ADR-0400
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-6796, REQ-6800, REQ-6802, REQ-6804, REQ-6806, REQ-6808, REQ-6810, REQ-6812, REQ-6814, REQ-6816, REQ-6818, REQ-6820, REQ-6822, REQ-6824, REQ-6826, REQ-6828, REQ-6830, REQ-6832, REQ-6834, REQ-6836, REQ-6838, REQ-6840, REQ-6842, REQ-6844, REQ-6846, REQ-6848, REQ-6850, REQ-6852, REQ-6854, REQ-6856, REQ-6858, REQ-6860, REQ-6862, REQ-6864, REQ-6866, REQ-6868, REQ-6870, REQ-6872, REQ-6874, REQ-6876, REQ-6878, REQ-6880, REQ-6882, REQ-6884, REQ-6886, REQ-6888, REQ-6890, REQ-6892, REQ-6894, REQ-6896, REQ-6898]
+revised: 2026-10-10
+addresses: [REQ-6796, REQ-6800, REQ-6802, REQ-6804, REQ-6806, REQ-6808, REQ-6810, REQ-6812, REQ-6814, REQ-6816, REQ-6820, REQ-6822, REQ-6824, REQ-6826, REQ-6828, REQ-6830, REQ-6832, REQ-6834, REQ-6836, REQ-6838, REQ-6840, REQ-6842, REQ-6844, REQ-6846, REQ-6848, REQ-6850, REQ-6852, REQ-6854, REQ-6856, REQ-6858, REQ-6860, REQ-6862, REQ-6864, REQ-6866, REQ-6868, REQ-6870, REQ-6872, REQ-6874, REQ-6876, REQ-6878, REQ-6880, REQ-6882, REQ-6884, REQ-6886, REQ-6888, REQ-6890, REQ-6892, REQ-6894, REQ-6896, REQ-6898]
 supersedes: []
 ---
 
@@ -203,3 +203,5 @@ The premortem, written as though it had happened: four months after the check sh
 - The layout of the dynamics screen and the node card: ADR-0150's design system and the screens' specification.
 - Whether a node reached fast and a node reached slowly should get different windows, which Xiong and Beck's data suggest and the owner's fixed window rules out for now.
 - Retention of the exempt nodes, which the fact states of ADR-0290 cover for basic facts and nothing covers for T1 to T4.
+
+Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6818 (superseded by REQ-7502, which ADR-0460 addresses).

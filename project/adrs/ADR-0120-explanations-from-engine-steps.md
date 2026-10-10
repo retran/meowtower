@@ -2,8 +2,8 @@
 id: ADR-0120
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-0600, REQ-0602, REQ-0604, REQ-0606, REQ-0608, REQ-0610, REQ-0612, REQ-0614, REQ-0616, REQ-0618, REQ-0620, REQ-0622, REQ-0624, REQ-0626, REQ-0628, REQ-0630, REQ-0632, REQ-0634, REQ-0636, REQ-0638, REQ-2604, REQ-2606, REQ-2716]
+revised: 2026-10-10
+addresses: [REQ-0600, REQ-0602, REQ-0604, REQ-0606, REQ-0610, REQ-0612, REQ-0614, REQ-0616, REQ-0618, REQ-0620, REQ-0622, REQ-0624, REQ-0628, REQ-0630, REQ-0632, REQ-0634, REQ-0636, REQ-0638, REQ-2604, REQ-2606, REQ-2716]
 supersedes: []
 ---
 
@@ -166,3 +166,5 @@ Premortem, written as though it already happened: by March 2027 she had stopped 
 Amended by ADR-0350, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0608 (superseded by REQ-6500, which ADR-0370 addresses); REQ-0626 (superseded by REQ-6502, which ADR-0370 addresses).

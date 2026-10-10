@@ -2,8 +2,8 @@
 id: ADR-0040
 artifact: adr
 status: approved
-revised: 2026-09-27
-addresses: [REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1212, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1228, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-0700, REQ-0702, REQ-0703, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0701, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-3712]
+revised: 2026-10-10
+addresses: [REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0701, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-3712]
 supersedes: []
 ---
 
@@ -193,3 +193,5 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0410, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-1212 (superseded by REQ-5108, which ADR-0220 addresses); REQ-1228 (superseded by REQ-5898, which ADR-0290 addresses); REQ-0700 (superseded by REQ-5948, which ADR-0300 addresses); REQ-0703 (superseded by REQ-5250, which ADR-0230 addresses).

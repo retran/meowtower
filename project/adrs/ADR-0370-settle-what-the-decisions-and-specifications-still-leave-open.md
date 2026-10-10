@@ -2,8 +2,8 @@
 id: ADR-0370
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-0204, REQ-0208, REQ-0214, REQ-0220, REQ-0222, REQ-0226, REQ-0604, REQ-0608, REQ-0616, REQ-0618, REQ-0626, REQ-0912, REQ-0918, REQ-0926, REQ-0934, REQ-0952, REQ-0956, REQ-0984, REQ-1040, REQ-1400, REQ-1402, REQ-1518, REQ-1520, REQ-1540, REQ-1544, REQ-1548, REQ-1620, REQ-1622, REQ-1662, REQ-1688, REQ-1712, REQ-1716, REQ-1720, REQ-1836, REQ-2108, REQ-2210, REQ-2224, REQ-2230, REQ-2424, REQ-2432, REQ-2434, REQ-2438, REQ-2512, REQ-2648, REQ-2806, REQ-2900, REQ-3008, REQ-3234, REQ-3244, REQ-3316, REQ-3320, REQ-3330, REQ-3402, REQ-3534, REQ-3606, REQ-3608, REQ-3636, REQ-3638, REQ-5068, REQ-5080, REQ-5152, REQ-5154, REQ-5642, REQ-5670, REQ-5796, REQ-5838, REQ-5994, REQ-6158, REQ-6160, REQ-6162, REQ-6234, REQ-6348, REQ-6402, REQ-6414, REQ-6500, REQ-6502, REQ-6504]
+revised: 2026-10-10
+addresses: [REQ-0204, REQ-0208, REQ-0214, REQ-0220, REQ-0222, REQ-0226, REQ-0604, REQ-0616, REQ-0618, REQ-0912, REQ-0918, REQ-0926, REQ-0934, REQ-0952, REQ-0956, REQ-0984, REQ-1040, REQ-1400, REQ-1402, REQ-1518, REQ-1520, REQ-1540, REQ-1544, REQ-1548, REQ-1620, REQ-1622, REQ-1662, REQ-1688, REQ-1712, REQ-1716, REQ-1720, REQ-1836, REQ-2108, REQ-2210, REQ-2224, REQ-2230, REQ-2424, REQ-2432, REQ-2434, REQ-2438, REQ-2512, REQ-2648, REQ-2806, REQ-2900, REQ-3008, REQ-3234, REQ-3244, REQ-3316, REQ-3320, REQ-3330, REQ-3402, REQ-3534, REQ-3606, REQ-3608, REQ-3636, REQ-3638, REQ-5068, REQ-5080, REQ-5152, REQ-5154, REQ-5642, REQ-5670, REQ-5796, REQ-5838, REQ-6158, REQ-6160, REQ-6162, REQ-6234, REQ-6348, REQ-6402, REQ-6414, REQ-6500, REQ-6502, REQ-6504]
 supersedes: []
 ---
 
@@ -186,3 +186,5 @@ The premortem, written as though it had happened: at the stage 0 bake-off no loc
 - The guilt list's phrases beyond REQ-3316's two examples: the content step, reviewed by the parent.
 - REQ-5130's missing twin on a ladder of one rung, which ADR-0220 keeps with its own reversal condition.
 - Whether REQ-1010 gains a raised-mode exception, which ADR-0360 left to its third reversal condition.
+
+Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0608 (superseded by REQ-6500, which this record now addresses); REQ-0626 (superseded by REQ-6502, which this record now addresses); REQ-5994 (superseded by REQ-6504, which this record now addresses).

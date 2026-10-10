@@ -2,8 +2,8 @@
 id: ADR-0460
 artifact: adr
 status: approved
-revised: 2026-09-29
-addresses: [REQ-0784, REQ-0840, REQ-0914, REQ-0916, REQ-0950, REQ-0980, REQ-0988, REQ-1040, REQ-1306, REQ-2726, REQ-3300, REQ-3304, REQ-3306, REQ-3318, REQ-3640, REQ-3644, REQ-5048, REQ-5248, REQ-5278, REQ-5300, REQ-5318, REQ-5414, REQ-5636, REQ-5646, REQ-5812, REQ-5824, REQ-5858, REQ-5864, REQ-5912, REQ-6064, REQ-6324, REQ-6348, REQ-6412, REQ-6424, REQ-6426, REQ-6616, REQ-6664, REQ-6668, REQ-6818, REQ-6842, REQ-6874, REQ-6890, REQ-6936, REQ-6946, REQ-6956, REQ-7106, REQ-7110, REQ-7120, REQ-7122, REQ-7128, REQ-7136, REQ-7148, REQ-7150, REQ-7192, REQ-7202, REQ-7210, REQ-7264, REQ-7360, REQ-7500, REQ-7502, REQ-7504, REQ-7506, REQ-7508, REQ-7510, REQ-7512, REQ-7514]
+revised: 2026-10-10
+addresses: [REQ-0784, REQ-0840, REQ-0914, REQ-0916, REQ-0950, REQ-0988, REQ-1040, REQ-1306, REQ-2726, REQ-3300, REQ-3304, REQ-3306, REQ-3318, REQ-3640, REQ-3644, REQ-5048, REQ-5248, REQ-5278, REQ-5300, REQ-5318, REQ-5414, REQ-5646, REQ-5812, REQ-5824, REQ-5858, REQ-5864, REQ-5912, REQ-6064, REQ-6324, REQ-6348, REQ-6412, REQ-6424, REQ-6616, REQ-6664, REQ-6842, REQ-6874, REQ-6890, REQ-6946, REQ-6956, REQ-7106, REQ-7110, REQ-7120, REQ-7122, REQ-7128, REQ-7136, REQ-7148, REQ-7150, REQ-7202, REQ-7210, REQ-7264, REQ-7500, REQ-7502, REQ-7504, REQ-7506, REQ-7508, REQ-7510, REQ-7512, REQ-7514]
 supersedes: []
 ---
 
@@ -205,3 +205,5 @@ The premortem, written as though it had happened: two months into stage 0.3, `ll
 - The figures the full limits screen adds to `LimitsResult` (entry 36): the decision that builds that screen.
 - Whether the hypothesis label ships at all, which ADR-0450's first reversal condition sends back to research.
 - REQ-7404's open finding on the tested and mapped counts, which waits for the owner as its own requirement.
+
+Amended on 2026-10-10: this record no longer addresses 8 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0980 (superseded by REQ-7506, which this record now addresses); REQ-5636 (superseded by REQ-7508, which this record now addresses); REQ-6426 (superseded by REQ-7510, which this record now addresses); REQ-6668 (superseded by REQ-7500, which this record now addresses); REQ-6818 (superseded by REQ-7502, which this record now addresses); REQ-6936 (superseded by REQ-7512, which this record now addresses); REQ-7192 (superseded by REQ-7514, which this record now addresses); REQ-7360 (superseded by REQ-7504, which this record now addresses).

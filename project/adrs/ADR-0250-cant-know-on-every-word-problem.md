@@ -2,8 +2,8 @@
 id: ADR-0250
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-5400, REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5412, REQ-5414, REQ-5416, REQ-5418, REQ-5420, REQ-5422, REQ-5424, REQ-5426, REQ-5428, REQ-5430, REQ-5432, REQ-5434, REQ-5436, REQ-5438, REQ-5440, REQ-5442, REQ-5444, REQ-5446, REQ-5448, REQ-5450, REQ-5452, REQ-5454, REQ-5456, REQ-5458, REQ-5460, REQ-5462, REQ-5464, REQ-5466, REQ-5470, REQ-5472, REQ-5028, REQ-5166]
+revised: 2026-10-10
+addresses: [REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5414, REQ-5416, REQ-5418, REQ-5420, REQ-5422, REQ-5424, REQ-5426, REQ-5428, REQ-5430, REQ-5432, REQ-5434, REQ-5436, REQ-5438, REQ-5440, REQ-5442, REQ-5444, REQ-5446, REQ-5448, REQ-5450, REQ-5452, REQ-5458, REQ-5460, REQ-5462, REQ-5464, REQ-5466, REQ-5470, REQ-5472, REQ-5028, REQ-5166]
 supersedes: []
 ---
 
@@ -211,3 +211,5 @@ The premortem, written as though it had happened: after three months the report 
 - The Dutch bridge's word list and share: ADR-0210.
 - Surplus or unanswerable problems outside T1 to T4, for example in the Sources track.
 - A tolerance on "about 10 %" and "about 5 %" for the owner's acceptance; the simulation bands in check 5 are mine, chosen at about ±20 % to ±30 % of each share for 2,000 slots.
+
+Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5400 (superseded by REQ-7158, which ADR-0430 addresses); REQ-5412 (superseded by REQ-7160, which ADR-0430 addresses); REQ-5454 (superseded by REQ-7174, which ADR-0430 addresses); REQ-5456 (superseded by REQ-7176, which ADR-0430 addresses).

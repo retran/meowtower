@@ -2,8 +2,8 @@
 id: ADR-0270
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-5600, REQ-5602, REQ-5604, REQ-5606, REQ-5608, REQ-5610, REQ-5612, REQ-5614, REQ-5616, REQ-5618, REQ-5620, REQ-5622, REQ-5624, REQ-5626, REQ-5628, REQ-5630, REQ-5632, REQ-5634, REQ-5636, REQ-5638, REQ-5640, REQ-5642, REQ-5644, REQ-5646, REQ-5648, REQ-5650, REQ-5652, REQ-5654, REQ-5656, REQ-5658, REQ-5660, REQ-5662, REQ-5664, REQ-5666, REQ-5668, REQ-5670, REQ-5672]
+revised: 2026-10-10
+addresses: [REQ-5600, REQ-5602, REQ-5604, REQ-5608, REQ-5610, REQ-5612, REQ-5614, REQ-5616, REQ-5618, REQ-5620, REQ-5622, REQ-5624, REQ-5626, REQ-5628, REQ-5630, REQ-5632, REQ-5634, REQ-5638, REQ-5640, REQ-5642, REQ-5644, REQ-5646, REQ-5648, REQ-5650, REQ-5652, REQ-5654, REQ-5656, REQ-5658, REQ-5660, REQ-5662, REQ-5664, REQ-5666, REQ-5668, REQ-5670, REQ-5672]
 supersedes: []
 ---
 
@@ -210,3 +210,5 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0390, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5606 (superseded by REQ-6422, which ADR-0360 addresses); REQ-5636 (superseded by REQ-7508, which ADR-0460 addresses).

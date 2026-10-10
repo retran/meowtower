@@ -2,8 +2,8 @@
 id: ADR-0410
 artifact: adr
 status: approved
-revised: 2026-09-28
-addresses: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6928, REQ-6930, REQ-6932, REQ-6934, REQ-6936, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980, REQ-6982]
+revised: 2026-10-10
+addresses: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6928, REQ-6930, REQ-6932, REQ-6934, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980, REQ-6982]
 supersedes: []
 ---
 
@@ -224,3 +224,5 @@ The premortem, written as though it had happened: a year in, the transfer sectio
 - A subtype split or renamed by a new graph version. The projection keys pairs by the subtype id of the graph version active at the show, so a new id counts as a new subtype; a mapping from old ids to new ones waits for the first graph change that needs it.
 - Which contexts the first list holds, and how fine they are. The building agent drafts the list and the owner reads it once; one reversal condition watches for a list too coarse, through the count of `template_one_context`, and another for a list too narrow, through «нет подходящего сюжета».
 - A comparison of the transferred share with the mean `expected` as an interpretation line. It needs its own record under ADR-0380's fixed list.
+
+Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6936 (superseded by REQ-7512, which ADR-0460 addresses).
