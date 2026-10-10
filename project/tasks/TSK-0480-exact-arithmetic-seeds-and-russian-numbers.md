@@ -33,7 +33,7 @@ Nothing.
 
 ## Evidence
 
-Collected on 2026-10-10 on the Mac, at commit 3aa57cd of the branch `tsk-0480-exact-arithmetic`; the pull request is named below. Every criterion is met.
+Collected on 2026-10-10 on the Mac, at commit 3aa57cd of the branch `tsk-0480-exact-arithmetic`, in pull request #16. Every criterion is met.
 
 - Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (53 Vitest files with 475 tests, and 59 Playwright tests passed; the two `✘` lines are the response recorder's `test.fail()` self-tests) and `npm run build && docker compose build`.
 - Criterion 1, REQ-1204: `tests/unit/math-q.test.ts` adds 0,1 and 0,2 to exactly `3/10`, divides 79 by 10 to `79/10` and multiplies back to 79, and adds 0,1 a thousand times to exactly 100, which the float sum fails.
