@@ -146,6 +146,26 @@ export const BreakOut = z
   .object({ status: z.enum(["resting", "playing"]) })
   .strict();
 
+/** Opens a session on the open adventure; the reply says where play stopped (REQ-0204). */
+export const ResumeIn = z.object({ clientSeq }).strict();
+export const ResumeOut = z
+  .object({
+    sessionId: z.string(),
+    adventureId: z.string(),
+    floor: z.number().int().positive(),
+    room: z.number().int().positive(),
+    slot: z.number().int().nonnegative(),
+    /** The task left open, or null between two tasks. */
+    itemId: z.string().nullable(),
+    view: View.nullable(),
+    attemptNo: z.union([z.literal(1), z.literal(2)]).nullable(),
+    hintLevels: z.array(z.number().int()),
+    /** The tasks of the open room whose explanation she bought. */
+    explainedItemIds: z.array(z.string()),
+  })
+  .strict();
+export type ResumeOut = z.infer<typeof ResumeOut>;
+
 export const AdventureCurrentOut = z
   .object({
     adventure: z

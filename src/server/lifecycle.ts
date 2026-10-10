@@ -1,4 +1,5 @@
 // Reads of the adventures and sessions projections for the play routes.
+import type { ResumePoint } from "../engine/projections/resume.js";
 import type { Db } from "./database.js";
 
 export type OpenState = "planned" | "active" | "paused";
@@ -36,4 +37,15 @@ export function sessionRow(
     .get(sessionId) as
     { adventure_id: string | null; state: string } | undefined;
   return row && { adventureId: row.adventure_id, state: row.state };
+}
+
+/** The adventure's resume point, or undefined before it has shown a task. */
+export function resumePoint(
+  db: Db,
+  adventureId: string,
+): ResumePoint | undefined {
+  const row = db
+    .prepare("SELECT point FROM resume_snapshot WHERE adventure_id = ?")
+    .get(adventureId) as { point: string } | undefined;
+  return row && (JSON.parse(row.point) as ResumePoint);
 }
