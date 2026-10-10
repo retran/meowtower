@@ -162,10 +162,13 @@ export type Packet = Room | Scene | Chest | { kind: "end" };
 let seq = Date.now();
 export const nextSeq = (): number => ++seq;
 
+/** The device's IANA time zone, which the game day follows (SPC-0090). */
+const zone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 export async function startSession(): Promise<string | null> {
   const { status, body } = await call("/api/session/start", {
     method: "POST",
-    body: JSON.stringify({ mode: "daily", clientSeq: nextSeq() }),
+    body: JSON.stringify({ mode: "daily", zone: zone(), clientSeq: nextSeq() }),
   });
   return status === 200 ? String(body["sessionId"]) : null;
 }
@@ -177,7 +180,7 @@ export async function startSession(): Promise<string | null> {
 export async function resumeAdventure(): Promise<ResumeOut | null> {
   const { status, body } = await call("/api/adventure/resume", {
     method: "POST",
-    body: JSON.stringify({ clientSeq: nextSeq() }),
+    body: JSON.stringify({ zone: zone(), clientSeq: nextSeq() }),
   });
   return status === 200 ? (body as unknown as ResumeOut) : null;
 }
