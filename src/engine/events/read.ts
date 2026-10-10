@@ -172,3 +172,11 @@ export function eventRows(db: Db): Record<string, unknown>[] {
     unknown
   >[];
 }
+
+/** The newest event of a type, or undefined where the log holds none. */
+export function latestEvent(db: Db, type: string): StoredEvent | undefined {
+  const row = db
+    .prepare("SELECT * FROM events WHERE type = ? ORDER BY seq DESC LIMIT 1")
+    .get(type) as Row | undefined;
+  return row && toEvent(row);
+}

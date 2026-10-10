@@ -525,6 +525,9 @@ const breakDefs: EventDef[] = [
       minutes: z.number().int().positive().describe("minutes added"),
     }),
   },
+  // The parent ended the day's play from the Parent Room (REQ-2444); the
+  // envelope's time says which game day it closes.
+  { type: "finish_today", v: 1, schema: obj({}) },
 ];
 
 const tag = obj({
