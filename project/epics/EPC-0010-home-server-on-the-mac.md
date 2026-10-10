@@ -20,17 +20,17 @@ This epic realises ADR-0010: the server in Docker on the Mac, the `./tower` comm
 4. From a second machine on the home network, a request without a device token gets 401; with a revoked token it gets `401 device_revoked`; a pairing code older than 5 minutes is refused; and the sixth wrong code within 15 minutes is refused even when correct. Evidence: the transcript of those four requests from a second machine, from TSK-0040 and TSK-0050.
 5. From a second machine on the home network, `http://<mac-name>.local:8080` refuses the connection, and on the Mac `http://localhost:8080` serves the Parent Room. Evidence: both requests' output, from TSK-0060.
 6. A real iPad, after `./tower ipad-setup` and nothing else, opens `https://<mac-name>.local` with no certificate warning and installs the home-screen app. Evidence: the parent's signed-off iPad checklist with screenshots, from TSK-0020.
-7. `grep -r "sk-or-" dist/client` finds nothing, and a Playwright test records every response the client receives in a full simulated day and finds no key. Evidence: the grep's exit status and the Playwright report, from TSK-0090.
-8. With OpenRouter blocked at the network, a simulated adventure day plays to its finale on library and pool texts. Evidence: the simulation's report, from TSK-0130.
+7. `grep -r "sk-or-" dist/client` finds nothing, and a Playwright test records every response the client receives in a full simulated day and finds no key. Evidence: the grep's exit status and the Playwright report, from TSK-0090, and the Playwright report of the simulated day, from the task of the epic realising ADR-0100 that takes TSK-0130's text.
+8. With OpenRouter blocked at the network, a simulated adventure day plays to its finale on library and pool texts. Evidence: the simulation's report, from the task of the epic realising ADR-0100 that takes TSK-0130's text.
 9. After 40 simulated sessions spread over three months, `data/snapshots/` holds 30 rolling snapshots plus the first of each month, and each snapshot opens in a SQLite client and lists its events. Evidence: the retention test's report, from TSK-0080.
 10. Playwright at 1280x720 with no mouse reaches and operates every control on every screen by keyboard, with a visible focus ring; the parent judges both interfaces screen by screen for REQ-2534. Evidence: the Playwright report and the parent's screen-by-screen judgement, from TSK-0100.
-11. After a device plays a day, its IndexedDB holds at most the unsent entries of its event queue, and its `localStorage` holds no game data. Evidence: the storage inspection test's report, from TSK-0420, once play and the event queue from the epic realising ADR-0030 exist.
+11. After a device plays a day, its IndexedDB holds at most the unsent entries of its event queue, and its `localStorage` holds no game data. Evidence: the storage inspection test's report, from TSK-0420, and its report after a played day, from TSK-0380.
 12. `./meowtower up` refuses with `gateway_unverified` when the hardware address of the recorded or the current gateway is unknown, and the network watch stops both containers within 70 seconds of a gateway change, which `./meowtower status` shows as `wrong_network`. Evidence: the script's and the watch's tests, from TSK-0430.
 13. `POST /api/stage0/write` and `GET /api/stage0/write/:id` answer 404, and the version 0 events they wrote still read back. Evidence: the route test and the rebuild test, from TSK-0440.
 14. `storage_ceiling` counts `data/` together with the live database and its write-ahead log. Evidence: the size check's test, from TSK-0450.
 15. Every requirement ADR-0010 addresses lands in exactly one closed task. Evidence: `meow-method check coverage` with no finding.
 
-**Amended by ADR-0360 and ADR-0370.** Names follow ADR-0200's table: `./tower` means `./meowtower`, `tower` the container `meowtower`, `tower-db` the volume `meowtower-db`, and `tower.sqlite` the file `meowtower.sqlite`. ADR-0370 entry 45 widened the event queue from answers to answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft`, so REQ-6506 superseded REQ-2542, and TSK-0420 replaced TSK-0110 for criterion 11. ADR-0360 entries 2 and 3 and ADR-0370 entry 1 changed what ADR-0010 delivers after TSK-0060, TSK-0030 and TSK-0080 were done, so criteria 12 to 14 and the tasks TSK-0430, TSK-0440 and TSK-0450 were added. ADR-0350's change to `up` and `status` for the local judges, and ADR-0360 entry 1, go to the epic realising ADR-0350, as Not covered says. ADR-0340 changes nothing this epic delivers: its sandbox files sit in the volume `storage_ceiling` already counts once TSK-0450 is done.
+**Amended by ADR-0360 and ADR-0370.** TSK-0130 was dropped on 2026-10-10, as Not covered says. Names follow ADR-0200's table: `./tower` means `./meowtower`, `tower` the container `meowtower`, `tower-db` the volume `meowtower-db`, and `tower.sqlite` the file `meowtower.sqlite`. ADR-0370 entry 45 widened the event queue from answers to answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft`, so REQ-6506 superseded REQ-2542, and TSK-0420 replaced TSK-0110 for criterion 11. ADR-0360 entries 2 and 3 and ADR-0370 entry 1 changed what ADR-0010 delivers after TSK-0060, TSK-0030 and TSK-0080 were done, so criteria 12 to 14 and the tasks TSK-0430, TSK-0440 and TSK-0450 were added. ADR-0350's change to `up` and `status` for the local judges, and ADR-0360 entry 1, go to the epic realising ADR-0350, as Not covered says. ADR-0340 changes nothing this epic delivers: its sandbox files sit in the volume `storage_ceiling` already counts once TSK-0450 is done.
 
 The epic can measure two things before it is finished. The crash test of TSK-0030 reports how many of 100 kills lose a committed write, and ADR-0010 reverses to Node under `launchd` if that number is above 0. `./tower status` reports how long a snapshot of a 1 GB database takes, against the 60-second budget in ADR-0190's Baselines table.
 
@@ -77,7 +77,8 @@ A task is marked in the commit that advances it, never in a later pass, because 
       evidence: meow-verbs exit 0, 331 Vitest and 13 Playwright tests; snapshot after each session, 30 rolling plus monthly kept, both notices (TSK-0080 Evidence)
       closes: REQ-2526, REQ-2530
       depends: TSK-0070 - it reuses the snapshot worker; TSK-0050 - the notices show in the Parent Room
-- [>] T-009 TSK-0090 The OpenRouter key never reaches a client
+- [x] T-009 TSK-0090 The OpenRouter key never reaches a client
+      evidence: the five verbs exit 0 at commit d730d97; the `key_in_client` check and the response recorder (TSK-0090 Evidence); the simulated-day run moved to TSK-0130
       closes: REQ-2504
       depends: TSK-0010 - the key's `.env` and the client bundle must exist
 - [x] T-010 TSK-0100 One client shell with a tablet and a computer interface, chosen by the device and switchable
@@ -92,14 +93,15 @@ A task is marked in the commit that advances it, never in a later pass, because 
       evidence: meow-verbs run format lint check test build exit 0; push_code check passes here and fails 4 fixtures (TSK-0120 Evidence)
       closes: REQ-2544, REQ-2546
       depends: TSK-0010 - the check runs over the code base it starts
-- [ ] T-013 TSK-0130 The adventure plays on without the model service
+- [~] T-013 TSK-0130 The adventure plays on without the model service
+      dropped: its simulated day through the gateway needs the epics realising ADR-0040, ADR-0100 and ADR-0110, none of which is written, so the task could not be done and held the chain; the epic realising ADR-0100 takes its text, and REQ-2506 sits under Not covered until then
       closes: REQ-2506
-      depends: TSK-0050 - the `model_service_down` line shows in the Parent Room; outside this epic, a simulated adventure day, which needs the epics realising ADR-0030, ADR-0040, ADR-0100 and ADR-0110
+      depends: TSK-0050 - the `model_service_down` line shows in the Parent Room
 - [+] T-014 TSK-0420 A device keeps no game data except the unsent entries of its event queue (`src/client/`, `tests/e2e/`)
       added: REQ-6506 superseded REQ-2542, which TSK-0110 closed, so the storage check has to allow the wider queue ADR-0370 defines
       closes: REQ-6506
       depends: TSK-0100 - the storage it restricts belongs to the client shell
-      waits: criterion 4 runs once EPC-0030's queue task fills the store and a simulated day exists, which needs the epics realising ADR-0030 and ADR-0040; that queue task builds on this one's store, so it is no dependency
+      amended: criterion 4 moved to TSK-0380 on 2026-10-10, so this task closes on its first three criteria and TSK-0380 can start
 - [+] T-015 TSK-0430 `up` refuses an unverified gateway, and a network watch stops the containers when the gateway changes (`meowtower`, a launchd plist)
       added: ADR-0360 entry 2 amended REQ-2510's behaviour after TSK-0060 was done
       closes: none; REQ-2510 stays with TSK-0060
@@ -148,6 +150,7 @@ The smallest set of tasks that would test the decision is TSK-0010, TSK-0020 and
 
 ## Not covered
 
+- REQ-2506, the adventure that plays on without the model service, and the run of a simulated day through the gateway that shows no key in any response (REQ-2504's second line), because both need ADR-0100's gateway and the epics realising ADR-0040 and ADR-0110, which aren't written. TSK-0130 holds their criteria and the epic realising ADR-0100 takes it as a task of its own.
 - ADR-0350's change to `./meowtower up`, `down` and `status`, a launchd daemon for each local judge and one status line per judge, and ADR-0360 entry 1, the dedicated standard account that runs each judge and the `./meowtower setup` that creates it, because both belong to the local judges, which the epic realising ADR-0350 builds.
 - The crash test's variant that restarts the Docker virtual machine, which ADR-0010's first reversal condition also counts: TSK-0030 didn't run it, because it needs Docker Desktop restarted by hand. The owner runs it from the stage 0 checklist, and the reversal condition stays unsettled until that run is recorded in TSK-0030's Evidence.
 - A copy of the data off the Mac, because no decision makes one; ADR-0010 leaves it to the owner.

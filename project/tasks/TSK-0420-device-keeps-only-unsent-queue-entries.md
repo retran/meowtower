@@ -2,7 +2,7 @@
 id: TSK-0420
 artifact: task
 status: approved
-revised: 2026-09-29
+revised: 2026-10-10
 epic: EPC-0010
 closes: [REQ-6506]
 issue:
@@ -21,7 +21,7 @@ An entry counts as unsent until the server acknowledges it with a reply SPC-0030
 1. Given a fresh device, when the client launches for the first time, then it calls `navigator.storage.persist()`. Closed by: a Playwright test.
 2. Given the client's source, when `npm run lint` runs, then its static check finds `indexedDB` opened only in the event queue's module, `caches` used only in the service worker, and no `localStorage` or `sessionStorage` write, no `document.cookie` write and no `navigator.storage.getDirectory()` call anywhere in `src/client/` (REQ-6506). Closed by: the lint verb's output, and one fixture per banned use, IndexedDB outside the queue's module, `localStorage`, `caches` outside the service worker, `document.cookie` and the origin-private file system, each of which makes the check fail.
 3. Given a device that has used the client with every sound channel off, when the test inspects its storage, then IndexedDB holds at most the event queue's store, every entry in it is an answer, a grouping set, `looks_set`, `glossary_opened` or `plan_draft` whose `idem_key` the server's log doesn't hold, `localStorage` and `sessionStorage` are empty, `document.cookie` holds no cookie the page can read, the origin-private file system is empty, and the service worker's caches hold only code, which counts scripts, styles, fonts and the language file, and pictures, with no sound file (REQ-6506). Closed by: the storage inspection test's report.
-4. Given a device that has played a simulated day, when the same inspection runs, then the result is the same, and no entry the server acknowledged is left in the store. Closed by: the storage inspection test's report of that run.
+
 
 ## What to do
 
@@ -29,9 +29,11 @@ Create the event queue's IndexedDB store, which owns its schema for all five ent
 
 ## Depends on
 
-TSK-0100, because the storage it restricts belongs to the client shell. Criterion 4 runs once EPC-0030's queue task fills and flushes the store and a simulated day exists, which needs the epics realising ADR-0030 and ADR-0040. That queue task builds on this task's store, so it is no dependency of this one.
+TSK-0100, because the storage it restricts belongs to the client shell. That queue task builds on this task's store, so it is no dependency of this one.
 
 Amended by ADR-0370, entry 45, on 2026-09-29: the queue task that builds on this store was named here as a dependency, which made the two tasks wait on each other.
+
+Amended on 2026-10-10: the criterion that inspects the store after a played day moved to TSK-0380 as its criterion 5, because only that task fills and flushes the store, and TSK-0380 depends on this task being done. Left here it made the two tasks wait on each other again.
 
 ## Evidence
 
