@@ -33,7 +33,7 @@ TSK-0360, because it adds these items to the snapshot and the resume that task b
 
 ## Evidence
 
-Collected on 2026-10-10 on the Mac, at commit c37443f of the branch `tsk-0370-scenes-chests-rewards-resume`; the pull request is not opened yet. Every criterion is met except where the notes below say a state can't be told apart.
+Collected on 2026-10-10 on the Mac, at commit c37443f of the branch `tsk-0370-scenes-chests-rewards-resume`, in pull request #5. Every criterion is met except where the notes below say a state can't be told apart.
 
 - Verbs: `meow-verbs` isn't installed on this Mac, so each command of `.meowpaw/profile.toml` ran by itself and exited 0: `npx prettier --check .`, `npm run lint`, `npx tsc --noEmit`, `npm test` (45 Vitest files with 411 tests, and 37 Playwright tests passed, 1 skipped) and `npm run build && docker compose build`. The two `✘` lines of the Playwright list are the `test.fail()` self-tests of the response recorder.
 - Criterion 1, REQ-0216 and REQ-0218: `tests/e2e/scene-resume.spec.ts` leaves a first context at the task shown, after a hint, after an explanation, after the answer with the parallel task open, and after that answer, then at the scene and at the chest. A second browser context resumes each time and gets the same `itemId`, view, attempt number, hint levels, scene lines, branches and chest options, and `llm_call` and `scene_prepared` counts don't grow. `tests/integration/scene-resume.test.ts` repeats the scene and chest cases on the API.
