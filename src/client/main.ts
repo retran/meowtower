@@ -2,6 +2,7 @@
 // first start picks one from the device, the settings switch it, and a hash
 // route shows each registered screen.
 import { device } from "./api.js";
+import { openQueue } from "./event-queue.js";
 import {
   applyInterface,
   detectInterface,
@@ -11,7 +12,22 @@ import { SCREENS, type Shell } from "./screens.js";
 import { loadStrings, t } from "./strings.js";
 import { STYLE } from "./style.js";
 
+/**
+ * Asks the browser to keep this device's storage, so the unsent entries of the
+ * queue survive pressure (SPC-0010), opens the queue's store, and registers
+ * the service worker that caches code and pictures.
+ */
+function keepStorage(): void {
+  void navigator.storage?.persist?.().catch(() => false);
+  void openQueue().catch(() => undefined);
+  if ("serviceWorker" in navigator)
+    void navigator.serviceWorker
+      .register("/sw.js", { type: "module" })
+      .catch(() => undefined);
+}
+
 async function boot(): Promise<void> {
+  keepStorage();
   const style = document.createElement("style");
   style.textContent = STYLE;
   document.head.append(style);

@@ -52,6 +52,50 @@ export function checkNoKeyInClient(root: string): Finding[] {
   return scan("key_in_client", paths, root, /sk-or-[A-Za-z0-9-]*/);
 }
 
+/**
+ * REQ-6506: a device keeps only the unsent entries of its event queue, so the
+ * client opens IndexedDB only in the queue's module, uses the Cache API only
+ * in the service worker, and writes no localStorage, sessionStorage, cookie or
+ * origin-private file system. Comments are left out of the search.
+ */
+export function checkClientStorage(root: string): Finding[] {
+  const dir = join(root, "src", "client");
+  const queue = join(dir, "event-queue.ts");
+  const worker = join(dir, "sw.ts");
+  const paths = (existsSync(dir) ? files(dir) : []).filter((p) =>
+    p.endsWith(".ts"),
+  );
+  const banned: { pattern: RegExp; only?: string }[] = [
+    { pattern: /\bindexedDB\b/, only: queue },
+    { pattern: /\bcaches\b/, only: worker },
+    { pattern: /\b(?:localStorage|sessionStorage)\.setItem\(/ },
+    { pattern: /\b(?:localStorage|sessionStorage)\.removeItem\(/ },
+    {
+      pattern: /\b(?:localStorage|sessionStorage)(?:\[[^\]]*\]|\.\w+)\s*=(?!=)/,
+    },
+    { pattern: /\bdocument\.cookie\s*=(?!=)/ },
+    { pattern: /\bgetDirectory\s*\(/ },
+  ];
+  return paths.flatMap((path) => {
+    const code = readFileSync(path, "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/(^|[^:])\/\/.*$/gm, "$1");
+    return banned.flatMap(({ pattern, only }) => {
+      if (only === path) return [];
+      const hit = pattern.exec(code);
+      return hit
+        ? [
+            {
+              check: "client_storage",
+              file: relative(root, path),
+              match: hit[0],
+            },
+          ]
+        : [];
+    });
+  });
+}
+
 /** REQ-2544, REQ-2546: the MVP holds no push code at all. */
 export function checkNoPush(root: string): Finding[] {
   const self = join(root, "tools", "static-checks.ts");
@@ -299,6 +343,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const findings = [
     ...checkNoKeyInClient(root),
     ...checkNoPush(root),
+    ...checkClientStorage(root),
     ...checkEventsSqlConfined(root),
     ...checkBlobWritesConfined(root),
     ...checkProjectionsPure(root),
@@ -310,6 +355,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
+      "client_storage searched src/client for IndexedDB outside the queue's module, the Cache API outside the service worker, and localStorage, sessionStorage, cookie and origin-private file system writes; " +
       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
