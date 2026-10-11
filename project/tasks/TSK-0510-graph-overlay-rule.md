@@ -34,7 +34,22 @@ Extend the loader to read the base file and each overlay file by file name order
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program. Each one has its test in `tests/unit/graph-overlay.test.ts`.
+
+1. An overlay with one node that requires a base node is added after the base nodes, and the base's weights, prerequisites and descent targets are unchanged.
+2. Three overlays are refused, each naming the overlay entry: one that reuses N1, one that changes N2's level, and one that adds a subtype to N3.
+3. The version differs with an overlay and equals the base version without one. A stored overlaid graph reads back with the same version and nodes.
+4. An overlay whose two nodes require each other fails rule 1 with a cycle. The base alone gives the count (3 nodes here) and the base version. The one case the criterion names, a cycle through a base node, can't be written, because a base file can't name an overlay node.
+
+The overlay files beside the graph are found by name, in name order, and the base file is not among them.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 3d4ffcf6f283, current at tree a35aa106f88d, revision 553, now 554
+- lint: passed, record f6ae66e79511, current at tree a35aa106f88d, revision 553, now 554
+- check: passed, record ba3528f4bc76, current at tree a35aa106f88d, revision 553, now 554
+- test: passed, record 6b835b3832b5, current at tree a35aa106f88d, revision 553, now 554
+- build: passed, record e40f55f2d6b3, current at tree a35aa106f88d, revision 553, now 554
 
 ## Left alone
 

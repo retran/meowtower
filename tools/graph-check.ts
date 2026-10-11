@@ -7,7 +7,8 @@ import {
   checkSlo,
   GRAPH_FILE,
   GraphInvalid,
-  openGraph,
+  openOverlaid,
+  overlaysBeside,
 } from "../src/engine/graph.js";
 
 const file = process.argv[2] ?? GRAPH_FILE;
@@ -17,8 +18,12 @@ try {
   const fixture = existsSync(FIXTURE)
     ? readFileSync(FIXTURE, "utf8")
     : undefined;
-  const graph = openGraph(readFileSync(file, "utf8"), fixture);
-  checkCounts(graph);
+  const graph = openOverlaid(
+    readFileSync(file, "utf8"),
+    overlaysBeside(file),
+    fixture,
+  );
+  checkCounts(graph.baseOnly());
   checkSlo(graph);
   // Until the real templates exist every subtype is listed as not_generatable (TSK-0509).
   const missing = notGeneratable(graph, []);

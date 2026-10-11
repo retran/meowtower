@@ -6,7 +6,12 @@
 // as `graph_unloadable`. At 1,000 stored versions it raises `graph_versions_many`
 // once and deletes none (REQ-0804, REQ-0808).
 import { readFileSync } from "node:fs";
-import { openCanonical, openGraph, type Graph } from "../engine/graph.js";
+import {
+  openCanonical,
+  openOverlaid,
+  overlaysBeside,
+  type Graph,
+} from "../engine/graph.js";
 import { notGeneratable } from "../engine/catalogue.js";
 import { useVersions, VERSIONS } from "../engine/projections/versions.js";
 import type { Db } from "./database.js";
@@ -59,7 +64,10 @@ export function startGraph(
 ): GraphStart {
   let start: GraphStart;
   try {
-    const graph = openGraph(readFileSync(file, "utf8"));
+    const graph = openOverlaid(
+      readFileSync(file, "utf8"),
+      overlaysBeside(file),
+    );
     const version = graph.graphVersion();
     const stored = latestStored(db);
     const previous = readStored(stored);

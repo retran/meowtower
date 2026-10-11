@@ -4,6 +4,8 @@
 // strict schema, and gives it a version that a comment doesn't change (REQ-0804).
 // The queries are read-only and nothing else reads the file (REQ-0808).
 import { createHash } from "node:crypto";
+import { readdirSync, readFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { parse } from "yaml";
 import { z } from "zod";
 
@@ -322,20 +324,27 @@ export interface Graph {
   changes(
     previous?: Graph,
   ): { node: string; field: string; reason: string; new: boolean }[];
+  /** The base file alone, without any overlay: rules 2 and 3 read only it (SPC-0050, rule 7). */
+  baseOnly(): Graph;
 }
 
 /** The read-only queries over a checked graph. */
-function queriesOver(data: GraphData): Graph {
-  const canonical = canonicalOf(data);
+function queriesOver(
+  data: GraphData,
+  overlaid?: { envelope: string; base: GraphData },
+): Graph {
+  const canonical = overlaid?.envelope ?? canonicalOf(data);
   const version = versionOf(canonical);
   const nodeOf = (id: string): NodeRecord => {
     const node = data.nodes[id];
     if (node === undefined) throw new RangeError(`no_node:${id}`);
     return node;
   };
-  return {
+  const self: Graph = {
     graphVersion: () => version,
     canonical: () => canonical,
+    baseOnly: () =>
+      overlaid === undefined ? self : queriesOver(overlaid.base),
     nodes: () =>
       Object.entries(data.nodes).map(([id, n]) => ({
         id,
@@ -385,19 +394,92 @@ function queriesOver(data: GraphData): Graph {
       }));
     },
   };
+  return self;
+}
+
+/** An overlay file: its name and its text (SPC-0050, rule 7). */
+export interface Overlay {
+  readonly name: string;
+  readonly text: string;
+}
+
+const OverlayFile = z
+  .object({ nodes: z.record(z.string().min(1), Node).default({}) })
+  .strict();
+
+interface OverlayPart {
+  readonly name: string;
+  readonly nodes: Record<string, NodeRecord>;
+}
+
+/** An overlay holds nodes of its own and nothing else: no topics, goals or changes. */
+function overlayPart(name: string, value: unknown): OverlayPart {
+  const parsed = OverlayFile.safeParse(value ?? {});
+  if (!parsed.success)
+    throw new GraphInvalid(
+      `overlay ${name}: ${parsed.error.issues.map(describe).join("; ")}`,
+    );
+  return { name, nodes: parsed.data.nodes };
+}
+
+/**
+ * Adds each overlay's nodes to the base. An overlay entry that reuses a node id of
+ * the base, or of an overlay before it, is refused (SPC-0050, rule 7); the merged
+ * graph then passes the schema, the prerequisite and group checks.
+ */
+function assemble(base: GraphData, parts: readonly OverlayPart[]): Graph {
+  if (parts.length === 0) return queriesOver(base);
+  const nodes: Record<string, NodeRecord> = { ...base.nodes };
+  for (const part of parts)
+    for (const [id, node] of Object.entries(part.nodes)) {
+      if (nodes[id] !== undefined)
+        throw new GraphInvalid(
+          `overlay ${part.name}: entry ${id} reuses a node of the graph (SPC-0050, rule 7)`,
+        );
+      nodes[id] = node;
+    }
+  const merged: GraphData = { ...base, nodes };
+  checkNodes(merged);
+  checkPrereqs(merged);
+  checkGroupOrder(merged);
+  const envelope = canonicalOf({
+    base,
+    overlays: parts.map((p) => ({ name: p.name, nodes: p.nodes })),
+  });
+  return queriesOver(merged, { envelope, base });
+}
+
+/** Loads the base text and its overlays, refusing any part that breaks (ADR-0050). */
+export function openOverlaid(
+  baseText: string,
+  overlays: readonly Overlay[],
+  fixtureText?: string,
+): Graph {
+  const fixture =
+    fixtureText === undefined ? undefined : parseText(fixtureText);
+  const base = checkGraph(parseText(baseText), fixture);
+  const parts = [...overlays]
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+    .map((o) => overlayPart(o.name, parseText(o.text)));
+  return assemble(base, parts);
 }
 
 /** Loads the graph from its YAML text, refusing it with GraphInvalid if it breaks. */
 export function openGraph(text: string, fixtureText?: string): Graph {
-  let value: unknown;
-  try {
-    value = parse(text, { maxAliasCount: 100 });
-  } catch (error) {
-    throw new GraphInvalid(`yaml: ${(error as Error).message}`);
-  }
-  const fixture =
-    fixtureText === undefined ? undefined : parseText(fixtureText);
-  return queriesOver(checkGraph(value ?? {}, fixture));
+  return openOverlaid(text, [], fixtureText);
+}
+
+/** The overlay files beside a graph file: `graph.<name>.yaml`, in name order (rule 7). */
+export function overlaysBeside(file: string): Overlay[] {
+  const dir = dirname(file);
+  const base = basename(file);
+  const stem = base.replace(/\.yaml$/, "");
+  return readdirSync(dir)
+    .filter(
+      (f) => f !== base && f.startsWith(`${stem}.`) && f.endsWith(".yaml"),
+    )
+    .sort()
+    .map((name) => ({ name, text: readFileSync(join(dir, name), "utf8") }));
 }
 
 function parseText(text: string): unknown {
@@ -408,9 +490,21 @@ function parseText(text: string): unknown {
   }
 }
 
-/** Reads a graph back from the canonical text stored for it. */
+/** Reads a graph back from the canonical text stored for it, with its overlays if it has any. */
 export function openCanonical(canonical: string): Graph {
-  return queriesOver(checkGraph(JSON.parse(canonical)));
+  const value = JSON.parse(canonical) as Record<string, unknown>;
+  if ("overlays" in value && "base" in value) {
+    const env = value as {
+      base: unknown;
+      overlays: { name: string; nodes: unknown }[];
+    };
+    const base = checkGraph(env.base);
+    const parts = env.overlays.map((o) =>
+      overlayPart(o.name, { nodes: o.nodes }),
+    );
+    return assemble(base, parts);
+  }
+  return queriesOver(checkGraph(value));
 }
 
 /** The node counts RES-0800 gives per domain, and in total (SPC-0050, rule 2). */
