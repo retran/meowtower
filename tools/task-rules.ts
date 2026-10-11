@@ -71,3 +71,44 @@ export async function loadTaskFacts(root: string): Promise<TaskFacts[]> {
   }
   return found;
 }
+
+/** A template's computation facts: the traps it lists and their explanations. */
+export interface GraphFacts {
+  readonly template: string;
+  readonly traps: readonly string[];
+  readonly explain: Readonly<Record<string, string>>;
+}
+
+/**
+ * Every trap a template lists has a template explanation (REQ-1214). A trap
+ * with none is a finding, named by its template and trap.
+ */
+export function checkExplainCoverage(facts: readonly GraphFacts[]): Finding[] {
+  return facts.flatMap((f) =>
+    f.traps
+      .filter((trap) => f.explain[trap] === undefined)
+      .map((trap) => ({
+        check: "explain_missing",
+        file: f.template,
+        match: trap,
+      })),
+  );
+}
+
+/** Loads the facts every template under src/templates exports as `name`. */
+export async function loadFacts<T>(root: string, name: string): Promise<T[]> {
+  const dir = join(root, "src", "templates");
+  if (!existsSync(dir)) return [];
+  const found: T[] = [];
+  for (const file of readdirSync(dir)
+    .filter((f) => f.endsWith(".ts"))
+    .sort()) {
+    const mod = (await import(pathToFileURL(join(dir, file)).href)) as Record<
+      string,
+      unknown
+    >;
+    const facts = mod[name];
+    if (facts !== undefined) found.push(...(facts as T[]));
+  }
+  return found;
+}
