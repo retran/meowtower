@@ -3,7 +3,7 @@ id: TSK-0506
 artifact: task
 status: approved
 revised: 2026-10-10
-epic: EPC-0050
+epic: EPC-0470
 closes: [REQ-0816, REQ-0818]
 issue:
 ---

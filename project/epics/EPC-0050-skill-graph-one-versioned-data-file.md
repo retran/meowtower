@@ -56,7 +56,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-006 TSK-0505 The graph file is complete: 79 maths nodes, the counts hold whatever an edit says, and the 17 split nodes have both levels (done: pull request 19)
       closes: REQ-0800, REQ-0814, REQ-0850
       depends: TSK-0503 (blocking) - the first third of the file.; TSK-0504 (blocking) - the counts rule needs all 79 nodes.
-- [ ] T-007 [P] TSK-0506 Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says
+- [~] T-007 [P] TSK-0506 (dropped here: moved to EPC-0470 under ADR-0480, which waits for the real templates) Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says
       closes: REQ-0816, REQ-0818
       depends: TSK-0504 (blocking) - the M nodes and their subtypes.
 - [x] T-008 [P] TSK-0507 Every SLO goal at 1F and 1S maps to a subtype of the graph (done: pull request 19)
@@ -65,7 +65,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-009 [P] TSK-0508 A failed subtype descends only to its own prerequisite (done: pull request 19)
       closes: REQ-0810
       depends: TSK-0504 (blocking) - M1, M5, D3 and A3 with their subtype tags exist.
-- [ ] T-010 [P] TSK-0509 The build fails on a template that names a subtype the graph lacks and on a second copy of a level or weight
+- [~] T-010 [P] TSK-0509 (dropped here: moved to EPC-0470 under ADR-0480, which waits for the real templates) The build fails on a template that names a subtype the graph lacks and on a second copy of a level or weight
       closes: REQ-0852, REQ-1244
       depends: TSK-0500 (blocking) - the loader and the query module the checks read.
 - [ ] T-011 [P] TSK-0510 A curriculum overlay adds nodes and links and never changes the base graph
