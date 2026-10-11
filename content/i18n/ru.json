@@ -123,13 +123,20 @@
   "standin.ending.line.2": "Всё, что у тебя есть, остаётся с тобой. Завтра башня придумает новую тропу.",
   "standin.ending.branch": "Идти домой",
   "notation.decimal": ",",
-  "notation.group": "\u00a0",
+  "notation.group": " ",
   "notation.mul": "·",
   "notation.div": ":",
-  "notation.minus": "\u2212",
+  "notation.minus": "−",
   "battle.clean.1": "Узел распутан начисто.",
   "battle.clean.2": "Нить легла ровно.",
   "battle.partial.1": "Нить почти на месте.",
   "battle.alt.1": "Узел ослаблен. Башня показывает другую дорогу.",
-  "battle.alt.2": "Тропа сворачивает. Туман расступается чуть левее."
+  "battle.alt.2": "Тропа сворачивает. Туман расступается чуть левее.",
+  "state.not_mastered": "Пока не освоено",
+  "state.understands": "Понимает",
+  "state.understands_needs_speed": "Понимает, нужна скорость",
+  "state.being_clarified": "Уточняется",
+  "state.stable": "устойчиво",
+  "state.not_checked": "Не проверялся",
+  "state.stretch_not_checked": "Stretch: не проверялся"
 }

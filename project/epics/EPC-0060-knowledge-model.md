@@ -44,7 +44,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0516 The model reads only graded unassisted first attempts as observations, each with a score and a weight
+- [x] T-001 TSK-0516 The model reads only graded unassisted first attempts as observations, each with a score and a weight (done: pull request 20)
       closes: REQ-0914, REQ-0916, REQ-0918, REQ-0930
       depends: none
 - [ ] T-002 TSK-0517 Each pair of node and subtype keeps its own "on her own" estimate, which falls with time and rises after a walkthrough
