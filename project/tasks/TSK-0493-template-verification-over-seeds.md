@@ -1,7 +1,7 @@
 ---
 id: TSK-0493
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: []
@@ -36,7 +36,22 @@ Add the tool and its golden fixtures under `tests/golden/`. ADR-0190's verify co
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement. Two criteria are closed only in part, as the last section says.
+
+1. `npm run verify:templates` runs each of the six stand-in templates (each task and its twin) on 10,000 seeds against the reference solver in `tools/reference/solver.ts`. Every template reports 0 invalid, 0 disagreements, 0 equal traps, 0 foreign numbers, 0 text findings and a 0.00 % fallback share, and the output names each template with its counts.
+2. `tests/unit/golden-templates.test.ts` rebuilds 20 seeds per template and compares the view and parameters byte for byte with `tests/golden/standin.json`. Any change in the output fails it.
+3. The text rules run over the rendered texts and solutions of all 10,000 seeds per template. `tests/unit/verify-templates.test.ts` plants a decimal point, an asterisk, a division slash and an ungrouped four-digit number, and each is caught.
+4. Generation is timed per seed: the 95th percentile is about 0.002 ms against 50 ms. `tests/unit/verify-templates.test.ts` plants a template that always takes a fallback entry, which is reported once at 100 %.
+
+Partly closed: the stand-in templates have fixed numbers and fixed texts, so criteria 1 and 3 check the rendered texts and solutions of every seed but see only one set of words. The check becomes meaningful with the real templates that the later epics bring.
+
+Stages at tree `5360be650cae`, from `meow-checks evidence`:
+
+- format: passed, record 39cc03fbb74c
+- lint: passed, record 6bf29e8b9161
+- check: passed, record ba9d7571e8b9
+- test: passed, record c18f117abb4a
+- build: passed, record cd06d2ed66bb
 
 ## Left alone
 
