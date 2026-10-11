@@ -50,7 +50,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-003 [P] TSK-0482 The checker accepts number answers by value and kind (done: pull request 18)
       closes: REQ-0732, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0778
       depends: TSK-0480 - every comparison is by value in `Q`.
-- [ ] T-004 [P] TSK-0483 The checker accepts time, point, choice, grid and order answers exactly
+- [x] T-004 [P] TSK-0483 The checker accepts time, point, choice, grid and order answers exactly (done: pull request 18)
       closes: REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772
       depends: TSK-0482 - it builds the module and the result type these kinds share.
 - [ ] T-005 [P] TSK-0484 A wrong answer is classified by its trap, and a choice task's wrong options are its traps' answers
