@@ -62,7 +62,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [ ] T-008 [P] TSK-0507 Every SLO goal at 1F and 1S maps to a subtype of the graph
       closes: REQ-0812
       depends: TSK-0505 (blocking) - the full set of subtypes the goals map to.
-- [ ] T-009 [P] TSK-0508 A failed subtype descends only to its own prerequisite
+- [x] T-009 [P] TSK-0508 A failed subtype descends only to its own prerequisite (done: pull request 19)
       closes: REQ-0810
       depends: TSK-0504 (blocking) - M1, M5, D3 and A3 with their subtype tags exist.
 - [ ] T-010 [P] TSK-0509 The build fails on a template that names a subtype the graph lacks and on a second copy of a level or weight
