@@ -68,7 +68,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-009 TSK-0488 A word problem takes one of the seven structures, with numbers fixed before the story (done: pull request 18)
       closes: REQ-0780, REQ-0782, REQ-0786, REQ-0788, REQ-0836
       depends: TSK-0486 - it supplies the graph the structures extend.; TSK-0481 - the generator draws the numbers.
-- [ ] T-010 [P] TSK-0489 `frameMetrics` measures a frame against the limits of the readability table
+- [x] T-010 [P] TSK-0489 `frameMetrics` measures a frame against the limits of the readability table (done: pull request 18)
       closes: REQ-0701, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-3712
       depends: TSK-0480 - it uses `formatQ` to count a number as one word; either task can land first with a stub.
 - [ ] T-011 [P] TSK-0490 The client gets only the view: no solution, no design, no meaning in the id, and pictures drawn from parameters

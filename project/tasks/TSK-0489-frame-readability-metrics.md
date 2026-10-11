@@ -1,7 +1,7 @@
 ---
 id: TSK-0489
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-0701, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-3712]
@@ -33,7 +33,24 @@ Add `src/shared/readability.ts` and a loader for the age band that reads `person
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Fixtures in `tests/unit/readability.test.ts`, eleven tests, one each side of each limit:
+
+1. REQ-0790: a frame of 2 steps passes 3 sentences and fails 4. REQ-0792: a sentence of 14 words passes and 15 fails.
+2. REQ-0794: a question that ends the frame passes, and one inside an earlier sentence fails. REQ-0796: a mean of 10 words passes and 11 fails.
+3. REQ-0798: 10 % of words outside the frequency list passes, and 15 % fails. REQ-0701: 2 risk terms pass and 3 fail.
+4. REQ-3712: with no `personal/player.md`, `ageBand` returns `age_unset`; with a file holding `age_band: 2` it returns `2`. A search of every tracked file finds no `age_band:` assignment outside the reader and the tests.
+
+The frequency list and the risk terms come from the caller, as the task states. `content/frequency.ru.txt` doesn't exist yet, and its building agent hasn't assembled it.
+
+Stages at tree `ec5270b433c7`, from `meow-checks evidence`:
+
+- format: passed, record abda49a35c0d
+- lint: passed, record 5d77da216b87
+- check: passed, record deeffb0f556a
+- test: passed, record 1e36f50f454f
+- build: passed, record c32c4ab5bf51
 
 ## Left alone
 
