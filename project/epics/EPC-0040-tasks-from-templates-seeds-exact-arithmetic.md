@@ -74,7 +74,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-011 [P] TSK-0490 The client gets only the view: no solution, no design, no meaning in the id, and pictures drawn from parameters (done: pull request 18)
       closes: REQ-1218, REQ-1220, REQ-1222, REQ-1230
       depends: TSK-0481 - the view is built from the template contract.
-- [ ] T-012 [P] TSK-0491 The parallel task keeps the difficulty and changes the numbers and the answer
+- [x] T-012 [P] TSK-0491 The parallel task keeps the difficulty and changes the numbers and the answer (done: pull request 18)
       closes: REQ-1224
       depends: TSK-0481 - it reuses the generator's candidate loop and seed streams.
 - [ ] T-013 TSK-0492 The play routes generate each task from a template and a seed, and an unparsed entry stays unanswered
