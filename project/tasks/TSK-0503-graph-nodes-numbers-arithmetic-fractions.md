@@ -1,7 +1,7 @@
 ---
 id: TSK-0503
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0050
 closes: [REQ-0800]
@@ -36,8 +36,25 @@ RES-0800 left three things open, and ADR-0050 chose these defaults, which this t
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program, except the typical groups' review named in the note below.
+
+1. The fixture comparison, rule 3 of `./meowtower graph check`, passes with the 79 nodes, and `tests/unit/graph-content.test.ts` counts the 33 nodes of N, A and F and the stretch nodes N8, A12, A15 and A16 with non-empty gates.
+2. The same file: every subtype has a level and a positive weight, the ordinary weights sum to 1 per node, and each 1F/1S node holds a 1F and a 1S subtype.
+3. The same file: `prereqs("F3")` carries `same-den` on F1 and `line` on N5, and an untagged link carries no tag.
+4. The same file: E1 to E5 are listed with ids and names, and no topic has a prerequisite field.
+
+Typical groups are provisional: each is my reading of the Utrecht learning lines (number, measures and geometry), recorded in `tools/graph-draft/nodes.py`, and needs the parent's review before the first version is final. Subtype ids follow the RES-1200 catalogue ranges.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 20e5f763fdb8, current at tree e931c2a52a3e, revision 418, now 419
+- lint: passed, record 1a500563c2c8, current at tree e931c2a52a3e, revision 418, now 419
+- check: passed, record 6d761a0aaac9, current at tree e931c2a52a3e, revision 418, now 419
+- test: passed, record 81020cfa53ad, current at tree e931c2a52a3e, revision 418, now 419
+- build: passed, record 40603cf51bc4, current at tree e931c2a52a3e, revision 418, now 419
 
 ## Left alone
 
 The nodes of the other six domains, which TSK-0504 and TSK-0505 write in the same file, the SLO goals, which TSK-0507 maps, and the measurement `method` field, which TSK-0506 adds to M4, M5 and M7.
+
+Typical groups: the owner approved the rule that a node's typical group is the group in which the Utrecht learning line first teaches its topic. The first draft put 35 of the 130 prerequisite links into an earlier or the same group than the node they unlock. The rule now raises each node's group to the largest group of its prerequisites, so no link runs backwards. The prerequisite links are unchanged and match RES-0800 (79 of 79 nodes). The group values stay provisional until the parent reviews them. The rule that a node is taught no earlier than its prerequisites is not in SPC-0050, and a decision would have to add it.

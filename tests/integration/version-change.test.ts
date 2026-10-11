@@ -1,9 +1,10 @@
+import { GRAPH_FILE, openGraph } from "../../src/engine/graph.js";
 // TSK-0270: a new model or threshold version recomputes every projection at
 // start-up (REQ-2230), unchanged versions recompute nothing, and a recompute
 // under a new model leaves the game tables as they were while node_snapshots
 // keeps rows under both versions (REQ-2224).
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Database from "better-sqlite3";
@@ -22,10 +23,12 @@ import { openDatabase } from "../../src/server/database.js";
 import { writeSyntheticLog } from "../helpers/synthetic-log.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-versions-"));
-const NONE: Versions = { model: "none", thresholds: "none", graph: "none" };
-const A: Versions = { model: "A", thresholds: "t1", graph: "none" };
-const B: Versions = { model: "B", thresholds: "t1", graph: "none" };
-const A2: Versions = { model: "A", thresholds: "t2", graph: "none" };
+// The graph version the server computes from content/graph.yaml at start (TSK-0500).
+const GRAPH = openGraph(readFileSync(GRAPH_FILE, "utf8")).graphVersion();
+const NONE: Versions = { model: "none", thresholds: "none", graph: GRAPH };
+const A: Versions = { model: "A", thresholds: "t1", graph: GRAPH };
+const B: Versions = { model: "B", thresholds: "t1", graph: GRAPH };
+const A2: Versions = { model: "A", thresholds: "t2", graph: GRAPH };
 afterEach(() => {
   useVersions(NONE);
   useKnowledgeModel(null);
@@ -119,7 +122,7 @@ describe("REQ-2230: a version change recomputes every projection at start-up", (
     expect(meta(live).every((m) => m.model_version === "A")).toBe(true);
     const out = await start(live, B);
     expect(out).toContain(
-      "startup_recompute: now model B, thresholds t1, graph none",
+      `startup_recompute: now model B, thresholds t1, graph ${GRAPH}`,
     );
     const after = meta(live);
     expect(after.map((m) => m.name)).toEqual(
@@ -187,7 +190,7 @@ describe("REQ-2224: a new model changes the estimates, not what the game decided
     expect(snapshots.map((s) => s.model_version)).toEqual(["A", "B"]);
     expect(
       snapshots.every(
-        (s) => s.threshold_version === "t1" && s.graph_version === "none",
+        (s) => s.threshold_version === "t1" && s.graph_version === GRAPH,
       ),
     ).toBe(true);
     expect(snapshots[0]?.n).toBe(snapshots[1]?.n);

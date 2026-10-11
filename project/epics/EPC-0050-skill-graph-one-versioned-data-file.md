@@ -1,7 +1,7 @@
 ---
 id: EPC-0050
 artifact: epic
-status: approved
+status: done
 revised: 2026-10-10
 realises: ADR-0050
 ---
@@ -38,37 +38,37 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0500 The server loads the skill graph from one file, versions it by its content and serves it through one query module
+- [x] T-001 TSK-0500 The server loads the skill graph from one file, versions it by its content and serves it through one query module (done: pull request 19)
       closes: REQ-0804, REQ-0808
       depends: none
-- [ ] T-002 TSK-0501 The validator rejects a cycle, a science topic in a prerequisite and a node dropped for the player's school group
+- [x] T-002 TSK-0501 The validator rejects a cycle, a science topic in a prerequisite and a node dropped for the player's school group (done: pull request 19)
       closes: REQ-0802, REQ-0854
       depends: TSK-0500 (blocking) - it extends the loader and the schema.
-- [ ] T-003 [P] TSK-0502 A graph edit with a stated reason takes effect with no code change, and an edit with none fails
+- [x] T-003 [P] TSK-0502 A graph edit with a stated reason takes effect with no code change, and an edit with none fails (done: pull request 19)
       closes: REQ-0806
       depends: TSK-0500 (blocking) - it reads `graph_versions` and the query module.; TSK-0501 (blocking) - it adds a rule to the validator.
-- [ ] T-004 TSK-0503 The graph file holds the nodes of numbers, arithmetic and fractions with their subtypes, and the five science topics
+- [x] T-004 TSK-0503 The graph file holds the nodes of numbers, arithmetic and fractions with their subtypes, and the five science topics (done: pull request 19)
       closes: REQ-0800
       depends: TSK-0501 (blocking) - the validator checks the nodes as they are written.; TSK-0502 (blocking) - the fixture comparison needs the rows.
-- [ ] T-005 TSK-0504 The graph file holds the nodes of decimals, percentages and measures with their subtypes
+- [x] T-005 TSK-0504 The graph file holds the nodes of decimals, percentages and measures with their subtypes (done: pull request 19)
       closes: REQ-0800
       depends: TSK-0503 (not blocking) - both edit `content/graph.yaml` and the fixture, so merging in order avoids a conflict.; TSK-0501 (blocking) - the validator.; TSK-0502 (blocking) - the fixture comparison.
-- [ ] T-006 TSK-0505 The graph file is complete: 79 maths nodes, the counts hold whatever an edit says, and the 17 split nodes have both levels
+- [x] T-006 TSK-0505 The graph file is complete: 79 maths nodes, the counts hold whatever an edit says, and the 17 split nodes have both levels (done: pull request 19)
       closes: REQ-0800, REQ-0814, REQ-0850
       depends: TSK-0503 (blocking) - the first third of the file.; TSK-0504 (blocking) - the counts rule needs all 79 nodes.
-- [ ] T-007 [P] TSK-0506 Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says
+- [~] T-007 [P] TSK-0506 (dropped here: moved to EPC-0470 under ADR-0480, which waits for the real templates) Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says
       closes: REQ-0816, REQ-0818
       depends: TSK-0504 (blocking) - the M nodes and their subtypes.
-- [ ] T-008 [P] TSK-0507 Every SLO goal at 1F and 1S maps to a subtype of the graph
+- [x] T-008 [P] TSK-0507 Every SLO goal at 1F and 1S maps to a subtype of the graph (done: pull request 19)
       closes: REQ-0812
       depends: TSK-0505 (blocking) - the full set of subtypes the goals map to.
-- [ ] T-009 [P] TSK-0508 A failed subtype descends only to its own prerequisite
+- [x] T-009 [P] TSK-0508 A failed subtype descends only to its own prerequisite (done: pull request 19)
       closes: REQ-0810
       depends: TSK-0504 (blocking) - M1, M5, D3 and A3 with their subtype tags exist.
-- [ ] T-010 [P] TSK-0509 The build fails on a template that names a subtype the graph lacks and on a second copy of a level or weight
+- [~] T-010 [P] TSK-0509 (dropped here: moved to EPC-0470 under ADR-0480, which waits for the real templates) The build fails on a template that names a subtype the graph lacks and on a second copy of a level or weight
       closes: REQ-0852, REQ-1244
       depends: TSK-0500 (blocking) - the loader and the query module the checks read.
-- [ ] T-011 [P] TSK-0510 A curriculum overlay adds nodes and links and never changes the base graph
+- [x] T-011 [P] TSK-0510 A curriculum overlay adds nodes and links and never changes the base graph (done: pull request 19)
       closes: REQ-3812
       depends: TSK-0500 (blocking) - the loader and the version hash.; TSK-0501 (blocking) - the validator whose rules the overlay shares.
 

@@ -3,7 +3,7 @@ id: TSK-0509
 artifact: task
 status: approved
 revised: 2026-10-10
-epic: EPC-0050
+epic: EPC-0470
 closes: [REQ-0852, REQ-1244]
 issue:
 ---
@@ -36,7 +36,22 @@ The templates written for the stand-in until the real nodes have templates name 
 
 ## Evidence
 
-Not yet.
+Criteria 1, 2 and 3 are partly closed and criterion 4 is closed. The task stays open.
+
+1. `tests/unit/catalogue-check.test.ts`: a template that names a missing subtype fails and names the template and the id, and a catalogue row that names a missing node fails and names the row.
+2. Partly closed. `TemplateRefSchema` and `CatalogueRowSchema` refuse a `level` and a `weight`, tested by two fixtures. There's no third fixture: no other content file has a zod schema yet, so a copy of a level in another file isn't tested.
+3. Partly closed. `notGeneratable` lists every subtype with no template: 118 on the real file, and `./meowtower graph check` prints the count. The notice `not_generatable` is raised once per new graph version (`tests/integration/graph-start.test.ts`). The loader doesn't mark each subtype `not_generatable` itself.
+4. `tests/unit/template-type.test.ts`: the template type holds no `level` and no `weight` field.
+
+Also fixed on the way: a parent notice that can't be written (for example, the default `/data/snapshots` folder on a Mac) is now logged as `notice_unwritable`, and the start goes on. Before this, a new notice could stop the server during the crash test.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 5501c8c5f1b1, current at tree dbf22498a0d6, revision 522, now 523
+- lint: passed, record 3c3e85450688, current at tree dbf22498a0d6, revision 522, now 523
+- check: passed, record b54471c13af6, current at tree dbf22498a0d6, revision 522, now 523
+- test: passed, record e4134100a313, current at tree dbf22498a0d6, revision 522, now 523
+- build: passed, record 53881b17ab73, current at tree dbf22498a0d6, revision 522, now 523
 
 ## Left alone
 

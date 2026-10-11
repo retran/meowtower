@@ -9,3 +9,4 @@ canon/
 test-results/
 playwright-report/
 tests/golden/
+.claude/

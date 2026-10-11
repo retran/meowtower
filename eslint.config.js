@@ -29,6 +29,45 @@ export default tseslint.config(
     },
   },
   {
+    // Only the allowed folders may read a node's typical school group (REQ-0854).
+    files: ["src/**/*.ts", "tools/**/*.ts"],
+    ignores: [
+      "src/parent/**",
+      "src/engine/director/cold-start.ts",
+      "src/engine/graph.ts",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["**/engine/graph", "**/engine/graph.js"],
+              importNames: ["typicalGroup"],
+              message:
+                "typicalGroup is read only under src/parent/ and by the Director's cold start (REQ-0854).",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Only the graph loader reads content/graph.yaml (SPC-0050).
+    files: ["src/**/*.ts", "tools/**/*.ts", "tests/**/*.ts"],
+    ignores: ["src/engine/graph.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Literal[value=/graph(\\.[a-z]+)?\\.yaml/]",
+          message:
+            "Only src/engine/graph.ts names the graph file; import GRAPH_FILE instead (SPC-0050).",
+        },
+      ],
+    },
+  },
+  {
     // A task is computed from its seed alone (REQ-1216), so the folders that
     // compute, render and check it import no model gateway and no network.
     files: [
@@ -56,6 +95,12 @@ export default tseslint.config(
               "A task is computed from its seed alone; no network module here (REQ-1216).",
           })),
           patterns: [
+            {
+              group: ["**/engine/graph", "**/engine/graph.js"],
+              importNames: ["typicalGroup"],
+              message:
+                "typicalGroup is read only under src/parent/ and by the Director's cold start (REQ-0854).",
+            },
             {
               group: ["**/gateway", "**/gateway/*"],
               message:

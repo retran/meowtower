@@ -1,7 +1,7 @@
 ---
 id: TSK-0501
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0050
 closes: [REQ-0802, REQ-0854]
@@ -38,7 +38,21 @@ The rules for counts, the fixture and the 17 split nodes need the full file and 
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program. Two parts are closed in a weaker form, as the last section says.
+
+1. `tests/unit/graph-loader.test.ts`: an id that doesn't start with its domain's letter, a `typicalGroup` of 9 and a subtype weight of 0 each fail, naming the node and the field. A prerequisite cycle fails, and the message names its nodes.
+2. The same file: a topic with a prerequisite field fails, and a maths node whose prerequisite is a topic fails. The schema holds no field for either.
+3. Partly closed. `nodes()` lists the file's nodes in file order, and `typicalGroup()` answers from the file. The test doesn't append the two `settings_changed` events the criterion names, because the query reads only the file and never the log.
+4. `tests/unit/lint-graph-rules.test.ts`: a module outside the allowed folders that imports `typicalGroup` fails. The same import under `src/parent/` or in the Director's cold start passes. A module outside the loader that names the graph file fails, and the loader itself passes. The lint verb is clean on the whole repository.
+5. Partly closed. `./meowtower graph check` ran by hand: on the valid file it printed `graph check: g-3fc6ff3ac75b passes rule 1 ...` and exited 0; on a file with level `2F` it printed the rule and the node and exited 1. No test runs the command.
+
+Stages at tree `9d1d7682014b`, from `meow-checks evidence`:
+
+- format: passed, record bf72133fb156, current at tree 9d1d7682014b, revision 361
+- lint: passed, record dd3ed65cc7e8, current at tree 9d1d7682014b, revision 361
+- check: passed, record 3af54e3c90a0, current at tree 9d1d7682014b, revision 361
+- test: passed, record 45b40fd4b279, current at tree 9d1d7682014b, revision 361
+- build: passed, record e86e54231203, current at tree 9d1d7682014b, revision 361
 
 ## Left alone
 

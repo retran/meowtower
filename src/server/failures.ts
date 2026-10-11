@@ -13,17 +13,36 @@ export function useNoticesDir(dir: string | null): void {
   writeFailed = false;
 }
 
+/** The states the parent sees in her notices, not only in the log (TSK-0500). */
+type ParentState =
+  | "log_write_failed"
+  | "graph_invalid"
+  | "graph_versions_many"
+  | "not_generatable";
+const PARENT_STATES = new Set<string>([
+  "log_write_failed",
+  "graph_invalid",
+  "graph_versions_many",
+  "not_generatable",
+]);
+
 export function raise(state: string, detail: string, now = Date.now): void {
   console.error(`${state}: ${detail}`);
-  if (state !== "log_write_failed" || !noticesDir) return;
-  mkdirSync(noticesDir, { recursive: true });
-  const notices = readNotices(noticesDir);
-  notices.log_write_failed = {
-    at: new Date(now()).toISOString(),
-    reason: detail,
-  };
-  writeNotices(noticesDir, notices);
-  writeFailed = true;
+  if (!PARENT_STATES.has(state) || !noticesDir) return;
+  // A notice that can't be written stays in the log: the start goes on (TSK-0509).
+  try {
+    mkdirSync(noticesDir, { recursive: true });
+    const notices = readNotices(noticesDir);
+    notices[state as ParentState] = {
+      at: new Date(now()).toISOString(),
+      reason: detail,
+    };
+    writeNotices(noticesDir, notices);
+  } catch (error) {
+    console.error(`notice_unwritable: ${state}: ${(error as Error).message}`);
+    return;
+  }
+  if (state === "log_write_failed") writeFailed = true;
 }
 
 /** A later write succeeded, so a raised `log_write_failed` clears. */
