@@ -14,6 +14,8 @@ export const FATIGUE_WEIGHT = 0.5;
 export interface LogEvent {
   readonly type: string;
   readonly payload: unknown;
+  /** The time the event was written, as an ISO string; read by the forgetting step. */
+  readonly ts?: string;
 }
 
 export interface Observation {
@@ -25,6 +27,15 @@ export interface Observation {
   /** Weight: 1, or 0.5 with the fatigue mark. */
   readonly w: number;
   readonly timeMs: number;
+  /** The time of the verdict, in milliseconds since the epoch; 0 when the log has none. */
+  readonly at: number;
+  /** The answer form and its number of options, which fix pGuess (ADR-0060). */
+  readonly form: "free" | "choice";
+  readonly options: number;
+  /** The number of solution steps, which fixes pSlip (ADR-0060). */
+  readonly steps: number;
+  /** True when a walkthrough or explanation came before the task (REQ-0920). */
+  readonly postFeedback: boolean;
   /** False when the attempt was interrupted or came from another device (REQ-0224). */
   readonly timeCounts: boolean;
   readonly control: boolean;
@@ -42,6 +53,10 @@ interface Item {
   subtype: string;
   purpose: string;
   parent: string | null;
+  form: "free" | "choice";
+  options: number;
+  steps: number;
+  postFeedback: boolean;
 }
 
 interface Attempt {
@@ -73,7 +88,7 @@ const field = <T>(payload: unknown, key: string): T | undefined =>
 export function observationsOf(log: readonly LogEvent[]): Observations {
   const items = new Map<string, Item>();
   const attempts = new Map<string, Attempt>();
-  const verdicts = new Map<string, { verdict: string }>();
+  const verdicts = new Map<string, { verdict: string; at: number }>();
   const excluded = new Set<string>();
 
   for (const event of log) {
@@ -85,6 +100,10 @@ export function observationsOf(log: readonly LogEvent[]): Observations {
         subtype: field<string>(p, "subtype") ?? "",
         purpose: field<string>(p, "purpose") ?? "",
         parent: field<string>(p, "parentItemId") ?? null,
+        form: field<string>(p, "answerForm") === "choice" ? "choice" : "free",
+        options: field<number>(p, "options") ?? 0,
+        steps: field<number>(p, "steps") ?? 1,
+        postFeedback: field<boolean>(p, "postFeedback") ?? false,
       });
     } else if (event.type === "attempt_submitted" && itemId !== undefined) {
       const input = field<{ submittedMs?: number }>(p, "input");
@@ -99,7 +118,10 @@ export function observationsOf(log: readonly LogEvent[]): Observations {
         rapidGuess: field<boolean>(p, "rapidGuess") ?? false,
       });
     } else if (event.type === "verdict" && itemId !== undefined) {
-      verdicts.set(itemId, { verdict: field<string>(p, "verdict") ?? "" });
+      verdicts.set(itemId, {
+        verdict: field<string>(p, "verdict") ?? "",
+        at: event.ts === undefined ? 0 : Date.parse(event.ts),
+      });
     } else if (event.type === "item_excluded" && itemId !== undefined) {
       excluded.add(itemId);
     } else if (event.type === "item_included" && itemId !== undefined) {
@@ -123,6 +145,11 @@ export function observationsOf(log: readonly LogEvent[]): Observations {
       c: SCORE[verdict] ?? 0,
       w: attempt.fatigue ? FATIGUE_WEIGHT : 1,
       timeMs: attempt.submittedMs,
+      at: verdict === undefined ? 0 : (verdicts.get(itemId)?.at ?? 0),
+      form: item.form,
+      options: item.options,
+      steps: item.steps,
+      postFeedback: item.postFeedback,
       timeCounts: !(attempt.interrupted || attempt.crossDevice),
       control,
     };

@@ -429,8 +429,11 @@ case "${1:-}" in
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
   export) cmd_export ;;
+  model)
+    if [[ "${2:-}" == check ]]; then shift 2; npx tsx tools/model-check.ts "$@"
+    else echo "usage: ./meowtower model check [file]" >&2; exit 2; fi ;;
   graph)
     if [[ "${2:-}" == check ]]; then shift 2; npx tsx tools/graph-check.ts "$@"
     else echo "usage: ./meowtower graph check [file]" >&2; exit 2; fi ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|export|graph check" >&2; exit 2 ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|export|graph check|model check" >&2; exit 2 ;;
 esac
