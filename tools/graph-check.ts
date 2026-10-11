@@ -1,6 +1,7 @@
 // `./meowtower graph check [file]` (SPC-0050, rule 1): loads the skill graph and
 // reports its version, or the failing rule with the node and field it names.
 import { existsSync, readFileSync } from "node:fs";
+import { notGeneratable } from "../src/engine/catalogue.js";
 import {
   checkCounts,
   GRAPH_FILE,
@@ -17,6 +18,9 @@ try {
     : undefined;
   const graph = openGraph(readFileSync(file, "utf8"), fixture);
   checkCounts(graph);
+  // Until the real templates exist every subtype is listed as not_generatable (TSK-0509).
+  const missing = notGeneratable(graph, []);
+  console.log(`not_generatable: ${missing.length} subtypes without a template`);
   console.log(
     `graph check: ${graph.graphVersion()} passes rules 1${fixture === undefined ? "" : ", 2 and 3"} (schema, field checks, levels and prerequisites${fixture === undefined ? "" : ", and the RES-0800 fixture"}) with ${graph.nodes().length} nodes`,
   );
