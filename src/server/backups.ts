@@ -31,6 +31,7 @@ export interface Notices {
   // The graph states the parent sees (TSK-0500).
   graph_invalid?: { at: string; reason: string } | null;
   graph_versions_many?: { at: string; reason: string } | null;
+  not_generatable?: { at: string; reason: string } | null;
 }
 
 const NOTICES = "notices.json";

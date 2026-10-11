@@ -1,6 +1,7 @@
 // The build checks that tie templates and catalogue rows to the graph (ADR-0040,
 // REQ-1244). A template or a catalogue row names a node and a subtype; a name the
 // graph lacks fails the build, and a subtype with no template is `not_generatable`.
+import { z } from "zod";
 import type { Graph } from "./graph.js";
 
 /** A template names the one node and subtype it generates for. */
@@ -65,3 +66,24 @@ export function notGeneratable(
     .flatMap((n) => graph.subtypes(n.id).map((s) => `${n.id}.${s.id}`))
     .filter((key) => !covered.has(key));
 }
+
+/**
+ * The strict schema of a template's declaration: it names a node and a subtype, and
+ * nothing else. A `level` or a `weight` is refused, because the graph holds them
+ * (REQ-0852).
+ */
+export const TemplateRefSchema = z
+  .object({
+    id: z.string().min(1),
+    node: z.string().min(1),
+    subtype: z.string().min(1),
+  })
+  .strict();
+
+/** The strict schema of a catalogue row: a node and the subtypes it lists, no weight (REQ-0852). */
+export const CatalogueRowSchema = z
+  .object({
+    node: z.string().min(1),
+    subtypes: z.array(z.string().min(1)),
+  })
+  .strict();

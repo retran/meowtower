@@ -3,7 +3,12 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { GRAPH_FILE, openGraph } from "../../src/engine/graph.js";
-import { checkCatalogue, notGeneratable } from "../../src/engine/catalogue.js";
+import {
+  CatalogueRowSchema,
+  checkCatalogue,
+  notGeneratable,
+  TemplateRefSchema,
+} from "../../src/engine/catalogue.js";
 
 const small = openGraph(
   readFileSync(
@@ -63,5 +68,37 @@ describe("REQ-1244: a subtype with no template is not_generatable", () => {
       .nodes()
       .reduce((acc, n) => acc + real.subtypes(n.id).length, 0);
     expect(notGeneratable(real, [])).toHaveLength(total);
+  });
+});
+
+describe("REQ-0852: the strict schemas refuse a level or a weight", () => {
+  it("refuses a template declaration that carries a level", () => {
+    expect(() =>
+      TemplateRefSchema.parse({
+        id: "t",
+        node: "N1",
+        subtype: "whole",
+        level: "1F",
+      }),
+    ).toThrow();
+  });
+
+  it("refuses a catalogue row that carries a weight", () => {
+    expect(() =>
+      CatalogueRowSchema.parse({
+        node: "N1",
+        subtypes: ["whole"],
+        weight: 0.5,
+      }),
+    ).toThrow();
+  });
+
+  it("accepts a clean declaration and a clean row", () => {
+    expect(() =>
+      TemplateRefSchema.parse({ id: "t", node: "N1", subtype: "whole" }),
+    ).not.toThrow();
+    expect(() =>
+      CatalogueRowSchema.parse({ node: "N1", subtypes: ["whole"] }),
+    ).not.toThrow();
   });
 });

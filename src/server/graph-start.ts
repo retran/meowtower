@@ -7,6 +7,7 @@
 // once and deletes none (REQ-0804, REQ-0808).
 import { readFileSync } from "node:fs";
 import { openCanonical, openGraph, type Graph } from "../engine/graph.js";
+import { notGeneratable } from "../engine/catalogue.js";
 import { useVersions, VERSIONS } from "../engine/projections/versions.js";
 import type { Db } from "./database.js";
 import { raise } from "./failures.js";
@@ -67,6 +68,14 @@ export function startGraph(
       "INSERT OR IGNORE INTO graph_versions (version, canonical, stored_at) VALUES (?, ?, ?)",
     ).run(version, graph.canonical(), now().toISOString());
     const after = storedCount(db);
+    // A new version tells the parent once which subtypes have no template (TSK-0509).
+    if (after > before) {
+      const missing = notGeneratable(graph, []).length;
+      raise(
+        "not_generatable",
+        `${missing} subtypes of graph ${version} have no template`,
+      );
+    }
     if (after > before && after >= GRAPH_VERSIONS_MANY)
       raise(
         "graph_versions_many",

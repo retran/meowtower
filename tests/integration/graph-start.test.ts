@@ -144,3 +144,17 @@ describe("REQ-0806: after a restart, only the change line added since the last v
     db.close();
   });
 });
+
+describe("TSK-0509: the parent is told once per graph version which subtypes have no template", () => {
+  it("raises not_generatable on a new version and not again on a second start", () => {
+    const db = freshDb();
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    startGraph(db, fixture);
+    startGraph(db, fixture);
+    const raised = error.mock.calls.filter(([line]) =>
+      String(line).startsWith("not_generatable"),
+    );
+    expect(raised).toHaveLength(1);
+    db.close();
+  });
+});
