@@ -1,7 +1,7 @@
 ---
 id: TSK-0502
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0050
 closes: [REQ-0806]
@@ -35,7 +35,24 @@ Add `changes()` to the query module, marking a line new when the previous stored
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program.
+
+1. REQ-0806, `tests/unit/graph-drift.test.ts`: a level changed in a copy with no changes line is refused as `graph_drift`, and the message names the node and the field. The same copy with a changes line naming that node and field passes and has a new version.
+2. The same file: a changes line excuses only the field it names. A copy that also changes that node's prerequisites is refused.
+3. `tests/integration/graph-start.test.ts`: after a restart on a file that gains a changes line and a weight change, `changes(previous)` marks the earlier line not new and the new line new. The two starts read the same file names but different stored contents, so no source file changed between them.
+
+Two limits, which are the task text's own, and one thing to know:
+- Rule 3 runs in `./meowtower graph check` and in the tests, where `tests/fixtures/res-0800.yaml` exists. The server doesn't pass the fixture at start, because the fixture isn't shipped in the image.
+- A fixture node that the base file lacks is skipped by rule 3. The node count is TSK-0503's rule, and until its nodes are written the base file has none to compare.
+- The fixture starts with the three nodes of the small test graph and gains its rows with TSK-0503 to TSK-0505.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record f3a8d08c8d21, current at tree 68b2bd00b42d, revision 373, now 374
+- lint: passed, record 359e167924d4, current at tree 68b2bd00b42d, revision 373, now 374
+- check: passed, record 3c977459ebeb, current at tree 68b2bd00b42d, revision 373, now 374
+- test: passed, record 47aafe429419, current at tree 68b2bd00b42d, revision 373, now 374
+- build: passed, record 7fff578ace77, current at tree 68b2bd00b42d, revision 373, now 374
 
 ## Left alone
 

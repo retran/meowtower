@@ -44,7 +44,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-002 TSK-0501 The validator rejects a cycle, a science topic in a prerequisite and a node dropped for the player's school group (done: pull request 19)
       closes: REQ-0802, REQ-0854
       depends: TSK-0500 (blocking) - it extends the loader and the schema.
-- [ ] T-003 [P] TSK-0502 A graph edit with a stated reason takes effect with no code change, and an edit with none fails
+- [x] T-003 [P] TSK-0502 A graph edit with a stated reason takes effect with no code change, and an edit with none fails (done: pull request 19)
       closes: REQ-0806
       depends: TSK-0500 (blocking) - it reads `graph_versions` and the query module.; TSK-0501 (blocking) - it adds a rule to the validator.
 - [ ] T-004 TSK-0503 The graph file holds the nodes of numbers, arithmetic and fractions with their subtypes, and the five science topics
