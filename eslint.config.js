@@ -62,6 +62,11 @@ export default tseslint.config(
                 "The model gateway never computes a number or an answer (REQ-1216).",
             },
           ],
+        },
+      ],
+    },
+  },
+  {
     // Only the allowed folders may read a node's typical school group (REQ-0854).
     files: ["src/**/*.ts", "tools/**/*.ts"],
     ignores: [
