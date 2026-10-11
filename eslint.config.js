@@ -29,44 +29,6 @@ export default tseslint.config(
     },
   },
   {
-    // A task is computed from its seed alone (REQ-1216), so the folders that
-    // compute, render and check it import no model gateway and no network.
-    files: [
-      "src/math/**/*.ts",
-      "src/templates/**/*.ts",
-      "src/render/**/*.ts",
-      "src/shared/answer.ts",
-    ],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          paths: [
-            "node:http",
-            "node:https",
-            "node:http2",
-            "node:net",
-            "node:tls",
-            "node:dns",
-            "node:dgram",
-            "undici",
-          ].map((name) => ({
-            name,
-            message:
-              "A task is computed from its seed alone; no network module here (REQ-1216).",
-          })),
-          patterns: [
-            {
-              group: ["**/gateway", "**/gateway/*"],
-              message:
-                "The model gateway never computes a number or an answer (REQ-1216).",
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
     // Only the allowed folders may read a node's typical school group (REQ-0854).
     files: ["src/**/*.ts", "tools/**/*.ts"],
     ignores: [
@@ -101,6 +63,50 @@ export default tseslint.config(
           selector: "Literal[value=/graph(\\.[a-z]+)?\\.yaml/]",
           message:
             "Only src/engine/graph.ts names the graph file; import GRAPH_FILE instead (SPC-0050).",
+        },
+      ],
+    },
+  },
+  {
+    // A task is computed from its seed alone (REQ-1216), so the folders that
+    // compute, render and check it import no model gateway and no network.
+    files: [
+      "src/math/**/*.ts",
+      "src/templates/**/*.ts",
+      "src/render/**/*.ts",
+      "src/shared/answer.ts",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            "node:http",
+            "node:https",
+            "node:http2",
+            "node:net",
+            "node:tls",
+            "node:dns",
+            "node:dgram",
+            "undici",
+          ].map((name) => ({
+            name,
+            message:
+              "A task is computed from its seed alone; no network module here (REQ-1216).",
+          })),
+          patterns: [
+            {
+              group: ["**/engine/graph", "**/engine/graph.js"],
+              importNames: ["typicalGroup"],
+              message:
+                "typicalGroup is read only under src/parent/ and by the Director's cold start (REQ-0854).",
+            },
+            {
+              group: ["**/gateway", "**/gateway/*"],
+              message:
+                "The model gateway never computes a number or an answer (REQ-1216).",
+            },
+          ],
         },
       ],
     },
