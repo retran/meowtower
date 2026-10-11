@@ -1,7 +1,7 @@
 ---
 id: TSK-0516
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0914, REQ-0916, REQ-0918, REQ-0930]
