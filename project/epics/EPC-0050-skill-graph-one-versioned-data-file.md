@@ -47,10 +47,10 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-003 [P] TSK-0502 A graph edit with a stated reason takes effect with no code change, and an edit with none fails (done: pull request 19)
       closes: REQ-0806
       depends: TSK-0500 (blocking) - it reads `graph_versions` and the query module.; TSK-0501 (blocking) - it adds a rule to the validator.
-- [ ] T-004 TSK-0503 The graph file holds the nodes of numbers, arithmetic and fractions with their subtypes, and the five science topics
+- [x] T-004 TSK-0503 The graph file holds the nodes of numbers, arithmetic and fractions with their subtypes, and the five science topics (done: pull request 19)
       closes: REQ-0800
       depends: TSK-0501 (blocking) - the validator checks the nodes as they are written.; TSK-0502 (blocking) - the fixture comparison needs the rows.
-- [ ] T-005 TSK-0504 The graph file holds the nodes of decimals, percentages and measures with their subtypes
+- [x] T-005 TSK-0504 The graph file holds the nodes of decimals, percentages and measures with their subtypes (done: pull request 19)
       closes: REQ-0800
       depends: TSK-0503 (not blocking) - both edit `content/graph.yaml` and the fixture, so merging in order avoids a conflict.; TSK-0501 (blocking) - the validator.; TSK-0502 (blocking) - the fixture comparison.
 - [ ] T-006 TSK-0505 The graph file is complete: 79 maths nodes, the counts hold whatever an edit says, and the 17 split nodes have both levels

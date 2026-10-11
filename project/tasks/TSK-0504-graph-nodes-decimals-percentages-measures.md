@@ -1,7 +1,7 @@
 ---
 id: TSK-0504
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0050
 closes: [REQ-0800]
@@ -36,7 +36,21 @@ M4, M5 and M7 hold their measurement subtypes with the `method` field in TSK-050
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program, except the typical groups' review named in the note below.
+
+1. The fixture comparison passes, and `tests/unit/graph-content.test.ts` counts the 28 nodes of D, P and M and gives the stretch nodes D7, P7, M11 and M14 non-empty gates.
+2. The same file: each subtype has a level and a positive weight, the weights of each node sum to 1, and D4, D6, P5, P6 and M4 hold a 1F and a 1S subtype.
+3. The same file: `M1.decimal` points to D3 and `M5.grid` to A3, and the other tags are carried as the record gives them.
+
+Typical groups are provisional: each is my reading of the Utrecht learning lines (number, measures and geometry), recorded in `tools/graph-draft/nodes.py`, and needs the parent's review before the first version is final. Subtype ids follow the RES-1200 catalogue ranges.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 20e5f763fdb8, current at tree e931c2a52a3e, revision 418, now 419
+- lint: passed, record 1a500563c2c8, current at tree e931c2a52a3e, revision 418, now 419
+- check: passed, record 6d761a0aaac9, current at tree e931c2a52a3e, revision 418, now 419
+- test: passed, record 81020cfa53ad, current at tree e931c2a52a3e, revision 418, now 419
+- build: passed, record 40603cf51bc4, current at tree e931c2a52a3e, revision 418, now 419
 
 ## Left alone
 
