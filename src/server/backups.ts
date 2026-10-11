@@ -28,6 +28,9 @@ export interface Notices {
   recompute_slow?: { at: string; ms: number } | null;
   log_large?: { at: string; bytes: number } | null;
   log_write_failed?: { at: string; reason: string } | null;
+  // The graph states the parent sees (TSK-0500).
+  graph_invalid?: { at: string; reason: string } | null;
+  graph_versions_many?: { at: string; reason: string } | null;
 }
 
 const NOTICES = "notices.json";

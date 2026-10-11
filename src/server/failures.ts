@@ -13,17 +13,25 @@ export function useNoticesDir(dir: string | null): void {
   writeFailed = false;
 }
 
+/** The states the parent sees in her notices, not only in the log (TSK-0500). */
+type ParentState = "log_write_failed" | "graph_invalid" | "graph_versions_many";
+const PARENT_STATES = new Set<string>([
+  "log_write_failed",
+  "graph_invalid",
+  "graph_versions_many",
+]);
+
 export function raise(state: string, detail: string, now = Date.now): void {
   console.error(`${state}: ${detail}`);
-  if (state !== "log_write_failed" || !noticesDir) return;
+  if (!PARENT_STATES.has(state) || !noticesDir) return;
   mkdirSync(noticesDir, { recursive: true });
   const notices = readNotices(noticesDir);
-  notices.log_write_failed = {
+  notices[state as ParentState] = {
     at: new Date(now()).toISOString(),
     reason: detail,
   };
   writeNotices(noticesDir, notices);
-  writeFailed = true;
+  if (state === "log_write_failed") writeFailed = true;
 }
 
 /** A later write succeeded, so a raised `log_write_failed` clears. */

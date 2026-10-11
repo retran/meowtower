@@ -1,0 +1,5 @@
+# The skill graph (SPC-0050). It holds no node until TSK-0503 fills it.
+nodes: {}
+topics: []
+sloGoals: []
+changes: []

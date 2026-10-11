@@ -6,6 +6,7 @@ import { snapshotNow } from "./snapshots.js";
 import { backupAfterSession } from "./backups.js";
 import { checkLogSize, runRecompute } from "./recompute.js";
 import { readContentVersions } from "./versions.js";
+import { startGraph } from "./graph-start.js";
 import { raise, useNoticesDir } from "./failures.js";
 import { recoverBlobs } from "../engine/blobs/store.js";
 import {
@@ -14,6 +15,9 @@ import {
   versionsChanged,
 } from "../engine/projections/registry.js";
 import { dirname, join } from "node:path";
+
+const GRAPH_DEFAULT = new URL("../../content/graph.yaml", import.meta.url)
+  .pathname;
 
 const dbPath =
   process.env["MEOWTOWER_DB"] ?? "/var/lib/meowtower/meowtower.sqlite";
@@ -33,6 +37,15 @@ try {
   });
 } catch (err) {
   // A missing guard or a refused migration stops the start (SPC-0020).
+  console.error(err instanceof Error ? err.message : String(err));
+  process.exit(1);
+}
+// The skill graph starts the server (ADR-0050): a broken file with no stored
+// version stops the start as graph_unloadable, and otherwise the last valid
+// version is served (TSK-0500).
+try {
+  startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_DEFAULT);
+} catch (err) {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);
 }
