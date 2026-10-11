@@ -191,6 +191,18 @@ function checkMethods(id: string, node: NodeRecord): void {
   }
 }
 
+/** ADR-0470: no node is taught before any of its prerequisites. */
+function checkGroupOrder(data: GraphData): void {
+  for (const [id, node] of Object.entries(data.nodes))
+    for (const prereq of node.prereqs) {
+      const before = data.nodes[prereq.node];
+      if (before !== undefined && before.typicalGroup > node.typicalGroup)
+        throw new GraphInvalid(
+          `node ${id}: typicalGroup ${node.typicalGroup} is before its prerequisite ${prereq.node} (group ${before.typicalGroup}) (ADR-0470)`,
+        );
+    }
+}
+
 /** The field values rule 3 compares, as one string per field. */
 const fieldsOf = (
   node: NodeRecord,
@@ -268,6 +280,7 @@ export function checkGraph(value: unknown, fixture?: unknown): GraphData {
     throw new GraphInvalid(parsed.error.issues.map(describe).join("; "));
   checkNodes(parsed.data);
   checkPrereqs(parsed.data);
+  checkGroupOrder(parsed.data);
   if (fixture !== undefined) {
     const expected = GraphFile.safeParse(fixture);
     if (!expected.success)
