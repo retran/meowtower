@@ -65,7 +65,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-008 TSK-0487 Entered steps are matched against every valid solution path and classified (done: pull request 18)
       closes: REQ-0705, REQ-0707, REQ-0709, REQ-0713, REQ-0774, REQ-0776, REQ-0848
       depends: TSK-0486 - the valid graphs and the structure traps come from the graph module.; TSK-0482 - a step's value is compared in `Q`.
-- [ ] T-009 TSK-0488 A word problem takes one of the seven structures, with numbers fixed before the story
+- [x] T-009 TSK-0488 A word problem takes one of the seven structures, with numbers fixed before the story (done: pull request 18)
       closes: REQ-0780, REQ-0782, REQ-0786, REQ-0788, REQ-0836
       depends: TSK-0486 - it supplies the graph the structures extend.; TSK-0481 - the generator draws the numbers.
 - [ ] T-010 [P] TSK-0489 `frameMetrics` measures a frame against the limits of the readability table

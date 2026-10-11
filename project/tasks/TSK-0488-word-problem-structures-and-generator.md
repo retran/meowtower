@@ -1,7 +1,7 @@
 ---
 id: TSK-0488
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-0780, REQ-0782, REQ-0786, REQ-0788, REQ-0836]
@@ -35,7 +35,25 @@ Add `src/templates/word-problem.ts` for the structure contract and `src/render/m
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Tests in `tests/unit/word-problem.test.ts`, ten tests, and the check's fixture:
+
+1. REQ-0780: the catalogue has exactly the seven structures, and `checkWordStructures` in `tools/word-rules.ts` fails `guess` and names `fixture.story`. The verify group reads `wordFacts` from `src/templates` and reads 0 templates until one exists.
+2. REQ-0782: `compose` hands the frame chooser the numbers and the answer already fixed, so a frame chosen first has no answer to receive. With no allowed node it returns `no_fluent_numbers`.
+3. REQ-0786: a property test over 10,000 seeds: each T4 problem has exactly one number its solution doesn't use.
+4. REQ-0788: `nounForm` gives зелье, зелья and зелий for 1, 3 and 5, and matches the Russian rule for every number from 1 to 100.
+5. REQ-0836: `modelChoice` gives four notes, one correct and three from the traps, each drawn as an SVG bar. `opensWithModel` holds for exactly 250 of 1,000 seeds.
+
+Not closed here: the structures are declared and checked, but the templates that use them come with the epics that realise the skill graph (ADR-0050), so no real word problem yet takes a structure.
+
+Stages at tree `73a4331e6f6c`, from `meow-checks evidence`:
+
+- format: passed, record 496032691484
+- lint: passed, record 67add1402d63
+- check: passed, record 9147b60f564c
+- test: passed, record 7628691f855e
+- build: passed, record 5344d9153c12
 
 ## Left alone
 
