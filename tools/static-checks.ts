@@ -340,6 +340,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { checkParamsLanguageFree, loadTemplateSchemas } =
     await import("./params-language-free.js");
   const templates = await loadTemplateSchemas(root);
+  const { checkTaskRules, loadTaskFacts } = await import("./task-rules.js");
+  const taskFacts = await loadTaskFacts(root);
   const findings = [
     ...checkNoKeyInClient(root),
     ...checkNoPush(root),
@@ -351,6 +353,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkGameProjectionImports(root),
     ...checkExplainCacheConfined(root),
     ...checkParamsLanguageFree(templates),
+    ...checkTaskRules(taskFacts),
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
@@ -358,6 +361,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       "client_storage searched src/client for IndexedDB outside the queue's module, the Cache API outside the service worker, and localStorage, sessionStorage, cookie and origin-private file system writes; " +
       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
+      `task_rules read ${taskFacts.length} templates' task facts in src/templates for choice options, comparison forms and free input; ` +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
