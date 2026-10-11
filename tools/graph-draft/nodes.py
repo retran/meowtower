@@ -47,6 +47,18 @@ SUB = {
  "S1":["tables"],"S2":["bar-line"],"S3":["mean","missing"],"S4":["pie"],"S5":["global"],"S6":["patterns"],"S7":["median-mode"],
  "T1":["one-step"],"T2":["two-step"],"T3":["three-step"],"T4":["four-step"],
 }
+# A node is taught no earlier than its prerequisites: raise its group to the
+# largest group of its prerequisites until no link runs backwards (TSK-0503).
+def _raise_groups():
+    changed = True
+    while changed:
+        changed = False
+        for node in rows:
+            for pid, _ in prereqs(node):
+                if GROUP[pid] > GROUP[node]:
+                    GROUP[node] = GROUP[pid]
+                    changed = True
+
 # Measurement subtypes with their level and method (SPC-0050, rule 4).
 METHOD_SPEC = {
  "M4": [("rect-squares","1F","squares"),("rect-sides","1F","sides"),("not-rect","1S","formula"),("side-from-perimeter","1S","formula"),("same-area","1S","formula")],
@@ -132,6 +144,7 @@ def emit(out):
 
 if __name__ == "__main__":
     assert len(rows) == 79, len(rows)
+    _raise_groups()
     text = "\n".join(emit([]))
     Path(sys.argv[1]).write_text(text + "\n", encoding="utf-8")
     print(f"wrote {len(rows)} nodes to {sys.argv[1]}")

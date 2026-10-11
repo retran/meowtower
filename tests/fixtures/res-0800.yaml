@@ -29,7 +29,7 @@ nodes:
   N4:
     domain: N
     level: "1F"
-    typicalGroup: 4
+    typicalGroup: 5
     subtypes:
       - { id: round, level: "1F", weight: 0.5 }
       - { id: estimate, level: "1F", weight: 0.5 }
@@ -38,7 +38,7 @@ nodes:
   N5:
     domain: N
     level: "1F"
-    typicalGroup: 3
+    typicalGroup: 5
     subtypes:
       - { id: point, level: "1F", weight: 0.5 }
       - { id: scale, level: "1F", weight: 0.5 }
@@ -84,7 +84,7 @@ nodes:
   A2:
     domain: A
     level: "1F"
-    typicalGroup: 2
+    typicalGroup: 3
     subtypes:
       - { id: mental-100, level: "1F", weight: 1.0 }
     prereqs:
@@ -109,7 +109,7 @@ nodes:
   A5:
     domain: A
     level: "1F"
-    typicalGroup: 3
+    typicalGroup: 5
     subtypes:
       - { id: column, level: "1F", weight: 1.0 }
     prereqs:
@@ -118,7 +118,7 @@ nodes:
   A6:
     domain: A
     level: "1F"
-    typicalGroup: 4
+    typicalGroup: 5
     subtypes:
       - { id: by-one-digit, level: "1F", weight: 1.0 }
     prereqs:
@@ -231,7 +231,7 @@ nodes:
   F1:
     domain: F
     level: "1F"
-    typicalGroup: 3
+    typicalGroup: 4
     subtypes:
       - { id: share, level: "1F", weight: 1.0 }
     prereqs:
@@ -239,7 +239,7 @@ nodes:
   F2:
     domain: F
     level: "1F"
-    typicalGroup: 4
+    typicalGroup: 5
     subtypes:
       - { id: fraction-of, level: "1F", weight: 1.0 }
     prereqs:
@@ -248,7 +248,7 @@ nodes:
   F3:
     domain: F
     level: "1F/1S"
-    typicalGroup: 4
+    typicalGroup: 5
     subtypes:
       - { id: same-den, level: "1F", weight: 0.5 }
       - { id: line, level: "1S", weight: 0.5 }
@@ -305,7 +305,7 @@ nodes:
   D1:
     domain: D
     level: "1F"
-    typicalGroup: 4
+    typicalGroup: 5
     subtypes:
       - { id: place-value, level: "1F", weight: 1.0 }
     prereqs:
@@ -372,7 +372,7 @@ nodes:
   P1:
     domain: P
     level: "1F"
-    typicalGroup: 5
+    typicalGroup: 6
     subtypes:
       - { id: half-tenth, level: "1F", weight: 0.5 }
       - { id: decimal, level: "1F", weight: 0.5 }
@@ -460,7 +460,7 @@ nodes:
   M3:
     domain: M
     level: "1F"
-    typicalGroup: 3
+    typicalGroup: 5
     subtypes:
       - { id: whole, level: "1F", weight: 0.5 }
       - { id: cents, level: "1F", weight: 0.5 }
@@ -470,7 +470,7 @@ nodes:
   M4:
     domain: M
     level: "1F/1S"
-    typicalGroup: 3
+    typicalGroup: 6
     subtypes:
       - { id: rect-squares, level: "1F", weight: 0.2, method: squares }
       - { id: rect-sides, level: "1F", weight: 0.2, method: sides }
@@ -483,7 +483,7 @@ nodes:
   M5:
     domain: M
     level: "1F/1S"
-    typicalGroup: 5
+    typicalGroup: 6
     subtypes:
       - { id: grid, level: "1F", weight: 0.333333, method: squares }
       - { id: sides, level: "1F", weight: 0.333333, method: sides }
@@ -561,7 +561,7 @@ nodes:
   M13:
     domain: M
     level: "1F"
-    typicalGroup: 2
+    typicalGroup: 5
     subtypes:
       - { id: instruments, level: "1F", weight: 1.0 }
     prereqs:
@@ -639,7 +639,7 @@ nodes:
   S1:
     domain: S
     level: "1F"
-    typicalGroup: 2
+    typicalGroup: 5
     subtypes:
       - { id: tables, level: "1F", weight: 1.0 }
     prereqs:
@@ -647,7 +647,7 @@ nodes:
   S2:
     domain: S
     level: "1F"
-    typicalGroup: 4
+    typicalGroup: 5
     subtypes:
       - { id: bar-line, level: "1F", weight: 1.0 }
     prereqs:
@@ -704,7 +704,7 @@ nodes:
   T1:
     domain: T
     level: "1F"
-    typicalGroup: 2
+    typicalGroup: 3
     subtypes:
       - { id: one-step, level: "1F", weight: 1.0 }
     prereqs:
