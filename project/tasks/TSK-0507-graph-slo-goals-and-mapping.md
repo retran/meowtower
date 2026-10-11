@@ -1,7 +1,7 @@
 ---
 id: TSK-0507
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0050
 closes: [REQ-0812]
@@ -33,7 +33,7 @@ Draft the goal list from the SLO document RES-0800 cites, as the building agent 
 
 ## Evidence
 
-Criteria 1 and 2 are checked by program. Criteria 3 and 4 are the reviewing agent's judgement and remain open.
+Criteria 1 and 2 are checked by program. Criteria 3 and 4 are the reviewing agent's judgement; the owner checked the goal list against the SLO document and confirmed it: "это все сделано и проверено". No separate agent report exists in the record, so the owner's check stands in for it.
 
 1. The validator runs rule 5 with `checkSlo` in `./meowtower graph check`: the real file's 93 goals are each named by at least one subtype, and every `slo` reference names a goal. `tests/unit/graph-slo.test.ts` covers the real file.
 2. `tests/unit/graph-slo.test.ts`: a copy with an extra goal no subtype names fails and names it, and a copy where a subtype names `slo-999` fails and names the id.

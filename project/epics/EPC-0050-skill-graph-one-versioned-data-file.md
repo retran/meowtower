@@ -59,7 +59,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [ ] T-007 [P] TSK-0506 Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says
       closes: REQ-0816, REQ-0818
       depends: TSK-0504 (blocking) - the M nodes and their subtypes.
-- [ ] T-008 [P] TSK-0507 Every SLO goal at 1F and 1S maps to a subtype of the graph
+- [x] T-008 [P] TSK-0507 Every SLO goal at 1F and 1S maps to a subtype of the graph (done: pull request 19)
       closes: REQ-0812
       depends: TSK-0505 (blocking) - the full set of subtypes the goals map to.
 - [x] T-009 [P] TSK-0508 A failed subtype descends only to its own prerequisite (done: pull request 19)
