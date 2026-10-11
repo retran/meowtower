@@ -71,7 +71,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-010 [P] TSK-0489 `frameMetrics` measures a frame against the limits of the readability table (done: pull request 18)
       closes: REQ-0701, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-3712
       depends: TSK-0480 - it uses `formatQ` to count a number as one word; either task can land first with a stub.
-- [ ] T-011 [P] TSK-0490 The client gets only the view: no solution, no design, no meaning in the id, and pictures drawn from parameters
+- [x] T-011 [P] TSK-0490 The client gets only the view: no solution, no design, no meaning in the id, and pictures drawn from parameters (done: pull request 18)
       closes: REQ-1218, REQ-1220, REQ-1222, REQ-1230
       depends: TSK-0481 - the view is built from the template contract.
 - [ ] T-012 [P] TSK-0491 The parallel task keeps the difficulty and changes the numbers and the answer

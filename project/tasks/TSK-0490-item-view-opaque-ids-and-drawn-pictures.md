@@ -1,7 +1,7 @@
 ---
 id: TSK-0490
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-1218, REQ-1220, REQ-1222, REQ-1230]
@@ -32,7 +32,23 @@ Add `src/render/` with the drawers for the pictures the stand-in and the first t
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Tests in `tests/unit/client-view.test.ts`, seven tests:
+
+1. REQ-1220 and REQ-1222: 1,000 client views carry no field that `forbiddenFields` in `tests/helpers/packets.ts` names, no trap id, no `correctAnswer`, no seed, no template id and no short solution. The 1,000 views come from one fixture template across 1,000 sessions, not from several templates, because the real templates arrive with later epics.
+2. REQ-1218: two tasks from one template and seed get different identifiers, each a 32-character hex string with no node or template name in it. The identifier is a keyed hash (hash-based message authentication code, HMAC) under the server's secret.
+3. REQ-1230: a picture is drawn from its parameters and is the same SVG each time, with no `id` or `class` and no node name. A parameter outside the schema (`node`) is refused, and `stripIds` drops `frameId` and `anchorId`.
+
+Stages at tree `a70514277639`, from `meow-checks evidence`:
+
+- format: passed, record 52bc1dd420b8
+- lint: passed, record 686310735501
+- check: passed, record b0c626b5654e
+- test: passed, record eca374408fdb
+- build: passed, record 9d5542cae695
+
+The test stage failed once on `scene-resume.spec.ts:308`, a timing test that passed on the re-run. The record cites the passing run.
 
 ## Left alone
 
