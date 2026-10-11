@@ -58,13 +58,14 @@ export interface Evidence {
 }
 
 /**
- * How far a row can be trusted (TSK-0522 AC5). An inferred state is low; a probe older
- * than STALE_DAYS is low, and a probe within it medium; a full block within STALE_DAYS is
- * high, and an older one medium (a choice this file makes, as the task leaves it open).
+ * How far a row can be trusted (SPC-0060, TSK-0522 AC5): a full block within 14 days is
+ * high, 15 to 30 days old medium, and older than 30 days low; a probe or island check
+ * within 30 days is medium and older is low; an inferred state is always low.
  */
 export function confidenceOf(evidence: Evidence): Confidence {
   if (evidence.kind === "inferred") return "low";
   if (evidence.kind === "probe")
     return evidence.ageDays > STALE_DAYS ? "low" : "medium";
-  return evidence.ageDays > STALE_DAYS ? "medium" : "high";
+  if (evidence.ageDays <= 14) return "high";
+  return evidence.ageDays > STALE_DAYS ? "low" : "medium";
 }

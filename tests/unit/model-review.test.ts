@@ -24,6 +24,8 @@ const obs = (at: number, c: number): Observation => ({
   postFeedback: false,
   timeCounts: true,
   control: false,
+  probe: false,
+  seq: 0,
 });
 
 describe("REQ-0992: after an unassisted failure the next review is one day later", () => {
@@ -41,7 +43,7 @@ describe("REQ-0992: five successes in a row give the ladder 1, 3, 7, 14, then 30
     run.forEach((_, k) => {
       const review = reviewOf(run.slice(0, k + 1), NOW);
       expect(review.lastSeen).toBe((k + 1) * DAY);
-      expect(review.nextReview).toBe((k + 1) * DAY + steps[k]! * DAY);
+      expect(review.nextReview).toBe((k + 1) * DAY + (steps[k] ?? 0) * DAY);
     });
   });
 });

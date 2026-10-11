@@ -101,6 +101,8 @@ describe("REQ-0986: a right answer never lowers p, on 10,000 random valid parame
             postFeedback: c.feedback,
             timeCounts: true,
             control: false,
+            probe: false,
+            seq: 0,
           },
           p,
         );

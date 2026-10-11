@@ -7,6 +7,8 @@
 export const NOT_ESTIMATED = ["warmup", "session0"] as const;
 /** The purpose of a control fact, which counts as its own node and subtype (REQ-0930). */
 export const CONTROL = "control";
+/** The purpose of a probe task, which two of its observations make a probe (SPC-0060). */
+export const PROBE = "probe";
 
 /** The weight of an attempt carrying the fatigue mark (ADR-0070, REQ-0918). */
 export const FATIGUE_WEIGHT = 0.5;
@@ -39,6 +41,10 @@ export interface Observation {
   /** False when the attempt was interrupted or came from another device (REQ-0224). */
   readonly timeCounts: boolean;
   readonly control: boolean;
+  /** True for a task whose purpose is a probe (REQ-0954). */
+  readonly probe: boolean;
+  /** The log index of the verdict, which orders observations across the whole log (TSK-0524). */
+  readonly seq: number;
 }
 
 export interface Observations {
@@ -88,10 +94,13 @@ const field = <T>(payload: unknown, key: string): T | undefined =>
 export function observationsOf(log: readonly LogEvent[]): Observations {
   const items = new Map<string, Item>();
   const attempts = new Map<string, Attempt>();
-  const verdicts = new Map<string, { verdict: string; at: number }>();
+  const verdicts = new Map<
+    string,
+    { verdict: string; at: number; seq: number }
+  >();
   const excluded = new Set<string>();
 
-  for (const event of log) {
+  for (const [index, event] of log.entries()) {
     const p = event.payload;
     const itemId = field<string>(p, "itemId");
     if (event.type === "item_shown" && itemId !== undefined) {
@@ -121,6 +130,7 @@ export function observationsOf(log: readonly LogEvent[]): Observations {
       verdicts.set(itemId, {
         verdict: field<string>(p, "verdict") ?? "",
         at: event.ts === undefined ? 0 : Date.parse(event.ts),
+        seq: index,
       });
     } else if (event.type === "item_excluded" && itemId !== undefined) {
       excluded.add(itemId);
@@ -152,6 +162,8 @@ export function observationsOf(log: readonly LogEvent[]): Observations {
       postFeedback: item.postFeedback,
       timeCounts: !(attempt.interrupted || attempt.crossDevice),
       control,
+      probe: item.purpose === PROBE,
+      seq: verdicts.get(itemId)?.seq ?? 0,
     };
     const estimated = !(NOT_ESTIMATED as readonly string[]).includes(
       item.purpose,

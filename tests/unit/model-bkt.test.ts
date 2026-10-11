@@ -34,6 +34,8 @@ const obs = (over: Partial<Observation>): Observation => ({
   postFeedback: false,
   timeCounts: true,
   control: false,
+  probe: false,
+  seq: 0,
   ...over,
 });
 
