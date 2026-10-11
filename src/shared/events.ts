@@ -225,6 +225,17 @@ const attemptSubmittedV2 = attemptSubmittedV1
   })
   .strict();
 
+// Version 3 records the model a word problem's opening choice picked, apart from
+// the answer (REQ-0713); an earlier attempt had none, so it reads as null.
+const attemptSubmittedV3 = attemptSubmittedV2
+  .extend({
+    modelChoice: z
+      .string()
+      .nullable()
+      .describe("the model the opening choice picked, or null"),
+  })
+  .strict();
+
 const verdictV1 = z
   .object({
     itemId,
@@ -736,6 +747,12 @@ export const EVENT_DEFS: readonly EventDef[] = [
       interrupted: false,
       crossDevice: false,
     }),
+  },
+  {
+    type: "attempt_submitted",
+    v: 3,
+    schema: attemptSubmittedV3,
+    upcastFrom: (payload) => ({ ...(payload as object), modelChoice: null }),
   },
   { type: "verdict", v: 1, schema: verdictV1 },
   { type: "hint_shown", v: 1, schema: hintShownV1 },
