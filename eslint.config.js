@@ -28,4 +28,42 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // A task is computed from its seed alone (REQ-1216), so the folders that
+    // compute, render and check it import no model gateway and no network.
+    files: [
+      "src/math/**/*.ts",
+      "src/templates/**/*.ts",
+      "src/render/**/*.ts",
+      "src/shared/answer.ts",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            "node:http",
+            "node:https",
+            "node:http2",
+            "node:net",
+            "node:tls",
+            "node:dns",
+            "node:dgram",
+            "undici",
+          ].map((name) => ({
+            name,
+            message:
+              "A task is computed from its seed alone; no network module here (REQ-1216).",
+          })),
+          patterns: [
+            {
+              group: ["**/gateway", "**/gateway/*"],
+              message:
+                "The model gateway never computes a number or an answer (REQ-1216).",
+            },
+          ],
+        },
+      ],
+    },
+  },
 );
