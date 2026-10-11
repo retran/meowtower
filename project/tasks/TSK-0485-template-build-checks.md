@@ -1,7 +1,7 @@
 ---
 id: TSK-0485
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-0706, REQ-0708, REQ-0710]
@@ -32,7 +32,24 @@ Add the checks to `tools/static-checks.ts` as verify group 1 checks, reading the
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Fixtures in `tests/unit/task-rules.test.ts`, eight tests:
+
+1. REQ-0700: a fixture with free input and a choice answer fails and names the template `fixture.free-choice`.
+2. REQ-0706: three options fail and four pass.
+3. REQ-0708 and REQ-0710: a sign comparison fails outside warmup, easy and tutorial, and passes inside them; the largest of four passes; an order of 3 or 4 passes and 5 fails.
+4. Unscored tasks are exempt.
+
+The verify group reads the templates' `taskFacts` from `src/templates`. Before any real template exists it reads 0 templates, and `static-checks` prints that count.
+
+Stages at tree `3e3d05b5f080`, from `meow-checks evidence`:
+
+- format: passed, record fd0602ff0caf
+- lint: passed, record 0753545535f2
+- check: passed, record 8dca59f25543
+- test: passed, record 978a1145ffad
+- build: passed, record b4230d39c2e0
 
 ## Left alone
 

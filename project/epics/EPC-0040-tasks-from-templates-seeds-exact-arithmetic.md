@@ -56,7 +56,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-005 [P] TSK-0484 A wrong answer is classified by its trap, and a choice task's wrong options are its traps' answers (done: pull request 18)
       closes: REQ-0702, REQ-0704, REQ-0726, REQ-0728, REQ-0730
       depends: TSK-0481 - the traps come from the template contract.; TSK-0482 - the entry's value and form come from the number kinds.
-- [ ] T-006 [P] TSK-0485 The build fails a template whose choice, comparison or traps break a rule
+- [x] T-006 [P] TSK-0485 The build fails a template whose choice, comparison or traps break a rule (done: pull request 18)
       closes: REQ-0706, REQ-0708, REQ-0710
       depends: TSK-0481 - the checks read the template contract.
 - [ ] T-007 [P] TSK-0486 One computation graph gives the solution, the hints and the explanation of every trap
