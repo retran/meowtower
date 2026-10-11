@@ -77,7 +77,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-012 [P] TSK-0491 The parallel task keeps the difficulty and changes the numbers and the answer (done: pull request 18)
       closes: REQ-1224
       depends: TSK-0481 - it reuses the generator's candidate loop and seed streams.
-- [ ] T-013 TSK-0492 The play routes generate each task from a template and a seed, and an unparsed entry stays unanswered
+- [x] T-013 TSK-0492 The play routes generate each task from a template and a seed, and an unparsed entry stays unanswered (done: pull request 18)
       closes: REQ-1200, REQ-0734, REQ-0736, REQ-0740
       depends: TSK-0481 - the routes call the generator.; TSK-0482 - the checker parses the entry.; TSK-0483 - the structured kinds are part of the module the route calls.; TSK-0490 - the route sends only the strict view.; TSK-0491 - the second attempt uses the parallel task.
 - [ ] T-014 TSK-0493 A verification run exercises every template on 10,000 seeds against an independent solver

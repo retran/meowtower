@@ -1,7 +1,7 @@
 ---
 id: TSK-0492
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-1200, REQ-0734, REQ-0736, REQ-0740]
@@ -36,7 +36,23 @@ Replace the stand-in task table in `src/server/standin.ts` with generated tasks 
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Stand-in tasks come from fixture templates with their current numbers (the owner's choice of the simplest option until the LLM text route exists). The route generates each shown task and each twin through `generate` at a base seed, and stores the template id, the base seed, the effective seed and the candidate in `item_shown` version 2, with an upcast from version 1.
+
+1. REQ-1200, `tests/unit/standin-generated.test.ts`: 60 generated stand-in tasks rebuild from their effective seeds with the same parameters and answers. This checks the rebuild on generated tasks, not on a played day's log.
+2. REQ-0734, REQ-0736 and REQ-0740, `tests/integration/unparsed-answer.test.ts`: `3,,5` gets `422 unparsed_input`; the log holds only the `item_shown` for that task, with no verdict, no attempt and no pause; the correct answer then logs exactly one attempt. `standinVerdict` returns `unparsed` for `3,,5`, letters and an empty entry.
+3. The test verb passes with the generated tasks: `tests/integration/packet-recorder.test.ts` now corrects its empty entries and counts the refusals, and every route and Playwright test passes.
+
+Deviations from the task text: the second attempt uses the stand-in's twin template rather than `sampleParallel`, because the twin is a fixed second parameter set, not a draw. The packet recorder's expected counts changed to match the refused entries.
+
+Stages at tree `9ab87fd0e087`, from `meow-checks evidence`:
+
+- format: passed, record 3055c5740cd2
+- lint: passed, record 1a4fc21b194d
+- check: passed, record 1ad80e4193fe
+- test: passed, record 7813c754a2de
+- build: passed, record ea731ff9e03e
 
 ## Left alone
 
