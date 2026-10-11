@@ -38,7 +38,23 @@ Nothing. The event schemas for attempts, verdicts, exclusions and settings exist
 
 ## Evidence
 
-Not yet.
+Every criterion is checked by a unit test, in `tests/unit/model-observations.test.ts` unless noted.
+
+1. A log with a first attempt, a second attempt, an assisted first attempt, a warm-up, a Session 0 task and an `attempt_late` event gives one observation for the estimate without help (the first attempt); the second and the assisted attempts are listed apart for the estimate with help.
+2. Excluded items: an item excluded and never re-included is in no list; an item excluded and then included again is back in the list (`item_included`, ADR-0500, schema test in `tests/unit/item-included.test.ts`).
+3. Scores 1, 0.5, 0 and 0 for right, partly right, wrong and "Не знаю"; the weight is 0.5 with the fatigue mark and 1 otherwise.
+4. A rapid guess is in no list; an interrupted attempt is an observation for accuracy with its time counted in no measure.
+5. An attempt on a control fact is an observation of its own node and subtype, with the control flag.
+
+The fatigue and rapid-guess marks are fields carried by hand on the fixture attempts, as the task states; an attempt without them is an ordinary one.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record ae71b8047eb5, current at tree 19b6f5a4bcef, revision 567, now 568
+- lint: passed, record 8c968a71e7bd, current at tree 19b6f5a4bcef, revision 567, now 568
+- check: passed, record 5db298ebca67, current at tree 19b6f5a4bcef, revision 567, now 568
+- test: passed, record dfa6742d490b, current at tree 19b6f5a4bcef, revision 567, now 568
+- build: passed, record c0424dff77dc, current at tree 19b6f5a4bcef, revision 567, now 568
 
 ## Left alone
 

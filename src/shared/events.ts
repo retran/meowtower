@@ -588,6 +588,14 @@ const parentDefs: EventDef[] = [
     }),
   },
   {
+    // The reversal of item_excluded (ADR-0500, REQ-0916): the task returns to the estimates.
+    type: "item_included",
+    v: 1,
+    schema: obj({
+      itemId: id("the task included again"),
+    }),
+  },
+  {
     type: "settings_changed",
     v: 1,
     schema: obj({
@@ -881,6 +889,7 @@ export const EVENT_CATALOGUE: readonly string[] = [
   "parent_tag_added",
   "parent_tag_removed",
   "item_excluded",
+  "item_included",
   "glossary_entry_approved",
   "calibration",
 ];
