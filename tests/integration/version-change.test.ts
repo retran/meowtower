@@ -1,4 +1,4 @@
-import { openGraph } from "../../src/engine/graph.js";
+import { GRAPH_FILE, openGraph } from "../../src/engine/graph.js";
 // TSK-0270: a new model or threshold version recomputes every projection at
 // start-up (REQ-2230), unchanged versions recompute nothing, and a recompute
 // under a new model leaves the game tables as they were while node_snapshots
@@ -24,9 +24,7 @@ import { writeSyntheticLog } from "../helpers/synthetic-log.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-versions-"));
 // The graph version the server computes from content/graph.yaml at start (TSK-0500).
-const GRAPH = openGraph(
-  readFileSync(new URL("../../content/graph.yaml", import.meta.url), "utf8"),
-).graphVersion();
+const GRAPH = openGraph(readFileSync(GRAPH_FILE, "utf8")).graphVersion();
 const NONE: Versions = { model: "none", thresholds: "none", graph: GRAPH };
 const A: Versions = { model: "A", thresholds: "t1", graph: GRAPH };
 const B: Versions = { model: "B", thresholds: "t1", graph: GRAPH };

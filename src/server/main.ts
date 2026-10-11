@@ -7,6 +7,7 @@ import { backupAfterSession } from "./backups.js";
 import { checkLogSize, runRecompute } from "./recompute.js";
 import { readContentVersions } from "./versions.js";
 import { startGraph } from "./graph-start.js";
+import { GRAPH_FILE } from "../engine/graph.js";
 import { raise, useNoticesDir } from "./failures.js";
 import { recoverBlobs } from "../engine/blobs/store.js";
 import {
@@ -15,9 +16,6 @@ import {
   versionsChanged,
 } from "../engine/projections/registry.js";
 import { dirname, join } from "node:path";
-
-const GRAPH_DEFAULT = new URL("../../content/graph.yaml", import.meta.url)
-  .pathname;
 
 const dbPath =
   process.env["MEOWTOWER_DB"] ?? "/var/lib/meowtower/meowtower.sqlite";
@@ -44,7 +42,7 @@ try {
 // version stops the start as graph_unloadable, and otherwise the last valid
 // version is served (TSK-0500).
 try {
-  startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_DEFAULT);
+  startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE);
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);

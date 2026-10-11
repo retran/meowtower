@@ -1,14 +1,14 @@
 # A small complete graph of three nodes for the loader's tests (TSK-0500).
 nodes:
   N1:
-    domain: getal
+    domain: N
     level: 1F
     typicalGroup: 3
     subtypes:
       - { id: whole, level: 1F, weight: 1 }
     prereqs: []
   N2:
-    domain: getal
+    domain: N
     level: 1S
     typicalGroup: 4
     subtypes:
@@ -16,7 +16,7 @@ nodes:
     prereqs:
       - { node: N1 }
   N3:
-    domain: getal
+    domain: N
     level: stretch
     typicalGroup: 6
     stretchGate: [N1, N2]

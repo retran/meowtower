@@ -16,6 +16,12 @@ export class GraphInvalid extends Error {
 
 const Level = z.enum(["1F", "1S", "1F/1S", "stretch"]);
 const SubtypeLevel = z.enum(["1F", "1S", "stretch"]);
+/** The nine domains of RES-0800, each by its letter (SPC-0050). */
+const Domain = z.enum(["N", "A", "F", "D", "P", "M", "G", "S", "T"]);
+
+/** The graph file, the only file the loader reads (ADR-0050). */
+export const GRAPH_FILE = new URL("../../content/graph.yaml", import.meta.url)
+  .pathname;
 
 const Subtype = z
   .object({
@@ -36,7 +42,7 @@ const Prereq = z
 
 const Node = z
   .object({
-    domain: z.string().min(1),
+    domain: Domain,
     level: Level,
     typicalGroup: z.number().int().min(1).max(8),
     ruOnly: z.boolean().default(false),
@@ -106,6 +112,32 @@ export const canonicalOf = (data: unknown): string =>
 export const versionOf = (canonical: string): string =>
   `g-${createHash("sha256").update(canonical).digest("hex").slice(0, 12)}`;
 
+/**
+ * A node's id starts with its domain's letter, and its level agrees with its
+ * subtypes (SPC-0050, rule 1): a 1F/1S node holds a 1F and a 1S subtype, a
+ * stretch node holds only stretch subtypes, and a 1F or 1S node holds at least
+ * one subtype at its own level.
+ */
+function checkNodes(data: GraphData): void {
+  for (const [id, node] of Object.entries(data.nodes)) {
+    if (!id.startsWith(node.domain))
+      throw new GraphInvalid(
+        `node ${id}: domain: the id must start with ${node.domain}`,
+      );
+    const levels = new Set(node.subtypes.map((s) => s.level));
+    const ok =
+      node.level === "stretch"
+        ? node.subtypes.every((s) => s.level === "stretch")
+        : node.level === "1F/1S"
+          ? levels.has("1F") && levels.has("1S")
+          : levels.has(node.level);
+    if (!ok)
+      throw new GraphInvalid(
+        `node ${id}: level: ${node.level} disagrees with its subtypes`,
+      );
+  }
+}
+
 /** A prerequisite cycle, or a prerequisite on a node the file doesn't hold. */
 function checkPrereqs(data: GraphData): void {
   const ids = new Set(Object.keys(data.nodes));
@@ -148,6 +180,7 @@ export function checkGraph(value: unknown): GraphData {
   const parsed = GraphFile.safeParse(value);
   if (!parsed.success)
     throw new GraphInvalid(parsed.error.issues.map(describe).join("; "));
+  checkNodes(parsed.data);
   checkPrereqs(parsed.data);
   return parsed.data;
 }
@@ -155,6 +188,14 @@ export function checkGraph(value: unknown): GraphData {
 export interface Graph {
   graphVersion(): string;
   canonical(): string;
+  nodes(): {
+    id: string;
+    domain: string;
+    level: string;
+    typicalGroup: number;
+    ruOnly: boolean;
+  }[];
+  typicalGroup(id: string): number;
   node(id: string): {
     domain: string;
     level: string;
@@ -181,6 +222,15 @@ function queriesOver(data: GraphData): Graph {
   return {
     graphVersion: () => version,
     canonical: () => canonical,
+    nodes: () =>
+      Object.entries(data.nodes).map(([id, n]) => ({
+        id,
+        domain: n.domain,
+        level: n.level,
+        typicalGroup: n.typicalGroup,
+        ruOnly: n.ruOnly,
+      })),
+    typicalGroup: (id) => nodeOf(id).typicalGroup,
     node: (id) => {
       const n = nodeOf(id);
       return {

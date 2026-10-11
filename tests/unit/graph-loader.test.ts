@@ -59,8 +59,8 @@ describe("REQ-0808: the schema names the node and the field it refuses", () => {
 
   it("refuses a field the schema doesn't name", () => {
     const extra = fixture.replace(
-      "    domain: getal\n    level: 1F",
-      "    domain: getal\n    colour: red\n    level: 1F",
+      "    domain: N\n    level: 1F",
+      "    domain: N\n    colour: red\n    level: 1F",
     );
     expect(() => openGraph(extra)).toThrow(/colour/);
   });
@@ -79,7 +79,7 @@ describe("REQ-0808: the query module answers from a complete record", () => {
 
   it("node(id) gives the domain, level, ruOnly and stretchGate", () => {
     expect(graph.node("N1")).toEqual({
-      domain: "getal",
+      domain: "N",
       level: "1F",
       ruOnly: false,
       stretchGate: undefined,
@@ -114,5 +114,56 @@ describe("ADR-0050: the parser keeps its cap of 100 aliases", () => {
     const aliases = Array.from({ length: 101 }, () => "*base").join(", ");
     const text = `base: &base 1\nlist: [${aliases}]\nnodes: {}\ntopics: []\nsloGoals: []\nchanges: []\n`;
     expect(() => openGraph(text)).toThrow(GraphInvalid);
+  });
+});
+
+describe("TSK-0501: the validator refuses a node that breaks a field rule, and names it", () => {
+  it("refuses an id that doesn't start with its domain's letter", () => {
+    const bad = fixture.replace("  N2:\n    domain: N", "  X2:\n    domain: N");
+    expect(() => openGraph(bad)).toThrow(/X2.*domain/);
+  });
+
+  it("refuses a typicalGroup of 9", () => {
+    const bad = fixture.replace("    typicalGroup: 4", "    typicalGroup: 9");
+    expect(() => openGraph(bad)).toThrow(/N2.*typicalGroup/);
+  });
+
+  it("refuses a subtype weight of 0", () => {
+    const bad = fixture.replace(
+      "{ id: fraction, level: 1S, weight: 1 }",
+      "{ id: fraction, level: 1S, weight: 0 }",
+    );
+    expect(() => openGraph(bad)).toThrow(/N2.*weight/);
+  });
+
+  it("refuses a 1S node with no 1S subtype", () => {
+    const bad = fixture.replace(
+      "{ id: fraction, level: 1S, weight: 1 }",
+      "{ id: fraction, level: 1F, weight: 1 }",
+    );
+    expect(() => openGraph(bad)).toThrow(/N2.*level/);
+  });
+
+  it("refuses a topic that carries a prerequisite field", () => {
+    const bad = fixture.replace(
+      "topics: []",
+      "topics:\n  - { id: E1, name: Licht, prereqs: [N1] }",
+    );
+    expect(() => openGraph(bad)).toThrow(/prereqs/);
+  });
+
+  it("refuses a maths node whose prerequisite is a topic", () => {
+    const bad = fixture
+      .replace("    prereqs: []", "    prereqs:\n      - { node: E1 }")
+      .replace("topics: []", "topics:\n  - { id: E1, name: Licht }");
+    expect(() => openGraph(bad)).toThrow(/E1/);
+  });
+});
+
+describe("REQ-0854: the node list is the file's nodes in file order, and typicalGroup is a query", () => {
+  it("lists the nodes in file order with their typical group", () => {
+    const graph = openGraph(fixture);
+    expect(graph.nodes().map((n) => n.id)).toEqual(["N1", "N2", "N3"]);
+    expect(graph.typicalGroup("N2")).toBe(4);
   });
 });
