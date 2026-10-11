@@ -47,6 +47,12 @@ SUB = {
  "S1":["tables"],"S2":["bar-line"],"S3":["mean","missing"],"S4":["pie"],"S5":["global"],"S6":["patterns"],"S7":["median-mode"],
  "T1":["one-step"],"T2":["two-step"],"T3":["three-step"],"T4":["four-step"],
 }
+# Measurement subtypes with their level and method (SPC-0050, rule 4).
+METHOD_SPEC = {
+ "M4": [("rect-squares","1F","squares"),("rect-sides","1F","sides"),("not-rect","1S","formula"),("side-from-perimeter","1S","formula"),("same-area","1S","formula")],
+ "M5": [("grid","1F","squares"),("sides","1F","sides"),("formula","1S","formula")],
+ "M7": [("by-cubes","1F","cubes"),("formula","1S","formula")],
+}
 # Stretch subtypes (G6.blocks, S3.missing) are stretch-level; the rest follow the node.
 STRETCH_SUB = {("G6","blocks"),("S3","missing")}
 GATE = {"N8":["N6","N7"],"A12":["A11","A13"],"A15":["A11","A13","D4"],"A16":["A11","A13"],"D7":["D4","D5","F7"],
@@ -77,6 +83,8 @@ def prereqs(node):
     return result
 
 def subtype_levels(node):
+    if node in METHOD_SPEC:
+        return [(n, lvl) for n, lvl, _ in METHOD_SPEC[node]]
     level = rows[node]["level"]
     names = SUB[node]
     if level == "1F/1S":
@@ -84,6 +92,9 @@ def subtype_levels(node):
     if level == "stretch":
         return [(n, "stretch") for n in names]
     return [(n, "stretch" if (node, n) in STRETCH_SUB else level) for n in names]
+
+def methods(node):
+    return {n: m for n, _, m in METHOD_SPEC.get(node, [])}
 
 def weights(node, subs):
     # Equal weights across the ordinary subtypes, summing to 1; stretch subtypes
@@ -106,7 +117,9 @@ def emit(out):
         subs = subtype_levels(node)
         ws = weights(node, subs)
         for sid, lvl in subs:
-            out.append(f"      - {{ id: {sid}, level: \"{lvl}\", weight: {ws[sid]} }}")
+            m = methods(node).get(sid)
+            extra = f", method: {m}" if m else ""
+            out.append(f"      - {{ id: {sid}, level: \"{lvl}\", weight: {ws[sid]}{extra} }}")
         pr = prereqs(node)
         if not pr:
             out.append("    prereqs: []")

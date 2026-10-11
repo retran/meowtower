@@ -133,6 +133,7 @@ function checkNodes(data: GraphData): void {
       throw new GraphInvalid(
         `node ${id}: domain: the id must start with ${node.domain}`,
       );
+    checkMethods(id, node);
     const levels = new Set(node.subtypes.map((s) => s.level));
     const ok =
       node.level === "stretch"
@@ -143,6 +144,49 @@ function checkNodes(data: GraphData): void {
     if (!ok)
       throw new GraphInvalid(
         `node ${id}: level: ${node.level} disagrees with its subtypes`,
+      );
+  }
+}
+
+/** The methods each measurement node allows, and the 1F method of each (SPC-0050, rule 4). */
+const METHODS: Readonly<
+  Record<string, { allowed: readonly string[]; oneF: readonly string[] }>
+> = {
+  M4: { allowed: ["formula", "squares", "sides"], oneF: ["squares", "sides"] },
+  M5: { allowed: ["formula", "squares", "sides"], oneF: ["squares", "sides"] },
+  M7: { allowed: ["formula", "cubes"], oneF: ["cubes"] },
+};
+
+/**
+ * Rule 4 (REQ-0816): M4, M5 and M7 carry a method on every subtype; a formula is
+ * 1S; a 1F subtype is squares or sides on M4 and M5, and cubes on M7. No other node
+ * carries a method.
+ */
+function checkMethods(id: string, node: NodeRecord): void {
+  const spec = METHODS[id];
+  for (const sub of node.subtypes) {
+    if (spec === undefined) {
+      if (sub.method !== undefined)
+        throw new GraphInvalid(
+          `node ${id}: subtype ${sub.id}: method is allowed only on M4, M5 and M7`,
+        );
+      continue;
+    }
+    if (sub.method === undefined)
+      throw new GraphInvalid(
+        `node ${id}: subtype ${sub.id}: method is missing`,
+      );
+    if (!spec.allowed.includes(sub.method))
+      throw new GraphInvalid(
+        `node ${id}: subtype ${sub.id}: method ${sub.method} is not allowed on ${id}`,
+      );
+    if (sub.method === "formula" && sub.level !== "1S")
+      throw new GraphInvalid(
+        `node ${id}: subtype ${sub.id}: a formula is 1S, not ${sub.level}`,
+      );
+    if (sub.level === "1F" && !spec.oneF.includes(sub.method))
+      throw new GraphInvalid(
+        `node ${id}: subtype ${sub.id}: a 1F subtype of ${id} takes ${spec.oneF.join(" or ")}, not ${sub.method}`,
       );
   }
 }

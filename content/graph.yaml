@@ -474,10 +474,11 @@ nodes:
     level: "1F/1S"
     typicalGroup: 3
     subtypes:
-      - { id: by-squares, level: "1F", weight: 0.25 }
-      - { id: by-sides, level: "1S", weight: 0.25 }
-      - { id: formula, level: "1S", weight: 0.25 }
-      - { id: not-rectangle, level: "1S", weight: 0.25 }
+      - { id: rect-squares, level: "1F", weight: 0.2, method: squares }
+      - { id: rect-sides, level: "1F", weight: 0.2, method: sides }
+      - { id: not-rect, level: "1S", weight: 0.2, method: formula }
+      - { id: side-from-perimeter, level: "1S", weight: 0.2, method: formula }
+      - { id: same-area, level: "1S", weight: 0.2, method: formula }
     prereqs:
       - { node: A5 }
       - { node: M1 }
@@ -486,9 +487,9 @@ nodes:
     level: "1F/1S"
     typicalGroup: 5
     subtypes:
-      - { id: grid, level: "1F", weight: 0.333333 }
-      - { id: formula, level: "1S", weight: 0.333333 }
-      - { id: sides, level: "1S", weight: 0.333333 }
+      - { id: grid, level: "1F", weight: 0.333333, method: squares }
+      - { id: sides, level: "1F", weight: 0.333333, method: sides }
+      - { id: formula, level: "1S", weight: 0.333333, method: formula }
     prereqs:
       - { node: A3, subtype: grid }
       - { node: A7, subtype: formula }
@@ -507,8 +508,8 @@ nodes:
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: by-cubes, level: "1F", weight: 0.5 }
-      - { id: formula, level: "1S", weight: 0.5 }
+      - { id: by-cubes, level: "1F", weight: 0.5, method: cubes }
+      - { id: formula, level: "1S", weight: 0.5, method: formula }
     prereqs:
       - { node: M5 }
   M8:
@@ -734,6 +735,7 @@ nodes:
       - { id: four-step, level: "1S", weight: 1.0 }
     prereqs:
       - { node: T3 }
+
 topics:
   - { id: E1, name: "forces and motion" }
   - { id: E2, name: "substances and their states" }
