@@ -1,7 +1,7 @@
 ---
 id: EPC-0050
 artifact: epic
-status: approved
+status: done
 revised: 2026-10-10
 realises: ADR-0050
 ---
@@ -68,7 +68,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [~] T-010 [P] TSK-0509 (dropped here: moved to EPC-0470 under ADR-0480, which waits for the real templates) The build fails on a template that names a subtype the graph lacks and on a second copy of a level or weight
       closes: REQ-0852, REQ-1244
       depends: TSK-0500 (blocking) - the loader and the query module the checks read.
-- [ ] T-011 [P] TSK-0510 A curriculum overlay adds nodes and links and never changes the base graph
+- [x] T-011 [P] TSK-0510 A curriculum overlay adds nodes and links and never changes the base graph (done: pull request 19)
       closes: REQ-3812
       depends: TSK-0500 (blocking) - the loader and the version hash.; TSK-0501 (blocking) - the validator whose rules the overlay shares.
 
