@@ -53,7 +53,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-005 TSK-0504 The graph file holds the nodes of decimals, percentages and measures with their subtypes (done: pull request 19)
       closes: REQ-0800
       depends: TSK-0503 (not blocking) - both edit `content/graph.yaml` and the fixture, so merging in order avoids a conflict.; TSK-0501 (blocking) - the validator.; TSK-0502 (blocking) - the fixture comparison.
-- [ ] T-006 TSK-0505 The graph file is complete: 79 maths nodes, the counts hold whatever an edit says, and the 17 split nodes have both levels
+- [x] T-006 TSK-0505 The graph file is complete: 79 maths nodes, the counts hold whatever an edit says, and the 17 split nodes have both levels (done: pull request 19)
       closes: REQ-0800, REQ-0814, REQ-0850
       depends: TSK-0503 (blocking) - the first third of the file.; TSK-0504 (blocking) - the counts rule needs all 79 nodes.
 - [ ] T-007 [P] TSK-0506 Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says
