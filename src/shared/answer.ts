@@ -14,6 +14,12 @@ export type Form =
   | "improper"
   | "mixed"
   | "quotient_remainder"
+  | "time"
+  | "point"
+  | "point_swapped"
+  | "choice"
+  | "grid"
+  | "order"
   | "none";
 
 export interface Checked {
@@ -170,3 +176,92 @@ export const quotientRemainder = (
     );
   });
 };
+
+const TIME = /^(\d{1,2}):(\d{2})$/;
+const POINT = /^\(\s*(-?\d+)\s*;\s*(-?\d+)\s*\)$/;
+
+/**
+ * A time. An analogue clock reads the hands as the morning or the afternoon
+ * hour, so `3:15`, `03:15` and `15:15` all show a quarter past three
+ * (REQ-0760). A digital time takes the 24-hour reading, with or without a
+ * leading zero (REQ-0762).
+ */
+export const timeAnswer = (
+  hour: number,
+  minute: number,
+  face: "analogue" | "digital",
+): Checker =>
+  accepting((t) => {
+    const m = TIME.exec(t);
+    if (!m) return UNPARSED;
+    const h = Number(m[1]);
+    const mm = Number(m[2]);
+    if (h > 23 || mm > 59) return UNPARSED;
+    const hours = face === "analogue" ? [hour % 12, (hour % 12) + 12] : [hour];
+    return judge(hours.includes(h) && mm === minute, "time");
+  });
+
+/**
+ * A point `(x; y)`, a node of the grid (REQ-0766). Its swap `(y; x)` is a
+ * trap: it is wrong and carries the form `point_swapped`.
+ */
+export const pointAnswer = (x: number, y: number): Checker =>
+  accepting((t) => {
+    const m = POINT.exec(t);
+    if (!m) return UNPARSED;
+    const px = Number(m[1]);
+    const py = Number(m[2]);
+    if (px === x && py === y) return correct("point");
+    if (px === y && py === x) return wrong("point_swapped");
+    return wrong("point");
+  });
+
+/**
+ * A choice or a sign comparison. The entry marks options by name, separated by
+ * commas, and exactly one option must be marked (REQ-0768). Two or none is
+ * unparsed.
+ */
+export const choiceAnswer = (
+  correctOption: string,
+  options: readonly string[],
+): Checker =>
+  accepting((t) => {
+    const marked = t.split(",").map((s) => s.trim());
+    if (marked.length !== 1) return UNPARSED;
+    const [only = ""] = marked;
+    if (!options.includes(only)) return UNPARSED;
+    return judge(only === correctOption, "choice");
+  });
+
+/**
+ * A grid, the set of marked cells. It is correct only when the marked cells are
+ * exactly the correct set, and one cell more or fewer is wrong (REQ-0770).
+ */
+export const gridAnswer = (correctCells: readonly string[]): Checker =>
+  accepting((t) => {
+    const marked = t.split(",").map((s) => s.trim());
+    if (marked.some((c) => c === "")) return UNPARSED;
+    const given = new Set(marked);
+    const want = new Set(correctCells);
+    const same =
+      given.size === want.size && [...want].every((c) => given.has(c));
+    return judge(same, "grid");
+  });
+
+/**
+ * An order: the items in a sequence. It is correct only as the exact correct
+ * permutation (REQ-0772). An entry that doesn't list the same items is unparsed.
+ */
+export const orderAnswer = (correctSequence: readonly string[]): Checker =>
+  accepting((t) => {
+    const given = t.split(",").map((s) => s.trim());
+    const sameItems =
+      given.length === correctSequence.length &&
+      new Set(given).size === given.length &&
+      correctSequence.every((c) => given.includes(c));
+    if (!sameItems) return UNPARSED;
+    return judge(
+      given.every((c, i) => c === correctSequence[i]),
+      "order",
+    );
+  });
