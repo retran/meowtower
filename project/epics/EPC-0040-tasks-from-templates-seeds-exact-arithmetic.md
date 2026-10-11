@@ -53,7 +53,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-004 [P] TSK-0483 The checker accepts time, point, choice, grid and order answers exactly (done: pull request 18)
       closes: REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772
       depends: TSK-0482 - it builds the module and the result type these kinds share.
-- [ ] T-005 [P] TSK-0484 A wrong answer is classified by its trap, and a choice task's wrong options are its traps' answers
+- [x] T-005 [P] TSK-0484 A wrong answer is classified by its trap, and a choice task's wrong options are its traps' answers (done: pull request 18)
       closes: REQ-0702, REQ-0704, REQ-0726, REQ-0728, REQ-0730
       depends: TSK-0481 - the traps come from the template contract.; TSK-0482 - the entry's value and form come from the number kinds.
 - [ ] T-006 [P] TSK-0485 The build fails a template whose choice, comparison or traps break a rule
