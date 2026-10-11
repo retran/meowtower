@@ -1,7 +1,7 @@
 ---
 id: TSK-0486
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-1214, REQ-1234]
@@ -32,7 +32,21 @@ Add `src/engine/tasks/graph.ts` and the check in `tools/static-checks.ts`. The R
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Tests in `tests/unit/graph.test.ts`, seven tests, and the check's fixtures:
+
+1. The solution, the three hints and an explanation contain no number that the graph doesn't compute or give. A fixture that writes `99` is flagged by `strayNumbers`.
+2. The explanation check: a trap with no explanation fails and names the template and the trap (`explain_missing`); with one it passes. The static check reads `graphFacts` from `src/templates`, and reads 0 templates until one exists.
+3. REQ-1234: the trap `skip` computes its wrong answer 60 in `Q` from the graph's values.
+
+Stages at tree `ce77ea0e1905`, from `meow-checks evidence`:
+
+- format: passed, record d1fdeabc65e9
+- lint: passed, record 9792203b17ca
+- check: passed, record 1c23921dcd11
+- test: passed, record 98b9a1afbf6f
+- build: passed, record dc070c587575
 
 ## Left alone
 

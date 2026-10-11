@@ -59,7 +59,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-006 [P] TSK-0485 The build fails a template whose choice, comparison or traps break a rule (done: pull request 18)
       closes: REQ-0706, REQ-0708, REQ-0710
       depends: TSK-0481 - the checks read the template contract.
-- [ ] T-007 [P] TSK-0486 One computation graph gives the solution, the hints and the explanation of every trap
+- [x] T-007 [P] TSK-0486 One computation graph gives the solution, the hints and the explanation of every trap (done: pull request 18)
       closes: REQ-1214, REQ-1234
       depends: TSK-0481 - it carries the template contract the graph extends.
 - [ ] T-008 TSK-0487 Entered steps are matched against every valid solution path and classified
