@@ -4,6 +4,7 @@
 // (REQ-0910, REQ-0988, REQ-0994). Pure: the graph is read through its query module only.
 import { type PairState, pKnowAt, pairKey } from "./bkt.js";
 import type { Observation } from "./observations.js";
+import { type Confidence, confidenceOf, reviewOf } from "./review.js";
 
 const DAY_MS = 86_400_000;
 
@@ -53,7 +54,22 @@ export interface Row {
   readonly nEff: number;
   readonly uncertainty: number;
   readonly state: "not checked" | "stretch: not checked" | "tested";
+  /** The review fields of review.ts (TSK-0522); null with no unassisted attempt. */
+  readonly lastSeen: number | null;
+  readonly stale: boolean;
+  readonly nextReview: number | null;
+  /** Low with no evidence; from the last attempt, a probe, until blocks exist (TSK-0523). */
+  readonly confidence: Confidence;
 }
+
+const reviewFields = (own: readonly Observation[], now: number) => {
+  const review = reviewOf(own, now);
+  const ageDays =
+    review.lastSeen === null ? 0 : (now - review.lastSeen) / DAY_MS;
+  const confidence: Confidence =
+    review.lastSeen === null ? "low" : confidenceOf({ kind: "probe", ageDays });
+  return { ...review, confidence };
+};
 
 /**
  * Every node row and subtype row of the graph at `now`, from the pair states and the
@@ -91,6 +107,7 @@ export function rowsOf(
       pKnow,
       nEff: nodeNEff,
       uncertainty: uncertaintyOf(pKnow, nodeNEff),
+      ...reviewFields(mine, now),
       state:
         mine.length === 0
           ? stretch
@@ -108,6 +125,7 @@ export function rowsOf(
         pKnow: p,
         nEff: subNEff,
         uncertainty: uncertaintyOf(p, subNEff),
+        ...reviewFields(own, now),
         state:
           own.length === 0
             ? stretch
