@@ -429,6 +429,29 @@ export const EXPECTED_DOMAINS: Readonly<
 };
 
 /**
+ * The 17 nodes that the SLO text moves to 1F/1S (REQ-0814).
+ */
+export const SPLIT_NODES = [
+  "N3",
+  "N6",
+  "N7",
+  "A11",
+  "A13",
+  "A14",
+  "F3",
+  "F4",
+  "F5",
+  "F6",
+  "F7",
+  "D4",
+  "D6",
+  "P5",
+  "P6",
+  "M4",
+  "S5",
+];
+
+/**
  * Rule 2 (SPC-0050, REQ-0800): the 79 maths nodes in nine domains with their
  * counts, 69 at 1F, 1S or 1F/1S and 10 at stretch. It runs on the whole file, not
  * on a test fixture, so it is called by `graph check` and the content tests.
@@ -449,6 +472,12 @@ export function checkCounts(graph: Graph): void {
     problems.push(
       `${nodes.length} nodes (${stretch} stretch), expected 79 (10)`,
     );
+  // REQ-0814: these 17 nodes are 1F/1S whatever a changes line says.
+  for (const id of SPLIT_NODES) {
+    const node = nodes.find((n) => n.id === id);
+    if (node !== undefined && node.level !== "1F/1S")
+      problems.push(`node ${id} is ${node.level}, but REQ-0814 keeps it 1F/1S`);
+  }
   if (problems.length > 0)
     throw new GraphInvalid(`counts: ${problems.join("; ")}`);
 }

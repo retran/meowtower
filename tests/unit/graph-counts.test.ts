@@ -79,3 +79,10 @@ describe("REQ-0814, REQ-0850: the 17 split nodes are 1F/1S, each with a 1F and a
     }
   });
 });
+
+describe("REQ-0814: a copy that sets one of the 17 to 1S fails, whatever a changes line says", () => {
+  it("fails N3 set to 1S and names it", () => {
+    const bad = list.map((n) => (n.id === "N3" ? { ...n, level: "1S" } : n));
+    expect(() => checkCounts(mutated(bad))).toThrow(/N3.*REQ-0814/);
+  });
+});
