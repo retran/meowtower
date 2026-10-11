@@ -112,3 +112,35 @@ describe("REQ-0804: at 1,000 stored versions the warning is raised once and none
     db.close();
   });
 });
+
+describe("REQ-0806: after a restart, only the change line added since the last version is new", () => {
+  it("marks the new line new and the earlier one not new, with no source file changed", () => {
+    const db = freshDb();
+    const first = join(dir, "first.yaml");
+    const second = join(dir, "second.yaml");
+    const text = readFileSync(fixture, "utf8");
+    const oneLine = text.replace(
+      "changes: []",
+      'changes:\n  - { node: N2, field: level, reason: "first" }',
+    );
+    const twoLines = oneLine
+      .replace(
+        'reason: "first" }',
+        'reason: "first" }\n  - { node: N3, field: prereqs, reason: "second" }',
+      )
+      .replace(
+        "{ id: whole, level: 1F, weight: 1 }",
+        "{ id: whole, level: 1F, weight: 2 }",
+      );
+    writeFileSync(first, oneLine);
+    writeFileSync(second, twoLines);
+    startGraph(db, first);
+    const again = startGraph(db, second);
+    const marks = again.graph.changes(again.previous);
+    expect(marks.map((m) => [m.node, m.new])).toEqual([
+      ["N2", false],
+      ["N3", true],
+    ]);
+    db.close();
+  });
+});

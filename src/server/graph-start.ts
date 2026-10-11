@@ -16,6 +16,8 @@ export const GRAPH_VERSIONS_MANY = 1000;
 
 export interface GraphStart {
   readonly graph: Graph;
+  /** The graph of the version stored before this start, for marking new change lines. */
+  readonly previous?: Graph | undefined;
   readonly version: string;
   readonly source: "file" | "stored";
 }
@@ -36,6 +38,18 @@ const latestStored = (
     )
     .get() as { version: string; canonical: string } | undefined;
 
+/** The stored graph, or undefined when none is stored or it can't be read back. */
+const readStored = (
+  stored: { canonical: string } | undefined,
+): Graph | undefined => {
+  if (stored === undefined) return undefined;
+  try {
+    return openCanonical(stored.canonical);
+  } catch {
+    return undefined;
+  }
+};
+
 /** Starts the server on the graph in `file`, or on the last stored version of it. */
 export function startGraph(
   db: Db,
@@ -46,6 +60,8 @@ export function startGraph(
   try {
     const graph = openGraph(readFileSync(file, "utf8"));
     const version = graph.graphVersion();
+    const stored = latestStored(db);
+    const previous = readStored(stored);
     const before = storedCount(db);
     db.prepare(
       "INSERT OR IGNORE INTO graph_versions (version, canonical, stored_at) VALUES (?, ?, ?)",
@@ -56,7 +72,7 @@ export function startGraph(
         "graph_versions_many",
         `${after} graph versions are stored; none is deleted`,
       );
-    start = { graph, version, source: "file" };
+    start = { graph, version, source: "file", previous };
   } catch (error) {
     const message = (error as Error).message;
     const stored = latestStored(db);

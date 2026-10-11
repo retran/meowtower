@@ -1,13 +1,18 @@
 // `./meowtower graph check [file]` (SPC-0050, rule 1): loads the skill graph and
 // reports its version, or the failing rule with the node and field it names.
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { GRAPH_FILE, GraphInvalid, openGraph } from "../src/engine/graph.js";
 
 const file = process.argv[2] ?? GRAPH_FILE;
+// Rule 3 compares the base file with the RES-0800 fixture (REQ-0806), when it exists.
+const FIXTURE = "tests/fixtures/res-0800.yaml";
 try {
-  const graph = openGraph(readFileSync(file, "utf8"));
+  const fixture = existsSync(FIXTURE)
+    ? readFileSync(FIXTURE, "utf8")
+    : undefined;
+  const graph = openGraph(readFileSync(file, "utf8"), fixture);
   console.log(
-    `graph check: ${graph.graphVersion()} passes rule 1 (schema, field checks, levels and prerequisites) with ${graph.nodes().length} nodes`,
+    `graph check: ${graph.graphVersion()} passes rules 1${fixture === undefined ? "" : " and 3"} (schema, field checks, levels and prerequisites${fixture === undefined ? "" : ", and the RES-0800 fixture"}) with ${graph.nodes().length} nodes`,
   );
   process.exit(0);
 } catch (error) {

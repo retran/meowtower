@@ -1,0 +1,32 @@
+# The RES-0800 fixture (SPC-0050, rule 3): each base maths node's domain, level
+# and prerequisites as RES-0800 gives them. It starts with the three nodes of the
+# small test graph and gains its rows with TSK-0503 to TSK-0505.
+nodes:
+  N1:
+    domain: N
+    level: 1F
+    typicalGroup: 3
+    subtypes:
+      - { id: whole, level: 1F, weight: 1 }
+    prereqs: []
+  N2:
+    domain: N
+    level: 1S
+    typicalGroup: 4
+    subtypes:
+      - { id: fraction, level: 1S, weight: 1 }
+    prereqs:
+      - { node: N1 }
+  N3:
+    domain: N
+    level: stretch
+    typicalGroup: 6
+    stretchGate: [N1, N2]
+    subtypes:
+      - { id: blocks, level: stretch, weight: 1 }
+    prereqs:
+      - { node: N2, subtype: fraction }
+topics: []
+sloGoals:
+  - { id: slo-1, level: 1F, text: "Rekenen op getallen tot 100" }
+changes: []

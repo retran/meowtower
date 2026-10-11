@@ -75,6 +75,15 @@ const SloGoal = z
   })
   .strict();
 
+/** A deliberate change: the node and field it excuses from the fixture, and why (REQ-0806). */
+const ChangeLine = z
+  .object({
+    node: z.string().min(1),
+    field: z.enum(["domain", "level", "prereqs"]),
+    reason: z.string().min(1),
+  })
+  .strict();
+
 const GraphFile = z
   .object({
     nodes: z.record(z.string().min(1), Node),
@@ -84,7 +93,7 @@ const GraphFile = z
       )
       .default([]),
     sloGoals: z.array(SloGoal).default([]),
-    changes: z.array(z.string()).default([]),
+    changes: z.array(ChangeLine).default([]),
   })
   .strict();
 
@@ -138,6 +147,39 @@ function checkNodes(data: GraphData): void {
   }
 }
 
+/** The field values rule 3 compares, as one string per field. */
+const fieldsOf = (
+  node: NodeRecord,
+): Record<"domain" | "level" | "prereqs", string> => ({
+  domain: node.domain,
+  level: node.level,
+  prereqs: JSON.stringify(node.prereqs.map((p) => [p.node, p.subtype ?? null])),
+});
+
+/**
+ * Rule 3 (SPC-0050, REQ-0806): each base node's domain, level and prerequisites
+ * equal the fixture's, unless a changes line names that node and field. A line
+ * excuses only the field it names. A difference without one is graph_drift.
+ */
+function checkFixture(data: GraphData, fixture: GraphData): void {
+  for (const [id, expected] of Object.entries(fixture.nodes)) {
+    const actual = data.nodes[id];
+    if (actual === undefined) continue;
+    const want = fieldsOf(expected);
+    const got = fieldsOf(actual);
+    for (const field of ["domain", "level", "prereqs"] as const) {
+      if (want[field] === got[field]) continue;
+      const excused = data.changes.some(
+        (c) => c.node === id && c.field === field,
+      );
+      if (!excused)
+        throw new GraphInvalid(
+          `graph_drift: node ${id}: ${field} differs from RES-0800 and no changes line names it`,
+        );
+    }
+  }
+}
+
 /** A prerequisite cycle, or a prerequisite on a node the file doesn't hold. */
 function checkPrereqs(data: GraphData): void {
   const ids = new Set(Object.keys(data.nodes));
@@ -175,13 +217,21 @@ const describe = (issue: z.core.$ZodIssue): string => {
   return `${place}: ${issue.message}`;
 };
 
-/** Checks a parsed value against the schema and the prerequisite graph. */
-export function checkGraph(value: unknown): GraphData {
+/** Checks a parsed value against the schema and the prerequisite graph, and against the fixture when one is given. */
+export function checkGraph(value: unknown, fixture?: unknown): GraphData {
   const parsed = GraphFile.safeParse(value);
   if (!parsed.success)
     throw new GraphInvalid(parsed.error.issues.map(describe).join("; "));
   checkNodes(parsed.data);
   checkPrereqs(parsed.data);
+  if (fixture !== undefined) {
+    const expected = GraphFile.safeParse(fixture);
+    if (!expected.success)
+      throw new GraphInvalid(
+        `fixture: ${expected.error.issues.map(describe).join("; ")}`,
+      );
+    checkFixture(parsed.data, expected.data);
+  }
   return parsed.data;
 }
 
@@ -207,7 +257,9 @@ export interface Graph {
   stretchGate(id: string): string[];
   topics(): GraphData["topics"];
   sloGoals(): GraphData["sloGoals"];
-  changes(): string[];
+  changes(
+    previous?: Graph,
+  ): { node: string; field: string; reason: string; new: boolean }[];
 }
 
 /** The read-only queries over a checked graph. */
@@ -246,19 +298,44 @@ function queriesOver(data: GraphData): Graph {
     stretchGate: (id) => [...(nodeOf(id).stretchGate ?? [])],
     topics: () => data.topics.map((t) => ({ ...t })),
     sloGoals: () => data.sloGoals.map((g) => ({ ...g })),
-    changes: () => [...data.changes],
+    changes: (previous) => {
+      const before =
+        previous === undefined
+          ? new Set<string>()
+          : new Set(
+              previous
+                .changes()
+                .map((c) => JSON.stringify([c.node, c.field, c.reason])),
+            );
+      return data.changes.map((c) => ({
+        node: c.node,
+        field: c.field,
+        reason: c.reason,
+        new: !before.has(JSON.stringify([c.node, c.field, c.reason])),
+      }));
+    },
   };
 }
 
 /** Loads the graph from its YAML text, refusing it with GraphInvalid if it breaks. */
-export function openGraph(text: string): Graph {
+export function openGraph(text: string, fixtureText?: string): Graph {
   let value: unknown;
   try {
     value = parse(text, { maxAliasCount: 100 });
   } catch (error) {
     throw new GraphInvalid(`yaml: ${(error as Error).message}`);
   }
-  return queriesOver(checkGraph(value ?? {}));
+  const fixture =
+    fixtureText === undefined ? undefined : parseText(fixtureText);
+  return queriesOver(checkGraph(value ?? {}, fixture));
+}
+
+function parseText(text: string): unknown {
+  try {
+    return parse(text, { maxAliasCount: 100 }) ?? {};
+  } catch (error) {
+    throw new GraphInvalid(`yaml: ${(error as Error).message}`);
+  }
 }
 
 /** Reads a graph back from the canonical text stored for it. */
