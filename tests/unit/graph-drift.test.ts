@@ -11,7 +11,7 @@ const base = readFileSync(
   "utf8",
 );
 const fixture = readFileSync(
-  new URL("../fixtures/res-0800.yaml", import.meta.url),
+  new URL("../fixtures/graph-small.yaml", import.meta.url),
   "utf8",
 );
 const withChanges = (lines: string): string =>

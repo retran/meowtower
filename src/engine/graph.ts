@@ -342,3 +342,43 @@ function parseText(text: string): unknown {
 export function openCanonical(canonical: string): Graph {
   return queriesOver(checkGraph(JSON.parse(canonical)));
 }
+
+/** The node counts RES-0800 gives per domain, and in total (SPC-0050, rule 2). */
+export const EXPECTED_DOMAINS: Readonly<
+  Record<string, [total: number, stretch: number]>
+> = {
+  N: [8, 1],
+  A: [17, 3],
+  F: [8, 0],
+  D: [7, 1],
+  P: [7, 1],
+  M: [14, 2],
+  G: [7, 1],
+  S: [7, 1],
+  T: [4, 0],
+};
+
+/**
+ * Rule 2 (SPC-0050, REQ-0800): the 79 maths nodes in nine domains with their
+ * counts, 69 at 1F, 1S or 1F/1S and 10 at stretch. It runs on the whole file, not
+ * on a test fixture, so it is called by `graph check` and the content tests.
+ */
+export function checkCounts(graph: Graph): void {
+  const nodes = graph.nodes();
+  const problems: string[] = [];
+  for (const [domain, [total, stretch]] of Object.entries(EXPECTED_DOMAINS)) {
+    const inDomain = nodes.filter((n) => n.domain === domain);
+    const gotStretch = inDomain.filter((n) => n.level === "stretch").length;
+    if (inDomain.length !== total || gotStretch !== stretch)
+      problems.push(
+        `domain ${domain} has ${inDomain.length} nodes (${gotStretch} stretch), expected ${total} (${stretch})`,
+      );
+  }
+  const stretch = nodes.filter((n) => n.level === "stretch").length;
+  if (nodes.length !== 79 || stretch !== 10 || nodes.length - stretch !== 69)
+    problems.push(
+      `${nodes.length} nodes (${stretch} stretch), expected 79 (10)`,
+    );
+  if (problems.length > 0)
+    throw new GraphInvalid(`counts: ${problems.join("; ")}`);
+}

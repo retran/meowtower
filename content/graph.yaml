@@ -1,5 +1,744 @@
-# The skill graph (SPC-0050). It holds no node until TSK-0503 fills it.
-nodes: {}
-topics: []
+# The skill graph (SPC-0050, ADR-0050): the 79 maths nodes of RES-0800 with
+# their levels after the 17 corrections, typical groups, subtypes and prerequisites.
+# Typical groups and subtype ids are provisional until the parent reviews the diff
+# (TSK-0503 to TSK-0505). The SLO goals and their mapping come with TSK-0507.
+nodes:
+  N1:
+    domain: N
+    level: "1F"
+    typicalGroup: 1
+    subtypes:
+      - { id: compare, level: "1F", weight: 0.5 }
+      - { id: before-after, level: "1F", weight: 0.5 }
+    prereqs: []
+  N2:
+    domain: N
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: compose, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: N1 }
+  N3:
+    domain: N
+    level: "1F/1S"
+    typicalGroup: 5
+    subtypes:
+      - { id: words-digits, level: "1F", weight: 0.5 }
+      - { id: compare-six, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: N2 }
+  N4:
+    domain: N
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: round, level: "1F", weight: 0.5 }
+      - { id: estimate, level: "1F", weight: 0.5 }
+    prereqs:
+      - { node: N3 }
+  N5:
+    domain: N
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: point, level: "1F", weight: 0.5 }
+      - { id: scale, level: "1F", weight: 0.5 }
+    prereqs:
+      - { node: N3 }
+  N6:
+    domain: N
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: million-decimal, level: "1F", weight: 0.5 }
+      - { id: round-million, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: N3 }
+  N7:
+    domain: N
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: thermometer, level: "1F", weight: 0.5 }
+      - { id: order, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: N5 }
+  N8:
+    domain: N
+    level: "stretch"
+    typicalGroup: 7
+    stretchGate: [N6, N7]
+    subtypes:
+      - { id: operate, level: "stretch", weight: 0.5 }
+      - { id: scale-operate, level: "stretch", weight: 0.5 }
+    prereqs:
+      - { node: N7 }
+      - { node: A2 }
+  A1:
+    domain: A
+    level: "1F"
+    typicalGroup: 1
+    subtypes:
+      - { id: add-sub-20, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: N1 }
+  A2:
+    domain: A
+    level: "1F"
+    typicalGroup: 2
+    subtypes:
+      - { id: mental-100, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A1 }
+      - { node: N2 }
+  A3:
+    domain: A
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: table, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A2 }
+  A4:
+    domain: A
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: divide-table, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A3 }
+  A5:
+    domain: A
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: column, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A2 }
+      - { node: N3 }
+  A6:
+    domain: A
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: by-one-digit, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A3 }
+      - { node: A5 }
+  A6a:
+    domain: A
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: round-numbers, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A3 }
+      - { node: A4 }
+      - { node: N2 }
+  A7:
+    domain: A
+    level: "1F"
+    typicalGroup: 5
+    subtypes:
+      - { id: by-two-digit, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A6 }
+      - { node: A6a }
+  A8:
+    domain: A
+    level: "1F"
+    typicalGroup: 5
+    subtypes:
+      - { id: remainder, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A4 }
+  A9:
+    domain: A
+    level: "1F"
+    typicalGroup: 5
+    subtypes:
+      - { id: long-one-digit, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A8 }
+      - { node: A6 }
+  A10:
+    domain: A
+    level: "1F"
+    typicalGroup: 6
+    subtypes:
+      - { id: by-two-digit-div, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A9 }
+      - { node: A6a }
+      - { node: N4 }
+  A11:
+    domain: A
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: order-brackets, level: "1F", weight: 0.5 }
+      - { id: unknown, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: A4 }
+      - { node: A5 }
+  A12:
+    domain: A
+    level: "stretch"
+    typicalGroup: 7
+    stretchGate: [A11, A13]
+    subtypes:
+      - { id: divisibility, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: A4 }
+  A13:
+    domain: A
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: efficient, level: "1F", weight: 0.5 }
+      - { id: properties, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: A7 }
+      - { node: A11 }
+  A14:
+    domain: A
+    level: "1F/1S"
+    typicalGroup: 7
+    subtypes:
+      - { id: calculator, level: "1F", weight: 0.5 }
+      - { id: calculator-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: N4 }
+      - { node: D6 }
+  A15:
+    domain: A
+    level: "stretch"
+    typicalGroup: 8
+    stretchGate: [A11, A13, D4]
+    subtypes:
+      - { id: one-step-eq, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: A11 }
+      - { node: D4 }
+  A16:
+    domain: A
+    level: "stretch"
+    typicalGroup: 8
+    stretchGate: [A11, A13]
+    subtypes:
+      - { id: two-step-eq, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: A15 }
+  F1:
+    domain: F
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: share, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A4 }
+  F2:
+    domain: F
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: fraction-of, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: F1 }
+      - { node: A9 }
+  F3:
+    domain: F
+    level: "1F/1S"
+    typicalGroup: 4
+    subtypes:
+      - { id: same-den, level: "1F", weight: 0.5 }
+      - { id: line, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: F1, subtype: same-den }
+      - { node: N5, subtype: line }
+  F4:
+    domain: F
+    level: "1F/1S"
+    typicalGroup: 5
+    subtypes:
+      - { id: equivalent, level: "1F", weight: 0.5 }
+      - { id: simplify, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: F1 }
+      - { node: A4 }
+  F5:
+    domain: F
+    level: "1F/1S"
+    typicalGroup: 5
+    subtypes:
+      - { id: add-same-den, level: "1F", weight: 0.5 }
+      - { id: mixed, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: F3 }
+  F6:
+    domain: F
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: add-unlike, level: "1F", weight: 0.5 }
+      - { id: add-unlike-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: F4 }
+      - { node: F5 }
+  F7:
+    domain: F
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: times-fraction, level: "1F", weight: 0.5 }
+      - { id: times-fraction-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: F2 }
+      - { node: F5 }
+  F8:
+    domain: F
+    level: "1S"
+    typicalGroup: 7
+    subtypes:
+      - { id: divide-fraction, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: F7 }
+  D1:
+    domain: D
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: place-value, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: F3 }
+      - { node: N3 }
+  D2:
+    domain: D
+    level: "1F"
+    typicalGroup: 5
+    subtypes:
+      - { id: add-sub, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: D1 }
+      - { node: A5 }
+  D3:
+    domain: D
+    level: "1F"
+    typicalGroup: 5
+    subtypes:
+      - { id: shift-10, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: D1 }
+  D4:
+    domain: D
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: multiply, level: "1F", weight: 0.5 }
+      - { id: multiply-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: D2 }
+      - { node: D3 }
+      - { node: A7 }
+  D5:
+    domain: D
+    level: "1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: divide, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: D4 }
+      - { node: A10 }
+  D6:
+    domain: D
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: convert, level: "1F", weight: 0.5 }
+      - { id: convert-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: F4 }
+      - { node: D1 }
+  D7:
+    domain: D
+    level: "stretch"
+    typicalGroup: 7
+    stretchGate: [D4, D5, F7]
+    subtypes:
+      - { id: order-mixed, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: A11 }
+      - { node: F7 }
+      - { node: D4 }
+  P1:
+    domain: P
+    level: "1F"
+    typicalGroup: 5
+    subtypes:
+      - { id: half-tenth, level: "1F", weight: 0.5 }
+      - { id: decimal, level: "1F", weight: 0.5 }
+    prereqs:
+      - { node: F1, subtype: half-tenth }
+      - { node: D6, subtype: decimal }
+  P2:
+    domain: P
+    level: "1F"
+    typicalGroup: 6
+    subtypes:
+      - { id: percent-of, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: P1 }
+      - { node: F2 }
+  P3:
+    domain: P
+    level: "1S"
+    typicalGroup: 7
+    subtypes:
+      - { id: share-of, level: "1S", weight: 0.5 }
+      - { id: vat, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: P2 }
+  P4:
+    domain: P
+    level: "1F"
+    typicalGroup: 6
+    subtypes:
+      - { id: ratio, level: "1F", weight: 0.5 }
+      - { id: per-one, level: "1F", weight: 0.5 }
+    prereqs:
+      - { node: A9 }
+      - { node: F2 }
+  P5:
+    domain: P
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: map-scale, level: "1F", weight: 0.5 }
+      - { id: map-scale-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: P4 }
+      - { node: M1 }
+  P6:
+    domain: P
+    level: "1F/1S"
+    typicalGroup: 7
+    subtypes:
+      - { id: compare-offer, level: "1F", weight: 0.5 }
+      - { id: relative, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: P3 }
+      - { node: P4 }
+      - { node: D5 }
+  P7:
+    domain: P
+    level: "stretch"
+    typicalGroup: 8
+    stretchGate: [P3, P6]
+    subtypes:
+      - { id: successive, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: P3 }
+      - { node: D4 }
+  M1:
+    domain: M
+    level: "1F"
+    typicalGroup: 6
+    subtypes:
+      - { id: whole, level: "1F", weight: 0.5 }
+      - { id: decimal, level: "1F", weight: 0.5 }
+    prereqs:
+      - { node: N3, subtype: whole }
+      - { node: D3, subtype: decimal }
+  M2:
+    domain: M
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: clock, level: "1F", weight: 0.5 }
+      - { id: calendar, level: "1F", weight: 0.5 }
+    prereqs:
+      - { node: A2 }
+  M3:
+    domain: M
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: whole, level: "1F", weight: 0.5 }
+      - { id: cents, level: "1F", weight: 0.5 }
+    prereqs:
+      - { node: A5, subtype: whole }
+      - { node: D2, subtype: cents }
+  M4:
+    domain: M
+    level: "1F/1S"
+    typicalGroup: 3
+    subtypes:
+      - { id: by-squares, level: "1F", weight: 0.25 }
+      - { id: by-sides, level: "1S", weight: 0.25 }
+      - { id: formula, level: "1S", weight: 0.25 }
+      - { id: not-rectangle, level: "1S", weight: 0.25 }
+    prereqs:
+      - { node: A5 }
+      - { node: M1 }
+  M5:
+    domain: M
+    level: "1F/1S"
+    typicalGroup: 5
+    subtypes:
+      - { id: grid, level: "1F", weight: 0.333333 }
+      - { id: formula, level: "1S", weight: 0.333333 }
+      - { id: sides, level: "1S", weight: 0.333333 }
+    prereqs:
+      - { node: A3, subtype: grid }
+      - { node: A7, subtype: formula }
+      - { node: M1 }
+  M6:
+    domain: M
+    level: "1S"
+    typicalGroup: 7
+    subtypes:
+      - { id: triangle, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: M5 }
+      - { node: F2 }
+  M7:
+    domain: M
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: by-cubes, level: "1F", weight: 0.5 }
+      - { id: formula, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: M5 }
+  M8:
+    domain: M
+    level: "1S"
+    typicalGroup: 7
+    subtypes:
+      - { id: speed, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: P4 }
+      - { node: M2 }
+  M9:
+    domain: M
+    level: "1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: area-units, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: M5 }
+      - { node: D3 }
+  M10:
+    domain: M
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: capacity, level: "1F", weight: 0.5 }
+      - { id: capacity-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: M7 }
+      - { node: D3 }
+  M11:
+    domain: M
+    level: "stretch"
+    typicalGroup: 8
+    stretchGate: [M6, M9]
+    subtypes:
+      - { id: circle, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: M6 }
+      - { node: D4 }
+  M12:
+    domain: M
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: benchmark, level: "1F", weight: 0.5 }
+      - { id: benchmark-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: M1 }
+      - { node: M9, subtype: ha }
+  M13:
+    domain: M
+    level: "1F"
+    typicalGroup: 2
+    subtypes:
+      - { id: instruments, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: N5 }
+      - { node: D1 }
+  M14:
+    domain: M
+    level: "stretch"
+    typicalGroup: 8
+    stretchGate: [M8, M10, P6]
+    subtypes:
+      - { id: average-speed, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: M8 }
+      - { node: P6 }
+  G1:
+    domain: G
+    level: "1F"
+    typicalGroup: 1
+    subtypes:
+      - { id: shapes, level: "1F", weight: 1.0 }
+    prereqs: []
+  G2:
+    domain: G
+    level: "stretch"
+    typicalGroup: 7
+    stretchGate: [G3, G4]
+    subtypes:
+      - { id: angles, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: G1 }
+  G3:
+    domain: G
+    level: "1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: symmetry, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: G1 }
+  G4:
+    domain: G
+    level: "1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: coordinates, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: N5 }
+  G5:
+    domain: G
+    level: "1F"
+    typicalGroup: 2
+    subtypes:
+      - { id: solids-nets, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: G1 }
+  G6:
+    domain: G
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: views, level: "1F", weight: 1.0 }
+      - { id: blocks, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: G5 }
+  G7:
+    domain: G
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: plan, level: "1F", weight: 0.5 }
+      - { id: plan-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: G4 }
+      - { node: P5 }
+  S1:
+    domain: S
+    level: "1F"
+    typicalGroup: 2
+    subtypes:
+      - { id: tables, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: N3 }
+  S2:
+    domain: S
+    level: "1F"
+    typicalGroup: 4
+    subtypes:
+      - { id: bar-line, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: S1 }
+      - { node: N5 }
+  S3:
+    domain: S
+    level: "1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: mean, level: "1S", weight: 1.0 }
+      - { id: missing, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: S1 }
+      - { node: A9 }
+  S4:
+    domain: S
+    level: "1S"
+    typicalGroup: 7
+    subtypes:
+      - { id: pie, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: S2 }
+      - { node: P1 }
+  S5:
+    domain: S
+    level: "1F/1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: global, level: "1F", weight: 0.5 }
+      - { id: global-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: S2 }
+      - { node: G4 }
+  S6:
+    domain: S
+    level: "1F/1S"
+    typicalGroup: 5
+    subtypes:
+      - { id: patterns, level: "1F", weight: 0.5 }
+      - { id: patterns-1S, level: "1S", weight: 0.5 }
+    prereqs:
+      - { node: A2 }
+      - { node: A3 }
+  S7:
+    domain: S
+    level: "stretch"
+    typicalGroup: 8
+    stretchGate: [S3, S4]
+    subtypes:
+      - { id: median-mode, level: "stretch", weight: 1.0 }
+    prereqs:
+      - { node: S3 }
+  T1:
+    domain: T
+    level: "1F"
+    typicalGroup: 2
+    subtypes:
+      - { id: one-step, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: A2 }
+  T2:
+    domain: T
+    level: "1F"
+    typicalGroup: 3
+    subtypes:
+      - { id: two-step, level: "1F", weight: 1.0 }
+    prereqs:
+      - { node: T1 }
+  T3:
+    domain: T
+    level: "1S"
+    typicalGroup: 5
+    subtypes:
+      - { id: three-step, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: T2 }
+  T4:
+    domain: T
+    level: "1S"
+    typicalGroup: 6
+    subtypes:
+      - { id: four-step, level: "1S", weight: 1.0 }
+    prereqs:
+      - { node: T3 }
+topics:
+  - { id: E1, name: "forces and motion" }
+  - { id: E2, name: "substances and their states" }
+  - { id: E3, name: "simple electric circuits" }
+  - { id: E4, name: "living organisms and plants" }
+  - { id: E5, name: "the Earth, the Sun and the Moon" }
 sloGoals: []
 changes: []
