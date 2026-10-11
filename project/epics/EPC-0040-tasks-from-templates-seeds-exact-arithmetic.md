@@ -62,7 +62,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-007 [P] TSK-0486 One computation graph gives the solution, the hints and the explanation of every trap (done: pull request 18)
       closes: REQ-1214, REQ-1234
       depends: TSK-0481 - it carries the template contract the graph extends.
-- [ ] T-008 TSK-0487 Entered steps are matched against every valid solution path and classified
+- [x] T-008 TSK-0487 Entered steps are matched against every valid solution path and classified (done: pull request 18)
       closes: REQ-0705, REQ-0707, REQ-0709, REQ-0713, REQ-0774, REQ-0776, REQ-0848
       depends: TSK-0486 - the valid graphs and the structure traps come from the graph module.; TSK-0482 - a step's value is compared in `Q`.
 - [ ] T-009 TSK-0488 A word problem takes one of the seven structures, with numbers fixed before the story
