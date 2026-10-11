@@ -1,7 +1,7 @@
 ---
 id: TSK-0481
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-1202, REQ-1206, REQ-1208, REQ-1210, REQ-1216, REQ-0830]
@@ -34,7 +34,25 @@ Add `src/engine/tasks/template.ts` with the contract of RES-1200 and ADR-0040's 
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Tests that close each criterion (commit `e5fa287` holds the tests, written first and seen failing; commit `0c1ebc7` holds the change):
+
+1. REQ-1202, `tests/unit/template-generate.test.ts`: two tests build the task twice and rebuild it from its effective seed alone. The golden test over 20 seeds is TSK-0493's.
+2. REQ-1208, the same file: the draw count is 1,000; `generation_fallback` takes the first accepted entry or the first entry; `generation_error` when there is no fallback list.
+3. REQ-1206, the same file: a property test over 10,000 seeds. REQ-1210: `distinct` compares by value, so `2/4` and `1/2` are one value.
+4. REQ-0830, the same file: the next task's answer differs from the previous task's, and its effective seed differs too.
+5. REQ-1216, `tests/unit/lint-no-network-import.test.ts`: nine cases, the rule fails a network or gateway import under each computing folder and passes the seeded source.
+
+Stages at tree `f23a56c906a0`, from `meow-checks evidence`:
+
+- format: passed, record 67035468d080
+- lint: passed, record b5850f512876
+- check: passed, record 8051ef8690f6
+- test: passed, record 5d2f75b296ac
+- build: passed, record d2b9e29f0d03
+
+Pull request: #18, EPC-0040's pull request.
 
 ## Left alone
 

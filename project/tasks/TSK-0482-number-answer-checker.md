@@ -1,7 +1,7 @@
 ---
 id: TSK-0482
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-0732, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0778]
@@ -34,7 +34,30 @@ Add the number kinds to `src/shared/answer.ts`, each parsing its entry with `Q` 
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Fixtures in `tests/unit/answer-number.test.ts`, 26 tests:
+
+1. REQ-0732: `12 500`, `12` with a no-break space, `012500` and `007` are correct; `12 501` is wrong; a malformed grouping is unparsed.
+2. REQ-0742: `2,5`, `2.5`, `2,50` and `2,500` are correct; `3` and `3,0` are correct for 3; `3,,5` is unparsed.
+3. REQ-0744 and REQ-0746: `2/4` and `3/6` are correct for 1/2; `6/4` is correct for 3/2; `0,5` is wrong, as a decimal.
+4. REQ-0748 and REQ-0750: `1/2` is full credit and `2/4` is half credit under the simplest-form rule.
+5. REQ-0752, REQ-0754 and REQ-0756: `2 1/2` is full credit under both rules; `5/2` is correct under the equivalent rule and half under the simplest; `2 2/4` is half under the simplest rule.
+6. REQ-0758: `6 r 19` is wrong for 79 and 10; `7 r 9` is correct.
+7. REQ-0778: `3/4` and `0,75` are correct for the value 3/4.
+8. `dont_know` gives no credit for every kind, and free text is unparsed.
+
+The fixtures sit in the unit suite, not in an acceptance test, because the epic's acceptance test doesn't exist yet. TSK-0492 gathers them there.
+
+Stages at tree `3a9535302ce6`, from `meow-checks evidence`:
+
+- format: passed, record e64afc8771bd
+- lint: passed, record b50646dcb918
+- check: passed, record b89f8e945b1b
+- test: passed, record e03dca877159
+- build: passed, record 9f57f6519ef6
+
+The tests and the module were written together, so the failing run that the implement step asks for didn't happen for this task.
 
 ## Left alone
 

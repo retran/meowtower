@@ -386,12 +386,13 @@ describe("ADR-0020: attempt_submitted gains a version with the two flags", () =>
     };
     registry.validate("attempt_submitted", 1, v1);
     const lifted = registry.upcast("attempt_submitted", 1, v1);
-    expect(lifted.v).toBe(2);
+    expect(lifted.v).toBe(3);
     expect(lifted.payload).toMatchObject({
       interrupted: false,
       crossDevice: false,
+      modelChoice: null,
     });
-    registry.validate("attempt_submitted", 2, lifted.payload);
+    registry.validate("attempt_submitted", 3, lifted.payload);
   });
 });
 

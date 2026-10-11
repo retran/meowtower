@@ -72,70 +72,90 @@ const attemptNo = z
   .union([z.literal(1), z.literal(2)])
   .describe("1 for the first attempt, 2 for the second");
 
-const itemShownV1 = z
-  .object({
-    itemId,
-    view: z
-      .object({
-        locale: z
-          .enum(["ru"])
-          .describe("the language the view was rendered in"),
-        text: z.string().describe("the task's text as rendered"),
-        svg: z
-          .string()
-          .nullable()
-          .describe("the task's picture as rendered, or null"),
-        options: z
-          .array(z.string())
-          .nullable()
-          .describe("the answer options shown, or null for free input"),
-        terms: z
-          .array(z.string())
-          .describe("the term hints marked in the text"),
-      })
-      .strict()
-      .describe("the full rendered view the player saw"),
-    templateId: z
+const itemShownBase = z.object({
+  itemId,
+  view: z
+    .object({
+      locale: z.enum(["ru"]).describe("the language the view was rendered in"),
+      text: z.string().describe("the task's text as rendered"),
+      svg: z
+        .string()
+        .nullable()
+        .describe("the task's picture as rendered, or null"),
+      options: z
+        .array(z.string())
+        .nullable()
+        .describe("the answer options shown, or null for free input"),
+      terms: z.array(z.string()).describe("the term hints marked in the text"),
+    })
+    .strict()
+    .describe("the full rendered view the player saw"),
+  templateId: z
+    .string()
+    .min(1)
+    .describe("the template that generated the task"),
+  templateVersion: z
+    .number()
+    .int()
+    .positive()
+    .describe("the template's version"),
+  seed: z.string().min(1).describe("the seed the task was generated from"),
+  params: z
+    .record(z.string(), z.unknown())
+    .describe("the task's language-free parameters"),
+  node: z.string().min(1).describe("the skill-graph node"),
+  subtype: z.string().min(1).describe("the node's subtype"),
+  purpose: z.string().min(1).describe("why the Director chose the task"),
+  attemptNo,
+  parentItemId: z
+    .string()
+    .min(1)
+    .optional()
+    .describe("for a second attempt, the itemId of the first"),
+  correctAnswer: z
+    .string()
+    .min(1)
+    .describe("the correct answer as it would be shown"),
+  shortSolution: z
+    .array(z.string())
+    .min(1)
+    .describe("the short solution's steps as they would be shown"),
+});
+
+const requireParentForSecond = (
+  p: { attemptNo: number; parentItemId?: string | undefined },
+  ctx: z.RefinementCtx,
+): void => {
+  if (p.attemptNo === 2 && p.parentItemId === undefined) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["parentItemId"],
+      message: "required for a second attempt",
+    });
+  }
+};
+
+const itemShownV1 = itemShownBase.strict().superRefine(requireParentForSecond);
+
+// Version 2 records the candidate the task was drawn at and its effective seed,
+// `base/k` or `base/f<i>`, so the task rebuilds from the template alone (REQ-1200).
+const itemShownV2 = itemShownBase
+  .extend({
+    effectiveSeed: z
       .string()
       .min(1)
-      .describe("the template that generated the task"),
-    templateVersion: z
+      .describe("the effective seed the task rebuilds from"),
+    candidate: z
       .number()
       .int()
-      .positive()
-      .describe("the template's version"),
-    seed: z.string().min(1).describe("the seed the task was generated from"),
-    params: z
-      .record(z.string(), z.unknown())
-      .describe("the task's language-free parameters"),
-    node: z.string().min(1).describe("the skill-graph node"),
-    subtype: z.string().min(1).describe("the node's subtype"),
-    purpose: z.string().min(1).describe("why the Director chose the task"),
-    attemptNo,
-    parentItemId: z
-      .string()
-      .min(1)
-      .optional()
-      .describe("for a second attempt, the itemId of the first"),
-    correctAnswer: z
-      .string()
-      .min(1)
-      .describe("the correct answer as it would be shown"),
-    shortSolution: z
-      .array(z.string())
-      .min(1)
-      .describe("the short solution's steps as they would be shown"),
+      .nonnegative()
+      .nullable()
+      .describe(
+        "the candidate k the task was drawn at, or null for a fallback",
+      ),
   })
   .strict()
-  .superRefine((p, ctx) => {
-    if (p.attemptNo === 2 && p.parentItemId === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["parentItemId"],
-        message: "required for a second attempt",
-      });
-    }
-  });
+  .superRefine(requireParentForSecond);
 
 const attemptSubmittedV0 = z
   .object({ raw: z.string().describe("stage 0: the answer as entered") })
@@ -222,6 +242,17 @@ const attemptSubmittedV2 = attemptSubmittedV1
     crossDevice: z
       .boolean()
       .describe("whether the answer came from another kind of device"),
+  })
+  .strict();
+
+// Version 3 records the model a word problem's opening choice picked, apart from
+// the answer (REQ-0713); an earlier attempt had none, so it reads as null.
+const attemptSubmittedV3 = attemptSubmittedV2
+  .extend({
+    modelChoice: z
+      .string()
+      .nullable()
+      .describe("the model the opening choice picked, or null"),
   })
   .strict();
 
@@ -725,6 +756,16 @@ const safetyDefs: EventDef[] = [
 
 export const EVENT_DEFS: readonly EventDef[] = [
   { type: "item_shown", v: 1, schema: itemShownV1 },
+  {
+    type: "item_shown",
+    v: 2,
+    schema: itemShownV2,
+    upcastFrom: (payload) => ({
+      ...(payload as object),
+      effectiveSeed: (payload as { seed: string }).seed,
+      candidate: null,
+    }),
+  },
   { type: "attempt_submitted", v: 0, schema: attemptSubmittedV0 },
   { type: "attempt_submitted", v: 1, schema: attemptSubmittedV1 },
   {
@@ -736,6 +777,12 @@ export const EVENT_DEFS: readonly EventDef[] = [
       interrupted: false,
       crossDevice: false,
     }),
+  },
+  {
+    type: "attempt_submitted",
+    v: 3,
+    schema: attemptSubmittedV3,
+    upcastFrom: (payload) => ({ ...(payload as object), modelChoice: null }),
   },
   { type: "verdict", v: 1, schema: verdictV1 },
   { type: "hint_shown", v: 1, schema: hintShownV1 },

@@ -1,7 +1,7 @@
 ---
 id: EPC-0040
 artifact: epic
-status: approved
+status: done
 revised: 2026-10-10
 realises: ADR-0040
 ---
@@ -44,43 +44,43 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: the five verbs exit 0 at commit 3aa57cd; `tests/unit/math-q.test.ts`, `tests/unit/math-rng.test.ts`, `tests/unit/math-format.test.ts` (TSK-0480 Evidence)
       closes: REQ-1204, REQ-1226
       depends: none
-- [ ] T-002 [P] TSK-0481 The template contract and the seeded generator with its fallback
+- [x] T-002 [P] TSK-0481 The template contract and the seeded generator with its fallback (done: pull request 18)
       closes: REQ-1202, REQ-1206, REQ-1208, REQ-1210, REQ-1216, REQ-0830
       depends: TSK-0480 - it supplies `Q`, the seed and the format the generator uses.
-- [ ] T-003 [P] TSK-0482 The checker accepts number answers by value and kind
+- [x] T-003 [P] TSK-0482 The checker accepts number answers by value and kind (done: pull request 18)
       closes: REQ-0732, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0778
       depends: TSK-0480 - every comparison is by value in `Q`.
-- [ ] T-004 [P] TSK-0483 The checker accepts time, point, choice, grid and order answers exactly
+- [x] T-004 [P] TSK-0483 The checker accepts time, point, choice, grid and order answers exactly (done: pull request 18)
       closes: REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772
       depends: TSK-0482 - it builds the module and the result type these kinds share.
-- [ ] T-005 [P] TSK-0484 A wrong answer is classified by its trap, and a choice task's wrong options are its traps' answers
+- [x] T-005 [P] TSK-0484 A wrong answer is classified by its trap, and a choice task's wrong options are its traps' answers (done: pull request 18)
       closes: REQ-0702, REQ-0704, REQ-0726, REQ-0728, REQ-0730
       depends: TSK-0481 - the traps come from the template contract.; TSK-0482 - the entry's value and form come from the number kinds.
-- [ ] T-006 [P] TSK-0485 The build fails a template whose choice, comparison or traps break a rule
+- [x] T-006 [P] TSK-0485 The build fails a template whose choice, comparison or traps break a rule (done: pull request 18)
       closes: REQ-0706, REQ-0708, REQ-0710
       depends: TSK-0481 - the checks read the template contract.
-- [ ] T-007 [P] TSK-0486 One computation graph gives the solution, the hints and the explanation of every trap
+- [x] T-007 [P] TSK-0486 One computation graph gives the solution, the hints and the explanation of every trap (done: pull request 18)
       closes: REQ-1214, REQ-1234
       depends: TSK-0481 - it carries the template contract the graph extends.
-- [ ] T-008 TSK-0487 Entered steps are matched against every valid solution path and classified
+- [x] T-008 TSK-0487 Entered steps are matched against every valid solution path and classified (done: pull request 18)
       closes: REQ-0705, REQ-0707, REQ-0709, REQ-0713, REQ-0774, REQ-0776, REQ-0848
       depends: TSK-0486 - the valid graphs and the structure traps come from the graph module.; TSK-0482 - a step's value is compared in `Q`.
-- [ ] T-009 TSK-0488 A word problem takes one of the seven structures, with numbers fixed before the story
+- [x] T-009 TSK-0488 A word problem takes one of the seven structures, with numbers fixed before the story (done: pull request 18)
       closes: REQ-0780, REQ-0782, REQ-0786, REQ-0788, REQ-0836
       depends: TSK-0486 - it supplies the graph the structures extend.; TSK-0481 - the generator draws the numbers.
-- [ ] T-010 [P] TSK-0489 `frameMetrics` measures a frame against the limits of the readability table
+- [x] T-010 [P] TSK-0489 `frameMetrics` measures a frame against the limits of the readability table (done: pull request 18)
       closes: REQ-0701, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-3712
       depends: TSK-0480 - it uses `formatQ` to count a number as one word; either task can land first with a stub.
-- [ ] T-011 [P] TSK-0490 The client gets only the view: no solution, no design, no meaning in the id, and pictures drawn from parameters
+- [x] T-011 [P] TSK-0490 The client gets only the view: no solution, no design, no meaning in the id, and pictures drawn from parameters (done: pull request 18)
       closes: REQ-1218, REQ-1220, REQ-1222, REQ-1230
       depends: TSK-0481 - the view is built from the template contract.
-- [ ] T-012 [P] TSK-0491 The parallel task keeps the difficulty and changes the numbers and the answer
+- [x] T-012 [P] TSK-0491 The parallel task keeps the difficulty and changes the numbers and the answer (done: pull request 18)
       closes: REQ-1224
       depends: TSK-0481 - it reuses the generator's candidate loop and seed streams.
-- [ ] T-013 TSK-0492 The play routes generate each task from a template and a seed, and an unparsed entry stays unanswered
+- [x] T-013 TSK-0492 The play routes generate each task from a template and a seed, and an unparsed entry stays unanswered (done: pull request 18)
       closes: REQ-1200, REQ-0734, REQ-0736, REQ-0740
       depends: TSK-0481 - the routes call the generator.; TSK-0482 - the checker parses the entry.; TSK-0483 - the structured kinds are part of the module the route calls.; TSK-0490 - the route sends only the strict view.; TSK-0491 - the second attempt uses the parallel task.
-- [ ] T-014 TSK-0493 A verification run exercises every template on 10,000 seeds against an independent solver
+- [x] T-014 TSK-0493 A verification run exercises every template on 10,000 seeds against an independent solver (done: pull request 18)
       closes: none - it verifies what the other tasks build
       depends: TSK-0485 - it runs the build checks over every template.; TSK-0486 - it checks the graph's numbers.; TSK-0488 - it covers the word problem templates too.; TSK-0492 - it can run on the fixture templates before play uses them.
 

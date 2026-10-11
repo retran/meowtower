@@ -1,7 +1,7 @@
 ---
 id: TSK-0484
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-0702, REQ-0704, REQ-0726, REQ-0728, REQ-0730]
@@ -33,7 +33,26 @@ Add `classify(entry, task)` and `buildOptions(task, count)`. Both are pure and r
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program; none rests on judgement.
+
+Fixtures and a property test in `tests/unit/traps-classify.test.ts`, nine tests:
+
+1. REQ-0726: the entry 14 is classified as the trap `add` and 3 as `skip`.
+2. REQ-0728: 13 (one digit off) and 21 (the digits of 12 swapped) are computational.
+3. REQ-0730: 48 and 35 are neighbouring times-table facts of 6 × 7, so they are computational; 99 is unclassified.
+4. REQ-0702: a four-option choice task has the correct answer and its three distinct trap answers.
+5. REQ-0704: missing options are two-digit for a two-digit answer, and fraction fillers share the answer's denominator.
+6. The property test over 1,000 seeds: every four-option task has four distinct options, and each filler has the answer's digit count.
+
+Stages at tree `0442115e1563`, from `meow-checks evidence`:
+
+- format: passed, record f889cb52025e
+- lint: passed, record 06f408c1e039
+- check: passed, record 427b0192e013
+- test: passed, record 23fc3d17118b
+- build: passed, record 385143b2fb8b
+
+The test stage failed once on a timing test in `scene-resume.spec.ts`, which passed on the re-run. The record cites the passing run.
 
 ## Left alone
 
