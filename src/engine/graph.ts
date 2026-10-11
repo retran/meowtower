@@ -481,3 +481,27 @@ export function checkCounts(graph: Graph): void {
   if (problems.length > 0)
     throw new GraphInvalid(`counts: ${problems.join("; ")}`);
 }
+
+/**
+ * Rule 5 (SPC-0050, REQ-0812): every SLO goal is named by at least one subtype, and
+ * every subtype's `slo` reference names an existing goal. Like rule 2, it runs on the
+ * whole file, so `graph check` and the content tests call it.
+ */
+export function checkSlo(graph: Graph): void {
+  const goals = new Set(graph.sloGoals().map((g) => g.id));
+  const named = new Set<string>();
+  const problems: string[] = [];
+  for (const n of graph.nodes())
+    for (const s of graph.subtypes(n.id))
+      for (const id of s.slo) {
+        named.add(id);
+        if (!goals.has(id))
+          problems.push(
+            `subtype ${n.id}.${s.id} names ${id}, which is not a goal`,
+          );
+      }
+  for (const id of goals)
+    if (!named.has(id)) problems.push(`goal ${id} is named by no subtype`);
+  if (problems.length > 0)
+    throw new GraphInvalid(`slo: ${problems.join("; ")}`);
+}

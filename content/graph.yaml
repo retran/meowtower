@@ -1,746 +1,1423 @@
-# The skill graph (SPC-0050, ADR-0050): the 79 maths nodes of RES-0800 with
-# their levels after the 17 corrections, typical groups, subtypes and prerequisites.
-# Typical groups and subtype ids are provisional until the parent reviews the diff
-# (TSK-0503 to TSK-0505). The SLO goals and their mapping come with TSK-0507.
 nodes:
   N1:
     domain: N
     level: "1F"
     typicalGroup: 1
     subtypes:
-      - { id: compare, level: "1F", weight: 0.5 }
-      - { id: before-after, level: "1F", weight: 0.5 }
+      - id: compare
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-03, slo-getallen-1f-06]
+      - id: before-after
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-06]
     prereqs: []
   N2:
     domain: N
     level: "1F"
     typicalGroup: 3
     subtypes:
-      - { id: compose, level: "1F", weight: 1.0 }
+      - id: compose
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-11]
     prereqs:
-      - { node: N1 }
+      - node: N1
   N3:
     domain: N
     level: "1F/1S"
     typicalGroup: 5
     subtypes:
-      - { id: words-digits, level: "1F", weight: 0.5 }
-      - { id: compare-six, level: "1S", weight: 0.5 }
+      - id: words-digits
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-03, slo-getallen-1f-04]
+      - id: compare-six
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-04]
     prereqs:
-      - { node: N2 }
+      - node: N2
   N4:
     domain: N
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: round, level: "1F", weight: 0.5 }
-      - { id: estimate, level: "1F", weight: 0.5 }
+      - id: round
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-09]
+      - id: estimate
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-10]
     prereqs:
-      - { node: N3 }
+      - node: N3
   N5:
     domain: N
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: point, level: "1F", weight: 0.5 }
-      - { id: scale, level: "1F", weight: 0.5 }
+      - id: point
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-07]
+      - id: scale
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-07]
     prereqs:
-      - { node: N3 }
+      - node: N3
   N6:
     domain: N
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: million-decimal, level: "1F", weight: 0.5 }
-      - { id: round-million, level: "1S", weight: 0.5 }
+      - id: million-decimal
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-03]
+      - id: round-million
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-08, slo-getallen-1s-09]
     prereqs:
-      - { node: N3 }
+      - node: N3
   N7:
     domain: N
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: thermometer, level: "1F", weight: 0.5 }
-      - { id: order, level: "1S", weight: 0.5 }
+      - id: thermometer
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-01]
+      - id: order
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-06]
     prereqs:
-      - { node: N5 }
+      - node: N5
   N8:
     domain: N
-    level: "stretch"
+    level: stretch
     typicalGroup: 7
-    stretchGate: [N6, N7]
+    stretchGate:
+      - N6
+      - N7
     subtypes:
-      - { id: operate, level: "stretch", weight: 0.5 }
-      - { id: scale-operate, level: "stretch", weight: 0.5 }
+      - id: operate
+        level: stretch
+        weight: 0.5
+        slo: [slo-getallen-1s-19]
+      - id: scale-operate
+        level: stretch
+        weight: 0.5
+        slo: [slo-getallen-1s-19]
     prereqs:
-      - { node: N7 }
-      - { node: A2 }
+      - node: N7
+      - node: A2
   A1:
     domain: A
     level: "1F"
     typicalGroup: 1
     subtypes:
-      - { id: add-sub-20, level: "1F", weight: 1.0 }
+      - id: add-sub-20
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-15]
     prereqs:
-      - { node: N1 }
+      - node: N1
   A2:
     domain: A
     level: "1F"
     typicalGroup: 3
     subtypes:
-      - { id: mental-100, level: "1F", weight: 1.0 }
+      - id: mental-100
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-12]
     prereqs:
-      - { node: A1 }
-      - { node: N2 }
+      - node: A1
+      - node: N2
   A3:
     domain: A
     level: "1F"
     typicalGroup: 3
     subtypes:
-      - { id: table, level: "1F", weight: 1.0 }
+      - id: table
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-12]
     prereqs:
-      - { node: A2 }
+      - node: A2
   A4:
     domain: A
     level: "1F"
     typicalGroup: 4
     subtypes:
-      - { id: divide-table, level: "1F", weight: 1.0 }
+      - id: divide-table
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-12, slo-getallen-1s-11]
     prereqs:
-      - { node: A3 }
+      - node: A3
   A5:
     domain: A
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: column, level: "1F", weight: 1.0 }
+      - id: column
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-15]
     prereqs:
-      - { node: A2 }
-      - { node: N3 }
+      - node: A2
+      - node: N3
   A6:
     domain: A
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: by-one-digit, level: "1F", weight: 1.0 }
+      - id: by-one-digit
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-16]
     prereqs:
-      - { node: A3 }
-      - { node: A5 }
+      - node: A3
+      - node: A5
   A6a:
     domain: A
     level: "1F"
     typicalGroup: 4
     subtypes:
-      - { id: round-numbers, level: "1F", weight: 1.0 }
+      - id: round-numbers
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-09]
     prereqs:
-      - { node: A3 }
-      - { node: A4 }
-      - { node: N2 }
+      - node: A3
+      - node: A4
+      - node: N2
   A7:
     domain: A
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: by-two-digit, level: "1F", weight: 1.0 }
+      - id: by-two-digit
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-17]
     prereqs:
-      - { node: A6 }
-      - { node: A6a }
+      - node: A6
+      - node: A6a
   A8:
     domain: A
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: remainder, level: "1F", weight: 1.0 }
+      - id: remainder
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f1s-03]
     prereqs:
-      - { node: A4 }
+      - node: A4
   A9:
     domain: A
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: long-one-digit, level: "1F", weight: 1.0 }
+      - id: long-one-digit
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-18]
     prereqs:
-      - { node: A8 }
-      - { node: A6 }
+      - node: A8
+      - node: A6
   A10:
     domain: A
     level: "1F"
     typicalGroup: 6
     subtypes:
-      - { id: by-two-digit-div, level: "1F", weight: 1.0 }
+      - id: by-two-digit-div
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-18]
     prereqs:
-      - { node: A9 }
-      - { node: A6a }
-      - { node: N4 }
+      - node: A9
+      - node: A6a
+      - node: N4
   A11:
     domain: A
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: order-brackets, level: "1F", weight: 0.5 }
-      - { id: unknown, level: "1S", weight: 0.5 }
+      - id: order-brackets
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1s-13]
+      - id: unknown
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-13]
     prereqs:
-      - { node: A4 }
-      - { node: A5 }
+      - node: A4
+      - node: A5
   A12:
     domain: A
-    level: "stretch"
+    level: stretch
     typicalGroup: 7
-    stretchGate: [A11, A13]
+    stretchGate:
+      - A11
+      - A13
     subtypes:
-      - { id: divisibility, level: "stretch", weight: 1.0 }
+      - id: divisibility
+        level: stretch
+        weight: 1.0
+        slo: [slo-getallen-1s-19]
     prereqs:
-      - { node: A4 }
+      - node: A4
   A13:
     domain: A
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: efficient, level: "1F", weight: 0.5 }
-      - { id: properties, level: "1S", weight: 0.5 }
+      - id: efficient
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-14]
+      - id: properties
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-14]
     prereqs:
-      - { node: A7 }
-      - { node: A11 }
+      - node: A7
+      - node: A11
   A14:
     domain: A
     level: "1F/1S"
     typicalGroup: 7
     subtypes:
-      - { id: calculator, level: "1F", weight: 0.5 }
-      - { id: calculator-1S, level: "1S", weight: 0.5 }
+      - id: calculator
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f1s-04]
+      - id: calculator-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1f1s-04]
     prereqs:
-      - { node: N4 }
-      - { node: D6 }
+      - node: N4
+      - node: D6
   A15:
     domain: A
-    level: "stretch"
+    level: stretch
     typicalGroup: 8
-    stretchGate: [A11, A13, D4]
+    stretchGate:
+      - A11
+      - A13
+      - D4
     subtypes:
-      - { id: one-step-eq, level: "stretch", weight: 1.0 }
+      - id: one-step-eq
+        level: stretch
+        weight: 1.0
+        slo: [slo-getallen-1s-20]
     prereqs:
-      - { node: A11 }
-      - { node: D4 }
+      - node: A11
+      - node: D4
   A16:
     domain: A
-    level: "stretch"
+    level: stretch
     typicalGroup: 8
-    stretchGate: [A11, A13]
+    stretchGate:
+      - A11
+      - A13
     subtypes:
-      - { id: two-step-eq, level: "stretch", weight: 1.0 }
+      - id: two-step-eq
+        level: stretch
+        weight: 1.0
+        slo: [slo-getallen-1s-20]
     prereqs:
-      - { node: A15 }
+      - node: A15
   F1:
     domain: F
     level: "1F"
     typicalGroup: 4
     subtypes:
-      - { id: share, level: "1F", weight: 1.0 }
+      - id: share
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-01]
     prereqs:
-      - { node: A4 }
+      - node: A4
   F2:
     domain: F
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: fraction-of, level: "1F", weight: 1.0 }
+      - id: fraction-of
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-22]
     prereqs:
-      - { node: F1 }
-      - { node: A9 }
+      - node: F1
+      - node: A9
   F3:
     domain: F
     level: "1F/1S"
     typicalGroup: 5
     subtypes:
-      - { id: same-den, level: "1F", weight: 0.5 }
-      - { id: line, level: "1S", weight: 0.5 }
+      - id: same-den
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-19]
+      - id: line
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-06]
     prereqs:
-      - { node: F1, subtype: same-den }
-      - { node: N5, subtype: line }
+      - node: F1
+        subtype: same-den
+      - node: N5
+        subtype: line
   F4:
     domain: F
     level: "1F/1S"
     typicalGroup: 5
     subtypes:
-      - { id: equivalent, level: "1F", weight: 0.5 }
-      - { id: simplify, level: "1S", weight: 0.5 }
+      - id: equivalent
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-23]
+      - id: simplify
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-16]
     prereqs:
-      - { node: F1 }
-      - { node: A4 }
+      - node: F1
+      - node: A4
   F5:
     domain: F
     level: "1F/1S"
     typicalGroup: 5
     subtypes:
-      - { id: add-same-den, level: "1F", weight: 0.5 }
-      - { id: mixed, level: "1S", weight: 0.5 }
+      - id: add-same-den
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-21]
+      - id: mixed
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-02]
     prereqs:
-      - { node: F3 }
+      - node: F3
   F6:
     domain: F
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: add-unlike, level: "1F", weight: 0.5 }
-      - { id: add-unlike-1S, level: "1S", weight: 0.5 }
+      - id: add-unlike
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-21]
+      - id: add-unlike-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-18]
     prereqs:
-      - { node: F4 }
-      - { node: F5 }
+      - node: F4
+      - node: F5
   F7:
     domain: F
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: times-fraction, level: "1F", weight: 0.5 }
-      - { id: times-fraction-1S, level: "1S", weight: 0.5 }
+      - id: times-fraction
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-24]
+      - id: times-fraction-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-18]
     prereqs:
-      - { node: F2 }
-      - { node: F5 }
+      - node: F2
+      - node: F5
   F8:
     domain: F
     level: "1S"
     typicalGroup: 7
     subtypes:
-      - { id: divide-fraction, level: "1S", weight: 1.0 }
+      - id: divide-fraction
+        level: "1S"
+        weight: 1.0
+        slo: [slo-getallen-1f-26]
     prereqs:
-      - { node: F7 }
+      - node: F7
   D1:
     domain: D
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: place-value, level: "1F", weight: 1.0 }
+      - id: place-value
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-03, slo-getallen-1f1s-02]
     prereqs:
-      - { node: F3 }
-      - { node: N3 }
+      - node: F3
+      - node: N3
   D2:
     domain: D
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: add-sub, level: "1F", weight: 1.0 }
+      - id: add-sub
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-15]
     prereqs:
-      - { node: D1 }
-      - { node: A5 }
+      - node: D1
+      - node: A5
   D3:
     domain: D
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: shift-10, level: "1F", weight: 1.0 }
+      - id: shift-10
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-13]
     prereqs:
-      - { node: D1 }
+      - node: D1
   D4:
     domain: D
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: multiply, level: "1F", weight: 0.5 }
-      - { id: multiply-1S, level: "1S", weight: 0.5 }
+      - id: multiply
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-16]
+      - id: multiply-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-19]
     prereqs:
-      - { node: D2 }
-      - { node: D3 }
-      - { node: A7 }
+      - node: D2
+      - node: D3
+      - node: A7
   D5:
     domain: D
     level: "1S"
     typicalGroup: 6
     subtypes:
-      - { id: divide, level: "1S", weight: 1.0 }
+      - id: divide
+        level: "1S"
+        weight: 1.0
+        slo: [slo-getallen-1s-15]
     prereqs:
-      - { node: D4 }
-      - { node: A10 }
+      - node: D4
+      - node: A10
   D6:
     domain: D
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: convert, level: "1F", weight: 0.5 }
-      - { id: convert-1S, level: "1S", weight: 0.5 }
+      - id: convert
+        level: "1F"
+        weight: 0.5
+        slo: [slo-getallen-1f-20]
+      - id: convert-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-getallen-1s-17]
     prereqs:
-      - { node: F4 }
-      - { node: D1 }
+      - node: F4
+      - node: D1
   D7:
     domain: D
-    level: "stretch"
+    level: stretch
     typicalGroup: 7
-    stretchGate: [D4, D5, F7]
+    stretchGate:
+      - D4
+      - D5
+      - F7
     subtypes:
-      - { id: order-mixed, level: "stretch", weight: 1.0 }
+      - id: order-mixed
+        level: stretch
+        weight: 1.0
+        slo: [slo-getallen-1s-16]
     prereqs:
-      - { node: A11 }
-      - { node: F7 }
-      - { node: D4 }
+      - node: A11
+      - node: F7
+      - node: D4
   P1:
     domain: P
     level: "1F"
     typicalGroup: 6
     subtypes:
-      - { id: half-tenth, level: "1F", weight: 0.5 }
-      - { id: decimal, level: "1F", weight: 0.5 }
+      - id: half-tenth
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verhoudingen-1f-01]
+      - id: decimal
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verhoudingen-1f-01]
     prereqs:
-      - { node: F1, subtype: half-tenth }
-      - { node: D6, subtype: decimal }
+      - node: F1
+        subtype: half-tenth
+      - node: D6
+        subtype: decimal
   P2:
     domain: P
     level: "1F"
     typicalGroup: 6
     subtypes:
-      - { id: percent-of, level: "1F", weight: 1.0 }
+      - id: percent-of
+        level: "1F"
+        weight: 1.0
+        slo: [slo-verhoudingen-1f-02]
     prereqs:
-      - { node: P1 }
-      - { node: F2 }
+      - node: P1
+      - node: F2
   P3:
     domain: P
     level: "1S"
     typicalGroup: 7
     subtypes:
-      - { id: share-of, level: "1S", weight: 0.5 }
-      - { id: vat, level: "1S", weight: 0.5 }
+      - id: share-of
+        level: "1S"
+        weight: 0.5
+        slo: [slo-verhoudingen-1s-01]
+      - id: vat
+        level: "1S"
+        weight: 0.5
+        slo: [slo-verhoudingen-1s-02]
     prereqs:
-      - { node: P2 }
+      - node: P2
   P4:
     domain: P
     level: "1F"
     typicalGroup: 6
     subtypes:
-      - { id: ratio, level: "1F", weight: 0.5 }
-      - { id: per-one, level: "1F", weight: 0.5 }
+      - id: ratio
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verhoudingen-1f-03]
+      - id: per-one
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verhoudingen-1f-03]
     prereqs:
-      - { node: A9 }
-      - { node: F2 }
+      - node: A9
+      - node: F2
   P5:
     domain: P
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: map-scale, level: "1F", weight: 0.5 }
-      - { id: map-scale-1S, level: "1S", weight: 0.5 }
+      - id: map-scale
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verhoudingen-1f-04]
+      - id: map-scale-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-verhoudingen-1s-03]
     prereqs:
-      - { node: P4 }
-      - { node: M1 }
+      - node: P4
+      - node: M1
   P6:
     domain: P
     level: "1F/1S"
     typicalGroup: 7
     subtypes:
-      - { id: compare-offer, level: "1F", weight: 0.5 }
-      - { id: relative, level: "1S", weight: 0.5 }
+      - id: compare-offer
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verhoudingen-1f-05]
+      - id: relative
+        level: "1S"
+        weight: 0.5
+        slo: [slo-verhoudingen-1s-04]
     prereqs:
-      - { node: P3 }
-      - { node: P4 }
-      - { node: D5 }
+      - node: P3
+      - node: P4
+      - node: D5
   P7:
     domain: P
-    level: "stretch"
+    level: stretch
     typicalGroup: 8
-    stretchGate: [P3, P6]
+    stretchGate:
+      - P3
+      - P6
     subtypes:
-      - { id: successive, level: "stretch", weight: 1.0 }
+      - id: successive
+        level: stretch
+        weight: 1.0
+        slo: [slo-verhoudingen-1s-05]
     prereqs:
-      - { node: P3 }
-      - { node: D4 }
+      - node: P3
+      - node: D4
   M1:
     domain: M
     level: "1F"
     typicalGroup: 6
     subtypes:
-      - { id: whole, level: "1F", weight: 0.5 }
-      - { id: decimal, level: "1F", weight: 0.5 }
+      - id: whole
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-02]
+      - id: decimal
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-03]
     prereqs:
-      - { node: N3, subtype: whole }
-      - { node: D3, subtype: decimal }
+      - node: N3
+        subtype: whole
+      - node: D3
+        subtype: decimal
   M2:
     domain: M
     level: "1F"
     typicalGroup: 4
     subtypes:
-      - { id: clock, level: "1F", weight: 0.5 }
-      - { id: calendar, level: "1F", weight: 0.5 }
+      - id: clock
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-04]
+      - id: calendar
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-05]
     prereqs:
-      - { node: A2 }
+      - node: A2
   M3:
     domain: M
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: whole, level: "1F", weight: 0.5 }
-      - { id: cents, level: "1F", weight: 0.5 }
+      - id: whole
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-06]
+      - id: cents
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-06]
     prereqs:
-      - { node: A5, subtype: whole }
-      - { node: D2, subtype: cents }
+      - node: A5
+        subtype: whole
+      - node: D2
+        subtype: cents
   M4:
     domain: M
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: rect-squares, level: "1F", weight: 0.2, method: squares }
-      - { id: rect-sides, level: "1F", weight: 0.2, method: sides }
-      - { id: not-rect, level: "1S", weight: 0.2, method: formula }
-      - { id: side-from-perimeter, level: "1S", weight: 0.2, method: formula }
-      - { id: same-area, level: "1S", weight: 0.2, method: formula }
+      - id: rect-squares
+        level: "1F"
+        weight: 0.2
+        method: squares
+        slo: [slo-meten-1f-07]
+      - id: rect-sides
+        level: "1F"
+        weight: 0.2
+        method: sides
+        slo: [slo-meten-1f-07]
+      - id: not-rect
+        level: "1S"
+        weight: 0.2
+        method: formula
+        slo: [slo-meten-1s-01]
+      - id: side-from-perimeter
+        level: "1S"
+        weight: 0.2
+        method: formula
+        slo: [slo-meten-1s-02]
+      - id: same-area
+        level: "1S"
+        weight: 0.2
+        method: formula
+        slo: [slo-meten-1s-03]
     prereqs:
-      - { node: A5 }
-      - { node: M1 }
+      - node: A5
+      - node: M1
   M5:
     domain: M
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: grid, level: "1F", weight: 0.333333, method: squares }
-      - { id: sides, level: "1F", weight: 0.333333, method: sides }
-      - { id: formula, level: "1S", weight: 0.333333, method: formula }
+      - id: grid
+        level: "1F"
+        weight: 0.333333
+        method: squares
+        slo: [slo-meten-1f-07]
+      - id: sides
+        level: "1F"
+        weight: 0.333333
+        method: sides
+        slo: [slo-meten-1f-07]
+      - id: formula
+        level: "1S"
+        weight: 0.333333
+        method: formula
+        slo: [slo-meten-1s-04]
     prereqs:
-      - { node: A3, subtype: grid }
-      - { node: A7, subtype: formula }
-      - { node: M1 }
+      - node: A3
+        subtype: grid
+      - node: A7
+        subtype: formula
+      - node: M1
   M6:
     domain: M
     level: "1S"
     typicalGroup: 7
     subtypes:
-      - { id: triangle, level: "1S", weight: 1.0 }
+      - id: triangle
+        level: "1S"
+        weight: 1.0
+        slo: [slo-meten-1s-05]
     prereqs:
-      - { node: M5 }
-      - { node: F2 }
+      - node: M5
+      - node: F2
   M7:
     domain: M
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: by-cubes, level: "1F", weight: 0.5, method: cubes }
-      - { id: formula, level: "1S", weight: 0.5, method: formula }
+      - id: by-cubes
+        level: "1F"
+        weight: 0.5
+        method: cubes
+        slo: [slo-meten-1f-08]
+      - id: formula
+        level: "1S"
+        weight: 0.5
+        method: formula
+        slo: [slo-meten-1s-06]
     prereqs:
-      - { node: M5 }
+      - node: M5
   M8:
     domain: M
     level: "1S"
     typicalGroup: 7
     subtypes:
-      - { id: speed, level: "1S", weight: 1.0 }
+      - id: speed
+        level: "1S"
+        weight: 1.0
+        slo: [slo-meten-1s-07]
     prereqs:
-      - { node: P4 }
-      - { node: M2 }
+      - node: P4
+      - node: M2
   M9:
     domain: M
     level: "1S"
     typicalGroup: 6
     subtypes:
-      - { id: area-units, level: "1S", weight: 1.0 }
+      - id: area-units
+        level: "1S"
+        weight: 1.0
+        slo: [slo-meten-1s-08]
     prereqs:
-      - { node: M5 }
-      - { node: D3 }
+      - node: M5
+      - node: D3
   M10:
     domain: M
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: capacity, level: "1F", weight: 0.5 }
-      - { id: capacity-1S, level: "1S", weight: 0.5 }
+      - id: capacity
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-09]
+      - id: capacity-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-meten-1s-09]
     prereqs:
-      - { node: M7 }
-      - { node: D3 }
+      - node: M7
+      - node: D3
   M11:
     domain: M
-    level: "stretch"
+    level: stretch
     typicalGroup: 8
-    stretchGate: [M6, M9]
+    stretchGate:
+      - M6
+      - M9
     subtypes:
-      - { id: circle, level: "stretch", weight: 1.0 }
+      - id: circle
+        level: stretch
+        weight: 1.0
+        slo: [slo-meten-1s-10]
     prereqs:
-      - { node: M6 }
-      - { node: D4 }
+      - node: M6
+      - node: D4
   M12:
     domain: M
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: benchmark, level: "1F", weight: 0.5 }
-      - { id: benchmark-1S, level: "1S", weight: 0.5 }
+      - id: benchmark
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-10]
+      - id: benchmark-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-meten-1s-11]
     prereqs:
-      - { node: M1 }
-      - { node: M9, subtype: ha }
+      - node: M1
+      - node: M9
+        subtype: ha
   M13:
     domain: M
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: instruments, level: "1F", weight: 1.0 }
+      - id: instruments
+        level: "1F"
+        weight: 1.0
+        slo: [slo-meten-1f-11]
     prereqs:
-      - { node: N5 }
-      - { node: D1 }
+      - node: N5
+      - node: D1
   M14:
     domain: M
-    level: "stretch"
+    level: stretch
     typicalGroup: 8
-    stretchGate: [M8, M10, P6]
+    stretchGate:
+      - M8
+      - M10
+      - P6
     subtypes:
-      - { id: average-speed, level: "stretch", weight: 1.0 }
+      - id: average-speed
+        level: stretch
+        weight: 1.0
+        slo: [slo-meten-1s-12]
     prereqs:
-      - { node: M8 }
-      - { node: P6 }
+      - node: M8
+      - node: P6
   G1:
     domain: G
     level: "1F"
     typicalGroup: 1
     subtypes:
-      - { id: shapes, level: "1F", weight: 1.0 }
+      - id: shapes
+        level: "1F"
+        weight: 1.0
+        slo: [slo-meten-1f-12]
     prereqs: []
   G2:
     domain: G
-    level: "stretch"
+    level: stretch
     typicalGroup: 7
-    stretchGate: [G3, G4]
+    stretchGate:
+      - G3
+      - G4
     subtypes:
-      - { id: angles, level: "stretch", weight: 1.0 }
+      - id: angles
+        level: stretch
+        weight: 1.0
+        slo: [slo-meten-1s-13]
     prereqs:
-      - { node: G1 }
+      - node: G1
   G3:
     domain: G
     level: "1S"
     typicalGroup: 6
     subtypes:
-      - { id: symmetry, level: "1S", weight: 1.0 }
+      - id: symmetry
+        level: "1S"
+        weight: 1.0
+        slo: [slo-meten-1s-14]
     prereqs:
-      - { node: G1 }
+      - node: G1
   G4:
     domain: G
     level: "1S"
     typicalGroup: 6
     subtypes:
-      - { id: coordinates, level: "1S", weight: 1.0 }
+      - id: coordinates
+        level: "1S"
+        weight: 1.0
+        slo: [slo-verbanden-1s-01]
     prereqs:
-      - { node: N5 }
+      - node: N5
   G5:
     domain: G
     level: "1F"
     typicalGroup: 2
     subtypes:
-      - { id: solids-nets, level: "1F", weight: 1.0 }
+      - id: solids-nets
+        level: "1F"
+        weight: 1.0
+        slo: [slo-meten-1f-13]
     prereqs:
-      - { node: G1 }
+      - node: G1
   G6:
     domain: G
     level: "1F"
     typicalGroup: 3
     subtypes:
-      - { id: views, level: "1F", weight: 1.0 }
-      - { id: blocks, level: "stretch", weight: 1.0 }
+      - id: views
+        level: "1F"
+        weight: 1.0
+        slo: [slo-meten-1f-14]
+      - id: blocks
+        level: stretch
+        weight: 1.0
+        slo: [slo-meten-1s-15]
     prereqs:
-      - { node: G5 }
+      - node: G5
   G7:
     domain: G
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: plan, level: "1F", weight: 0.5 }
-      - { id: plan-1S, level: "1S", weight: 0.5 }
+      - id: plan
+        level: "1F"
+        weight: 0.5
+        slo: [slo-meten-1f-15]
+      - id: plan-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-meten-1s-16]
     prereqs:
-      - { node: G4 }
-      - { node: P5 }
+      - node: G4
+      - node: P5
   S1:
     domain: S
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: tables, level: "1F", weight: 1.0 }
+      - id: tables
+        level: "1F"
+        weight: 1.0
+        slo: [slo-verbanden-1f-01]
     prereqs:
-      - { node: N3 }
+      - node: N3
   S2:
     domain: S
     level: "1F"
     typicalGroup: 5
     subtypes:
-      - { id: bar-line, level: "1F", weight: 1.0 }
+      - id: bar-line
+        level: "1F"
+        weight: 1.0
+        slo: [slo-verbanden-1f-02]
     prereqs:
-      - { node: S1 }
-      - { node: N5 }
+      - node: S1
+      - node: N5
   S3:
     domain: S
     level: "1S"
     typicalGroup: 6
     subtypes:
-      - { id: mean, level: "1S", weight: 1.0 }
-      - { id: missing, level: "stretch", weight: 1.0 }
+      - id: mean
+        level: "1S"
+        weight: 1.0
+        slo: [slo-verbanden-1s-02]
+      - id: missing
+        level: stretch
+        weight: 1.0
+        slo: [slo-verbanden-1s-03]
     prereqs:
-      - { node: S1 }
-      - { node: A9 }
+      - node: S1
+      - node: A9
   S4:
     domain: S
     level: "1S"
     typicalGroup: 7
     subtypes:
-      - { id: pie, level: "1S", weight: 1.0 }
+      - id: pie
+        level: "1S"
+        weight: 1.0
+        slo: [slo-verbanden-1s-04]
     prereqs:
-      - { node: S2 }
-      - { node: P1 }
+      - node: S2
+      - node: P1
   S5:
     domain: S
     level: "1F/1S"
     typicalGroup: 6
     subtypes:
-      - { id: global, level: "1F", weight: 0.5 }
-      - { id: global-1S, level: "1S", weight: 0.5 }
+      - id: global
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verbanden-1f-03]
+      - id: global-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-verbanden-1s-05]
     prereqs:
-      - { node: S2 }
-      - { node: G4 }
+      - node: S2
+      - node: G4
   S6:
     domain: S
     level: "1F/1S"
     typicalGroup: 5
     subtypes:
-      - { id: patterns, level: "1F", weight: 0.5 }
-      - { id: patterns-1S, level: "1S", weight: 0.5 }
+      - id: patterns
+        level: "1F"
+        weight: 0.5
+        slo: [slo-verbanden-1f-04]
+      - id: patterns-1S
+        level: "1S"
+        weight: 0.5
+        slo: [slo-verbanden-1s-06]
     prereqs:
-      - { node: A2 }
-      - { node: A3 }
+      - node: A2
+      - node: A3
   S7:
     domain: S
-    level: "stretch"
+    level: stretch
     typicalGroup: 8
-    stretchGate: [S3, S4]
+    stretchGate:
+      - S3
+      - S4
     subtypes:
-      - { id: median-mode, level: "stretch", weight: 1.0 }
+      - id: median-mode
+        level: stretch
+        weight: 1.0
+        slo: [slo-verbanden-1s-07]
     prereqs:
-      - { node: S3 }
+      - node: S3
   T1:
     domain: T
     level: "1F"
     typicalGroup: 3
     subtypes:
-      - { id: one-step, level: "1F", weight: 1.0 }
+      - id: one-step
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-08]
     prereqs:
-      - { node: A2 }
+      - node: A2
   T2:
     domain: T
     level: "1F"
     typicalGroup: 3
     subtypes:
-      - { id: two-step, level: "1F", weight: 1.0 }
+      - id: two-step
+        level: "1F"
+        weight: 1.0
+        slo: [slo-getallen-1f-08]
     prereqs:
-      - { node: T1 }
+      - node: T1
   T3:
     domain: T
     level: "1S"
     typicalGroup: 5
     subtypes:
-      - { id: three-step, level: "1S", weight: 1.0 }
+      - id: three-step
+        level: "1S"
+        weight: 1.0
+        slo: [slo-getallen-1s-07]
     prereqs:
-      - { node: T2 }
+      - node: T2
   T4:
     domain: T
     level: "1S"
     typicalGroup: 6
     subtypes:
-      - { id: four-step, level: "1S", weight: 1.0 }
+      - id: four-step
+        level: "1S"
+        weight: 1.0
+        slo: [slo-getallen-1s-07]
     prereqs:
-      - { node: T3 }
-
+      - node: T3
 topics:
-  - { id: E1, name: "forces and motion" }
-  - { id: E2, name: "substances and their states" }
-  - { id: E3, name: "simple electric circuits" }
-  - { id: E4, name: "living organisms and plants" }
-  - { id: E5, name: "the Earth, the Sun and the Moon" }
-sloGoals: []
+  - id: E1
+    name: forces and motion
+  - id: E2
+    name: substances and their states
+  - id: E3
+    name: simple electric circuits
+  - id: E4
+    name: living organisms and plants
+  - id: E5
+    name: the Earth, the Sun and the Moon
+sloGoals:
+  - id: slo-getallen-1f-01
+    level: 1F
+    text: Понимание, произношение и запись целых чисел и простых дробей
+  - id: slo-getallen-1f-03
+    level: 1F
+    text: Чтение и запись целых чисел, простых дробей и десятичных дробей
+  - id: slo-getallen-1f-04
+    level: 1F
+    text: Использование специальных названий чисел (например, миллион, три четверти)
+  - id: slo-getallen-1f-06
+    level: 1F
+    text: Позиционная десятичная система и числовой ряд
+  - id: slo-getallen-1f-07
+    level: 1F
+    text: Использование числовой прямой с целыми и простыми десятичными числами
+  - id: slo-getallen-1f-08
+    level: 1F
+    text: Перевод простой ситуации в математическое вычисление
+  - id: slo-getallen-1f-09
+    level: 1F
+    text: Округление целых чисел до круглых
+  - id: slo-getallen-1f-10
+    level: 1F
+    text: Приблизительная оценка результатов вычислений
+  - id: slo-getallen-1f-11
+    level: 1F
+    text: Разбиение и составление чисел на основе десятичной системы
+  - id: slo-getallen-1f-12
+    level: 1F
+    text: Автоматизация сложения, вычитания до 100 и таблиц умножения
+  - id: slo-getallen-1f-13
+    level: 1F
+    text: Устный счет (сложение, вычитание, умножение, деление) с 'нулями'
+  - id: slo-getallen-1f-14
+    level: 1F
+    text: Эффективные вычисления с использованием свойств чисел
+  - id: slo-getallen-1f-15
+    level: 1F
+    text: Выполнение сложения и вычитания целых и простых десятичных чисел
+  - id: slo-getallen-1f-16
+    level: 1F
+    text: Умножение однозначного числа на двузначное или трехзначное
+  - id: slo-getallen-1f-17
+    level: 1F
+    text: Умножение двузначного числа на двузначное
+  - id: slo-getallen-1f-18
+    level: 1F
+    text: Деление чисел (максимум трехзначное на двузначное)
+  - id: slo-getallen-1f-19
+    level: 1F
+    text: Сравнение и упорядочивание простых обыкновенных дробей
+  - id: slo-getallen-1f-20
+    level: 1F
+    text: Перевод простых обыкновенных дробей в десятичные
+  - id: slo-getallen-1f-21
+    level: 1F
+    text: Сложение и вычитание простых дробей с одинаковыми и разными знаменателями
+  - id: slo-getallen-1f-22
+    level: 1F
+    text: Умножение целого числа на дробь (нахождение части от целого)
+  - id: slo-getallen-1f-23
+    level: 1F
+    text: Сокращение дробей и выделение целой части
+  - id: slo-getallen-1f-24
+    level: 1F
+    text: Умножение обыкновенной дроби на дробь
+  - id: slo-getallen-1f-26
+    level: 1F
+    text: Деление обыкновенной дроби на дробь
+  - id: slo-getallen-1f1s-02
+    level: 1F/1S
+    text: Понимание структуры десятичной системы счисления
+  - id: slo-getallen-1f1s-03
+    level: 1F/1S
+    text: Интерпретация остатка при делении в текстовых задачах
+  - id: slo-getallen-1f1s-04
+    level: 1F/1S
+    text: Обоснованный выбор между устным счетом и использованием калькулятора
+  - id: slo-getallen-1s-02
+    level: 1S
+    text: Использование смешанных чисел
+  - id: slo-getallen-1s-04
+    level: 1S
+    text: Понимание разницы между цифрой и числом
+  - id: slo-getallen-1s-06
+    level: 1S
+    text: Использование числовой прямой с десятичными и обыкновенными дробями
+  - id: slo-getallen-1s-07
+    level: 1S
+    text: Перевод сложной ситуации в математическое вычисление
+  - id: slo-getallen-1s-08
+    level: 1S
+    text: Округление десятичного числа до целого
+  - id: slo-getallen-1s-09
+    level: 1S
+    text: Округление в контексте конкретной ситуации (с избытком или недостатком)
+  - id: slo-getallen-1s-11
+    level: 1S
+    text: Свободное владение делением из таблиц умножения
+  - id: slo-getallen-1s-13
+    level: 1S
+    text: Соблюдение правильного порядка выполнения математических действий
+  - id: slo-getallen-1s-14
+    level: 1S
+    text: Эффективные вычисления с большими числами
+  - id: slo-getallen-1s-15
+    level: 1S
+    text: Деление с получением остатка или десятичного числа
+  - id: slo-getallen-1s-16
+    level: 1S
+    text: Сравнение сложных дробей с использованием стандартных процедур
+  - id: slo-getallen-1s-17
+    level: 1S
+    text: Перевод сложных обыкновенных дробей в десятичные
+  - id: slo-getallen-1s-18
+    level: 1S
+    text: Сложение и вычитание сложных обыкновенных и смешанных дробей
+  - id: slo-getallen-1s-19
+    level: 1S
+    text: Использование стандартных процедур со сложными числами
+  - id: slo-getallen-1s-20
+    level: 1S
+    text: Осознанное использование стандартных процедур при вычислениях
+  - id: slo-verhoudingen-1f-01
+    level: 1F
+    text: Базовое понимание отношений и процентов
+  - id: slo-verhoudingen-1f-02
+    level: 1F
+    text: Вычисление простых процентов (например, 10%, 50%) от числа
+  - id: slo-verhoudingen-1f-03
+    level: 1F
+    text: Решение простых задач на отношения
+  - id: slo-verhoudingen-1f-04
+    level: 1F
+    text: Работа с простыми масштабами на картах
+  - id: slo-verhoudingen-1f-05
+    level: 1F
+    text: Сравнение предложений и цен в задачах на отношения
+  - id: slo-verhoudingen-1s-01
+    level: 1S
+    text: Вычисление процентов с более сложными числами
+  - id: slo-verhoudingen-1s-02
+    level: 1S
+    text: Вычисление НДС (BTW) и налогов
+  - id: slo-verhoudingen-1s-03
+    level: 1S
+    text: Вычисления со сложными масштабами
+  - id: slo-verhoudingen-1s-04
+    level: 1S
+    text: Решение сложных задач на отношения (относительное сравнение)
+  - id: slo-verhoudingen-1s-05
+    level: 1S
+    text: Последовательные вычисления с процентами и отношениями
+  - id: slo-meten-1f-01
+    level: 1F
+    text: Понимание температур и термометров
+  - id: slo-meten-1f-02
+    level: 1F
+    text: Целые числа в измерениях
+  - id: slo-meten-1f-03
+    level: 1F
+    text: Десятичные числа в измерениях
+  - id: slo-meten-1f-04
+    level: 1F
+    text: Определение времени по часам
+  - id: slo-meten-1f-05
+    level: 1F
+    text: Чтение дат и календарей
+  - id: slo-meten-1f-06
+    level: 1F
+    text: Работа с деньгами (целые числа и центы)
+  - id: slo-meten-1f-07
+    level: 1F
+    text: Вычисление площади и периметра прямоугольных фигур (сетки/стороны)
+  - id: slo-meten-1f-08
+    level: 1F
+    text: Определение объема через подсчет кубиков
+  - id: slo-meten-1f-09
+    level: 1F
+    text: Емкость и переводы базовых единиц объема
+  - id: slo-meten-1f-10
+    level: 1F
+    text: Оценка длин и площадей с помощью эталонов
+  - id: slo-meten-1f-11
+    level: 1F
+    text: Использование измерительных инструментов
+  - id: slo-meten-1f-12
+    level: 1F
+    text: Распознавание геометрических фигур
+  - id: slo-meten-1f-13
+    level: 1F
+    text: Объемные фигуры и их развертки
+  - id: slo-meten-1f-14
+    level: 1F
+    text: Виды и проекции фигур
+  - id: slo-meten-1f-15
+    level: 1F
+    text: Чтение планов и простых карт
+  - id: slo-meten-1s-01
+    level: 1S
+    text: Вычисление площади непрямоугольных фигур по формуле
+  - id: slo-meten-1s-02
+    level: 1S
+    text: Нахождение стороны через периметр или площадь
+  - id: slo-meten-1s-03
+    level: 1S
+    text: Понимание того, что фигуры с одинаковой площадью могут иметь разный периметр
+  - id: slo-meten-1s-04
+    level: 1S
+    text: Использование математических формул для площади и периметра
+  - id: slo-meten-1s-05
+    level: 1S
+    text: Вычисление площади треугольника
+  - id: slo-meten-1s-06
+    level: 1S
+    text: Использование формулы для вычисления объема
+  - id: slo-meten-1s-07
+    level: 1S
+    text: Понимание и вычисление скорости
+  - id: slo-meten-1s-08
+    level: 1S
+    text: Перевод единиц измерения площади
+  - id: slo-meten-1s-09
+    level: 1S
+    text: Перевод сложных единиц емкости и объема
+  - id: slo-meten-1s-10
+    level: 1S
+    text: Вычисления, связанные с кругом
+  - id: slo-meten-1s-11
+    level: 1S
+    text: Оценка измерений с эталонами (1S)
+  - id: slo-meten-1s-12
+    level: 1S
+    text: Вычисление средней скорости
+  - id: slo-meten-1s-13
+    level: 1S
+    text: Измерение и понимание углов
+  - id: slo-meten-1s-14
+    level: 1S
+    text: Понимание симметрии в 2D и 3D
+  - id: slo-meten-1s-15
+    level: 1S
+    text: Работа со сложными блочными структурами
+  - id: slo-meten-1s-16
+    level: 1S
+    text: Чтение сложных планов
+  - id: slo-verbanden-1f-01
+    level: 1F
+    text: Извлечение данных из простых таблиц (например, расписания)
+  - id: slo-verbanden-1f-02
+    level: 1F
+    text: Чтение простых линейных и столбчатых диаграмм
+  - id: slo-verbanden-1f-03
+    level: 1F
+    text: Глобальная оценка и интерпретация диаграмм
+  - id: slo-verbanden-1f-04
+    level: 1F
+    text: Распознавание и продолжение простых числовых и геометрических паттернов
+  - id: slo-verbanden-1s-01
+    level: 1S
+    text: Размещение точек в системе координат (положительные числа)
+  - id: slo-verbanden-1s-02
+    level: 1S
+    text: Вычисление среднего значения
+  - id: slo-verbanden-1s-03
+    level: 1S
+    text: Поиск недостающего значения в наборе данных
+  - id: slo-verbanden-1s-04
+    level: 1S
+    text: Чтение и построение круговых диаграмм
+  - id: slo-verbanden-1s-05
+    level: 1S
+    text: Глобальный анализ графиков и выявление тенденций
+  - id: slo-verbanden-1s-06
+    level: 1S
+    text: Работа со сложными паттернами
+  - id: slo-verbanden-1s-07
+    level: 1S
+    text: Вычисление медианы и моды
 changes: []

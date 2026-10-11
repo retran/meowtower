@@ -61,3 +61,20 @@ Stages, from `meow-checks evidence`:
 The SLO goals and their mapping, which TSK-0507 adds, and the overlay rule, which TSK-0510 adds.
 
 Typical groups: the owner approved the rule that a node's typical group is the group in which the Utrecht learning line first teaches its topic. The first draft put 35 of the 130 prerequisite links into an earlier or the same group than the node they unlock. The rule now raises each node's group to the largest group of its prerequisites, so no link runs backwards. The prerequisite links are unchanged and match RES-0800 (79 of 79 nodes). The group values stay provisional until the parent reviews them. The rule that a node is taught no earlier than its prerequisites is not in SPC-0050, and a decision would have to add it.
+
+Every criterion is checked as the lines below say.
+
+1. The fixture comparison passes for G, S and T, and `tests/unit/graph-content.test.ts` counts 18 nodes, with G2 and S7 as the stretch nodes with gates.
+2. `./meowtower graph check` reports the counts and exits 0 on the real file; `tests/unit/graph-counts.test.ts` covers the counts.
+3. `tests/unit/graph-counts.test.ts`: a copy with a node added, one removed, or one moved into stretch fails the counts rule.
+4. `tests/unit/graph-counts.test.ts` and `tests/unit/graph-methods.test.ts`: the 17 split nodes are 1F/1S with a 1F and a 1S subtype, and a copy that moves one of them off 1F/1S fails with the node named, whatever a changes line says.
+5. Measured on the real file with a script run outside the repository: load and validation take a median of 7.8 ms and at most 21 ms over 20 runs, against the 1 s baseline of ADR-0050. `tests/unit/graph-counts.test.ts` asserts the one-second limit.
+6. The parent checked the first version against the table in `~/workspace/graph-check-table.md` and approved it: "проверил, все хорошо".
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 9c6a14c214ff, current at tree 03372e710d3e, revision 502, now 508
+- lint: passed, record d1324aa2e753, current at tree 03372e710d3e, revision 502, now 508
+- check: passed, record a232402fd52d, current at tree 03372e710d3e, revision 502, now 508
+- test: passed, record 937b75e65184, current at tree 03372e710d3e, revision 507, now 508
+- build: passed, record 7c7fb91706d5, current at tree 03372e710d3e, revision 503, now 508

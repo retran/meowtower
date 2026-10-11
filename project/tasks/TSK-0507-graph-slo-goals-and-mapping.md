@@ -33,7 +33,20 @@ Draft the goal list from the SLO document RES-0800 cites, as the building agent 
 
 ## Evidence
 
-Not yet.
+Criteria 1 and 2 are checked by program. Criteria 3 and 4 are the reviewing agent's judgement and remain open.
+
+1. The validator runs rule 5 with `checkSlo` in `./meowtower graph check`: the real file's 93 goals are each named by at least one subtype, and every `slo` reference names a goal. `tests/unit/graph-slo.test.ts` covers the real file.
+2. `tests/unit/graph-slo.test.ts`: a copy with an extra goal no subtype names fails and names it, and a copy where a subtype names `slo-999` fails and names the id.
+
+The goal list was written by the owner in `content/graph.yaml`; its levels, groups and prerequisites are unchanged.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 9c6a14c214ff, current at tree 03372e710d3e, revision 502, now 508
+- lint: passed, record d1324aa2e753, current at tree 03372e710d3e, revision 502, now 508
+- check: passed, record a232402fd52d, current at tree 03372e710d3e, revision 502, now 508
+- test: passed, record 937b75e65184, current at tree 03372e710d3e, revision 507, now 508
+- build: passed, record 7c7fb91706d5, current at tree 03372e710d3e, revision 503, now 508
 
 ## Left alone
 
