@@ -44,7 +44,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       evidence: the five verbs exit 0 at commit 3aa57cd; `tests/unit/math-q.test.ts`, `tests/unit/math-rng.test.ts`, `tests/unit/math-format.test.ts` (TSK-0480 Evidence)
       closes: REQ-1204, REQ-1226
       depends: none
-- [ ] T-002 [P] TSK-0481 The template contract and the seeded generator with its fallback
+- [x] T-002 [P] TSK-0481 The template contract and the seeded generator with its fallback (done: pull request 18)
       closes: REQ-1202, REQ-1206, REQ-1208, REQ-1210, REQ-1216, REQ-0830
       depends: TSK-0480 - it supplies `Q`, the seed and the format the generator uses.
 - [ ] T-003 [P] TSK-0482 The checker accepts number answers by value and kind

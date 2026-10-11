@@ -1,7 +1,7 @@
 ---
 id: TSK-0481
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0040
 closes: [REQ-1202, REQ-1206, REQ-1208, REQ-1210, REQ-1216, REQ-0830]
@@ -52,7 +52,7 @@ Stages at tree `f23a56c906a0`, from `meow-checks evidence`:
 - test: passed, record 5d2f75b296ac
 - build: passed, record d2b9e29f0d03
 
-Pull request: EPC-0040's pull request, number pending.
+Pull request: #18, EPC-0040's pull request.
 
 ## Left alone
 
