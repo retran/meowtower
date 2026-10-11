@@ -1,7 +1,7 @@
 ---
 id: ADR-0500
 artifact: adr
-status: draft
+status: approved
 revised: 2026-10-11
 addresses: [REQ-0916]
 supersedes: []
@@ -12,6 +12,8 @@ supersedes: []
 # 0500. A task the parent excluded returns to the estimates by an `item_included` event
 
 ## Decision
+
+The owner chose this option on 2026-10-11.
 
 The log gets a new event type, `item_included`, with one field, `itemId`. The parent's action that reverses `item_excluded` writes it. A task whose last exclusion event is `item_excluded` is in no observation, probe or block; a task whose last one is `item_included`, or that has none, is in them as usual (REQ-0916). Works once accepted: the knowledge model reads the pair. Doesn't work yet: no screen sends the event; the parent's screen comes with ADR-0180's epic.
 
