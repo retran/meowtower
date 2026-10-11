@@ -47,7 +47,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-002 [P] TSK-0481 The template contract and the seeded generator with its fallback (done: pull request 18)
       closes: REQ-1202, REQ-1206, REQ-1208, REQ-1210, REQ-1216, REQ-0830
       depends: TSK-0480 - it supplies `Q`, the seed and the format the generator uses.
-- [ ] T-003 [P] TSK-0482 The checker accepts number answers by value and kind
+- [x] T-003 [P] TSK-0482 The checker accepts number answers by value and kind (done: pull request 18)
       closes: REQ-0732, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0778
       depends: TSK-0480 - every comparison is by value in `Q`.
 - [ ] T-004 [P] TSK-0483 The checker accepts time, point, choice, grid and order answers exactly
