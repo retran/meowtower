@@ -1,7 +1,7 @@
 ---
 id: TSK-0500
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0050
 closes: [REQ-0804, REQ-0808]
@@ -40,7 +40,27 @@ Nothing. The version-change recompute and the migration runner already exist fro
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program. Two parts of the task text are not done, as the last section says.
+
+1. REQ-0804, `tests/unit/graph-loader.test.ts`: two graphs that differ in one subtype weight have different versions; a file that differs only in a YAML comment has the same version; the version has the form `g-` and 12 hexadecimal digits.
+2. REQ-0808, the same file: a node without `typicalGroup`, a level of `2F`, a `stretchGate` on a node that isn't a stretch node, and a field the schema doesn't name each fail the load with a message naming the node and the field. A complete record answers `node`, `subtypes`, `prereqs`, `topics`, `sloGoals` and `changes`. A prerequisite cycle fails.
+3. `tests/integration/graph-start.test.ts`: the first start stores the canonical content, and reading it back gives the same node and prerequisites. A second start on the same file adds no row, and `VERSIONS.graph` equals the version.
+4. The same file: a broken file after a good start serves the stored version and raises `graph_invalid` once. With nothing stored, the start stops with `graph_unloadable`.
+5. ADR-0050 criterion for the alias cap: 101 aliases are refused by the unit test. At 1,000 stored versions, one new start raises `graph_versions_many` once, and all 1,001 versions are kept.
+
+Not done as the task text states:
+- `content/versions.json` still says `"graph": "none"`. The server sets the graph version from the file at start, and `tests/integration/version-change.test.ts` now reads the loaded version.
+- The ESLint rules for the graph file's literal name and for `typicalGroup` imports aren't written.
+
+The `yaml` package is added at version 2.9.1, released 2026-09-11, more than two weeks before this change.
+
+Stages at tree `d1f27d831882`, from `meow-checks evidence`:
+
+- format: passed, record 8f685ec8be2a
+- lint: passed, record a18c5cd70f10
+- check: passed, record 4f97bd89bd62
+- test: passed, record 1edd38def612
+- build: passed, record 87aa10a4c1b3
 
 ## Left alone
 

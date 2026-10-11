@@ -38,7 +38,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0500 The server loads the skill graph from one file, versions it by its content and serves it through one query module
+- [x] T-001 TSK-0500 The server loads the skill graph from one file, versions it by its content and serves it through one query module (done: pull request 19)
       closes: REQ-0804, REQ-0808
       depends: none
 - [ ] T-002 TSK-0501 The validator rejects a cycle, a science topic in a prerequisite and a node dropped for the player's school group
