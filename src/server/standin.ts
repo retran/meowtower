@@ -1,6 +1,9 @@
 // The stand-in adventure of EPC-0030: fixed hand-written tasks and a plain
 // check, until the epics realising ADR-0040, ADR-0070 and ADR-0140 replace the
 // tasks, the sequence, the check and the grants. Texts live in the language file.
+import { Q } from "../math/q.js";
+import type { Template } from "../engine/tasks/template.js";
+import { integerAnswer } from "../shared/answer.js";
 import { t } from "../shared/i18n.js";
 
 export interface StandinTask {
@@ -31,6 +34,39 @@ export const STANDIN_TASKS: readonly StandinTask[] = [
     twin: { params: { a: 3, b: 5 }, answer: "15" },
   },
 ];
+
+/** The operation each stand-in task asks for: 1 adds, 2 subtracts, 3 multiplies. */
+const OPERATION: Record<number, (a: Q, b: Q) => Q> = {
+  1: (a, b) => a.add(b),
+  2: (a, b) => a.sub(b),
+  3: (a, b) => a.mul(b),
+};
+
+/**
+ * The fixture template of a stand-in task, or of its twin (REQ-1200). Its
+ * numbers are the task's own, so the text written around them stays as it is,
+ * and its answer is computed in `Q`. Until the real templates come, every
+ * candidate is the same fixed parameter set.
+ */
+export const standinTemplate = (
+  task: StandinTask,
+  twin: boolean,
+): Template<{ a: number; b: number }> => {
+  const fixed = twin ? task.twin.params : task.params;
+  const op = OPERATION[task.n];
+  if (op === undefined) throw new RangeError("no_operation");
+  return {
+    id: `standin.task.${task.n}${twin ? ".twin" : ""}`,
+    version: "1",
+    inputClass: "standin",
+    answerKind: "number",
+    draw: () => ({ ...fixed }),
+    valid: () => true,
+    solve: (p) => op(Q.of(BigInt(p.a)), Q.of(BigInt(p.b))),
+    traps: () => [],
+    fallback: Array.from({ length: 5 }, () => ({ ...fixed })),
+  };
+};
 
 export const ROOM_LENGTH = STANDIN_TASKS.length;
 
@@ -68,8 +104,6 @@ export const taskExplanation = (task: StandinTask): string =>
 export const taskOf = (subtype: string): StandinTask | undefined =>
   STANDIN_TASKS.find((task) => subtype === `task-${task.n}`);
 
-const normalise = (raw: string): string => raw.replace(/\s+/g, "");
-
 export type Verdict = "correct" | "wrong" | "dont_know" | "unparsed";
 
 /** The stand-in check: equal to the answer is correct, anything else isn't. */
@@ -79,9 +113,8 @@ export function standinVerdict(
   answer: string,
 ): Verdict {
   if (dontKnow) return "dont_know";
-  const given = normalise(raw);
-  if (given === "") return "unparsed";
-  return given === normalise(answer) ? "correct" : "wrong";
+  const verdict = integerAnswer(Q.of(BigInt(answer)))(raw).verdict;
+  return verdict === "half" ? "wrong" : verdict;
 }
 
 /** The stand-in adventure's one scene, shown after its last task (EPC-0030). */

@@ -60,7 +60,9 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
       headers: { cookie, "content-type": "application/json" },
     });
     const body = (await res.json()) as Record<string, unknown>;
-    if (res.status !== 200) refused.push(`${path}: ${res.status}`);
+    // The 422 of an unparsed entry is the expected refusal of a correction.
+    const expected = res.status === 422 && path.endsWith("/answer");
+    if (res.status !== 200 && !expected) refused.push(`${path}: ${res.status}`);
     packets.push({ body });
     if (body["kind"] === "room" || helps) {
       const itemId = helps ?? String(body["itemId"]);
@@ -112,9 +114,18 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
         helps,
       );
     const answer = async (itemId: string, t: number): Promise<void> => {
+      // An empty entry is unparsed: it is refused and is not an attempt, so the
+      // player corrects it and answers again (REQ-0734, REQ-0736).
+      if (t % 3 === 0)
+        await post(`/api/session/${sessionId}/answer`, {
+          itemId,
+          raw: "",
+          dontKnow: false,
+          input,
+        });
       await post(`/api/session/${sessionId}/answer`, {
         itemId,
-        raw: t % 3 === 0 ? "" : String(t),
+        raw: String(t),
         dontKnow: t % 5 === 0,
         input,
       });
@@ -175,7 +186,9 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
   // finale adds the scene, its reply, the chest, its reply, the end packet and
   // a new start: 600 tasks in adventures of 60 reach 9 finales.
   expect(ends).toBe(9);
-  expect(packets.length).toBe(30 * (1 + 20 * 2 + 2 + 2 * 4 + 1) + 6 * ends);
+  // Each day's refused empty entries add 8 requests: 7 first attempts at
+  // t = 0, 3, ..., 18 and the twin at t = 12.
+  expect(packets.length).toBe(30 * (1 + 20 * 2 + 2 + 2 * 4 + 1 + 8) + 6 * ends);
   expect(refused).toEqual([]);
   expect(leaks).toEqual([]);
   expect(earlyAnswers).toEqual([]);

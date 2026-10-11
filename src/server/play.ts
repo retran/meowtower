@@ -27,6 +27,12 @@ import {
 } from "../engine/events/read.js";
 import { resumeFromLog } from "../engine/projections/resume.js";
 import { isZone } from "../shared/game-day.js";
+import { baseSeed } from "../math/rng.js";
+import {
+  generate,
+  type Built,
+  type Template,
+} from "../engine/tasks/template.js";
 import {
   AdventureCurrentOut,
   AnswerIn,
@@ -86,6 +92,7 @@ import {
   standinPurpose,
   standinScene,
   STANDIN_THREADS,
+  standinTemplate,
   standinVerdict,
   taskExplanation,
   taskHint,
@@ -111,6 +118,28 @@ export interface PlayOptions {
   /** Sweeps for an expired lease this often; without it only a request does. */
   sweepLeasesMs?: number;
 }
+
+/** The candidate a task was drawn at, read from its effective seed `base/k`. */
+const candidateOf = (effective: string): number | null => {
+  const m = /\/(\d+)$/.exec(effective);
+  return m ? Number(m[1]) : null;
+};
+
+/** A task drawn from its template at its base seed, with the seed it rebuilds from. */
+const drawnTask = <P>(
+  template: Template<P>,
+  base: Uint8Array,
+):
+  | { built: Built<P>; effectiveSeed: string; candidate: number | null }
+  | undefined => {
+  const g = generate(template, base);
+  if (g.status === "generation_error") return undefined;
+  return {
+    built: g.built,
+    effectiveSeed: g.effectiveSeed,
+    candidate: candidateOf(g.effectiveSeed),
+  };
+};
 
 interface ItemShown {
   itemId: string;
@@ -730,6 +759,9 @@ export function mountPlay(
     }
     const task = STANDIN_TASKS[index % STANDIN_TASKS.length];
     if (!task) return c.json({ error: "no_task" }, 500);
+    const base = baseSeed(sessionId, `standin.task.${task.n}`, index);
+    const drawn = drawnTask(standinTemplate(task, false), base);
+    if (!drawn) return c.json({ error: "no_task" }, 500);
     const shown: ItemShown = {
       itemId: randomUUID(),
       view: {
@@ -740,23 +772,25 @@ export function mountPlay(
         terms: [],
       },
       attemptNo: 1,
-      correctAnswer: task.answer,
+      correctAnswer: drawn.built.answer.toString(),
       shortSolution: taskSolution(task),
       subtype: `task-${task.n}`,
-      seed: `standin-${index}`,
+      seed: Buffer.from(base).toString("hex"),
     };
     appendEvents(db, [
       ...lifecycle,
       {
         type: "item_shown",
-        v: 1,
+        v: 2,
         payload: {
           ...shown,
-          templateId: "standin",
+          templateId: standinTemplate(task, false).id,
           templateVersion: 1,
-          params: task.params,
+          params: drawn.built.params,
           node: "standin",
           purpose: standinPurpose(task),
+          effectiveSeed: drawn.effectiveSeed,
+          candidate: drawn.candidate,
         },
         origin,
         ...within(sessionId),
@@ -1164,6 +1198,10 @@ export function mountPlay(
       a.dontKnow,
       shown.correctAnswer,
     );
+    // An entry the engine can't parse is returned to the player to correct. It
+    // is not an attempt, so nothing is logged and the task's time keeps running
+    // (REQ-0734, REQ-0736, REQ-0740).
+    if (verdict === "unparsed") return c.json({ error: "unparsed_input" }, 422);
     const outcome: Outcome = verdict === "correct" ? "clean" : "alt";
     const hints = hintLevels(found.log, a.itemId);
     // A pause between showing the task and this answer, or a device of another
@@ -1389,14 +1427,17 @@ export function mountPlay(
     if (!answered) return c.json({ error: "attempt_open" }, 409);
     const task = taskOf(shown.subtype);
     if (!task) return c.json({ error: "item_unknown" }, 404);
+    const twinBase = baseSeed(sessionId, `standin.task.${task.n}.twin`, 0);
+    const drawnTwin = drawnTask(standinTemplate(task, true), twinBase);
+    if (!drawnTwin) return c.json({ error: "item_unknown" }, 404);
     const twin: ItemShown = {
       itemId: randomUUID(),
       view: { ...shown.view, text: taskText(task, true) },
       attemptNo: 2,
-      correctAnswer: task.twin.answer,
+      correctAnswer: drawnTwin.built.answer.toString(),
       shortSolution: taskSolution(task, true),
       subtype: shown.subtype,
-      seed: `${shown.seed}-twin`,
+      seed: Buffer.from(twinBase).toString("hex"),
       parentItemId: itemId,
     };
     appendEvents(
@@ -1405,14 +1446,16 @@ export function mountPlay(
         [
           {
             type: "item_shown",
-            v: 1,
+            v: 2,
             payload: {
               ...twin,
-              templateId: "standin",
+              templateId: standinTemplate(task, true).id,
               templateVersion: 1,
-              params: task.twin.params,
+              params: drawnTwin.built.params,
               node: "standin",
               purpose: standinPurpose(task),
+              effectiveSeed: drawnTwin.effectiveSeed,
+              candidate: drawnTwin.candidate,
             },
             origin: { deviceId, clientMs: Date.now() },
             ...within(sessionId),
