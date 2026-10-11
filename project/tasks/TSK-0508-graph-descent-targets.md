@@ -32,7 +32,19 @@ Add `descentTargets` to `src/engine/graph.ts` as a pure query over the loaded gr
 
 ## Evidence
 
-Not yet.
+Every criterion is checkable by a program.
+
+1. `tests/unit/graph-descent.test.ts` on the real file: `descentTargets("M1", "decimal")` is `D3` and `descentTargets("M5", "grid")` is `A3`, neither the node's other prerequisites.
+2. The same file, on the three-node fixture: an untagged subtype gets the untagged prerequisites, and a tagged subtype gets the tagged ones only.
+3. The same file: N1, with no prerequisites, descends to an empty list.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 880711f1fde0, current at tree 0290be89c9ab, revision 457
+- lint: passed, record b6335585ebba, current at tree 0290be89c9ab, revision 457
+- check: passed, record 3a71af2d9e48, current at tree 0290be89c9ab, revision 457
+- test: passed, record 8a516908f99a, current at tree 0290be89c9ab, revision 457
+- build: passed, record c581a45ec5e0, current at tree 0290be89c9ab, revision 457
 
 ## Left alone
 

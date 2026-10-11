@@ -312,6 +312,11 @@ export interface Graph {
   subtypes(id: string): SubtypeRecord[];
   prereqs(id: string): { node: string; subtype: string | undefined }[];
   stretchGate(id: string): string[];
+  /**
+   * The prerequisites a failed subtype descends to (REQ-0810): the ones tagged for
+   * that subtype when there are any, otherwise the untagged ones. Never all of them.
+   */
+  descentTargets(id: string, subtype: string): string[];
   topics(): GraphData["topics"];
   sloGoals(): GraphData["sloGoals"];
   changes(
@@ -353,6 +358,14 @@ function queriesOver(data: GraphData): Graph {
     prereqs: (id) =>
       nodeOf(id).prereqs.map((p) => ({ node: p.node, subtype: p.subtype })),
     stretchGate: (id) => [...(nodeOf(id).stretchGate ?? [])],
+    descentTargets: (id, subtype) => {
+      const prereqs = nodeOf(id).prereqs;
+      const tagged = prereqs
+        .filter((p) => p.subtype === subtype)
+        .map((p) => p.node);
+      if (tagged.length > 0) return tagged;
+      return prereqs.filter((p) => p.subtype === undefined).map((p) => p.node);
+    },
     topics: () => data.topics.map((t) => ({ ...t })),
     sloGoals: () => data.sloGoals.map((g) => ({ ...g })),
     changes: (previous) => {
