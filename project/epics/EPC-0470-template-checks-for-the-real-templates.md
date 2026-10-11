@@ -10,7 +10,7 @@ realises: ADR-0480
 
 # The checks that read templates run once the real templates exist
 
-Realises exactly ADR-0480: the method checks of the measurement subtypes against the templates' ranges, and the build checks that tie templates to the graph.
+Realises exactly ADR-0480 and waits for ADR-0490, the decision that writes the real templates: the method checks of the measurement subtypes against the templates' ranges, and the build checks that tie templates to the graph.
 
 ## Acceptance criteria
 
