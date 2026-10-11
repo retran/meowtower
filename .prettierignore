@@ -8,3 +8,4 @@ canon/
 *.md
 test-results/
 playwright-report/
+tests/golden/
