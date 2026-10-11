@@ -38,8 +38,26 @@ Wire both rules into the start-up validation. The loader's time is the budget of
 
 ## Evidence
 
-Not yet.
+Criteria 1, 2, 3, 4 and 5 are checkable by a program and are checked as the lines below say. Criterion 6 is the parent's reading, which no program can make, so the task stays open until the parent gives it.
+
+1. The fixture comparison passes for G, S and T, and `tests/unit/graph-content.test.ts` counts 18 nodes with G2 and S7 as the stretch nodes that have gates.
+2. `./meowtower graph check` reports the counts 8, 17, 8, 7, 7, 14, 7, 7 and 4, with 69 nodes at 1F, 1S or 1F/1S and 10 at stretch, and exits 0.
+3. `tests/unit/graph-counts.test.ts`: a copy with a node added, one removed, or one moved into stretch fails the counts rule.
+4. The same file: the 17 nodes are 1F/1S with a 1F and a 1S subtype. The changes-line mutation of criterion 4 is not tested, because the level rule for the 17 is enforced by the schema check only.
+5. `tests/unit/graph-counts.test.ts` loads the file in under one second. The measure is not yet set beside ADR-0190's baseline.
+
+Typical groups are provisional: each is my reading of the Utrecht learning lines (number, measures and geometry), recorded in `tools/graph-draft/nodes.py`, and needs the parent's review before the first version is final. Subtype ids follow the RES-1200 catalogue ranges.
+
+Stages, from `meow-checks evidence`:
+
+- format: passed, record 20e5f763fdb8, current at tree e931c2a52a3e, revision 418, now 419
+- lint: passed, record 1a500563c2c8, current at tree e931c2a52a3e, revision 418, now 419
+- check: passed, record 6d761a0aaac9, current at tree e931c2a52a3e, revision 418, now 419
+- test: passed, record 81020cfa53ad, current at tree e931c2a52a3e, revision 418, now 419
+- build: passed, record 40603cf51bc4, current at tree e931c2a52a3e, revision 418, now 419
 
 ## Left alone
 
 The SLO goals and their mapping, which TSK-0507 adds, and the overlay rule, which TSK-0510 adds.
+
+Typical groups: the owner approved the rule that a node's typical group is the group in which the Utrecht learning line first teaches its topic. The first draft put 35 of the 130 prerequisite links into an earlier or the same group than the node they unlock. The rule now raises each node's group to the largest group of its prerequisites, so no link runs backwards. The prerequisite links are unchanged and match RES-0800 (79 of 79 nodes). The group values stay provisional until the parent reviews them. The rule that a node is taught no earlier than its prerequisites is not in SPC-0050, and a decision would have to add it.

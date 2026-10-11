@@ -55,3 +55,5 @@ Stages, from `meow-checks evidence`:
 ## Left alone
 
 Domains N, A and F, which TSK-0503 writes, domains G, S and T, which TSK-0505 writes, and the `method` field, which TSK-0506 adds.
+
+Typical groups: the owner approved the rule that a node's typical group is the group in which the Utrecht learning line first teaches its topic. The first draft put 35 of the 130 prerequisite links into an earlier or the same group than the node they unlock. The rule now raises each node's group to the largest group of its prerequisites, so no link runs backwards. The prerequisite links are unchanged and match RES-0800 (79 of 79 nodes). The group values stay provisional until the parent reviews them. The rule that a node is taught no earlier than its prerequisites is not in SPC-0050, and a decision would have to add it.
