@@ -347,6 +347,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     root,
     "graphFacts",
   );
+  const { checkWordStructures } = await import("./word-rules.js");
+  const wordFacts = await loadFacts<import("./word-rules.js").WordFacts>(
+    root,
+    "wordFacts",
+  );
   const findings = [
     ...checkNoKeyInClient(root),
     ...checkNoPush(root),
@@ -360,6 +365,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkParamsLanguageFree(templates),
     ...checkTaskRules(taskFacts),
     ...checkExplainCoverage(graphFacts),
+    ...checkWordStructures(wordFacts),
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
@@ -369,6 +375,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       `params_language read ${templates.length} templates in src/templates for string parameters; ` +
       `task_rules read ${taskFacts.length} templates' task facts in src/templates for choice options, comparison forms and free input; ` +
       `explain_missing read ${graphFacts.length} templates' traps and explanations in src/templates; ` +
+      `word_structure read ${wordFacts.length} word problem templates' structures in src/templates; ` +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
