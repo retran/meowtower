@@ -1,7 +1,7 @@
 ---
 id: TSK-0517
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0908, REQ-0912, REQ-0920]
@@ -39,7 +39,7 @@ The admission of new forms to the estimate, the `estimate` stream and the `pGues
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/model-bkt.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
 
 ## Left alone
 

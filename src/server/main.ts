@@ -4,17 +4,31 @@ import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 import { snapshotNow } from "./snapshots.js";
 import { backupAfterSession } from "./backups.js";
-import { checkLogSize, runRecompute } from "./recompute.js";
+import {
+  checkLogSize,
+  checkSnapshotCeiling,
+  runRecompute,
+} from "./recompute.js";
 import { readContentVersions } from "./versions.js";
 import { startGraph } from "./graph-start.js";
+import {
+  activeKnowledgeParams,
+  refreshKnowledge,
+  useKnowledge,
+} from "../engine/projections/knowledge.js";
+import { loadParams } from "../engine/model/params.js";
+import { latestEvent } from "../engine/events/read.js";
+import { type ActivationContext } from "./model-activate.js";
 import { GRAPH_FILE } from "../engine/graph.js";
 import { raise, useNoticesDir } from "./failures.js";
 import { recoverBlobs } from "../engine/blobs/store.js";
 import {
   useVersions,
+  VERSIONS,
   versionLabel,
   versionsChanged,
 } from "../engine/projections/registry.js";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const dbPath =
@@ -38,11 +52,37 @@ try {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);
 }
+// The latest model_activated event names the model in use; the content file names it only
+// while the log holds none (ADR-0510).
+const activated = latestEvent(db, "model_activated");
+if (activated)
+  useVersions({
+    ...VERSIONS,
+    model: (activated.payload as { modelVersion: string }).modelVersion,
+  });
 // The skill graph starts the server (ADR-0050): a broken file with no stored
 // version stops the start as graph_unloadable, and otherwise the last valid
 // version is served (TSK-0500).
+let activation: ActivationContext | undefined;
 try {
-  startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE);
+  const started = startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE);
+  // The knowledge model runs once a model version is named (SPC-0060); until then its
+  // tables stay empty. The game-day zone is the family's, set in the environment.
+  const model = VERSIONS.model;
+  const zone = process.env["MEOWTOWER_ZONE"] ?? "UTC";
+  activation = { graph: started.graph, zone, active: activeKnowledgeParams };
+  const modelFile = new URL(
+    `../../content/model.${model}.json`,
+    import.meta.url,
+  );
+  if (model !== "none" && !existsSync(modelFile))
+    console.error(`model_unloadable: no file for model version ${model}`);
+  else if (model !== "none")
+    useKnowledge({
+      params: loadParams(readFileSync(modelFile, "utf8")),
+      graph: started.graph,
+      zone,
+    });
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);
@@ -70,7 +110,15 @@ recoverBlobs(db, join(dirname(snapshots), "blobs"), (file) =>
 
 // A snapshot after each session (REQ-2526); data/ is the snapshots folder's parent.
 const onSessionEnded = (): void => {
+  // The end of an adventure recomputes the knowledge rows from the whole log; a failure
+  // keeps the earlier rows and the next end retries it (TSK-0527).
+  try {
+    refreshKnowledge(db, new Date().toISOString());
+  } catch (err) {
+    raise("recompute_failed", err instanceof Error ? err.message : String(err));
+  }
   checkLogSize(db, snapshots, Date.now);
+  checkSnapshotCeiling(db, snapshots, Date.now);
   void backupAfterSession({
     live: dbPath,
     dir: snapshots,
@@ -83,7 +131,13 @@ const game = serve({
   port,
 });
 const parent = serve({
-  fetch: createParentApp({ db, dbPath, snapshots, exports }).fetch,
+  fetch: createParentApp({
+    db,
+    dbPath,
+    snapshots,
+    exports,
+    ...(activation ? { model: activation } : {}),
+  }).fetch,
   port: parentPort,
 });
 

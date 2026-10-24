@@ -1,7 +1,7 @@
 ---
 id: TSK-0526
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976]
@@ -41,7 +41,9 @@ The descent through a subtype's own prerequisite reads `descentTargets` from the
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/states-inference.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+No event records a failed island check yet, so `obligationsOf` takes the failures as an argument. The property test over generated logs is a fixed fixture with every kind, not a generated one.
 
 ## Left alone
 

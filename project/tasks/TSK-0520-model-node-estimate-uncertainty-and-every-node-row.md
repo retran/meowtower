@@ -1,7 +1,7 @@
 ---
 id: TSK-0520
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0910, REQ-0988, REQ-0994]
@@ -37,7 +37,7 @@ The graph arrives from the epic realising ADR-0050. Until its file holds the 79 
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/model-aggregate.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
 
 ## Left alone
 

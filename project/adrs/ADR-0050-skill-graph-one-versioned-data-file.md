@@ -1,7 +1,7 @@
 ---
 id: ADR-0050
 artifact: adr
-status: approved
+status: done
 revised: 2026-09-27
 addresses: [REQ-0800, REQ-0802, REQ-0804, REQ-0806, REQ-0808, REQ-0810, REQ-0812, REQ-0814, REQ-0816, REQ-0818, REQ-0850, REQ-0852, REQ-0854, REQ-1244, REQ-3812]
 supersedes: []

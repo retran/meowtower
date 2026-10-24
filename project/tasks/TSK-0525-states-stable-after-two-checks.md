@@ -1,7 +1,7 @@
 ---
 id: TSK-0525
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0944]
@@ -33,7 +33,9 @@ Add the `stable` rule to `src/engine/states/rules.ts` over the checks of TSK-052
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/states-rules.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+The task text says a probe is never one of the two checks, but its second criterion counts a fluent probe with a later fluent block as stable. The rule follows the criterion and SPC-0060: one of the two must be a full block, and two probes never qualify.
 
 ## Left alone
 

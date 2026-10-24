@@ -31,6 +31,12 @@ export interface Projection {
    * only the current versions' rows (SPC-0020).
    */
   versioned?: boolean;
+  /**
+   * Writes the rows that need the whole log, into `target`: the projection's own table or a
+   * shadow copy of it. Run after the events are folded, in the same transaction as the swap
+   * (TSK-0527).
+   */
+  fullPass?: (db: Db, target: string, computedAt: string) => void;
   /** Folds one event into `table`, the projection's own or a shadow copy of it. */
   apply: (
     db: Db,
@@ -56,8 +62,13 @@ export function versionsChanged(db: Db): boolean {
   return (
     prepared(
       db,
-      "SELECT 1 FROM derived_meta WHERE model_version <> ? OR threshold_version <> ? LIMIT 1",
-    ).get(VERSIONS.model, VERSIONS.thresholds) !== undefined
+      "SELECT 1 FROM derived_meta WHERE model_version <> ? OR threshold_version <> ? OR graph_version <> ? OR rules_version <> ? LIMIT 1",
+    ).get(
+      VERSIONS.model,
+      VERSIONS.thresholds,
+      VERSIONS.graph,
+      VERSIONS.rules,
+    ) !== undefined
   );
 }
 
@@ -99,11 +110,11 @@ export function applyProjections(
 ): void {
   const meta = prepared(
     db,
-    `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, last_seq, computed_at)
-     VALUES (?, ?, ?, ?, ?, ?)
+    `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, rules_version, last_seq, computed_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(name) DO UPDATE SET model_version = excluded.model_version,
        threshold_version = excluded.threshold_version, graph_version = excluded.graph_version,
-       last_seq = excluded.last_seq, computed_at = excluded.computed_at`,
+       rules_version = excluded.rules_version, last_seq = excluded.last_seq, computed_at = excluded.computed_at`,
   );
   for (const p of registered) {
     if (!tableExists(db, p.table)) db.exec(p.create);
@@ -113,6 +124,7 @@ export function applyProjections(
       VERSIONS.model,
       VERSIONS.thresholds,
       VERSIONS.graph,
+      VERSIONS.rules,
       event.seq,
       computedAt,
     );
@@ -134,19 +146,21 @@ export function rebuildMissing(
     for (const p of missing) db.exec(p.create);
     let last = 0;
     for (const e of allEvents()) {
-      for (const p of missing) p.apply(db, e, computedAt);
+      for (const p of missing) p.apply(db, e, computedAt, p.table);
       last = e.seq;
     }
     const meta = prepared(
       db,
-      `INSERT OR REPLACE INTO derived_meta VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT OR REPLACE INTO derived_meta (name, model_version, threshold_version, graph_version, rules_version, last_seq, computed_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     );
+    for (const p of missing) p.fullPass?.(db, p.table, computedAt);
     for (const p of missing)
       meta.run(
         p.name,
         VERSIONS.model,
         VERSIONS.thresholds,
         VERSIONS.graph,
+        VERSIONS.rules,
         last,
         computedAt,
       );

@@ -1,0 +1,18 @@
+{
+  "version": "v1",
+  "pInit": {
+    "7": { "1F": 0.55, "1S": 0.25, "stretch": 0.05 },
+    "8": { "1F": 0.7, "1S": 0.4, "stretch": 0.1 }
+  },
+  "pLearnPractice": 0.05,
+  "pLearnFeedback": 0.15,
+  "pGuessFree": 0.03,
+  "slipBase": 0.95,
+  "pSlipMin": 0.1,
+  "halfLife": {
+    "initialDays": 60,
+    "growth": 1.5,
+    "capDays": 365,
+    "minGapDays": 3
+  }
+}

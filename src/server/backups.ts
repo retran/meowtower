@@ -27,6 +27,7 @@ export interface Notices {
   recompute_failed?: { at: string; version: string; reason: string } | null;
   recompute_slow?: { at: string; ms: number } | null;
   log_large?: { at: string; bytes: number } | null;
+  snapshot_ceiling?: { at: string; rows: number } | null;
   log_write_failed?: { at: string; reason: string } | null;
   // The graph states the parent sees (TSK-0500).
   graph_invalid?: { at: string; reason: string } | null;

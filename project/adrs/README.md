@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-46 decisions in all: 42 approved, 4 done.
+49 decisions in all: 41 approved, 5 done, 3 draft.
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
@@ -10,8 +10,8 @@
 | [ADR-0020](ADR-0020-append-only-event-log-is-the-only-truth.md) | An append-only event log in SQLite is the only truth, and every other table is a projection rebuilt from it | done |
 | [ADR-0030](ADR-0030-server-decides-through-http-and-sse.md) | The server decides everything through an HTTP and SSE API, with one active device per adventure and a client queue that loses no answer | done |
 | [ADR-0040](ADR-0040-tasks-from-templates-seeds-exact-arithmetic.md) | Code generates every task from a versioned template, a seed and exact arithmetic, and one solution graph drives checking, hints and solutions | done |
-| [ADR-0050](ADR-0050-skill-graph-one-versioned-data-file.md) | The skill graph is one versioned data file, the single source of nodes, levels, prerequisites, subtypes and weights | approved |
-| [ADR-0060](ADR-0060-knowledge-model.md) | The knowledge model is BKT with forgetting plus two beta estimates, with report states from explicit rules, versioned and recomputed from the event log | approved |
+| [ADR-0050](ADR-0050-skill-graph-one-versioned-data-file.md) | The skill graph is one versioned data file, the single source of nodes, levels, prerequisites, subtypes and weights | done |
+| [ADR-0060](ADR-0060-knowledge-model.md) | The knowledge model is BKT with forgetting plus two beta estimates, with report states from explicit rules, versioned and recomputed from the event log | done |
 | [ADR-0070](ADR-0070-director-selection-and-measurement.md) | The Director fills each slot by information value inside a flow corridor, a three-day domain window and spaced review, and guards the measurement against repeats, fatigue and rapid guesses | approved |
 | [ADR-0080](ADR-0080-one-attempt-flow-measures-then-teaches.md) | Every task runs one attempt flow on the server: an unassisted first attempt measures, then a free short solution, one parallel second attempt and hints paid in guiding threads teach | approved |
 | [ADR-0090](ADR-0090-day-planned-from-pace-with-invisible-time.md) | The server plans each day's adventure from her pace, counts time only from the event log, and brings eye exercises, rest stops and a soft stop as story at task boundaries, with no clock on her screens | approved |
@@ -52,4 +52,8 @@
 | [ADR-0440](ADR-0440-constructions-expand-into-the-four-operations-and-pass-per-family.md) | «Сплети загадку» takes the seven constructions by expanding each named operation into the four operations the verdict already judges, masking fraction words as tokens of their own, gating each construction on its nodes and letting each new number family play in text only after its own 50-text test | approved |
 | [ADR-0450](ADR-0450-hypotheses-logged-from-mvp-labelled-later-on-later-data.md) | The parent's hypotheses are two parent events from the first version, and after the MVP a label judges each only on later data by numeric conditions and a hold, with the build check's example conditions fixed here | approved |
 | [ADR-0460](ADR-0460-settle-what-the-addendum-2-records-still-leave-open.md) | Every gap the addendum 2 records still leave open settles by ADR-0360's defaults with the newer addendum 2 decision owning its own capability, rejected findings stay as records, and eight requirements get replacements | approved |
+| [ADR-0470](ADR-0470-no-node-taught-before-its-prerequisites.md) | No node's typical group is below the group of any of its prerequisites | draft |
+| [ADR-0480](ADR-0480-template-checks-wait-for-the-real-templates.md) | The checks that read templates wait for the real templates, in their own epic | draft |
+| [ADR-0490](ADR-0490-real-templates-for-the-maths-nodes-later.md) | The templates for the real maths nodes are written after the knowledge model and the strings, in their own epic | draft |
+| [ADR-0510](ADR-0510-model-activated-carries-the-gate-figures.md) | `model_activated` records the file version and the held-out figures, and the latest one names the active model | done |
 <!-- /meow-flow index -->

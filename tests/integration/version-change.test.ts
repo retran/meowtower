@@ -10,9 +10,11 @@ import { join } from "node:path";
 import Database from "better-sqlite3";
 import { afterAll, afterEach, describe, expect, it } from "vitest";
 import {
-  useKnowledgeModel,
-  type KnowledgeModel,
+  refreshKnowledge,
+  useKnowledge,
 } from "../../src/engine/projections/knowledge.js";
+import { loadParams } from "../../src/engine/model/params.js";
+import { RULES_VERSION } from "../../src/engine/states/version.js";
 import {
   PROJECTIONS,
   useVersions,
@@ -24,36 +26,55 @@ import { writeSyntheticLog } from "../helpers/synthetic-log.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-versions-"));
 // The graph version the server computes from content/graph.yaml at start (TSK-0500).
-const GRAPH = openGraph(readFileSync(GRAPH_FILE, "utf8")).graphVersion();
-const NONE: Versions = { model: "none", thresholds: "none", graph: GRAPH };
-const A: Versions = { model: "A", thresholds: "t1", graph: GRAPH };
-const B: Versions = { model: "B", thresholds: "t1", graph: GRAPH };
-const A2: Versions = { model: "A", thresholds: "t2", graph: GRAPH };
+const GRAPH_OPEN = openGraph(readFileSync(GRAPH_FILE, "utf8"));
+const GRAPH = GRAPH_OPEN.graphVersion();
+const rules = RULES_VERSION;
+const NONE: Versions = {
+  model: "none",
+  thresholds: "none",
+  graph: GRAPH,
+  rules,
+};
+const A: Versions = { model: "A", thresholds: "t1", graph: GRAPH, rules };
+const B: Versions = { model: "B", thresholds: "t1", graph: GRAPH, rules };
+const A2: Versions = { model: "A", thresholds: "t2", graph: GRAPH, rules };
 afterEach(() => {
   useVersions(NONE);
-  useKnowledgeModel(null);
+  useKnowledge(null);
+});
+
+/** The v1 parameters; model B starts every group-7 first-year subtype higher, so its estimates differ. */
+const modelText = readFileSync(
+  new URL("../../content/model.v1.json", import.meta.url),
+  "utf8",
+);
+const paramsOf = (versions: Versions) => {
+  const file = JSON.parse(modelText) as {
+    pInit: Record<string, Record<string, number>>;
+  };
+  if (versions.model === "B")
+    file.pInit["7"] = { ...file.pInit["7"], "1F": 0.65 };
+  return loadParams(JSON.stringify(file));
+};
+const knowledgeFor = (versions: Versions) => ({
+  params: paramsOf(versions),
+  graph: GRAPH_OPEN,
+  zone: "UTC",
 });
 afterAll(() => rmSync(root, { recursive: true, force: true }));
-
-/** A stand-in knowledge model: a node's value after each verdict, by model version. */
-const standIn: KnowledgeModel = (e, versions) => {
-  if (e.type !== "verdict") return [];
-  const right = (e.payload as { verdict: string }).verdict === "correct";
-  const weight = versions.model === "B" ? 0.9 : 0.6;
-  return [{ node: "A1", value: right ? weight : 1 - weight }];
-};
 
 let worlds = 0;
 /** A database holding the 30-day log, computed under `versions`. */
 function computedUnder(versions: Versions): string {
   const live = join(root, `w${++worlds}.sqlite`);
   useVersions(versions);
-  useKnowledgeModel(standIn);
+  useKnowledge(knowledgeFor(versions));
   const db = openDatabase(live);
   writeSyntheticLog(db, { days: 30, tasksPerDay: 20, seed: 11 });
+  refreshKnowledge(db, "end-of-adventure");
   db.close();
   useVersions(NONE);
-  useKnowledgeModel(null);
+  useKnowledge(null);
   return live;
 }
 
@@ -151,7 +172,7 @@ describe("REQ-2224: a new model changes the estimates, not what the game decided
   it("leaves every game table as it was and keeps node_snapshots rows under both versions", async () => {
     const live = computedUnder(A);
     const db = openDatabase(live);
-    const game = PROJECTIONS.filter((p) => !p.versioned);
+    const game = PROJECTIONS.filter((p) => p.class === "game");
     const rows = (table: string) => {
       const columns = (
         db.prepare("SELECT name FROM pragma_table_info(?)").all(table) as {
@@ -170,14 +191,14 @@ describe("REQ-2224: a new model changes the estimates, not what the game decided
     );
 
     useVersions(B);
-    useKnowledgeModel(standIn);
+    useKnowledge(knowledgeFor(B));
     await recompute(db, { computedAt: "under-B" });
 
     for (const p of game)
       expect(rows(p.table), p.table).toEqual(before[p.table]);
     const snapshots = db
       .prepare(
-        "SELECT model_version, threshold_version, graph_version, count(*) AS n, round(avg(value), 3) AS mean FROM node_snapshots GROUP BY 1, 2, 3 ORDER BY 1",
+        "SELECT model_version, threshold_version, graph_version, count(*) AS n, round(avg(p_know), 3) AS mean FROM node_snapshots GROUP BY 1, 2, 3 ORDER BY 1",
       )
       .all() as {
       model_version: string;

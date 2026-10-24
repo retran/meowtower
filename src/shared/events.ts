@@ -588,6 +588,52 @@ const parentDefs: EventDef[] = [
     }),
   },
   {
+    // The reversal of item_excluded (ADR-0500, REQ-0916): the task returns to the estimates.
+    type: "item_included",
+    v: 1,
+    schema: obj({
+      itemId: id("the task included again"),
+    }),
+  },
+  {
+    // The parent's activation of a model version after the held-out gate (ADR-0510, REQ-7506).
+    type: "model_activated",
+    v: 1,
+    schema: obj({
+      modelVersion: id("the model file version now active"),
+      previous: z
+        .string()
+        .min(1)
+        .nullable()
+        .describe("the version it replaced, or null"),
+      heldOutAttempts: z
+        .number()
+        .int()
+        .min(0)
+        .describe("the held-out attempts compared"),
+      figures: obj({
+        active: obj({
+          logLoss: z
+            .number()
+            .describe("the active version's held-out log-loss"),
+          ece: z
+            .number()
+            .describe("the active version's expected calibration error"),
+        })
+          .nullable()
+          .describe(
+            "the active version's figures, or null for the first version",
+          ),
+        candidate: obj({
+          logLoss: z.number().describe("the candidate's held-out log-loss"),
+          ece: z
+            .number()
+            .describe("the candidate's expected calibration error"),
+        }).describe("the candidate's figures"),
+      }).describe("the gate figures"),
+    }),
+  },
+  {
     type: "settings_changed",
     v: 1,
     schema: obj({
@@ -881,6 +927,7 @@ export const EVENT_CATALOGUE: readonly string[] = [
   "parent_tag_added",
   "parent_tag_removed",
   "item_excluded",
+  "item_included",
   "glossary_entry_approved",
   "calibration",
 ];

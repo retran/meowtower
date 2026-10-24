@@ -6,6 +6,8 @@ import { PIN_PATTERN, setPin } from "./parent-access.js";
 import { takeSnapshot } from "./snapshots.js";
 import { readNotices } from "./backups.js";
 import { runRecompute } from "./recompute.js";
+import { ModelParamsInvalid } from "../engine/model/params.js";
+import { type ActivationContext, activateModel } from "./model-activate.js";
 import { EXPORT_FILES, exportAll } from "./export.js";
 import { readFileSync } from "node:fs";
 import { writeFileSync } from "node:fs";
@@ -22,12 +24,15 @@ export function createParentApp({
   dbPath,
   snapshots,
   exports,
+  model,
 }: {
   db: Db;
   now?: () => number;
   dbPath?: string;
   snapshots?: string;
   exports?: string;
+  /** What the model activation reads; absent where no graph is loaded. */
+  model?: ActivationContext;
 }): Hono {
   const app = new Hono();
   // Only the Mac reaches this listener, so only the Mac issues pairing codes.
@@ -72,6 +77,23 @@ export function createParentApp({
         },
         500,
       );
+    }
+  });
+  // ./meowtower model activate: the gate and the event, written by the server (ADR-0510).
+  app.post("/model/activate", async (c) => {
+    if (!model) return c.json({ error: "model_unavailable" }, 500);
+    const text = await c.req.text();
+    try {
+      const result = activateModel(db, text, model);
+      return c.json(result, result.accepted ? 200 : 409);
+    } catch (err) {
+      if (err instanceof ModelParamsInvalid)
+        return c.json(
+          { error: "model_params_invalid", reason: err.message },
+          400,
+        );
+      console.error(`model_activation_failed: ${String(err)}`);
+      return c.json({ error: "model_activation_failed" }, 500);
     }
   });
   // ./meowtower db-snapshot: one snapshot on demand, its time kept for status.

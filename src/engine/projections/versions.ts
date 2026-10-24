@@ -1,9 +1,13 @@
 // The versions the projections are computed with (SPC-0020). A module of its
 // own, importing nothing, so the registry and the projections both read it.
+import { RULES_VERSION } from "../states/version.js";
+
 export interface Versions {
   model: string;
   thresholds: string;
   graph: string;
+  /** The version of the state rules, which is code and not a content file (TSK-0524). */
+  rules: string;
 }
 
 /**
@@ -15,6 +19,7 @@ export const VERSIONS: Versions = {
   model: "none",
   thresholds: "none",
   graph: "none",
+  rules: RULES_VERSION,
 };
 
 export function useVersions(versions: Versions): void {
@@ -22,4 +27,4 @@ export function useVersions(versions: Versions): void {
 }
 
 export const versionLabel = (v: Versions = VERSIONS): string =>
-  `model ${v.model}, thresholds ${v.thresholds}, graph ${v.graph}`;
+  `model ${v.model}, thresholds ${v.thresholds}, graph ${v.graph}, rules ${v.rules}`;

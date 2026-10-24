@@ -1,7 +1,7 @@
 ---
 id: TSK-0522
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0992]
@@ -36,7 +36,9 @@ The retention check of ADR-0400 changes the ladder after the MVP, and a hinted r
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/model-review.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+The confidence bands follow SPC-0060, which gives full blocks 14 days for high, and an older full block than 30 days is low.
 
 ## Left alone
 

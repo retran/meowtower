@@ -1,7 +1,7 @@
 ---
 id: TSK-0519
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0982, REQ-0984, REQ-3712]
@@ -36,7 +36,7 @@ The decision leaves open which row applies when the log holds no setting. I chos
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/model-priors.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
 
 ## Left alone
 

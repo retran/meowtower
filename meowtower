@@ -323,6 +323,15 @@ cmd_recompute() {
   echo "Up to event $(echo "$reply" | sed -n 's/.*"lastSeq":\([0-9]*\).*/\1/p'), in $(echo "$reply" | sed -n 's/.*"ms":\([0-9]*\).*/\1/p') ms."
 }
 
+# The held-out gate and the model_activated event, both done by the server (ADR-0510).
+cmd_model_activate() {
+  local file="${1:-}" reply
+  [[ -f $file ]] || { echo "usage: ./meowtower model activate <content/model.vN.json>" >&2; exit 2; }
+  reply="$(curl -sS -X POST --data-binary @"$file" "http://localhost:$PARENT_PORT/model/activate")" \
+    || { echo "server_unreachable: run ./meowtower up first."; exit 1; }
+  printf '%s' "$reply" | npx tsx tools/eval-model.ts report
+}
+
 # One snapshot on demand, taken by the server so play goes on (SPC-0010).
 cmd_db_snapshot() {
   local reply
@@ -429,8 +438,14 @@ case "${1:-}" in
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
   export) cmd_export ;;
+  model)
+    case "${2:-}" in
+      check) shift 2; npx tsx tools/model-check.ts "$@" ;;
+      activate) shift 2; cmd_model_activate "$@" ;;
+      *) echo "usage: ./meowtower model check [file] | model activate <file>" >&2; exit 2 ;;
+    esac ;;
   graph)
     if [[ "${2:-}" == check ]]; then shift 2; npx tsx tools/graph-check.ts "$@"
     else echo "usage: ./meowtower graph check [file]" >&2; exit 2; fi ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|export|graph check" >&2; exit 2 ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|export|graph check|model check|model activate" >&2; exit 2 ;;
 esac

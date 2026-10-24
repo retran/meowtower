@@ -1,7 +1,7 @@
 ---
 id: TSK-0523
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0932, REQ-0950, REQ-0952, REQ-0954]
@@ -36,7 +36,9 @@ The fatigue guard on blocks (REQ-1110) and the escalation of a probe that falls 
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/states-checks.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+A choice-only node is read from its observations (every one a choice task), because the graph file records no answer form.
 
 ## Left alone
 

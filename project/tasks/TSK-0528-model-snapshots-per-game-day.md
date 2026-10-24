@@ -1,7 +1,7 @@
 ---
 id: TSK-0528
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0904, REQ-0906]
@@ -35,7 +35,9 @@ Earlier-version snapshots are the one derived data the log can't rebuild alone, 
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/integration/knowledge-recompute.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+Not covered by a test: two adventures on one game day overwriting that day's rows (the pass rewrites every day at once), and a recompute with the earlier version's code absent.
 
 ## Left alone
 

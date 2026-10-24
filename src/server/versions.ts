@@ -4,6 +4,7 @@
 // elsewhere for a test.
 import { readFileSync } from "node:fs";
 import type { Versions } from "../engine/projections/registry.js";
+import { RULES_VERSION } from "../engine/states/version.js";
 
 const DEFAULT = new URL("../../content/versions.json", import.meta.url);
 
@@ -13,5 +14,10 @@ export function readContentVersions(
   const v = JSON.parse(readFileSync(path, "utf8")) as Partial<Versions>;
   if (!v.model || !v.thresholds || !v.graph)
     throw new Error(`versions_invalid: ${String(path)} lacks a version`);
-  return { model: v.model, thresholds: v.thresholds, graph: v.graph };
+  return {
+    model: v.model,
+    thresholds: v.thresholds,
+    graph: v.graph,
+    rules: RULES_VERSION,
+  };
 }
