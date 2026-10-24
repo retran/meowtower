@@ -50,7 +50,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [ ] T-004 [P] TSK-0679 Every fixed System line sits in one section the parent reads in one sitting
       closes: REQ-3300, REQ-3306, REQ-3318
       depends: TSK-0676 - the lines are keys of the typed file and the pause form is its System message shape.
-- [ ] T-005 [P] TSK-0680 One forbidden list holds every inflected form, every phrase and the knot's wrong word
+- [x] T-005 [P] TSK-0680 One forbidden list holds every inflected form, every phrase and the knot's wrong word (done: pull request 23)
       closes: REQ-3314, REQ-3320, REQ-3324
       depends: none
 - [x] T-006 TSK-0681 `textGate` checks a line against the one list and returns a pass or the rule that failed (done: pull request 23)
