@@ -1,7 +1,7 @@
 ---
 id: ADR-0490
 artifact: adr
-status: draft
+status: approved
 revised: 2026-10-11
 addresses: [REQ-1232]
 supersedes: []

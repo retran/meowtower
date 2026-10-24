@@ -58,6 +58,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       depends: TSK-0503 (blocking) - the first third of the file.; TSK-0504 (blocking) - the counts rule needs all 79 nodes.
 - [~] T-007 [P] TSK-0506 (dropped here: moved to EPC-0470 under ADR-0480, which waits for the real templates) Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says
       closes: REQ-0816, REQ-0818
+      dropped: moved to EPC-0470 under ADR-0480, which waits for the real templates
       depends: TSK-0504 (blocking) - the M nodes and their subtypes.
 - [x] T-008 [P] TSK-0507 Every SLO goal at 1F and 1S maps to a subtype of the graph (done: pull request 19)
       closes: REQ-0812
@@ -67,6 +68,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
       depends: TSK-0504 (blocking) - M1, M5, D3 and A3 with their subtype tags exist.
 - [~] T-010 [P] TSK-0509 (dropped here: moved to EPC-0470 under ADR-0480, which waits for the real templates) The build fails on a template that names a subtype the graph lacks and on a second copy of a level or weight
       closes: REQ-0852, REQ-1244
+      dropped: moved to EPC-0470 under ADR-0480, which waits for the real templates
       depends: TSK-0500 (blocking) - the loader and the query module the checks read.
 - [x] T-011 [P] TSK-0510 A curriculum overlay adds nodes and links and never changes the base graph (done: pull request 19)
       closes: REQ-3812
@@ -101,6 +103,7 @@ The smallest set of tasks that would test the decision is TSK-0500, TSK-0501, TS
 
 ## Not covered
 
+- REQ-0816, REQ-0818, REQ-0852 and REQ-1244, which the dropped TSK-0506 and TSK-0509 would have closed: EPC-0470 closes them under ADR-0480, because their checks read the real templates, which ADR-0490's epic writes.
 - The stretch gate's admission by tested results, REQ-0820, the weekly limit on stable nodes in mental arithmetic, REQ-0832, and the descent in play: ADR-0070 applies them with this epic's `stretchGate` and `descentTargets`, so the epic realising ADR-0070 closes them.
 - The report's gap and ceiling lists, the coverage by level, the word problem matrix and the Parent Room's drawing of `graph_invalid`, `graph_changed` and `not_generatable`: ADR-0180's epic. The tasks here write the notices and the `changes` lines the report reads.
 - Node states and how subtype weights enter the node estimate: ADR-0060's epic, which reads the query module.

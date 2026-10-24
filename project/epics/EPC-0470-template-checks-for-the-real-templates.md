@@ -1,7 +1,7 @@
 ---
 id: EPC-0470
 artifact: epic
-status: draft
+status: approved
 revised: 2026-10-11
 realises: ADR-0480
 ---
@@ -29,7 +29,7 @@ Realises exactly ADR-0480 and waits for ADR-0490, the decision that writes the r
 - [ ] T-001 TSK-0506 The measurement subtypes' method rule checked against the real templates' parameter ranges (waits for the real templates)
       closes: REQ-0816, REQ-0818
       depends: none - the rule is already in the validator; the reviewing agent reads the templates
-- [ ] T-002 TSK-0509 The build fails on a template that names a subtype or node the graph lacks, and refuses a level or a weight in any content file (waits for the real templates)
+- [x] T-002 TSK-0509 The build fails on a template that names a subtype or node the graph lacks, and refuses a level or a weight in any content file (done: pull request 19)
       closes: REQ-0852, REQ-1244
       depends: none - the checks are in src/engine/catalogue.ts and tools/graph-check.ts
 

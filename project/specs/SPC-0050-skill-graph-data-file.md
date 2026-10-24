@@ -134,7 +134,7 @@ The parent or a developer changes a node, a prerequisite, a level or a weight by
 
 ### The validator
 
-The validator runs in `npm run verify`, in `./tower graph check` and at every server start. It parses the file with the `yaml` package, whose cap of 100 aliases stays on, and checks seven rules:
+The validator runs in `npm run verify`, in `./tower graph check` and at every server start. It parses the file with the `yaml` package, whose cap of 100 aliases stays on, and checks eight rules:
 
 1. The schema, the field checks in the node table, and an acyclic prerequisite graph by topological sort (REQ-0808).
 2. The counts: 79 maths nodes, the nine domains with the per-domain counts above, 69 nodes at 1F, 1S or 1F/1S and 10 at stretch (REQ-0800). The `tracks` part and overlay nodes stay out of these counts.
@@ -143,6 +143,7 @@ The validator runs in `npm run verify`, in `./tower graph check` and at every se
 5. SLO goals: every `sloGoals` entry is named by at least one subtype, and every `slo` reference names an existing goal (REQ-0812). A reviewing agent judges the goal list and the mapping against the SLO document when `sloGoals` is first written and whenever `sloGoals` or any subtype's `slo` field changes, and its report names every goal with at least one subtype.
 6. Scope: every node up to the end of group 8, level 1S, stays in the graph, whatever the player's current school group, which `personal/player.md` holds (REQ-0854). The validator has no filter by `typicalGroup`, and no module outside `src/parent/` and the Director's cold start can read `typicalGroup`, since the lint rule under Query module fails the import.
 7. Overlays: a curriculum overlay file `content/graph.<curriculum>.yaml`, such as `content/graph.nl.yaml`, is on when it exists, and the loader reads every such file beside `content/graph.yaml`. The first version ships none. An overlay adds nodes of its own, with their subtypes and prerequisites, and those prerequisites may name base nodes. The validator fails an overlay entry that reuses a base node id, adds a subtype or a prerequisite to a base node, or removes or changes a base field, so the weights, prerequisites and descent targets of base nodes stay as the base file gives them (REQ-3812). Rules 1, 4, 5 and 6 run on the base and the overlays together, and rules 2 and 3 on the base file alone.
+8. Group order: no node's `typicalGroup` is below the `typicalGroup` of any prerequisite the node names (REQ-0800, REQ-0808). The check runs after the cycle check, so a cycle is still reported as a cycle.
 
 The validator also warns once for each node with more than 5 subtypes at equal weights, since none of them reaches the weight of 0.2 a full block must cover.
 

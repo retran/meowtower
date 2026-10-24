@@ -1,7 +1,7 @@
 ---
 id: ADR-0480
 artifact: adr
-status: draft
+status: approved
 revised: 2026-10-11
 addresses: [REQ-0816, REQ-0818, REQ-0852, REQ-1244]
 supersedes: []

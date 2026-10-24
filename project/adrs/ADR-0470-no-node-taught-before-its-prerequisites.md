@@ -1,7 +1,7 @@
 ---
 id: ADR-0470
 artifact: adr
-status: draft
+status: done
 revised: 2026-10-11
 addresses: [REQ-0800, REQ-0808]
 supersedes: []
