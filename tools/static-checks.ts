@@ -336,6 +336,18 @@ export function checkGameProjectionImports(
   return findings;
 }
 
+/**
+ * REQ-3810: no Cyrillic character in `src/` outside `__fixtures__`, so a Russian string written
+ * into the code is found before a second language can ship. The check reports the file and the match.
+ */
+export function checkNoCyrillic(root: string): Finding[] {
+  const src = join(root, "src");
+  const paths = existsSync(src)
+    ? files(src).filter((p) => !p.split(sep).includes("__fixtures__"))
+    : [];
+  return scan("cyrillic_in_src", paths, root, /[\u0400-\u04FF]+/);
+}
+
 /** TSK-0676: `src/shared/i18n-keys.ts` is the file `tools/gen-keys.ts` writes from `ru.json`. */
 export async function checkKeysFresh(): Promise<Finding[]> {
   const fresh = (await renderKeys(readLanguage())) === generatedKeys();
@@ -369,6 +381,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   );
   const findings = [
     ...checkNoKeyInClient(root),
+    ...checkNoCyrillic(root),
     ...checkNoPush(root),
     ...checkClientStorage(root),
     ...checkEventsSqlConfined(root),
@@ -385,6 +398,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
+      "cyrillic_in_src searched src for Cyrillic characters outside fixtures; " +
       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
       "client_storage searched src/client for IndexedDB outside the queue's module, the Cache API outside the service worker, and localStorage, sessionStorage, cookie and origin-private file system writes; " +
       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +

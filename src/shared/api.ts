@@ -221,7 +221,7 @@ export const HintOut = z
   })
   .strict();
 
-/** «Ещё один ряд»: the reply once the extension is logged. */
+/** The extension by one row: the reply once the extension is logged. */
 export const ExtendOut = z.object({ status: z.literal("extended") }).strict();
 
 /** The body of the explain and second-attempt requests. */
@@ -257,7 +257,7 @@ export type StreamMessage = z.infer<typeof StreamMessage>;
 
 export const PollOut = z.object({ messages: z.array(StreamMessage) }).strict();
 
-/** «Сохранить и уйти», the page hidden, or no input for too long (SPC-0030). */
+/** The save-and-leave action, the page hidden, or no input for too long (SPC-0030). */
 export const HeartbeatIn = z.object({ clientSeq }).strict();
 export const HeartbeatOut = z.object({ status: z.literal("ok") }).strict();
 

@@ -1,7 +1,7 @@
 ---
 id: TSK-0677
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0160
 closes: [REQ-3810]
@@ -32,7 +32,9 @@ Add the Cyrillic scan to `tools/static-checks.ts`, which the lint verb already r
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/lint-no-literal-string.test.ts (the Cyrillic scan and the `no-literal-string` rule on a markup fixture and on each of `aria-label`, `title`, `placeholder` and `alt`) and tests/e2e/pseudo-language.spec.ts (the walk of every route under a language whose values are the keys, seen to fail on a stray string), and by the stages of the repository run on this branch, whose outcomes are in pull request 23.
+
+The client builds its screens with `el()` calls and has no markup, so the ESLint rule guards the components ADR-0150's epic adds, and the Playwright walk is what covers the present client. The walk opens the routes of an unpaired device, so a screen that needs a paired device shows its pairing prompt.
 
 ## Left alone
 

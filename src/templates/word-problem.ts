@@ -100,8 +100,7 @@ export function t4Problem(seed: Uint8Array): T4Problem {
 
 /**
  * The Russian noun form a number takes: `forms` is the one form (1), the few
- * form (2 to 4) and the many form (5 to 20 and the rest), as in «1 зелье,
- * 3 зелья, 5 зелий» (REQ-0788).
+ * form (2 to 4) and the many form (5 to 20 and the rest), as Russian plurals do (REQ-0788).
  */
 export function nounForm(
   n: number,

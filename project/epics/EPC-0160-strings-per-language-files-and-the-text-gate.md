@@ -41,7 +41,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-001 TSK-0676 One typed function reads every string from the language file, and a language is shipped only when its keys match (done: pull request 23)
       closes: REQ-3810, REQ-3304
       depends: none
-- [ ] T-002 [P] TSK-0677 A string written into the code fails the build
+- [x] T-002 [P] TSK-0677 A string written into the code fails the build (done: pull request 23)
       closes: REQ-3810
       depends: TSK-0676 - the pseudo-language run needs the typed `t` and the language files it loads.
 - [ ] T-003 [P] TSK-0678 The interface uses the world's labels, and a label that brings back the test, the clock or the streak fails the build

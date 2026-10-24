@@ -154,7 +154,7 @@ export function mountParentRoom(
     return c.json(parentSettings(db));
   });
 
-  // «Закончить на сегодня»: the rest of the game day plays no further task
+  // the finish-today action: the rest of the game day plays no further task
   // and takes no extension (REQ-2444).
   app.post("/api/parent/finish-today", (c) => {
     const deviceId = parent(c);

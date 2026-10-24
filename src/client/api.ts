@@ -314,7 +314,7 @@ export async function deliverRewards(
   return status === 200;
 }
 
-/** «Ещё один ряд»: the server refuses with `day_finished` once the parent ended the day. */
+/** The extension by one row: the server refuses with `day_finished` once the parent ended the day. */
 export async function extend(
   sessionId: string,
 ): Promise<"ok" | "day_finished" | Moved | null> {
