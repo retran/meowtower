@@ -110,3 +110,5 @@ Amended: EPC-0010 by ADR-0360; EPC-0020 by ADR-0370.
 | [EPC-0440](epics/EPC-0440-constructions-expand-into-the-four-operations-and-pass-per-family.md) | «Сплети загадку» takes the seven constructions by expanding each named operation into the four operations, masking fraction words as tokens of their own and letting each number family play in text only after its own test | approved |
 | [EPC-0450](epics/EPC-0450-parent-hypotheses.md) | The parent's hypotheses are two parent events from the first version, and after the MVP a label judges each only on later data | approved |
 | [EPC-0460](epics/EPC-0460-settle-what-addendum-2-records-leave-open.md) | Every gap the addendum 2 records still leave open settles by ADR-0360's defaults, and eight requirements get replacements | approved |
+| [EPC-0470](epics/EPC-0470-template-checks-for-the-real-templates.md) | The checks that read templates run once the real templates exist | approved |
+| [EPC-0480](epics/EPC-0480-templates-for-every-maths-node.md) | Every maths node has templates for each of its subtypes and answer kinds | approved |
