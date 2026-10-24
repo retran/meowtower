@@ -1,7 +1,7 @@
 ---
 id: TSK-0676
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0160
 closes: [REQ-3810, REQ-3304]
@@ -38,7 +38,9 @@ Nothing in this epic. The notation keys exist in `content/i18n/ru.json` from the
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/i18n-typed.test.ts (the `tsc` failure on an unknown key and a missing placeholder value, the plural forms, the pause line, the parity check, the 400 for an unshipped language and the freshness of the generated file) and by the stages of the repository run on this branch, whose outcomes are in pull request 23.
+
+Not covered by a test: the profile refusing to select a language outside the shipped set, because no route writes a profile language yet; `isShipped` is the check that route will call.
 
 ## Left alone
 

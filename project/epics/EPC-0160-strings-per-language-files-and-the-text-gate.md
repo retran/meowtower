@@ -38,7 +38,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0676 One typed function reads every string from the language file, and a language is shipped only when its keys match
+- [x] T-001 TSK-0676 One typed function reads every string from the language file, and a language is shipped only when its keys match (done: pull request 23)
       closes: REQ-3810, REQ-3304
       depends: none
 - [ ] T-002 [P] TSK-0677 A string written into the code fails the build

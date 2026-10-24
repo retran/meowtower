@@ -16,7 +16,7 @@ import { flushOnce, refusedAnswers, stuckEntries } from "./answer-queue.js";
 import { act, button, choice, el, heading, link, status } from "./controls.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
-import { clock, t } from "./strings.js";
+import { clock, t, uiKey, type UiKey } from "./strings.js";
 
 export interface Shell {
   paired: boolean;
@@ -187,9 +187,9 @@ const pairing: Screen = {
 /** The line for an attempt's result; a lockout names when attempts resume. */
 function refusal(
   result: Tried,
-  done: string,
-  locked: Record<string, string>,
-  failed: string,
+  done: UiKey,
+  locked: Record<string, UiKey>,
+  failed: UiKey,
 ): string {
   if (result.ok) return t(done);
   const key = locked[result.error];
@@ -413,7 +413,7 @@ const parentSettingsScreen: Screen = {
           return choice(
             "three-day",
             value,
-            `ui.parentSettings.limit.${value}`,
+            uiKey(`ui.parentSettings.limit.${value}`),
             limit === current.threeDayLimit,
             async () => {
               note.textContent = "";

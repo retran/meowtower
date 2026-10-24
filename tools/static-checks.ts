@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PROJECTIONS } from "../src/engine/projections/registry.js";
+import { generatedKeys, readLanguage, renderKeys } from "./gen-keys.js";
 
 export interface Finding {
   check: string;
@@ -335,6 +336,20 @@ export function checkGameProjectionImports(
   return findings;
 }
 
+/** TSK-0676: `src/shared/i18n-keys.ts` is the file `tools/gen-keys.ts` writes from `ru.json`. */
+export async function checkKeysFresh(): Promise<Finding[]> {
+  const fresh = (await renderKeys(readLanguage())) === generatedKeys();
+  return fresh
+    ? []
+    : [
+        {
+          check: "i18n_keys_stale",
+          file: "src/shared/i18n-keys.ts",
+          match: "run `npx tsx tools/gen-keys.ts`",
+        },
+      ];
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = process.cwd();
   const { checkParamsLanguageFree, loadTemplateSchemas } =
@@ -366,6 +381,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkTaskRules(taskFacts),
     ...checkExplainCoverage(graphFacts),
     ...checkWordStructures(wordFacts),
+    ...(await checkKeysFresh()),
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
@@ -376,6 +392,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       `task_rules read ${taskFacts.length} templates' task facts in src/templates for choice options, comparison forms and free input; ` +
       `explain_missing read ${graphFacts.length} templates' traps and explanations in src/templates; ` +
       `word_structure read ${wordFacts.length} word problem templates' structures in src/templates; ` +
+      "i18n_keys compared src/shared/i18n-keys.ts with the file tools/gen-keys.ts writes from ru.json; " +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
