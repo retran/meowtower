@@ -1,7 +1,7 @@
 ---
 id: TSK-0533
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0070
 closes: [REQ-1012, REQ-1016, REQ-1018]
@@ -38,7 +38,7 @@ An inferred state doesn't qualify, because the island checks already test inferr
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/director-review.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 22.
 
 ## Left alone
 

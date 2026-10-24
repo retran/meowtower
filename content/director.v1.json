@@ -1,0 +1,21 @@
+{
+  "version": "v1",
+  "weights": {
+    "uncertainty": 2.0,
+    "staleness": 1.5,
+    "frontier": 1.5,
+    "escalation": 1.5,
+    "stretch": 1.0,
+    "spacedReview": 1.5,
+    "recheck": 2.0,
+    "parentTopic": 1.5,
+    "recentShows": 1.0
+  },
+  "stalenessDays": { "frontier": 7, "other": 14 },
+  "staleAfterDays": 30,
+  "recentShowsDays": 3,
+  "recentShowsCap": 5,
+  "uncertainFrom": 0.5,
+  "parentTopicDays": 2,
+  "parentTopicPerDay": 4
+}
