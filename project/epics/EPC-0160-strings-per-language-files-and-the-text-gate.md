@@ -56,7 +56,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-006 TSK-0681 `textGate` checks a line against the one list and returns a pass or the rule that failed (done: pull request 23)
       closes: REQ-3328, REQ-3302
       depends: TSK-0680 - the gate reads the list and its fixtures.
-- [ ] T-007 [P] TSK-0682 The build passes every fixed string and 200 rendered seeds of every template through the gate
+- [x] T-007 [P] TSK-0682 The build passes every fixed string and 200 rendered seeds of every template through the gate (done: pull request 23)
       closes: REQ-3326, REQ-3308
       depends: TSK-0681 - the check calls the gate.; TSK-0676 - the check walks the keys and groups of the typed file.
 - [ ] T-008 [P] TSK-0683 The server runs the gate on every line before it leaves, and a blocked line is replaced by its source's fallback
