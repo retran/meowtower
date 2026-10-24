@@ -1,7 +1,7 @@
 ---
 id: TSK-0681
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0160
 closes: [REQ-3328, REQ-3302]
@@ -35,7 +35,9 @@ A line of kind `system` is also checked for "!" and for digits, because numbers 
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/voice-gate.test.ts (the ADR-0160 fixtures, the normalisation, the system, label and emoji rules, the exemptions and the single reader of the list), and by the stages of the repository run on this branch, whose outcomes are in pull request 23.
+
+The gate folds a Latin look-alike to Cyrillic only inside a token that holds both scripts, so ordinary Latin text such as `x + 3` cannot match.
 
 ## Left alone
 

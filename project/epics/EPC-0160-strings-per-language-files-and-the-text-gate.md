@@ -53,7 +53,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [ ] T-005 [P] TSK-0680 One forbidden list holds every inflected form, every phrase and the knot's wrong word
       closes: REQ-3314, REQ-3320, REQ-3324
       depends: none
-- [ ] T-006 TSK-0681 `textGate` checks a line against the one list and returns a pass or the rule that failed
+- [x] T-006 TSK-0681 `textGate` checks a line against the one list and returns a pass or the rule that failed (done: pull request 23)
       closes: REQ-3328, REQ-3302
       depends: TSK-0680 - the gate reads the list and its fixtures.
 - [ ] T-007 [P] TSK-0682 The build passes every fixed string and 200 rendered seeds of every template through the gate

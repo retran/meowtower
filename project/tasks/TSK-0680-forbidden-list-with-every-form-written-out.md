@@ -35,7 +35,9 @@ Nothing. The gate that matches a text against the list lands later in this epic,
 
 ## Evidence
 
-Not yet.
+The list is written: `content/shaming.ru.json` holds 17 lemmas with 242 forms, 9 phrases with 526 token runs, the rejected labels and the forms of the knot word, and the unit tests in tests/unit/voice-gate.test.ts pass for the fixtures, the diminutives, the phrases, the shortage phrases and the knot keys.
+
+Resting on judgement: criterion 1, the owner's review of the expanded forms. The forms come from pymorphy3, whose dictionary is OpenCorpora's, through `tools/forms.py`, in place of the `tools/forms.ts` the task names, because the dictionary has a maintained Python reader. The count is under the ADR's estimate of about 25 lemmas and a thousand forms, because REQ-3314 names 17 single words and the rest are phrases.
 
 ## Left alone
 

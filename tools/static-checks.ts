@@ -348,6 +348,24 @@ export function checkNoCyrillic(root: string): Finding[] {
   return scan("cyrillic_in_src", paths, root, /[\u0400-\u04FF]+/);
 }
 
+/**
+ * REQ-3328: only `src/shared/voice/` opens `content/shaming.ru.json`, so every check reads the same
+ * list through the one gate.
+ */
+export function checkListReader(root: string): Finding[] {
+  const src = join(root, "src");
+  const paths = existsSync(src)
+    ? files(src).filter(
+        (p) =>
+          !relative(root, p)
+            .split(sep)
+            .join("/")
+            .startsWith("src/shared/voice/"),
+      )
+    : [];
+  return scan("list_outside_voice", paths, root, /shaming\.ru\.json/);
+}
+
 /** TSK-0676: `src/shared/i18n-keys.ts` is the file `tools/gen-keys.ts` writes from `ru.json`. */
 export async function checkKeysFresh(): Promise<Finding[]> {
   const fresh = (await renderKeys(readLanguage())) === generatedKeys();
@@ -382,6 +400,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const findings = [
     ...checkNoKeyInClient(root),
     ...checkNoCyrillic(root),
+    ...checkListReader(root),
     ...checkNoPush(root),
     ...checkClientStorage(root),
     ...checkEventsSqlConfined(root),
@@ -398,6 +417,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
+      "list_outside_voice searched src outside src/shared/voice for the forbidden list; " +
       "cyrillic_in_src searched src for Cyrillic characters outside fixtures; " +
       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
       "client_storage searched src/client for IndexedDB outside the queue's module, the Cache API outside the service worker, and localStorage, sessionStorage, cookie and origin-private file system writes; " +
