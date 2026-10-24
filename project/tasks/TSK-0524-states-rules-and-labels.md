@@ -1,7 +1,7 @@
 ---
 id: TSK-0524
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0946]
@@ -39,7 +39,9 @@ The state's label and chip fill come from a key and a mapping; the Russian strin
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/states-rules.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+The golden fixtures live in that file. The Russian strings for "fluent" and "fluent (probe)" are not in the record, so `content/i18n/ru.json` holds no key for them yet.
 
 ## Left alone
 

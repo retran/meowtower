@@ -1,7 +1,7 @@
 ---
 id: TSK-0521
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0922, REQ-0924, REQ-0926, REQ-0928]
@@ -38,7 +38,7 @@ Until the epic realising ADR-0180 owns the thresholds, the task reads the catalo
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/model-beta.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
 
 ## Left alone
 

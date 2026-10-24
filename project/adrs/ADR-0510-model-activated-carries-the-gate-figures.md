@@ -1,7 +1,7 @@
 ---
 id: ADR-0510
 artifact: adr
-status: approved
+status: done
 revised: 2026-10-24
 addresses: [REQ-7506, REQ-0984]
 supersedes: []

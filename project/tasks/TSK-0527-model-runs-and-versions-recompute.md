@@ -1,7 +1,7 @@
 ---
 id: TSK-0527
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0900, REQ-0902]
@@ -39,7 +39,9 @@ Evaluate forgetting at the server time of the event that triggered the run; for 
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/integration/knowledge-recompute.test.ts and tests/integration/version-change.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+The full pass over a 365-day synthetic log took 670 ms and the per-node update about 47 ms on average on the development Mac, one run, so the 95th percentile is not measured. Not covered by a test: the graph and thresholds versions each starting a recompute separately, and the golden test failing when a rule changes with `RULES_VERSION` unchanged (the golden test names the fixture that changed).
 
 ## Left alone
 

@@ -1,7 +1,7 @@
 ---
 id: TSK-0518
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0986]
@@ -36,7 +36,7 @@ Until the epic realising ADR-0040 has written the catalogue's templates, the val
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/model-params.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
 
 ## Left alone
 

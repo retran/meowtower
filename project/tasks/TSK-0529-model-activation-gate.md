@@ -1,7 +1,7 @@
 ---
 id: TSK-0529
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0060
 closes: [REQ-0984]
@@ -37,7 +37,9 @@ ADR-0060 names this tool among its new work, and REQ-0980, which it served, is s
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/model-evaluate.test.ts and tests/integration/model-activate.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 20.
+
+The command is built under TSK-1180, which ADR-0510 realises. Not covered by a test: the estimates taking another group's priors from the recompute after activation.
 
 ## Left alone
 

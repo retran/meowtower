@@ -1,7 +1,7 @@
 ---
 id: EPC-0060
 artifact: epic
-status: approved
+status: done
 revised: 2026-10-10
 realises: ADR-0060
 ---
@@ -47,43 +47,43 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-001 TSK-0516 The model reads only graded unassisted first attempts as observations, each with a score and a weight (done: pull request 20)
       closes: REQ-0914, REQ-0916, REQ-0918, REQ-0930
       depends: none
-- [ ] T-002 TSK-0517 Each pair of node and subtype keeps its own "on her own" estimate, which falls with time and rises after a walkthrough
+- [x] T-002 TSK-0517 Each pair of node and subtype keeps its own "on her own" estimate, which falls with time and rises after a walkthrough (done: pull request 20)
       closes: REQ-0908, REQ-0912, REQ-0920
       depends: TSK-0516 (blocking) - the observations with their scores and weights.
-- [ ] T-003 [P] TSK-0518 A parameter file that could let a right answer lower the estimate never loads
+- [x] T-003 [P] TSK-0518 A parameter file that could let a right answer lower the estimate never loads (done: pull request 20)
       closes: REQ-0986
       depends: TSK-0517 (blocking) - the update whose bounds the validator guards.
-- [ ] T-004 [P] TSK-0519 Starting estimates follow the subtype's level and the school group the parent set, and change only through a new model version
+- [x] T-004 [P] TSK-0519 Starting estimates follow the subtype's level and the school group the parent set, and change only through a new model version (done: pull request 20)
       closes: REQ-0982, REQ-0984, REQ-3712
       depends: TSK-0517 (blocking) - the parameter file and the update that reads `pInit`.
-- [ ] T-005 TSK-0520 A node's estimate is the weighted mean of its subtypes', carries an uncertainty, and exists for every node up to group 8
+- [x] T-005 TSK-0520 A node's estimate is the weighted mean of its subtypes', carries an uncertainty, and exists for every node up to group 8 (done: pull request 20)
       closes: REQ-0910, REQ-0988, REQ-0994
       depends: TSK-0517 (blocking) - the pair estimates the aggregate reads.; TSK-0519 (blocking) - the prior of each pair.
-- [ ] T-006 [P] TSK-0521 Assisted attempts feed a "with help" estimate, and speed feeds a fluency estimate, and neither touches the "on her own" estimate
+- [x] T-006 [P] TSK-0521 Assisted attempts feed a "with help" estimate, and speed feeds a fluency estimate, and neither touches the "on her own" estimate (done: pull request 20)
       closes: REQ-0922, REQ-0924, REQ-0926, REQ-0928
       depends: TSK-0516 (blocking) - the observations with their scores, weights and time flags.
-- [ ] T-007 [P] TSK-0522 After an unassisted failure a node's next review falls one day later, and the row carries its last-seen date, staleness and confidence
+- [x] T-007 [P] TSK-0522 After an unassisted failure a node's next review falls one day later, and the row carries its last-seen date, staleness and confidence (done: pull request 20)
       closes: REQ-0992
       depends: TSK-0520 (blocking) - the row the fields sit on.
-- [ ] T-008 [P] TSK-0523 A full block and a probe are defined from the node's graded attempts, never spanning a lesson mark and never holding a control fact
+- [x] T-008 [P] TSK-0523 A full block and a probe are defined from the node's graded attempts, never spanning a lesson mark and never holding a control fact (done: pull request 20)
       closes: REQ-0932, REQ-0950, REQ-0952, REQ-0954
       depends: TSK-0516 (blocking) - the observations a block is made of.
-- [ ] T-009 TSK-0524 Each node's state follows from a named rule over its listed attempts, never from a probability
+- [x] T-009 TSK-0524 Each node's state follows from a named rule over its listed attempts, never from a probability (done: pull request 20)
       closes: REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0946
       depends: TSK-0523 (blocking) - the block and probe definitions.; TSK-0521 (blocking) - the fluency threshold and `fast`.
-- [ ] T-010 TSK-0525 A node becomes "stable" only after "fluent" in two checks at least 14 days apart, one of them a full block
+- [x] T-010 TSK-0525 A node becomes "stable" only after "fluent" in two checks at least 14 days apart, one of them a full block (done: pull request 20)
       closes: REQ-0944
       depends: TSK-0524 (blocking) - the rule table and the golden test this rule joins.
-- [ ] T-011 TSK-0526 Inferred and cut-off states sit beside the tested state, never add to it, and a cut-off node is no gap
+- [x] T-011 TSK-0526 Inferred and cut-off states sit beside the tested state, never add to it, and a cut-off node is no gap (done: pull request 20)
       closes: REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976
       depends: TSK-0524 (blocking) - the tested states inference follows.; TSK-0522 (blocking) - `stale` and `nextReview`, which two obligation kinds read.
-- [ ] T-012 TSK-0527 The model runs after each graded attempt, recomputes everything at the end of an adventure and recomputes again when a version changes
+- [x] T-012 TSK-0527 The model runs after each graded attempt, recomputes everything at the end of an adventure and recomputes again when a version changes (done: pull request 20)
       closes: REQ-0900, REQ-0902
       depends: TSK-0526 (blocking) - the full set of rows the run writes.; TSK-0521 (blocking) - the beta estimates that are part of every row.; TSK-0525 (blocking) - the last state rule the golden test covers.
-- [ ] T-013 TSK-0528 One snapshot is saved for each game day of play, and a version change keeps the earlier versions' snapshots
+- [x] T-013 TSK-0528 One snapshot is saved for each game day of play, and a version change keeps the earlier versions' snapshots (done: pull request 20)
       closes: REQ-0904, REQ-0906
       depends: TSK-0527 (blocking) - the recompute whose output the snapshot records.
-- [ ] T-014 [P] TSK-0529 A new parameter file replaces the active one only when it predicts held-out attempts better on both log-loss and calibration
+- [x] T-014 [P] TSK-0529 A new parameter file replaces the active one only when it predicts held-out attempts better on both log-loss and calibration (done: pull request 20)
       closes: REQ-0984
       depends: TSK-0527 (blocking) - the recompute the tool replays with a candidate.; TSK-0518 (blocking) - the validator a candidate passes first.
 
