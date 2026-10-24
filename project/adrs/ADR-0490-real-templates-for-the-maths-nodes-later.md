@@ -13,7 +13,7 @@ supersedes: []
 
 ## Decision
 
-The owner decided on 2026-10-24 that each subtype and answer kind gets at least ten templates: ten different task forms, each with its own parameter shape and wording, and each yielding thousands of seeded variants. Every maths node in the graph gets templates for each of its subtypes and answer kinds, written in a later epic that starts after the Architecture Decision Record (ADR) 0060, the knowledge model, and ADR-0160, the player's strings, are realised. Until then the stand-in and fixture templates stand in, and the checks that read templates (EPC-0470) wait.
+The owner decided on 2026-10-24 that each subtype and answer kind gets at least ten templates, and twenty or more where the subtype has that many distinct task forms: each with its own task form, parameter shape and wording, and each yielding thousands of seeded variants. The templates conform to the Dutch programme first, and the Russian programme, with its olympiad tasks, supplies extensions that are marked as such. A domain's templates are written only after a research record names the passages of both programmes they rest on. Every maths node in the graph gets templates for each of its subtypes and answer kinds, written in a later epic that starts after the Architecture Decision Record (ADR) 0060, the knowledge model, and ADR-0160, the player's strings, are realised. Until then the stand-in and fixture templates stand in, and the checks that read templates (EPC-0470) wait.
 
 ## Why
 

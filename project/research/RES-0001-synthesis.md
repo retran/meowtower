@@ -86,6 +86,7 @@ Each record was moved from one range of the draft specification on 2026-09-26. T
 | [RES-4260](RES-4260-compose-riddles-for-rational-numbers-and-multi-step-expressions.md) | The owner's addendum 2 of 2026-09-28, item 7, extends «Сплети загадку» (Weave a riddle) from word-problem types to seven constructions: equal groups, the two meanings of division, a fraction of a number, decimals, percentages, ratios and multi-step expressions. | approved |
 | [RES-4270](RES-4270-parent-hypotheses.md) | The owner's addendum 2 of 2026-09-28, item 8, adds a page «Гипотезы» (Hypotheses) to the Parent Room. | approved |
 | [RES-4280](RES-4280-addendum-2-simulations-behind-the-report-rules.md) | I reran the three simulations that the draft decisions ADR-0380, ADR-0420 and ADR-0450 used to show that three approved rules can't hold as written, and all three results stand. | approved |
+| [RES-4281](RES-4281-domain-n-number-sense-across-dutch-groups-1-to-8-and-the-russian-programme.md) | The Dutch groups 1 to 8 are the base of domain N's templates, the Russian grades 1 to 6 add extensions, and the Dutch standard itself allows reasoning tasks. | draft |
 <!-- /meow-flow index -->
 
 ## Sources
