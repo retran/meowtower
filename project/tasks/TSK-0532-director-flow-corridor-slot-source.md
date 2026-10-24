@@ -1,7 +1,7 @@
 ---
 id: TSK-0532
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0070
 closes: [REQ-1006, REQ-1008, REQ-1010]
@@ -35,7 +35,7 @@ Nothing. The outcomes `clean`, `partial` and `alt` are on the `verdict` events t
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/director-corridor.test.ts, and by the stages of the repository run on this branch, whose outcomes are in pull request 22.
 
 ## Left alone
 
