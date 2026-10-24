@@ -17,6 +17,8 @@ import type { Db } from "./database.js";
 /** ADR-0190's Baselines budget for a full recompute of one year's log. */
 export const RECOMPUTE_BUDGET_MS = 60_000;
 export const LOG_LARGE_BYTES = 1024 ** 3;
+/** The row count of `node_snapshots` at which the parent is told, once (TSK-0528). */
+export const SNAPSHOT_CEILING_ROWS = 2_000_000;
 
 export async function runRecompute(
   db: Db,
@@ -66,6 +68,28 @@ export function checkLogSize(
   if (notices.log_large) return false;
   console.error(`log_large: the log holds ${bytes} bytes`);
   notices.log_large = { at: new Date(now()).toISOString(), bytes };
+  writeNotices(dir, notices);
+  return true;
+}
+
+/** Raises `snapshot_ceiling` once when `node_snapshots` passes the ceiling; deletes no row. */
+export function checkSnapshotCeiling(
+  db: Db,
+  dir: string,
+  now: () => number,
+  ceiling = SNAPSHOT_CEILING_ROWS,
+): boolean {
+  const rows = (
+    db.prepare("SELECT count(*) AS n FROM node_snapshots").get() as {
+      n: number;
+    }
+  ).n;
+  if (rows <= ceiling) return false;
+  mkdirSync(dir, { recursive: true });
+  const notices = readNotices(dir);
+  if (notices.snapshot_ceiling) return false;
+  console.error(`snapshot_ceiling: node_snapshots holds ${rows} rows`);
+  notices.snapshot_ceiling = { at: new Date(now()).toISOString(), rows };
   writeNotices(dir, notices);
   return true;
 }

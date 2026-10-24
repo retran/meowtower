@@ -20,6 +20,8 @@ import {
   type Versions,
 } from "../../src/engine/projections/registry.js";
 import { recompute } from "../../src/engine/recompute.js";
+import { readNotices } from "../../src/server/backups.js";
+import { checkSnapshotCeiling } from "../../src/server/recompute.js";
 import { gameDayOf } from "../../src/shared/game-day.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
 import { writeSyntheticLog } from "../helpers/synthetic-log.js";
@@ -143,6 +145,26 @@ describe("REQ-0904, REQ-0902: a new rules version adds its rows and keeps the ea
     expect(versionsChanged(db)).toBe(true);
     await recompute(db, { computedAt: "under-rules-2" });
     expect(versionsChanged(db)).toBe(false);
+    db.close();
+  });
+});
+
+describe("TSK-0528: node_snapshots above the ceiling raises snapshot_ceiling once and deletes nothing", () => {
+  it("reports at a low ceiling a single time and keeps every row", () => {
+    const db = world();
+    const dir = mkdtempSync(join(root, "notices-"));
+    const rows = () =>
+      (
+        db.prepare("SELECT count(*) AS n FROM node_snapshots").get() as {
+          n: number;
+        }
+      ).n;
+    const before = rows();
+    expect(checkSnapshotCeiling(db, dir, Date.now, before + 1)).toBe(false);
+    expect(checkSnapshotCeiling(db, dir, Date.now, 5)).toBe(true);
+    expect(checkSnapshotCeiling(db, dir, Date.now, 5)).toBe(false);
+    expect(readNotices(dir).snapshot_ceiling?.rows).toBe(before);
+    expect(rows()).toBe(before);
     db.close();
   });
 });

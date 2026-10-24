@@ -4,7 +4,11 @@ import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 import { snapshotNow } from "./snapshots.js";
 import { backupAfterSession } from "./backups.js";
-import { checkLogSize, runRecompute } from "./recompute.js";
+import {
+  checkLogSize,
+  checkSnapshotCeiling,
+  runRecompute,
+} from "./recompute.js";
 import { readContentVersions } from "./versions.js";
 import { startGraph } from "./graph-start.js";
 import {
@@ -99,6 +103,7 @@ const onSessionEnded = (): void => {
     raise("recompute_failed", err instanceof Error ? err.message : String(err));
   }
   checkLogSize(db, snapshots, Date.now);
+  checkSnapshotCeiling(db, snapshots, Date.now);
   void backupAfterSession({
     live: dbPath,
     dir: snapshots,
