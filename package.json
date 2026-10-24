@@ -13,7 +13,8 @@
     "format": "prettier --check .",
     "test": "vitest run tests && playwright test",
     "test:smoke": "vitest run tests/smoke",
-    "start": "node dist/server/main.js"
+    "start": "node dist/server/main.js",
+    "strings:system": "tsx tools/strings-system.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "1.5.5-r.5",
@@ -28,6 +29,7 @@
     "@types/better-sqlite3": "9.6.0",
     "@types/node": "24.19.0",
     "eslint": "10.11.0",
+    "eslint-plugin-i18next": "6.1.5",
     "fast-check": "4.10.2",
     "prettier": "3.9.9",
     "tsx": "4.23.15",

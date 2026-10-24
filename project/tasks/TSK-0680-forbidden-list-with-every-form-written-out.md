@@ -1,7 +1,7 @@
 ---
 id: TSK-0680
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0160
 closes: [REQ-3314, REQ-3320, REQ-3324]
@@ -35,7 +35,9 @@ Nothing. The gate that matches a text against the list lands later in this epic,
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/voice-gate.test.ts (the fixtures that match and pass, the diminutives, the phrases, the shortage phrases and the knot keys), by the owner's review of the expanded forms in `content/shaming.ru.json`, approved in the session of pull request 23, and by the stages of the repository run on this branch.
+
+The forms come from pymorphy3, whose dictionary is OpenCorpora's, through `tools/forms.py`, in place of the `tools/forms.ts` the task names. The list holds 17 lemmas with 242 forms and 9 phrases with 526 token runs, under the decision's estimate of about 25 lemmas and a thousand forms, because REQ-3314 names 17 single words and the rest are phrases.
 
 ## Left alone
 

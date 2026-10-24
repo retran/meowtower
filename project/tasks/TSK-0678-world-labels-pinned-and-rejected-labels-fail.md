@@ -37,6 +37,10 @@ The task window and its thread button are drawn by the epic realising ADR-0150. 
 
 Not yet.
 
+So far: the world's labels are pinned by key and exact text in tests/unit/labels.test.ts, the outcome labels replace the stand-in badges, every `ui.*` value passes the rejected-label and time-phrase check through the gate, and the thread button text is the key `ui.task.thread` with `{n}`.
+
+Not done: criterion 3, the Playwright test of the thread button at 0 and at 3 threads, because the play screen has no hint button until the attempt-flow epic (ADR-0080) adds it.
+
 ## Left alone
 
 The label «Нельзя узнать», which `ui.task.cantKnow` pins in the epic realising ADR-0250, and the word «Привал» as a time label, which the epic realising ADR-0090 builds.

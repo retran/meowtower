@@ -26,6 +26,9 @@ const PARENT_STATES = new Set<string>([
   "not_generatable",
 ]);
 
+/** The folder the parent's notices live in, or null before the server names it. */
+export const noticesDirectory = (): string | null => noticesDir;
+
 export function raise(state: string, detail: string, now = Date.now): void {
   console.error(`${state}: ${detail}`);
   if (!PARENT_STATES.has(state) || !noticesDir) return;

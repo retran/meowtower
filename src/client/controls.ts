@@ -1,7 +1,7 @@
 // Controls every screen builds from, so each one is keyboard-operable and
 // reports its action: the keyboard test reads `data-last-action` to prove a
 // key press operated the control it focused.
-import { t } from "./strings.js";
+import { t, type UiKey } from "./strings.js";
 
 export function act(action: string): void {
   document.body.dataset["lastAction"] = action;
@@ -19,7 +19,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
 
 export { el };
 
-export function heading(key: string): HTMLHeadingElement {
+export function heading(key: UiKey): HTMLHeadingElement {
   return el("h1", { id: "screen-title" }, t(key));
 }
 
@@ -30,7 +30,7 @@ export function status(text = ""): HTMLParagraphElement {
 }
 
 export function button(
-  key: string,
+  key: UiKey,
   action: string,
   onActivate: () => void | Promise<void>,
 ): HTMLButtonElement {
@@ -44,7 +44,7 @@ export function button(
 }
 
 export function link(
-  key: string,
+  key: UiKey,
   action: string,
   to: string,
 ): HTMLAnchorElement {
@@ -57,7 +57,7 @@ export function link(
 export function choice(
   name: string,
   value: string,
-  key: string,
+  key: UiKey,
   checked: boolean,
   onChoose: () => void | Promise<void>,
 ): HTMLLabelElement {

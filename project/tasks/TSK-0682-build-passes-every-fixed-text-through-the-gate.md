@@ -1,7 +1,7 @@
 ---
 id: TSK-0682
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0160
 closes: [REQ-3326, REQ-3308]
@@ -36,7 +36,9 @@ The epic realising ADR-0040 supplies `generate` and the templates. Until it has 
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/unit/gate-content.test.ts (the kind of each key group, a fixture value that fails with the file, key and form, the committed content passing, a canon paragraph, a template that fails on one seed, a System value with a digit and a number filled from a placeholder, and the skipped language) and by the lint run of the repository, which now gates the content, on this branch, whose outcomes are in pull request 23.
+
+The gate found three real violations in the stand-in content, «Твой ответ» as a label and «не получилось» in two failure messages, and they are reworded. Only `content/i18n/ru.json` exists among the content files the task lists, so the other files are gated once they exist. The registered templates are the stand-in tasks, whose text is a key of `ru.json`, so their 200 seeds render the same lines until the real templates carry parameters.
 
 ## Left alone
 

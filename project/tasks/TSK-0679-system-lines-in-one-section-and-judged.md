@@ -34,6 +34,10 @@ Move the fixed System lines of the stand-in adventure into `system.*` and name e
 
 Not yet.
 
+So far: `npm run strings:system` prints each `system.*` key with its lines (tests/unit/strings-system.test.ts), and the only System line today is `system.fallback.line`.
+
+Not done: criterion 1, the static check that a System window takes its lines only from a `system.*` key, because no code opens a System window yet; and criterion 2, which rests on the parent's judgement of the section at the stage 0.3 acceptance.
+
 ## Left alone
 
 The voice of generated System lines, which ADR-0110 and ADR-0120 carry into their prompts, and the line `system.fallback.line` itself, which TSK-0683 uses and this task only lists.

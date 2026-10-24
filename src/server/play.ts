@@ -64,7 +64,7 @@ import {
   SessionStartOut,
   StopOffer,
 } from "../shared/api.js";
-import { t } from "../shared/i18n.js";
+import { keyFor, t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
 import { createRateCap } from "./rate.js";
@@ -236,7 +236,7 @@ function answerReply(
     threads: stockAt(upTo),
     feedback: { correctAnswer: shown.correctAnswer },
     shortSolution: shown.shortSolution,
-    battleLine: t(`battle.${outcome}.1`),
+    battleLine: t(keyFor(`battle.${outcome}.1`)),
   };
 }
 
@@ -654,7 +654,7 @@ export function mountPlay(
     }
 
     const index = firsts.length;
-    // After «Закончить на сегодня» the next boundary is the stop offer, once an
+    // After the finish-today action the next boundary is the stop offer, once an
     // open scene or chest is done, and it takes no extension (REQ-2444).
     if (finishedToday(db, Date.now(), sessionZone(db, sessionId))) {
       const point = resumeFromLog(played);

@@ -38,10 +38,10 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 TSK-0676 One typed function reads every string from the language file, and a language is shipped only when its keys match
+- [x] T-001 TSK-0676 One typed function reads every string from the language file, and a language is shipped only when its keys match (done: pull request 23)
       closes: REQ-3810, REQ-3304
       depends: none
-- [ ] T-002 [P] TSK-0677 A string written into the code fails the build
+- [x] T-002 [P] TSK-0677 A string written into the code fails the build (done: pull request 23)
       closes: REQ-3810
       depends: TSK-0676 - the pseudo-language run needs the typed `t` and the language files it loads.
 - [ ] T-003 [P] TSK-0678 The interface uses the world's labels, and a label that brings back the test, the clock or the streak fails the build
@@ -50,16 +50,16 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [ ] T-004 [P] TSK-0679 Every fixed System line sits in one section the parent reads in one sitting
       closes: REQ-3300, REQ-3306, REQ-3318
       depends: TSK-0676 - the lines are keys of the typed file and the pause form is its System message shape.
-- [ ] T-005 [P] TSK-0680 One forbidden list holds every inflected form, every phrase and the knot's wrong word
+- [x] T-005 [P] TSK-0680 One forbidden list holds every inflected form, every phrase and the knot's wrong word (done: pull request 23)
       closes: REQ-3314, REQ-3320, REQ-3324
       depends: none
-- [ ] T-006 TSK-0681 `textGate` checks a line against the one list and returns a pass or the rule that failed
+- [x] T-006 TSK-0681 `textGate` checks a line against the one list and returns a pass or the rule that failed (done: pull request 23)
       closes: REQ-3328, REQ-3302
       depends: TSK-0680 - the gate reads the list and its fixtures.
-- [ ] T-007 [P] TSK-0682 The build passes every fixed string and 200 rendered seeds of every template through the gate
+- [x] T-007 [P] TSK-0682 The build passes every fixed string and 200 rendered seeds of every template through the gate (done: pull request 23)
       closes: REQ-3326, REQ-3308
       depends: TSK-0681 - the check calls the gate.; TSK-0676 - the check walks the keys and groups of the typed file.
-- [ ] T-008 [P] TSK-0683 The server runs the gate on every line before it leaves, and a blocked line is replaced by its source's fallback
+- [x] T-008 [P] TSK-0683 The server runs the gate on every line before it leaves, and a blocked line is replaced by its source's fallback (done: pull request 23)
       closes: REQ-3326
       depends: TSK-0681 - the server calls the gate.
 

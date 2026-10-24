@@ -1,7 +1,7 @@
 ---
 id: TSK-0683
 artifact: task
-status: approved
+status: done
 revised: 2026-10-10
 epic: EPC-0160
 closes: [REQ-3326]
@@ -37,7 +37,9 @@ The epics realising ADR-0110, ADR-0120 and ADR-0040 supply the fallbacks of the 
 
 ## Evidence
 
-Not yet.
+Closed by the tests in tests/integration/outgoing.test.ts (a forbidden line from each of the five sources replaced and recorded with its source, kind, rule, form and line, a body gated on its way out through `send`, the fallback line, the 1,000-row limit, and the counters with `text_blocked_high` raised once and again only after a change of more than half) and by the stages of the repository run on this branch, whose outcomes are in pull request 23.
+
+What the tests do not cover: `./meowtower status` printing `text_blocked_high` and `snapshot_ceiling` was checked by hand on a sample notices file, not by a test. The gate reads every text field of a body sent through `send`, and a body that a route sends without `send` would leave around it. Every body is tagged `fixed` for now, because the Master, the line pool, the Explainer and the real templates do not exist yet; each source's own fallback comes with its epic.
 
 ## Left alone
 

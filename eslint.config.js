@@ -1,3 +1,4 @@
+import i18next from "eslint-plugin-i18next";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -12,6 +13,24 @@ export default tseslint.config(
     ],
   },
   ...tseslint.configs.strict,
+  {
+    // A string written into a component is found and moved before a second language can ship
+    // (ADR-0160, REQ-3810): literal text in markup, and in aria-label, title, placeholder and alt.
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["**/__fixtures__/**"],
+    plugins: { i18next },
+    rules: {
+      "i18next/no-literal-string": [
+        "error",
+        {
+          mode: "jsx-only",
+          "jsx-attributes": {
+            include: ["aria-label", "title", "placeholder", "alt"],
+          },
+        },
+      ],
+    },
+  },
   {
     // A task rebuilds from its seed (REQ-1202), so `src/` draws only from the
     // seeded source in `src/math/rng.ts`.

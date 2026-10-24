@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Hono } from "hono";
-import { lang, t, uiStrings } from "../shared/i18n.js";
+import { isShipped, lang, t, uiStrings } from "../shared/i18n.js";
 import { iconPng } from "./icon.js";
 
 const escape = (s: string): string =>
@@ -57,9 +57,15 @@ export function mountShell(app: Hono): void {
       "cache-control": "no-cache",
     });
   });
-  app.get("/i18n/:file", (c) =>
-    c.req.param("file") === `${lang}.json` ? c.json(uiStrings()) : c.notFound(),
-  );
+  // A language outside the shipped set gets the Russian strings and a 400, so the shell still
+  // shows text and the mistake is visible (REQ-3810).
+  app.get("/i18n/:file", (c) => {
+    const file = c.req.param("file");
+    if (file === `${lang}.json`) return c.json(uiStrings());
+    const code = /^([a-z]{2,3})\.json$/.exec(file)?.[1];
+    if (code && !isShipped(code)) return c.json(uiStrings(), 400);
+    return c.notFound();
+  });
   app.get("/", (c) => c.html(page()));
   app.get("/manifest.webmanifest", (c) =>
     c.body(

@@ -3,6 +3,8 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PROJECTIONS } from "../src/engine/projections/registry.js";
+import { gateContent } from "./gate-content.js";
+import { generatedKeys, readLanguage, renderKeys } from "./gen-keys.js";
 
 export interface Finding {
   check: string;
@@ -335,6 +337,65 @@ export function checkGameProjectionImports(
   return findings;
 }
 
+/**
+ * REQ-3810: no Cyrillic character in `src/` outside `__fixtures__`, so a Russian string written
+ * into the code is found before a second language can ship. The check reports the file and the match.
+ */
+export function checkNoCyrillic(root: string): Finding[] {
+  const src = join(root, "src");
+  const paths = existsSync(src)
+    ? files(src).filter((p) => !p.split(sep).includes("__fixtures__"))
+    : [];
+  return scan("cyrillic_in_src", paths, root, /[\u0400-\u04FF]+/);
+}
+
+/**
+ * REQ-3328: only `src/shared/voice/` opens `content/shaming.ru.json`, so every check reads the same
+ * list through the one gate.
+ */
+export function checkListReader(root: string): Finding[] {
+  const src = join(root, "src");
+  const paths = existsSync(src)
+    ? files(src).filter(
+        (p) =>
+          !relative(root, p)
+            .split(sep)
+            .join("/")
+            .startsWith("src/shared/voice/"),
+      )
+    : [];
+  return scan("list_outside_voice", paths, root, /shaming\.ru\.json/);
+}
+
+/** TSK-0682: every fixed string, the canon and 200 seeds of every template pass the text gate. */
+export async function checkContentGate(root: string): Promise<Finding[]> {
+  const { STANDIN_TASKS, taskSolution, taskText } =
+    await import("../src/server/standin.js");
+  const standins = STANDIN_TASKS.map((task) => ({
+    id: `standin.task.${task.n}`,
+    render: () => [taskText(task), ...taskSolution(task)],
+  }));
+  return gateContent(root, standins).map((f) => ({
+    check: f.check,
+    file: f.file,
+    match: `${f.key}: ${f.rule} ${f.match}${f.seed === undefined ? "" : ` (seed ${f.seed})`}`,
+  }));
+}
+
+/** TSK-0676: `src/shared/i18n-keys.ts` is the file `tools/gen-keys.ts` writes from `ru.json`. */
+export async function checkKeysFresh(): Promise<Finding[]> {
+  const fresh = (await renderKeys(readLanguage())) === generatedKeys();
+  return fresh
+    ? []
+    : [
+        {
+          check: "i18n_keys_stale",
+          file: "src/shared/i18n-keys.ts",
+          match: "run `npx tsx tools/gen-keys.ts`",
+        },
+      ];
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const root = process.cwd();
   const { checkParamsLanguageFree, loadTemplateSchemas } =
@@ -354,6 +415,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   );
   const findings = [
     ...checkNoKeyInClient(root),
+    ...checkNoCyrillic(root),
+    ...checkListReader(root),
     ...checkNoPush(root),
     ...checkClientStorage(root),
     ...checkEventsSqlConfined(root),
@@ -366,9 +429,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkTaskRules(taskFacts),
     ...checkExplainCoverage(graphFacts),
     ...checkWordStructures(wordFacts),
+    ...(await checkKeysFresh()),
+    ...(await checkContentGate(root)),
   ];
   console.log(
     "static checks: key_in_client searched dist/client, src/client and content for sk-or-; " +
+      "list_outside_voice searched src outside src/shared/voice for the forbidden list; " +
+      "cyrillic_in_src searched src for Cyrillic characters outside fixtures; " +
       "push_code searched the code base for VAPID keys, push tables, push libraries and push.apple.com; " +
       "client_storage searched src/client for IndexedDB outside the queue's module, the Cache API outside the service worker, and localStorage, sessionStorage, cookie and origin-private file system writes; " +
       "events_sql searched the code outside src/engine/events, migrations and tests for SQL naming events; " +
@@ -376,6 +443,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       `task_rules read ${taskFacts.length} templates' task facts in src/templates for choice options, comparison forms and free input; ` +
       `explain_missing read ${graphFacts.length} templates' traps and explanations in src/templates; ` +
       `word_structure read ${wordFacts.length} word problem templates' structures in src/templates; ` +
+      "forbidden_in_content passed every fixed string, the canon and 200 seeds of every template through the text gate; " +
+      "i18n_keys compared src/shared/i18n-keys.ts with the file tools/gen-keys.ts writes from ru.json; " +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +

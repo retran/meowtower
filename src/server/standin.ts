@@ -4,7 +4,7 @@
 import { Q } from "../math/q.js";
 import type { Template } from "../engine/tasks/template.js";
 import { integerAnswer } from "../shared/answer.js";
-import { t } from "../shared/i18n.js";
+import { keyFor, t } from "../shared/i18n.js";
 
 export interface StandinTask {
   n: number;
@@ -89,16 +89,16 @@ export const STANDIN_THREADS = 5;
 const key = (task: StandinTask, twin: boolean): string =>
   `standin.task.${task.n}${twin ? ".twin" : ""}`;
 export const taskText = (task: StandinTask, twin = false): string =>
-  t(`${key(task, twin)}.text`);
+  t(keyFor(`${key(task, twin)}.text`));
 export const taskSolution = (task: StandinTask, twin = false): string[] => [
-  t(`${key(task, twin)}.solution`),
+  t(keyFor(`${key(task, twin)}.solution`)),
 ];
 // A task and its twin share the hint rungs and the template explanation,
 // which name no number.
 export const taskHint = (task: StandinTask, level: number): string =>
-  t(`standin.task.${task.n}.hint.${level}`);
+  t(keyFor(`standin.task.${task.n}.hint.${level}`));
 export const taskExplanation = (task: StandinTask): string =>
-  t(`standin.task.${task.n}.explanation`);
+  t(keyFor(`standin.task.${task.n}.explanation`));
 
 /** The stand-in task an item_shown's subtype names. */
 export const taskOf = (subtype: string): StandinTask | undefined =>

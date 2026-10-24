@@ -29,7 +29,7 @@ import {
 import { flushOnce, retryClock, submitAnswer } from "./answer-queue.js";
 import { act, button, el, heading, link, status } from "./controls.js";
 import type { Screen } from "./screens.js";
-import { t } from "./strings.js";
+import { t, uiKey, type UiKey } from "./strings.js";
 
 /** No input for this long outside the task window pauses the adventure (REQ-2408). */
 export const IDLE_OUTSIDE_TASK_MS = 90 * 1000;
@@ -46,7 +46,7 @@ export const DRAFT_EVERY_MS = 10 * 1000;
 const ACCEPTS: Record<Room["input"]["kind"], RegExp> = { integer: /^\d*$/ };
 
 /** The badge's word for an outcome; the server decides the outcome. */
-function badgeKey(reply: AnswerOut, dontKnow: boolean): string {
+function badgeKey(reply: AnswerOut, dontKnow: boolean): UiKey {
   if (reply.outcome === "clean") return "ui.play.badge.clean";
   if (reply.outcome === "partial") return "ui.play.badge.partial";
   return dontKnow ? "ui.play.badge.unknown" : "ui.play.badge.soft";
@@ -162,7 +162,7 @@ export const playScreen: Screen = {
         );
     }
 
-    const refused = (key: string): void =>
+    const refused = (key: UiKey): void =>
       draw(
         status(t(key)),
         el("nav", { className: "actions" }, link("ui.nav.back", "back", "/")),
@@ -351,7 +351,7 @@ export const playScreen: Screen = {
           "ul",
           { className: "grants" },
           ...grants.map((g) =>
-            el("li", {}, `${t(`ui.reward.${g.kind}`)} × ${g.amount}`),
+            el("li", {}, `${t(uiKey(`ui.reward.${g.kind}`))} × ${g.amount}`),
           ),
         ),
         el(
@@ -422,7 +422,7 @@ export const playScreen: Screen = {
         ...scene.lines.map((line) => {
           const p = el("p", { className: "scene-line" });
           p.append(
-            el("strong", {}, `${t(`ui.speaker.${line.speaker}`)}: `),
+            el("strong", {}, `${t(uiKey(`ui.speaker.${line.speaker}`))}: `),
             line.text,
           );
           return p;
@@ -496,7 +496,7 @@ export const playScreen: Screen = {
       const note = status();
       const options = chest.options.map((option) => {
         const b = el("button", { type: "button", className: "control" });
-        b.textContent = t(`ui.reward.${option.kind}`);
+        b.textContent = t(uiKey(`ui.reward.${option.kind}`));
         b.dataset["action"] = "chest-pick";
         b.dataset["rewardId"] = option.rewardId;
         b.addEventListener("click", () => {

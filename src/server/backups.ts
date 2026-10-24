@@ -28,6 +28,8 @@ export interface Notices {
   recompute_slow?: { at: string; ms: number } | null;
   log_large?: { at: string; bytes: number } | null;
   snapshot_ceiling?: { at: string; rows: number } | null;
+  // The sources whose blocked share of a day's lines passed 5 %, with the share last reported.
+  text_blocked_high?: Record<string, { at: string; share: number }> | null;
   log_write_failed?: { at: string; reason: string } | null;
   // The graph states the parent sees (TSK-0500).
   graph_invalid?: { at: string; reason: string } | null;
