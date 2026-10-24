@@ -87,17 +87,17 @@ test("REQ-2402: the client refuses a letter, sends a wrong number raw and shows 
   await page.waitForTimeout(300);
   await expect(page.locator(".badge")).toHaveCount(0);
   await expect(page.locator(".play")).not.toContainText(
-    /Чисто|Почти|Другая тропа|Принято/,
+    /Распутан начисто|Почти чисто|Узел ослаблен|Принято/,
   );
   release();
   const reply = (await (await replied).json()) as { outcome?: string };
   // The badge the server's outcome names, and nothing the client decided.
   const word =
     reply.outcome === "clean"
-      ? "Чисто!"
+      ? "Распутан начисто"
       : reply.outcome === "partial"
-        ? "Почти!"
-        : "Другая тропа";
+        ? "Почти чисто"
+        : "Узел ослаблен";
   await expect(page.locator(".badge")).toHaveText(word);
 });
 

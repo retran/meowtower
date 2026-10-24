@@ -31,6 +31,7 @@ interface ListFile {
   phrases: { runs: string[][] }[];
   shortage: { runs: string[][] }[];
   rejectedLabels: string[];
+  labelPatterns: string[];
   knot: { keys: string[]; forms: string[] };
 }
 
@@ -93,6 +94,7 @@ const runsOf = (groups: { runs: string[][] }[]): Map<string, string[][]> => {
 };
 const phraseRuns = runsOf(list.phrases);
 const shortageRuns = runsOf(list.shortage);
+const labelPatterns = list.labelPatterns.map((p) => new RegExp(p, "iu"));
 const rejected = new Set(list.rejectedLabels.map((l) => normalise(l).trim()));
 
 const matchRun = (
@@ -122,8 +124,13 @@ export function textGate(text: string, input: GateInput): GateResult {
     const digit = /\d/.exec(text);
     if (digit) return fail("system_digit", digit[0]);
   }
-  if (input.kind === "label" && rejected.has(normalise(text).trim()))
-    return fail("rejected_label", text.trim());
+  if (input.kind === "label") {
+    const folded = normalise(text).trim();
+    if (rejected.has(folded)) return fail("rejected_label", text.trim());
+    // A time left is a clock, so a count of minutes left is refused as a label (REQ-3312).
+    const clock = labelPatterns.map((re) => re.exec(folded)).find(Boolean);
+    if (clock) return fail("rejected_label", clock[0]);
+  }
   const words = tokens(text);
   for (let i = 0; i < words.length; i += 1) {
     const phrase = matchRun(words, i, phraseRuns);
@@ -152,16 +159,3 @@ export function knotViolations(
   }
   return found;
 }
-
-/** The rejected labels of REQ-3312 and the shapes of a time left, for the label check. */
-export const labelRules = (): { labels: string[]; patterns: RegExp[] } => ({
-  labels: [...rejected],
-  patterns: (
-    JSON.parse(
-      readFileSync(
-        new URL("../../../content/shaming.ru.json", import.meta.url),
-        "utf8",
-      ),
-    ) as { labelPatterns: string[] }
-  ).labelPatterns.map((p) => new RegExp(p, "iu")),
-});

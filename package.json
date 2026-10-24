@@ -13,7 +13,8 @@
     "format": "prettier --check .",
     "test": "vitest run tests && playwright test",
     "test:smoke": "vitest run tests/smoke",
-    "start": "node dist/server/main.js"
+    "start": "node dist/server/main.js",
+    "strings:system": "tsx tools/strings-system.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "1.5.5-r.5",

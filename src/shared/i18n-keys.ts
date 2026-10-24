@@ -146,6 +146,12 @@ export interface StringParams {
   "state.not_checked": NoParams;
   "state.stretch_not_checked": NoParams;
   "system.fallback.line": NoParams;
+  "ui.scheme.title": NoParams;
+  "ui.scheme.thread": NoParams;
+  "ui.task.thread": { n: string | number };
+  "ui.rest.title": NoParams;
+  "ui.play.extend": NoParams;
+  "ui.days.counter": NoParams;
 }
 
 export type Key = keyof StringParams;
