@@ -55,4 +55,5 @@
 | [ADR-0470](ADR-0470-no-node-taught-before-its-prerequisites.md) | No node's typical group is below the group of any of its prerequisites | draft |
 | [ADR-0480](ADR-0480-template-checks-wait-for-the-real-templates.md) | The checks that read templates wait for the real templates, in their own epic | draft |
 | [ADR-0490](ADR-0490-real-templates-for-the-maths-nodes-later.md) | The templates for the real maths nodes are written after the knowledge model and the strings, in their own epic | draft |
+| [ADR-0510](ADR-0510-model-activated-carries-the-gate-figures.md) | `model_activated` records the file version and the held-out figures, and the latest one names the active model | approved |
 <!-- /meow-flow index -->

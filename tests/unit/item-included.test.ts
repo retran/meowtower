@@ -22,3 +22,28 @@ describe("ADR-0500: the item_included schema", () => {
     ).toThrow();
   });
 });
+
+describe("ADR-0510: the model_activated schema", () => {
+  const figs = { logLoss: 0.5, ece: 0.05 };
+  it("accepts the first version, with no earlier figures", () => {
+    expect(() =>
+      registry.validate("model_activated", 1, {
+        modelVersion: "v1",
+        previous: null,
+        heldOutAttempts: 40,
+        figures: { active: null, candidate: figs },
+      }),
+    ).not.toThrow();
+  });
+
+  it("refuses an event with no candidate figures", () => {
+    expect(() =>
+      registry.validate("model_activated", 1, {
+        modelVersion: "v2",
+        previous: "v1",
+        heldOutAttempts: 40,
+        figures: { active: figs },
+      }),
+    ).toThrow();
+  });
+});

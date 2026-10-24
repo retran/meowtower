@@ -53,12 +53,12 @@ afterAll(() => rmSync(root, { recursive: true, force: true }));
 
 let worlds = 0;
 /** A database with a 10-day synthetic log and its knowledge rows written under `V1`. */
-function world(): Db {
+function world(end = true): Db {
   useVersions(V1);
   useKnowledge({ params, graph, zone: ZONE });
   const db = openDatabase(join(root, `w${++worlds}.sqlite`));
   writeSyntheticLog(db, { days: 10, tasksPerDay: 12, seed: 5 });
-  refreshKnowledge(db, "end-of-adventure");
+  if (end) refreshKnowledge(db, "end-of-adventure");
   return db;
 }
 
@@ -167,4 +167,74 @@ describe("TSK-0528: node_snapshots above the ceiling raises snapshot_ceiling onc
     expect(rows()).toBe(before);
     db.close();
   });
+});
+
+describe("REQ-0900: a per-node update after a verdict is replaced by the full pass", () => {
+  it("writes the verdict's node without a full pass", () => {
+    const db = world(false);
+    const row = db
+      .prepare(
+        "SELECT state FROM node_estimates WHERE node = 'A1' AND subtype = ''",
+      )
+      .get();
+    expect(row).toBeDefined();
+    db.close();
+  });
+
+  it("replaces a deliberately wrong row at the end of the adventure", () => {
+    const db = world();
+    const right = hashOf(db, "node_estimates");
+    db.exec("UPDATE node_estimates SET p_know = 0.123 WHERE node = 'A1'");
+    expect(hashOf(db, "node_estimates")).not.toBe(right);
+    refreshKnowledge(db, "end-of-adventure");
+    expect(hashOf(db, "node_estimates")).toBe(right);
+    db.close();
+  });
+});
+
+describe("TSK-0527: a failing per-node update keeps the event and the node's last rows", () => {
+  it("logs the failure, appends the event anyway and leaves node_estimates as it was", () => {
+    const db = world();
+    const before = hashOf(db, "node_estimates");
+    const events = (
+      db.prepare("SELECT count(*) AS n FROM events").get() as { n: number }
+    ).n;
+    const broken = {
+      ...graph,
+      nodes: () => {
+        throw new Error("injected");
+      },
+    };
+    useKnowledge({
+      params,
+      graph: broken as unknown as typeof graph,
+      zone: ZONE,
+    });
+    writeSyntheticLog(db, { days: 1, tasksPerDay: 3, seed: 99 });
+    expect(
+      (db.prepare("SELECT count(*) AS n FROM events").get() as { n: number }).n,
+    ).toBeGreaterThan(events);
+    expect(hashOf(db, "node_estimates")).toBe(before);
+    db.close();
+  });
+});
+
+describe("TSK-0527: the full pass and the per-node update stay inside their budgets", () => {
+  it("recomputes a 365-day log within 10 s and reports the per-update time", () => {
+    useVersions(V1);
+    const db = openDatabase(join(root, `w${++worlds}.sqlite`));
+    writeSyntheticLog(db, { days: 365, tasksPerDay: 20, seed: 3 });
+    useKnowledge({ params, graph, zone: ZONE });
+    const started = performance.now();
+    refreshKnowledge(db, "budget");
+    const pass = performance.now() - started;
+    const tick = performance.now();
+    writeSyntheticLog(db, { days: 1, tasksPerDay: 10, seed: 4 });
+    const update = (performance.now() - tick) / 10;
+    console.log(
+      `knowledge: full pass ${Math.round(pass)} ms, per-node update about ${Math.round(update)} ms`,
+    );
+    expect(pass).toBeLessThan(10_000);
+    db.close();
+  }, 120_000);
 });

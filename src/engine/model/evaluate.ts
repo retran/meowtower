@@ -12,7 +12,12 @@ import {
   pKnowAt,
 } from "./bkt.js";
 import type { ModelParamsT } from "./params.js";
-import type { Observation } from "./observations.js";
+import {
+  type LogEvent,
+  observationsOf,
+  type Observation,
+} from "./observations.js";
+import { priorOf, rowOf } from "./priors.js";
 
 /** The share of play days held out for the comparison (ADR-0060). */
 export const HELD_OUT_SHARE = 0.2;
@@ -151,3 +156,36 @@ export const gateRuns = (
   activeFile: string | undefined,
   candidateFile: string,
 ): boolean => activeFile !== undefined && activeFile !== candidateFile;
+
+/** What the evaluation reads of the graph: the level of each subtype fixes its prior row. */
+export interface EvalGraph {
+  nodes(): { id: string }[];
+  subtypes(id: string): { id: string; level: string }[];
+}
+
+type Level = "1F" | "1S" | "stretch";
+
+/**
+ * The held-out figures of one parameter file over a log: the observations come from the log,
+ * the prior row from its latest school-group setting, and each pair's level from the graph.
+ */
+export function evaluateModel(
+  graph: EvalGraph,
+  log: readonly LogEvent[],
+  params: ModelParamsT,
+  zone: string,
+): Figures {
+  const levels = new Map<string, Level>();
+  for (const n of graph.nodes())
+    for (const s of graph.subtypes(n.id))
+      levels.set(`${n.id}|${s.id}`, s.level as Level);
+  const group = rowOf(log);
+  const { own } = observationsOf(log);
+  const predictions = predictionsOf(
+    own,
+    params,
+    (o) => priorOf(params, group, levels.get(`${o.node}|${o.subtype}`) ?? "1F"),
+    zone,
+  );
+  return figuresOf(predictions);
+}

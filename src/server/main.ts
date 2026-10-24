@@ -12,15 +12,19 @@ import {
 import { readContentVersions } from "./versions.js";
 import { startGraph } from "./graph-start.js";
 import {
+  activeKnowledgeParams,
   refreshKnowledge,
   useKnowledge,
 } from "../engine/projections/knowledge.js";
 import { loadParams } from "../engine/model/params.js";
+import { latestEvent } from "../engine/events/read.js";
+import { type ActivationContext } from "./model-activate.js";
 import { GRAPH_FILE } from "../engine/graph.js";
 import { raise, useNoticesDir } from "./failures.js";
 import { recoverBlobs } from "../engine/blobs/store.js";
 import {
   useVersions,
+  VERSIONS,
   versionLabel,
   versionsChanged,
 } from "../engine/projections/registry.js";
@@ -48,14 +52,25 @@ try {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);
 }
+// The latest model_activated event names the model in use; the content file names it only
+// while the log holds none (ADR-0510).
+const activated = latestEvent(db, "model_activated");
+if (activated)
+  useVersions({
+    ...VERSIONS,
+    model: (activated.payload as { modelVersion: string }).modelVersion,
+  });
 // The skill graph starts the server (ADR-0050): a broken file with no stored
 // version stops the start as graph_unloadable, and otherwise the last valid
 // version is served (TSK-0500).
+let activation: ActivationContext | undefined;
 try {
   const started = startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE);
   // The knowledge model runs once a model version is named (SPC-0060); until then its
   // tables stay empty. The game-day zone is the family's, set in the environment.
-  const model = readContentVersions().model;
+  const model = VERSIONS.model;
+  const zone = process.env["MEOWTOWER_ZONE"] ?? "UTC";
+  activation = { graph: started.graph, zone, active: activeKnowledgeParams };
   const modelFile = new URL(
     `../../content/model.${model}.json`,
     import.meta.url,
@@ -66,7 +81,7 @@ try {
     useKnowledge({
       params: loadParams(readFileSync(modelFile, "utf8")),
       graph: started.graph,
-      zone: process.env["MEOWTOWER_ZONE"] ?? "UTC",
+      zone,
     });
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err));
@@ -116,7 +131,13 @@ const game = serve({
   port,
 });
 const parent = serve({
-  fetch: createParentApp({ db, dbPath, snapshots, exports }).fetch,
+  fetch: createParentApp({
+    db,
+    dbPath,
+    snapshots,
+    exports,
+    ...(activation ? { model: activation } : {}),
+  }).fetch,
   port: parentPort,
 });
 

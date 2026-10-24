@@ -5,7 +5,7 @@
 // versions, so a new model or rules version adds its rows beside the old ones. Until a model
 // is set (`useKnowledge`) the tables stay empty.
 import type Database from "better-sqlite3";
-import { allEvents } from "../events/read.js";
+import { allEvents, itemEvents, type StoredEvent } from "../events/read.js";
 import type { ModelParamsT } from "../model/params.js";
 import {
   type KnowledgeGraph,
@@ -30,6 +30,56 @@ let setup: KnowledgeSetup | null = null;
 export function useKnowledge(next: KnowledgeSetup | null): void {
   setup = next;
 }
+
+type Estimates = ReturnType<typeof knowledgeOf>["estimates"];
+
+/** The node an item belongs to, from the event that showed it. */
+function nodeOfVerdict(db: Db, verdict: StoredEvent): string | undefined {
+  const itemId = (verdict.payload as { itemId?: string }).itemId;
+  if (itemId === undefined) return undefined;
+  const shown = itemEvents(db, itemId).find((e) => e.type === "item_shown");
+  return (shown?.payload as { node?: string } | undefined)?.node;
+}
+
+function writeEstimates(
+  db: Db,
+  target: string,
+  estimates: Estimates,
+  computedAt: string,
+): void {
+  const insert = db.prepare(
+    `INSERT OR REPLACE INTO ${target} VALUES (@node, @subtype, @pKnow, @nEff, @uncertainty, @lastSeen,
+      @stale, @nextReview, @confidence, @state, @rule, @items, @inferredState, @cutBy,
+      @isGap, @helpA, @helpB, @fluentA, @fluentB, @computedAt)`,
+  );
+  for (const e of estimates)
+    insert.run({
+      node: e.node,
+      subtype: e.subtype ?? "",
+      pKnow: e.pKnow,
+      nEff: e.nEff,
+      uncertainty: e.uncertainty,
+      lastSeen: e.lastSeen,
+      stale: e.stale ? 1 : 0,
+      nextReview: e.nextReview,
+      confidence: e.confidence,
+      state: e.state?.state ?? null,
+      rule: e.state?.rule ?? null,
+      items: e.state ? JSON.stringify(e.state.items) : null,
+      inferredState: e.inferredState,
+      cutBy: e.cutBy,
+      isGap: e.isGap ? 1 : 0,
+      helpA: e.withHelp?.alpha ?? null,
+      helpB: e.withHelp?.beta ?? null,
+      fluentA: e.fluency?.alpha ?? null,
+      fluentB: e.fluency?.beta ?? null,
+      computedAt,
+    });
+}
+
+/** The parameters of the model in use, or null before any model is set. */
+export const activeKnowledgeParams = (): ModelParamsT | null =>
+  setup?.params ?? null;
 
 const noFold = (): void => {};
 
@@ -61,40 +111,40 @@ const nodeEstimates: Projection = {
     computed_at TEXT NOT NULL,
     PRIMARY KEY (node, subtype)
   ) STRICT`,
-  apply: noFold,
   fullPass(db: Db, target: string, computedAt: string) {
     if (!setup) return;
     const log = [...allEvents(db)];
     const { estimates } = knowledgeOf(setup.graph, log, setup.params);
     db.prepare(`DELETE FROM ${target}`).run();
-    const insert = db.prepare(
-      `INSERT INTO ${target} VALUES (@node, @subtype, @pKnow, @nEff, @uncertainty, @lastSeen,
-        @stale, @nextReview, @confidence, @state, @rule, @items, @inferredState, @cutBy,
-        @isGap, @helpA, @helpB, @fluentA, @fluentB, @computedAt)`,
-    );
-    for (const e of estimates)
-      insert.run({
-        node: e.node,
-        subtype: e.subtype ?? "",
-        pKnow: e.pKnow,
-        nEff: e.nEff,
-        uncertainty: e.uncertainty,
-        lastSeen: e.lastSeen,
-        stale: e.stale ? 1 : 0,
-        nextReview: e.nextReview,
-        confidence: e.confidence,
-        state: e.state?.state ?? null,
-        rule: e.state?.rule ?? null,
-        items: e.state ? JSON.stringify(e.state.items) : null,
-        inferredState: e.inferredState,
-        cutBy: e.cutBy,
-        isGap: e.isGap ? 1 : 0,
-        helpA: e.withHelp?.alpha ?? null,
-        helpB: e.withHelp?.beta ?? null,
-        fluentA: e.fluency?.alpha ?? null,
-        fluentB: e.fluency?.beta ?? null,
+    writeEstimates(db, target, estimates, computedAt);
+  },
+  /**
+   * After a verdict, the node's own rows are rewritten from the log, so the Director sees its
+   * new estimate at once. The end-of-adventure pass replaces every row (REQ-0900), and a
+   * failure here is logged and leaves the node's last rows, never the event (TSK-0527).
+   */
+  apply(db: Db, event: StoredEvent, computedAt: string, table?: string) {
+    if (table !== undefined || !setup || event.type !== "verdict") return;
+    try {
+      const node = nodeOfVerdict(db, event);
+      if (node === undefined) return;
+      const { estimates } = knowledgeOf(
+        setup.graph,
+        [...allEvents(db)],
+        setup.params,
+      );
+      db.prepare("DELETE FROM node_estimates WHERE node = ?").run(node);
+      writeEstimates(
+        db,
+        "node_estimates",
+        estimates.filter((e) => e.node === node),
         computedAt,
-      });
+      );
+    } catch (err) {
+      console.error(
+        `knowledge_update_failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
   },
 };
 

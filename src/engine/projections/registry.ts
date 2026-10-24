@@ -146,7 +146,7 @@ export function rebuildMissing(
     for (const p of missing) db.exec(p.create);
     let last = 0;
     for (const e of allEvents()) {
-      for (const p of missing) p.apply(db, e, computedAt);
+      for (const p of missing) p.apply(db, e, computedAt, p.table);
       last = e.seq;
     }
     const meta = prepared(
