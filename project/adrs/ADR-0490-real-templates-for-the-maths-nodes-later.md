@@ -2,7 +2,7 @@
 id: ADR-0490
 artifact: adr
 status: approved
-revised: 2026-10-11
+revised: 2026-10-24
 addresses: [REQ-1232]
 supersedes: []
 ---
@@ -13,7 +13,7 @@ supersedes: []
 
 ## Decision
 
-Every maths node in the graph gets templates for each of its subtypes and answer kinds, written in a later epic that starts after the Architecture Decision Record (ADR) 0060, the knowledge model, and ADR-0160, the player's strings, are realised. Until then the stand-in and fixture templates stand in, and the checks that read templates (EPC-0470) wait.
+The owner decided on 2026-10-24 that each subtype and answer kind gets at least ten templates: ten different task forms, each with its own parameter shape and wording, and each yielding thousands of seeded variants. Every maths node in the graph gets templates for each of its subtypes and answer kinds, written in a later epic that starts after the Architecture Decision Record (ADR) 0060, the knowledge model, and ADR-0160, the player's strings, are realised. Until then the stand-in and fixture templates stand in, and the checks that read templates (EPC-0470) wait.
 
 ## Why
 
@@ -42,8 +42,9 @@ The checks that read real templates stay unrun until the later epic, and the pla
 
 ## How I will know it was realised
 
-1. Every maths node has templates for each subtype, and `graph check` lists no subtype as not_generatable.
+1. Every maths node has at least ten templates for each subtype and answer kind, and `graph check` lists no subtype as not_generatable or as having fewer than ten.
 
 ## What this does not settle
 
 - The order in which the nodes get templates.
+- What makes two templates different forms of one subtype; the epic fixes it with the first domain.

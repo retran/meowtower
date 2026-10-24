@@ -14,7 +14,7 @@ Realises exactly ADR-0490. It starts after the knowledge model (EPC-0060, done) 
 
 ## Acceptance criteria
 
-1. Every maths node has templates for each subtype and answer kind the catalogue gives it, and `./meowtower graph check` lists no subtype as not_generatable. Evidence: the command's output, from TSK-1201.
+1. Every maths node has at least ten templates for each subtype and answer kind, and `./meowtower graph check` lists no subtype as not_generatable or as having fewer than ten templates. Evidence: the command's output, from TSK-1201.
 2. Every template of a domain passes `npm run verify:templates`: no invalid parameters, no disagreement with the reference solver, no equal traps and no text that breaks the text rules. Evidence: the verification run's report for each domain, from TSK-1192 to TSK-1200.
 
 ## Marks
