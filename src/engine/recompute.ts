@@ -72,13 +72,14 @@ export { versionLabel };
 
 /** The rows of a versioned table that another set of versions computed. */
 const OTHER_VERSIONS =
-  "NOT (model_version = ? AND threshold_version = ? AND graph_version = ?)";
+  "NOT (model_version = ? AND threshold_version = ? AND graph_version = ? AND rules_version = ?)";
 const CURRENT_VERSIONS =
-  "model_version = ? AND threshold_version = ? AND graph_version = ?";
+  "model_version = ? AND threshold_version = ? AND graph_version = ? AND rules_version = ?";
 const versionArgs = (): string[] => [
   VERSIONS.model,
   VERSIONS.thresholds,
   VERSIONS.graph,
+  VERSIONS.rules,
 ];
 
 /**
@@ -147,12 +148,14 @@ export async function recompute(
         after = last;
       }
       const meta = db.prepare(
-        `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, last_seq, computed_at)
-         VALUES (?, ?, ?, ?, ?, ?)
+        `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, rules_version, last_seq, computed_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(name) DO UPDATE SET model_version = excluded.model_version,
            threshold_version = excluded.threshold_version, graph_version = excluded.graph_version,
-           last_seq = excluded.last_seq, computed_at = excluded.computed_at`,
+           rules_version = excluded.rules_version, last_seq = excluded.last_seq, computed_at = excluded.computed_at`,
       );
+      // The knowledge tables of the active versions, built from the whole log (TSK-0527).
+      for (const p of projections) p.fullPass?.(db, shadow(p), computedAt);
       for (const p of projections) {
         db.exec(`DROP TABLE IF EXISTS ${p.table}`);
         db.exec(`ALTER TABLE ${shadow(p)} RENAME TO ${p.table}`);
@@ -161,6 +164,7 @@ export async function recompute(
           VERSIONS.model,
           VERSIONS.thresholds,
           VERSIONS.graph,
+          VERSIONS.rules,
           after,
           computedAt,
         );
@@ -215,6 +219,7 @@ export function checkProjections(db: Db): Divergence[] {
           after = last;
         }
       })();
+      p.fullPass?.(db, fresh, "check");
       const columns = comparedColumns(db, p.table);
       const list = columns.join(", ");
       // A versioned table is compared on the current versions' rows only.

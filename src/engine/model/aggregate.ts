@@ -91,9 +91,15 @@ export function rowsOf(
       : pKnowAt(state, now);
   };
   const rows: Row[] = [];
+  const byNode = new Map<string, Observation[]>();
+  for (const o of observations) {
+    const list = byNode.get(o.node);
+    if (list) list.push(o);
+    else byNode.set(o.node, [o]);
+  }
   for (const node of graph.nodes()) {
     const subs = graph.subtypes(node.id);
-    const mine = observations.filter((o) => o.node === node.id);
+    const mine = byNode.get(node.id) ?? [];
     const nodeNEff = nEffOf(mine, halfLifeOf, now);
     const parts = subs.map((s) => ({
       weight: s.weight,

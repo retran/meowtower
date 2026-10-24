@@ -7,6 +7,11 @@ import { backupAfterSession } from "./backups.js";
 import { checkLogSize, runRecompute } from "./recompute.js";
 import { readContentVersions } from "./versions.js";
 import { startGraph } from "./graph-start.js";
+import {
+  refreshKnowledge,
+  useKnowledge,
+} from "../engine/projections/knowledge.js";
+import { loadParams } from "../engine/model/params.js";
 import { GRAPH_FILE } from "../engine/graph.js";
 import { raise, useNoticesDir } from "./failures.js";
 import { recoverBlobs } from "../engine/blobs/store.js";
@@ -15,6 +20,7 @@ import {
   versionLabel,
   versionsChanged,
 } from "../engine/projections/registry.js";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const dbPath =
@@ -42,7 +48,22 @@ try {
 // version stops the start as graph_unloadable, and otherwise the last valid
 // version is served (TSK-0500).
 try {
-  startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE);
+  const started = startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE);
+  // The knowledge model runs once a model version is named (SPC-0060); until then its
+  // tables stay empty. The game-day zone is the family's, set in the environment.
+  const model = readContentVersions().model;
+  const modelFile = new URL(
+    `../../content/model.${model}.json`,
+    import.meta.url,
+  );
+  if (model !== "none" && !existsSync(modelFile))
+    console.error(`model_unloadable: no file for model version ${model}`);
+  else if (model !== "none")
+    useKnowledge({
+      params: loadParams(readFileSync(modelFile, "utf8")),
+      graph: started.graph,
+      zone: process.env["MEOWTOWER_ZONE"] ?? "UTC",
+    });
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err));
   process.exit(1);
@@ -70,6 +91,13 @@ recoverBlobs(db, join(dirname(snapshots), "blobs"), (file) =>
 
 // A snapshot after each session (REQ-2526); data/ is the snapshots folder's parent.
 const onSessionEnded = (): void => {
+  // The end of an adventure recomputes the knowledge rows from the whole log; a failure
+  // keeps the earlier rows and the next end retries it (TSK-0527).
+  try {
+    refreshKnowledge(db, new Date().toISOString());
+  } catch (err) {
+    raise("recompute_failed", err instanceof Error ? err.message : String(err));
+  }
   checkLogSize(db, snapshots, Date.now);
   void backupAfterSession({
     live: dbPath,

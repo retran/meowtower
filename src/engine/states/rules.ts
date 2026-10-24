@@ -203,14 +203,40 @@ export function statesOf(
   },
   log: readonly LogEvent[],
 ): NodeState[] {
-  const { own } = observationsOf(log);
-  const marks = marksOf(log);
-  return graph.nodes().map((n) =>
-    nodeStateOf(
-      { id: n.id, stretch: n.level === "stretch" },
-      own.filter((o) => o.node === n.id),
-      graph.subtypes(n.id),
-      marks.get(n.id) ?? -1,
-    ),
-  );
+  return statesOfObservations(graph, observationsOf(log).own, marksOf(log));
+}
+
+/** The states of every node from its graded first attempts and its lesson marks (SPC-0060). */
+export function statesOfObservations(
+  graph: {
+    nodes(): { id: string; level: string }[];
+    subtypes(id: string): { id: string; weight: number }[];
+  },
+  own: readonly Observation[],
+  marks: ReadonlyMap<string, number>,
+): NodeState[] {
+  const byNode = groupByNode(own);
+  return graph
+    .nodes()
+    .map((n) =>
+      nodeStateOf(
+        { id: n.id, stretch: n.level === "stretch" },
+        byNode.get(n.id) ?? [],
+        graph.subtypes(n.id),
+        marks.get(n.id) ?? -1,
+      ),
+    );
+}
+
+/** The observations of each node, in their order. */
+export function groupByNode(
+  own: readonly Observation[],
+): Map<string, Observation[]> {
+  const byNode = new Map<string, Observation[]>();
+  for (const o of own) {
+    const list = byNode.get(o.node);
+    if (list) list.push(o);
+    else byNode.set(o.node, [o]);
+  }
+  return byNode;
 }
