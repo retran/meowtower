@@ -3,6 +3,7 @@ import { LogWriteFailed } from "../engine/events/append.js";
 import { isOpen, type Db } from "./database.js";
 import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
+import { createOutgoing } from "./outgoing.js";
 import { mountPlay } from "./play.js";
 import { mountShell } from "./shell.js";
 import { createStream, type Stream } from "./stream.js";
@@ -25,6 +26,16 @@ export function createApp({
   sweepLeasesMs?: number;
 }): Hono {
   const app = new Hono();
+  // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
+  const outgoing = createOutgoing(
+    db,
+    now,
+    process.env["MEOWTOWER_ZONE"] ?? "UTC",
+  );
+  app.use("*", async (c, next) => {
+    c.set("outgoing", outgoing);
+    await next();
+  });
   // A failed log write replies 503 on every route and reaches the parent
   // (ADR-0020); a later state-changing request that succeeds clears it.
   app.onError((err, c) => {

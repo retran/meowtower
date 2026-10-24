@@ -145,6 +145,7 @@ export interface StringParams {
   "state.stable": NoParams;
   "state.not_checked": NoParams;
   "state.stretch_not_checked": NoParams;
+  "system.fallback.line": NoParams;
 }
 
 export type Key = keyof StringParams;

@@ -138,5 +138,6 @@
   "state.being_clarified": "Уточняется",
   "state.stable": "устойчиво",
   "state.not_checked": "Не проверялся",
-  "state.stretch_not_checked": "Stretch: не проверялся"
+  "state.stretch_not_checked": "Stretch: не проверялся",
+  "system.fallback.line": "Туман над тропой. Подожди немного."
 }

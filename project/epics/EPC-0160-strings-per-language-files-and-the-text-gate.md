@@ -59,7 +59,7 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 - [x] T-007 [P] TSK-0682 The build passes every fixed string and 200 rendered seeds of every template through the gate (done: pull request 23)
       closes: REQ-3326, REQ-3308
       depends: TSK-0681 - the check calls the gate.; TSK-0676 - the check walks the keys and groups of the typed file.
-- [ ] T-008 [P] TSK-0683 The server runs the gate on every line before it leaves, and a blocked line is replaced by its source's fallback
+- [x] T-008 [P] TSK-0683 The server runs the gate on every line before it leaves, and a blocked line is replaced by its source's fallback (done: pull request 23)
       closes: REQ-3326
       depends: TSK-0681 - the server calls the gate.
 
