@@ -1,7 +1,7 @@
 ---
 id: TSK-1196
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -33,7 +33,9 @@ Write the templates of domain P in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 138 templates of domain P are in src/templates/p1.ts to p3.ts, written with the short form of src/templates/kitf.ts, with their strings in content/tasks-p.ru.json. Closed by tests/unit/templates.test.ts (ten or more templates for each of the 12 subtypes, 200 seeds for each template) and by `npm run verify:templates` on 10,000 seeds for each template. `./meowtower graph check` lists none of the 12 subtypes of domain P as thin.
+
+A percentage answer is the number of percent, without the sign. P7 holds eleven templates at stretch, all tagged as extensions, because the Dutch goals give only the rule that percentages add over the same whole.
 
 ## Left alone
 

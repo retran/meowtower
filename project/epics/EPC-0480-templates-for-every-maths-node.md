@@ -38,7 +38,7 @@ Realises exactly ADR-0490. It starts after the knowledge model (EPC-0060, done) 
 - [x] T-004 [P] TSK-1195 The 7 nodes of domain D have templates for every subtype and answer kind
       closes: REQ-1232
       depends: TSK-0676 (blocking) - the typed string function that task text and keys go through.; TSK-1192 (not blocking) - the first domain settles the template conventions the others copy.
-- [ ] T-005 [P] TSK-1196 The 7 nodes of domain P have templates for every subtype and answer kind
+- [x] T-005 [P] TSK-1196 The 7 nodes of domain P have templates for every subtype and answer kind
       closes: REQ-1232
       depends: TSK-0676 (blocking) - the typed string function that task text and keys go through.; TSK-1192 (not blocking) - the first domain settles the template conventions the others copy.
 - [ ] T-006 [P] TSK-1197 The 14 nodes of domain M have templates for every subtype and answer kind
