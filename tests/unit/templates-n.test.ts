@@ -1,16 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { compile, strayIn, taskStrings } from "../../src/templates/spec.js";
-import { n1Specs } from "../../src/templates/n1.js";
+import { templates } from "../../src/templates/index.js";
+import { strayIn } from "../../src/templates/spec.js";
 
-const strings = taskStrings("n");
-const compiled = n1Specs.map((spec) => compile(spec, strings));
+const compiled = templates;
 const SEEDS = 200;
 const seedOf = (i: number): Uint8Array =>
   Uint8Array.from({ length: 32 }, (_, k) => (i * 31 + k * 7) % 256);
 
-describe("N1 templates", () => {
+describe("domain N templates", () => {
   it("holds at least ten templates for each subtype", () => {
-    for (const subtype of ["compare", "before-after"]) {
+    for (const subtype of [
+      "compare",
+      "before-after",
+      "compose",
+      "words-digits",
+      "compare-six",
+    ]) {
       expect(
         compiled.filter((c) => c.subtype === subtype).length,
       ).toBeGreaterThanOrEqual(10);
