@@ -153,6 +153,8 @@ export interface Compiled {
 export function entryOf(kind: AnswerKind, answer: Answer): string {
   if (kind === "integer" || kind === "decimal" || kind === "line") {
     if (!(answer instanceof Q)) throw new TypeError("answer_not_a_number");
+    if (kind === "integer" && answer.d !== 1n)
+      throw new TypeError("answer_not_an_integer");
     return kind === "integer"
       ? answer.n.toString()
       : formatQ(answer, {

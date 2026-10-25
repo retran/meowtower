@@ -1,7 +1,7 @@
 ---
 id: TSK-1195
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -33,7 +33,11 @@ Write the templates of domain D in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 107 templates of domain D are in src/templates/d1.ts and d2.ts, written with the short form of src/templates/kitf.ts and its decimal helpers, with their strings in content/tasks-d.ru.json. Closed by tests/unit/templates.test.ts (ten or more templates for each of the 9 subtypes, 200 seeds for each template) and by `npm run verify:templates` on 10,000 seeds for each template. `./meowtower graph check` lists none of the 9 subtypes of domain D as thin.
+
+A task of the integer kind now fails at once when a trap is not a whole number, because the entry of such a trap would have read as the answer.
+
+D7 holds ten templates at stretch, all tagged as extensions: no Dutch goal read names the order of operations with decimals and fractions.
 
 ## Left alone
 

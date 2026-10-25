@@ -132,3 +132,21 @@ export const forFraction =
   (node: string, subtype: string) =>
   (o: FracT): Spec<never> =>
     frac(node, subtype, o);
+
+/** `n` hundredths-or-other: the exact number `n / 10^places`. */
+export const qd = (n: number, places: number): Q =>
+  Q.of(BigInt(n), 10n ** BigInt(places));
+
+/** `n / 10^places` as a decimal text with a comma; `trim` drops zeros at the end, as `2,5` for `2,50`. */
+export function dec(n: number, places: number, trim = false): string {
+  const neg = n < 0;
+  const abs = Math.abs(n);
+  const unit = 10 ** places;
+  const whole = Math.floor(abs / unit);
+  let rest = String(abs % unit).padStart(places, "0");
+  if (trim) rest = rest.replace(/0+$/, "");
+  const sign = neg ? "−" : "";
+  return rest === ""
+    ? `${sign}${digits(whole)}`
+    : `${sign}${digits(whole)},${rest}`;
+}
