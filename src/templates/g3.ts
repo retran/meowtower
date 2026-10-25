@@ -1,0 +1,437 @@
+// Domain G, part 3: solids, nets, views and blocks (RES-4285). The Dutch goals match nets and pictures from group 2 to 5
+// and ask for views at group 4 and a plan with heights at group 6; counting faces, edges and vertices is a Russian
+// extension. Texts are plain blanks in `content/tasks-g.ru.json`. Generated from one table with the strings.
+import { calc, rg } from "./kitc.js";
+import { q } from "./kitf.js";
+import { type Spec } from "./spec.js";
+
+const G5_solids_nets = calc("G5", "solids-nets");
+const G5_solids_nets_specs: readonly Spec<never>[] = [
+  G5_solids_nets({
+    id: "G5.solids-nets.01",
+    form: "the-edges-of-separate-cubes",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(2, 7)],
+    f: (a) => q(12 * a),
+    t: { "faces-instead": (a) => q(6 * a), "cubes-only": (a) => q(a) },
+    c: [6, 12],
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.02",
+    form: "the-faces-of-separate-boxes",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(2, 9)],
+    f: (a) => q(6 * a),
+    t: { "edges-instead": (a) => q(12 * a), "boxes-only": (a) => q(a) },
+    c: [6, 12],
+    origin: {
+      extension:
+        "the faces, edges and vertices of solids, Russian programme (RES-4285)",
+    },
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.03",
+    form: "the-faces-of-a-pyramid",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(3, 9)],
+    f: (a) => q(a + 1),
+    t: { "base-forgotten": (a) => q(a), edges: (a) => q(2 * a) },
+    c: [1, 2],
+    origin: {
+      extension:
+        "the faces, edges and vertices of solids, Russian programme (RES-4285)",
+    },
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.04",
+    form: "the-edges-of-a-pyramid",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(3, 9)],
+    f: (a) => q(2 * a),
+    t: { "base-only": (a) => q(a), faces: (a) => q(a + 1) },
+    c: [1, 2],
+    origin: {
+      extension:
+        "the faces, edges and vertices of solids, Russian programme (RES-4285)",
+    },
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.05",
+    form: "the-vertices-of-a-prism",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(3, 9)],
+    f: (a) => q(2 * a),
+    t: { "one-base": (a) => q(a), edges: (a) => q(3 * a) },
+    c: [2, 3],
+    origin: {
+      extension:
+        "the faces, edges and vertices of solids, Russian programme (RES-4285)",
+    },
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.06",
+    form: "the-side-faces-of-a-prism",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(3, 9)],
+    f: (a) => q(a),
+    t: { "all-faces": (a) => q(a + 2), edges: (a) => q(3 * a) },
+    c: [2, 3],
+    origin: {
+      extension:
+        "the faces, edges and vertices of solids, Russian programme (RES-4285)",
+    },
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.07",
+    form: "the-dots-on-the-opposite-face",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(1, 6)],
+    f: (a) => q(7 - a),
+    t: { "same-face": (a) => q(a), "from-six": (a) => q(6 - a) },
+    c: [6, 7],
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.08",
+    form: "the-hidden-dots",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(1, 6), rg(1, 6), rg(1, 6)],
+    ok: (a, b, c) => a + b + c < 15 && a + b + c > 7,
+    f: (a, b, c) => q(21 - a - b - c),
+    t: {
+      "visible-sum": (a, b, c) => q(a + b + c),
+      "from-seven": (a, b, c) => q(7 - a - b - c),
+    },
+    c: [7, 21],
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.09",
+    form: "the-cubes-with-one-painted-face",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(3, 7)],
+    f: (a) => q(6 * (a - 2) * (a - 2)),
+    t: {
+      "all-surface-cubes": (a) => q(6 * a * a),
+      "one-face-only": (a) => q((a - 2) * (a - 2)),
+    },
+    c: [2, 6],
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.10",
+    form: "the-wire-for-the-edges-of-a-cube",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(2, 12)],
+    f: (a) => q(12 * a),
+    t: { "face-edges": (a) => q(4 * a), faces: (a) => q(6 * a) },
+    c: [4, 6, 12],
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.11",
+    form: "the-area-of-the-net-of-a-cube",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(2, 9)],
+    f: (a) => q(6 * a * a),
+    t: { "one-face": (a) => q(a * a), "edge-times-six": (a) => q(6 * a) },
+    c: [6],
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.12",
+    form: "the-visible-faces-of-cubes-in-a-row",
+    g: [2, 5],
+    kind: "integer",
+    p: [rg(2, 9)],
+    f: (a) => q(4 * a + 2),
+    t: { "all-faces": (a) => q(6 * a), "four-per-cube": (a) => q(4 * a) },
+    c: [2, 4, 6],
+  }),
+  G5_solids_nets({
+    id: "G5.solids-nets.13",
+    form: "the-solid-shaped-like-a-ball",
+    g: [2, 3],
+    kind: "choice",
+    p: [rg(0, 19)],
+    f: () => "1",
+    t: { cube: () => "2", box: () => "3", pencil: () => "4" },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+];
+
+const G6_views = calc("G6", "views");
+const G6_views_specs: readonly Spec<never>[] = [
+  G6_views({
+    id: "G6.views.01",
+    form: "the-squares-seen-from-the-front",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(1, 5), rg(1, 5), rg(1, 5)],
+    ok: (a, b, c) => a + b + c > 3,
+    f: (a, b, c) => q(a + b + c),
+    t: {
+      "highest-only": (a, b, c) => q(Math.max(a, b, c)),
+      columns: () => q(3),
+    },
+    c: [3],
+  }),
+  G6_views({
+    id: "G6.views.02",
+    form: "the-height-seen-from-the-side",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(1, 6), rg(1, 6), rg(1, 6)],
+    ok: (a, b, c) => a !== b && b !== c && a !== c,
+    f: (a, b, c) => q(Math.max(a, b, c)),
+    t: {
+      sum: (a, b, c) => q(a + b + c),
+      lowest: (a, b, c) => q(Math.min(a, b, c)),
+    },
+  }),
+  G6_views({
+    id: "G6.views.03",
+    form: "the-squares-seen-from-above",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(2, 6), rg(2, 6)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a * b),
+    t: { "sides-added": (a, b) => q(a + b) },
+  }),
+  G6_views({
+    id: "G6.views.04",
+    form: "the-hidden-cubes",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(2, 4), rg(2, 4), rg(2, 4), rg(5, 9)],
+    ok: (a, b, c, d) => a * b * c > d + 2 && a * b * c - d !== d,
+    f: (a, b, c, d) => q(a * b * c - d),
+    t: {
+      visible: (a, b, c, d) => q(d),
+      "sum-of-sides": (a, b, c, d) => q(a + b + c - d),
+    },
+  }),
+  G6_views({
+    id: "G6.views.05",
+    form: "the-stacked-cubes-from-the-top-view",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(8, 15), rg(4, 7)],
+    ok: (a, b) => a - b !== b,
+    f: (a, b) => q(a - b),
+    t: { visible: (a, b) => q(b), all: (a) => q(a) },
+  }),
+  G6_views({
+    id: "G6.views.06",
+    form: "the-columns-of-at-least-a-given-height",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(1, 5), rg(1, 5), rg(1, 5), rg(2, 4)],
+    ok: (a, b, c, d) =>
+      [a, b, c].filter((z) => z >= d).length > 0 &&
+      [a, b, c].filter((z) => z >= d).length < 3 &&
+      [a, b, c].filter((z) => z === d).length !==
+        [a, b, c].filter((z) => z >= d).length,
+    f: (a, b, c, d) => q([a, b, c].filter((z) => z >= d).length),
+    t: {
+      all: () => q(3),
+      exact: (a, b, c, d) => q([a, b, c].filter((z) => z === d).length),
+    },
+    c: [3],
+  }),
+  G6_views({
+    id: "G6.views.07",
+    form: "the-right-hand-when-facing-north",
+    g: [3, 4],
+    kind: "choice",
+    p: [rg(0, 19)],
+    f: () => "2",
+    t: { west: () => "1", south: () => "3", north: () => "4" },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+  G6_views({
+    id: "G6.views.08",
+    form: "the-view-of-a-ball",
+    g: [3, 4],
+    kind: "choice",
+    p: [rg(0, 19)],
+    f: () => "3",
+    t: {
+      "circle-and-square": () => "1",
+      "square-everywhere": () => "2",
+      "square-and-circle": () => "4",
+    },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+  G6_views({
+    id: "G6.views.09",
+    form: "the-top-view-of-a-box",
+    g: [4, 5],
+    kind: "choice",
+    p: [rg(0, 19)],
+    f: () => "4",
+    t: { circle: () => "1", triangle: () => "2", pentagon: () => "3" },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+  G6_views({
+    id: "G6.views.10",
+    form: "the-cubes-removed-from-a-box",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(2, 4), rg(2, 4), rg(2, 4), rg(1, 3)],
+    ok: (a, b, c) => a * b * c > 12,
+    f: (a, b, c, d) => q(a * b * c - d),
+    t: { removed: (a, b, c, d) => q(d), sum: (a, b, c, d) => q(a + b + c - d) },
+  }),
+];
+
+const G6_blocks = calc("G6", "blocks");
+const G6_blocks_specs: readonly Spec<never>[] = [
+  G6_blocks({
+    id: "G6.blocks.01",
+    form: "the-cubes-in-a-plan-with-heights",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 5), rg(1, 5), rg(1, 5), rg(1, 5)],
+    ok: (a, b, c, d) =>
+      a + b + c + d > 4 &&
+      (a !== b || b !== c || c !== d) &&
+      a + b + c + d !== 4 * Math.max(a, b, c, d),
+    f: (a, b, c, d) => q(a + b + c + d),
+    t: {
+      cells: () => q(4),
+      "highest-times-four": (a, b, c, d) => q(4 * Math.max(a, b, c, d)),
+    },
+    c: [4],
+  }),
+  G6_blocks({
+    id: "G6.blocks.02",
+    form: "the-highest-tower-in-a-plan",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 6), rg(1, 6), rg(1, 6), rg(1, 6)],
+    ok: (a, b, c, d) => new Set([a, b, c, d]).size === 4,
+    f: (a, b, c, d) => q(Math.max(a, b, c, d)),
+    t: {
+      sum: (a, b, c, d) => q(a + b + c + d),
+      lowest: (a, b, c, d) => q(Math.min(a, b, c, d)),
+    },
+  }),
+  G6_blocks({
+    id: "G6.blocks.03",
+    form: "the-cubes-to-add-for-an-even-height",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 4), rg(1, 4), rg(1, 4), rg(5, 6)],
+    ok: (a, b, c, d) => d - a !== 3 * d - a - b - c,
+    f: (a, b, c, d) => q(3 * d - a - b - c),
+    t: {
+      "one-column": (a, b, c, d) => q(d - a),
+      built: (a, b, c) => q(a + b + c),
+    },
+    c: [3],
+  }),
+  G6_blocks({
+    id: "G6.blocks.04",
+    form: "the-surface-of-a-tower",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 9)],
+    f: (a) => q(4 * a + 1),
+    t: { "with-bottom": (a) => q(4 * a + 2), "sides-only": (a) => q(4 * a) },
+    c: [1, 2, 4],
+  }),
+  G6_blocks({
+    id: "G6.blocks.05",
+    form: "the-cubes-in-three-staircases",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 8)],
+    f: (a) => q((3 * a * (a + 1)) / 2),
+    t: {
+      "one-staircase": (a) => q((a * (a + 1)) / 2),
+      "by-the-top": (a) => q(3 * a),
+    },
+    c: [1, 2, 3],
+  }),
+  G6_blocks({
+    id: "G6.blocks.06",
+    form: "the-surface-after-removing-a-corner-cube",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 6)],
+    f: (a) => q(6 * a * a),
+    t: {
+      "minus-three": (a) => q(6 * a * a - 3),
+      "plus-three": (a) => q(6 * a * a + 3),
+    },
+    c: [1, 3, 6],
+  }),
+  G6_blocks({
+    id: "G6.blocks.07",
+    form: "the-cubes-left-after-removing-top-ones",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 6), rg(3, 6), rg(1, 3)],
+    ok: (a, b, c) => c !== a,
+    f: (a, b, c) => q(a * b - c),
+    t: {
+      "removed-all-tops": (a, b) => q(a * b - a),
+      sum: (a, b, c) => q(a + b - c),
+    },
+  }),
+  G6_blocks({
+    id: "G6.blocks.08",
+    form: "the-cubes-of-the-second-layer",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 5), rg(2, 5), rg(2, 4)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(a * b * (c - 1)),
+    t: {
+      "one-layer": (a, b) => q(a * b),
+      "all-layers": (a, b, c) => q(a * b * c),
+    },
+    c: [1],
+  }),
+  G6_blocks({
+    id: "G6.blocks.09",
+    form: "the-rows-of-a-tower-plan",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 5), rg(2, 5), rg(2, 4)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(a * b * c),
+    t: { cells: (a, b) => q(a * b), sum: (a, b, c) => q(a + b + c) },
+  }),
+  G6_blocks({
+    id: "G6.blocks.10",
+    form: "the-cubes-in-a-pyramid-of-layers",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 5)],
+    f: (a) => q((a * (a + 1) * (2 * a + 1)) / 6),
+    t: {
+      "bottom-layer": (a) => q(a * a),
+      "sides-added": (a) => q((a * (a + 1)) / 2),
+    },
+    c: [1, 2, 4, 9],
+  }),
+];
+
+export const gSpecs3: readonly Spec<never>[] = [
+  ...G5_solids_nets_specs,
+  ...G6_views_specs,
+  ...G6_blocks_specs,
+];

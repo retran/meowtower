@@ -1,7 +1,7 @@
 ---
 id: TSK-1198
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -33,7 +33,9 @@ Write the templates of domain G in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 101 templates of domain G are in src/templates/g1.ts to g4.ts, written with the short form of src/templates/kitc.ts, with their strings in content/tasks-g.ru.json. Closed by tests/unit/templates.test.ts (ten or more templates for each of the 9 subtypes, 200 seeds for each template) and by `npm run verify:templates` on 10,000 seeds for each template. `./meowtower graph check` lists none of the 9 subtypes of domain G as thin or without a template.
+
+No template draws a picture: each describes its figure in words, because the template contract has no picture field yet. A coordinate answer is a pair, a set answer names its options by number, and a choice names its option by number, because the option texts stay in the per-language file and no Russian text may sit in the code. The subtypes G2, G4 and G7 had fewer than ten forms in the sources RES-4285 lists, so some of their templates are forms of my own that follow the Dutch goal of the group; the angle measure, the centre symmetry, the coordinate plane and the faces, edges and vertices of solids are extensions, tagged as such.
 
 ## Left alone
 

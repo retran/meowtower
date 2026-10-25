@@ -6,6 +6,10 @@ import { aSpecs3 } from "./a3.js";
 import { aSpecs4 } from "./a4.js";
 import { dSpecs1 } from "./d1.js";
 import { dSpecs2 } from "./d2.js";
+import { gSpecs1 } from "./g1.js";
+import { gSpecs2 } from "./g2.js";
+import { gSpecs3 } from "./g3.js";
+import { gSpecs4 } from "./g4.js";
 import { fSpecs1 } from "./f1.js";
 import { fSpecs2 } from "./f2.js";
 import { fSpecs3 } from "./f3.js";
@@ -50,6 +54,7 @@ export const templates: readonly Compiled[] = [
   ...compileAll("f", [...fSpecs1, ...fSpecs2, ...fSpecs3]),
   ...compileAll("d", [...dSpecs1, ...dSpecs2]),
   ...compileAll("p", [...pSpecs1, ...pSpecs2, ...pSpecs3]),
+  ...compileAll("g", [...gSpecs1, ...gSpecs2, ...gSpecs3, ...gSpecs4]),
   ...compileAll("m", [
     ...mSpecs1,
     ...mSpecs2,
