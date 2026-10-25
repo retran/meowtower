@@ -116,7 +116,7 @@ A node's `level` agrees with its subtypes in three ways. A `1F/1S` node has at l
 
 An ordinary subtype is one without `form: new`, at any level, so the stretch subtype `G6.blocks` counts toward G6's sum of 1.
 
-In the first version, weights are equal across a node's ordinary subtypes, `typicalGroup` comes from the Utrecht learning line and the SLO concretisation, and `ruOnly` is false unless the SLO check finds no Dutch goal for a subtype.
+In the first version, weights are equal across a node's ordinary subtypes, `typicalGroup` comes from the SLO tussendoelen, the group of the Dutch goal that first contains the node, held back where a prerequisite link would put the node after a dependent (ADR-0530), and `ruOnly` is false unless the SLO check finds no Dutch goal for a subtype.
 
 ## Behaviour
 

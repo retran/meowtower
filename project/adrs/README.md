@@ -59,4 +59,5 @@
 | [ADR-0500](ADR-0500-item-included-reverses-an-exclusion.md) | A task the parent excluded returns to the estimates by an `item_included` event | done |
 | [ADR-0510](ADR-0510-model-activated-carries-the-gate-figures.md) | `model_activated` records the file version and the held-out figures, and the latest one names the active model | done |
 | [ADR-0520](ADR-0520-two-answer-kinds-and-a-distance-for-the-number-line.md) | The answer contract gains a set kind, an ordered-pair kind and an acceptance distance for a point on a line | done |
+| [ADR-0530](ADR-0530-typical-groups-follow-the-dutch-goals-where-the-prerequisites-allow.md) | A node's typical group follows the Dutch goal that first contains it, where the prerequisite order allows | done |
 <!-- /meow-flow index -->
