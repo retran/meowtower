@@ -16,13 +16,21 @@ import {
   choiceAnswer,
   decimalAnswer,
   integerAnswer,
+  lineAnswer,
   orderAnswer,
   pairAnswer,
   setAnswer,
 } from "../shared/answer.js";
 
 export type AnswerKind =
-  "integer" | "decimal" | "compare" | "choice" | "set" | "pair" | "order";
+  | "integer"
+  | "decimal"
+  | "compare"
+  | "choice"
+  | "set"
+  | "pair"
+  | "order"
+  | "line";
 
 /** An answer by kind: a number, a sign or an option, a list of options, or two numbers. */
 export type Answer = Q | string | readonly string[] | readonly [Q, Q];
@@ -62,6 +70,8 @@ export interface Spec<P> {
   readonly roles?: Readonly<Record<string, string>>;
   /** The values the strings may name; every `{name}` in a string is filled from here. */
   readonly vars: (p: P) => Record<string, string>;
+  /** How far an entry may lie from the answer of a `line` task and still be right (ADR-0520). */
+  readonly within?: (p: P) => Q;
   /** The options of a choice or set task, in the order shown. */
   readonly options?: (p: P) => readonly string[];
   /** Numbers the solution and hints may state that no parameter or answer holds, such as 10 for tens. */
@@ -135,7 +145,7 @@ export interface Compiled {
 
 /** How an answer is entered, as the checker of its kind reads it. */
 export function entryOf(kind: AnswerKind, answer: Answer): string {
-  if (kind === "integer" || kind === "decimal") {
+  if (kind === "integer" || kind === "decimal" || kind === "line") {
     if (!(answer instanceof Q)) throw new TypeError("answer_not_a_number");
     return kind === "integer"
       ? answer.n.toString()
@@ -171,6 +181,7 @@ function checkerOf(
   kind: AnswerKind,
   answer: Answer,
   options: readonly string[] | null,
+  within: Q,
 ): Checker {
   switch (kind) {
     case "integer":
@@ -179,6 +190,8 @@ function checkerOf(
       return decimalAnswer(answer as Q);
     case "compare":
       return choiceAnswer(answer as string, SIGNS);
+    case "line":
+      return lineAnswer(answer as Q, within);
     case "choice":
       return choiceAnswer(answer as string, options ?? []);
     case "set":
@@ -253,7 +266,12 @@ export function compile<P>(
           options,
           answer,
           entry: entryOf(spec.answer, answer),
-          checker: checkerOf(spec.answer, answer, options),
+          checker: checkerOf(
+            spec.answer,
+            answer,
+            options,
+            spec.within ? spec.within(p) : Q.of(0n),
+          ),
           traps: traps.map((t) => ({
             id: t.spec.id,
             kind: t.spec.kind,
@@ -268,12 +286,12 @@ export function compile<P>(
             stringsOf(text.hints[2]),
           ],
           referenceAgrees: sameAnswer(answer, spec.reference(p)),
-          allowed: [
+          allowed: withNegatives([
             ...Object.values(vars).flatMap(numbersIn),
             ...numbersOfAnswer(answer),
             ...traps.flatMap((t) => numbersOfAnswer(t.wrong)),
             ...(spec.constants ?? []).map((c) => Q.of(BigInt(c))),
-          ],
+          ]),
           paramsKey: JSON.stringify(vars),
         };
         return made;
@@ -282,6 +300,12 @@ export function compile<P>(
     },
   };
 }
+
+/** A number written with its sign dropped, as `-5` is read in a text, still counts as the number. */
+const withNegatives = (list: readonly Q[]): Q[] => [
+  ...list,
+  ...list.map((q) => q.neg()),
+];
 
 const numbersOfAnswer = (answer: Answer): Q[] =>
   answer instanceof Q
@@ -304,3 +328,7 @@ export function strayIn(made: Made): string[] {
     made.allowed,
   );
 }
+
+/** Types a spec by its parameters and stores it in the list every domain file exports. */
+export const defineSpec = <P>(spec: Spec<P>): Spec<never> =>
+  spec as unknown as Spec<never>;

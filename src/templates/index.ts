@@ -3,6 +3,8 @@
 import { n1Specs } from "./n1.js";
 import { n2Specs } from "./n2.js";
 import { n3Specs } from "./n3.js";
+import { n4Specs } from "./n4.js";
+import { n5Specs } from "./n5.js";
 import { compile, type Compiled, type Spec, taskStrings } from "./spec.js";
 
 const compileAll = (
@@ -14,5 +16,11 @@ const compileAll = (
 };
 
 export const templates: readonly Compiled[] = [
-  ...compileAll("n", [...n1Specs, ...n2Specs, ...n3Specs]),
+  ...compileAll("n", [
+    ...n1Specs,
+    ...n2Specs,
+    ...n3Specs,
+    ...n4Specs,
+    ...n5Specs,
+  ]),
 ];

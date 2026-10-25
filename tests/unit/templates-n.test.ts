@@ -1,4 +1,7 @@
+import { readFileSync } from "node:fs";
+import { parse } from "yaml";
 import { describe, expect, it } from "vitest";
+import { GRAPH_FILE } from "../../src/engine/graph.js";
 import { templates } from "../../src/templates/index.js";
 import { strayIn } from "../../src/templates/spec.js";
 
@@ -8,17 +11,19 @@ const seedOf = (i: number): Uint8Array =>
   Uint8Array.from({ length: 32 }, (_, k) => (i * 31 + k * 7) % 256);
 
 describe("domain N templates", () => {
-  it("holds at least ten templates for each subtype", () => {
-    for (const subtype of [
-      "compare",
-      "before-after",
-      "compose",
-      "words-digits",
-      "compare-six",
-    ]) {
-      expect(
-        compiled.filter((c) => c.subtype === subtype).length,
-      ).toBeGreaterThanOrEqual(10);
+  it("holds at least ten templates for each subtype of every node that has one", () => {
+    const graph = parse(readFileSync(GRAPH_FILE, "utf8")) as {
+      nodes: Record<string, { subtypes: { id: string }[] }>;
+    };
+    const done = new Set(compiled.map((c) => c.node));
+    expect(done.size).toBeGreaterThan(0);
+    for (const node of done) {
+      for (const sub of graph.nodes[node]?.subtypes ?? []) {
+        const count = compiled.filter(
+          (c) => c.node === node && c.subtype === sub.id,
+        ).length;
+        expect(count, `${node}.${sub.id}`).toBeGreaterThanOrEqual(10);
+      }
     }
   });
 
