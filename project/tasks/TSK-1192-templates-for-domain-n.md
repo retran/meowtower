@@ -1,7 +1,7 @@
 ---
 id: TSK-1192
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -32,7 +32,9 @@ Write the templates of domain N in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 172 templates of domain N are in src/templates/n1.ts to n8.ts, with their strings in content/tasks-n.ru.json. Closed by tests/unit/templates-n.test.ts (ten or more templates for each subtype of every node that has one, 200 seeds for each template) and by `npm run verify:templates`, which runs each registry template on 10,000 seeds. `./meowtower graph check` now lists the subtypes with no template and the thin ones, and none of the 15 subtypes of domain N is thin.
+
+The texts are plain blanks for the story writer of ADR-0130, which rewrites them around the same numbers. The `roles` field of the template spec, which carries what each number stands for in that request, is filled in for only three templates so far.
 
 ## Left alone
 

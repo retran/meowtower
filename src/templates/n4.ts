@@ -300,9 +300,9 @@ const estimateSpecs = [
     slack: () => 10,
     trap: { id: "one-addend", wrong: (p) => q(Math.max(p.a, p.b)) },
     vars: (p) => ({
-      ra: s(nearest(p.a, 10)),
-      rb: s(nearest(p.b, 10)),
-      rs: s(nearest(p.a, 10) + nearest(p.b, 10)),
+      ra: digits(nearest(p.a, 10)),
+      rb: digits(nearest(p.b, 10)),
+      rs: digits(nearest(p.a, 10) + nearest(p.b, 10)),
     }),
   }),
   estimating({
@@ -315,9 +315,9 @@ const estimateSpecs = [
     slack: () => 10,
     trap: { id: "sum-instead", wrong: (p) => q(p.a + p.b) },
     vars: (p) => ({
-      ra: s(nearest(p.a, 10)),
-      rb: s(nearest(p.b, 10)),
-      rs: s(nearest(p.a, 10) - nearest(p.b, 10)),
+      ra: digits(nearest(p.a, 10)),
+      rb: digits(nearest(p.b, 10)),
+      rs: digits(nearest(p.a, 10) - nearest(p.b, 10)),
     }),
     constants: [10],
   }),
@@ -331,7 +331,10 @@ const estimateSpecs = [
       q(Array.from({ length: p.b }, () => p.a).reduce((x, y) => x + y, 0)),
     slack: (p) => 5 * p.b,
     trap: { id: "sum-instead", wrong: (p) => q(p.a + p.b) },
-    vars: (p) => ({ ra: s(nearest(p.a, 10)), rs: s(nearest(p.a, 10) * p.b) }),
+    vars: (p) => ({
+      ra: digits(nearest(p.a, 10)),
+      rs: digits(nearest(p.a, 10) * p.b),
+    }),
   }),
   estimating({
     id: "N4.estimate.04",
@@ -343,8 +346,8 @@ const estimateSpecs = [
     slack: (p) => 5 * (p.a + p.b) + 25,
     trap: { id: "ten-times-off", wrong: (p) => q(10 * p.a * p.b) },
     vars: (p) => ({
-      ra: s(nearest(p.a, 10)),
-      rb: s(nearest(p.b, 10)),
+      ra: digits(nearest(p.a, 10)),
+      rb: digits(nearest(p.b, 10)),
       rs: digits(nearest(p.a, 10) * nearest(p.b, 10)),
     }),
     constants: [10, 25],
@@ -373,7 +376,10 @@ const estimateSpecs = [
     second: (p) => q(p.b * p.a),
     slack: (p) => 5 * p.b,
     trap: { id: "one-item", wrong: (p) => q(p.a) },
-    vars: (p) => ({ ra: s(nearest(p.a, 10)), rs: s(nearest(p.a, 10) * p.b) }),
+    vars: (p) => ({
+      ra: digits(nearest(p.a, 10)),
+      rs: digits(nearest(p.a, 10) * p.b),
+    }),
   }),
   estimating({
     id: "N4.estimate.07",
@@ -389,9 +395,9 @@ const estimateSpecs = [
     slack: () => 15,
     trap: { id: "two-addends", wrong: (p) => q(p.a + p.b) },
     vars: (p) => ({
-      ra: s(nearest(p.a, 10)),
-      rb: s(nearest(p.b, 10)),
-      rc: s(nearest(p.c, 10)),
+      ra: digits(nearest(p.a, 10)),
+      rb: digits(nearest(p.b, 10)),
+      rc: digits(nearest(p.c, 10)),
     }),
     constants: [10, 15],
   }),
@@ -409,9 +415,9 @@ const estimateSpecs = [
     slack: () => 150,
     trap: { id: "forgot-a-leg", wrong: (p) => q(p.a + p.b) },
     vars: (p) => ({
-      ra: s(nearest(p.a, 100)),
-      rb: s(nearest(p.b, 100)),
-      rc: s(nearest(p.c, 100)),
+      ra: digits(nearest(p.a, 100)),
+      rb: digits(nearest(p.b, 100)),
+      rc: digits(nearest(p.c, 100)),
     }),
     constants: [100, 150],
   }),
@@ -424,7 +430,10 @@ const estimateSpecs = [
     second: (p) => Q.fromDecimal((p.a / 50).toFixed(2)),
     slack: () => 1,
     trap: { id: "ten-times-more", wrong: (p) => Q.of(BigInt(p.a), 5n) },
-    vars: (p) => ({ near: s(nearest(p.a, 50)), cnt: s(nearest(p.a, 50) / 50) }),
+    vars: (p) => ({
+      near: digits(nearest(p.a, 50)),
+      cnt: digits(nearest(p.a, 50) / 50),
+    }),
     constants: [1, 50],
   }),
   estimating({
