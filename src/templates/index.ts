@@ -12,6 +12,11 @@ import { fSpecs3 } from "./f3.js";
 import { pSpecs1 } from "./p1.js";
 import { pSpecs2 } from "./p2.js";
 import { pSpecs3 } from "./p3.js";
+import { mSpecs1 } from "./m1.js";
+import { mSpecs2 } from "./m2.js";
+import { mSpecs3 } from "./m3.js";
+import { mSpecs4 } from "./m4.js";
+import { mSpecs5 } from "./m5.js";
 import { n1Specs } from "./n1.js";
 import { n2Specs } from "./n2.js";
 import { n3Specs } from "./n3.js";
@@ -45,4 +50,11 @@ export const templates: readonly Compiled[] = [
   ...compileAll("f", [...fSpecs1, ...fSpecs2, ...fSpecs3]),
   ...compileAll("d", [...dSpecs1, ...dSpecs2]),
   ...compileAll("p", [...pSpecs1, ...pSpecs2, ...pSpecs3]),
+  ...compileAll("m", [
+    ...mSpecs1,
+    ...mSpecs2,
+    ...mSpecs3,
+    ...mSpecs4,
+    ...mSpecs5,
+  ]),
 ];

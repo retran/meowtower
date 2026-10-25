@@ -23,6 +23,10 @@ export const fr = (n: number, d: number): string => `${n}${SLASH}${d}`;
 /** A number as a text of the kind named: a whole number, a decimal, a fraction or a mixed number. */
 export function show(kind: AnswerKind, x: FVal): string {
   if (typeof x === "string") return x;
+  if (kind === "time" && Array.isArray(x)) {
+    const [h, m] = x as unknown as readonly [Q, Q];
+    return `${h.n.toString()}:${m.n.toString().padStart(2, "0")}`;
+  }
   if (!(x instanceof Q)) {
     return (x as readonly (Q | string)[])
       .map((y) => (y instanceof Q ? show("integer", y) : y))
@@ -52,6 +56,7 @@ export interface FracT {
   readonly origin?: Origin;
   readonly kind: AnswerKind;
   readonly rule?: "equivalent" | "simplest";
+  readonly face?: "analogue" | "digital";
   readonly draw: (r: Xoshiro128) => number[];
   readonly valid?: (v: number[]) => boolean;
   readonly solve: (v: number[]) => FVal;
@@ -91,6 +96,7 @@ export function frac(node: string, subtype: string, o: FracT): Spec<never> {
     ...(o.origin ? { origin: o.origin } : {}),
     answer: o.kind,
     ...(o.rule ? { rule: o.rule } : {}),
+    ...(o.face ? { face: o.face } : {}),
     draw: o.draw,
     valid: (v: number[]) => {
       if (o.valid && !o.valid(v)) return false;
@@ -150,3 +156,7 @@ export function dec(n: number, places: number, trim = false): string {
     ? `${sign}${digits(whole)}`
     : `${sign}${digits(whole)},${rest}`;
 }
+
+/** A clock time as the text of a task: `h:mm`. */
+export const tm = (h: number, m: number): string =>
+  `${h}:${m.toString().padStart(2, "0")}`;

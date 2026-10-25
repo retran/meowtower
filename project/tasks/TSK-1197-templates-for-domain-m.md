@@ -1,7 +1,7 @@
 ---
 id: TSK-1197
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -33,7 +33,9 @@ Write the templates of domain M in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 294 templates of domain M are in src/templates/m1.ts to m5.ts, written with the short form of src/templates/kitc.ts, with their strings in content/tasks-m.ru.json. Closed by tests/unit/templates.test.ts (ten or more templates for each of the 26 subtypes, 200 seeds for each template) and by `npm run verify:templates` on 10,000 seeds for each template. `./meowtower graph check` lists none of the 26 subtypes of domain M as thin or without a template.
+
+A clock answer is the time as H:MM, checked in the face the template names. A choice about a benchmark names its option by number, because the option texts stay in the per-language file and no Russian text may sit in the code. The circle, the average speed and the work problems are extensions, tagged as such, because the Dutch goals stop short of them.
 
 ## Left alone
 

@@ -22,6 +22,7 @@ import {
   orderAnswer,
   pairAnswer,
   setAnswer,
+  timeAnswer,
 } from "../shared/answer.js";
 
 export type AnswerKind =
@@ -34,7 +35,8 @@ export type AnswerKind =
   | "order"
   | "line"
   | "fraction"
-  | "mixed";
+  | "mixed"
+  | "time";
 
 /** An answer by kind: a number, a sign or an option, a list of options, or two numbers. */
 export type Answer = Q | string | readonly string[] | readonly [Q, Q];
@@ -76,6 +78,8 @@ export interface Spec<P> {
   readonly vars: (p: P) => Record<string, string>;
   /** How a fraction or mixed answer is judged: any equal fraction, or only the simplest form. Default: simplest. */
   readonly rule?: "equivalent" | "simplest";
+  /** The clock face of a `time` task: an analogue clock accepts both halves of the day. Default: digital. */
+  readonly face?: "analogue" | "digital";
   /** How far an entry may lie from the answer of a `line` task and still be right (ADR-0520). */
   readonly within?: (p: P) => Q;
   /** The options of a choice or set task, in the order shown. */
@@ -179,6 +183,12 @@ export function entryOf(kind: AnswerKind, answer: Answer): string {
       ? whole.toString()
       : `${whole.toString()} ${rest.toString()}/${answer.d.toString()}`;
   }
+  if (kind === "time") {
+    if (!Array.isArray(answer) || answer.length !== 2)
+      throw new TypeError("answer_not_a_time");
+    const [h, m] = answer as unknown as readonly [Q, Q];
+    return `${h.n.toString()}:${m.n.toString().padStart(2, "0")}`;
+  }
   if (kind === "pair") {
     if (!Array.isArray(answer) || answer.length !== 2)
       throw new TypeError("answer_not_a_pair");
@@ -205,6 +215,7 @@ function checkerOf(
   options: readonly string[] | null,
   within: Q,
   rule: "equivalent" | "simplest",
+  face: "analogue" | "digital",
 ): Checker {
   switch (kind) {
     case "integer":
@@ -213,6 +224,10 @@ function checkerOf(
       return decimalAnswer(answer as Q);
     case "compare":
       return choiceAnswer(answer as string, SIGNS);
+    case "time": {
+      const [h, m] = answer as unknown as readonly [Q, Q];
+      return timeAnswer(Number(h.n), Number(m.n), face);
+    }
     case "fraction":
       return fractionAnswer(answer as Q, rule);
     case "mixed":
@@ -299,6 +314,7 @@ export function compile<P>(
             options,
             spec.within ? spec.within(p) : Q.of(0n),
             spec.rule ?? "simplest",
+            spec.face ?? "digital",
           ),
           traps: traps.map((t) => ({
             id: t.spec.id,
@@ -318,7 +334,11 @@ export function compile<P>(
             ...Object.values(vars).flatMap(numbersIn),
             ...numbersOfAnswer(answer),
             ...traps.flatMap((t) => numbersOfAnswer(t.wrong)),
-            ...(spec.constants ?? []).map((c) => Q.of(BigInt(c))),
+            ...(spec.constants ?? []).map((c) =>
+              Number.isInteger(c)
+                ? Q.of(BigInt(c))
+                : Q.fromDecimal(String(c).replace(".", ",")),
+            ),
           ]),
           paramsKey: JSON.stringify(vars),
         };
