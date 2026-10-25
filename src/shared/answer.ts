@@ -20,6 +20,9 @@ export type Form =
   | "choice"
   | "grid"
   | "order"
+  | "set"
+  | "pair"
+  | "line"
   | "none";
 
 export interface Checked {
@@ -71,6 +74,13 @@ const reduced = (n: bigint, d: bigint): boolean => {
 };
 
 const isImproper = (n: bigint, d: bigint): boolean => (n < 0n ? -n : n) >= d;
+
+/** A whole number, a grouped number or a decimal read by value, or undefined when it is none. */
+const parseNumber = (t: string): Q | undefined => {
+  if (INTEGER.test(t) || GROUPED.test(t))
+    return Q.of(BigInt(t.replace(/[  ]/g, "").replace(/^\+/, "")));
+  return DECIMAL.test(t) ? Q.fromDecimal(t) : undefined;
+};
 
 /** A whole number: `12500`, `007`, or grouped `12 500`. */
 export const integerAnswer = (correctValue: Q): Checker =>
@@ -205,15 +215,72 @@ export const timeAnswer = (
  * A point `(x; y)`, a node of the grid (REQ-0766). Its swap `(y; x)` is a
  * trap: it is wrong and carries the form `point_swapped`.
  */
-export const pointAnswer = (x: number, y: number): Checker =>
+export const pointAnswer = (x: number, y: number, within = 0): Checker =>
   accepting((t) => {
     const m = POINT.exec(t);
     if (!m) return UNPARSED;
     const px = Number(m[1]);
     const py = Number(m[2]);
-    if (px === x && py === y) return correct("point");
+    if (Math.abs(px - x) <= within && Math.abs(py - y) <= within)
+      return correct("point");
     if (px === y && py === x) return wrong("point_swapped");
     return wrong("point");
+  });
+
+/**
+ * A number placed on a line "ongeveer" (ADR-0520): the entry is a number, right when it lies
+ * within `within` of the target and wrong beyond it. With `within` of zero only the exact value
+ * is right.
+ */
+export const lineAnswer = (target: Q, within: Q): Checker =>
+  accepting((t) => {
+    const value = parseNumber(t);
+    if (value === undefined) return UNPARSED;
+    const distance = value.sub(target);
+    const far = distance.cmp(Q.of(0n)) < 0 ? distance.neg() : distance;
+    return judge(far.cmp(within) <= 0, "line");
+  });
+
+/**
+ * Every correct option, selected (ADR-0520). The entry marks options by name, separated by
+ * commas. The exact set is right; the correct options with one missing, or with one wrong option
+ * added, are half right; anything else is wrong. An empty entry, a repeated option or an option
+ * outside the list is unparsed.
+ */
+export const setAnswer = (
+  correctOptions: readonly string[],
+  options: readonly string[],
+): Checker =>
+  accepting((t) => {
+    const marked = t.split(",").map((s) => s.trim());
+    if (marked.some((c) => c === "" || !options.includes(c))) return UNPARSED;
+    const given = new Set(marked);
+    if (given.size !== marked.length) return UNPARSED;
+    const want = new Set(correctOptions);
+    const missing = [...want].filter((c) => !given.has(c)).length;
+    const extra = [...given].filter((c) => !want.has(c)).length;
+    if (missing + extra === 0) return correct("set");
+    return missing + extra === 1 ? half("set") : wrong("set");
+  });
+
+/**
+ * Two numbers in order, such as the number before and the number after (ADR-0520). The entry is
+ * `a; b`. Both right is correct, one right is half right, and none is wrong. A number is judged
+ * by value, so `12 500` and `12500` agree.
+ */
+export const pairAnswer = (first: Q, second: Q): Checker =>
+  accepting((t) => {
+    const parts = t.split(";").map((s) => s.trim());
+    if (parts.length !== 2) return UNPARSED;
+    const a = parseNumber(parts[0] ?? "");
+    const b = parseNumber(parts[1] ?? "");
+    if (a === undefined || b === undefined) return UNPARSED;
+    const right = Number(a.eq(first)) + Number(b.eq(second));
+    return right === 2
+      ? correct("pair")
+      : right === 1
+        ? half("pair")
+        : wrong("pair");
   });
 
 /**

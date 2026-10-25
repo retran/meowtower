@@ -1,7 +1,7 @@
 ---
 id: ADR-0520
 artifact: adr
-status: draft
+status: done
 revised: 2026-10-24
 addresses: [REQ-1232]
 supersedes: []
