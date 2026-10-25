@@ -1,7 +1,7 @@
 ---
 id: TSK-1193
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -33,7 +33,9 @@ Write the templates of domain A in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 221 templates of domain A are in src/templates/a1.ts to a4.ts, written with the short form of src/templates/kit.ts, with their strings in content/tasks-a.ru.json. Closed by tests/unit/templates.test.ts (ten or more templates for each of the 20 subtypes, 200 seeds for each template) and by `npm run verify:templates` on 10,000 seeds for each template. `./meowtower graph check` lists none of the 20 subtypes of domain A as thin.
+
+A15 and A16 hold ten templates each. The research record found too few forms for ten in these two subtypes, so they reuse the one-step and two-step shapes with different roles for the unknown. The "several named digits in cells" answer kind that RES-4283 asks for is not built; no template needs it yet.
 
 ## Left alone
 

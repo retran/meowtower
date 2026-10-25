@@ -10,7 +10,7 @@ const SEEDS = 200;
 const seedOf = (i: number): Uint8Array =>
   Uint8Array.from({ length: 32 }, (_, k) => (i * 31 + k * 7) % 256);
 
-describe("domain N templates", () => {
+describe("domain N and A templates", () => {
   it("holds at least ten templates for each subtype of every node that has one", () => {
     const graph = parse(readFileSync(GRAPH_FILE, "utf8")) as {
       nodes: Record<string, { subtypes: { id: string }[] }>;
