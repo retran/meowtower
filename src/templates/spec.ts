@@ -15,8 +15,10 @@ import {
   type Checker,
   choiceAnswer,
   decimalAnswer,
+  fractionAnswer,
   integerAnswer,
   lineAnswer,
+  mixedAnswer,
   orderAnswer,
   pairAnswer,
   setAnswer,
@@ -30,7 +32,9 @@ export type AnswerKind =
   | "set"
   | "pair"
   | "order"
-  | "line";
+  | "line"
+  | "fraction"
+  | "mixed";
 
 /** An answer by kind: a number, a sign or an option, a list of options, or two numbers. */
 export type Answer = Q | string | readonly string[] | readonly [Q, Q];
@@ -70,6 +74,8 @@ export interface Spec<P> {
   readonly roles?: Readonly<Record<string, string>>;
   /** The values the strings may name; every `{name}` in a string is filled from here. */
   readonly vars: (p: P) => Record<string, string>;
+  /** How a fraction or mixed answer is judged: any equal fraction, or only the simplest form. Default: simplest. */
+  readonly rule?: "equivalent" | "simplest";
   /** How far an entry may lie from the answer of a `line` task and still be right (ADR-0520). */
   readonly within?: (p: P) => Q;
   /** The options of a choice or set task, in the order shown. */
@@ -157,6 +163,20 @@ export function entryOf(kind: AnswerKind, answer: Answer): string {
           minus: "-",
         });
   }
+  if (kind === "fraction" || kind === "mixed") {
+    if (!(answer instanceof Q)) throw new TypeError("answer_not_a_number");
+    if (kind === "mixed" && answer.d === 1n) return answer.n.toString();
+    if (
+      kind === "fraction" ||
+      (answer.n < 0n ? -answer.n : answer.n) < answer.d
+    )
+      return `${answer.n.toString()}/${answer.d.toString()}`;
+    const whole = answer.n / answer.d;
+    const rest = answer.n % answer.d;
+    return rest === 0n
+      ? whole.toString()
+      : `${whole.toString()} ${rest.toString()}/${answer.d.toString()}`;
+  }
   if (kind === "pair") {
     if (!Array.isArray(answer) || answer.length !== 2)
       throw new TypeError("answer_not_a_pair");
@@ -182,6 +202,7 @@ function checkerOf(
   answer: Answer,
   options: readonly string[] | null,
   within: Q,
+  rule: "equivalent" | "simplest",
 ): Checker {
   switch (kind) {
     case "integer":
@@ -190,6 +211,10 @@ function checkerOf(
       return decimalAnswer(answer as Q);
     case "compare":
       return choiceAnswer(answer as string, SIGNS);
+    case "fraction":
+      return fractionAnswer(answer as Q, rule);
+    case "mixed":
+      return mixedAnswer(answer as Q, rule);
     case "line":
       return lineAnswer(answer as Q, within);
     case "choice":
@@ -271,6 +296,7 @@ export function compile<P>(
             answer,
             options,
             spec.within ? spec.within(p) : Q.of(0n),
+            spec.rule ?? "simplest",
           ),
           traps: traps.map((t) => ({
             id: t.spec.id,
@@ -301,6 +327,13 @@ export function compile<P>(
   };
 }
 
+/** A number and, for a fraction, the numbers a text reads in it: numerator, denominator, whole part and rest. */
+const partsOf = (x: Q): Q[] => {
+  if (x.d === 1n) return [x];
+  const n = x.n < 0n ? -x.n : x.n;
+  return [x, Q.of(n), Q.of(x.d), Q.of(n / x.d), Q.of(n % x.d)];
+};
+
 /** A number written with its sign dropped, as `-5` is read in a text, still counts as the number. */
 const withNegatives = (list: readonly Q[]): Q[] => [
   ...list,
@@ -309,7 +342,7 @@ const withNegatives = (list: readonly Q[]): Q[] => [
 
 const numbersOfAnswer = (answer: Answer): Q[] =>
   answer instanceof Q
-    ? [answer]
+    ? partsOf(answer)
     : typeof answer === "string"
       ? numbersIn(answer)
       : (answer as readonly (Q | string)[]).flatMap((x) =>
