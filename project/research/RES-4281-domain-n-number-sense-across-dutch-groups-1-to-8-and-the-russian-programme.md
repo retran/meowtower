@@ -1,7 +1,7 @@
 ---
 id: RES-4281
 artifact: research
-status: draft
+status: approved
 revised: 2026-10-24
 elaborates: RES-1200
 ---
@@ -22,7 +22,9 @@ What must the templates of domain N ask, at which group, so that they cover the 
 
 ## Method
 
-I read these sources in full text, extracted with `pdftotext`: the SLO tussendoelen rekenen-wiskunde po 2017 (the Getalbegrip tables, groups 2 to 8), the SLO concretisering of reference levels 1F and 1S (Domein Getallen, part A and B, October 2011), and the federal working programme for mathematics, grades 1 to 4 and grades 5 to 9, base level (edsoo.ru, July 2025). I did not read the Soviet-era textbooks of Moro, Bantova and Vilenkin themselves: no scan or text of them could be fetched, and the web tools returned only teachers' derived plans. The federal programme is the legal successor of that tradition, and I treat it as the Russian primary source. The Kangaroo and school-stage olympiad papers were located and not yet read: the Dutch Kangoeroe papers on w4kangoeroe.nl, the Russian-language Kangaroo papers hosted by the University of Tartu, and the MCCME school-stage papers with solutions at olympiads.mccme.ru.
+I read these sources in full text, extracted with `pdftotext`: the SLO tussendoelen rekenen-wiskunde po 2017 (the Getalbegrip tables, groups 2 to 8), the SLO concretisering of reference levels 1F and 1S (Domein Getallen, part A and B, October 2011), and the federal working programme for mathematics, grades 1 to 4 and grades 5 to 9, base level (edsoo.ru, July 2025). I also read two Soviet-era textbooks from the Internet Archive, as OCR text: Moro and Bantova, Mathematics for grade 1 (16th edition, Prosveshchenie, 1990, "for the three-year primary school") and for grade 2 (9th edition, 1977). I could not find readable copies of the Soviet grade 3 and 4 books by Moro, or of Vilenkin's grades 5 and 6 from the Soviet period; the only Vilenkin text I found is the 2024 edition for grade 6, which is not Soviet. The federal programme is the legal successor of that tradition, and I treat it as the Russian primary source for grades 3 to 6. Of the olympiad papers I read the Russian-language Kangaroo paper for grades 3 and 4 (2020), the all-Russian school-stage paper with solutions (2021), and the Dutch Kangoeroe report of 2003.
+
+Not obtained: Russian-hosted programme PDFs failed the certificate check and I did not bypass it, two other programme PDFs were page images that my OCR tool (English only) could not read, and both were superseded by the federal programme text above.
 
 ## Findings
 
@@ -58,6 +60,14 @@ The Dutch standard teaches rounding from group 5 and the Russian programme from 
 
 Against the Dutch base, the Russian text adds, for the number sense of domain N: comparison by "how many times" (кратное сравнение, grade 3), multiplication and division by 10, 100 and 1000 as a number-sense step (grade 4), Roman numerals (grade 5), the rectangular coordinate plane (grade 6), and arithmetic with negative numbers and the absolute value (grade 6), which the Dutch primary standard leaves to secondary school. These are extensions: the Dutch goals do not forbid them, and the Russian text gives them an age.
 
+### Two Soviet textbooks of grades 1 and 2 teach the same numbers to 100 as Dutch groups 3 and 4
+
+The grade 1 book (1990) is organised as "Десяток", then "Сотня" with "Числа от 11 до 20" and "Числа от 21 до 100", and it sets comparison tasks of exactly the form the Dutch goals describe: «Сравни числа: 76 и 40; 20 и 8; 100 и 99» (moro1-1990.txt line 3790) and «Сравни числа 16 и 17; 20 и 19; 20 и 12» (line 1334), with a choice of the signs «>», «<», «=» (line 35). The grade 2 book (1977) opens with "Сотня" and includes "Умножение десяти и деление на 10", "Увеличение и уменьшение числа в несколько раз" and "Задачи на сравнение чисел" in its contents (moro2-1977.txt, contents from line 14797). The Soviet text therefore teaches "a number n times larger or smaller" in grade 2, a year earlier than the current federal programme does in grade 3.
+
+### The olympiad papers give number-reasoning forms that the drill does not
+
+Russian school stage 2021, grade 4: guess a three-digit number from three guesses that each agree with it in exactly one place, «109, 704 и 124», answer 729 (task 4.5); put the digits 1 to 5 once each so that every 1×3 rectangle sums to 13 (4.6); restore erased signs from four examples with letters standing for the signs (4.1); say how many five-rouble coins Petya has from counts of coins that are not of each value (4.2). Kangaroo 2020, grades 3 and 4: a grasshopper starts on 1 and may jump only to a cell whose number is 3 more, and the child finds the largest number it can reach (task 6), and a table of operations in which the cells with result 20 are shaded (task 3); each task has five options, a right answer scores 3 points in the first eight tasks and a wrong one costs a point. Dutch Kangoeroe 2003 report (its group label is unconfirmed, because the extracted reports show vmbo, havo and vwo sections): how many whole numbers fit a count smaller than 15,35, the smallest number in the tables of 2, 3 and 4, and sums of numbers in two rings (kangoeroe-396 report, lines 516 to 534).
+
 ### The existing answer kinds cover most forms and miss four
 
 SPC-0040 lists integer, decimal, fraction, mixed, quotientRemainder, time, point, compare, choice, grid, order, steps, equation and region. The sources use forms with no kind: select every number that fits (a set), give the number before and after (an ordered pair), name a missing digit in a column of a number (an integer works), complete a split such as 6400 = 4 x 100 + 6 x ... (an integer works), say how many numbers fit a rule (an integer works), and build the largest or smallest number from given digit cards (an integer works). Only the set and the ordered pair need a new kind; a range "between X and Y" can be a choice. A tolerance rule is also missing for "ongeveer" tasks on a number line, where a placed point is right within a stated distance.
@@ -72,7 +82,7 @@ SPC-0040 lists integer, decimal, fraction, mixed, quotientRemainder, time, point
 6. The answer contract gains a set kind (select every correct option) and an ordered-pair kind (two numbers), and an acceptance distance for a point placed "ongeveer" on a line.
 7. Rounding templates state their purpose, because the Dutch goals make the purpose set the accuracy.
 8. N8, arithmetic with negative numbers, stays at stretch and is an extension, and N7's thermometer templates read and compare temperatures without arithmetic until the order subtype reaches 1S.
-9. Before its templates are written, every domain gets a record like this one that names the passages it rests on, and the Soviet-era textbook sources are added when a readable copy is found.
+9. Before its templates are written, every domain gets a record like this one that names the passages it rests on. The Soviet-era sources for grades 3 to 6 are added when a readable copy is found; until then only grades 1 and 2 have a Soviet source.
 
 ## Sources
 
@@ -80,6 +90,8 @@ SPC-0040 lists integer, decimal, fraction, mixed, quotientRemainder, time, point
 - [SLO, Concretisering referentieniveaus rekenen 1F en 1S (2011)](https://slo.nl/publish/pages/2834/concretisering-referentieniveaus-rekenen-1f-1s.pdf), read 2026-10-24 - Domein Getallen, parts A and B.
 - [Federal working programme, mathematics, grades 1 to 4 (2025)](https://edsoo.ru/wp-content/uploads/2025/07/2025_noo_frp_matematika_1-4.pdf), read 2026-10-24 - the number content of grades 1 to 4.
 - [Federal working programme, mathematics, grades 5 to 9, base level (2025)](https://edsoo.ru/wp-content/uploads/2025/07/2025_ooo_frp_matematika-5-9_baza.pdf), read 2026-10-24 - the number content of grades 5 and 6.
-- [Kangoeroe papers, w4kangoeroe.nl](https://w4kangoeroe.nl/kangoeroe/index.php/download_file/view/396/405), located 2026-10-24, not yet read - Dutch contest papers for groups 7 and 8.
-- [Kangaroo papers for grades 3 and 4, University of Tartu](https://teaduskool.ut.ee/sites/default/files/teaduskool/ainevoistlused/kanguru_2019_20_ylesanded_ekolier_vk.pdf), located 2026-10-24, not yet read - Russian-language contest tasks.
-- [MCCME, school stage of the all-Russian olympiad, with solutions](https://olympiads.mccme.ru/vmo/2021/i-sol.pdf), located 2026-10-24, not yet read - olympiad tasks for grades 4 and 5.
+- [Moro and Bantova, Mathematics for grade 1 (1990)](https://archive.org/details/1_20240811_20240811_1529), read 2026-10-24 - Soviet grade 1: numbers to 10, 20 and 100, and comparison tasks.
+- [Moro and Bantova, Mathematics for grade 2 (1977)](https://archive.org/details/1977_20220407_202204), read 2026-10-24 - Soviet grade 2: the hundred and "n times larger or smaller".
+- [Kangoeroe 2003 report, w4kangoeroe.nl](https://w4kangoeroe.nl/kangoeroe/index.php/download_file/view/396/405), read 2026-10-24 - Dutch contest items on numbers.
+- [Kangaroo 2020, grades 3 and 4, University of Tartu](https://teaduskool.ut.ee/sites/default/files/teaduskool/ainevoistlused/kanguru_2019_20_ylesanded_ekolier_vk.pdf), read 2026-10-24 - contest format and number items.
+- [MCCME, school stage of the all-Russian olympiad 2021, with solutions](https://olympiads.mccme.ru/vmo/2021/i-sol.pdf), read 2026-10-24 - grade 4 and 5 number tasks.
