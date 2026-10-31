@@ -272,3 +272,24 @@ The premortem, written as though it had happened. At the first probe stage check
 - Whether the owner allows Dutch probe text at all: the owner's amendment to `CLAUDE.md`.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6636 (superseded by REQ-7400, which this record now addresses); REQ-6668 (superseded by REQ-7500, which ADR-0460 addresses); REQ-6672 (superseded by REQ-7402, which this record now addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. One module computes every Wilson, Newcombe and median interval, and a reference table holds it to 0.0005 (`archive/tasks/TSK-1028-one-interval-module-with-a-reference-table.md`)
+2. Each measure owns a «мало данных» floor, and a figure below it feeds no finding (`archive/tasks/TSK-1029-measure-registry-and-floor-property-test.md`)
+3. The report draws its own lines only from a list fixed before her data exists (`archive/tasks/TSK-1030-fixed-list-of-contrasts.md`)
+4. The language line and the maths line appear at 95 % and say «пока не ясно» otherwise (`archive/tasks/TSK-1031-language-and-maths-lines.md`)
+5. Every line the report draws names a check to run and proposes no lesson (`archive/tasks/TSK-1032-interpretation-lines-name-a-check.md`)
+6. The report offers no setting, filter or mode that hides a node or a figure (`archive/tasks/TSK-1033-report-cannot-be-curated.md`)
+7. The summary counts excluded attempts as right and wrong, and each node card strikes them through (`archive/tasks/TSK-1034-exclusion-trail-in-summary-and-node-card.md`)
+8. The summary lists nodes with errors that carry no hard word, beside the language-cause list (`archive/tasks/TSK-1035-errors-without-hard-words-list.md`)
+9. The PDF snapshot prints every report screen and every node card, or nothing (`archive/tasks/TSK-1036-pdf-snapshot-prints-everything-or-nothing.md`)
+10. Three states have node labels, the fourth has none, and «на пороге» names one label only (`archive/tasks/TSK-1037-four-states-and-the-threshold-word.md`)
+11. The four new event types each have one owning decision, and the owner check fails while it is a draft (`archive/tasks/TSK-1038-event-types-have-one-approved-owner.md`)
+12. `item_shown` records two new purposes and the probe's presentation, and stored events stay readable (`archive/tasks/TSK-1039-item-shown-purposes-probe-field-and-upcast.md`)
+13. The scope guard fails on every deferred part of addendum 2, and a probe template names its family (`archive/tasks/TSK-1040-scope-guard-keeps-deferred-parts-out-of-the-mvp.md`)
+14. No model request can carry a report figure, a probe result or a hypothesis (`archive/tasks/TSK-1041-no-request-carries-a-figure-or-her-data-to-the-probe.md`)
+15. Check 5 plays four students whose accuracy follows the presentation, and counts both lines on one seed (`archive/tasks/TSK-1042-check-5-students-and-the-both-gaps-bar.md`)
+16. Check 5 holds the single-gap and no-gap bars, a phase limit, and a rate the report's own code measures (`archive/tasks/TSK-1043-check-5-single-gap-bars-phase-limit-and-rates.md`)
+

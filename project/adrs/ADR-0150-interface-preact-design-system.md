@@ -142,3 +142,24 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3236 (superseded by REQ-6212, which ADR-0330 addresses); REQ-3512 (superseded by REQ-5604, which ADR-0270 addresses); REQ-3520 (superseded by REQ-6346, which ADR-0340 addresses); REQ-3524 (superseded by REQ-6108, which ADR-0320 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The owner's 23 components are ported to typed Preact components, and a drift check compares the port with the owner's script (`archive/tasks/TSK-0660-ported-components-and-the-drift-check.md`)
+2. The root carries her theme, palette and text size, the dreamcore layer sits on the scene alone, and the Parent Room keeps the light theme (`archive/tasks/TSK-0661-theme-palette-and-text-size-follow-her-everywhere-but-the-parent-room.md`)
+3. The verify command fails on a contrast below its threshold, on a colour literal and on a grey shadow (`archive/tasks/TSK-0662-contrast-and-token-checks-fail-the-build.md`)
+4. She changes the look in her settings at any time, and every paired device opens in it (`archive/tasks/TSK-0663-settings-screen-and-looks-follow-her-to-every-device.md`)
+5. Text sizes, line length, local fonts and equal-width digits hold on the iPad and on a computer (`archive/tasks/TSK-0664-type-scale-line-length-fonts-and-equal-width-digits.md`)
+6. Nothing moves in the task window, nothing flashes more than three times a second, and no sound starts loud (`archive/tasks/TSK-0665-nothing-moves-in-the-task-window-and-no-sound-starts-loud.md`)
+7. A screen reader announces a System window and a new story line without interrupting, and every counter names its resource (`archive/tasks/TSK-0666-screen-readers-hear-new-lines-and-counters-without-interruption.md`)
+8. The maths keypad holds its keys in fixed cells on the right, and «Готово» and «Не знаю» sit apart from it (`archive/tasks/TSK-0667-keypad-with-fixed-cells-and-the-action-row.md`)
+9. Each answer kind has its own field, and an entry the engine can't parse is marked softly (`archive/tasks/TSK-0668-answer-fields-for-each-kind-and-a-soft-mark-for-an-unparsed-entry.md`)
+10. «Не знаю» is on every task kind, a choice keeps its colours after an answer, and keys 1 to 4 select an option (`archive/tasks/TSK-0669-dont-know-on-every-kind-uncoloured-options-and-number-keys.md`)
+11. A maths term with a glossary entry is marked, and a tap opens its explanation, picture and approved Dutch word (`archive/tasks/TSK-0670-term-hints-underline-the-glossary-terms-and-open-a-popover.md`)
+12. Every story screen is one grid with the story in the centre, a scene column with no button, and a top bar that always leaves (`archive/tasks/TSK-0671-story-screen-grid-top-bar-and-action-row.md`)
+13. Every Underside screen shows «Мне страшно» and a lantern, and the Awakening closes with rank E (`archive/tasks/TSK-0672-underside-lantern-awakening-closing-and-the-creepiness-heading.md`)
+14. Outcomes, the knot scheme, the experience bar, elements, chests, unmet creatures and quests show what the rules require (`archive/tasks/TSK-0673-outcome-scheme-elements-chest-and-creature-displays.md`)
+15. The story field has a voice button, and where Safari offers no speech recognition it opens the keyboard's dictation (`archive/tasks/TSK-0674-voice-button-beside-the-story-field.md`)
+16. The parent looks at every screen in both themes and all four presets and signs off the five rules a person must judge (`archive/tasks/TSK-0675-parent-looks-at-every-screen-in-both-themes-and-four-presets.md`)
+

@@ -245,3 +245,21 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0390, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. A puzzle is a language-free data file and a Russian text file, and the build fails one that breaks a static rule (`archive/tasks/TSK-0868-puzzle-bank-files-and-the-group-1-static-checks.md`)
+2. A puzzle's check accepts every answer that meets its rules, for numbers, sets, arrangements and grid cells (`archive/tasks/TSK-0869-checks-accept-every-answer-that-meets-the-rules-for-four-kinds.md`)
+3. Each of the five widgets has one pure rules module that the client and the server both run, and the move-sequence check replays moves through it (`archive/tasks/TSK-0870-five-widget-rules-modules-and-the-move-sequence-check.md`)
+4. The Diary shows puzzle pages and the five widgets as play she enters by her own choice, under the names «Петельки Смотрителя» and «головоломка» (`archive/tasks/TSK-0871-diary-puzzle-pages-the-widgets-and-the-branch-names.md`)
+5. `npm run puzzles:prepare` passes each puzzle through five steps on the offline key and stops at its own budget (`archive/tasks/TSK-0872-offline-preparation-run-gets-a-puzzle-through-five-steps.md`)
+6. The parent approves each puzzle by hash on one screen, and the game serves only the content she approved (`archive/tasks/TSK-0873-parent-approves-a-puzzle-by-hash-and-the-game-serves-only-approved.md`)
+7. The Director of puzzles offers at most one new puzzle a game day, after a finale, and never more than three are open (`archive/tasks/TSK-0874-director-of-puzzles-offers-one-new-puzzle-after-the-finale.md`)
+8. The server runs a puzzle's own flow: unlimited answers, a three-rung ladder, one free thread and a box (`archive/tasks/TSK-0875-puzzle-routes-answers-rungs-free-thread-and-the-box.md`)
+9. Every puzzle action is an event type of its own, and the knowledge model and the Director read none of them (`archive/tasks/TSK-0876-puzzle-events-of-their-own-that-the-knowledge-model-never-reads.md`)
+10. A puzzle opens from a rest stop, its minutes count towards the eyes and the soft stop, and the soft stop waits for a boundary (`archive/tasks/TSK-0877-puzzle-time-the-rest-stop-the-eye-count-and-the-soft-stop.md`)
+11. A solved puzzle gives its Diary page, a mark, 2 or 3 star yarn and a title for each series of five, the same after a hint (`archive/tasks/TSK-0878-a-solved-puzzle-gives-its-page-yarn-and-titles-and-nothing-else.md`)
+12. The economy's balance simulation counts the star yarn puzzles give and the guiding threads they spend (`archive/tasks/TSK-0879-balance-simulation-includes-puzzle-yarn-and-thread-spend.md`)
+13. The VWO readiness screen shows «Нестандартное мышление» as a reserve, with the puzzle counts, and report v1 keeps nine screens (`archive/tasks/TSK-0880-report-section-non-standard-thinking-on-the-readiness-screen.md`)
+

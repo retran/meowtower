@@ -213,3 +213,20 @@ The premortem, written as though it had happened: after three months the report 
 - A tolerance on "about 10 %" and "about 5 %" for the owner's acceptance; the simulation bands in check 5 are mine, chosen at about ±20 % to ±30 % of each share for 2,000 slots.
 
 Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5400 (superseded by REQ-7158, which ADR-0430 addresses); REQ-5412 (superseded by REQ-7160, which ADR-0430 addresses); REQ-5454 (superseded by REQ-7174, which ADR-0430 addresses); REQ-5456 (superseded by REQ-7176, which ADR-0430 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The skill graph names the surplus and unanswerable subtypes and gates them by the node's own state (`archive/tasks/TSK-0820-insufficient-and-surplus-subtypes-in-the-graph.md`)
+2. The checker accepts «Нельзя узнать» with or without a chosen option and records three verdicts apart from «Не знаю» (`archive/tasks/TSK-0821-checker-accepts-cant-know-and-gives-its-verdicts.md`)
+3. A surplus template declares extra-data graphs, and an answer that uses the unused number is classed `used_extra_data` (`archive/tasks/TSK-0822-extra-data-graphs-and-the-class-used-extra-data.md`)
+4. An unanswerable problem is a complete problem with one given withheld, so its steps, hints and step count come from the complete graph (`archive/tasks/TSK-0823-unanswerable-problem-is-a-complete-problem-with-one-given-withheld.md`)
+5. Every T1 to T4 problem sends four "what's missing" options in its packet, built by one rule for both kinds (`archive/tasks/TSK-0824-four-options-and-one-packet-for-both-kinds.md`)
+6. «Нельзя узнать» sits in the action row of every T1 to T4 phase and opens the four options before it submits (`archive/tasks/TSK-0825-cant-know-button-in-the-action-row-and-its-options-step.md`)
+7. The Director draws a surplus or unanswerable subtype per slot from a seeded stream, behind a state gate (`archive/tasks/TSK-0826-director-draws-surplus-and-unanswerable-slots-at-random.md`)
+8. A refusal guard reads 20 solvable first attempts, halves the unanswerable share once and clears itself (`archive/tasks/TSK-0827-refusal-guard-halves-the-unanswerable-share.md`)
+9. The twin after an unanswerable first attempt is unanswerable or ordinary with equal odds (`archive/tasks/TSK-0828-twin-after-an-unanswerable-attempt-is-drawn-at-random.md`)
+10. Surplus and unanswerable subtypes write streams of their own and move no estimate until a model version admits them (`archive/tasks/TSK-0829-new-subtypes-keep-their-own-streams-until-admitted.md`)
+11. «Нельзя узнать» breaks a run of «Не знаю» and adds nothing to the help limit or the help share (`archive/tasks/TSK-0830-cant-know-counts-as-an-answer-in-every-limit.md`)
+12. The report shows four separate counts, the refusal observation and a note that the unanswerable estimates stay unchecked (`archive/tasks/TSK-0831-report-shows-four-counts-and-the-note-on-unchecked-estimates.md`)
+

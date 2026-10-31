@@ -539,3 +539,22 @@ file with a dictionary it wasn't written from.
   for a second language covers when that language ships.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5202 (superseded by REQ-7202, which ADR-0440, ADR-0460 addresses); REQ-5206 (superseded by REQ-7210, which ADR-0440, ADR-0460 addresses); REQ-5218 (superseded by REQ-6420, which ADR-0360 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. `judgeCompose` gives one verdict and an error class for a target and a graph, the same every time (`archive/tasks/TSK-0788-judge-compose-gives-one-verdict-for-a-target-and-a-graph.md`)
+2. A card riddle has her build the problem from sentence cards the engine made, and the engine judges it with no model (`archive/tasks/TSK-0789-card-riddle-is-built-from-sentence-cards-with-no-model.md`)
+3. Every riddle runs one compose flow on the server, with one correction, an unassisted attempt and no twin (`archive/tasks/TSK-0790-every-riddle-runs-one-compose-flow-with-one-correction-and-no-twin.md`)
+4. The five compose events record verdicts and both texts only in their own fields, and mark a corrected riddle (`archive/tasks/TSK-0791-compose-events-keep-verdicts-and-both-texts-in-one-place.md`)
+5. The masker replaces every number in her cleaned text with a token, and the map from tokens to numbers never leaves the Mac (`archive/tasks/TSK-0792-masker-replaces-every-number-and-keeps-the-mapping-on-the-mac.md`)
+6. Her composed text passes the local triggers, the cleaning, the masking and the judge's safety check before any parse request leaves the Mac (`archive/tasks/TSK-0793-her-text-passes-triggers-cleaning-masking-and-a-safety-check-before-a-parse.md`)
+7. `PARSE_MODEL` is fixed to a zero-retention player-tier endpoint, every parse call is logged, and it spends only from the parse bucket (`archive/tasks/TSK-0794-parse-model-runs-at-zero-retention-and-every-call-is-logged-and-charged-to-its-bucket.md`)
+8. The engine refuses an invalid parse reply as `unparsed`, and the paraphrase holds only template strings and spans found in her own text (`archive/tasks/TSK-0795-parser-reply-is-checked-and-she-sees-only-template-words-and-her-own-spans.md`)
+9. The Director offers at most 2 riddles a game day as a story scene outside the room slots, on a node she understands (`archive/tasks/TSK-0796-director-offers-at-most-two-riddles-a-day-outside-the-room-slots.md`)
+10. The riddle's field is the story's free-text field with its note and three starters, and every string comes from the language files (`archive/tasks/TSK-0797-riddle-field-uses-the-story-field-with-its-note-starters-and-strings-from-files.md`)
+11. The composing stream counts verdicts apart, and no estimate, block, probe, state, ladder or input share reads a riddle (`archive/tasks/TSK-0798-composing-stream-is-counted-apart-and-no-estimate-reads-a-riddle.md`)
+12. The report shows «Может составить задачу» as counts, and the Parent Room lists every riddle with its texts, paraphrase, answer and verdict (`archive/tasks/TSK-0799-report-and-parent-room-show-the-riddles-counts-and-the-rejected-share.md`)
+13. «Загадки героини» pages are rendered by the server from the log, and no composed text reaches a `StoryRequest` or the Master's memory (`archive/tasks/TSK-0800-diary-pages-are-rendered-from-the-log-and-no-riddle-text-reaches-the-master.md`)
+14. `verify --live --compose` runs the parser on masked reference texts and reports agreement, the match bound, the confusion and the request check (`archive/tasks/TSK-0801-live-compose-verification-measures-the-masked-parser-on-labelled-texts.md`)
+

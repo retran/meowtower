@@ -66,3 +66,9 @@ A reader of an approved record must translate old names through the table above,
 
 - The name of the Tower inside the story, which the canon keeps.
 - Whether «Мяубашня» is the final Russian title: it is the owner's direction to change the title, with this spelling chosen by the implementer and open to the owner's correction.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Every technical name carries Meowtower in the repository, the running stack and the living documents (`archive/tasks/TSK-0740-renamed-names-hold-in-the-stack-and-the-living-documents.md`)
+

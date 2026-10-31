@@ -234,3 +234,24 @@ Amended by ADR-0380, ADR-0390, ADR-0400, ADR-0410, ADR-0420, ADR-0430 and ADR-04
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 5 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-1320 (superseded by REQ-5248, which ADR-0230, ADR-0460 addresses); REQ-1342 (superseded by REQ-7170, which ADR-0430 addresses); REQ-1414 (superseded by REQ-6796, which ADR-0390, ADR-0400 addresses); REQ-2308 (superseded by REQ-6064, which ADR-0280, ADR-0290, ADR-0300, ADR-0310, ADR-0330, ADR-0460 addresses); REQ-3518 (superseded by REQ-6348, which ADR-0340, ADR-0370, ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The report is a cached projection of the log, rebuilt after each adventure and served only to the parent session (`archive/tasks/TSK-0708-report-cache-rebuilds-after-each-adventure-behind-the-parent-session.md`)
+2. The node card shows each task as the player saw it, and assisted attempts reach only the "with help" figures (`archive/tasks/TSK-0709-node-card-shows-each-task-as-shown-and-keeps-assisted-attempts-apart.md`)
+3. The summary screen shows the frontier, the nodes to recheck and a long day (`archive/tasks/TSK-0710-summary-screen-shows-the-frontier-stale-nodes-and-long-days.md`)
+4. The graph map rings every frontier node, and word problems are counted by type and steps with modelling errors apart (`archive/tasks/TSK-0711-graph-map-rings-the-frontier-and-splits-word-problem-errors.md`)
+5. The misconceptions screen groups traps across nodes and lists the unrecognised, and the science screen shows no score (`archive/tasks/TSK-0712-misconceptions-and-science-screens.md`)
+6. The VWO readiness block counts verified states against thresholds kept as versioned data (`archive/tasks/TSK-0713-vwo-readiness-ladder-counts-verified-states-against-versioned-thresholds.md`)
+7. The limits projection computes a result for each session, smoothed over 7 sessions, and measures endurance (`archive/tasks/TSK-0714-limits-projection-and-the-endurance-limit.md`)
+8. The limits for holding steps, speed of the basics, scratchpad, error type and carelessness are computed (`archive/tasks/TSK-0715-limits-holding-steps-speed-scratchpad-error-type-and-carelessness.md`)
+9. The limits for impulsiveness, avoidance, anxiety, flow and help are computed (`archive/tasks/TSK-0716-limits-impulsiveness-avoidance-anxiety-flow-and-help.md`)
+10. The limits screen shows one row for each of the twelve limits, with «мало данных» below three sessions (`archive/tasks/TSK-0717-limits-screen-shows-twelve-rows-and-too-little-data.md`)
+11. Fluency thresholds are kept for each device type and start from the catalogue and the motor correction (`archive/tasks/TSK-0718-fluency-thresholds-per-device-type-start-from-catalogue-and-motor-correction.md`)
+12. The motor check repeats monthly, every update is a new threshold version, and only a person changes the catalogue (`archive/tasks/TSK-0719-monthly-motor-check-threshold-versions-and-a-read-only-catalogue.md`)
+13. A lesson mark opens a recheck from day 1 to 3 and another from day 12 to 16 (`archive/tasks/TSK-0720-lesson-marks-open-two-recheck-windows.md`)
+14. Lesson labels compare checked states only, and the dynamics views carry their caveats (`archive/tasks/TSK-0721-lesson-labels-and-dynamics-views-compare-only-checked-states.md`)
+15. The parent sets the player's three details in the Parent Room, and a Dutch word shows only after approval (`archive/tasks/TSK-0722-settings-panel-holds-the-three-values-and-the-glossary-waits-for-approval.md`)
+16. The parent prepares, previews and approves the next adventure, and the player gets it with no live model call (`archive/tasks/TSK-0723-parent-prepares-previews-and-approves-the-next-adventure.md`)
+

@@ -222,3 +222,21 @@ The premortem, written as though it had happened: at the stage 0.3 review the bl
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. A grouping template declares its host node, technique, admissible links and optimal plans, and the build fails one that breaks a rule (`archive/tasks/TSK-0836-grouping-declaration-and-its-build-checks.md`)
+2. Six grouping templates, two for each technique a template can declare, show an expression with a convenient grouping (`archive/tasks/TSK-0837-six-grouping-templates-two-for-each-technique.md`)
+3. One pure function scores a submitted set of links as `optimal`, `valid` or `none` without a language model (`archive/tasks/TSK-0838-score-grouping-optimal-valid-or-none.md`)
+4. The server logs each set of links as `grouping_submitted`, restores it on resume and holds the one grouping each attempt submits (`archive/tasks/TSK-0839-grouping-route-and-the-grouping-submitted-event.md`)
+5. The server sends no plan and no score before the first attempt ends, and the short solution shows the plan beside the direct calculation (`archive/tasks/TSK-0840-no-plan-or-score-before-the-answer-and-the-plan-in-the-short-solution.md`)
+6. The task window lets her link two numbers or mark one, with a 56 px touch zone, and shows no verdict on any loop (`archive/tasks/TSK-0841-task-window-draws-links-and-marks-and-judges-none.md`)
+7. The grouping score never reaches the outcome, and no model version reads a grouping attempt during the MVP (`archive/tasks/TSK-0842-grouping-never-reaches-the-outcome-or-the-knowledge-model.md`)
+8. The `grouping_stream` projection holds one row per grouping attempt and marks assisted attempts apart (`archive/tasks/TSK-0843-grouping-stream-projection-per-technique.md`)
+9. The short loop pays 1 star yarn for an `optimal` grouping on a `clean` unassisted first attempt and reads no time (`archive/tasks/TSK-0844-short-loop-pays-one-star-yarn-for-an-optimal-grouping.md`)
+10. The scene plays the short loop's spell and the System line «Обнаружен короткий путь» after the task window closes (`archive/tasks/TSK-0845-short-loop-animation-and-system-line-play-after-the-window-closes.md`)
+11. `./meowtower yarn-weeks` prints star yarn per source for each week, and two high weeks in a row raise one notice (`archive/tasks/TSK-0846-weekly-yarn-table-and-the-high-week-notice.md`)
+12. The Director offers at most one grouping task a floor, in a room slot, behind four gates and counted apart (`archive/tasks/TSK-0847-director-offers-one-grouping-task-a-floor-in-a-room-slot.md`)
+13. The Summary screen shows «Видит удобные приёмы» per technique and names what the figure counts (`archive/tasks/TSK-0848-report-block-sees-convenient-methods-per-technique.md`)
+

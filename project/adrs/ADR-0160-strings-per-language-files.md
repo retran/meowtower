@@ -122,3 +122,10 @@ Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change p
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3704 (superseded by REQ-5080, which ADR-0210, ADR-0370 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The interface uses the world's labels, and a label that brings back the test, the clock or the streak fails the build (`archive/tasks/TSK-0678-world-labels-pinned-and-rejected-labels-fail.md`)
+2. Every fixed System line sits in one section the parent reads in one sitting (`archive/tasks/TSK-0679-system-lines-in-one-section-and-judged.md`)
+

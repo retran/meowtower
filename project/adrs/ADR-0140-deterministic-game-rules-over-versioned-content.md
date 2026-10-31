@@ -204,3 +204,24 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 5 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-2026 (superseded by REQ-6126, which ADR-0320 addresses); REQ-2116 (superseded by REQ-6128, which ADR-0320 addresses); REQ-2124 (superseded by REQ-6244, which ADR-0330, ADR-0360 addresses); REQ-2128 (superseded by REQ-6414, which ADR-0360, ADR-0370 addresses); REQ-2180 (superseded by REQ-6252, which ADR-0330 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Every number the game rules use lives in a versioned content file that the server validates and never half-loads (`archive/tasks/TSK-0644-versioned-content-files-with-schemas-and-a-safe-loader.md`)
+2. A spell has three outcomes judged on the unassisted first attempt, and the answer reply carries its outcome and badge (`archive/tasks/TSK-0645-spell-outcome-badge-and-the-caps-for-a-rapid-or-assisted-attempt.md`)
+3. The streak grows on clean unassisted first attempts, fires a clean row at 3 and every 5, and shows only as a garland (`archive/tasks/TSK-0646-streak-clean-rows-and-the-garland.md`)
+4. A room takes its branch, a floor its state and a chapter its finale from the versioned thresholds, and the Director logs each decision (`archive/tasks/TSK-0647-room-branch-floor-state-and-chapter-finale-from-versioned-thresholds.md`)
+5. A Guardian always has its three endings, a missed reward always comes back within 7 sessions, and the canon names no threshold (`archive/tasks/TSK-0648-guardian-endings-reward-queue-and-the-canon-wording-check.md`)
+6. The build fails when the thresholds in force miss the target shares, and a new version needs a decision record that names it (`archive/tasks/TSK-0649-calibration-test-and-the-record-each-thresholds-version-needs.md`)
+7. Experience comes from effort, never falls, and the MVP shows no stats, paths or rank change (`archive/tasks/TSK-0650-experience-level-rank-and-the-systems-the-mvp-leaves-out.md`)
+8. Daily quests count acts of play, the day count counts days played, and the game never reminds her to return (`archive/tasks/TSK-0651-daily-quests-day-count-nearest-goal-and-no-reminders.md`)
+9. Grants follow one table in the content file, read no clock, and take nothing away (`archive/tasks/TSK-0652-grants-of-buttons-shards-yarn-materials-and-moon-motes.md`)
+10. The shop sells for buttons at fixed prices from a shelf of six items that changes by the same rule every day (`archive/tasks/TSK-0653-shop-catalogue-and-a-shelf-that-changes-the-same-way-every-day.md`)
+11. A chest offers three rewards from the three largest shortfalls by rules she could compute, and answers never enter the choice (`archive/tasks/TSK-0654-chests-fill-from-the-largest-shortfalls-by-visible-rules.md`)
+12. The Thread Forge opens on day 6 of play with six recipes of three rows each (`archive/tasks/TSK-0655-thread-forge-with-three-row-recipes-opening-on-day-six.md`)
+13. The roster is six approved familiars, up to three more when their pictures are chosen, and Session 0 lets her choose and name a starter (`archive/tasks/TSK-0656-familiar-roster-starters-and-stages-as-approved-content.md`)
+14. Friendship grows from shared scenes, a familiar evolves at set levels, and no answer changes either (`archive/tasks/TSK-0657-friendship-and-evolution-that-never-read-a-verdict.md`)
+15. A hatching offers the canon name first, lets her give her own, and never suggests a name already in use (`archive/tasks/TSK-0658-hatching-names-the-canon-first-and-no-duplicate.md`)
+16. The bestiary is a projection of the creatures she met, and the element ring never reaches a task (`archive/tasks/TSK-0659-bestiary-projection-and-the-element-ring-kept-out-of-tasks.md`)
+

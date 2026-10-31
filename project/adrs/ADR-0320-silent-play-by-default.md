@@ -176,3 +176,22 @@ The premortem, written as though it had happened: at stage 0.3 the silent test w
 Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6132 (superseded by REQ-6430, which ADR-0360 addresses); REQ-6134 (superseded by REQ-6432, which ADR-0360 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The parent owns two sound channels that start off at volume 0, and the player's settings hold no sound control (`archive/tasks/TSK-0932-parent-owns-two-sound-channels-and-both-start-off.md`)
+2. One audio module is the only code that can make sound, and it leaves no trace while both channels are off (`archive/tasks/TSK-0933-one-audio-module-leaves-no-trace-while-both-channels-are-off.md`)
+3. Every volume step of both channels stays at or below -6 dB, so music and effects together never pass the file's peak (`archive/tasks/TSK-0934-volume-steps-stay-at-or-below-minus-6-db.md`)
+4. Every sound is a registered event, the build fails when an event has no picture, and no task gives information by sound (`archive/tasks/TSK-0935-every-sound-event-is-registered-and-its-picture-is-checked.md`)
+5. The MVP's sound events each have a picture that carries the same information with sound off (`archive/tasks/TSK-0936-mvp-sound-events-each-with-a-picture-that-stands-alone.md`)
+6. A trick changes how a spell looks, and everything the canon defines by what the heroine hears has a sign the player sees (`archive/tasks/TSK-0937-tricks-change-a-spells-look-and-heard-things-have-a-seen-sign.md`)
+7. An eye exercise that takes the eyes off the screen ends at the player's tap, with no number and no countdown (`archive/tasks/TSK-0938-eyes-off-exercises-end-at-the-players-tap.md`)
+8. While the player waits for the Master, the familiar does something funny, nothing shows time passing, and voice stays optional (`archive/tasks/TSK-0939-familiar-waits-for-the-master-with-a-funny-action-and-no-sign-of-time.md`)
+9. Every tap changes the tapped control's look within 100 ms, and inside the task window the change is instant (`archive/tasks/TSK-0940-every-tap-changes-the-look-within-100-ms-and-the-task-window-has-no-transition.md`)
+10. A reaction line enters the bank only after the full checks, and the build fails on a bank that has fewer lines than it needs (`archive/tasks/TSK-0941-reaction-lines-enter-the-bank-only-after-the-full-checks.md`)
+11. After free text, a prepared reaction line shows first within 2 seconds, and the Master's checked reply follows (`archive/tasks/TSK-0942-first-line-after-free-text-shows-within-two-seconds.md`)
+12. No reaction line repeats in an adventure while the bank holds an unshown one, and the parent can flag a line out (`archive/tasks/TSK-0943-reaction-lines-cycle-without-repeats-and-the-parent-can-flag-one.md`)
+13. The silent acceptance test plays the Awakening and one adventure and counts every audio act (`archive/tasks/TSK-0944-silent-acceptance-test-counts-every-audio-act.md`)
+14. A real iPad shows that a new install is silent, that each switch sounds its own channel, and that silent mode wins (`archive/tasks/TSK-0945-ipad-sound-rows-on-the-spikes-test-page-and-the-games-settings.md`)
+

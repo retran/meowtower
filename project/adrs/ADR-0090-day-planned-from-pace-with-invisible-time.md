@@ -205,3 +205,24 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 7 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0102 (superseded by REQ-6234, which ADR-0330, ADR-0370 addresses); REQ-0104 (superseded by REQ-5856, which ADR-0290, ADR-0300 addresses); REQ-0306 (superseded by REQ-6132, which ADR-0320, ADR-0360 addresses); REQ-0310 (superseded by REQ-5726, which ADR-0280 addresses); REQ-0334 (superseded by REQ-5000, which ADR-0210 addresses); REQ-0336 (superseded by REQ-5012, which ADR-0210, ADR-0360 addresses); REQ-0338 (superseded by REQ-5016, which ADR-0210, ADR-0360 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The server projects the day's active time, the eye count and the soft-stop point from the event log (`archive/tasks/TSK-0564-time-projections-from-the-log.md`)
+2. The server plans the day's adventure from a seeded plan sized to about 60 minutes at her pace (`archive/tasks/TSK-0565-day-plan-sized-from-her-pace.md`)
+3. The plan places warm-ups and easy tasks where her answers can't move them (`archive/tasks/TSK-0566-warm-ups-and-easy-tasks-placed-in-advance.md`)
+4. A task opens between the System's announcement and its outcome line, transitions ignore the chosen node, and the end of the row names her growth in words (`archive/tasks/TSK-0567-transitions-announcements-and-end-of-row.md`)
+5. The battle model holds no health for the heroine, and an agent reads every Tangle line (`archive/tasks/TSK-0568-no-damage-and-no-mocking-tangles.md`)
+6. A due eye exercise plays at the next boundary, the four exercises take turns, and two due events play in a fixed order (`archive/tasks/TSK-0569-boundary-scheduler-and-eye-exercise.md`)
+7. The Parent Room holds the eye-skip switch, no field for a daily maximum and the memo on how to talk about the game (`archive/tasks/TSK-0570-parent-room-eye-skip-no-maximum-and-memo.md`)
+8. The soft stop plays at the first boundary after 60 minutes, offers «Ещё один ряд» beside saving, and ends the day through a story scene (`archive/tasks/TSK-0571-soft-stop-at-sixty-minutes.md`)
+9. Each «Ещё один ряд» continues the adventure with tasks and moves the soft stop 20 minutes on (`archive/tasks/TSK-0572-extensions-add-twenty-minutes.md`)
+10. «Закончить на сегодня» in the Parent Room brings the soft stop at the next boundary with no «Ещё один ряд» (`archive/tasks/TSK-0573-finish-for-today-control-and-stop.md`)
+11. The «Привал» button is always on screen and stays inactive for 10 minutes after a rest stop ends (`archive/tasks/TSK-0574-rest-stop-button-and-wait.md`)
+12. Three «Не знаю» in a row bring the familiar's offer of a rest stop and log an avoidance signal (`archive/tasks/TSK-0575-three-dont-know-offer-rest-stop.md`)
+13. The server detects four anxiety signals, answers each with an easy task and a gentle scene, and lowers the frontier share after a second (`archive/tasks/TSK-0576-anxiety-signals-and-gentle-sequence.md`)
+14. Session 0 runs eight steps in order in 20 to 25 minutes and lets her choose a name, a cloak colour and a focus but no look (`archive/tasks/TSK-0577-session-zero-eight-steps.md`)
+15. Every event of Session 0 carries `session0: true` and the knowledge projection skips it (`archive/tasks/TSK-0578-session-zero-updates-no-estimate.md`)
+16. Her screens show no timer, no clock, no minute count and no moving or waiting hourglass (`archive/tasks/TSK-0579-her-screens-show-no-time.md`)
+

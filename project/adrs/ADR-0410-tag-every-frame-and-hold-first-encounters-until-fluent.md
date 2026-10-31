@@ -226,3 +226,22 @@ The premortem, written as though it had happened: a year in, the transfer sectio
 - A comparison of the transferred share with the mean `expected` as an interpretation line. It needs its own record under ADR-0380's fixed list.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6936 (superseded by REQ-7512, which ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The closed list of contexts only gains entries, and the server refuses a tag it doesn't hold (`archive/tasks/TSK-1076-contexts-list-append-only.md`)
+2. The template schema takes `contexts`, refuses `formats` and any third format, and warns on one context (`archive/tasks/TSK-1077-template-contexts-and-single-format.md`)
+3. Every accepted frame records its context, and a frame without one is never served (`archive/tasks/TSK-1078-frame-accepted-records-context.md`)
+4. A frame request names the least used context, and the review screen lets the parent change it or park the frame (`archive/tasks/TSK-1079-frame-request-names-context-and-review.md`)
+5. The frame picker keeps one unshown context back until the node is fluent and repeats the oldest frame instead (`archive/tasks/TSK-1080-frame-picker-context-hold.md`)
+6. A subtype with both formats takes only bare templates until its node is fluent or 14 game days pass (`archive/tasks/TSK-1081-format-hold-bare-until-fluent.md`)
+7. Both holds run from the first adventure and put `transfer_hold` in `why` (`archive/tasks/TSK-1082-transfer-hold-why-from-first-adventure.md`)
+8. A side slot takes the subtype, format and context she has already met (`archive/tasks/TSK-1083-side-slots-take-what-she-has-met.md`)
+9. `first_exposures` marks each first show of a subtype, format and context once, at its highest kind, with its category (`archive/tasks/TSK-1084-first-exposures-projection.md`)
+10. A first encounter is eligible only when it measures transfer, and its reason names the first failing condition (`archive/tasks/TSK-1085-first-exposure-eligibility-and-reasons.md`)
+11. A rebuild keeps the `expected` each show had under the model version active then (`archive/tasks/TSK-1086-first-exposures-keep-model-version-fields.md`)
+12. The transfer view feeds no estimate, state, probe or block, and a first encounter still counts in «сама» (`archive/tasks/TSK-1087-transfer-view-feeds-nothing.md`)
+13. A 60-day simulation shows each first encounter once and both holds keeping their encounters back (`archive/tasks/TSK-1088-sixty-day-transfer-simulation.md`)
+14. After the MVP, the report shows near and far transfer apart, pooled, with the expected chance beside each share (`archive/tasks/TSK-1089-transfer-section-of-the-report.md`)
+
