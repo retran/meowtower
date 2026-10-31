@@ -33,6 +33,7 @@ import { n5Specs } from "./n5.js";
 import { n6Specs } from "./n6.js";
 import { n7Specs } from "./n7.js";
 import { n8Specs } from "./n8.js";
+import { PICTURES } from "./pictures.js";
 import { compile, type Compiled, type Spec, taskStrings } from "./spec.js";
 
 const compileAll = (
@@ -40,7 +41,13 @@ const compileAll = (
   specs: readonly Spec<never>[],
 ): Compiled[] => {
   const strings = taskStrings(domain);
-  return specs.map((spec) => compile(spec, strings));
+  return specs.map((spec) => {
+    const picture = PICTURES[spec.id];
+    return compile(
+      picture ? ({ ...spec, picture } as unknown as Spec<never>) : spec,
+      strings,
+    );
+  });
 };
 
 export const templates: readonly Compiled[] = [

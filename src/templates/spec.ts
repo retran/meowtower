@@ -74,6 +74,8 @@ export interface Spec<P> {
   readonly traps?: readonly TrapSpec<P>[];
   /** The role of each number placeholder, such as a price or a count: the structure ADR-0130 sends the story writer. */
   readonly roles?: Readonly<Record<string, string>>;
+  /** The picture of the task, drawn by code from the drawn numbers alone (RES-1200). */
+  readonly picture?: (p: P) => string;
   /** The values the strings may name; every `{name}` in a string is filled from here. */
   readonly vars: (p: P) => Record<string, string>;
   /** How a fraction or mixed answer is judged: any equal fraction, or only the simplest form. Default: simplest. */
@@ -119,6 +121,8 @@ export function taskStrings(domain: string): Record<string, TaskStrings> {
 /** What a compiled template builds for one seed. */
 export interface Made {
   readonly text: string;
+  /** A picture drawn by code from the drawn numbers, or null where the task has none. */
+  readonly svg: string | null;
   readonly options: readonly string[] | null;
   readonly answer: Answer;
   /** The answer as the player enters it. */
@@ -305,6 +309,7 @@ export function compile<P>(
         const stringsOf = (s: string): string => fill(s, vars, spec.id);
         const made: Made = {
           text: stringsOf(text.text),
+          svg: spec.picture ? spec.picture(p) : null,
           options,
           answer,
           entry: entryOf(spec.answer, answer),

@@ -118,7 +118,7 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     form: "the-axes-of-an-isosceles-triangle",
     g: [5, 6],
     kind: "integer",
-    p: [rg(3, 9), rg(10, 14)],
+    p: [rg(6, 9), rg(10, 11)],
     f: () => q(1),
     t: { equilateral: () => q(3), none: () => q(0) },
   }),

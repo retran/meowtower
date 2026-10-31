@@ -32,6 +32,11 @@ describe("domain N and A templates", () => {
     expect(new Set(compiled.map((c) => c.form)).size).toBe(compiled.length);
   });
 
+  it("draws a picture for the tasks that show data or a figure", () => {
+    const drawn = compiled.filter((c) => c.make(seedOf(1)).svg !== null);
+    expect(drawn.length).toBeGreaterThan(100);
+  });
+
   it("keeps the groups inside 1 to 8", () => {
     for (const c of compiled) {
       expect(c.groups[0]).toBeGreaterThanOrEqual(1);
@@ -47,6 +52,20 @@ describe("domain N and A templates", () => {
           const made = c.make(seedOf(i));
           expect(made.referenceAgrees).toBe(true);
           expect(made.checker(made.entry).verdict).toBe("correct");
+        }
+      });
+
+      it("draws a picture that is a plain, deterministic SVG", () => {
+        for (let i = 0; i < SEEDS; i += 1) {
+          const made = c.make(seedOf(i));
+          if (made.svg === null) continue;
+          expect(made.svg.startsWith("<svg ")).toBe(true);
+          expect(made.svg.endsWith("</svg>")).toBe(true);
+          expect(made.svg).not.toMatch(
+            /<script|href|on\w+=|NaN|Infinity|undefined/,
+          );
+          expect(made.svg.length).toBeLessThan(20000);
+          expect(c.make(seedOf(i)).svg).toBe(made.svg);
         }
       });
 
