@@ -124,6 +124,8 @@ export type Lang = "ru" | "en" | "nl";
 /** The words and letters a picture carries, from `content/pictures.<language>.json`. */
 export interface PictureLabels {
   readonly compass: { n: string; e: string; s: string; w: string };
+  /** The letters of a symmetry task, by template id, in the order its options name them. */
+  readonly letters: Readonly<Record<string, readonly string[]>>;
 }
 
 const PictureFile = z.object({
@@ -133,6 +135,7 @@ const PictureFile = z.object({
     s: z.string(),
     w: z.string(),
   }),
+  letters: z.record(z.string(), z.array(z.string())),
 });
 
 const labelCache = new Map<Lang, PictureLabels>();

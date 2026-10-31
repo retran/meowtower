@@ -37,6 +37,15 @@ describe("domain N and A templates", () => {
     expect(drawn.length).toBeGreaterThan(100);
   });
 
+  it("draws a picture for every task of geometry and of area, volume and circle", () => {
+    const geometry = /^(G\d|M(4|5|6|7|11)\.)/;
+    const bare = compiled
+      .filter((c) => geometry.test(c.id))
+      .filter((c) => c.make(seedOf(1)).svg === null)
+      .map((c) => c.id);
+    expect(bare).toEqual([]);
+  });
+
   it("labels a picture in the language asked for", () => {
     const rose = compiled.find((c) => c.id === "G7.plan.01");
     expect(rose).toBeDefined();

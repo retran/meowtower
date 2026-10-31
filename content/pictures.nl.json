@@ -4,5 +4,10 @@
     "e": "O",
     "s": "Z",
     "w": "W"
+  },
+  "letters": {
+    "G3.symmetry.05": ["A", "R", "T", "B"],
+    "G3.symmetry.06": ["E", "L", "B", "F"],
+    "G3.symmetry.07": ["T", "E", "H", "R"]
   }
 }

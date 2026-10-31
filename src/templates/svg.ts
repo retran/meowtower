@@ -785,3 +785,387 @@ export function layers(a: number): string {
   }).join("");
   return wrap(a * s + 20, a * s + 20, body);
 }
+
+/** The letters of a task, large, each under its number. */
+export function letters(list: readonly string[]): string {
+  const w = 52;
+  return wrap(
+    list.length * w + 20,
+    74,
+    list
+      .map(
+        (l, i) =>
+          label(10 + i * w + w / 2, 44, l, 40) +
+          label(10 + i * w + w / 2, 66, i + 1, 12),
+      )
+      .join(""),
+  );
+}
+
+const innerOf = (svg: string): { w: number; h: number; body: string } => {
+  const m = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg);
+  return {
+    w: Number(m?.[1] ?? 100),
+    h: Number(m?.[2] ?? 100),
+    body: svg.slice(svg.indexOf(">") + 1, svg.lastIndexOf("</svg>")),
+  };
+};
+
+/** Pictures side by side, each in a cell under its number: the options of a task shown as they are. */
+export function gallery(svgs: readonly string[]): string {
+  const cell = 120;
+  const body = svgs
+    .map((svg, i) => {
+      const { w, h, body: inner } = innerOf(svg);
+      const k = Math.min(100 / w, 100 / h);
+      return `<g transform="translate(${num(10 + i * cell + (cell - 10 - w * k) / 2)},${num(8 + (100 - h * k) / 2)}) scale(${num(k)})">${inner}</g>${label(10 + i * cell + (cell - 10) / 2, 124, i + 1, 13)}`;
+    })
+    .join("");
+  return wrap(svgs.length * cell + 10, 134, body);
+}
+
+/** A pencil seen from the side: a long rectangle with a point. */
+export function pencil(): string {
+  return wrap(
+    120,
+    40,
+    `<rect x="10" y="12" width="80" height="16" ${tint(5, 0.4)}/>${poly(
+      [
+        [90, 12],
+        [110, 20],
+        [90, 28],
+      ],
+      tint(1, 0.4),
+    )}`,
+  );
+}
+
+export type Ring = readonly (readonly [number, number])[];
+
+export interface FigLabel {
+  readonly x: number;
+  readonly y: number;
+  readonly t: string | number;
+}
+
+export interface FigOptions {
+  /** Draw the unit grid behind the figure (paper in squares). */
+  readonly grid?: boolean;
+  readonly labels?: readonly FigLabel[];
+  /** Dashed segments, such as a height: x1, y1, x2, y2 in the figure's units. */
+  readonly dashed?: readonly (readonly [number, number, number, number])[];
+}
+
+/**
+ * A plane figure from its outlines in the units of the task, y pointing up. Each shape is an outline
+ * followed by the holes cut out of it. The figure is fitted to the picture, so a 3 by 2 and a 30 by 20
+ * look alike but for their labels.
+ */
+export function fig(
+  shapes: readonly (readonly Ring[])[],
+  opts: FigOptions = {},
+): string {
+  const all = shapes.flatMap((s) => s.flatMap((r) => r));
+  const xs = all.map((p) => p[0]);
+  const ys = all.map((p) => p[1]);
+  const x0 = Math.min(...xs);
+  const y0 = Math.min(...ys);
+  const w = Math.max(...xs) - x0 || 1;
+  const h = Math.max(...ys) - y0 || 1;
+  const k = Math.min(170 / w, 130 / h);
+  const px = (x: number): number => 28 + (x - x0) * k;
+  const py = (y: number): number => 22 + (y0 + h - y) * k;
+  let body = "";
+  if (opts.grid && w <= 20 && h <= 20) {
+    for (let i = 0; i <= w; i += 1)
+      body += `<line x1="${num(px(x0 + i))}" y1="${num(py(y0))}" x2="${num(px(x0 + i))}" y2="${num(py(y0 + h))}" stroke-opacity="0.2"/>`;
+    for (let j = 0; j <= h; j += 1)
+      body += `<line x1="${num(px(x0))}" y1="${num(py(y0 + j))}" x2="${num(px(x0 + w))}" y2="${num(py(y0 + j))}" stroke-opacity="0.2"/>`;
+  }
+  shapes.forEach((rings, i) => {
+    const d = rings
+      .map(
+        (r) =>
+          `M${r.map(([x, y]) => `${num(px(x))},${num(py(y))}`).join(" L")} Z`,
+      )
+      .join(" ");
+    body += `<path d="${d}" fill-rule="evenodd" ${tint(i, 0.3)}/>`;
+  });
+  for (const [a, b, c, d] of opts.dashed ?? [])
+    body += `<line x1="${num(px(a))}" y1="${num(py(b))}" x2="${num(px(c))}" y2="${num(py(d))}" stroke-dasharray="4 3"/>`;
+  for (const l of opts.labels ?? [])
+    body += label(px(l.x), py(l.y) + 4, l.t, 12);
+  return wrap(w * k + 56, h * k + 44, body);
+}
+
+const box4 = (x: number, y: number, w: number, h: number): Ring => [
+  [x, y],
+  [x + w, y],
+  [x + w, y + h],
+  [x, y + h],
+];
+
+/** A rectangle of `w` by `h` with its side lengths written beside it; `grid` draws the paper in squares. */
+export function sized(
+  w: number,
+  h: number,
+  names: readonly [string | number, string | number] = [w, h],
+  grid = false,
+): string {
+  return fig([[box4(0, 0, w, h)]], {
+    grid,
+    labels: [
+      { x: w / 2, y: -h * 0.12 - 0.15, t: names[0] },
+      { x: w + w * 0.1 + 0.2, y: h / 2, t: names[1] },
+    ],
+  });
+}
+
+/** Two rectangles side by side on one base line. */
+export function joined(
+  a: readonly [number, number],
+  b: readonly [number, number],
+): string {
+  return fig([[box4(0, 0, a[0], a[1])], [box4(a[0], 0, b[0], b[1])]], {
+    labels: [
+      { x: a[0] / 2, y: a[1] / 2, t: `${a[0]}×${a[1]}` },
+      { x: a[0] + b[0] / 2, y: b[1] / 2, t: `${b[0]}×${b[1]}` },
+    ],
+  });
+}
+
+/** A rectangle with a smaller rectangle cut out of its corner (an L), or out of its middle when `inside`. */
+export function notched(
+  w: number,
+  h: number,
+  cw: number,
+  ch: number,
+  inside = false,
+): string {
+  const outer = box4(0, 0, w, h);
+  if (inside)
+    return fig([[outer, box4((w - cw) / 2, (h - ch) / 2, cw, ch)]], {
+      labels: [
+        { x: w / 2, y: -0.4, t: w },
+        { x: w + 0.6, y: h / 2, t: h },
+        { x: w / 2, y: h / 2, t: `${cw}×${ch}` },
+      ],
+    });
+  const l: Ring = [
+    [0, 0],
+    [w, 0],
+    [w, h - ch],
+    [w - cw, h - ch],
+    [w - cw, h],
+    [0, h],
+  ];
+  return fig([[l]], {
+    labels: [
+      { x: w / 2, y: -0.4, t: w },
+      { x: -0.6, y: h / 2, t: h },
+      { x: w - cw / 2, y: h - ch / 2 + 0.3, t: `${cw}×${ch}` },
+    ],
+  });
+}
+
+/** A staircase of `steps` steps, each `s` wide and high. */
+export function stairs(steps: number, s = 1): string {
+  const ring: [number, number][] = [[0, 0]];
+  for (let i = 0; i < steps; i += 1) {
+    ring.push([(i + 1) * s, i * s]);
+    ring.push([(i + 1) * s, (i + 1) * s]);
+  }
+  ring.push([0, steps * s]);
+  return fig([[ring]], { grid: steps * s <= 20 });
+}
+
+/** A plus made of five squares of side `a`. */
+export function crossOf(a: number): string {
+  const r: Ring = [
+    [a, 0],
+    [2 * a, 0],
+    [2 * a, a],
+    [3 * a, a],
+    [3 * a, 2 * a],
+    [2 * a, 2 * a],
+    [2 * a, 3 * a],
+    [a, 3 * a],
+    [a, 2 * a],
+    [0, 2 * a],
+    [0, a],
+    [a, a],
+  ];
+  return fig([[r]], { labels: [{ x: 1.5 * a, y: 1.5 * a, t: a }] });
+}
+
+/** A frame or a path: an outer rectangle with a rectangle of its own cut out of the middle. */
+export function framed(w: number, h: number, iw: number, ih: number): string {
+  return fig([[box4(0, 0, w, h), box4((w - iw) / 2, (h - ih) / 2, iw, ih)]], {
+    labels: [
+      { x: w / 2, y: -0.5, t: w },
+      { x: w + 0.7, y: h / 2, t: h },
+      { x: w / 2, y: h / 2, t: `${iw}×${ih}` },
+    ],
+  });
+}
+
+/** A triangle by a base and a height, with the height dashed; `right` puts the right angle at the base's end. */
+export function based(base: number, height: number, right = false): string {
+  const apex = right ? 0 : base * 0.35;
+  return fig(
+    [
+      [
+        [
+          [0, 0],
+          [base, 0],
+          [apex, height],
+        ],
+      ],
+    ],
+    {
+      dashed: right ? [] : [[apex, 0, apex, height]],
+      labels: [
+        { x: base / 2, y: -height * 0.12, t: base },
+        {
+          x: apex + (right ? -base * 0.1 : base * 0.08),
+          y: height / 2,
+          t: height,
+        },
+      ],
+    },
+  );
+}
+
+/** A parallelogram by a base and a height; `diagonal` cuts it in two triangles. */
+export function slanted(
+  base: number,
+  height: number,
+  diagonal = false,
+): string {
+  const s = base * 0.3;
+  return fig(
+    [
+      [
+        [
+          [0, 0],
+          [base, 0],
+          [base + s, height],
+          [s, height],
+        ],
+      ],
+    ],
+    {
+      dashed: diagonal ? [[0, 0, base + s, height]] : [[s, 0, s, height]],
+      labels: [
+        { x: base / 2, y: -height * 0.12, t: base },
+        { x: s - base * 0.08, y: height / 2, t: height },
+      ],
+    },
+  );
+}
+
+/** A rhombus with both diagonals. */
+export function rhombus(d1: number, d2: number): string {
+  return fig(
+    [
+      [
+        [
+          [0, d2 / 2],
+          [d1 / 2, 0],
+          [d1, d2 / 2],
+          [d1 / 2, d2],
+        ],
+      ],
+    ],
+    {
+      dashed: [
+        [0, d2 / 2, d1, d2 / 2],
+        [d1 / 2, 0, d1 / 2, d2],
+      ],
+      labels: [
+        { x: d1 * 0.75, y: d2 * 0.42, t: d1 },
+        { x: d1 * 0.56, y: d2 * 0.8, t: d2 },
+      ],
+    },
+  );
+}
+
+export type CircleMark =
+  "radius" | "diameter" | "ring" | "semicircle" | "wheel";
+
+/** A circle (or a ring, or a half) with the measure the task names written on it. */
+export function circle(
+  kind: CircleMark,
+  value: number | string = "",
+  inner: number | string = "",
+): string {
+  const c = 70;
+  const r = 52;
+  const radius = `${line(c, c, c + r, c)}${label(c + r / 2, c - 6, value)}`;
+  if (kind === "radius")
+    return wrap(
+      140,
+      140,
+      `<circle cx="${c}" cy="${c}" r="${r}" ${tint(0, 0.2)}/>${radius}${dot(c, c, 2)}`,
+    );
+  if (kind === "diameter")
+    return wrap(
+      140,
+      140,
+      `<circle cx="${c}" cy="${c}" r="${r}" ${tint(0, 0.2)}/>${line(c - r, c, c + r, c)}${label(c, c - 6, value)}`,
+    );
+  if (kind === "ring")
+    return wrap(
+      140,
+      140,
+      `<path d="M${c - r},${c} a${r},${r} 0 1 0 ${2 * r},0 a${r},${r} 0 1 0 ${-2 * r},0 M${c - r * 0.5},${c} a${r * 0.5},${r * 0.5} 0 1 0 ${r},0 a${r * 0.5},${r * 0.5} 0 1 0 ${-r},0" fill-rule="evenodd" ${tint(1, 0.3)}/>${line(c, c, c + r, c)}${label(c + r * 0.75, c - 6, value)}${label(c + r * 0.25, c + 14, inner)}${dot(c, c, 2)}`,
+    );
+  if (kind === "semicircle")
+    return wrap(
+      140,
+      90,
+      `<path d="M${c - r},${c - 10} A${r},${r} 0 0 1 ${c + r},${c - 10} Z" ${tint(2, 0.3)}/>${line(c, c - 10, c + r, c - 10)}${label(c + r / 2, c - 16, value)}${dot(c, c - 10, 2)}`,
+    );
+  return wrap(
+    140,
+    140,
+    `<circle cx="${c}" cy="${c}" r="${r}" ${tint(5, 0.25)}/><circle cx="${c}" cy="${c}" r="${r * 0.12}" fill="currentColor"/>${line(c - r, c, c + r, c)}${label(c, c - 8, value)}`,
+  );
+}
+
+/** A cuboid with its three edges written beside it, and the unit cubes it holds drawn on its front face. */
+export function cuboid(a: number, b: number, c: number, cubes = false): string {
+  const k = 100 / Math.max(a, b, c, 1);
+  const w = a * k;
+  const hgt = c * k;
+  const d = b * k;
+  let lines = "";
+  if (cubes && a <= 8 && c <= 8)
+    for (let i = 1; i < a; i += 1)
+      lines += line(10 + i * k, 10 + d * 0.5, 10 + i * k, 10 + d * 0.5 + hgt);
+  if (cubes && a <= 8 && c <= 8)
+    for (let j = 1; j < c; j += 1)
+      lines += line(10, 10 + d * 0.5 + j * k, 10 + w, 10 + d * 0.5 + j * k);
+  return wrap(
+    w + d * 0.5 + 30,
+    hgt + d * 0.5 + 30,
+    `${iso(10, 10, w, hgt, d)}${lines}${label(10 + w / 2, 10 + d * 0.5 + hgt + 14, a)}${label(10 + w + d * 0.5 + 10, 10 + d * 0.25 + hgt / 2, c)}${label(10 + w + d * 0.25 + 6, 10 + d * 0.25 - 2, b)}`,
+  );
+}
+
+/** Regular polygon outline with one side written, for the tasks that cut a perimeter into equal sides. */
+export function regular(n: number, side: string | number = "?"): string {
+  const c = 70;
+  const r = 52;
+  const pts = Array.from({ length: n }, (_, i) => {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+    return [c + r * Math.cos(a), c + r * Math.sin(a)] as const;
+  });
+  const m0 = pts[0] ?? [c, c];
+  const m1 = pts[1] ?? [c, c];
+  return wrap(
+    140,
+    140,
+    `${poly(pts, tint(0, 0.2))}${label((m0[0] + m1[0]) / 2 + 8, (m0[1] + m1[1]) / 2 - 4, side)}`,
+  );
+}
