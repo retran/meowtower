@@ -57,13 +57,21 @@ const ACCEPTS: Record<"integer" | "text", RegExp> = {
   text: /^[^\u0000-\u001f]{0,40}$/,
 };
 
+/** The pixels on screen for one unit of a picture. */
+const PICTURE_SCALE = 2.2;
+
 /** A picture the server drew, parsed as SVG so that nothing in it runs. */
 function picture(svg: string): HTMLElement {
   const holder = el("figure", { className: "picture" });
   const doc = new DOMParser().parseFromString(svg, "image/svg+xml");
   const root = doc.documentElement;
-  if (root.localName === "svg" && !doc.querySelector("script, parsererror"))
-    holder.append(document.importNode(root, true));
+  if (root.localName === "svg" && !doc.querySelector("script, parsererror")) {
+    const node = document.importNode(root, true);
+    // A viewBox has no size of its own: a small figure would stretch to the width of the page.
+    const width = Number(root.getAttribute("viewBox")?.split(" ")[2] ?? 0);
+    if (width > 0) node.style.width = `${Math.round(width * PICTURE_SCALE)}px`;
+    holder.append(node);
+  }
   return holder;
 }
 
@@ -471,19 +479,23 @@ export const playScreen: Screen = {
         el("p", { className: "task" }, ...math(room.view.text)),
         ...(typed
           ? [
-              el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
-              field,
-              ...(format
-                ? [
-                    el(
-                      "p",
-                      { className: "format" },
-                      t(uiKey(`ui.play.format.${format}`)),
-                    ),
-                  ]
-                : []),
-              ...(symbol ? [keyHint] : []),
-              preview,
+              el(
+                "div",
+                { className: "entry" },
+                el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
+                field,
+                ...(format
+                  ? [
+                      el(
+                        "p",
+                        { className: "format" },
+                        t(uiKey(`ui.play.format.${format}`)),
+                      ),
+                    ]
+                  : []),
+                ...(symbol ? [keyHint] : []),
+                preview,
+              ),
             ]
           : [
               el("div", { className: "options" }, ...buttons),
@@ -722,29 +734,37 @@ export const playScreen: Screen = {
         ...reply.shortSolution.map((line) => el("li", {}, ...math(line))),
       );
       draw(
-        badge,
-        ...(dontKnow
-          ? []
-          : [
-              el(
-                "p",
-                { className: "yours" },
-                `${t("ui.play.yours")} `,
-                ...math(entered),
-              ),
-            ]),
         el(
-          "p",
-          { className: "right" },
-          `${t("ui.play.right")} `,
-          ...math(reply.feedback.correctAnswer),
+          "div",
+          { className: "result" },
+          badge,
+          ...(dontKnow
+            ? []
+            : [
+                el(
+                  "p",
+                  { className: "yours" },
+                  `${t("ui.play.yours")} `,
+                  ...math(entered),
+                ),
+              ]),
+          el(
+            "p",
+            { className: "right" },
+            `${t("ui.play.right")} `,
+            ...math(reply.feedback.correctAnswer),
+          ),
         ),
         ...(reply.note
           ? [el("p", { className: "note" }, ...math(reply.note))]
           : []),
         el("p", { className: "battle" }, reply.battleLine),
-        el("p", {}, t("ui.play.solution")),
-        solution,
+        el(
+          "div",
+          { className: "result" },
+          el("p", { className: "heading" }, t("ui.play.solution")),
+          solution,
+        ),
         el(
           "nav",
           { className: "actions" },

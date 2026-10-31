@@ -29,19 +29,29 @@ body {
   line-height: 1.4;
 }
 main { margin: 0 auto; }
+h1 { font-size: 1.6em; line-height: 1.2; }
 .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.15; margin: 0 0.15em; }
 .frac > span { padding: 0 0.2em; }
 .frac > span:first-child { border-bottom: 2px solid currentColor; }
-.badge { font-size: 1.6rem; font-weight: 700; }
+.badge { font-size: 1.6em; font-weight: 700; line-height: 1.2; }
+.battle { opacity: 0.75; }
+.task { font-size: 1.1em; }
+/* Things that belong together sit closer than the blocks of a screen. */
+.entry, .result, .hints { display: flex; flex-direction: column; gap: var(--space-2); }
+.hints:empty, .preview:empty, .picked:empty, .format:empty { display: none; }
+.hint { padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); background: var(--paper); }
+.note { padding: var(--space-3) var(--space-4); border-left: 4px solid var(--accent); border-radius: var(--space-2); background: var(--paper); }
+.solution { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: var(--space-2); }
+.heading { font-weight: 600; }
 .options { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-.option { font-size: 1.3rem; min-width: var(--touch-min); }
+.option { font-size: 1.15em; min-width: var(--touch-min); min-height: var(--touch-min); }
 .option[aria-pressed="true"] { background: var(--accent); color: var(--card); }
 .option:disabled { opacity: 0.4; }
-.format { font-size: 0.95rem; opacity: 0.8; }
-.preview, .picked { min-height: 2.5em; font-size: 1.3rem; }
+.format { font-size: 0.85em; opacity: 0.8; }
+.preview, .picked { font-size: 1.2em; }
 .right { font-weight: 600; }
 .picture { margin: 0; text-align: center; }
-.picture svg { max-width: 100%; max-height: 40vh; height: auto; }
+.picture svg { display: block; margin: 0 auto; max-width: 100%; max-height: 40vh; height: auto; }
 h1, p, fieldset, form { margin: 0; }
 
 /* One card a screen, its blocks one gap apart. */
@@ -54,6 +64,7 @@ section {
   border-radius: var(--radius-lg);
 }
 .actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.control[data-action="play-submit"], .control[data-action="play-next"] { background: var(--accent); color: #fff; font-weight: 600; }
 .status:empty, .code:empty { display: none; }
 .devices { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
 .devices li { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
@@ -88,6 +99,7 @@ legend { padding: 0 var(--space-2); }
 
 form { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
 input:not([type="radio"]) {
+  max-width: 100%;
   padding: 0 var(--space-4);
   border: 2px solid var(--accent);
   border-radius: var(--radius-sm);
@@ -108,9 +120,10 @@ input:not([type="radio"]) {
 [data-interface="tablet"] input[type="radio"] { width: 24px; height: 24px; }
 
 /* The computer interface: a compact row, driven by keyboard or mouse. */
-[data-interface="computer"] main { max-width: 880px; padding: var(--space-7) var(--space-6); font-size: 17px; }
-[data-interface="computer"] section { padding: var(--space-6) var(--space-7); }
+[data-interface="computer"] main { max-width: 1100px; padding: var(--space-7) var(--space-6); font-size: 21px; }
+[data-interface="computer"] [data-action="play-leave"] { margin-left: auto; }
+[data-interface="computer"] section { padding: var(--space-7); }
 [data-interface="computer"] .control,
-[data-interface="computer"] input:not([type="radio"]) { min-height: 40px; }
-[data-interface="computer"] .choice { min-height: 32px; }
+[data-interface="computer"] input:not([type="radio"]) { min-height: 50px; }
+[data-interface="computer"] .choice { min-height: 40px; }
 `;
