@@ -244,3 +244,9 @@ While the client has no connection, the hint, explanation and second-attempt con
 | `PUT /api/parent/settings` carries a `threeDayLimit` outside 1 to 7 and not `null` | `400 settings_invalid`, and nothing is logged. |
 | `extend` after `finish_today` on the same game day | `409 day_finished` until 04:00. |
 | The answer or check reply takes longer than 300 ms at the 95th percentile | The verify report shows the measure against ADR-0190's Baselines table. |
+
+## The room, the answer and the result
+
+A task whose answer is chosen takes buttons (REQ-7536): `input.kind` is `choice`, `set` or `order`, `view.options` holds the labels and `input.values` what each one sends. A typed answer carries `input.format`, and the field shows that format with an example before the first key press (REQ-7524). It draws a fraction as it is typed (REQ-7526) and names the key of the entry's symbol on the current layout, read from the keys pressed (REQ-7528).
+
+The task window offers the hints up to the last rung that does not state the answer (REQ-7538). The result says in plain words whether the answer was right (REQ-7516), shows the entry and the correct answer (REQ-7518), and shows `note`, the explanation of a known wrong answer (REQ-7540).

@@ -289,3 +289,7 @@ The generator builds a riddle's target with the purpose `compose`, and `judgeCom
 | An outgoing `ItemViewOut` or `InputSpec` carries an unlisted field | Serialisation fails, and the body never reaches the client. |
 | `COMPOSE_FREE` is on with no passing record for the configured `PARSE_MODEL` and prompt hash | Text riddles turn off, card riddles play, and `./meowtower status` shows `compose_flag_off`. |
 | The game day's parse bucket can't reserve two parses | The Director offers a card riddle. |
+
+## What a template's strings and pictures hold
+
+Each step of a solution states its calculation with the numbers of the task (REQ-7520), and the solution of a choice or a set names the reason the right option is right (REQ-7522). A string computes a value with `{=expression}` and agrees a noun with `{name|one|few|many}`, so a noun takes the form its number requires (REQ-7530). Every task of geometry, area, volume and the circle carries a picture drawn by code (REQ-7532), and the letters on a picture follow the language the task is built for (REQ-7534). Every task knows the typical mistakes of its form and explains each one (REQ-7542).
