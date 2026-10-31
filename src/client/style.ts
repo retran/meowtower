@@ -67,7 +67,7 @@ section {
 .control[data-action="play-submit"], .control[data-action="play-next"] { background: var(--accent); color: #fff; font-weight: 600; }
 .status:empty, .code:empty { display: none; }
 .devices { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
-.devices li { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
+.devices li { min-height: var(--touch-min); display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
 .devices li > span:first-child { flex: 1; }
 .tag { padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--paper); }
 .code { font-size: 1.4em; font-weight: 700; }
@@ -111,13 +111,47 @@ input:not([type="radio"]) {
 /* The tablet interface: large touch targets in one column. */
 [data-interface="tablet"] main { max-width: 720px; padding: var(--space-7) var(--space-6); font-size: 22px; }
 [data-interface="tablet"] section { padding: var(--space-6); }
-[data-interface="tablet"] .actions { flex-direction: column; }
+[data-interface="tablet"] .option { flex: 1 1 auto; min-height: 64px; }
 [data-interface="tablet"] .control,
 [data-interface="tablet"] input:not([type="radio"]) { min-height: var(--touch-min); }
 [data-interface="tablet"] form,
 [data-interface="tablet"] form > * { align-self: stretch; }
 [data-interface="tablet"] .choice { min-height: var(--touch-min); }
 [data-interface="tablet"] input[type="radio"] { width: 24px; height: 24px; }
+
+/* Upright, one column with the buttons in a grid of two, and the main action on its own row. */
+@media (orientation: portrait) {
+  [data-interface="tablet"] main { padding: var(--space-6) var(--space-5); max-width: none; }
+  [data-interface="tablet"] .actions { display: grid; grid-template-columns: 1fr 1fr; }
+  [data-interface="tablet"] .actions > :first-child:not(:last-child):nth-last-child(odd) { grid-column: 1 / -1; }
+  [data-interface="tablet"] .picture svg { max-height: 34vh; }
+}
+
+/* On its side the page is short: the picture stands left of the task, and the buttons share one row. */
+@media (orientation: landscape) {
+  [data-interface="tablet"] main { padding: var(--space-5) var(--space-6); max-width: 1180px; }
+  [data-interface="tablet"] section { padding: var(--space-5) var(--space-6); gap: var(--space-4); }
+  [data-interface="tablet"] .actions { flex-direction: row; }
+  [data-interface="tablet"] .actions > * { flex: 1 1 0; white-space: nowrap; }
+  [data-interface="tablet"] .picture svg { max-height: 62vh; }
+  [data-interface="tablet"] section:has(> .picture),
+  [data-interface="tablet"] section:has(.solution) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    align-content: start;
+  }
+  [data-interface="tablet"] section:has(> .picture) > *,
+  [data-interface="tablet"] section:has(.solution) > * { grid-column: 2; }
+  [data-interface="tablet"] section:has(> .picture) > h1,
+  [data-interface="tablet"] section:has(.solution) > h1,
+  [data-interface="tablet"] section > .actions { grid-column: 1 / -1; }
+  [data-interface="tablet"] section > .picture { grid-column: 1; grid-row: 2 / span 6; align-self: center; }
+  [data-interface="tablet"] section:has(.solution) > * { grid-column: 1; }
+  [data-interface="tablet"] section:has(.solution) > h1,
+  [data-interface="tablet"] section:has(.solution) > .actions { grid-column: 1 / -1; }
+  [data-interface="tablet"] section > .result:has(.solution) { grid-column: 2; grid-row: 2 / span 4; }
+}
 
 /* The computer interface: a compact row, driven by keyboard or mouse. */
 [data-interface="computer"] main { max-width: 1100px; padding: var(--space-7) var(--space-6); font-size: 21px; }

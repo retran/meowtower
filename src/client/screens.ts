@@ -46,12 +46,13 @@ const home: Screen = {
       ),
     );
     const nav = el("nav", { className: "actions" });
-    nav.append(
-      button("ui.home.play", "play", () => {
-        location.hash = "#/play";
-      }),
-      link("ui.nav.settings", "open-settings", "/settings"),
-    );
+    if (shell.paired)
+      nav.append(
+        button("ui.home.play", "play", () => {
+          location.hash = "#/play";
+        }),
+      );
+    nav.append(link("ui.nav.settings", "open-settings", "/settings"));
     if (shell.paired)
       nav.append(link("ui.nav.parent", "open-parent", "/parent"));
     else nav.append(link("ui.nav.pair", "open-pair", "/pair"));
@@ -317,7 +318,11 @@ const parentDevicesScreen: Screen = {
         delete section.dataset["busy"];
         return;
       }
-      devices.forEach((d, i) => {
+      // Devices in use come first; a revoked one is only history.
+      const inOrder = [...devices].sort(
+        (x, y) => Number(x.revoked) - Number(y.revoked),
+      );
+      inOrder.forEach((d, i) => {
         const label = t(
           d.kind === "tablet" ? "ui.devices.tablet" : "ui.devices.computer",
           {

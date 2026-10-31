@@ -74,7 +74,7 @@
   "ui.devices.code": "Код {code}, действует до {time}.",
   "ui.devices.loginNeeded": "Сначала войдите в Комнату родителя.",
   "ui.parentSettings.title": "Настройки",
-  "ui.parentSettings.threeDay": "Сколько дней игры даётся на одно приключение, прежде чем его закроет короткий финал",
+  "ui.parentSettings.threeDay": "Сколько игровых дней длится приключение",
   "ui.parentSettings.limit.off": "не закрывать",
   "ui.parentSettings.limit.1": "1 день",
   "ui.parentSettings.limit.2": "2 дня",
