@@ -25,7 +25,7 @@ export function readValue(text: string): Q | null {
 }
 
 /** A value as a task writes it: grouped digits, a decimal comma, or a fraction that has no finite decimal. */
-export function writeValue(x: Q): string {
+export function writeValue(x: Q, asFraction = false): string {
   const negative = x.n < 0n;
   const n = negative ? -x.n : x.n;
   const sign = negative ? "−" : "";
@@ -33,17 +33,47 @@ export function writeValue(x: Q): string {
   let d = x.d;
   while (d % 2n === 0n) d /= 2n;
   while (d % 5n === 0n) d /= 5n;
-  if (d !== 1n) return `${sign}${n.toString()}${SLASH}${x.d.toString()}`;
+  if (d !== 1n || asFraction)
+    return `${sign}${n.toString()}${SLASH}${x.d.toString()}`;
   return formatQ(x, { decimal: ",", group: "", mul: "", div: "", minus: "−" });
 }
 
-/** Evaluates an expression of numbers, variables, `+ - * /` and brackets. */
+const whole = (x: Q): bigint => {
+  const q = x.n / x.d;
+  return x.n < 0n && x.n % x.d !== 0n ? q - 1n : q;
+};
+const sorted = (xs: readonly Q[]): Q[] => [...xs].sort((p, q) => p.cmp(q));
+const gcd = (a: bigint, b: bigint): bigint =>
+  b === 0n ? (a < 0n ? -a : a) : gcd(b, a % b);
+
+/** The functions an expression may call: `nth(k, ...)` is the k-th smallest of its numbers, from 1. */
+const FUNCTIONS: Readonly<
+  Record<string, (args: readonly Q[]) => Q | undefined>
+> = {
+  min: (a) => sorted(a)[0],
+  max: (a) => sorted(a)[a.length - 1],
+  floor: ([x]) => (x ? Q.of(whole(x)) : undefined),
+  mod: ([x, y]) => (x && y ? x.sub(y.mul(Q.of(whole(x.div(y))))) : undefined),
+  gcd: ([x, y]) => (x && y ? Q.of(gcd(x.n, y.n)) : undefined),
+  pow: ([x, y]) => (x && y ? Q.of(x.n ** y.n) : undefined),
+  nth: ([k, ...rest]) => (k ? sorted(rest)[Number(k.n) - 1] : undefined),
+};
+
+/** True when an expression reads a fraction, so that its result is written as a fraction too. */
+export const readsFraction = (
+  source: string,
+  vars: Readonly<Record<string, string>>,
+): boolean =>
+  (source.match(/\w+/g) ?? []).some((name) => vars[name]?.includes(SLASH));
+
+/** Evaluates an expression of numbers, variables, `+ - * /`, brackets and the functions above. */
 export function evaluate(
   source: string,
   vars: Readonly<Record<string, string>>,
   id: string,
 ): Q {
-  const tokens = source.match(/\d+(?:[.,]\d+)?|\w+|[-+*/()]/g) ?? [];
+  // A comma between digits with no space is a decimal comma; an argument comma stands alone.
+  const tokens = source.match(/\d+(?:\.\d+)?|\w+|[-+*/(),]/g) ?? [];
   let at = 0;
   const fail = (why: string): never => {
     throw new RangeError(`bad_expression:${id}:${source}:${why}`);
@@ -60,6 +90,18 @@ export function evaluate(
       return value;
     }
     if (/^\d/.test(token)) return Q.fromDecimal(token.replace(".", ","));
+    const fn = FUNCTIONS[token];
+    if (fn && tokens[at] === "(") {
+      at += 1;
+      const args = [sum()];
+      while (tokens[at] === ",") {
+        at += 1;
+        args.push(sum());
+      }
+      if (tokens[at] !== ")") return fail("bracket");
+      at += 1;
+      return fn(args) ?? fail(`arguments of ${token}`);
+    }
     const text = vars[token];
     if (text === undefined) return fail(`unknown ${token}`);
     return readValue(text) ?? fail(`not a number ${token}`);

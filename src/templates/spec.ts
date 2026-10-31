@@ -8,7 +8,7 @@
 import { readFileSync } from "node:fs";
 import { z } from "zod";
 import { strayNumbers } from "../engine/tasks/graph.js";
-import { agree, evaluate, writeValue } from "./expr.js";
+import { agree, evaluate, readsFraction, writeValue } from "./expr.js";
 import { formatQ } from "../math/format.js";
 import { Q } from "../math/q.js";
 import { candidateSeed, Xoshiro128 } from "../math/rng.js";
@@ -295,8 +295,8 @@ const fill = (
     let value = vars[head];
     if (head.startsWith("=")) {
       const worked = evaluate(head.slice(1), vars, id);
-      computed.push(worked);
-      value = writeValue(worked);
+      computed.push(...partsOf(worked));
+      value = writeValue(worked, readsFraction(head, vars));
     }
     if (value === undefined)
       throw new RangeError(`unfilled_placeholder:${id}:${head}`);

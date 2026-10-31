@@ -649,7 +649,7 @@ const brackets = [
     traps: [
       ["left-to-right", "procedural", ([a = 0, b = 0, c = 0]) => (a + b) * c],
     ],
-    extra: ([b = 0, c = 0]) => ({ m: String(b * c) }),
+    extra: ([, b = 0, c = 0]) => ({ m: String(b * c) }),
   }),
   a11({
     id: "A11.order-brackets.02",
@@ -706,7 +706,7 @@ const brackets = [
         ([a = 0, b = 0, q = 0]) => a + b * q,
       ],
     ],
-    extra: ([b = 0, q = 0]) => ({ n: String(b * q) }),
+    extra: ([, b = 0, q = 0]) => ({ n: String(b * q) }),
   }),
   a11({
     id: "A11.order-brackets.06",
@@ -827,7 +827,7 @@ const brackets = [
     traps: [
       ["brackets-ignored", "procedural", ([a = 0, b = 0, c = 0]) => a - b - c],
     ],
-    extra: ([b = 0, c = 0]) => ({ i: String(b - c) }),
+    extra: ([, b = 0, c = 0]) => ({ i: String(b - c) }),
   }),
 ];
 

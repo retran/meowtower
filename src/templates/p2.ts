@@ -390,7 +390,7 @@ const ratio = [
         ([a = 0, b = 0, k = 0]) => q(b + (a * k - a)),
       ],
     ],
-    extra: ([a = 0, k = 0]) => ({ s: String(a * k) }),
+    extra: ([a = 0, , k = 0]) => ({ s: String(a * k) }),
   }),
   p4({
     id: "P4.ratio.02",
@@ -472,7 +472,7 @@ const ratio = [
         ([a = 0, b = 0, k = 0]) => q(b + (a * k - a)),
       ],
     ],
-    extra: ([a = 0, k = 0]) => ({ s: String(a * k) }),
+    extra: ([a = 0, , k = 0]) => ({ s: String(a * k) }),
   }),
   p4({
     id: "P4.ratio.08",
@@ -552,7 +552,7 @@ const ratio = [
         ([a = 0, b = 0, k = 0]) => q(a * k + b),
       ],
     ],
-    extra: ([a = 0, k = 0]) => ({ p: String(a * k) }),
+    extra: ([a = 0, , k = 0]) => ({ p: String(a * k) }),
   }),
   p4({
     id: "P4.ratio.12",

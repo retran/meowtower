@@ -129,7 +129,7 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "decimal",
     p: [of(10, 20, 30, 40, 50)],
     ok: () => true,
-    f: (a) => qd((314 * a) / 10, 2),
+    f: (a) => qd(314 * a, 2),
     t: { "pi-as-three": (a) => q(3 * a) },
     c: [3, 3.14],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },

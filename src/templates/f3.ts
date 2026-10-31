@@ -695,7 +695,7 @@ const times = [
         ([, n = 0, d = 0, k = 0]) => q(n * k, d),
       ],
     ],
-    extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
+    extra: ([, n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
   f7({
     id: "F7.times-fraction.10",

@@ -972,7 +972,7 @@ const mixedOps = [
         ([w = 0, t = 0, k = 0]) => q(w).sub(qd(t, 1)).mul(q(k)),
       ],
     ],
-    extra: ([t = 0]) => ({ x: dec(t, 1) }),
+    extra: ([, t = 0]) => ({ x: dec(t, 1) }),
   }),
   d7({
     id: "D7.order-mixed.04",

@@ -295,7 +295,7 @@ const efficient = [
     solve: ([a = 0, b = 0, c = 0]) => a + b + c,
     ref: ([a = 0, b = 0, c = 0]) => a + c + b,
     traps: [["two-addends", "procedural", ([a = 0, b = 0]) => a + b]],
-    extra: ([a = 0, c = 0]) => ({ f: String(a + c) }),
+    extra: ([a = 0, , c = 0]) => ({ f: String(a + c) }),
   }),
   a13e({
     id: "A13.efficient.06",
