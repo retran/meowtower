@@ -1,4 +1,5 @@
 // REQ-7528: the key of a symbol follows the layout, which only the keys pressed can show.
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   firstLayout,
@@ -38,5 +39,17 @@ describe("the layout behind the key hints", () => {
     expect(symbolOf("fraction")).toBe("slash");
     expect(symbolOf("pair")).toBe("semicolon");
     expect(symbolOf("time")).toBe("colon");
+  });
+
+  it("names a key by its English marking, on every layout", () => {
+    const strings = JSON.parse(
+      readFileSync("content/i18n/ru.json", "utf8"),
+    ) as Record<string, string>;
+    const hints = Object.entries(strings).filter(([k]) =>
+      k.startsWith("ui.play.key."),
+    );
+    expect(hints.length).toBe(16);
+    for (const [key, text] of hints)
+      expect(text, key).not.toMatch(/(?:буквой|от) \p{Script=Cyrillic}\b/u);
   });
 });
