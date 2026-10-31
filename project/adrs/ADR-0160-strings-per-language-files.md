@@ -3,7 +3,7 @@ id: ADR-0160
 artifact: adr
 status: approved
 revised: 2026-10-10
-addresses: [REQ-3810, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3310, REQ-3312, REQ-3314, REQ-3318, REQ-3320, REQ-3322, REQ-3324, REQ-3326, REQ-3328]
+addresses: [REQ-3810, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-7544, REQ-3312, REQ-3314, REQ-3318, REQ-3320, REQ-3322, REQ-3324, REQ-3326, REQ-3328]
 supersedes: []
 ---
 
@@ -26,7 +26,7 @@ Every string the player or the parent reads comes from a per-language file under
    - `src/` holds no Cyrillic character outside test fixtures, a one-line grep that catches a Russian string written into a component;
    - the lint rule `no-literal-string` from `eslint-plugin-i18next` (6.1.5 on npm, checked 2026-09-27) rejects literal text in JSX and in `aria-label`, `title`, `placeholder` and `alt`, which catches an English or Dutch string the grep can't see;
    - every language file has the reference keys and placeholders;
-   - tests pin the exact values of the world's labels in REQ-3310 and of `ui.task.thread` in REQ-3322;
+   - tests pin the exact values of the world's labels in REQ-7544 and of `ui.task.thread` in REQ-3322;
    - no `ui.*` value equals a rejected label from REQ-3312, compared after trimming and folding case;
    - no `system.*` value holds "!" or a digit, because numbers reach System windows only as code-filled fields (REQ-3302, REQ-3308);
    - `textGate` passes every string in every per-language content file, and 200 rendered seeds of every task template, a sample size I chose.
@@ -100,7 +100,7 @@ The premortem, written as though it already happened. The gate shipped and passe
 3. A test renders every screen of ADR-0150 with a pseudo-language file whose values are the keys themselves and finds no visible or accessible text that isn't a key, so no string escaped the file.
 4. The fixtures pass: «ошибкой», «задачку», «Урок», «ОЦЕНКА» and the Latin look-alike «зaдача» are blocked, and «примерно», «примерить», «мимоза» and «верно» pass.
 5. A server test sends one line per source, the Master, pool, Explainer, template and a fixed string, each holding a forbidden form, and none reaches the SSE stream; each leaves one `text_blocked` row.
-6. The tests for REQ-3310 and REQ-3322 find the exact labels, and the thread button reads «Путеводная нить · 0» at zero threads with no shortage phrase anywhere on the screen.
+6. The tests for REQ-7544 and REQ-3322 find the exact labels, and the thread button reads «Путеводная нить · 0» at zero threads with no shortage phrase anywhere on the screen.
 7. The parent reads the `system.*` section at the stage 0.3 acceptance and signs off REQ-3300, REQ-3306 and REQ-3318 for fixed text.
 
 ## What this does not settle

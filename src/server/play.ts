@@ -29,6 +29,16 @@ import { resumeFromLog } from "../engine/projections/resume.js";
 import { isZone } from "../shared/game-day.js";
 import { baseSeed } from "../math/rng.js";
 import {
+  hexOf,
+  inputOf,
+  judge,
+  pick,
+  present,
+  rebuild,
+  trapOf,
+  twinOf,
+} from "./task-source.js";
+import {
   generate,
   type Built,
   type Template,
@@ -99,7 +109,6 @@ import {
   taskOf,
   taskSolution,
   taskText,
-  type StandinTask,
   type Verdict,
 } from "./standin.js";
 
@@ -117,6 +126,8 @@ export interface PlayOptions {
   onSessionEnded?: (sessionId: string) => void;
   /** Sweeps for an expired lease this often; without it only a request does. */
   sweepLeasesMs?: number;
+  /** Where the tasks come from: the three fixed stand-in tasks, or the template registry (EPC-0480). */
+  tasks?: "standin" | "registry";
 }
 
 /** The candidate a task was drawn at, read from its effective seed `base/k`. */
@@ -150,6 +161,8 @@ interface ItemShown {
   subtype: string;
   seed: string;
   parentItemId?: string;
+  /** The registry template of the task; absent for a stand-in task. */
+  templateId?: string;
 }
 
 const payloadOf = <T>(e: StoredEvent): T => e.payload as T;
@@ -203,7 +216,7 @@ function roomFor(
     kind: "room",
     itemId: shown.itemId,
     view: shown.view,
-    input: { kind: "integer" },
+    input: inputOf(shown.templateId, shown.seed),
     slot: Math.max(slot, 0) % ROOM_LENGTH,
     roomLength: ROOM_LENGTH,
     attemptNo: shown.attemptNo,
@@ -222,8 +235,17 @@ function answerReply(
   const upTo = log.filter((e) => e.seq <= verdictSeq);
   const verdicts = upTo
     .filter((e) => e.type === "verdict")
-    .map((e) => payloadOf<{ attemptNo: number; outcome: Outcome }>(e));
-  const outcome = verdicts[verdicts.length - 1]?.outcome ?? "alt";
+    .map((e) =>
+      payloadOf<{
+        attemptNo: number;
+        outcome: Outcome;
+        trapId: string | null;
+      }>(e),
+    );
+  const last = verdicts[verdicts.length - 1];
+  const outcome = last?.outcome ?? "alt";
+  const item = shown.templateId ? rebuild(shown.templateId, shown.seed) : null;
+  const note = item?.made.traps.find((t) => t.id === last?.trapId)?.explanation;
   // The streak counts clean first attempts in a row.
   const firsts = verdicts.filter((v) => v.attemptNo === 1);
   let streak = 0;
@@ -235,6 +257,7 @@ function answerReply(
     grants: [],
     threads: stockAt(upTo),
     feedback: { correctAnswer: shown.correctAnswer },
+    ...(note ? { note } : {}),
     shortSolution: shown.shortSolution,
     battleLine: t(keyFor(`battle.${outcome}.1`)),
   };
@@ -252,7 +275,7 @@ interface Lease {
 export function mountPlay(
   app: Hono,
   db: Db,
-  { now, stream, explainer, onSessionEnded, sweepLeasesMs }: PlayOptions,
+  { now, stream, explainer, onSessionEnded, sweepLeasesMs, tasks }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
 
@@ -383,7 +406,7 @@ export function mountPlay(
     sessionId: string,
     seq: number,
     itemId: string,
-    task: StandinTask,
+    fallback: string,
   ): Promise<void> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<null>((resolve) => {
@@ -399,7 +422,7 @@ export function mountPlay(
       seq,
       itemId,
       source: text === null ? "template" : "model",
-      text: text ?? taskExplanation(task),
+      text: text ?? fallback,
     });
   }
 
@@ -756,6 +779,51 @@ export function mountPlay(
         },
       ]);
       return send(c, End, { kind: "end" });
+    }
+    if (tasks === "registry") {
+      const chosen = pick(sessionId, index, STANDIN_ADVENTURE_TASKS);
+      const made = chosen.template.make(chosen.base);
+      const seed = hexOf(chosen.base);
+      const shape = present({ template: chosen.template, made });
+      const shown: ItemShown = {
+        itemId: randomUUID(),
+        view: {
+          locale: "ru",
+          text: shape.text,
+          svg: made.svg,
+          options: shape.options,
+          terms: [],
+        },
+        attemptNo: 1,
+        correctAnswer: shape.answer,
+        shortSolution: [...made.solution],
+        subtype: chosen.template.subtype,
+        seed,
+        templateId: chosen.template.id,
+      };
+      appendEvents(db, [
+        ...lifecycle,
+        {
+          type: "item_shown",
+          v: 2,
+          payload: {
+            ...shown,
+            templateVersion: 1,
+            params: { drawn: made.paramsKey },
+            node: chosen.template.node,
+            purpose: "ladder",
+            effectiveSeed: `${seed}/0`,
+            candidate: 0,
+          },
+          origin,
+          ...within(sessionId),
+        },
+      ]);
+      return send(
+        c,
+        Room,
+        roomFor(shown, sessionEvents(db, sessionId), playLog(sessionId)),
+      );
     }
     const task = STANDIN_TASKS[index % STANDIN_TASKS.length];
     if (!task) return c.json({ error: "no_task" }, 500);
@@ -1193,11 +1261,12 @@ export function mountPlay(
     }
 
     // The server checks `raw` itself and ignores the client's `parsed`.
-    const verdict: Verdict = standinVerdict(
-      a.raw,
-      a.dontKnow,
-      shown.correctAnswer,
-    );
+    const registry = shown.templateId
+      ? rebuild(shown.templateId, shown.seed)
+      : null;
+    const verdict: Verdict = registry
+      ? judge(registry, a.raw, a.dontKnow)
+      : standinVerdict(a.raw, a.dontKnow, shown.correctAnswer);
     // An entry the engine can't parse is returned to the player to correct. It
     // is not an attempt, so nothing is logged and the task's time keeps running
     // (REQ-0734, REQ-0736, REQ-0740).
@@ -1246,7 +1315,10 @@ export function mountPlay(
               attemptNo: shown.attemptNo,
               verdict,
               outcome,
-              trapId: null,
+              trapId:
+                registry && verdict === "wrong"
+                  ? trapOf(registry, a.raw)
+                  : null,
               errorClass: null,
               steps: [],
             },
@@ -1282,7 +1354,16 @@ export function mountPlay(
     if (found instanceof Response) return found;
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
-    if (!task) return c.json({ error: "item_unknown" }, 404);
+    const registry = shown.templateId
+      ? rebuild(shown.templateId, shown.seed)
+      : null;
+    const hintText = (n: number): string =>
+      registry
+        ? (registry.made.hints[Math.min(2, Math.max(0, n - 1))] ?? "")
+        : task
+          ? taskHint(task, n)
+          : "";
+    if (!task && !registry) return c.json({ error: "item_unknown" }, 404);
     const key = `hint:${deviceId}:${clientSeq}`;
 
     // A repeat gets the rung it bought and the stock as it was then.
@@ -1292,7 +1373,7 @@ export function mountPlay(
       const bought = payloadOf<{ level: number }>(first).level;
       return send(c, HintOut, {
         level: bought,
-        text: taskHint(task, bought),
+        text: hintText(bought),
         threads: stockAt(log, prior[prior.length - 1]?.seq),
       });
     }
@@ -1301,7 +1382,7 @@ export function mountPlay(
     if (levels.includes(level))
       return send(c, HintOut, {
         level,
-        text: taskHint(task, level),
+        text: hintText(level),
         threads: stockAt(log),
       });
     if (level !== Math.max(0, ...levels) + 1)
@@ -1332,7 +1413,7 @@ export function mountPlay(
     );
     return send(c, HintOut, {
       level,
-      text: taskHint(task, level),
+      text: hintText(level),
       threads: stockAt(sessionEvents(db, sessionId)),
     });
   });
@@ -1348,7 +1429,10 @@ export function mountPlay(
     if (found instanceof Response) return found;
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
-    if (!task) return c.json({ error: "item_unknown" }, 404);
+    const registry = shown.templateId
+      ? rebuild(shown.templateId, shown.seed)
+      : null;
+    if (!task && !registry) return c.json({ error: "item_unknown" }, 404);
     const key = `explain:${deviceId}:${body.data.clientSeq}`;
 
     const prior = requestEvents(db, key);
@@ -1390,7 +1474,17 @@ export function mountPlay(
       ),
     );
     // The reply doesn't wait for the text (REQ-2424); the stream brings it.
-    if (written) void deliver(sessionId, written.seq, itemId, task);
+    if (written)
+      void deliver(
+        sessionId,
+        written.seq,
+        itemId,
+        registry
+          ? registry.made.solution.join(" ")
+          : task
+            ? taskExplanation(task)
+            : "",
+      );
     return send(c, ExplainOut, {
       status: "pending",
       threads: stockAt(sessionEvents(db, sessionId)),
@@ -1426,6 +1520,59 @@ export function mountPlay(
     );
     if (!answered) return c.json({ error: "attempt_open" }, 409);
     const task = taskOf(shown.subtype);
+    const original = shown.templateId
+      ? rebuild(shown.templateId, shown.seed)
+      : null;
+    if (original && shown.templateId) {
+      const other = twinOf(shown.templateId, sessionId, original.made);
+      if (!other) return c.json({ error: "item_unknown" }, 404);
+      const shape = present(other);
+      const twin: ItemShown = {
+        itemId: randomUUID(),
+        view: {
+          locale: "ru",
+          text: shape.text,
+          svg: other.made.svg,
+          options: shape.options,
+          terms: [],
+        },
+        attemptNo: 2,
+        correctAnswer: shape.answer,
+        shortSolution: [...other.made.solution],
+        subtype: shown.subtype,
+        seed: other.seed,
+        parentItemId: itemId,
+        templateId: shown.templateId,
+      };
+      appendEvents(
+        db,
+        keyed(
+          [
+            {
+              type: "item_shown",
+              v: 2,
+              payload: {
+                ...twin,
+                templateVersion: 1,
+                params: { drawn: other.made.paramsKey },
+                node: other.template.node,
+                purpose: "ladder",
+                effectiveSeed: `${other.seed}/0`,
+                candidate: 0,
+              },
+              origin: { deviceId, clientMs: Date.now() },
+              ...within(sessionId),
+            },
+          ],
+          `second-attempt:${deviceId}:${body.data.clientSeq}`,
+        ),
+      );
+      return send(
+        c,
+        Room,
+        roomFor(twin, sessionEvents(db, sessionId), playLog(sessionId)),
+      );
+    }
     if (!task) return c.json({ error: "item_unknown" }, 404);
     const twinBase = baseSeed(sessionId, `standin.task.${task.n}.twin`, 0);
     const drawnTwin = drawnTask(standinTemplate(task, true), twinBase);

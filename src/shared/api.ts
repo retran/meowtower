@@ -34,7 +34,20 @@ const View = z
   })
   .strict();
 
-export const InputSpec = z.object({ kind: z.enum(["integer"]) }).strict();
+export const InputSpec = z
+  .object({
+    /** A typed entry, one button, several buttons, or buttons tapped in order. */
+    kind: z.enum(["integer", "text", "choice", "set", "order"]),
+    /** The answer kind of a typed entry, which names the format the field shows. */
+    format: z
+      .enum(["decimal", "fraction", "mixed", "pair", "time", "line"])
+      .optional(),
+    /** What each option of `view.options` sends as the answer. */
+    values: z.array(z.string()).optional(),
+  })
+  .strict();
+
+export type InputSpec = z.infer<typeof InputSpec>;
 
 export const Room = z
   .object({
@@ -150,6 +163,8 @@ export const AnswerOut = z
     ),
     threads: z.number().int().nonnegative(),
     feedback: z.object({ correctAnswer: z.string() }).strict(),
+    /** What went differently, when the entry is a known wrong answer of the task. */
+    note: z.string().min(1).optional(),
     shortSolution: z.array(z.string()).min(1),
     battleLine: z.string().min(1),
   })
@@ -220,6 +235,8 @@ export const HintOut = z
     threads: z.number().int().nonnegative(),
   })
   .strict();
+
+export type HintOut = z.infer<typeof HintOut>;
 
 /** The extension by one row: the reply once the extension is logged. */
 export const ExtendOut = z.object({ status: z.literal("extended") }).strict();

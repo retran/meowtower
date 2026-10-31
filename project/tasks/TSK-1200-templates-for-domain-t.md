@@ -1,7 +1,7 @@
 ---
 id: TSK-1200
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -12,11 +12,11 @@ issue:
 
 # The 4 nodes of domain T have templates for every subtype and answer kind
 
-After this task, each of the 4 nodes of domain T (0 at stretch) has a template for every subtype and answer kind the catalogue gives it, with its text in the per-language file and no string in the code (ADR-0490, REQ-1232).
+After this task, each of the 4 nodes of domain T (0 at stretch) has at least ten templates for every subtype and answer kind the catalogue gives it, with its text in the per-language file and no string in the code (ADR-0490, REQ-1232).
 
 ## Acceptance criteria
 
-1. Given the nodes of domain T, when `./meowtower graph check` lists the subtypes without a template, then none of them is a subtype of domain T. Closed by: the command's output.
+1. Given the nodes of domain T, when `./meowtower graph check` lists the subtypes without a template or with fewer than ten, then none of them is a subtype of domain T. Closed by: the command's output.
 2. Given each template of domain T, when `npm run verify:templates` runs it, then it shows no invalid parameters, no disagreement with the reference solver, no equal traps and no text that breaks the text rules. Closed by: the verification run's report.
 3. Given a template of domain T, when its text is read, then every player-facing string comes from the per-language file through the typed function. Closed by: the lint run's `no-literal-string` result.
 
@@ -33,7 +33,7 @@ Write the templates of domain T in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 46 templates of domain T are in src/templates/t1.ts and t2.ts, with their strings in content/tasks-t.ru.json. Closed by tests/unit/templates.test.ts and by `npm run verify:templates` on 10,000 seeds for each template. Each text is a plain blank with `roles` naming what each number stands for, so the story writer of ADR-0130 can dress it.
 
 ## Left alone
 

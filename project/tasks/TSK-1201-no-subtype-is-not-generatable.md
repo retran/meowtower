@@ -1,7 +1,7 @@
 ---
 id: TSK-1201
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -12,11 +12,11 @@ issue:
 
 # No subtype of the graph is listed as not_generatable
 
-After this task, every subtype of the 79 maths nodes has a template, so the not_generatable notice lists none and EPC-0470's checks can run (ADR-0490, REQ-1232).
+After this task, every subtype and answer kind of the 79 maths nodes has at least ten templates, so the not_generatable notice lists none and EPC-0470's checks can run (ADR-0490, REQ-1232).
 
 ## Acceptance criteria
 
-1. Given the finished templates, when `./meowtower graph check` runs, then it lists no subtype as not_generatable and exits 0. Closed by: the command's output.
+1. Given the finished templates, when `./meowtower graph check` runs, then it lists no subtype as not_generatable or as having fewer than ten templates and exits 0. Closed by: the command's output.
 2. Given a new graph version, when the server starts, then the parent's notices hold no not_generatable notice. Closed by: the unit test of the start-up notice.
 
 The definition of done in ADR-0190 applies as well and isn't restated here.
@@ -39,7 +39,7 @@ Run the check over the whole graph and fix any subtype a domain task missed.
 
 ## Evidence
 
-Not yet.
+`./meowtower graph check` lists `not_generatable: 0` and `thin: 0` at this commit. The registry holds 1335 templates, each verified on 10,000 seeds.
 
 ## Left alone
 

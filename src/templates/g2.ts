@@ -1,0 +1,346 @@
+// Domain G, part 2: symmetry and coordinates (RES-4285). The Dutch goals give line symmetry at group 5 and the grid
+// reference at group 6; symmetry about a centre and the coordinate plane are Russian extensions of grade 6. Texts are
+// plain blanks in `content/tasks-g.ru.json`. Generated from one table with the strings.
+import type { Q } from "../math/q.js";
+import { calc, of, rg } from "./kitc.js";
+import { q } from "./kitf.js";
+import { SIGNS, type Spec } from "./spec.js";
+
+const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
+
+const G3_symmetry = calc("G3", "symmetry");
+const G3_symmetry_specs: readonly Spec<never>[] = [
+  G3_symmetry({
+    id: "G3.symmetry.01",
+    form: "the-axes-of-a-regular-polygon",
+    g: [5, 6],
+    kind: "integer",
+    p: [of(3, 4, 5, 6, 8)],
+    f: (a) => q(a),
+    t: {
+      "one-axis": () => q(1),
+      doubled: (a) => q(2 * a),
+      "half-of-sides": (a) => (a % 2 === 0 ? q(a / 2) : null),
+    },
+    c: [1, 2],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.02",
+    form: "the-mirror-image-of-a-number",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(1, 8), rg(9, 15)],
+    f: (a, b) => q(2 * b - a),
+    t: {
+      "distance-only": (a, b) => q(b - a),
+      "mirror-itself": (a, b) => q(b),
+      "wrong-side": (a, b) => (2 * a - b === b - a ? null : q(2 * a - b)),
+    },
+    c: [2],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.03",
+    form: "the-mirror-point-on-a-grid",
+    g: [5, 6],
+    kind: "pair",
+    p: [rg(1, 4), rg(1, 6), rg(5, 7)],
+    ok: (a, b, c) => b !== 2 * c - a,
+    f: (a, b, c) => [q(2 * c - a), q(b)] as const,
+    t: {
+      "same-point": (a, b) => [q(a), q(b)] as const,
+      swapped: (a, b, c) => [q(b), q(2 * c - a)] as const,
+      "on-the-axis": (a, b, c) => [q(c), q(b)] as const,
+      "horizontal-mirror": (a, b, c) =>
+        a === b ? null : ([q(a), q(2 * c - b)] as const),
+    },
+    c: [2],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.04",
+    form: "the-point-reflected-in-a-centre",
+    g: [5, 6],
+    kind: "pair",
+    p: [rg(1, 4), rg(1, 4), rg(5, 7), rg(5, 7)],
+    f: (a, b, c, d) => [q(2 * c - a), q(2 * d - b)] as const,
+    t: {
+      centre: (a, b, c, d) => [q(c), q(d)] as const,
+      "line-mirror": (a, b, c) => [q(2 * c - a), q(b)] as const,
+      "horizontal-mirror": (a, b, c, d) => [q(a), q(2 * d - b)] as const,
+    },
+    c: [2],
+    origin: {
+      extension:
+        "the symmetry about a centre and the coordinate plane, Russian grade 6 (RES-4285)",
+    },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.05",
+    form: "the-letters-with-a-vertical-axis",
+    g: [5, 6],
+    kind: "set",
+    p: [rg(0, 19)],
+    f: () => ["1", "3"],
+    t: {
+      "only-the-first": () => ["1"],
+      "only-the-third": () => ["3"],
+      "with-the-fourth": () => ["1", "3", "4"],
+    },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.06",
+    form: "the-letters-with-a-horizontal-axis",
+    g: [5, 6],
+    kind: "set",
+    p: [rg(0, 19)],
+    f: () => ["1", "3"],
+    t: {
+      "only-the-first": () => ["1"],
+      "only-the-third": () => ["3"],
+      "with-the-second": () => ["1", "2", "3"],
+    },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.07",
+    form: "the-letter-with-two-axes",
+    g: [5, 6],
+    kind: "choice",
+    p: [rg(0, 19)],
+    f: () => "3",
+    t: {
+      "one-vertical-axis": () => "1",
+      "one-horizontal-axis": () => "2",
+      "no-axis": () => "4",
+    },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.08",
+    form: "the-axes-of-a-rectangle",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(2, 9), rg(10, 19)],
+    f: () => q(2),
+    t: { "as-a-square": () => q(4), one: () => q(1) },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.09",
+    form: "the-axes-of-an-isosceles-triangle",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(6, 9), rg(10, 11)],
+    f: () => q(1),
+    t: { equilateral: () => q(3), none: () => q(0) },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.10",
+    form: "the-holes-in-a-folded-sheet",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(1, 5)],
+    f: (a) => q(2 ** a),
+    t: {
+      "one-hole": () => q(1),
+      "per-fold": (a) => (a === 2 ? null : q(a)),
+      "one-fold-less": (a) => (a <= 2 ? null : q(2 ** (a - 1))),
+    },
+    c: [2],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.11",
+    form: "the-card-flipped-twice",
+    g: [5, 6],
+    kind: "choice",
+    p: [rg(0, 19)],
+    f: () => "4",
+    t: {
+      "mirror-image": () => "1",
+      "upside-down": () => "2",
+      "quarter-turn": () => "3",
+    },
+    options: () => ["1", "2", "3", "4"],
+    c: [1, 2, 3, 4],
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.12",
+    form: "the-axes-of-a-square",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(2, 15)],
+    ok: (a) => a !== 4 && a !== 2,
+    f: () => q(4),
+    t: { "as-a-rectangle": () => q(2), side: (a) => q(a) },
+  }),
+];
+
+const G4_coordinates = calc("G4", "coordinates");
+const G4_coordinates_specs: readonly Spec<never>[] = [
+  G4_coordinates({
+    id: "G4.coordinates.01",
+    form: "the-distance-along-a-row",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 5), rg(6, 12), rg(1, 9)],
+    f: (a, b) => q(b - a),
+    t: {
+      "far-coordinate": (a, b) => q(b),
+      "coordinates-added": (a, b) => q(a + b),
+      "counted-points": (a, b) => q(b - a + 1),
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.02",
+    form: "the-distance-along-a-column",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 9), rg(1, 5), rg(6, 12)],
+    f: (a, b, c) => q(c - b),
+    t: {
+      "far-coordinate": (a, b, c) => q(c),
+      "coordinates-added": (a, b, c) => q(b + c),
+      "counted-points": (a, b, c) => q(c - b + 1),
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.03",
+    form: "the-fourth-vertex-of-a-rectangle",
+    g: [6, 7],
+    kind: "pair",
+    p: [rg(1, 3), rg(1, 3), rg(5, 9), rg(5, 9)],
+    f: (a, b, c, d) => [q(a), q(d)] as const,
+    t: {
+      "first-vertex": (a, b) => [q(a), q(b)] as const,
+      "third-vertex": (a, b, c, d) => [q(c), q(d)] as const,
+      swapped: (a, b, c, d) => [q(d), q(a)] as const,
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.04",
+    form: "the-position-after-a-move",
+    g: [6, 7],
+    kind: "pair",
+    p: [rg(1, 4), rg(1, 4), rg(1, 5), rg(1, 5)],
+    ok: (a, b, c, d) => c !== d,
+    f: (a, b, c, d) => [q(a + c), q(b + d)] as const,
+    t: {
+      "swapped-shifts": (a, b, c, d) => [q(a + d), q(b + c)] as const,
+      "shifts-only": (a, b, c, d) => [q(c), q(d)] as const,
+      swapped: (a, b, c, d) => [q(b + d), q(a + c)] as const,
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.05",
+    form: "the-middle-of-a-segment-on-a-row",
+    g: [6, 7],
+    kind: "pair",
+    p: [of(2, 4, 6), of(8, 10, 12), rg(1, 9)],
+    ok: (a, b, c) => (a + b) / 2 !== c,
+    f: (a, b, c) => [q((a + b) / 2), q(c)] as const,
+    t: {
+      "left-end": (a, b, c) => [q(a), q(c)] as const,
+      "half-the-sum": (a, b) => [q((a + b) / 2), q((a + b) / 2)] as const,
+      swapped: (a, b, c) => [q(c), q((a + b) / 2)] as const,
+      "not-halved": (a, b, c) => [q(a + b), q(c)] as const,
+    },
+    c: [2],
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.06",
+    form: "the-area-of-a-rectangle-from-two-opposite-vertices",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 3), rg(1, 3), rg(5, 9), rg(5, 9)],
+    ok: (a, b, c, d) => c - a !== d - b,
+    f: (a, b, c, d) => q((c - a) * (d - b)),
+    t: {
+      perimeter: (a, b, c, d) => q(2 * (c - a + (d - b))),
+      "sides-added": (a, b, c, d) => q(c - a + (d - b)),
+      "far-vertex-product": (a, b, c, d) =>
+        c * d === 2 * (c - a + (d - b)) || c * d === c - a + (d - b)
+          ? null
+          : q(c * d),
+    },
+    c: [2],
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.07",
+    form: "the-shortest-walk-on-a-grid",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 4), rg(1, 4), rg(5, 9), rg(5, 9)],
+    ok: (a, b, c, d) => c - a !== d - b,
+    f: (a, b, c, d) => q(c - a + (d - b)),
+    t: {
+      "longer-side": (a, b, c, d) => q(Math.max(c - a, d - b)),
+      "end-coordinates": (a, b, c, d) => q(c + d),
+      area: (a, b, c, d) =>
+        (c - a) * (d - b) === c + d ||
+        (c - a) * (d - b) === Math.max(c - a, d - b)
+          ? null
+          : q((c - a) * (d - b)),
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.08",
+    form: "the-points-with-both-coordinates-up-to-a-bound",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 6)],
+    f: (a) => q((a + 1) * (a + 1)),
+    t: {
+      "without-zero": (a) => q(a * a),
+      "one-axis": (a) => q(a + 1),
+      "counts-added": (a) => q(2 * a + 2),
+    },
+    x: () => ({ x: "x", y: "y" }),
+    c: [0, 1],
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.09",
+    form: "the-distance-to-an-axis",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 5), rg(6, 12)],
+    f: (a, b) => q(b),
+    t: {
+      "first-coordinate": (a) => q(a),
+      "coordinates-added": (a, b) => q(a + b),
+    },
+    c: [0],
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.10",
+    form: "the-position-after-a-return-walk",
+    g: [6, 7],
+    kind: "pair",
+    p: [rg(4, 7), rg(4, 7), rg(1, 3), rg(1, 3)],
+    ok: (a, b, c, d) => c !== d,
+    f: (a, b, c, d) => [q(a - c), q(b - d)] as const,
+    t: {
+      "all-added": (a, b, c, d) => [q(a + c), q(b + d)] as const,
+      "first-part": (a, b) => [q(a), q(b)] as const,
+      swapped: (a, b, c, d) =>
+        a - c === b - d ? null : ([q(b - d), q(a - c)] as const),
+    },
+    c: [0],
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.11",
+    form: "the-higher-point",
+    g: [6, 7],
+    kind: "compare",
+    p: [rg(1, 9), rg(1, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => sign(q(a), q(b)),
+    t: { reversed: (a, b) => sign(q(b), q(a)) },
+  }),
+];
+
+export const gSpecs2: readonly Spec<never>[] = [
+  ...G3_symmetry_specs,
+  ...G4_coordinates_specs,
+];

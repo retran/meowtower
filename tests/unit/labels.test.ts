@@ -1,5 +1,5 @@
 // TSK-0678: the interface uses the world's labels, and a label that brings back the test, the clock
-// or the streak fails the build (ADR-0160, REQ-3310, REQ-3312).
+// or the streak fails the build (ADR-0160, REQ-7544, REQ-3312).
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { textGate } from "../../src/shared/voice/gate.js";
@@ -11,7 +11,7 @@ const ru = JSON.parse(readFileSync("content/i18n/ru.json", "utf8")) as Record<
 const label = (text: string) =>
   textGate(text, { lang: "ru", kind: "label", source: "fixed" });
 
-describe("REQ-3310: each label of the world is pinned to its key and its exact text", () => {
+describe("REQ-7544: each label of the world is pinned to its key and its exact text", () => {
   it.each([
     ["ui.scheme.title", "Схема узла"],
     ["ui.scheme.thread", "Как легла нить"],
@@ -19,10 +19,10 @@ describe("REQ-3310: each label of the world is pinned to its key and its exact t
     ["ui.play.submit", "Готово"],
     ["ui.play.dontKnow", "Не знаю"],
     ["ui.reward.thread", "Путеводная нить"],
-    ["ui.play.badge.clean", "Распутан начисто"],
-    ["ui.play.badge.partial", "Почти чисто"],
-    ["ui.play.badge.soft", "Узел ослаблен"],
-    ["ui.play.badge.unknown", "Принято"],
+    ["ui.play.badge.clean", "Правильно!"],
+    ["ui.play.badge.partial", "Почти правильно"],
+    ["ui.play.badge.soft", "Пока не так"],
+    ["ui.play.badge.unknown", "Давай посмотрим, как решить"],
     ["ui.rest.title", "Привал"],
     ["ui.play.leave", "Сохранить и уйти"],
     ["ui.play.extend", "Ещё один ряд"],

@@ -16,6 +16,8 @@ import {
 } from "../src/engine/tasks/template.js";
 import { baseSeed } from "../src/math/rng.js";
 import { Q } from "../src/math/q.js";
+import { templates as registry } from "../src/templates/index.js";
+import { strayIn, type Compiled } from "../src/templates/spec.js";
 import {
   STANDIN_TASKS,
   standinTemplate,
@@ -190,6 +192,61 @@ export function goldenRecords(): GoldenRecord[] {
   );
 }
 
+/** What a run over one registry template found (ADR-0490): the checks of the unit test, on many seeds. */
+export function verifyCompiled(c: Compiled, seeds = SEEDS): TemplateReport {
+  let invalid = 0;
+  let disagreements = 0;
+  let equalTraps = 0;
+  let foreignNumbers = 0;
+  let textFindings = 0;
+  const times: number[] = [];
+  for (let i = 0; i < seeds; i++) {
+    const started = performance.now();
+    let made;
+    try {
+      made = c.make(baseSeed(`verify-${i}`, c.id, 0));
+    } catch {
+      invalid++;
+      continue;
+    }
+    times.push(performance.now() - started);
+    if (!made.referenceAgrees) disagreements++;
+    if (made.checker(made.entry).verdict !== "correct") invalid++;
+    const entries = made.traps.map((t) => t.entry);
+    if (
+      new Set(entries).size !== entries.length ||
+      made.traps.some((t) => made.checker(t.entry).verdict === "correct")
+    )
+      equalTraps++;
+    foreignNumbers += strayIn(made).length;
+    for (const text of [made.text, ...made.solution, ...made.hints])
+      for (const rule of TEXT_RULES)
+        if (rule.pattern.test(text)) textFindings++;
+  }
+  const sorted = [...times].sort((x, y) => x - y);
+  const p95Ms = sorted[Math.ceil(0.95 * sorted.length) - 1] ?? 0;
+  const findings: string[] = [];
+  if (invalid > 0) findings.push(`invalid ${invalid}`);
+  if (disagreements > 0) findings.push(`disagreements ${disagreements}`);
+  if (equalTraps > 0) findings.push(`equal traps ${equalTraps}`);
+  if (foreignNumbers > 0) findings.push(`foreign numbers ${foreignNumbers}`);
+  if (textFindings > 0) findings.push(`text rules ${textFindings}`);
+  if (p95Ms > BUDGET_MS)
+    findings.push(`p95 ${p95Ms.toFixed(2)} ms over ${BUDGET_MS} ms`);
+  return {
+    template: c.id,
+    seeds,
+    invalid,
+    disagreements,
+    equalTraps,
+    foreignNumbers,
+    textFindings,
+    fallbackShare: 0,
+    p95Ms,
+    findings,
+  };
+}
+
 function main(): number {
   if (process.argv.includes("--golden")) {
     writeFileSync(GOLDEN_PATH, `${JSON.stringify(goldenRecords(), null, 2)}\n`);
@@ -211,6 +268,14 @@ function main(): number {
     for (const finding of r.findings) console.log(`  finding: ${finding}`);
     if (r.findings.length > 0) failed = true;
   }
+  for (const c of registry) {
+    const r = verifyCompiled(c);
+    if (r.findings.length > 0) {
+      console.log(`${r.template}: ${r.findings.join(", ")}`);
+      failed = true;
+    }
+  }
+  console.log(`registry: ${registry.length} templates, ${SEEDS} seeds each`);
   return failed ? 1 : 0;
 }
 

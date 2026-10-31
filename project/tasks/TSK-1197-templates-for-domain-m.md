@@ -1,7 +1,7 @@
 ---
 id: TSK-1197
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -12,11 +12,11 @@ issue:
 
 # The 14 nodes of domain M have templates for every subtype and answer kind
 
-After this task, each of the 14 nodes of domain M (2 at stretch) has a template for every subtype and answer kind the catalogue gives it, with its text in the per-language file and no string in the code (ADR-0490, REQ-1232).
+After this task, each of the 14 nodes of domain M (2 at stretch) has at least ten templates for every subtype and answer kind the catalogue gives it, with its text in the per-language file and no string in the code (ADR-0490, REQ-1232).
 
 ## Acceptance criteria
 
-1. Given the nodes of domain M, when `./meowtower graph check` lists the subtypes without a template, then none of them is a subtype of domain M. Closed by: the command's output.
+1. Given the nodes of domain M, when `./meowtower graph check` lists the subtypes without a template or with fewer than ten, then none of them is a subtype of domain M. Closed by: the command's output.
 2. Given each template of domain M, when `npm run verify:templates` runs it, then it shows no invalid parameters, no disagreement with the reference solver, no equal traps and no text that breaks the text rules. Closed by: the verification run's report.
 3. Given a template of domain M, when its text is read, then every player-facing string comes from the per-language file through the typed function. Closed by: the lint run's `no-literal-string` result.
 
@@ -33,7 +33,9 @@ Write the templates of domain M in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 294 templates of domain M are in src/templates/m1.ts to m5.ts, written with the short form of src/templates/kitc.ts, with their strings in content/tasks-m.ru.json. Closed by tests/unit/templates.test.ts (ten or more templates for each of the 26 subtypes, 200 seeds for each template) and by `npm run verify:templates` on 10,000 seeds for each template. `./meowtower graph check` lists none of the 26 subtypes of domain M as thin or without a template.
+
+A clock answer is the time as H:MM, checked in the face the template names. A choice about a benchmark names its option by number, because the option texts stay in the per-language file and no Russian text may sit in the code. The circle, the average speed and the work problems are extensions, tagged as such, because the Dutch goals stop short of them.
 
 ## Left alone
 
