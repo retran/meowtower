@@ -176,7 +176,7 @@ branches at once, and the code shows the right one.
   exact list, and «один», «первый», «последний» (one, first, last) are
   allowed. In place of numbers write «несколько», «много», «чуть-чуть»,
   «уйма» (several, many, a little, loads). The code puts the game's counters
-  (experience, level, characteristic points, task progress, row numbers) into
+  (ability levels, characteristic points, task progress, row numbers) into
   separate fields. Names from the canon and names the player gave, such
   as «Поварята Пополам» (the Half-and-Half Cooks) or «Кошка Первой Петли» (the
   Cat of the First Loop), may be written as they are. The canon's own

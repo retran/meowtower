@@ -36,11 +36,23 @@ become a little more even.
 
 ## Ranks
 
-A rank is how deeply the hunter sees «Основа». The rank changes on the
-Director's signal at campaign milestones, and the specification holds the
-calendar. The Master makes each rank change its own solemn scene: every window
-of the Tower is lit, the familiars line up, and the Guardians send
-congratulations in their own style. A rank never goes down.
+A rank is how deeply the hunter sees «Основа». The rank follows her abilities:
+it rises when the threads of its groups hold, and it falls when too many of them
+have frayed for a long while, and the specification holds the rule. The heroine
+receives a rank only in the story: the Master makes each rise its own solemn
+scene: every window of the Tower is lit, the
+familiars line up, and the Guardians send congratulations in their own style. A
+fall is a story event too: the threads have loosened, and the Master says how to
+mend them. It never says anything about the heroine herself, and it takes
+nothing: her items, titles, opened floors, currencies, friendships and pages
+stay, and what a rank opened stays open.
+
+The heroine's abilities are her skills in the trials, one for each knot of the
+map, each with its level. She can see them on her sheet with her rank, and a
+level can loosen and be mended in the same way. Each domain gives her a verb,
+such as reading the Archive's marks or turning the Works, which grows with its
+levels. A level opens new things in the
+Tower, such as a hatch only that skill can untie, and what it opened stays open.
 
 | Rank | Title | What the heroine sees | What opens in the story |
 | --- | --- | --- | --- |
@@ -53,21 +65,17 @@ congratulations in their own style. A rank never goes down.
 
 ### Ranks in the first version
 
-In the first version the heroine holds rank E from Session 0, and the rank
-never changes. At rank E she gets every floor, hidden hatches and portals
+In the first version the heroine starts at rank E in Session 0, and the rank
+follows her abilities from then on. At rank E she gets every floor, hidden hatches and portals
 between halls, the first familiar, the Diary and short slips onto the edge of
 the Underside; the first ciphers wait until ciphers ship, and until then the
 Diary develops an enciphered page before she opens it (CAN-0090). An opening
 of a later rank that the first version has, such as the floors' secret
-places, opens on the date that rank would have arrived, while the badge still
-says E. An opening the first version doesn't have, such as a path or the
-forge's big recipes, stays closed. A season finale that would raise the rank
-gives its chapter title and main reward like any chapter finale, and the rank
-stays E (CAN-0080). When ranks arrive, one solemn
-scene gives the heroine the rank the calendar has reached.
+places, opens when she first reaches that rank. An opening the first version doesn't have, such as a path or the
+forge's big recipes, stays closed. A season finale gives its chapter title and main reward like any chapter
+finale, and the rank stays as her abilities set it (CAN-0080).
 
-The canon names no month for a rank. After the first version, the campaign's
-season milestones set when ranks come (CAN-0080). Her rival «Мирра Шпилька»
+The canon names no month for a rank. Her rival «Мирра Шпилька»
 (Mirra Hairpin) holds rank D, one above the heroine's starting E, and keeps
 it all through the first version (CAN-0080).
 
@@ -75,7 +83,8 @@ it all through the first version (CAN-0080).
 
 Characteristics affect only the story: how easily the player's bold idea
 works. They never affect trials. The first version has no characteristics: a
-level-up there is light and sound and gives no characteristic points.
+rise of an ability or a rank there is light and sound and gives no
+characteristic points.
 
 | Characteristic | What it means in the world | Example in the story |
 | --- | --- | --- |

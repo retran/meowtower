@@ -3,7 +3,7 @@ id: ADR-0140
 artifact: adr
 status: approved
 revised: 2026-10-10
-addresses: [REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764, REQ-1900, REQ-1902, REQ-1904, REQ-1906, REQ-1908, REQ-1910, REQ-1912, REQ-1914, REQ-1916, REQ-1918, REQ-1920, REQ-1922, REQ-1924, REQ-1926, REQ-1928, REQ-1930, REQ-1932, REQ-1934, REQ-1936, REQ-1938, REQ-1940, REQ-1942, REQ-1944, REQ-1946, REQ-1948, REQ-1950, REQ-1952, REQ-1954, REQ-2000, REQ-2002, REQ-2004, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2018, REQ-2020, REQ-2022, REQ-2024, REQ-2028, REQ-2030, REQ-2032, REQ-2034, REQ-2036, REQ-2038, REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2118, REQ-2120, REQ-2122, REQ-2126, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2138, REQ-2140, REQ-2142, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2182, REQ-2184, REQ-2186, REQ-3532, REQ-3534]
+addresses: [REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764, REQ-1900, REQ-1902, REQ-1904, REQ-1906, REQ-1908, REQ-1910, REQ-1912, REQ-1914, REQ-1916, REQ-1918, REQ-1920, REQ-1922, REQ-1924, REQ-1926, REQ-1928, REQ-1930, REQ-1932, REQ-1934, REQ-1936, REQ-1938, REQ-1940, REQ-1942, REQ-1944, REQ-1946, REQ-1948, REQ-1950, REQ-1952, REQ-1954, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2022, REQ-2024, REQ-2028, REQ-2030, REQ-2032, REQ-2036, REQ-2038, REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2118, REQ-2120, REQ-2122, REQ-2126, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2138, REQ-2140, REQ-2142, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2182, REQ-2184, REQ-2186, REQ-3532, REQ-3534]
 supersedes: []
 issue: 34
 projected: 0e829404c9c4
@@ -23,7 +23,7 @@ The module holds five rule sets, and each takes its numbers from one content fil
 | Rule set | Content file | What it decides |
 | --- | --- | --- |
 | Outcomes | `content/thresholds.json` | a spell's outcome, the badge, the streak, clean rows, the room branch, the floor state, the chapter finale variant, the reward queue |
-| Progression | `content/economy.json` | experience, level, rank, daily quests, the pattern row, the day count, the nearest goal |
+| Progression | `content/economy.json` | ability levels, rank, daily quests, the pattern row, the day count, the nearest goal |
 | Rewards | `content/economy.json` | buttons, shards, yarn, floor materials, chest contents and quality, shop prices and shelf, forge recipes |
 | Familiars | `content/familiars.yaml` | the roster, starters, friendship points and levels, evolution stages and thresholds, the bestiary |
 | Tricks and items | `content/economy.json` | the catalogue of outfits, accessories, foci, curiosities and tricks, each with a category and no power field |
@@ -58,15 +58,15 @@ The canon and the line pool name a spell's outcomes clean, almost and loosened, 
 
 ### Progression
 
-Experience comes from effort (RES-2000): 5 for any first attempt, whatever its verdict, 3 for a second attempt, 10 for a scene, 20 for a floor in any state, 50 for a daily quest and 60 for a completed adventure. Leaving level L costs `min(150 + 20 * (L - 1), 600)` experience. I read the formula as the cost of leaving L, because that reading gives RES-2000's own figures: 7,920 for levels 1 to 22, and level 4 at about 520. RES-2000 estimates 521 experience an adventure, inside the 500 to 650 REQ-2004 imposes. Experience, level, rank, owned items, currencies, friendship and pages only ever grow, because the module has no rule that subtracts from them except a purchase or a forge the player chose, which spend currency and add an item.
+The game accumulates no experience. Ability levels and rank are computed from the knowledge graph and may fall, as ADR-3220 states. Owned items, currencies, friendship, titles, opened floors and pages only ever grow, because the module has no rule that subtracts from them except a purchase or a forge the player chose, which spend currency and add an item (REQ-8022).
 
-A level-up fires a ceremony of light and sound and grants nothing. The heroine holds rank E from Session 0, and Mirra holds rank D, both as fixed content values in the MVP; the MVP ships no stats, paths or rank changes, and no rank month appears in the canon. If stats arrive later, the module sends the Master each stat only as low, medium or high relative to the others, and no task rule reads a stat.
+A rise of an ability level or rank fires a ceremony of light and motion and grants no item or currency. The heroine starts at rank E in Session 0 and her rank follows ADR-3220; Mirra holds rank D as a fixed content value in the MVP. The MVP ships no stats or paths, and no rank month appears in the canon. If stats arrive later, the module sends the Master each stat only as low, medium or high relative to the others, and no task rule reads a stat.
 
-Each game day the module picks 3 daily quests from a pool of templates by the day's seed. Every template counts an act of play, such as clearing floors or picking from a chest, and none counts a correct answer. A content check rejects a template whose counter reads a verdict. A quest met gives 50 experience, 10 buttons and 1 thread. An unmet quest disappears when the game day ends, with no event the player sees. The optional pattern row comes at most once in 3 days, from a success branch, and gives 2 star yarn and nothing else.
+Each game day the module picks 3 daily quests from a pool of templates by the day's seed. Every template counts an act of play, such as clearing floors or picking from a chest, and none counts a correct answer. A content check rejects a template whose counter reads a verdict. A quest met gives 10 buttons and 1 thread. An unmet quest disappears when the game day ends, with no event the player sees. The optional pattern row comes at most once in 3 days, from a success branch, and gives 2 star yarn and nothing else.
 
 The day count is the number of game days on which the player answered at least one task, computed from the log. The module keeps no streak of days, and the player's side of the client has no notification code: no Web Push subscription, no Notification API call and no service-worker push handler. A static check fails the build if any of these appear outside the Parent Room's code, which keeps room for the parent's alarm that ADR-0110 leaves to a later stage.
 
-The nearest goal is the goal with the smallest remaining share, among the next level, the next evolution, the next forge recipe, the bestiary percentage and the next Diary page, with ties broken in that order. I chose "smallest remaining share" so the goal shown is the one she can reach soonest. The server sends it with the main screen and with the end of every scene. The experience bar shows points toward the next level.
+The nearest goal is the goal with the smallest remaining share, among the next ability level, the next evolution, the next forge recipe, the bestiary percentage and the next Diary page, with ties broken in that order. I chose "smallest remaining share" so the goal shown is the one she can reach soonest. The server sends it with the main screen and with the end of every scene.
 
 ### Rewards
 
@@ -152,7 +152,7 @@ The build pays in checks that are easy to forget: the static checks for notifica
 
 The player pays with predictability. A chest she could compute from her stock is less surprising than a lottery, and after a few weeks she may learn which category comes next.
 
-The strongest objection is that the accuracy bonuses still pay for being right. Shards, yarn, the sparkling slot and success-branch secrets all come faster with correct answers, so a slow careful guess earns more than an honest "I don't know", and the rapid-guess cap catches only fast guesses. I keep the bonuses because the owner's draft puts them there and RES-2100 bounds them. Clean work speeds the forge by about 40 %, a week at clean share 0.4 still forges an outfit and an accessory, and experience, buttons and friendship are the same for every verdict. The objection is the first reversal condition, measured in stage 0.3.
+The strongest objection is that the accuracy bonuses still pay for being right. Shards, yarn, the sparkling slot and success-branch secrets all come faster with correct answers, so a slow careful guess earns more than an honest "I don't know", and the rapid-guess cap catches only fast guesses. I keep the bonuses because the owner's draft puts them there and RES-2100 bounds them. Clean work speeds the forge by about 40 %, a week at clean share 0.4 still forges an outfit and an accessory, and buttons and friendship are the same for every verdict. The objection is the first reversal condition, measured in stage 0.3.
 
 ## What would reverse it
 
@@ -184,7 +184,7 @@ Premortem, written as if it happened: by November the player had learned that a 
 2. A test changes `content/thresholds.json` to version 2 and rebuilds the projections: every past room branch and floor state stays as logged.
 3. Unit tests cover each row of the badge mapping, each streak rule including resume and a new adventure, the rapid-guess and assisted-attempt caps in both shares, and the stateless floor.
 4. The simulation of ADR-0190 on the mixed profiles reports, for version 1, success in 55-75 % of rooms, cunning in at most 25 % of floor-days, triumph in 15-35 % and triumph chapters near half, or fails the build.
-5. A test plays one adventure with every answer "I don't know" and gets the same experience, buttons, quest completions and friendship as the same adventure with every answer correct.
+5. A test plays one adventure with every answer "I don't know" and gets the same buttons, quest completions and friendship as the same adventure with every answer correct.
 6. A test plays the same state on the same day twice and gets the same chest; a test with two categories tied shows the tie broken the same way whatever the answers.
 7. Static checks fail the build on a notification API in the player's client, a payment SDK, a leaderboard route or a verdict-reading quest template. They also fail it on a trick field read by any rule, an element-ring import from outcome or selection code, a canon threshold number, or a Guardian with fewer than three fallback endings.
 8. A test in a simulated first week shows the forge open by the end of day one and the shop open from the first screen.
@@ -198,7 +198,7 @@ Premortem, written as if it happened: by November the player had learned that a 
 - The pictures of familiars, stages, items and silhouettes' sources; ADR-0170 owns them.
 - Guiding threads, their stock, cap and the conversion of surplus threads into buttons; ADR-0080 owns them, and this record's quest and clean-row rules only call its grant.
 - Calibrated thresholds; they arrive in a later decision record, named by version, after the stage 0.1 simulation.
-- Familiar battles, stats, paths, rank changes, legendaries and AI-made creatures, which come after the MVP; this record fixes only the rules they must follow when they arrive.
+- Familiar battles, stats, paths, legendaries and AI-made creatures, which come after the MVP; this record fixes only the rules they must follow when they arrive.
 
 Amended by ADR-0250, ADR-0260, ADR-0280, ADR-0290, ADR-0320 and ADR-0330, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
@@ -207,6 +207,8 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 5 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-2026 (superseded by REQ-6126, which ADR-0320 addresses); REQ-2116 (superseded by REQ-6128, which ADR-0320 addresses); REQ-2124 (superseded by REQ-6244, which ADR-0330, ADR-0360 addresses); REQ-2128 (superseded by REQ-6414, which ADR-0360, ADR-0370 addresses); REQ-2180 (superseded by REQ-6252, which ADR-0330 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: experience goes, ability levels and rank are computed from the graph and may fall. It no longer addresses the requirements ADR-3220 withdrew.
 
 ## Plan
 
@@ -217,7 +219,7 @@ The upgrade folded these open tasks in (ADR-3090). Read each one before its step
 4. A room takes its branch, a floor its state and a chapter its finale from the versioned thresholds, and the Director logs each decision (`archive/tasks/TSK-0647-room-branch-floor-state-and-chapter-finale-from-versioned-thresholds.md`)
 5. A Guardian always has its three endings, a missed reward always comes back within 7 sessions, and the canon names no threshold (`archive/tasks/TSK-0648-guardian-endings-reward-queue-and-the-canon-wording-check.md`)
 6. The build fails when the thresholds in force miss the target shares, and a new version needs a decision record that names it (`archive/tasks/TSK-0649-calibration-test-and-the-record-each-thresholds-version-needs.md`)
-7. Experience comes from effort, never falls, and the MVP shows no stats, paths or rank change (`archive/tasks/TSK-0650-experience-level-rank-and-the-systems-the-mvp-leaves-out.md`)
+7. The MVP shows no stats or paths; ADR-3220 builds ability levels and rank in place of experience (`archive/tasks/TSK-0650-experience-level-rank-and-the-systems-the-mvp-leaves-out.md`)
 8. Daily quests count acts of play, the day count counts days played, and the game never reminds her to return (`archive/tasks/TSK-0651-daily-quests-day-count-nearest-goal-and-no-reminders.md`)
 9. Grants follow one table in the content file, read no clock, and take nothing away (`archive/tasks/TSK-0652-grants-of-buttons-shards-yarn-materials-and-moon-motes.md`)
 10. The shop sells for buttons at fixed prices from a shelf of six items that changes by the same rule every day (`archive/tasks/TSK-0653-shop-catalogue-and-a-shelf-that-changes-the-same-way-every-day.md`)

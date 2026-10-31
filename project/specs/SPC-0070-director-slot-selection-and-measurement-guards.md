@@ -2,8 +2,8 @@
 id: SPC-0070
 artifact: spec
 status: live
-revised: 2026-10-10
-states: [REQ-0105, REQ-0107, REQ-0820, REQ-6404, REQ-0832, REQ-0956, REQ-6406, REQ-0966, REQ-0970, REQ-0972, REQ-0974, REQ-6844, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-6846, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-6400, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-6402, REQ-1114, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132, REQ-5304, REQ-5434, REQ-5438, REQ-5440, REQ-5446, REQ-5448, REQ-7176]
+revised: 2026-10-31
+states: [REQ-0105, REQ-0107, REQ-0820, REQ-6404, REQ-0832, REQ-0956, REQ-6406, REQ-0966, REQ-0970, REQ-0972, REQ-0974, REQ-6844, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-6846, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-6400, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-6402, REQ-1114, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132, REQ-5304, REQ-5434, REQ-5438, REQ-5440, REQ-5446, REQ-5448, REQ-7176, REQ-7972, REQ-7974, REQ-7976]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -84,6 +84,10 @@ Each floor opens with its scene, an ungraded warm-up and either 2 mental arithme
 After the MVP, a floor's Dutch probe letters take the place ADR-0290's floor order gives them, after the track tasks and before the rooms. A letter takes no room slot, so the slot sources and the flow corridor below stay as they are.
 
 Each adventure holds 2 control facts at its start and 2 at its end (REQ-1038), and each extension adds 2 more. A Guardian task comes on about one floor in three.
+
+### Candidates by ability level
+
+A node's candidate tasks are those of the difficulty its ability level sets (REQ-7972). The node's templates, ordered by highest group and then steps, split into five equal bands, band 5 led by olympiad templates, and an empty band takes the nearest lower band. So a node whose templates sit in one group still differs by level (REQ-7974). A level changes no share of review and frontier slots (REQ-7976).
 
 ### The flow corridor
 

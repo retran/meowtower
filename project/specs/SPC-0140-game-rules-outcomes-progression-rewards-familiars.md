@@ -2,8 +2,8 @@
 id: SPC-0140
 artifact: spec
 status: live
-revised: 2026-09-28
-states: [REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764, REQ-1900, REQ-1902, REQ-1904, REQ-1906, REQ-1908, REQ-1910, REQ-1912, REQ-1914, REQ-1916, REQ-1918, REQ-1920, REQ-1922, REQ-1924, REQ-1926, REQ-1928, REQ-1930, REQ-1932, REQ-1934, REQ-1936, REQ-1938, REQ-1940, REQ-1942, REQ-1944, REQ-1946, REQ-1948, REQ-1950, REQ-1952, REQ-1954, REQ-2000, REQ-2002, REQ-2004, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2018, REQ-2020, REQ-2022, REQ-2024, REQ-2028, REQ-2030, REQ-2032, REQ-2034, REQ-2036, REQ-2038, REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2118, REQ-2120, REQ-2122, REQ-2126, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2138, REQ-2140, REQ-2142, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2182, REQ-2184, REQ-2186, REQ-3532, REQ-3534, REQ-5018, REQ-5020, REQ-5416, REQ-5418, REQ-5422, REQ-6414]
+revised: 2026-10-31
+states: [REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764, REQ-1900, REQ-1902, REQ-1904, REQ-1906, REQ-1908, REQ-1910, REQ-1912, REQ-1914, REQ-1916, REQ-1918, REQ-1920, REQ-1922, REQ-1924, REQ-1926, REQ-1928, REQ-1930, REQ-1932, REQ-1934, REQ-1936, REQ-1938, REQ-1940, REQ-1942, REQ-1944, REQ-1946, REQ-1948, REQ-1950, REQ-1952, REQ-1954, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2022, REQ-2024, REQ-2028, REQ-2030, REQ-2032, REQ-2036, REQ-2038, REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2118, REQ-2120, REQ-2122, REQ-2126, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2138, REQ-2140, REQ-2142, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2182, REQ-2184, REQ-2186, REQ-3532, REQ-3534, REQ-5018, REQ-5020, REQ-5416, REQ-5418, REQ-5422, REQ-6414, REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7978, REQ-7980, REQ-7982, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8010, REQ-8012, REQ-8014, REQ-8022, REQ-8030, REQ-8032, REQ-8034, REQ-8036, REQ-8038, REQ-8040, REQ-8042, REQ-8044, REQ-8046, REQ-8048, REQ-8050, REQ-8054, REQ-8056, REQ-8068]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -12,7 +12,7 @@ states: [REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, R
 
 ## Scope
 
-This document covers the server module `src/game/`, which turns play into story results and rewards: a spell's outcome and badge, the streak and clean rows, the room branch, the floor state and the chapter finale's variant, the reward queue, experience, level and rank, the daily quests and their rewards, the day count and the nearest goal, every grant of buttons, shards, yarn and floor materials, chests, the shop, the Thread Forge, the familiars and the bestiary. It is written at the level of game rules: the content files the rules read, the events they log, the routes that reach them and the values they compute. It holds no diagram.
+This document covers the server module `src/game/`, which turns play into story results and rewards: a spell's outcome and badge, the streak and clean rows, the room branch, the floor state and the chapter finale's variant, the reward queue, ability levels and rank, the daily quests and their rewards, the day count and the nearest goal, every grant of buttons, shards, yarn and floor materials, chests, the shop, the Thread Forge, the familiars and the bestiary. It is written at the level of game rules: the content files the rules read, the events they log, the routes that reach them and the values they compute. It holds no diagram.
 
 It leaves out what other specifications state. SPC-0030 states the routes' shared contract, the answer reply, repeated requests, the resume point and the three-day wrap-up. SPC-0080 states the attempt flow, second attempts and the guiding threads' stock, cap, spending and the amounts of each thread grant. ADR-0330 states the schedule that opens each system by days of play, the route choice and which categories a chest draws from before and after the Diary opens. ADR-0320 states the level-up ceremony and what a trick changes. ADR-0260, ADR-0280 and ADR-0290 state the grants of the short loop, of Diary puzzles and of the Volley, and how a Volley counts for the streak. ADR-0230 states the verdicts of a composed riddle. The words the player reads, the screens that draw the garland, chests and bestiary, and the pictures belong to the specifications of strings, the interface and the art.
 
@@ -25,7 +25,7 @@ It leaves out what other specifications state. SPC-0030 states the routes' share
 | Rule set | Content file | What it decides |
 | --- | --- | --- |
 | Outcomes | `content/thresholds.json` | a spell's outcome, the badge, the streak, clean rows, the room branch, the floor state, the chapter finale's variant, the reward queue |
-| Progression | `content/economy.json` | experience, level, rank, daily quests, the pattern row, the day count, the nearest goal |
+| Progression | `content/economy.json` | ability levels, rank, daily quests, the pattern row, the day count, the nearest goal |
 | Rewards | `content/economy.json` | buttons, shards, yarn, floor materials, chest contents and quality, shop prices and shelf, forge recipes |
 | Familiars | `content/familiars.yaml` | the roster, starters, friendship points and levels, evolution stages and thresholds, the element ring, the bestiary |
 | Items | `content/economy.json` | the catalogue of outfits, accessories, foci, curiosities and tricks, each with a category and no power field |
@@ -56,7 +56,8 @@ All go through `appendEvents`.
 | `reward_reopened` | a queued reward came back |
 | `chest_offered` | the chest's three offered rewards with their categories and qualities |
 | `chest_chosen` | her pick |
-| `level_up` | the level reached |
+| `ability_level_changed` | the node, both levels and the rule |
+| `rank_changed` | both ranks and the rule |
 | `quest_progress` | a daily quest counted an act, or was met |
 | `shop_purchase` | the item bought and the price paid |
 | `forge_crafted` | the recipe and the item forged |
@@ -149,17 +150,31 @@ The first-month review follows this checklist, which the comment block of `conte
 2. Change the chapter `triumph` share first, before any other threshold.
 3. Write the new version and its decision record, which the owner approves (REQ-1734).
 
-### Experience, level and rank
+### Ability levels and rank
 
-Experience comes from effort, from these starting values in `content/economy.json`: 5 for any first attempt, whatever its verdict, 3 for a second attempt, 10 for a scene, 20 for a floor in any state, 50 for a met daily quest (REQ-2034) and 60 for a completed adventure. An unassisted first attempt earns the same experience whether the answer is right, wrong or «Не знаю» (REQ-2000). By RES-2000's estimate of one adventure's first attempts, scenes, floors and quests, these amounts give about 521 experience for one 60-minute adventure, inside 500 to 650 (REQ-2004). Leaving level L costs `min(150 + 20 * (L - 1), 600)` experience. The experience bar shows the points toward the next level (REQ-2018).
+A node of the skill graph is an ability to the player, and its stage is the ability's level, from 1 to 5 (REQ-7960). Each stored level names its rule, `level.v1` (REQ-7962). The levels are a function of the event log and read the model's node estimate; the report's states read no level (REQ-7964).
 
-A level-up logs `level_up` and grants no stat points, buttons, guiding threads or other reward (REQ-2028); ADR-0320 states its ceremony. Experience, level, rank, owned items, currencies, friendship and pages only grow: no rule subtracts from them after an answer, a mistake or a missed day (REQ-2002), and only a purchase or a forge she chose spends currency, and each adds an item. A mistake or «Не знаю» takes away no currency, item or other reward (REQ-2100).
+A node rises as soon as its estimate reaches the next line: 0.35 for level 2, 0.6 for 3, 0.8 for 4 and 0.92 for 5 (REQ-7966). A node with olympiad tasks reaches level 5 only with two clean first attempts on them (REQ-7978). A node falls only after three observations in a row with the estimate at least 0.1 below its level's line (REQ-7968). `tools/` replays the player's log over these lines, and the sheet stays off until that replay passes (REQ-7970).
 
-The heroine holds rank E from Session 0 through the MVP (REQ-2020), and «Мирра Шпилька» (Mirra Hairpin), her rival, holds rank D (REQ-2036), both as fixed content values. The MVP shows and offers no stats (REQ-2030) and no paths (REQ-2032), and the canon names no month for any rank (REQ-2038). If stats arrive later, the module sends the Master each stat only as low, medium or high relative to the others (REQ-2022), and no task rule reads a stat (REQ-2024).
+After the second such observation the game shows a warning in the setting (REQ-7996). A fall shows a story event that names what changed in the threads and the way back (REQ-7992), and its text says nothing of the player's aptitude or what she is (REQ-7994). A fall takes no item, title, opened floor, currency, friendship or page (REQ-7998). No rule reduces these after an answer, a mistake or a missed day (REQ-8022), only a purchase or a forge she chose spends currency, and each adds an item. A mistake or «Не знаю» takes away no currency, item or other reward (REQ-2100).
+
+The game accumulates no experience (REQ-7980). The rank comes from the levels alone (REQ-7982), by rule `rank.v1`. A rank's nodes are those with a typical group up to its own, E groups 1 to 3, D up to 4, C up to 5, B up to 6 and A up to 8 (REQ-8054), each by its weight, word-problem nodes included (REQ-7986). The rank rises when 80 % of that weight stands at level 4 or higher, and falls when the share has stayed below 65 % for 14 days in a row. Rank S takes the same shares at level 5 over all nodes (REQ-7988). The levels only qualify her: a higher rank reaches her through a story event (REQ-8034) within 3 adventures (REQ-8068). A simulated player with steady recall sees no fall of rank in 365 days (REQ-7990). A level change logs `ability_level_changed`, and the story event that gives or takes a rank logs `rank_changed`. A rise grants no stat points, buttons, guiding threads or other reward (REQ-2028, REQ-8000); ADR-0320 states its ceremony.
+
+Reaching a stated ability level opens the possibilities `content/economy.json` ties to it, such as a place, a passage or a move in the Tower (REQ-8030), and an opening stays open after the level falls (REQ-8032). An opening never blocks the campaign.
+
+The character sheet shows each ability with its level number and a bar to the next level (REQ-8010) and the rank letter (REQ-8012), and it never shows an estimate as a probability or percentage (REQ-8014). The Parent Room lists the falls of levels and rank (REQ-8006), holds a setting that hides falls of rank from the player (REQ-8004), and claims no effect on learning (REQ-8008).
+
+«Мирра Шпилька» (Mirra Hairpin), her rival, holds rank D as a fixed content value (REQ-2036). The MVP shows and offers no stats (REQ-2030) and no paths (REQ-2032), and the canon names no month for any rank (REQ-2038). If stats arrive later, the module sends the Master each stat only as low, medium or high relative to the others (REQ-2022), and no task rule reads a stat (REQ-2024).
+
+### Gates
+
+Every floor stays open from her first day, whatever her levels (REQ-8036). `content/gates.json` lists the Tower's gates of seven kinds: level, combination, stretch, word-problem, rank, secret and shortcut (REQ-8044). No gate stands between her and a checkpoint or finale (REQ-8038). A combination gate needs abilities of two floors (REQ-8046). Each gate opens something she can use again (REQ-8042). Each domain gives a verb in the setting that grows with its levels (REQ-8040). The map shows each closed gate she has seen with the ability it asks for (REQ-8048), and each floor's mastery as the mean level of its abilities (REQ-8050).
+
+A node with no evidence of its own takes a level from the nodes that build on it, one below their lowest, and a tested level replaces it (REQ-8056).
 
 ### Daily quests and daily rewards
 
-Daily quests and daily rewards come every game day once their system has opened, as ADR-0330 states, and no setting or rule switches them off (REQ-5018). The module picks the day's 3 daily quests by the day's seed. They show beside «В прошлый раз…» (Last time…), the opening scene ADR-0110 orders from the planner's latest session summary, or beside the library opening that replaces it when that order fails. The daily rewards are the grants of a met quest: 50 experience, 10 buttons (REQ-2132) and the guiding thread SPC-0080 states. The choice of two routes of the day comes beside the 3 quests and never takes a quest's place (REQ-5020).
+Daily quests and daily rewards come every game day once their system has opened, as ADR-0330 states, and no setting or rule switches them off (REQ-5018). The module picks the day's 3 daily quests by the day's seed. They show beside «В прошлый раз…» (Last time…), the opening scene ADR-0110 orders from the planner's latest session summary, or beside the library opening that replaces it when that order fails. The daily rewards are the grants of a met quest: 10 buttons (REQ-2132) and the guiding thread SPC-0080 states. The choice of two routes of the day comes beside the 3 quests and never takes a quest's place (REQ-5020).
 
 Every quest template counts an act of play, such as clearing floors or picking from a chest, and none counts a correct answer, so every quest can be met without answering any task correctly (REQ-2006). A content check rejects a template whose counter reads a verdict. The module logs `quest_progress` as a quest counts an act and when it is met. A quest unmet when the game day ends disappears with no penalty and no event she sees (REQ-2008).
 
@@ -171,7 +186,7 @@ The day count is the number of game days on which she answered at least one task
 
 The player's side of the client sends no notification or reminder to come back (REQ-2014). It holds no Web Push subscription, no Notification API call and no service-worker push handler, and a static check fails the build if any of these appear outside the Parent Room's code.
 
-The nearest goal is the goal with the smallest remaining share among the next level, the next evolution, the next forge recipe, the bestiary percentage and the next Diary page, with ties broken in that order. The module picks only among goals whose system is already open, as `systems_open` shows. The server sends it with the main screen and with the end of every scene (REQ-2016).
+The nearest goal is the goal with the smallest remaining share among the next ability level, the next evolution, the next forge recipe, the bestiary percentage and the next Diary page, with ties broken in that order. The module picks only among goals whose system is already open, as `systems_open` shows. The server sends it with the main screen and with the end of every scene (REQ-2016).
 
 ### Grants
 

@@ -2,8 +2,8 @@
 id: SPC-0090
 artifact: spec
 status: live
-revised: 2026-10-10
-states: [REQ-0100, REQ-0105, REQ-0107, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0148, REQ-0300, REQ-0302, REQ-0304, REQ-0308, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364, REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5022, REQ-5056]
+revised: 2026-10-31
+states: [REQ-0100, REQ-0105, REQ-0107, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0300, REQ-0302, REQ-0304, REQ-0308, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364, REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5022, REQ-5056, REQ-8016]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -109,7 +109,7 @@ A change of node or floor shows as the next transition from a cycle of four, a h
 
 The battle model holds no health for the heroine: no field, event or line damages her, whatever she answers (REQ-0126). A Tangle's lines come from content that ADR-0110's frames and ADR-0160's forbidden-word list check, and an agent reads every battle line and scene where a Tangle acts and judges that none attacks or mocks her (REQ-0128).
 
-The end of the row names in words the growth she made in the adventure: experience, level, familiars, quests, star-steel shards and star yarn (REQ-0148). It shows no score, no percentage and no comparison with past days.
+The end of the row names in words the growth she made in the adventure: ability levels, rank, familiars, quests, star-steel shards and star yarn (REQ-8016). It shows no score, no percentage and no comparison with past days.
 
 ### Session 0
 

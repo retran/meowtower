@@ -2,8 +2,8 @@
 id: SPC-0050
 artifact: spec
 status: live
-revised: 2026-10-10
-states: [REQ-0800, REQ-0802, REQ-0804, REQ-0806, REQ-0808, REQ-0810, REQ-0812, REQ-0814, REQ-0816, REQ-0818, REQ-0850, REQ-0852, REQ-0854, REQ-1244, REQ-3812]
+revised: 2026-10-31
+states: [REQ-0800, REQ-0802, REQ-0804, REQ-0806, REQ-0808, REQ-0810, REQ-0812, REQ-0814, REQ-0816, REQ-0818, REQ-0850, REQ-0852, REQ-0854, REQ-1244, REQ-3812, REQ-8052]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -158,6 +158,10 @@ The build fails when a template or a row of `content/catalogue.yaml` names a nod
 ### Loading
 
 The loader parses and validates the file within 1 second at start-up, the budget ADR-0190's Baselines table holds. A file that passes becomes the served graph. When the file fails and a valid version is stored, the server serves the last valid version and shows `graph_invalid` once in the Parent Room.
+
+### Edges resolve
+
+Each prerequisite edge names a node and a subtype that exist (REQ-8052).
 
 ## Failure paths
 

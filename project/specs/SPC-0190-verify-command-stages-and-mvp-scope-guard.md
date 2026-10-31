@@ -2,8 +2,8 @@
 id: SPC-0190
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5076, REQ-5078, REQ-5080, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500]
+revised: 2026-10-31
+states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5078, REQ-5080, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500, REQ-8020]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -227,7 +227,7 @@ Each of the nine open questions of RES-3000 is answered or deferred on the recor
 
 ### The MVP scope and its guard
 
-The first version holds every part of the MVP contents list (REQ-5076): levels and experience with daily quests; chests with a choice of 1 from 3, the forge and the buttons-only shop; the MVP familiar roster with friendship and evolution; the Master's story with success and other-path branches, floor states, Diary pages, names the player gives, free text and light dreamcore; the single mode with guiding threads, explanations, the event log and knowledge model v1; for the parent, lesson marks, report v1 and the raw data export; and the first addendum's items 1 to 9 and 11 to 13, from the hint ladder to the parent's sandbox.
+The first version holds every part of the MVP contents list (REQ-8020): ability levels and rank with daily quests; chests with a choice of 1 from 3, the forge and the buttons-only shop; the MVP familiar roster with friendship and evolution; the Master's story with success and other-path branches, floor states, Diary pages, names the player gives, free text and light dreamcore; the single mode with guiding threads, explanations, the event log and knowledge model v1; for the parent, lesson marks, report v1 and the raw data export; and the first addendum's items 1 to 9 and 11 to 13, from the hint ladder to the parent's sandbox.
 
 The first version also holds the second addendum's parts that shape the log (REQ-6676):
 
