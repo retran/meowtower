@@ -2,7 +2,7 @@
 id: SPC-0280
 artifact: spec
 status: live
-revised: 2026-09-29
+revised: 2026-10-31
 states: [REQ-5700, REQ-5702, REQ-5704, REQ-5706, REQ-5708, REQ-5710, REQ-5712, REQ-5714, REQ-5716, REQ-5718, REQ-5720, REQ-5722, REQ-5724, REQ-5725, REQ-5726, REQ-5728, REQ-5730, REQ-5731, REQ-5732, REQ-5734, REQ-5736, REQ-5738, REQ-5740, REQ-5742, REQ-5744, REQ-5746, REQ-5748, REQ-5750, REQ-5752, REQ-5754, REQ-5756, REQ-5758, REQ-5760, REQ-5762, REQ-5764, REQ-5766, REQ-5768, REQ-5770, REQ-5772, REQ-5774, REQ-5776, REQ-5778, REQ-5780, REQ-5782, REQ-5784, REQ-5786, REQ-5788, REQ-5790, REQ-5792, REQ-5794, REQ-5795, REQ-5796, REQ-5798]
 ---
 
@@ -218,7 +218,7 @@ ADR-0190's verification fails on any puzzle whose reference solution fails its c
 | No variant's parsed answer passes the check in 2 blind solves | `puzzle_blind_solve_failed`: the run's report names the puzzle; its statement is rewritten by hand or its data fixed. |
 | The run reaches its $20 budget | `budget_puzzle_run_spent`: the run stops and keeps what passed. |
 | A puzzle file's hash differs from every approved hash | `puzzle_unapproved_hash`: the puzzle isn't served, and it returns to the review queue once a preparation run passes its blind solve. |
-| The sandbox has turned a puzzle off | The puzzle isn't served until `disabled_content` no longer lists it. |
+| The sandbox has turned a puzzle off | The puzzle isn't served until `disabled_content` drops it. |
 | No theme has an approved puzzle the offer rules allow | `puzzle_bank_exhausted`: no page appears, and the section shows the count of approved puzzles left. |
 | The server's replay refuses a move the client applied, or the validity test refuses a whole state past the move cap | `puzzle_move_refused`: the server logs the move with `refused`, returns its last accepted state, and the widget redraws it. |
 | A check throws on an answer | `puzzle_check_error`: the answer is logged `not_judged`, the familiar says a neutral line, the puzzle stays open, and the answer counts neither towards the second miss of REQ-5786 nor in `puzzle_solved`'s attempts. |

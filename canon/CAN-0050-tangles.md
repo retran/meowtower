@@ -2,7 +2,7 @@
 id: CAN-0050
 artifact: canon
 status: approved
-revised: 2026-09-26
+revised: 2026-10-31
 ---
 
 # The Tangles
@@ -62,8 +62,8 @@ Nobody loses, because the Tower always has more than one way.
 
 ## Why Tangles appear
 
-The Tower knits itself every night, and every piece of knitting has
-mistakes. The longer the Tower slept without a Keeper, the more knots built
+The rows are knitted again every night, and every piece of knitting has
+mistakes. The longer the Tower stood without a Keeper, the more knots built
 up. In spring, Tangles come from the Underside: mirror Tangles with inverted
 colours (CAN-0080).
 
@@ -143,8 +143,7 @@ CAN-0130.
    with it, the Master can bring it back later.
 7. The first meeting with any Tangle, one from the tables above or a new
    one, gives the heroine the right to name it for the Diary. A name in the
-   tables is a placeholder: the System offers it among its suggestions, and
-   from then on the Master uses the name she chose.
+   tables is a placeholder: it comes among the suggestions, and from then on the Master uses the name she chose.
 
 ## Open questions
 

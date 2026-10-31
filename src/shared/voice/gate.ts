@@ -17,8 +17,10 @@ export type Rule =
 export type GateResult =
   { ok: true } | { ok: false; rule: Rule; match: string };
 
+export type GateLang = "ru" | "en" | "nl";
+
 export interface GateInput {
-  readonly lang: "ru";
+  readonly lang: GateLang;
   readonly kind: Kind;
   /** Where the text came from: `player` is exempt, as is any key under `parent.`. */
   readonly source: string;
@@ -35,12 +37,13 @@ interface ListFile {
   knot: { keys: string[]; forms: string[] };
 }
 
-const list = JSON.parse(
-  readFileSync(
-    new URL("../../../content/shaming.ru.json", import.meta.url),
-    "utf8",
-  ),
-) as ListFile;
+const listOf = (lang: GateLang): ListFile =>
+  JSON.parse(
+    readFileSync(
+      new URL(`../../../content/shaming.${lang}.json`, import.meta.url),
+      "utf8",
+    ),
+  ) as ListFile;
 
 /** Latin letters that look like Cyrillic ones; folded only inside a token that mixes both scripts. */
 const LOOKALIKE: Record<string, string> = {
@@ -82,7 +85,6 @@ export function tokens(text: string): string[] {
   );
 }
 
-const formSet = new Set(list.forms.flatMap((e) => e.forms));
 const runsOf = (groups: { runs: string[][] }[]): Map<string, string[][]> => {
   const byFirst = new Map<string, string[][]>();
   for (const run of groups.flatMap((g) => g.runs)) {
@@ -92,10 +94,32 @@ const runsOf = (groups: { runs: string[][] }[]): Map<string, string[][]> => {
   }
   return byFirst;
 };
-const phraseRuns = runsOf(list.phrases);
-const shortageRuns = runsOf(list.shortage);
-const labelPatterns = list.labelPatterns.map((p) => new RegExp(p, "iu"));
-const rejected = new Set(list.rejectedLabels.map((l) => normalise(l).trim()));
+
+interface GateList {
+  readonly forms: ReadonlySet<string>;
+  readonly phrases: Map<string, string[][]>;
+  readonly shortage: Map<string, string[][]>;
+  readonly labels: readonly RegExp[];
+  readonly rejected: ReadonlySet<string>;
+}
+
+const lists = new Map<GateLang, GateList>();
+
+/** One list a language, read once. A person reads each list; only the Russian one gates fixed labels. */
+function gateList(lang: GateLang): GateList {
+  const hit = lists.get(lang);
+  if (hit) return hit;
+  const file = listOf(lang);
+  const gate: GateList = {
+    forms: new Set(file.forms.flatMap((e) => e.forms)),
+    phrases: runsOf(file.phrases),
+    shortage: runsOf(file.shortage),
+    labels: file.labelPatterns.map((p) => new RegExp(p, "iu")),
+    rejected: new Set(file.rejectedLabels.map((l) => normalise(l).trim())),
+  };
+  lists.set(lang, gate);
+  return gate;
+}
 
 const matchRun = (
   words: readonly string[],
@@ -117,6 +141,7 @@ const fail = (rule: Rule, match: string): GateResult => ({
 export function textGate(text: string, input: GateInput): GateResult {
   if (input.source === "player" || input.key?.startsWith("parent."))
     return { ok: true };
+  const list = gateList(input.lang);
   const emoji = /\p{Extended_Pictographic}/u.exec(text);
   if (emoji) return fail("emoji", emoji[0]);
   if (input.kind === "system") {
@@ -126,19 +151,19 @@ export function textGate(text: string, input: GateInput): GateResult {
   }
   if (input.kind === "label") {
     const folded = normalise(text).trim();
-    if (rejected.has(folded)) return fail("rejected_label", text.trim());
+    if (list.rejected.has(folded)) return fail("rejected_label", text.trim());
     // A time left is a clock, so a count of minutes left is refused as a label (REQ-3312).
-    const clock = labelPatterns.map((re) => re.exec(folded)).find(Boolean);
+    const clock = list.labels.map((re) => re.exec(folded)).find(Boolean);
     if (clock) return fail("rejected_label", clock[0]);
   }
   const words = tokens(text);
   for (let i = 0; i < words.length; i += 1) {
-    const phrase = matchRun(words, i, phraseRuns);
+    const phrase = matchRun(words, i, list.phrases);
     if (phrase) return fail("forbidden_phrase", phrase);
-    const shortage = matchRun(words, i, shortageRuns);
+    const shortage = matchRun(words, i, list.shortage);
     if (shortage) return fail("shortage_phrase", shortage);
     const word = words[i] as string;
-    if (formSet.has(word)) return fail("forbidden_form", word);
+    if (list.forms.has(word)) return fail("forbidden_form", word);
   }
   return { ok: true };
 }
@@ -150,10 +175,11 @@ export function textGate(text: string, input: GateInput): GateResult {
 export function knotViolations(
   entries: Readonly<Record<string, string>>,
 ): { key: string; match: string }[] {
-  const knotForms = new Set(list.knot.forms);
+  const { knot } = listOf("ru");
+  const knotForms = new Set(knot.forms);
   const found: { key: string; match: string }[] = [];
   for (const [key, value] of Object.entries(entries)) {
-    if (!list.knot.keys.some((prefix) => key.startsWith(prefix))) continue;
+    if (!knot.keys.some((prefix) => key.startsWith(prefix))) continue;
     const hit = tokens(value).find((w) => knotForms.has(w));
     if (hit) found.push({ key, match: hit });
   }

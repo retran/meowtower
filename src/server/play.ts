@@ -35,6 +35,7 @@ import {
   judge,
   pick,
   present,
+  presentFramed,
   rebuild,
   trapOf,
   twinOf,
@@ -167,7 +168,12 @@ interface ItemShown {
   parentItemId?: string;
   /** The registry template of the task; absent for a stand-in task. */
   templateId?: string;
+  /** The live frame the task was shown with (ADR-3100). */
+  frameId?: number;
 }
+
+/** How long a task waits for its story before it shows its template text (REQ-7890). */
+const FRAME_WAIT_MS = 90_000;
 
 const payloadOf = <T>(e: StoredEvent): T => e.payload as T;
 
@@ -315,14 +321,29 @@ export function mountPlay(
   }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
-  /** Prepares the frames of the tasks after `index`, so the next rooms are ready before she arrives. */
-  const prepareAhead = (sessionId: string, index: number): void => {
+  /** Tasks go on with no end for now: the ladder is walked again, with other seeds, each lap (ADR-3210). */
+  const endlessTask = (key: string, index: number) =>
+    pick(
+      `${key}/${Math.floor(index / STANDIN_ADVENTURE_TASKS).toString()}`,
+      index % STANDIN_ADVENTURE_TASKS,
+      STANDIN_ADVENTURE_TASKS,
+    );
+  /** What a task is drawn from and spends from: a reload starts a session, and the adventure goes on. */
+  const adventureKey = (sessionId: string): string =>
+    sessionRow(db, sessionId)?.adventureId ?? sessionId;
+  /** Waits for the story of the task about to show, while the client shows its loader (REQ-7890). */
+  const nextFrame = async (sessionId: string): Promise<void> => {
     if (!frames || tasks !== "registry") return;
-    for (const at of [index, index + 1]) {
-      if (at >= STANDIN_ADVENTURE_TASKS) break;
-      const { template, base } = pick(sessionId, at, STANDIN_ADVENTURE_TASKS);
-      void frames.prepare({ template, base, bucket: sessionId, lang });
-    }
+    const played = playLog(sessionId);
+    const answered = answeredIn(played);
+    const open = played
+      .filter((e) => e.type === "item_shown")
+      .some((e) => !answered.has(payloadOf<ItemShown>(e).itemId));
+    const index = firstsOf(played).length;
+    if (open) return;
+    const key = adventureKey(sessionId);
+    const { template, base } = endlessTask(key, index);
+    await frames.ready({ template, base, bucket: key, lang }, FRAME_WAIT_MS);
   };
 
   // One device holds the adventure at a time. The lease is kept in memory and
@@ -533,7 +554,6 @@ export function mountPlay(
     const taken = written[written.length - 1];
     if (left && taken)
       stream.publish(left.sessionId, { type: "lease_moved", seq: taken.seq });
-    prepareAhead(sessionId, 0);
     return sessionId;
   }
 
@@ -663,11 +683,15 @@ export function mountPlay(
     });
   });
 
-  app.get("/api/session/:id/next", (c) => {
+  app.get("/api/session/:id/next", async (c) => {
     const deviceId = device(db, c);
     if (deviceId instanceof Response) return deviceId;
-    if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
+    const waiting = sessionRow(db, sessionId);
+    if (waiting && waiting.state !== "ended" && !displaced(deviceId))
+      await nextFrame(sessionId);
+    // The wait can outlive the session, so everything is read after it.
+    if (displaced(deviceId)) return leaseMoved(c);
     const session = sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
@@ -742,6 +766,7 @@ export function mountPlay(
     // secrets she didn't open (REQ-0228, REQ-0232). A room left half done
     // goes on until it is whole.
     if (
+      tasks !== "registry" &&
       session.adventureId &&
       index % ROOM_LENGTH === 0 &&
       wrapUpOf(sessionId)
@@ -774,7 +799,11 @@ export function mountPlay(
     // The stand-in adventure's finale: its scene, then its chest, then the end.
     // An open scene or chest is shown again as it was, never prepared anew
     // (REQ-0216, REQ-0218).
-    if (session.adventureId && index >= STANDIN_ADVENTURE_TASKS) {
+    if (
+      tasks !== "registry" &&
+      session.adventureId &&
+      index >= STANDIN_ADVENTURE_TASKS
+    ) {
       const point = resumeFromLog(played);
       if (point?.scene) {
         if (lifecycle.length) appendEvents(db, lifecycle);
@@ -831,13 +860,15 @@ export function mountPlay(
       return send(c, End, { kind: "end" });
     }
     if (tasks === "registry") {
-      const chosen = pick(sessionId, index, STANDIN_ADVENTURE_TASKS);
+      const chosen = endlessTask(adventureKey(sessionId), index);
       const frame =
         frames?.take({ template: chosen.template, base: chosen.base, lang }) ??
         null;
-      const made = chosen.template.make(chosen.base, lang, frame?.text);
+      const made = chosen.template.make(chosen.base, lang);
       const seed = hexOf(chosen.base);
-      const shape = present({ template: chosen.template, made });
+      const shape = frame
+        ? presentFramed({ template: chosen.template, made }, frame.text)
+        : present({ template: chosen.template, made });
       const shown: ItemShown = {
         itemId: randomUUID(),
         view: {
@@ -853,6 +884,7 @@ export function mountPlay(
         subtype: chosen.template.subtype,
         seed,
         templateId: chosen.template.id,
+        ...(frame ? { frameId: frame.id } : {}),
       };
       appendEvents(db, [
         ...lifecycle,
@@ -868,13 +900,11 @@ export function mountPlay(
             effectiveSeed: `${seed}/0`,
             candidate: 0,
             frameSource: frame ? "live" : "template",
-            ...(frame ? { frameId: frame.id } : {}),
           },
           origin,
           ...within(sessionId),
         },
       ]);
-      prepareAhead(sessionId, index + 1);
       return send(
         c,
         Room,
@@ -1587,7 +1617,25 @@ export function mountPlay(
         shown.view.locale,
       );
       if (!other) return c.json({ error: "item_unknown" }, 404);
-      const shape = present(other);
+      await frames?.ready(
+        {
+          template: other.template,
+          base: Uint8Array.from(Buffer.from(other.seed, "hex")),
+          bucket: adventureKey(sessionId),
+          lang,
+          ...(shown.frameId === undefined ? {} : { previous: shown.view.text }),
+        },
+        FRAME_WAIT_MS,
+      );
+      const twinFrame =
+        frames?.take({
+          template: other.template,
+          base: Uint8Array.from(Buffer.from(other.seed, "hex")),
+          lang,
+        }) ?? null;
+      const shape = twinFrame
+        ? presentFramed(other, twinFrame.text)
+        : present(other);
       const twin: ItemShown = {
         itemId: randomUUID(),
         view: {
@@ -1604,6 +1652,7 @@ export function mountPlay(
         seed: other.seed,
         parentItemId: itemId,
         templateId: shown.templateId,
+        ...(twinFrame ? { frameId: twinFrame.id } : {}),
       };
       appendEvents(
         db,

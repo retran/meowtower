@@ -809,6 +809,18 @@ const safetyDefs: EventDef[] = [
       role: id("the model role called"),
     }),
   },
+  {
+    type: "budget_month_spent",
+    v: 1,
+    schema: obj({ month: id("the month, as YYYY-MM, that reached its limit") }),
+  },
+  {
+    type: "live_frames_paused",
+    v: 1,
+    schema: obj({
+      gameDay: z.number().int().describe("the game day live frames stopped"),
+    }),
+  },
 ];
 
 export const EVENT_DEFS: readonly EventDef[] = [

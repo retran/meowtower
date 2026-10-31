@@ -2,7 +2,7 @@
 id: SPC-0350
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-10-31
 states: [REQ-2648, REQ-2732, REQ-3910, REQ-3912, REQ-3914, REQ-3916, REQ-3918, REQ-3920, REQ-3922, REQ-3924]
 ---
 
@@ -138,7 +138,7 @@ Before the gateway sends a judge any check, the judge passes four steps, at star
 
 The server listens while these run, and the judge stays `unverified` until all four pass; then it is `up`. When `GET /props` names a file other than the configured one while the server starts, the server refuses to start with `judge_file_mismatch`, naming both files, as SPC-0100 states (REQ-1644). A refused connection to a judge, or a `/props` answer whose file or build differs from the last one read, makes the judge `unverified` at once, and it takes no check until the four steps pass again (REQ-3920).
 
-Every 60 seconds the gateway probes each judge with `/health` and `/props` and reads the file's size and modification time again. When the file hash, the runtime build, a check's prompt hash, the test-set version or the in-flight count differs from the `bakeoff` row a check passed on, the gateway stops sending that judge the check at once, resolves its route again, and holds back only the checks whose row no longer matches (REQ-3920). A check held back returns to the judge on the first probe after `tools/bakeoff.ts --local` writes a passing row for the new inputs, with no restart (REQ-3920).
+Every 60 seconds the gateway probes each judge with `/health` and `/props` and reads the file's size and modification time again. When the file hash, the runtime build, a check's prompt hash, the test-set version or the in-flight count differs from the `bakeoff` row a check passed on, the gateway stops sending that judge the check at once, resolves its route again, and holds back only the checks whose row doesn't match (REQ-3920). A check held back returns to the judge on the first probe after `tools/bakeoff.ts --local` writes a passing row for the new inputs, with no restart (REQ-3920).
 
 ### A local judge's answer
 

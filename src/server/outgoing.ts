@@ -6,6 +6,7 @@ import { mkdirSync } from "node:fs";
 import type Database from "better-sqlite3";
 import { gameDayOf } from "../shared/game-day.js";
 import { t } from "../shared/i18n.js";
+import { lang } from "../shared/i18n.js";
 import { type Kind, textGate } from "../shared/voice/gate.js";
 import { readNotices, writeNotices } from "./backups.js";
 import type { Db } from "./database.js";
@@ -107,7 +108,7 @@ export function createOutgoing(
     if (context.source === "player") return text;
     const kind = context.kind ?? "story";
     const result = textGate(text, {
-      lang: "ru",
+      lang,
       kind,
       source: context.source,
       ...(context.key ? { key: context.key } : {}),

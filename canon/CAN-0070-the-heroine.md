@@ -2,7 +2,7 @@
 id: CAN-0070
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # The heroine
@@ -13,18 +13,16 @@ This record holds who the heroine is: a knot hunter, her six ranks, her five
 characteristics, her five paths, her starting kit and her room in the Tower.
 Ranks and characteristics shape the story only and never touch a trial. The
 ranks unlock places and powers described in CAN-0040 (the floors' secrets),
-CAN-0100 (the forge and the Fair) and CAN-0130 (the Underside). The System
-that gives her tasks and changes her rank is set out in CAN-0030, the Diary in
-CAN-0090 and the familiars in CAN-0060. The Director signals each rank on the
+CAN-0100 (the forge and the Fair) and CAN-0130 (the Underside). The Diary
+is set out in CAN-0090 and the familiars in CAN-0060. The Director signals each rank on the
 campaign calendar (CAN-0080).
 
 ## What kind of hunter she is
 
 The heroine is a «охотница на узлы» (knot hunter): a girl who sees the threads
 of «Основа» (the Warp) and can untangle them. The world has no school for
-hunters and no teacher. She has the System, which gives her tasks and keeps
-count; the Diary, where the previous Keeper left hints; and the familiars,
-who believe in her more than she does. She is a catgirl, with soft ears and
+hunters and no teacher. She has the Diary, where the previous Keeper left
+hints, and the familiars, who believe in her more than she does. She is a catgirl, with soft ears and
 a tail the colour of her hair. Her look comes from one of four character
 sheets drawn from the reference picture keyart-heroine (CAN-0120): the
 family picks the sheet with the player once, before her art is made, and it
@@ -38,10 +36,10 @@ become a little more even.
 
 ## Ranks
 
-A rank is how deeply the hunter sees «Основа». The System changes the rank on
-the Director's signal at campaign milestones, and the specification holds the
-calendar. The Master makes each rank change its own solemn scene: the Tower
-lights every window, the familiars line up, and the Guardians send
+A rank is how deeply the hunter sees «Основа». The rank changes on the
+Director's signal at campaign milestones, and the specification holds the
+calendar. The Master makes each rank change its own solemn scene: every window
+of the Tower is lit, the familiars line up, and the Guardians send
 congratulations in their own style. A rank never goes down.
 
 | Rank | Title | What the heroine sees | What opens in the story |

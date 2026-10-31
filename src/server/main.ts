@@ -1,4 +1,5 @@
 import { serve } from "@hono/node-server";
+import { parentSettings } from "./parent-room.js";
 import { createFrameQueue, type FrameQueue } from "./frames/queue.js";
 import { ConfigInvalid, readConfig } from "./gateway/config.js";
 import { createGateway, verifyModels } from "./gateway/gateway.js";
@@ -135,6 +136,9 @@ const onSessionEnded = (): void => {
 let frames: FrameQueue | undefined;
 try {
   const config = readConfig(process.env);
+  // The game runs only in `play`: the tools start the other modes (ADR-3200).
+  if (config && config.mode !== "play")
+    throw new ConfigInvalid("GATEWAY_MODE", "the server runs only in play");
   if (config) {
     const routes = liveRoutes(config);
     const zone = process.env["MEOWTOWER_ZONE"] ?? "UTC";
@@ -146,8 +150,17 @@ try {
     };
     const queue = createFrameQueue({
       db,
-      gateway: createGateway({ db, config, routes }),
+      gateway: createGateway({
+        db,
+        config,
+        routes,
+        names: (process.env["MEOWTOWER_EGRESS_NAMES"] ?? "")
+          .split(",")
+          .filter((n) => n !== ""),
+      }),
       zone,
+      level: () => parentSettings(db).creepiness,
+      gender: () => parentSettings(db).gender,
     });
     if (await turnOn()) frames = queue;
     else {
@@ -180,6 +193,7 @@ const game = serve({
       process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry",
     frames: {
       prepare: (task) => live.current?.prepare(task) ?? Promise.resolve(),
+      ready: (task, ms) => live.current?.ready(task, ms) ?? Promise.resolve(),
       take: (task) => live.current?.take(task) ?? null,
     },
   }).fetch,

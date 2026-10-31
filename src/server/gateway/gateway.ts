@@ -1,13 +1,15 @@
 // The model gateway (ADR-0100, ADR-3100): one call per request, by the route its role names. It
 // reserves the worst case first, so concurrent calls can't pass a limit together, and writes the
 // whole request and reply to `llm_log`, which is the audit of everything that leaves the Mac.
+import { appendEvents } from "../../engine/events/append.js";
 import type { Db } from "../database.js";
 import { ROLES, type GatewayConfig, type RoleName } from "./config.js";
+import { cleanEgress } from "./egress.js";
 import { costOf } from "./prices.js";
 import type { RouteReply, Routes } from "./routes.js";
 
-export const ADVENTURE_LIMIT_USD = 1.5;
-export const MONTH_LIMIT_USD = 60;
+export const ADVENTURE_LIMIT_USD = 5;
+export const MONTH_LIMIT_USD = 200;
 
 export interface GatewayRequest {
   readonly role: RoleName;
@@ -37,12 +39,18 @@ export function createGateway({
   config,
   routes,
   now = Date.now,
+  limits = { adventure: ADVENTURE_LIMIT_USD, month: MONTH_LIMIT_USD },
+  names = [],
 }: {
   db: Db;
   config: GatewayConfig;
   routes: Routes;
   now?: () => number;
+  limits?: { readonly adventure: number; readonly month: number };
+  /** The names the parent set, which the egress guard cleans. */
+  names?: readonly string[];
 }): Gateway {
+  let monthSpent: string | null = null;
   const held = new Map<string, number>();
   const hold = (key: string, amount: number): void => {
     held.set(key, (held.get(key) ?? 0) + amount);
@@ -70,8 +78,9 @@ export function createGateway({
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   return {
-    async call({ role, bucket, system, user, schema }) {
+    async call({ role, bucket, system, user: raw, schema }) {
       const spec = ROLES[role];
+      const user = cleanEgress(raw, names);
       const { route: name, model } = config.roles[role];
       const route = routes[name];
       const request = {
@@ -90,18 +99,13 @@ export function createGateway({
         tokensIn(system) + tokensIn(user),
         spec.maxTokens,
       );
-      if (
-        spentOn(bucket) + heldOn(bucket) + worst > ADVENTURE_LIMIT_USD ||
-        spentSince(month) + heldOn("month") + worst > MONTH_LIMIT_USD
-      )
-        return { ok: false, reason: "budget_exhausted" };
-      hold(bucket, worst);
-      hold("month", worst);
-      const log = (
+      const monthOver =
+        spentSince(month) + heldOn("month") + worst > limits.month;
+      const row = (
         outcome: string,
         reply: RouteReply | null,
         response: string,
-      ): void => {
+      ): number | bigint =>
         insert.run(
           started.toISOString(),
           role,
@@ -116,8 +120,42 @@ export function createGateway({
           outcome,
           JSON.stringify(route.body(request)),
           response,
-        );
+        ).lastInsertRowid;
+      const log = (
+        outcome: string,
+        reply: RouteReply | null,
+        response: string,
+      ): void => {
+        const id = row(outcome, reply, response);
+        appendEvents(db, [
+          {
+            type: "llm_call",
+            v: 1,
+            payload: { llmLogId: String(id), role },
+            origin: { deviceId: "server", clientMs: now() },
+          },
+        ]);
       };
+      if (
+        spentOn(bucket) + heldOn(bucket) + worst > limits.adventure ||
+        monthOver
+      ) {
+        if (monthOver && monthSpent !== month) {
+          monthSpent = month;
+          appendEvents(db, [
+            {
+              type: "budget_month_spent",
+              v: 1,
+              payload: { month: month.slice(0, 7) },
+              origin: { deviceId: "server", clientMs: now() },
+            },
+          ]);
+        }
+        row("budget_exhausted", null, `reserve ${worst.toFixed(6)}`);
+        return { ok: false, reason: "budget_exhausted" };
+      }
+      hold(bucket, worst);
+      hold("month", worst);
       try {
         const reply = await route.call(request);
         const finished = reply.stopReason !== "refusal" && reply.text !== "";
@@ -147,7 +185,7 @@ export async function verifyModels(
 > {
   try {
     for (const [role, { route, model }] of Object.entries(config.roles))
-      if (!(await routes[route as keyof Routes].hasModel(model)))
+      if (!(await routes[route].hasModel(model)))
         return { state: "missing", role };
     return { state: "ok" };
   } catch {

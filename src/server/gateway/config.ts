@@ -2,7 +2,7 @@
 // each role's tier, bucket, timeout and `max_tokens`, so configuration changes a model and never a tier.
 export type RouteName = "openrouter" | "anthropic";
 export type Tier = "player" | "content";
-export type RoleName = "TASK_TEXT_MODEL" | "LIVE_CHECK_MODEL" | "SAFETY_MODEL";
+export type RoleName = "TASK_TEXT_MODEL" | "FRAME_JUDGE_MODEL";
 
 export interface RoleSpec {
   readonly tier: Tier;
@@ -11,9 +11,8 @@ export interface RoleSpec {
 }
 
 export const ROLES: Readonly<Record<RoleName, RoleSpec>> = {
-  TASK_TEXT_MODEL: { tier: "content", timeoutMs: 30_000, maxTokens: 4000 },
-  LIVE_CHECK_MODEL: { tier: "player", timeoutMs: 10_000, maxTokens: 1000 },
-  SAFETY_MODEL: { tier: "player", timeoutMs: 5000, maxTokens: 200 },
+  TASK_TEXT_MODEL: { tier: "content", timeoutMs: 90_000, maxTokens: 12_000 },
+  FRAME_JUDGE_MODEL: { tier: "content", timeoutMs: 30_000, maxTokens: 4000 },
 };
 
 /** The roles that draw a picture have no direct route, because Claude models give text only (REQ-7630). */
@@ -29,7 +28,11 @@ export interface RoleRoute {
   readonly model: string;
 }
 
+/** `verify` spends from the offline key and records; `replay` answers from recordings and opens no connection. */
+export type GatewayMode = "play" | "verify" | "replay";
+
 export interface GatewayConfig {
+  readonly mode: GatewayMode;
   readonly roles: Readonly<Record<RoleName, RoleRoute>>;
   readonly playerProviders: readonly string[];
   readonly contentProviders: readonly string[];
@@ -76,6 +79,13 @@ export function readConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): GatewayConfig | null {
   const attested = env["ANTHROPIC_ZDR_ATTESTED"] === "true";
+  const mode = env["GATEWAY_MODE"] ?? "play";
+  if (mode !== "play" && mode !== "verify" && mode !== "replay")
+    throw new ConfigInvalid("GATEWAY_MODE", `unknown mode "${mode}"`);
+  const openrouterKey =
+    mode === "verify"
+      ? env["OPENROUTER_OFFLINE_KEY"]
+      : env["OPENROUTER_PLAY_KEY"];
   const names = Object.keys(ROLES) as RoleName[];
   if (names.some((name) => !env[name])) return null;
   const roles = Object.fromEntries(
@@ -87,12 +97,12 @@ export function readConfig(
   for (const name of names) {
     const route = roles[name].route;
     const key =
-      route === "anthropic"
-        ? env["ANTHROPIC_API_KEY"]
-        : env["OPENROUTER_PLAY_KEY"];
-    if (!key) throw new ConfigInvalid(name, `no key for the route ${route}`);
+      route === "anthropic" ? env["ANTHROPIC_API_KEY"] : openrouterKey;
+    if (!key && mode !== "replay")
+      throw new ConfigInvalid(name, `no key for the route ${route}`);
   }
   return {
+    mode,
     roles,
     playerProviders: listOf(
       env["PLAYER_TIER_PROVIDERS"],
@@ -102,7 +112,7 @@ export function readConfig(
       env["CONTENT_TIER_PROVIDERS"],
       "anthropic,openai,google-ai-studio,seed,mistral",
     ),
-    openrouterKey: env["OPENROUTER_PLAY_KEY"],
+    openrouterKey,
     anthropicKey: env["ANTHROPIC_API_KEY"],
   };
 }

@@ -2,7 +2,7 @@
 id: CAN-0120
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # Art direction
@@ -11,11 +11,11 @@ revised: 2026-09-27
 
 This record holds the game's art direction: the overall style, the global
 palette, the palettes of each floor and of dreamcore, shapes and lines,
-proportions, System windows, the English style and negative blocks for image
+proportions, interface panels, the English style and negative blocks for image
 generation, the dreamcore art direction with its own blocks, and seven sample
 prompts. It draws the places of CAN-0020 and CAN-0040, the heroine of
-CAN-0070, the familiars of CAN-0060, the Tangles of CAN-0050, the items of
-CAN-0100 and the System windows of CAN-0030. The dreamcore layer and its
+CAN-0070, the familiars of CAN-0060, the Tangles of CAN-0050 and the items of
+CAN-0100. The dreamcore layer and its
 creepiness levels are set out in CAN-0130, which this record gives a look.
 The prompt blocks stay in English, as the bible gives them, because the image
 models read English.
@@ -138,7 +138,7 @@ applies.
 - Tangles: round, fluffy or jelly-like, with one "glitch detail": a colour
   shifted by a pixel, a trembling edge, an extra ear, tangled threads inside.
 
-## System windows
+## Interface panels
 
 Semi-transparent glowing panels in the style of a boiled sweet:
 

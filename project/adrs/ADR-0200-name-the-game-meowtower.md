@@ -3,7 +3,7 @@ id: ADR-0200
 artifact: adr
 status: approved
 revised: 2026-09-27
-addresses: [REQ-3714]
+addresses: [REQ-7930]
 supersedes: []
 issue: 40
 projected: a5c9c3d34cf7
@@ -69,6 +69,8 @@ A reader of an approved record must translate old names through the table above,
 
 - The name of the Tower inside the story, which the canon keeps.
 - Whether «Мяубашня» is the final Russian title: it is the owner's direction to change the title, with this spelling chosen by the implementer and open to the owner's correction.
+
+Amended on 2026-10-31: the title is «Туманный Брод», Misty Ford and Nevelwade; this record addresses REQ-7930 in place of REQ-3714.
 
 ## Plan
 

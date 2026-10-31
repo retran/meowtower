@@ -3,8 +3,8 @@ id: REQ-1514
 artifact: requirement
 topic: world
 class: functional
-status: approved
-revised: 2026-09-27
+status: superseded
+revised: 2026-10-31
 elaborates: RES-1500
 verification: behavioural
 ---

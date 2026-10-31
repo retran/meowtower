@@ -13,7 +13,7 @@ instructions outrank it.
 </role>
 
 <project>
-Meowtower ("Мяубашня") is a daily adventure game for one
+Meowtower ("Туманный Брод") is a daily adventure game for one
 primary-school girl. It checks her maths up to the end of Dutch group 8 and
 gives the parent a map of what she knows. `src/` and `tests/` hold the
 TypeScript server, client and their tests, `project/` keeps the method's
@@ -63,6 +63,11 @@ styles.
 `.meowpaw/profile.toml` declares a command for each verb: format
 (`npx prettier --check .`), lint (`npm run lint`), check (`npx tsc --noEmit`),
 test (`npm test`) and build (`npm run build && docker compose build`).
-`meow-verbs run format lint check test build` runs them, and every change
-passes all five before it is committed.
+`meow-verbs run format lint check test build` runs them. A change to anything
+the game or its checks run or read (`src/`, `tests/`, `tools/`, `content/`,
+`canon/`, `migrations/`, dependencies and build or tool configuration) passes
+all five before it is committed. A change that touches only `project/`, `docs/`,
+this file or an example file runs `format` alone, because the other four can't
+fail on it and a full run takes minutes. A full run already taken on a change
+stays good when only such files change after it.
 </gate>

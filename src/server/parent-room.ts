@@ -34,12 +34,17 @@ const LoginIn = z.object({ pin: z.string() }).strict();
  */
 export const THREE_DAY_DEFAULT = 3;
 
+/** The highest level until the parent chooses another (REQ-7850). */
+export const CREEPINESS_DEFAULT = 2;
+
 const SettingsIn = z
   .object({
     threeDayLimit: z
       .union([z.number().int().min(1).max(7), z.null()])
       .optional(),
     language: z.enum(SHIPPED).optional(),
+    creepiness: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+    gender: z.enum(["f", "m"]).optional(),
   })
   .strict();
 
@@ -47,6 +52,8 @@ const SettingsIn = z
 export function parentSettings(db: Db): {
   threeDayLimit: number | null;
   language: Lang;
+  creepiness: 0 | 1 | 2;
+  gender: "f" | "m";
 } {
   const stored = (key: string): { value: string } | undefined =>
     db
@@ -60,12 +67,18 @@ export function parentSettings(db: Db): {
       : undefined;
   const limit = stored("threeDayLimit");
   const language = stored("language");
+  const creepiness = stored("creepiness");
+  const gender = stored("gender");
   return {
     threeDayLimit: limit
       ? (JSON.parse(limit.value) as number | null)
       : THREE_DAY_DEFAULT,
     // Russian until the parent chooses another language.
     language: language ? (JSON.parse(language.value) as Lang) : "ru",
+    creepiness: creepiness
+      ? (JSON.parse(creepiness.value) as 0 | 1 | 2)
+      : CREEPINESS_DEFAULT,
+    gender: gender ? (JSON.parse(gender.value) as "f" | "m") : "f",
   };
 }
 

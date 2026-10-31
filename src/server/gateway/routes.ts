@@ -34,7 +34,7 @@ export interface Route {
 
 export type Routes = Readonly<Record<RouteName, Route>>;
 
-/** Thinking stays low: a frame is a short text, and thinking tokens bill as output. */
+/** Effort stays low: reasoning takes most of the time, and a player waits for each story. */
 const anthropicBody = ({
   model,
   system,
@@ -44,7 +44,14 @@ const anthropicBody = ({
 }: RouteRequest) => ({
   model,
   max_tokens: maxTokens,
-  system,
+  // The rules and the setting repeat on every frame, so they are cached.
+  system: [
+    {
+      type: "text" as const,
+      text: system,
+      cache_control: { type: "ephemeral" as const },
+    },
+  ],
   messages: [{ role: "user" as const, content: user }],
   output_config: {
     effort: "low" as const,
@@ -100,7 +107,11 @@ export function openRouterRoute(
   config: GatewayConfig,
   send: typeof fetch = fetch,
 ): Route {
-  const body = (request: RouteRequest) => ({
+  const headers = {
+    authorization: `Bearer ${config.openrouterKey ?? ""}`,
+    "content-type": "application/json",
+  };
+  const chatBody = (request: RouteRequest) => ({
     model: request.model,
     max_tokens: request.maxTokens,
     messages: [
@@ -114,6 +125,7 @@ export function openRouterRoute(
       ...(request.schema ? { require_parameters: true } : {}),
     },
     usage: { include: true },
+    reasoning: { effort: "low" },
     ...(request.schema
       ? {
           response_format: {
@@ -128,15 +140,12 @@ export function openRouterRoute(
       : {}),
   });
   return {
-    body,
+    body: chatBody,
     async call(request) {
       const res = await send(`${OPENROUTER}/chat/completions`, {
         method: "POST",
-        headers: {
-          authorization: `Bearer ${config.openrouterKey ?? ""}`,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(body(request)),
+        headers,
+        body: JSON.stringify(chatBody(request)),
         signal: AbortSignal.timeout(request.timeoutMs),
       });
       if (!res.ok) throw new Error(`openrouter_${res.status.toString()}`);

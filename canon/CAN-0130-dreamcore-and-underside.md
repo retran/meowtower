@@ -2,7 +2,7 @@
 id: CAN-0130
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # Dreamcore, the dream Underside and mild creepiness
@@ -10,7 +10,7 @@ revised: 2026-09-27
 ## Summary
 
 This record holds the Tower's dreamcore layer: what the Underside is as the
-Tower's dream, how the heroine slips into it, why it matters for the mystery,
+sleepy layer, how the heroine slips into it, why it matters for the mystery,
 the three creepiness levels, the pattern for building an eerie scene, five
 dreamcore locations, the dreamcore variants of the nine floors, and the
 Master's rules. The Underside's mirror floors belong to the spring season of
@@ -23,12 +23,15 @@ too, and the always-cosy places are the ones CAN-0110 names.
 
 All knitting has a right side and a reverse side. The Tower's «Изнанка» (the
 Underside) is more than the mirror floors of the spring season: it's also the
-Tower's «сонный слой» (sleepy layer), where the Tower dreams while it re-knits
-itself. There everything is familiar but slightly "not right": corridors are
+«сонный слой» (sleepy layer). There everything is familiar but slightly "not right": corridors are
 longer than they should be, lamps hum quietly, objects float, the sky looks
 like soft television static, and the air smells of something from childhood.
-The place isn't dangerous or wicked. It's very quiet and a little lonely, and
-it likes being visited.
+The place isn't dangerous or wicked. It's very quiet and a little lonely.
+
+Secret, never shown (CAN-0030, "The Tower's secret"): the sleepy
+layer is where the Tower dreams while it knits itself. It remembers there what
+happened long ago, it likes being visited, and every room there, young Irma's
+nursery included, is its dream.
 
 ### Slips
 
@@ -43,7 +46,7 @@ Garden of Facets), as CAN-0080 tells.
 
 ### Why it matters for the mystery
 
-In the sleepy layer the Tower remembers what happened long ago. There the
+The sleepy layer holds traces of what happened long ago. There the
 heroine can find traces of young Irma, such as a knitted scarf on a swing or a
 child's drawing of a cat, but never a direct answer. Clues from the Underside
 follow the same pace of the reveal as every other clue (CAN-0080).
@@ -51,7 +54,7 @@ follow the same pace of the reveal as every other clue (CAN-0080).
 ## Creepiness levels
 
 The parent chooses the level: 0 «Уютно» (Cosy), 1 «Чуть жутковато» (A Little
-Eerie, the default) or 2 «Загадочно» (Mysterious), under the heading
+Eerie) or 2 «Загадочно» (Mysterious, the default), under the heading
 «Уровень жуткости» (creepiness level) in the Parent Room. These three names
 are the only names of the levels. The Master receives the level in every
 order and never exceeds it.
@@ -84,9 +87,7 @@ Strangeness, then curiosity, then a kind answer. First something puzzling: a
 whisper, a note, a swing moving by itself. Then the heroine and her familiar
 come closer, with the familiar beside her, light present and the exit in
 sight. Then the strange thing turns out to be lonely, shy, caring or simply
-funny. The System's dry humour works as reassurance: «Обнаружен шёпот. Шёпот
-стеснительный. Угроза: не обнаружена» (Whisper detected. Whisper is shy.
-Threat: not detected).
+funny. Dry humour works as reassurance.
 
 ## Five dreamcore locations
 
@@ -95,13 +96,12 @@ Threat: not detected).
 | «Площадка Сумерек» (the Twilight Playground) | A children's playground inside the Tower in eternal dusty-rose dusk, a carousel with lemon lights, a sandpit of soft sand | The carousel hums quietly and turns with no wind; the swings move by themselves («Пустокачель», the Empty Swing) | The slide from this playground always leads straight to the door of the heroine's room |
 | «Бесконечный Мягкий Коридор» (the Endless Soft Corridor) | A corridor with cream-coloured carpet, identical doors, lamps humming in unison under the ceiling | The doors repeat, and the corridor seems longer than it should be («Коридорник», the Corridor Worm) | Behind every door is a small cosy room, and one of them always leads back |
 | «Бассейн Тихой Воды» (the Pool of Quiet Water) | A hall of pastel tiles, shallow warm water up to the ankles, rubber ducks swimming by themselves, glints running over the ceiling | Voices echo longer than they speak; the ducks line up and all look the same way | The ducks are distant relatives of «Фуражка» (Cap), the ferry duck of CAN-0020, and show the way to the exit |
-| «Комната Чьего-то Детства» (Somebody's Childhood Room) | A cosy nursery with furniture that's too big: a huge chair, a bed with a knitted cover, knitting needles on the windowsill, a drawing of a cat on the wall | A clock with no hands; the window looks out where it shouldn't | This is the Tower's dream of young Irma's nursery: here the heroine finds soft clues to the mystery (CAN-0080) |
+| «Комната Чьего-то Детства» (Somebody's Childhood Room) | A cosy nursery with furniture that's too big: a huge chair, a bed with a knitted cover, knitting needles on the windowsill, a drawing of a cat on the wall | A clock with no hands; the window looks out where it shouldn't | This is young Irma's nursery as the sleepy layer holds it: here the heroine finds soft clues to the mystery (CAN-0080) |
 | «Станция Туманного Поезда» (the Fog Train Station) | An empty little station at night, humming lanterns, a timetable in chalk, like the one on the town hall | A train of fog arrives strictly on time, but nobody is on it | The train is the fog of «Туманный Брод» (Misty Ford) going home; the ticket is a breadcrumb, and it always takes her back to the right side |
 
 ## Dreamcore variants of the floors
 
-Sometimes a floor re-knits itself "in its sleep" and for one day becomes its
-dreamcore variant. The trials, the Guardian and the inhabitants stay the same.
+Sometimes a floor becomes its dreamcore variant for one day. The trials, the Guardian and the inhabitants stay the same.
 What changes is the light, the sound, the backgrounds and which eerie-cute
 Tangles she can meet, never above the creepiness level.
 
@@ -117,11 +117,7 @@ Tangles she can meet, never above the creepiness level.
 | «Сортировочная Шёпотов» (the Whisper Sorting Office) | «Ночная Почта» (the Night Post) | Paper birds float slowly, whispers come from the empty boxes («Шепотун», Whisperkin) |
 | «Обсерватория» (the Observatory) | «Обсерватория без Звёзд» (the Observatory Without Stars) | The dome is open, but there's soft static in place of stars; the stars return one by one when the heroine comes in |
 
-The System announces a dreamcore variant in the morning, dry and calm: «За
-ночь Архив увидел сон. Сон остался. Освещение приглушено. Книги спят. Не
-будить. Разбудили. Книги не против.» (Overnight the Archive had a dream. The
-dream stayed. Lighting dimmed. Books asleep. Do not wake. Woken. Books don't
-mind.)
+The morning note names a dreamcore variant, dry and calm, with no speaker.
 
 ## Rules for the Master
 
@@ -136,7 +132,7 @@ mind.)
    or a funny habit.
 5. On «мне страшно» (I'm scared), an immediate kind resolution and a return to
    the light (CAN-0110, "Safety net").
-6. Dreamcore doesn't cancel the humour: the System stays dry, the Tangles stay
+6. Dreamcore doesn't cancel the humour: the notes stay dry, the Tangles stay
    funny, and the Guardians stay themselves.
 7. Every other canon rule holds in dreamcore scenes: no numbers, no school, no
    other people's characters.

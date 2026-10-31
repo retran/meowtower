@@ -408,12 +408,16 @@ const parentSettingsScreen: Screen = {
     const note = status();
     const limits = el("fieldset", {});
     const languages = el("fieldset", {});
+    const creepiness = el("fieldset", {});
+    const gender = el("fieldset", {});
     const nav = el("nav", { className: "actions" });
     const section = el(
       "section",
       {},
       heading("ui.parentSettings.title"),
       languages,
+      creepiness,
+      gender,
       limits,
       note,
       nav,
@@ -442,6 +446,46 @@ const parentSettingsScreen: Screen = {
               // The strings of the page come from the server in the new language.
               if (saved) location.reload();
               else note.textContent = t("ui.devices.failed");
+            },
+          ),
+        ),
+      );
+      creepiness.append(
+        el("legend", {}, t("ui.parentSettings.creepiness")),
+        ...([0, 1, 2] as const).map((level) =>
+          choice(
+            "creepiness",
+            String(level),
+            uiKey(`ui.parentSettings.creepiness.${String(level)}`),
+            level === current.creepiness,
+            async () => {
+              note.textContent = "";
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ creepiness: level }),
+              );
+              note.textContent = t(
+                saved ? "ui.settings.saved" : "ui.devices.failed",
+              );
+            },
+          ),
+        ),
+      );
+      gender.append(
+        el("legend", {}, t("ui.parentSettings.gender")),
+        ...(["f", "m"] as const).map((value) =>
+          choice(
+            "gender",
+            value,
+            uiKey(`ui.parentSettings.gender.${value}`),
+            value === current.gender,
+            async () => {
+              note.textContent = "";
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ gender: value }),
+              );
+              note.textContent = t(
+                saved ? "ui.settings.saved" : "ui.devices.failed",
+              );
             },
           ),
         ),

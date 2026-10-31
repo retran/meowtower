@@ -18,6 +18,7 @@ import {
   heartbeat,
   MOVED,
   nextPacket,
+  secondAttempt,
   nextSeq,
   buyHint,
   pause,
@@ -28,16 +29,7 @@ import {
   UNREACHABLE,
 } from "./api.js";
 import { flushOnce, retryClock, submitAnswer } from "./answer-queue.js";
-import {
-  act,
-  button,
-  el,
-  focusField,
-  heading,
-  link,
-  math,
-  status,
-} from "./controls.js";
+import { act, button, el, focusField, link, math, status } from "./controls.js";
 import type { Screen } from "./screens.js";
 import {
   firstLayout,
@@ -142,9 +134,7 @@ export const playScreen: Screen = {
       document.addEventListener(type, onActivity, true);
 
     const draw = (...children: Node[]): void => {
-      const step = el("div", { className: "step" });
-      step.append(...children);
-      section.replaceChildren(heading("ui.play.title"), step);
+      section.replaceChildren(...children);
       delete section.dataset["busy"];
       focusField(section);
     };
@@ -263,7 +253,10 @@ export const playScreen: Screen = {
       if (!sessionId) return;
       section.dataset["busy"] = "1";
       const wait = retryClock();
+      // A story being written takes seconds, so a slow reply shows the waiting scene.
+      const slow = setTimeout(showWaiting, 150);
       let packet = await nextPacket(sessionId);
+      clearTimeout(slow);
       // No task shows while the server can't be reached.
       while (packet === UNREACHABLE) {
         if (gone()) return;
@@ -395,7 +388,7 @@ export const playScreen: Screen = {
           refused("ui.play.failed");
           return;
         }
-        drawOutcome(delivery.reply, dontKnow, shown ?? raw);
+        drawOutcome(delivery.reply, dontKnow, shown ?? raw, room);
       }
       const labels = room.view.options ?? [];
       const values = room.input.values ?? [];
@@ -742,8 +735,20 @@ export const playScreen: Screen = {
       reply: AnswerOut,
       dontKnow: boolean,
       entered: string,
+      room: Room,
     ): void {
       taskOpen = false;
+      // A second attempt follows a first one that wasn't clean (REQ-7164).
+      const canRetry = reply.outcome !== undefined && reply.outcome !== "clean";
+      const retry = async (): Promise<void> => {
+        showWaiting();
+        const next = await secondAttempt(room.itemId);
+        if (gone()) return;
+        if (next === MOVED) return viewOnly();
+        if (!next) return refused("ui.play.failed");
+        drawRoom(next);
+        restartIdle();
+      };
       const badge = el(
         "p",
         { className: "badge" },
@@ -779,7 +784,6 @@ export const playScreen: Screen = {
         ...(reply.note
           ? [el("p", { className: "note" }, ...math(reply.note))]
           : []),
-        el("p", { className: "battle" }, reply.battleLine),
         el(
           "div",
           { className: "result" },
@@ -789,6 +793,7 @@ export const playScreen: Screen = {
         el(
           "nav",
           { className: "actions" },
+          ...(canRetry ? [button("ui.play.again", "play-again", retry)] : []),
           button("ui.play.next", "play-next", advance),
           button("ui.play.leave", "play-leave", () => stop("leave")),
         ),

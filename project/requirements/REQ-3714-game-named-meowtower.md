@@ -3,8 +3,8 @@ id: REQ-3714
 artifact: requirement
 topic: scope
 class: functional
-status: approved
-revised: 2026-09-27
+status: superseded
+revised: 2026-10-31
 elaborates: RES-0010
 verification: static
 ---

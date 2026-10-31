@@ -3,7 +3,7 @@ id: REQ-7544
 artifact: requirement
 topic: voice
 class: functional
-status: approved
+status: superseded
 revised: 2026-10-31
 elaborates: RES-3300
 verification: static
