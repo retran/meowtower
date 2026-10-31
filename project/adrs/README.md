@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-55 decisions in all: 43 approved, 12 done.
+56 decisions in all: 44 approved, 12 done.
 
 | Identifier                                                                                    | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -61,5 +61,6 @@
 | [ADR-0530](ADR-0530-typical-groups-follow-the-dutch-goals-where-the-prerequisites-allow.md)   | A node's typical group follows the Dutch goal that first contains it, where the prerequisite order allows                                                                                                                                                                                                                                         | done     |
 | [ADR-3100](ADR-3100-live-frames-set-every-task-in-the-story-and-each-role-names-its-route.md) | Live frames set every task in the story, written by Claude Haiku 5.5, and each model role names its route, OpenRouter or the direct Anthropic API                                                                                                                                                                                                 | done     |
 | [ADR-3200](ADR-3200-frames-on-every-template-a-list-per-language-and-new-budgets.md)          | Every template takes a live frame, each language has its forbidden list, an adventure may spend $5 and a month $200, and the model log keeps everything                                                                                                                                                                                           | approved |
+| [ADR-3210](ADR-3210-jev-judges-frames-on-a-direct-route.md)                                   | A frame takes two model calls: the author writes variants, and Jev checks them all and chooses the best in one request                                                                                                                                                                                                                            | approved |
 
 <!-- /meow-flow index -->

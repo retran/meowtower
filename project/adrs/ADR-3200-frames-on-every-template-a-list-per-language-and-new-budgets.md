@@ -3,7 +3,7 @@ id: ADR-3200
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-7690, REQ-7700, REQ-7710, REQ-7720, REQ-7730, REQ-7740]
+addresses: [REQ-7690, REQ-7700, REQ-7710, REQ-7730, REQ-7740]
 supersedes: []
 ---
 
@@ -68,6 +68,8 @@ A log kept for good grows without bound: each row repeats its prompt, so `llm_lo
 - ADR-0100: the adventure's limit is $5 and the month's $200; the nightly deletion of bodies and the 1 GB report on them go away.
 - ADR-0160: an agent may draft a forbidden list; the gate reads the game's language.
 - ADR-3100: tasks with buttons and pictures take frames; `live_frames_paused` is an event; the blind solve shows options.
+
+Amended by ADR-3210, approved on 2026-10-31: this record no longer addresses REQ-7720, which are superseded.
 
 ## Plan
 

@@ -3,14 +3,8 @@ import { readFileSync } from "node:fs";
 import { z } from "zod";
 import type { Gateway } from "../gateway/gateway.js";
 import { textGate } from "../../shared/voice/gate.js";
-import type { AnswerKind, Compiled, Lang } from "../../templates/spec.js";
-import { presentFramed } from "../task-source.js";
-import {
-  type FramePrompt,
-  MAX_SENTENCES,
-  MAX_WORDS,
-  promptOf,
-} from "./request.js";
+import type { Lang } from "../../templates/spec.js";
+import { MAX_SENTENCES, MAX_WORDS, promptOf } from "./request.js";
 
 const PLACEHOLDER = /\{[^{}]+\}/g;
 
@@ -75,87 +69,97 @@ export function codeFault(
   return null;
 }
 
-const Verdict = z.object({ safe: z.boolean(), joke: z.boolean() });
-const VERDICT_SCHEMA = {
-  type: "object",
-  properties: { safe: { type: "boolean" }, joke: { type: "boolean" } },
-  required: ["safe", "joke"],
-  additionalProperties: false,
-} as const;
+/** Doubt counts as a no: Jev reads languages other than English less well (ADR-3210). */
+const UNSAFE_AT = 0.2;
+const JOKE_AT = 0.5;
+const CHANGED_AT = 0.2;
 
-/** The safety question on the text with its placeholders unfilled (REQ-3600). */
-export async function safe(
-  gateway: Gateway,
-  bucket: string,
-  frame: string,
-  lang: Lang,
-): Promise<boolean> {
-  const reply = await gateway.call({
-    role: "SAFETY_MODEL",
-    bucket,
-    system: promptOf(lang).safety,
-    user: frame,
-    schema: VERDICT_SCHEMA,
-  });
-  if (!reply.ok) return false;
-  try {
-    const verdict = Verdict.parse(JSON.parse(reply.text));
-    return verdict.safe && !verdict.joke;
-  } catch {
-    return false;
-  }
+const Answers = z.record(
+  z.string(),
+  z.union([
+    z.number(),
+    z.object({
+      choice: z.string(),
+      probabilities: z.record(z.string(), z.number()).optional(),
+    }),
+  ]),
+);
+
+export interface Judged {
+  /** The variant chosen, or null when none passed. */
+  readonly best: string | null;
+  readonly rejected: readonly string[];
+  readonly unused: readonly string[];
 }
 
-const FORMAT: Readonly<Record<AnswerKind, keyof FramePrompt["formats"]>> = {
-  integer: "number",
-  decimal: "number",
-  line: "number",
-  fraction: "fraction",
-  mixed: "mixed",
-  pair: "pair",
-  time: "time",
-  compare: "options",
-  choice: "options",
-  set: "options",
-  order: "options",
-};
-
-/** One blind solve: the model reads the task as the player does, buttons and picture included, and the
- *  engine's checker reads its answer. Nothing marks the right option (REQ-7710). */
-export async function solvesBlind(
+/** One request checks every variant against the template and chooses the best (REQ-3600, REQ-7750).
+ *  Null means the judge failed, and the task keeps its template text. */
+export async function judged(
   gateway: Gateway,
   bucket: string,
-  template: Compiled,
-  seed: Uint8Array,
+  variants: readonly string[],
+  blank: string,
   lang: Lang,
-  frame: string,
-): Promise<boolean> {
-  const made = template.make(seed, lang);
-  const shape = presentFramed(template, seed, lang, frame);
-  const prompt = promptOf(lang);
-  const labels = shape.options;
+): Promise<Judged | null> {
+  const { judge } = promptOf(lang);
+  const names = variants.map((_, i) => String(i + 1));
+  const ask = (text: string, n: string): string => text.replace("{n}", n);
   const reply = await gateway.call({
-    role: "LIVE_CHECK_MODEL",
+    role: "FRAME_JUDGE_MODEL",
     bucket,
-    system: `${prompt.solve} ${prompt.formats[FORMAT[template.answer]]}`,
+    system: "",
     user: [
-      shape.text,
-      ...(labels ?? []).map((l, i) => `${(i + 1).toString()}) ${l}`),
-      ...(made.svg ? [made.svg] : []),
+      ...variants.map((v, i) => `${judge.variant} ${names[i] ?? ""}: ${v}`),
+      "---",
+      blank,
     ].join("\n"),
+    questions: {
+      ...Object.fromEntries(
+        names.flatMap((n) => [
+          [`unsafe_${n}`, ask(judge.unsafe, n)],
+          [`joke_${n}`, ask(judge.joke, n)],
+          [`changed_${n}`, ask(judge.changed, n)],
+        ]),
+      ),
+      best: {
+        instructions: judge.best,
+        criteria: Object.fromEntries(
+          names.map((n) => [`variant_${n}`, `${judge.variant} ${n}`]),
+        ),
+      },
+    },
   });
-  if (!reply.ok) return false;
-  const raw = reply.text.trim();
-  const values =
-    shape.input.kind === "choice" ||
-    shape.input.kind === "set" ||
-    shape.input.kind === "order"
-      ? shape.input.values
-      : null;
-  const entry = values
-    ? (raw.match(/\d+/gu) ?? [])
-        .map((n) => values[Number(n) - 1] ?? "")
-        .join(",")
-    : raw;
-  return made.checker(entry).verdict === "correct";
+  if (!reply.ok) return null;
+  const parsed = Answers.safeParse(JSON.parse(reply.text));
+  if (!parsed.success) return null;
+  const answers = parsed.data;
+  const below = (key: string, limit: number): boolean | null => {
+    const value = answers[key];
+    return typeof value === "number" ? value < limit : null;
+  };
+  const passes = names.map((n) => {
+    const all = [
+      below(`unsafe_${n}`, UNSAFE_AT),
+      below(`joke_${n}`, JOKE_AT),
+      below(`changed_${n}`, CHANGED_AT),
+    ];
+    return all.includes(null) ? null : all.every(Boolean);
+  });
+  if (passes.includes(null)) return null;
+  const best = answers["best"];
+  if (best === undefined || typeof best === "number") return null;
+  const chance = (i: number): number =>
+    best.probabilities?.[`variant_${names[i] ?? ""}`] ?? 0;
+  const passing = names.flatMap((_, i) => (passes[i] ? [i] : []));
+  // The choice stands when its variant passed; otherwise the likeliest variant that did.
+  const chosen = passing.includes(
+    names.indexOf(best.choice.replace("variant_", "")),
+  )
+    ? names.indexOf(best.choice.replace("variant_", ""))
+    : [...passing].sort((a, b) => chance(b) - chance(a))[0];
+  return {
+    best: chosen === undefined ? null : (variants[chosen] ?? null),
+    rejected: variants.filter((_, i) => !passes[i]),
+    unused: variants.filter((_, i) => passes[i] && i !== chosen),
+  };
 }

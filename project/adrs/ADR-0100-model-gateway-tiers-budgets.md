@@ -439,6 +439,8 @@ Amended by ADR-3100, approved on 2026-10-31, whose `## Amends` section changes p
 
 Amended by ADR-3200, approved on 2026-10-31, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
+Amended by ADR-3210, approved on 2026-10-31, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
 ## Plan
 
 The upgrade folded these open tasks in (ADR-3090). Read each one before its step.

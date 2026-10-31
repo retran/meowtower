@@ -3,7 +3,7 @@ id: SPC-0100
 artifact: spec
 status: live
 revised: 2026-10-31
-states: [REQ-7650, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688, REQ-7590, REQ-7600, REQ-7610, REQ-7620, REQ-7630, REQ-7690, REQ-7700, REQ-7710, REQ-7740]
+states: [REQ-7750, REQ-7650, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688, REQ-7590, REQ-7600, REQ-7610, REQ-7620, REQ-7630, REQ-7690, REQ-7700, REQ-7710, REQ-7740]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -42,6 +42,7 @@ Each role takes its model id from `.env` (REQ-1642). The code fixes each role's 
 | `PLANNER_MODEL` | player | play | adventure | `z-ai/glm-5.3` |
 | `FREE_PEN_MODEL` | player | play | adventure | the adventure's Master model |
 | `LIVE_GEN_MODEL` | content | play | adventure | set in `.env` |
+| `FRAME_JUDGE_MODEL` | content | play | adventure | unset; ADR-3210 names `typesafe/jev-1.14` |
 | `TASK_TEXT_MODEL` | content | play | adventure | unset; ADR-3100 names `claude-haiku-5-5` |
 | `LIVE_CHECK_MODEL` | player | play | adventure for frames, explanations for explanations | set in `.env` |
 | `SAFETY_MODEL` | player | play | the caller's bucket | set in `.env` |
@@ -109,7 +110,7 @@ The dependencies run one way. Only `src/server/gateway/` opens a connection to a
 
 ### Routes
 
-The gateway has two routes, `openrouter` and `anthropic`. Each role's value is `<route>:<model>`, such as `anthropic:claude-haiku-5-5` (REQ-7590), and a value with no known route stops the start as `model_config_invalid`. Each request goes by exactly its role's route, with no failover to the other (REQ-7600). A player-tier role may name `anthropic` only while `ANTHROPIC_ZDR_ATTESTED` is `true`, the owner's statement that the organisation has zero retention (REQ-7610). An image-output role may name only `openrouter` (REQ-7630).
+The gateway has two routes, `openrouter` and `anthropic`. Jev answers on OpenRouter at `/api/v1/systemone`. Each role's value is `<route>:<model>`, such as `anthropic:claude-haiku-5-5` (REQ-7590), and a value with no known route stops the start as `model_config_invalid`. Each request goes by exactly its role's route, with no failover to the other (REQ-7600). A player-tier role may name `anthropic` only while `ANTHROPIC_ZDR_ATTESTED` is `true`, the owner's statement that the organisation has zero retention (REQ-7610). An image-output role may name only `openrouter` (REQ-7630).
 
 Both routes return text, a stop reason, tokens and a cost in US dollars. OpenRouter's cost comes from `usage.cost`. A direct call's cost comes from the dated price table in `src/server/gateway/prices.ts`. The month of play counts `llm_log` across every route (REQ-7620), and OpenRouter's key limit is a second ceiling on that route alone.
 

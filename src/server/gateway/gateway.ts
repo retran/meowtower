@@ -6,7 +6,7 @@ import type { Db } from "../database.js";
 import { ROLES, type GatewayConfig, type RoleName } from "./config.js";
 import { cleanEgress } from "./egress.js";
 import { costOf } from "./prices.js";
-import type { RouteReply, Routes } from "./routes.js";
+import type { JudgeQuestion, RouteReply, Routes } from "./routes.js";
 
 export const ADVENTURE_LIMIT_USD = 5;
 export const MONTH_LIMIT_USD = 200;
@@ -18,6 +18,7 @@ export interface GatewayRequest {
   readonly system: string;
   readonly user: string;
   readonly schema?: Readonly<Record<string, unknown>>;
+  readonly questions?: Readonly<Record<string, JudgeQuestion>>;
 }
 
 export type GatewayResult =
@@ -78,10 +79,9 @@ export function createGateway({
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   return {
-    async call({ role, bucket, system, user: raw, schema }) {
+    async call({ role, bucket, system, user: raw, schema, questions }) {
       const spec = ROLES[role];
-      // The blind solve holds the engine's own numbers, which the guard must leave alone (SPC-0100).
-      const user = role === "LIVE_CHECK_MODEL" ? raw : cleanEgress(raw, names);
+      const user = cleanEgress(raw, names);
       const { route: name, model } = config.roles[role];
       const route = routes[name];
       const request = {
@@ -92,6 +92,7 @@ export function createGateway({
         maxTokens: spec.maxTokens,
         timeoutMs: spec.timeoutMs,
         ...(schema ? { schema } : {}),
+        ...(questions ? { questions } : {}),
       };
       const started = new Date(now());
       const month = `${started.toISOString().slice(0, 7)}-01`;
@@ -182,7 +183,7 @@ export async function verifyModels(
 > {
   try {
     for (const [role, { route, model }] of Object.entries(config.roles))
-      if (!(await routes[route as keyof Routes].hasModel(model)))
+      if (!(await routes[route].hasModel(model)))
         return { state: "missing", role };
     return { state: "ok" };
   } catch {

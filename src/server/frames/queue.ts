@@ -2,12 +2,11 @@
 // waits, and keeps every frame with its status. A task with no ready frame shows its template text.
 import { z } from "zod";
 import { appendEvents } from "../../engine/events/append.js";
-import { baseSeed } from "../../math/rng.js";
 import type { Compiled, Lang } from "../../templates/spec.js";
 import type { Db } from "../database.js";
 import type { Gateway } from "../gateway/gateway.js";
 import { gameDayOf } from "../../shared/game-day.js";
-import { codeFault, safe, solvesBlind } from "./check.js";
+import { codeFault, judged } from "./check.js";
 import {
   FRAME_SCHEMA,
   frameSystem,
@@ -109,7 +108,7 @@ export function createFrameQueue({
       .get(task.template.id, hex(task.base), task.lang) !== undefined;
 
   async function run(task: FrameTask): Promise<void> {
-    const { template, base, bucket, lang } = task;
+    const { template, bucket, lang } = task;
     const blank = template.blank(lang);
     const reply = await gateway.call({
       role: "TASK_TEXT_MODEL",
@@ -127,34 +126,18 @@ export function createFrameQueue({
         keep(task, reply.text, "rejected", "schema");
       return;
     }
-    for (const frame of variants) {
+    const clean = variants.filter((frame) => {
       const fault = codeFault(frame, blank, lang);
-      if (fault) {
-        keep(task, frame, "rejected", fault);
-        continue;
-      }
-      if (!(await safe(gateway, bucket, frame, lang))) {
-        keep(task, frame, "rejected", "safety");
-        continue;
-      }
-      // The task's own numbers and two other draws of the same template (REQ-3630, REQ-3632).
-      const seeds = [
-        base,
-        baseSeed(hex(base), template.id, 1),
-        baseSeed(hex(base), template.id, 2),
-      ];
-      const solved = await Promise.all(
-        seeds.map((s) =>
-          solvesBlind(gateway, bucket, template, s, lang, frame),
-        ),
-      );
-      if (!solved.every(Boolean)) {
-        keep(task, frame, "rejected", "blind_solve");
-        continue;
-      }
-      keep(task, frame, "ready", null);
-      return;
-    }
+      if (fault) keep(task, frame, "rejected", fault);
+      return fault === null;
+    });
+    if (clean.length === 0) return;
+    const verdict = await judged(gateway, bucket, clean, blank, lang);
+    if (!verdict) return;
+    for (const frame of verdict.rejected)
+      keep(task, frame, "rejected", "judge");
+    for (const frame of verdict.unused) keep(task, frame, "unused", null);
+    if (verdict.best) keep(task, verdict.best, "ready", null);
   }
 
   return {

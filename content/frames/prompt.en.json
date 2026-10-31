@@ -10,14 +10,11 @@
     "Plain, clear text with no jokes."
   ],
   "variants": "Write {count} different variants in English.",
-  "safety": "You check a text for a maths game for a primary-school child. `safe` is false if the text is frightening, shaming, cruel or unfit for a child. `joke` is true if the text holds a joke.",
-  "solve": "Solve the task.",
-  "formats": {
-    "number": "Reply with the number alone.",
-    "fraction": "Reply with a fraction such as 3/4 or a whole number alone.",
-    "mixed": "Reply with a mixed number such as 2 3/4, a fraction or a whole number alone.",
-    "pair": "Reply with two numbers separated by a semicolon, such as 3; 4.",
-    "time": "Reply with a time such as 7:05.",
-    "options": "Reply with the number of the right option alone. If several are right or an order is asked for, list the numbers separated by commas."
+  "judge": {
+    "variant": "Variant",
+    "unsafe": "Does variant {n} in the `state` hold anything frightening, shaming, cruel or unfit for a child?",
+    "joke": "Does variant {n} in the `state` hold a joke?",
+    "changed": "After the line --- the `state` holds the original task. Does variant {n} ask something different from the original task, or change its conditions?",
+    "best": "Which variant best weaves the task into the game's world and stays clear to a child?"
   }
 }

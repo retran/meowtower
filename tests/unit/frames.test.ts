@@ -8,7 +8,7 @@ import { baseSeed } from "../../src/math/rng.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
 import { adminPage } from "../../src/server/admin.js";
 import { llmAudit } from "../../src/server/audit.js";
-import { codeFault, solvesBlind } from "../../src/server/frames/check.js";
+import { codeFault } from "../../src/server/frames/check.js";
 import { present, presentFramed } from "../../src/server/task-source.js";
 import { textGate } from "../../src/shared/voice/gate.js";
 import { createFrameQueue } from "../../src/server/frames/queue.js";
@@ -44,42 +44,43 @@ const template = templates.find(
 );
 if (!template) throw new Error("no_framable_template");
 
-/** A model that wraps the blank, is safe, and solves through a function. */
-function model(
-  solve: (r: GatewayRequest) => string,
-): Gateway & { seen: GatewayRequest[] } {
+const wrapped = `На этаже Башни узел. ${template.blank("ru")}`;
+const other = `Страж ждёт у нити. ${template.blank("ru")}`;
+const answers = (
+  over: Record<string, number> = {},
+  choice = "variant_2",
+): string =>
+  JSON.stringify({
+    unsafe_1: 0,
+    joke_1: 0,
+    changed_1: 0,
+    unsafe_2: 0,
+    joke_2: 0,
+    changed_2: 0,
+    best: { choice, probabilities: { variant_1: 0.3, variant_2: 0.7 } },
+    ...over,
+  });
+const CLEAN = answers();
+
+/** A model that wraps the blank, and a judge that answers `verdict`. */
+function model(verdict: string | null): Gateway & { seen: GatewayRequest[] } {
   return {
     seen: [],
     call(r) {
       this.seen.push(r);
-      const text =
-        r.role === "TASK_TEXT_MODEL"
-          ? JSON.stringify({
-              frames: [`На этаже Башни узел. ${template?.blank("ru") ?? ""}`],
-            })
-          : r.role === "SAFETY_MODEL"
-            ? JSON.stringify({ safe: true, joke: false })
-            : solve(r);
-      return Promise.resolve({ ok: true, text });
+      if (r.role === "TASK_TEXT_MODEL")
+        return Promise.resolve({
+          ok: true,
+          text: JSON.stringify({ frames: [wrapped, other] }),
+        });
+      return Promise.resolve(
+        verdict === null
+          ? { ok: false, reason: "provider_failed" }
+          : { ok: true, text: verdict },
+      );
     },
   };
 }
-
-const answerOf = (r: GatewayRequest): string => {
-  for (const k of [0, 1, 2]) {
-    const seed =
-      k === 0
-        ? base
-        : baseSeed(Buffer.from(base).toString("hex"), template.id, k);
-    const made = template.make(
-      seed,
-      "ru",
-      `На этаже Башни узел. ${template.blank("ru")}`,
-    );
-    if (made.text === r.user) return made.entry;
-  }
-  return "?";
-};
 
 describe("the code checks", () => {
   const blank = "Найди {a} и {=a+b}.";
@@ -138,46 +139,64 @@ describe("the prompt", () => {
 
 describe("the queue", () => {
   const task = { template, base, bucket: "b", lang: "ru" as const };
-  it("makes a frame ready, and the task shows it with the engine's numbers", async () => {
-    const queue = createFrameQueue({
-      db: database(),
-      gateway: model(answerOf),
-      zone: "UTC",
-    });
+  const queueOf = (gateway: Gateway, db = database()) =>
+    createFrameQueue({ db, gateway, zone: "UTC" });
+  it("makes a frame ready with two calls, and the task shows the engine's numbers", async () => {
+    const gateway = model(CLEAN);
+    const queue = queueOf(gateway);
     await queue.prepare(task);
     const frame = queue.take(task);
-    expect(frame).not.toBeNull();
+    expect(gateway.seen.map((r) => r.role)).toEqual([
+      "TASK_TEXT_MODEL",
+      "FRAME_JUDGE_MODEL",
+    ]);
     expect(queue.take(task)).toBeNull();
-    const plain = template.make(base, "ru");
     const framed = template.make(base, "ru", frame?.text);
-    expect(framed.text).toContain("На этаже Башни");
-    expect(framed.entry).toBe(plain.entry);
+    expect(framed.text).toContain("Страж ждёт у нити");
+    expect(framed.entry).toBe(template.make(base, "ru").entry);
   });
-  it("rejects a frame that fails one blind solve and shows no answer to the solver", async () => {
-    const db = database();
-    let count = 0;
-    const gateway = model((r) => {
-      count += 1;
-      return count === 2 ? "?" : answerOf(r);
+  it("keeps the variant that passed when the choice fell on a rejected one", async () => {
+    const queue = queueOf(model(answers({ unsafe_2: 0.9 })));
+    await queue.prepare(task);
+    expect(queue.take(task)?.text).toBe(wrapped);
+  });
+  it("sends the judge every variant and the original in one request", async () => {
+    const gateway = model(CLEAN);
+    await queueOf(gateway).prepare(task);
+    const judge = gateway.seen[1];
+    expect(judge?.user).toBe(
+      `Вариант 1: ${wrapped}\nВариант 2: ${other}\n---\n${template.blank("ru")}`,
+    );
+    expect(Object.keys(judge?.questions ?? {})).toHaveLength(7);
+    expect(judge?.questions?.["best"]).toMatchObject({
+      criteria: { variant_1: "Вариант 1", variant_2: "Вариант 2" },
     });
-    const queue = createFrameQueue({ db, gateway, zone: "UTC" });
+  });
+  it.each([
+    { unsafe_1: 0.3, unsafe_2: 0.3 },
+    { joke_1: 0.6, joke_2: 0.6 },
+    { changed_1: 0.3, changed_2: 0.3 },
+  ])("rejects doubt: %j", async (over) => {
+    const db = database();
+    const queue = queueOf(model(answers(over)), db);
     await queue.prepare(task);
     expect(queue.take(task)).toBeNull();
-    expect(db.prepare("SELECT status, step FROM frames").get()).toEqual({
-      status: "rejected",
-      step: "blind_solve",
-    });
-    const solves = gateway.seen.filter((r) => r.role === "LIVE_CHECK_MODEL");
-    expect(solves).toHaveLength(3);
-    for (const solve of solves) expect(solve.schema).toBeUndefined();
+    expect(
+      db.prepare("SELECT DISTINCT status, step FROM frames").all(),
+    ).toEqual([{ status: "rejected", step: "judge" }]);
   });
-  it("leaves no frame when the model fails", async () => {
-    const queue = createFrameQueue({
-      db: database(),
-      gateway: {
-        call: () => Promise.resolve({ ok: false, reason: "provider_failed" }),
-      },
-      zone: "UTC",
+  it("leaves no frame when the judge fails", async () => {
+    const db = database();
+    const queue = queueOf(model(null), db);
+    await queue.prepare(task);
+    expect(queue.take(task)).toBeNull();
+    expect(db.prepare("SELECT COUNT(*) AS n FROM frames").get()).toEqual({
+      n: 0,
+    });
+  });
+  it("leaves no frame when the author fails", async () => {
+    const queue = queueOf({
+      call: () => Promise.resolve({ ok: false, reason: "provider_failed" }),
     });
     await queue.prepare(task);
     expect(queue.take(task)).toBeNull();
@@ -200,31 +219,6 @@ describe("every template", () => {
         expect(framed.answer).toBe(plain.answer);
         expect(framed.text).toContain("Страж ждёт.");
       }
-  });
-  it("shows a blind solver the options and picture, and reads its answer by option", async () => {
-    const choice = templates.find(
-      (t) => t.answer === "choice" && t.make(base).svg !== null,
-    );
-    if (!choice) throw new Error("no_choice_with_picture");
-    const shape = present({ template: choice, made: choice.make(base) });
-    const seen: GatewayRequest[] = [];
-    const right = (shape.input.values ?? []).indexOf(choice.make(base).entry);
-    const ok = await solvesBlind(
-      {
-        call(r) {
-          seen.push(r);
-          return Promise.resolve({ ok: true, text: String(right + 1) });
-        },
-      },
-      "b",
-      choice,
-      base,
-      "ru",
-      choice.blank("ru"),
-    );
-    expect(ok).toBe(true);
-    expect(seen[0]?.user).toContain("1) ");
-    expect(seen[0]?.user).toContain("<svg");
   });
 });
 

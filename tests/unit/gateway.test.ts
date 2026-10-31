@@ -18,7 +18,11 @@ import {
   replayRoute,
 } from "../../src/server/gateway/recording.js";
 import { costOf } from "../../src/server/gateway/prices.js";
-import type { Route, Routes } from "../../src/server/gateway/routes.js";
+import {
+  openRouterRoute,
+  type Route,
+  type Routes,
+} from "../../src/server/gateway/routes.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-gateway-"));
 const opened: Db[] = [];
@@ -36,8 +40,7 @@ const database = (): Db => {
 
 const env = {
   TASK_TEXT_MODEL: "anthropic:claude-haiku-5-5",
-  LIVE_CHECK_MODEL: "openrouter:anthropic/claude-haiku-5.5",
-  SAFETY_MODEL: "openrouter:anthropic/claude-haiku-5.5",
+  FRAME_JUDGE_MODEL: "openrouter:typesafe/jev-1.14",
   ANTHROPIC_API_KEY: "a",
   OPENROUTER_PLAY_KEY: "o",
 };
@@ -99,13 +102,59 @@ describe("role values", () => {
   });
 });
 
+describe("the judge on OpenRouter", () => {
+  it("asks named questions and reads each answer as a probability", async () => {
+    const sent: { url: string; body: unknown }[] = [];
+    const send = ((url: string, init: { body: string }) => {
+      sent.push({ url, body: JSON.parse(init.body) });
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            answers: {
+              unsafe: { type: "noul", noul: 0.1 },
+              best: { type: "choice", choice: "a", probabilities: { a: 1 } },
+            },
+            usage: { input_tokens: 1000, output_tokens: 9, cost: 0.00004 },
+          }),
+        ),
+      );
+    }) as unknown as typeof fetch;
+    const reply = await openRouterRoute(config, send).call({
+      model: "typesafe/jev-1.14",
+      tier: "content",
+      system: "",
+      user: "text",
+      maxTokens: 200,
+      timeoutMs: 1500,
+      questions: {
+        unsafe: "unsafe?",
+        best: { instructions: "best?", criteria: { a: "A" } },
+      },
+    });
+    expect(sent[0]?.url).toContain("/systemone");
+    expect(sent[0]?.body).toEqual({
+      model: "typesafe/jev-1.14",
+      state: "text",
+      questions: {
+        unsafe: { type: "noul", instructions: "unsafe?" },
+        best: { type: "choice", instructions: "best?", criteria: { a: "A" } },
+      },
+    });
+    expect(JSON.parse(reply.text)).toEqual({
+      unsafe: 0.1,
+      best: { choice: "a", probabilities: { a: 1 } },
+    });
+    expect(reply.costUsd).toBe(0.00004);
+  });
+});
+
 describe("the gateway", () => {
   it("sends each request by its role's route and logs both the same way", async () => {
     const db = database();
     const routes = { anthropic: fake(), openrouter: fake() };
     const gateway = createGateway({ db, config, routes: routes as Routes });
     await gateway.call({ role: "TASK_TEXT_MODEL", ...asked });
-    await gateway.call({ role: "SAFETY_MODEL", ...asked });
+    await gateway.call({ role: "FRAME_JUDGE_MODEL", ...asked });
     expect(routes.anthropic.calls).toBe(1);
     expect(routes.openrouter.calls).toBe(1);
     const rows = db
@@ -120,7 +169,11 @@ describe("the gateway", () => {
     const db = database();
     const routes = { anthropic: fake(), openrouter: fake(199.9999) };
     const gateway = createGateway({ db, config, routes: routes as Routes });
-    await gateway.call({ role: "SAFETY_MODEL", ...asked, bucket: "first" });
+    await gateway.call({
+      role: "FRAME_JUDGE_MODEL",
+      ...asked,
+      bucket: "first",
+    });
     const refused = await gateway.call({
       role: "TASK_TEXT_MODEL",
       ...asked,
@@ -159,7 +212,7 @@ describe("the gateway", () => {
     expect((await gateway.call(first)).ok).toBe(false);
     expect((await gateway.call({ ...first, bucket: "other" })).ok).toBe(true);
   });
-  it("cleans names and contact details, and leaves a blind solve's numbers", async () => {
+  it("cleans names and contact details", async () => {
     const db = database();
     const seen: string[] = [];
     const route: Route = {
@@ -183,9 +236,7 @@ describe("the gateway", () => {
     });
     const user = "Мурка a@b.nl 1234 AB +31 6 1234 5678";
     await gateway.call({ role: "TASK_TEXT_MODEL", ...asked, user });
-    await gateway.call({ role: "LIVE_CHECK_MODEL", ...asked, user });
     expect(seen[0]).toBe("[имя] [почта] [адрес] [телефон]");
-    expect(seen[1]).toBe(user);
   });
   it("replays a recording, and a request with none fails as recording_missing", async () => {
     const dir = mkdtempSync(join(root, "recordings-"));

@@ -10,14 +10,11 @@
     "Eenvoudige, duidelijke tekst zonder grappen."
   ],
   "variants": "Schrijf {count} verschillende varianten in het Nederlands.",
-  "safety": "Je controleert een tekst voor een rekenspel voor een kind op de basisschool. `safe` is false als de tekst eng, beschamend, wreed of ongeschikt voor een kind is. `joke` is true als de tekst een grap bevat.",
-  "solve": "Los de opgave op.",
-  "formats": {
-    "number": "Antwoord alleen met het getal.",
-    "fraction": "Antwoord alleen met een breuk zoals 3/4 of een geheel getal.",
-    "mixed": "Antwoord alleen met een gemengd getal zoals 2 3/4, een breuk of een geheel getal.",
-    "pair": "Antwoord met twee getallen gescheiden door een puntkomma, zoals 3; 4.",
-    "time": "Antwoord met een tijd zoals 7:05.",
-    "options": "Antwoord alleen met het nummer van de goede keuze. Als er meer goed zijn of een volgorde gevraagd wordt, noem de nummers gescheiden door komma's."
+  "judge": {
+    "variant": "Variant",
+    "unsafe": "Bevat variant {n} in de `state` iets engs, beschamends, wreeds of ongeschikts voor een kind?",
+    "joke": "Bevat variant {n} in de `state` een grap?",
+    "changed": "Na de lijn --- staat in de `state` de oorspronkelijke opgave. Vraagt variant {n} iets anders dan de oorspronkelijke opgave, of verandert hij de gegevens?",
+    "best": "Welke variant verweeft de opgave het best met de wereld van het spel en blijft duidelijk voor een kind?"
   }
 }

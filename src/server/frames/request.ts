@@ -41,13 +41,8 @@ export interface FramePrompt {
   readonly intro: string;
   readonly rules: readonly string[];
   readonly variants: string;
-  readonly safety: string;
-  readonly solve: string;
-  readonly formats: Readonly<
-    Record<
-      "number" | "fraction" | "mixed" | "pair" | "time" | "options",
-      string
-    >
+  readonly judge: Readonly<
+    Record<"variant" | "unsafe" | "joke" | "changed" | "best", string>
   >;
 }
 

@@ -2,7 +2,7 @@
 // each role's tier, bucket, timeout and `max_tokens`, so configuration changes a model and never a tier.
 export type RouteName = "openrouter" | "anthropic";
 export type Tier = "player" | "content";
-export type RoleName = "TASK_TEXT_MODEL" | "LIVE_CHECK_MODEL" | "SAFETY_MODEL";
+export type RoleName = "TASK_TEXT_MODEL" | "FRAME_JUDGE_MODEL";
 
 export interface RoleSpec {
   readonly tier: Tier;
@@ -12,8 +12,7 @@ export interface RoleSpec {
 
 export const ROLES: Readonly<Record<RoleName, RoleSpec>> = {
   TASK_TEXT_MODEL: { tier: "content", timeoutMs: 30_000, maxTokens: 4000 },
-  LIVE_CHECK_MODEL: { tier: "player", timeoutMs: 10_000, maxTokens: 1000 },
-  SAFETY_MODEL: { tier: "player", timeoutMs: 5000, maxTokens: 200 },
+  FRAME_JUDGE_MODEL: { tier: "content", timeoutMs: 1500, maxTokens: 200 },
 };
 
 /** The roles that draw a picture have no direct route, because Claude models give text only (REQ-7630). */

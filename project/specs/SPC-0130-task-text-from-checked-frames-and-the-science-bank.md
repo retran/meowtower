@@ -3,7 +3,7 @@ id: SPC-0130
 artifact: spec
 status: live
 revised: 2026-10-31
-states: [REQ-7640, REQ-1236, REQ-1238, REQ-1546, REQ-3600, REQ-3602, REQ-3618, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3630, REQ-3632, REQ-3640, REQ-3642, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-7550, REQ-7560, REQ-7570, REQ-7580, REQ-7720]
+states: [REQ-7760, REQ-7770, REQ-7780, REQ-7640, REQ-1236, REQ-1238, REQ-1546, REQ-3600, REQ-3602, REQ-3618, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3640, REQ-3642, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-7550, REQ-7560, REQ-7570, REQ-7580]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -41,7 +41,7 @@ It leaves out what other parts define. The task's steps, numbers, answer, word-p
 
 ### Live frame statuses
 
-`ready`, `rejected` with the failing step, `used` and `expired` at the end of the game day it was made for.
+`ready`, `rejected` with the failing step, `unused`, `used` and `expired` at the end of the game day it was made for.
 
 ### Failure states
 
@@ -72,8 +72,10 @@ Every frame passes these steps, offline and live alike:
 1. The request gives the author model the template's text with its placeholders, the role of each number placeholder, the language, the setting from `content/frames/prompt.<language>.json` and the limits on length: up to 3 sentences more than the template, each at most 22 words or as long as the template's longest sentence (REQ-7570). The request holds no name she chose and no text of hers.
 2. The request asks for 5 variants (REQ-3622). A reply that doesn't match the schema is discarded whole (REQ-3624).
 3. Code checks each variant. Every placeholder the request lists appears exactly once, and no other placeholder appears (REQ-3626). The text holds no digit or number word beyond those its template writes, from `content/numerals.<language>.json`, such as «два» (two), «половина» (half) or «дюжина» (dozen) (REQ-3628). The length limit and the forbidden-word check of the language pass.
-4. The safety check passes on the text with its placeholders unfilled. The check module sends it as a `JudgeRequest` to the gateway, which asks the judge ADR-0350 routes the check to and, when that judge errs or times out, `SAFETY_MODEL`, as SPC-0100 states.
-5. Code fills the frame with three sets of numbers from the template's generator, the task's own and two others. A checking model solves each filled problem blind, stating an answer in free form, and the engine's answer checker compares it with the engine's answer for that set. The frame passes only when all three match (REQ-3630). The solver sees what the player sees, the options and a picture's source included, with no answer marked (REQ-7720). The solver is `LIVE_CHECK_MODEL`.
+4. One request to `FRAME_JUDGE_MODEL` reads every variant that passed step 3 with the template's text beside them. It answers per variant whether the text is unsafe, holds a joke or changes the task (REQ-3600, REQ-7750, REQ-7760). A variant passes when `unsafe` and `changed` are under 0.2 and `joke` under 0.5.
+5. The same request chooses the best variant (REQ-7770). The choice stands when its variant passed; otherwise the likeliest variant that passed takes its place. A passing variant not chosen turns `unused`.
+
+When the judge errs, times out or answers outside the expected form, nothing is kept and the task shows its template text (REQ-7780).
 
 A task statement carries no joke (REQ-1546). The request asks for plain text with no joke, the safety question in step 4 also asks whether the frame holds one, and the parent judges every template's fixed text at stage acceptance.
 
@@ -89,7 +91,7 @@ Every request to a model goes through the gateway, which records the request and
 
 Every task a frame can carry takes a live frame, and no frame library exists (REQ-7550). The owner decided this on 2026-10-31, because a text written in advance can't follow the current story.
 
-A frame replaces only a task's question, so every template takes one, and buttons, input and answer come from the template. A second attempt keeps the first attempt's frame with its own numbers. After the server shows a task, and when a session starts, the frame queue prepares frames for the next 2 tasks in the background (REQ-3618), running steps 1 to 5 until a variant passes. A variant that passes turns `ready`. The third solve of step 5 runs on the task's own numbers, so it also serves as the final blind solve (REQ-3632). When the server shows a task, it takes that task's `ready` frame, which turns `used`, and fills it with the engine's numbers.
+A frame replaces only a task's question, so every template takes one, and buttons, input and answer come from the template. A second attempt keeps the first attempt's frame with its own numbers. After the server shows a task, and when a session starts, the frame queue prepares frames for the next 2 tasks in the background (REQ-3618), running steps 1 to 5. The chosen variant turns `ready`. When the server shows a task, it takes that task's `ready` frame, which turns `used`, and fills it with the engine's numbers.
 
 A task with no `ready` frame shows its template text with no wait (REQ-7560). The `item_shown` event carries `frameSource`, `live` or `template`, and `frameId` on a live one.
 
@@ -117,9 +119,8 @@ Frames follow the parent's language: Russian, English or Dutch, each with its ow
 | A placeholder is missing or appears twice | Step 3 rejects the variant with `frame_rejected`. |
 | A variant holds a digit or a number word such as «дюжина» | Step 3 rejects it. |
 | A variant breaks the length, readability or forbidden-word limits | Step 3 rejects it. |
-| The safety check says no, or finds a joke | Step 4 rejects the variant. |
-| The routed judge errs or times out on the safety check | The gateway asks `SAFETY_MODEL` the same question. |
-| The blind solver misses the engine's answer on any of the three sets | Step 5 rejects the variant. |
+| The judge finds a variant unsafe, joking or changed | Step 4 rejects the variant. |
+| The judge errs or times out | The task shows its template text. |
 | More than 30% of a game day's checked live frames are rejected, from the tenth on | `live_frames_paused`; template text until 04:00. |
 | `TASK_TEXT_MODEL` is unset, the adventure budget is spent, no model is reachable or no `ready` frame waits | The task shows its template text. |
 | A science question has no approval of its current hash | `science_unapproved`; it isn't served. |
