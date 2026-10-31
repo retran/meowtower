@@ -8,13 +8,13 @@ export interface StringParams {
   "ui.home.ready": NoParams;
   "ui.home.unpaired": NoParams;
   "ui.home.play": NoParams;
-  "ui.play.title": NoParams;
   "ui.play.answer": NoParams;
   "ui.play.submit": NoParams;
   "ui.play.dontKnow": NoParams;
   "ui.play.leave": NoParams;
   "ui.play.next": NoParams;
   "ui.play.solution": NoParams;
+  "ui.play.again": NoParams;
   "ui.play.badge.clean": NoParams;
   "ui.play.badge.partial": NoParams;
   "ui.play.badge.soft": NoParams;
@@ -77,6 +77,13 @@ export interface StringParams {
   "ui.devices.code": { code: string | number; time: string | number };
   "ui.devices.loginNeeded": NoParams;
   "ui.parentSettings.title": NoParams;
+  "ui.parentSettings.gender": NoParams;
+  "ui.parentSettings.gender.f": NoParams;
+  "ui.parentSettings.gender.m": NoParams;
+  "ui.parentSettings.creepiness": NoParams;
+  "ui.parentSettings.creepiness.0": NoParams;
+  "ui.parentSettings.creepiness.1": NoParams;
+  "ui.parentSettings.creepiness.2": NoParams;
   "ui.parentSettings.threeDay": NoParams;
   "ui.parentSettings.limit.off": NoParams;
   "ui.parentSettings.limit.1": NoParams;

@@ -15,7 +15,7 @@ describe("REQ-7544: each label of the world is pinned to its key and its exact t
   it.each([
     ["ui.scheme.title", "Схема узла"],
     ["ui.scheme.thread", "Как легла нить"],
-    ["ui.play.answer", "Твоё заклинание"],
+    ["ui.play.answer", "Ответ"],
     ["ui.play.submit", "Готово"],
     ["ui.play.dontKnow", "Не знаю"],
     ["ui.reward.thread", "Путеводная нить"],

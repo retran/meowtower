@@ -67,6 +67,6 @@ describe("REQ-2500: the game runs as a web app in a browser on the iPad and the 
 
 describe("player-facing strings live in the language file (CLAUDE.md, ADR-0160)", () => {
   it("reads the app name from content/i18n/ru.json", () => {
-    expect(t("ui.app.name")).toBe("Мяубашня");
+    expect(t("ui.app.name")).toBe("Туманный Брод");
   });
 });

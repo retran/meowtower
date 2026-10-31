@@ -3,7 +3,7 @@ id: SPC-0130
 artifact: spec
 status: live
 revised: 2026-10-31
-states: [REQ-7760, REQ-7770, REQ-7780, REQ-7640, REQ-1236, REQ-1238, REQ-1546, REQ-3600, REQ-3602, REQ-3618, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3640, REQ-3642, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-7550, REQ-7560, REQ-7570, REQ-7580]
+states: [REQ-7950, REQ-7940, REQ-7900, REQ-7890, REQ-7860, REQ-7760, REQ-7800, REQ-7780, REQ-7640, REQ-1236, REQ-1238, REQ-1546, REQ-3600, REQ-3624, REQ-3640, REQ-3642, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-7550, REQ-7570, REQ-7580]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -22,7 +22,7 @@ It leaves out what other parts define. The task's steps, numbers, answer, word-p
 
 | Surface | What it is |
 | --- | --- |
-| A frame | Text with a placeholder for every number, name and counted noun, such as «{hero} купила на Ярмарке Весов {a} {item:gen} по {b} монет…» ("{hero} bought {a} {item} at the Fair of Scales for {b} coins each…"), with its structure, locale, floor, characters, the role of each number placeholder, one context from `content/contexts.yaml` (ADR-0410) and a content hash. |
+| A frame | The story text of one task, with its numbers; such as «{hero} купила на Ярмарке Весов {a} {item:gen} по {b} монет…» ("{hero} bought {a} {item} at the Fair of Scales for {b} coins each…"), with its structure, locale, floor, characters, the role of each number placeholder, one context from `content/contexts.yaml` (ADR-0410) and a content hash. |
 | `FrameRequest` | The request to the author model: the solution graph's steps, the role of each number placeholder, the floor, the characters as canon names or `{hero}` and `{familiar}`, the context it asks for (ADR-0410), the length and vocabulary limits, and a request for 5 variants of plain text with no joke. |
 | The frame reply | Strict JSON: an array of 5 frame objects. |
 | `CheckedText` | The check module's output type, which SPC-0120 defines; this part adds the frame checks to it. |
@@ -63,19 +63,19 @@ The frame service calls models only through the gateway (ADR-0100) and runs its 
 
 ### A frame carries the only model text in a task
 
-A model writes story frames and nothing else that enters a task's text, and a Diary puzzle's text comes only from ADR-0280's approved bank. The engine fixes the task's steps, numbers and answer first, then picks a frame for the task's structure, and code fills the placeholders (REQ-3602). The filler puts names in as SPC-0110 states.
+A model writes story frames and nothing else that enters a task's text, and a Diary puzzle's text comes only from ADR-0280's approved bank. The engine fixes the task's steps, numbers and answer first, and the story carries those numbers.
 
 ### The pipeline
 
 Every frame passes these steps, offline and live alike:
 
-1. The request gives the author model the template's text with its placeholders, the role of each number placeholder, the language, the setting from `content/frames/prompt.<language>.json` and the limits on length: up to 3 sentences more than the template, each at most 22 words or as long as the template's longest sentence (REQ-7570). The request holds no name she chose and no text of hers.
-2. The request asks for 5 variants (REQ-3622). A reply that doesn't match the schema is discarded whole (REQ-3624).
-3. Code checks each variant. Every placeholder the request lists appears exactly once, and no other placeholder appears (REQ-3626). The text holds no digit or number word beyond those its template writes, from `content/numerals.<language>.json`, such as «два» (two), «половина» (half) or «дюжина» (dozen) (REQ-3628). The length limit and the forbidden-word check of the language pass.
-4. One request to `FRAME_JUDGE_MODEL` reads every variant that passed step 3 with the template's text beside them. It answers per variant whether the text is unsafe, holds a joke or changes the task (REQ-3600, REQ-7750, REQ-7760). A variant passes when `unsafe` and `changed` are under 0.2 and `joke` under 0.5.
-5. The same request chooses the best variant (REQ-7770). The choice stands when its variant passed; otherwise the likeliest variant that passed takes its place. A passing variant not chosen turns `unused`.
+1. The code fills the template once. The request gives the author model that task, the role of each number, how the player answers, the language, the setting and the limits on length, on every attempt (REQ-7860, REQ-7570). The request holds no name she chose and no text of hers.
+2. The request asks for 1 story (REQ-7940). A reply that doesn't match the schema is discarded whole (REQ-3624).
+3. Code rejects a story that holds a forbidden word or doesn't end on a question, and a length fault lowers its score.
+4. `FRAME_JUDGE_MODEL` solves the story from itself and scores it in one request, with the task, a description of how the player answers and the answer options beside it (REQ-3600, REQ-7750, REQ-7760). The engine checks that answer (REQ-7950). A story is out at `unsafe` 0.7.
+5. The code scores the rest as 0.3 `fits` + 0.2 `flows` + 0.2 `clear` + 0.2 `sense` + 0.1 `alive` - `changed` - `numbers` - `unsafe` - 0.3 `joke`, with 0.15 off for a length fault, and below 0.1 the author writes again, up to 3 times; the highest score is shown (REQ-7800), and a lower story turns `unused`.
 
-When the judge errs, times out or answers outside the expected form, nothing is kept and the task shows its template text (REQ-7780).
+When the judge fails on every variant, nothing is kept and the task shows its template text (REQ-7780).
 
 A task statement carries no joke (REQ-1546). The request asks for plain text with no joke, the safety question in step 4 also asks whether the frame holds one, and the parent judges every template's fixed text at stage acceptance.
 
@@ -91,11 +91,11 @@ Every request to a model goes through the gateway, which records the request and
 
 Every task a frame can carry takes a live frame, and no frame library exists (REQ-7550). The owner decided this on 2026-10-31, because a text written in advance can't follow the current story.
 
-A frame replaces only a task's question, so every template takes one, and buttons, input and answer come from the template. A second attempt keeps the first attempt's frame with its own numbers. After the server shows a task, and when a session starts, the frame queue prepares frames for the next 2 tasks in the background (REQ-3618), running steps 1 to 5. The chosen variant turns `ready`. When the server shows a task, it takes that task's `ready` frame, which turns `used`, and fills it with the engine's numbers.
+A frame replaces only a task's question, so every template takes one, and buttons, input and answer come from the template. A second attempt is a task of its own: its frame is written when it is requested and continues the first attempt's story, and the second attempt waits for it like any task. When a task is requested, the frame queue runs steps 1 to 5 for it, and nothing is prepared ahead (REQ-7900). The chosen variant turns `ready`. When the server shows a task, it takes that task's `ready` frame, which turns `used`, and fills it with the engine's numbers.
 
-A task with no `ready` frame shows its template text with no wait (REQ-7560). The `item_shown` event carries `frameSource`, `live` or `template`, and `frameId` on a live one.
+A task waits up to 90 seconds for its frame behind a loading animation, and then shows its template text (REQ-7890). The `item_shown` event carries `frameSource`, `live` or `template`, and `frameId` on a live one.
 
-The `frames` table keeps every live frame with its status and never deletes one (REQ-3642). At 50,000 rows it reports once to the owner. A frame counts as checked when it has finished the pipeline or failed a step, and as rejected when it failed a step. A reply discarded whole at step 2 counts as 5 checked frames, all rejected. From the tenth checked frame of a game day, when more than 30% of that day's checked frames are rejected, the server writes `live_frames_paused` and shows template text until the game day ends (REQ-3640).
+The `frames` table keeps every live frame with its status and never deletes one (REQ-3642). At 50,000 rows it reports once to the owner. A frame counts as checked when it has finished the pipeline or failed a step, and as rejected when it failed a step. A reply discarded whole at step 2 counts as 3 checked frames, all rejected. From the tenth checked frame of a game day, when more than 30% of that day's checked frames are rejected, the server writes `live_frames_paused` and shows template text until the game day ends (REQ-3640).
 
 The request holds the places `arc`, `adventure` and `situation` for the summaries of the story arc, the adventure and the current game situation. They stay empty until a decision moves `TASK_TEXT_MODEL` to the player tier (REQ-7580).
 
@@ -107,6 +107,10 @@ A question reaches the player only when the log holds a `science_approved` event
 
 When the Director gives a science slot a topic, the question is the least recently shown approved question of that topic, never-shown first, with ties broken by the day's seed. The window is 45 game days before stage 0.5 (REQ-3652) and 90 game days from stage 0.5 (REQ-3654), and the verify command fails a build whose `repeatWindowDays` doesn't match its stage. When the topic has no approved question outside the window, the question shown longest ago comes (REQ-3656), and its `item_shown` carries `repeat: true` (REQ-3658).
 
+### Tone
+
+The creepiness level in force sets the author's tone and what the judge counts as safe, read for each frame (REQ-7840).
+
 ### Language
 
 Frames follow the parent's language: Russian, English or Dutch, each with its own `content/numerals.<language>.json`. Science questions exist in Russian only, in `content/science.ru.json`.
@@ -115,11 +119,9 @@ Frames follow the parent's language: Russian, English or Dutch, each with its ow
 
 | Condition | What happens |
 | --- | --- |
-| The author model's reply is outside the schema | The server discards the whole reply; a live one counts as 5 checked live frames, all rejected. |
-| A placeholder is missing or appears twice | Step 3 rejects the variant with `frame_rejected`. |
-| A variant holds a digit or a number word such as «дюжина» | Step 3 rejects it. |
-| A variant breaks the length, readability or forbidden-word limits | Step 3 rejects it. |
-| The judge finds a variant unsafe, joking or changed | Step 4 rejects the variant. |
+| The author model's reply is outside the schema | The server discards the whole reply; a live one counts as 3 checked live frames, all rejected. |
+| A variant holds a forbidden word | Step 3 rejects it. |
+| A variant is plainly unsafe | Step 4 rejects the variant. |
 | The judge errs or times out | The task shows its template text. |
 | More than 30% of a game day's checked live frames are rejected, from the tenth on | `live_frames_paused`; template text until 04:00. |
 | `TASK_TEXT_MODEL` is unset, the adventure budget is spent, no model is reachable or no `ready` frame waits | The task shows its template text. |

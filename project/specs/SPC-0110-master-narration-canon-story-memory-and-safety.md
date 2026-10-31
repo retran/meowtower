@@ -2,8 +2,8 @@
 id: SPC-0110
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032]
+revised: 2026-10-31
+states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-7850, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-7830, REQ-7840, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -188,7 +188,7 @@ The Parent Room offers a creepiness level of 0, 1 or 2, set to 1 until the paren
 
 The always-forbidden list is part of the checklist for every reply at every level: no jump scares or sudden loud sounds, blood or injury, death, body horror, faces that melt or distort, being stuck forever with no way out, threats to family or loved ones, realistic dangers such as fire, drowning, kidnapping or strangers, the heroine being chased, darkness with no light source, possession, or people being replaced (REQ-1522).
 
-Orders for eye exercises, rest stops, the end of the row, the heroine's room and the task window force «Уютно» and no dreamcore, and a content test holds their pool categories to level 0 (REQ-1524). The game's music is a hand-picked set, and the parent listens to each track for ticking before it ships (REQ-1512).
+Orders for eye exercises, rest stops, the end of the row and the heroine's room force «Уютно» and no dreamcore, and a content test holds their pool categories to level 0 (REQ-7830). The game's music is a hand-picked set, and the parent listens to each track for ticking before it ships (REQ-1512).
 
 ### Dreamcore and the Underside
 

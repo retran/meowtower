@@ -18,11 +18,7 @@ import {
   replayRoute,
 } from "../../src/server/gateway/recording.js";
 import { costOf } from "../../src/server/gateway/prices.js";
-import {
-  openRouterRoute,
-  type Route,
-  type Routes,
-} from "../../src/server/gateway/routes.js";
+import { type Route, type Routes } from "../../src/server/gateway/routes.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-gateway-"));
 const opened: Db[] = [];
@@ -40,7 +36,7 @@ const database = (): Db => {
 
 const env = {
   TASK_TEXT_MODEL: "anthropic:claude-haiku-5-5",
-  FRAME_JUDGE_MODEL: "openrouter:typesafe/jev-1.14",
+  FRAME_JUDGE_MODEL: "openrouter:anthropic/claude-haiku-5.5",
   ANTHROPIC_API_KEY: "a",
   OPENROUTER_PLAY_KEY: "o",
 };
@@ -102,52 +98,6 @@ describe("role values", () => {
   });
 });
 
-describe("the judge on OpenRouter", () => {
-  it("asks named questions and reads each answer as a probability", async () => {
-    const sent: { url: string; body: unknown }[] = [];
-    const send = ((url: string, init: { body: string }) => {
-      sent.push({ url, body: JSON.parse(init.body) });
-      return Promise.resolve(
-        new Response(
-          JSON.stringify({
-            answers: {
-              unsafe: { type: "noul", noul: 0.1 },
-              best: { type: "choice", choice: "a", probabilities: { a: 1 } },
-            },
-            usage: { input_tokens: 1000, output_tokens: 9, cost: 0.00004 },
-          }),
-        ),
-      );
-    }) as unknown as typeof fetch;
-    const reply = await openRouterRoute(config, send).call({
-      model: "typesafe/jev-1.14",
-      tier: "content",
-      system: "",
-      user: "text",
-      maxTokens: 200,
-      timeoutMs: 1500,
-      questions: {
-        unsafe: "unsafe?",
-        best: { instructions: "best?", criteria: { a: "A" } },
-      },
-    });
-    expect(sent[0]?.url).toContain("/systemone");
-    expect(sent[0]?.body).toEqual({
-      model: "typesafe/jev-1.14",
-      state: "text",
-      questions: {
-        unsafe: { type: "noul", instructions: "unsafe?" },
-        best: { type: "choice", instructions: "best?", criteria: { a: "A" } },
-      },
-    });
-    expect(JSON.parse(reply.text)).toEqual({
-      unsafe: 0.1,
-      best: { choice: "a", probabilities: { a: 1 } },
-    });
-    expect(reply.costUsd).toBe(0.00004);
-  });
-});
-
 describe("the gateway", () => {
   it("sends each request by its role's route and logs both the same way", async () => {
     const db = database();
@@ -183,6 +133,11 @@ describe("the gateway", () => {
     expect(routes.anthropic.calls).toBe(0);
     expect(eventsOfType(db, "budget_month_spent")).toHaveLength(1);
     expect(eventsOfType(db, "llm_call")).toHaveLength(1);
+    expect(
+      db
+        .prepare("SELECT role FROM llm_log WHERE outcome = 'budget_exhausted'")
+        .all(),
+    ).toEqual([{ role: "TASK_TEXT_MODEL" }]);
   });
   it("logs a failure and answers provider_failed", async () => {
     const db = database();

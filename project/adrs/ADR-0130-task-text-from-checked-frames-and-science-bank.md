@@ -3,7 +3,7 @@ id: ADR-0130
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-3600, REQ-3602, REQ-3618, REQ-3622, REQ-3624, REQ-3626, REQ-3628, REQ-3640, REQ-3642, REQ-3646, REQ-3660, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-1236, REQ-1238, REQ-1546]
+addresses: [REQ-3600, REQ-3624, REQ-3640, REQ-3642, REQ-3646, REQ-3660, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-1236, REQ-1238, REQ-1546]
 supersedes: []
 issue: 33
 projected: b309fdab92dd
@@ -172,6 +172,16 @@ Amended by ADR-3200, approved on 2026-10-31, whose `## Amends` section changes p
 Amended by ADR-3210, approved on 2026-10-31, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended by ADR-3210, approved on 2026-10-31: this record no longer addresses REQ-3630, REQ-3632, which are superseded.
+
+Amended on 2026-10-31: this record no longer addresses REQ-3626, which REQ-7790 superseded.
+
+Amended on 2026-10-31: this record no longer addresses REQ-3628, which REQ-7820 superseded.
+
+Amended on 2026-10-31: this record no longer addresses REQ-3602, which REQ-7860 superseded.
+
+Amended on 2026-10-31: this record no longer addresses REQ-3618, which REQ-7900 superseded.
+
+Amended on 2026-10-31: this record no longer addresses REQ-3622, which REQ-7940 superseded.
 
 ## Plan
 

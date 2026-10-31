@@ -11,7 +11,7 @@ revised: 2026-09-28
 
 ## What it is
 
-Meowtower («Мяубашня») is a daily adventure game for one player, a
+Meowtower («Туманный Брод») is a daily adventure game for one player, a
 primary-school girl, and a long-running log of how she does maths. (from
 RES-0010, high; RES-4200, high; the player from CLAUDE.md, high) Its goal is
 to take her maths results apart into their components and find where her

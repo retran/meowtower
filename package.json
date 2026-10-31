@@ -10,7 +10,7 @@
     "check": "tsc --noEmit",
     "lint": "eslint . && tsx tools/static-checks.ts",
     "verify:templates": "tsx tools/verify-templates.ts",
-    "verify:live": "GATEWAY_MODE=verify tsx tools/verify-live.ts",
+    "verify:live": "GATEWAY_MODE=verify tsx --env-file=.env tools/verify-live.ts",
     "format": "prettier --check .",
     "test": "vitest run tests && playwright test",
     "test:smoke": "vitest run tests/smoke",

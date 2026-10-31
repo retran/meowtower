@@ -9,7 +9,7 @@ import { expect, test } from "./fixtures.js";
 
 const DB = "/tmp/meowtower-e2e.sqlite";
 const PARENT = "http://127.0.0.1:3925";
-const WAITING = "Туман над тропой, фамильяр ищет дорогу";
+const WAITING = "Пишем историю…";
 
 async function ready(page: Page, route: string): Promise<void> {
   await page.goto("about:blank");

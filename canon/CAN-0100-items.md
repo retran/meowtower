@@ -2,7 +2,7 @@
 id: CAN-0100
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # Items
@@ -40,7 +40,7 @@ invention are in CAN-0110.
 | «Сапожки Точного Шага» (Boots of the Exact Step) | Outfit | They step exactly where you meant to go. Sometimes slightly before you do. |
 | «Капюшон с Ушками Путаницы» (Hood with Tangle Ears) | Outfit | The ears tremble when a knot is near. One ear is extra. It won't say which. |
 | «Очки Второго Взгляда» (Glasses of the Second Look) | Accessory | Through them you see what usually only cats see. The cats aren't pleased. |
-| «Значок "Я Считаю Ступеньки"» (Badge "I Count Steps") | Accessory | Issued by the System without explanation. Staircases treat you more warmly. |
+| «Значок "Я Считаю Ступеньки"» (Badge "I Count Steps") | Accessory | Issued without explanation. Staircases treat you more warmly. |
 | «Шарф Туманной Погоды» (Scarf of Foggy Weather) | Accessory | Knitted by someone who cared a great deal about the fog. The pattern looks suspiciously like something familiar. |
 | «Гамак из Облачной Пряжи» (Hammock of Cloud Yarn) | Decor | In it you dream dreams where everything is counted correctly. Very calm dreams. |
 | «Лампа Вчерашнего Света» (Lamp of Yesterday's Light) | Decor | Shines with the light that was yesterday. Yesterday was sunny. |
@@ -61,12 +61,12 @@ accessories from three materials:
   behind by clean untangling;
 - floor materials (see below).
 
-Forging is a small ceremony: the anvil purrs, the hammer knocks, the familiars
-bring threads, and the System announces the recipe. The player names each new
+Forging is a small ceremony: the anvil purrs, the hammer knocks and the
+familiars bring threads. The player names each new
 item.
 
-The forge is open from the first days: the System gives the first recipe
-after the first material is found. Big recipes, such as complex foci and path
+The forge is open from the first days: the first recipe comes after the
+first material is found. Big recipes, such as complex foci and path
 outfits, open later as the story goes on.
 
 ### Floor materials
@@ -88,12 +88,11 @@ success branches give more of them.
 
 ### Recipes
 
-A recipe is a System entry written like a knitting pattern: the item, its
+A recipe is an entry written like a knitting pattern: the item, its
 materials and how much of each. The quantities are fields the code fills in.
 Example: «Рецепт. Фонарь Терпеливого Света. Ряд 1: осколки звёздной стали.
-Ряд 2: звёздная пряжа. Ряд 3: архивная пыльца. Торопиться не рекомендуется.»
-(Recipe. Lantern of Patient Light. Row 1: star-steel shards. Row 2: star
-yarn. Row 3: Archive pollen. Hurrying is not recommended.)
+Ряд 2: звёздная пряжа. Ряд 3: архивная пыльца.» (Recipe. Lantern of Patient Light. Row 1: star-steel
+shards. Row 2: star yarn. Row 3: Archive pollen.)
 
 Recipes are visible in advance, and the result of forging is always known,
 because forging has no chance in it. An accessory takes a small recipe, an
@@ -123,8 +122,8 @@ chest is hidden, and nothing in it is left to chance.
 ## The shop
 
 On the Scales Fair there's «Лавка» (the shop). «Барон фон Наценка» (Baron
-von Markup) stands behind the counter, but the System hangs the price tags,
-and the Baron is deeply offended by this. So the prices in the shop are
+von Markup) stands behind the counter, but he doesn't set the price tags,
+and he is deeply offended by this. So the prices in the shop are
 honest and don't change.
 
 - The only currency is buttons. The world has no real money.
@@ -135,10 +134,9 @@ honest and don't change.
   bags, no chances, no «последний экземпляр» (last one left) and no «скидка
   сгорит» (discount expires).
 - The shop sells outfits, accessories, foci and curiosities. Guiding threads
-  aren't for sale, because the Tower gives them.
+  aren't for sale, because they come free.
 - The Baron still tries to haggle, or to sell the sky or last Tuesday. Each
-  time the System writes: «Товар не зарегистрирован. Цена не изменена.» (Item
-  not registered. Price unchanged.)
+  time the price stays as it was.
 
 ## Rules for items the AI invents
 

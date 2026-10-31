@@ -13,4 +13,4 @@ verification: behavioural
 
 # REQ-7760
 
-A story frame MUST pass the judge's question whether it asks the same as its template before the player sees it.
+The judge's answer whether a story frame asks the same as its template MUST count against the frame's score.

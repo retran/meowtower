@@ -13,7 +13,7 @@ instructions outrank it.
 </role>
 
 <project>
-Meowtower ("Мяубашня") is a daily adventure game for one
+Meowtower ("Туманный Брод") is a daily adventure game for one
 primary-school girl. It checks her maths up to the end of Dutch group 8 and
 gives the parent a map of what she knows. `src/` and `tests/` hold the
 TypeScript server, client and their tests, `project/` keeps the method's

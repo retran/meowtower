@@ -8,7 +8,7 @@ import { baseSeed } from "../../src/math/rng.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
 import { adminPage } from "../../src/server/admin.js";
 import { llmAudit } from "../../src/server/audit.js";
-import { codeFault } from "../../src/server/frames/check.js";
+import { codeFault, scoreOf } from "../../src/server/frames/check.js";
 import { present, presentFramed } from "../../src/server/task-source.js";
 import { textGate } from "../../src/shared/voice/gate.js";
 import { createFrameQueue } from "../../src/server/frames/queue.js";
@@ -22,7 +22,6 @@ import type {
   GatewayRequest,
 } from "../../src/server/gateway/gateway.js";
 import { templates } from "../../src/templates/index.js";
-import type { Lang } from "../../src/templates/spec.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-frames-"));
 const opened: Db[] = [];
@@ -44,93 +43,59 @@ const template = templates.find(
 );
 if (!template) throw new Error("no_framable_template");
 
-const wrapped = `На этаже Башни узел. ${template.blank("ru")}`;
-const other = `Страж ждёт у нити. ${template.blank("ru")}`;
-const answers = (
-  over: Record<string, number> = {},
-  choice = "variant_2",
-): string =>
-  JSON.stringify({
-    unsafe_1: 0,
-    joke_1: 0,
-    changed_1: 0,
-    unsafe_2: 0,
-    joke_2: 0,
-    changed_2: 0,
-    best: { choice, probabilities: { variant_1: 0.3, variant_2: 0.7 } },
-    ...over,
-  });
-const CLEAN = answers();
-
-/** A model that wraps the blank, and a judge that answers `verdict`. */
-function model(verdict: string | null): Gateway & { seen: GatewayRequest[] } {
-  return {
-    seen: [],
-    call(r) {
-      this.seen.push(r);
-      if (r.role === "TASK_TEXT_MODEL")
-        return Promise.resolve({
-          ok: true,
-          text: JSON.stringify({ frames: [wrapped, other] }),
-        });
-      return Promise.resolve(
-        verdict === null
-          ? { ok: false, reason: "provider_failed" }
-          : { ok: true, text: verdict },
-      );
-    },
-  };
-}
+const clean = {
+  unsafe: 0,
+  joke: 0,
+  changed: 0,
+  fits: 0.5,
+  flows: 0.5,
+  clear: 0.5,
+  alive: 0.5,
+  sense: 0.5,
+  numbers: 0,
+};
+/** The judge's answers: `other` scores higher unless a test says otherwise. */
+const answering =
+  (
+    of: (variant: string) => Partial<typeof clean>,
+  ): ((r: GatewayRequest) => string) =>
+  (r) =>
+    JSON.stringify({
+      ...clean,
+      ...of(/^История:\n(.*)\n\nИсходная/su.exec(r.user)?.[1] ?? ""),
+    });
 
 describe("the code checks", () => {
-  const blank = "Найди {a} и {=a+b}.";
-  it("passes a frame that keeps every placeholder", () => {
+  const task = "Найди 7.";
+  it("passes a text with any numbers", () => {
+    expect(codeFault("Страж просит найти 7 и ещё 9?", task, "ru")).toBeNull();
+  });
+  it("marks a text that ends with no question", () => {
+    expect(codeFault("Он стоит над яблоками.", task, "ru")).toBe("question");
+  });
+  it("marks a forbidden word and a text that is too long", () => {
+    expect(codeFault("Это ошибка?", task, "ru")).toBe("gate");
     expect(
-      codeFault("Страж просит: найди {=a+b} и {a}.", blank, "ru"),
-    ).toBeNull();
-  });
-  it("rejects a missing or doubled placeholder", () => {
-    expect(codeFault("Найди {a}.", blank, "ru")).toBe("placeholders");
-    expect(codeFault("{a} {a} {=a+b}.", blank, "ru")).toBe("placeholders");
-  });
-  it("rejects a digit and a number word in each language", () => {
-    expect(codeFault("Найди 7, {a} и {=a+b}.", blank, "ru")).toBe("digit");
-    const words: Record<Lang, string> = {
-      ru: "дюжина",
-      en: "dozen",
-      nl: "dozijn",
-    };
-    for (const lang of ["ru", "en", "nl"] as const)
-      expect(codeFault(`${words[lang]} {a} {=a+b}.`, blank, lang)).toBe(
-        "number_word",
-      );
-  });
-  it("keeps a number the template writes itself", () => {
-    expect(
-      codeFault("Страж просит: 10 и {a}.", "Сложи 10 и {a}.", "ru"),
-    ).toBeNull();
-    expect(codeFault("Страж просит {a}.", "Сложи 10 и {a}.", "ru")).toBe(
-      "digit",
-    );
-  });
-  it("rejects a text that is too long", () => {
-    expect(codeFault("Ax. Bx. Cx. Dx. Ex. {a} {=a+b}.", blank, "en")).toBe(
-      "length",
-    );
+      codeFault("Ax. Bx. Cx. Dx. Ex. Fx. Gx. Hx. Ix. Jx?", task, "en"),
+    ).toBe("length");
   });
 });
 
 describe("the prompt", () => {
   it("is in the game's language and keeps empty places for the summaries", () => {
-    expect(frameSystem("ru")).toContain("Башня");
-    expect(frameSystem("en")).toContain("Tower");
-    expect(frameSystem("nl")).toContain("Toren");
+    expect(frameSystem("ru", 2)).toContain("Башня");
+    expect(frameSystem("en", 2)).toContain("Tower");
+    expect(frameSystem("nl", 2)).toContain("Toren");
     const user = frameUser({
-      blank: "x",
+      task: "x",
       roles: {},
       lang: "ru",
       slots: NO_SLOTS,
+      told: ["old story"],
+      answers: [],
+      kind: "integer",
     });
+    expect(user).toContain("<told>\nold story\n</told>");
     expect(user).toContain("<story_arc></story_arc>");
     expect(user).toContain("<adventure></adventure>");
     expect(user).toContain("<game_situation></game_situation>");
@@ -138,63 +103,175 @@ describe("the prompt", () => {
 });
 
 describe("the queue", () => {
+  const rightAnswer = template.make(base, "ru").entry;
   const task = { template, base, bucket: "b", lang: "ru" as const };
   const queueOf = (gateway: Gateway, db = database()) =>
     createFrameQueue({ db, gateway, zone: "UTC" });
-  it("makes a frame ready with two calls, and the task shows the engine's numbers", async () => {
-    const gateway = model(CLEAN);
+  /** An author that writes `stories` in turn, and a judge that scores each by `of`. */
+  const writing = (
+    stories: readonly string[],
+    of: (story: string) => Partial<typeof clean>,
+    solve: (r: GatewayRequest) => string = (r) =>
+      r.user.length > 0 ? rightAnswer : "",
+  ): Gateway & { seen: GatewayRequest[] } => {
+    let round = 0;
+    return {
+      seen: [],
+      call(r) {
+        this.seen.push(r);
+        if (r.role === "TASK_TEXT_MODEL") {
+          round += 1;
+          return Promise.resolve({
+            ok: true,
+            text: JSON.stringify({ story: stories[round - 1] ?? "x?" }),
+          });
+        }
+        return Promise.resolve({
+          ok: true,
+          text: JSON.stringify({
+            ...JSON.parse(answering(of)(r)),
+            answer: solve(r),
+          }),
+        });
+      },
+    };
+  };
+  it("takes the first story that clears the bar, with two calls", async () => {
+    const gateway = writing(["Первая?"], () => ({}));
     const queue = queueOf(gateway);
     await queue.prepare(task);
-    const frame = queue.take(task);
     expect(gateway.seen.map((r) => r.role)).toEqual([
       "TASK_TEXT_MODEL",
       "FRAME_JUDGE_MODEL",
     ]);
+    expect(queue.take(task)?.text).toBe("Первая?");
     expect(queue.take(task)).toBeNull();
-    const framed = template.make(base, "ru", frame?.text);
-    expect(framed.text).toContain("Страж ждёт у нити");
-    expect(framed.entry).toBe(template.make(base, "ru").entry);
   });
-  it("keeps the variant that passed when the choice fell on a rejected one", async () => {
-    const queue = queueOf(model(answers({ unsafe_2: 0.9 })));
-    await queue.prepare(task);
-    expect(queue.take(task)?.text).toBe(wrapped);
-  });
-  it("sends the judge every variant and the original in one request", async () => {
-    const gateway = model(CLEAN);
-    await queueOf(gateway).prepare(task);
-    const judge = gateway.seen[1];
-    expect(judge?.user).toBe(
-      `Вариант 1: ${wrapped}\nВариант 2: ${other}\n---\n${template.blank("ru")}`,
+  it("writes again below the bar", async () => {
+    const queue = queueOf(
+      writing(["Плохая?", "Хорошая?"], (v) =>
+        v === "Плохая?" ? { changed: 0.9 } : {},
+      ),
     );
-    expect(Object.keys(judge?.questions ?? {})).toHaveLength(7);
-    expect(judge?.questions?.["best"]).toMatchObject({
-      criteria: { variant_1: "Вариант 1", variant_2: "Вариант 2" },
-    });
+    await queue.prepare(task);
+    expect(queue.take(task)?.text).toBe("Хорошая?");
   });
-  it.each([
-    { unsafe_1: 0.3, unsafe_2: 0.3 },
-    { joke_1: 0.6, joke_2: 0.6 },
-    { changed_1: 0.3, changed_2: 0.3 },
-  ])("rejects doubt: %j", async (over) => {
+  it("writes again when the story can't be solved to the engine's answer", async () => {
+    const gateway = writing(
+      ["Нерешаемая?", "Решаемая?"],
+      () => ({}),
+      (r) => (r.user.includes("Нерешаемая") ? "нет" : rightAnswer),
+    );
+    const queue = queueOf(gateway);
+    await queue.prepare(task);
+    expect(queue.take(task)?.text).toBe("Решаемая?");
+  });
+  it("shows the best of three rounds when none clears the bar", async () => {
+    const queue = queueOf(
+      writing(["Раз?", "Два?", "Три?"], (v) => ({
+        changed: v === "Два?" ? 0.6 : 0.9,
+      })),
+    );
+    await queue.prepare(task);
+    expect(queue.take(task)?.text).toBe("Два?");
+  });
+  it("removes only a plainly unsafe text", async () => {
     const db = database();
-    const queue = queueOf(model(answers(over)), db);
+    const queue = queueOf(
+      writing(["Жуть?"], () => ({ unsafe: 0.7 })),
+      db,
+    );
     await queue.prepare(task);
     expect(queue.take(task)).toBeNull();
     expect(
       db.prepare("SELECT DISTINCT status, step FROM frames").all(),
     ).toEqual([{ status: "rejected", step: "judge" }]);
   });
-  it("leaves no frame when the judge fails", async () => {
-    const db = database();
-    const queue = queueOf(model(null), db);
-    await queue.prepare(task);
-    expect(queue.take(task)).toBeNull();
-    expect(db.prepare("SELECT COUNT(*) AS n FROM frames").get()).toEqual({
-      n: 0,
-    });
+  it("counts numbers that differ from the task against a story", async () => {
+    const score = (over: Partial<typeof clean>): number =>
+      scoreOf({ ...clean, ...over }) ?? 0;
+    expect(score({ numbers: 0.6 })).toBeLessThan(score({}));
+    expect(score({ fits: 1, alive: 0 })).toBeGreaterThan(
+      score({ fits: 0, alive: 1 }),
+    );
   });
-  it("leaves no frame when the author fails", async () => {
+  it("follows the parent's level in the author's tone and the judge's safety bar", async () => {
+    const gateway = writing(["Текст?"], () => ({}));
+    const queue = createFrameQueue({
+      db: database(),
+      gateway,
+      zone: "UTC",
+      level: () => 0,
+    });
+    await queue.prepare(task);
+    expect(gateway.seen[0]?.system).toContain("без жути");
+    expect(gateway.seen[0]?.system).toContain("Никогда");
+    expect(
+      gateway.seen.find((r) => r.role === "FRAME_JUDGE_MODEL")?.system,
+    ).toContain("без жути");
+  });
+  it("gives the author and the judge a task's answer options", async () => {
+    const choice = templates.find((t) => t.answer === "compare");
+    if (!choice) throw new Error("no_compare");
+    const gateway = writing(["Текст?"], () => ({}));
+    await queueOf(gateway).prepare({ ...task, template: choice });
+    expect(gateway.seen[0]?.user).toContain("<answers><; =; ></answers>");
+    expect(gateway.seen[0]?.user).toContain("кнопки со знаками");
+    expect(
+      gateway.seen.find((r) => r.role === "FRAME_JUDGE_MODEL")?.user,
+    ).toContain("кнопки со знаками");
+  });
+  it("waits for a frame, starts one nobody started, and gives up at its limit", async () => {
+    const queue = queueOf(writing(["Текст?"], () => ({})));
+    await queue.ready(task, 1000);
+    expect(queue.take(task)).not.toBeNull();
+    const stuck = queueOf({ call: () => new Promise(() => undefined) });
+    await stuck.ready(task, 10);
+    expect(stuck.take(task)).toBeNull();
+  });
+  it("shows the author a task's picture", async () => {
+    const drawn = templates.find((t) => t.make(base).svg !== null);
+    if (!drawn) throw new Error("no_picture");
+    const gateway = writing(["Текст?"], () => ({}));
+    await queueOf(gateway).prepare({ ...task, template: drawn });
+    expect(gateway.seen[0]?.user).toContain("<picture><svg");
+  });
+  it("gives a second attempt the story it continues, and no other stories", async () => {
+    const gateway = writing(["Старая?", "Новая?"], () => ({}));
+    const queue = queueOf(gateway);
+    await queue.prepare(task);
+    await queue.prepare({
+      ...task,
+      base: baseSeed("s", "t", 1),
+      previous: "Мост вздохнул.",
+    });
+    const user =
+      gateway.seen.filter((r) => r.role === "TASK_TEXT_MODEL")[1]?.user ?? "";
+    expect(user).toContain("<previous_story>Мост вздохнул.</previous_story>");
+    expect(user).toContain("Не начинай новую историю");
+    expect(user).not.toContain("Старая?");
+  });
+  it("gives the author the same filled task on every attempt, ", async () => {
+    const gateway = writing(
+      ["Это ошибка.", "Это ошибка.", "Это ошибка."],
+      () => ({}),
+    );
+    await queueOf(gateway).prepare(task);
+    const filled = template.make(base, "ru", template.blank("ru")).text;
+    const authored = gateway.seen.filter((r) => r.role === "TASK_TEXT_MODEL");
+    expect(authored).toHaveLength(3);
+    for (const r of authored)
+      expect(r.user).toContain(`<task>${filled}</task>`);
+  });
+  it("tells the author the recent stories of its language", async () => {
+    const gateway = writing(["Старая?", "Новая?"], () => ({}));
+    const queue = queueOf(gateway);
+    await queue.prepare(task);
+    await queue.prepare({ ...task, base: baseSeed("s", "t", 1) });
+    const authored = gateway.seen.filter((r) => r.role === "TASK_TEXT_MODEL");
+    expect(authored[1]?.user).toContain("Старая?");
+  });
+  it("leaves no frame when a model fails", async () => {
     const queue = queueOf({
       call: () => Promise.resolve({ ok: false, reason: "provider_failed" }),
     });
@@ -204,20 +281,15 @@ describe("the queue", () => {
 });
 
 describe("every template", () => {
-  it("takes a frame in each language with its buttons and picture unchanged", () => {
+  it("keeps its buttons and answer under a frame in each language", () => {
     for (const lang of ["ru", "en", "nl"] as const)
       for (const t of templates) {
-        const framed = presentFramed(
-          t,
-          base,
-          lang,
-          `Страж ждёт. ${t.blank(lang)}`,
-        );
-        const plain = present({ template: t, made: t.make(base, lang) });
+        const item = { template: t, made: t.make(base, lang) };
+        const framed = presentFramed(item, "Страж ждёт.");
+        const plain = present(item);
         expect(framed.options).toEqual(plain.options);
-        expect(framed.input).toEqual(plain.input);
         expect(framed.answer).toBe(plain.answer);
-        expect(framed.text).toContain("Страж ждёт.");
+        expect(framed.text).toBe("Страж ждёт.");
       }
   });
 });

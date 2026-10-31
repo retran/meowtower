@@ -30,12 +30,12 @@ export interface RegistryItem {
 
 /** The template and seed of the `index`-th task of an adventure, `tasks` tasks long. */
 export function pick(
-  sessionId: string,
+  adventureKey: string,
   index: number,
   tasks: number,
 ): { template: Compiled; base: Uint8Array } {
   const step = Math.max(1, Math.floor(ladder.length / tasks));
-  const bytes = baseSeed(sessionId, "ladder", index);
+  const bytes = baseSeed(adventureKey, "ladder", index);
   const dice = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const at = Math.min(
     ladder.length - 1,
@@ -43,7 +43,7 @@ export function pick(
   );
   const template = ladder[at];
   if (!template) throw new RangeError("registry_empty");
-  return { template, base: baseSeed(sessionId, template.id, index) };
+  return { template, base: baseSeed(adventureKey, template.id, index) };
 }
 
 /** A task rebuilt from its template id and base seed, as it was shown. */
@@ -51,11 +51,10 @@ export function rebuild(
   templateId: string,
   seed: string,
   lang: Lang = "ru",
-  frame?: string,
 ): RegistryItem | null {
   const template = byId.get(templateId);
   if (!template) return null;
-  return { template, made: template.make(seedOf(seed), lang, frame), seed };
+  return { template, made: template.make(seedOf(seed), lang), seed };
 }
 
 /** The parallel task of a second attempt: the same template drawn at another seed, with other numbers. */
@@ -106,17 +105,12 @@ const FORMATS = [
 const formatOf = (kind: string): InputSpec["format"] =>
   FORMATS.find((f) => f === kind);
 
-/** A task as shown with a frame: the buttons come from the template's own text, the words from the frame. */
+/** A task as shown with a frame: the buttons come from the template, the words from the frame. */
 export function presentFramed(
-  template: Compiled,
-  seed: Uint8Array,
-  lang: Lang,
+  item: Pick<RegistryItem, "template" | "made">,
   frame: string,
 ): Presented {
-  return {
-    ...present({ template, made: template.make(seed, lang) }),
-    text: template.make(seed, lang, frame).text,
-  };
+  return { ...present(item), text: frame };
 }
 
 /** The buttons of a compare, choice, set or order task, or the field of any other. */

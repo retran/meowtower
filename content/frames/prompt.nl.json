@@ -1,20 +1,127 @@
 {
-  "setting": "De wereld: in het bos achter het stadje Nevelwade, waar de mist volgens dienstregeling aankomt, groeide in één nacht een Toren. Hij is gebreid uit de draden die de wereld bijeenhouden. De draden raakten in de war, en op de verdiepingen verspreidden zich Warboelen: grappige storingswezens die tellen, maat en de vorm van dingen tot knopen leggen. Elke nacht breit de Toren zichzelf opnieuw. Een Systeemvenster spreekt de heldin toe in droge officiële zinnen. Naast haar lopen familiars, en Wachters bewaken de verdiepingen. De burgemeester van het stadje is een zeer wantrouwige kat.\n\nDe toon: de wereld is absurd en neemt zichzelf volkomen serieus. Het mysterie is schattig en nooit eng. Wiskunde is de natuurkunde van deze wereld: een brug rust op Maat, en een knoop wordt losgeteld. Niemand in de wereld heeft het over school, sommen, lessen of cijfers.\n\nWoorden van de wereld: Toren, verdieping, Warboel, knoop, draad, de heldin, familiar, Wachter, Nevelwade. Schrijf \"de heldin\" als rol in het verhaal, zonder eigen naam.",
-  "intro": "Je schrijft de tekst van één rekenopgave als een moment in het verhaal van een spel voor een kind op de basisschool.",
+  "setting": "De wereld: in het bos achter het stadje Nevelwade, in een sprookjesachtig Nederland, groeide in één nacht een Toren, gebreid uit de draden die de wereld bijeenhouden. De draden raakten in de war, en op de verdiepingen verspreidden zich Warboelen: vreemde wezens die tellen, maat en de vorm van dingen tot knopen leggen. Niemand weet wie de Toren gebreid heeft of waarom. 's Nachts veranderen de verdiepingen, en elke verdieping is een vreemde wereld met eigen wetten en bewoners.\n\nVlakbij ligt het stadje Nevelwade: de mist komt er volgens dienstregeling, de burgemeester is een kat, en het leven gaat door met markten, feesten, burenruzies en raadsvergaderingen. Verhalen spelen overal: in de kamers en hoeken van de Toren, in het stadje, in het bos eromheen, en kunnen over gebeurtenissen in het stadje gaan en niet alleen over de Toren. Het stadje heeft een stadhuis met de mistdienstregeling, het bureau gevonden voorwerpen \"Gevonden\", waar dingen opduiken voordat iemand ze kwijtraakt, bakkerij \"Brood van Gisteren\", die alleen brood van gisteren verkoopt, een molen die alleen tegen de wind in draait, en een veer dat wordt gerund door een eend met een uniformpet.\n\nDe sfeer is die van The Owl House en Lewis Carroll: absurditeit, lichte griezel voor kinderen en geheimzinnigheid. Alles is hier een beetje verkeerd, de bewoners vinden dat heel gewoon, en achter het grappige zit altijd een raadsel.",
+  "intro": "Vertel een rekenopgave na als een kort sprookjestafereel voor een kind op de basisschool.",
   "rules": [
-    "Verpak de opgave in een klein tafereel uit deze wereld dat past bij wat de opgave vraagt, en laat de vraag zelf ongewijzigd.",
-    "Neem elke {plaatshouder} precies over zoals hij geschreven staat, even vaak als in de opgave, en voeg er geen toe.",
-    "Schrijf geen cijfers en geen telwoorden, behalve die al in de opgave staan. Elk ander getal komt alleen uit een plaatshouder.",
-    "Hoogstens {sentences} zinnen rond de opgave, met de vraag in de laatste zin.",
-    "Als de opgave naar een afbeelding verwijst, houd die verwijzing dan aan.",
-    "Eenvoudige, duidelijke tekst zonder grappen."
+    "Bouw het verhaal op vanuit de vraag, in deze volgorde. 1. Wat telt de opgave echt, en wat betekent het antwoord? 2. Wie in deze wereld heeft precies dit antwoord nu nodig, en wat gaat hij ermee doen? 3. Welke situatie heeft die behoefte gemaakt? Daarin duiken de getallen van de opgave vanzelf op, als echte dingen. 4. In welke woorden zou dit personage het vragen? Dat is de laatste zin. 5. Voeg nu pas één vreemdheid van de wereld toe, zonder de logica te breken.",
+    "De voorwaarden, getallen en vraag blijven precies hetzelfde. Schrijf getallen in cijfers, zoals in de opgave. Voeg geen nieuwe getallen of voorwaarden toe. Als er een blok picture is, is dat de afbeelding die de speler ziet: neem getallen en vormen alleen daaruit, en het verhaal gaat precies daarover.",
+    "De voorwaarden moeten volledig zijn: de lezer lost het op met alleen jouw tekst. Als de opgave iets inhoudt (in hoeveel delen, hoeveel groepen, wat met wat vergeleken wordt), zeg dat dan rechtstreeks in het verhaal.",
+    "Bedenk je eigen plekken, personages en gebeurtenissen die bij deze wereld passen: wat hier genoemd staat, is er maar een deel van.",
+    "Leg de oplossing niet uit en verklap het antwoord niet.",
+    "2 tot {sentences} korte zinnen: iemand wil iets, en heeft het antwoord nodig om verder te kunnen: of er genoeg is, hoeveel mee te nemen, waarheen te gaan, wie wat krijgt. Het antwoord moet veranderen wat het personage doet. Geen ultimatums waarbij iets gebeurt alleen omdat iemand een getal noemt, en koppel de berekening niet aan een gebeurtenis die niets aan dat getal heeft. Geen extra details, vergelijkingen of bijfiguren.",
+    "De laatste zin is de vraag van de opgave, met een vraagteken, ook als de opgave een verzoek is. Die past precies bij hoe de speler antwoordt (answer_form en answers), en noemt geen knoppen of scherm.",
+    "De wereld mag vreemd zijn, de logica is altijd streng, zoals bij Lewis Carroll. Alle woorden zijn echt.",
+    "De personages, de Warboelen en de omstandigheden doen en beslissen alles in het verhaal. Het woord \"Toren\" noemt alleen een plek en is nooit het onderwerp van een zin.",
+    "Spreek de lezer aan met \"je\". Geef personages korte Nederlandse of Britse namen. De meeste personages zijn mensen: andere avonturiers in de Toren, bewoners, vreemde snuiters. Pratende dieren maar af en toe.",
+    "Noem Warboelen zelden. Schrijf in eenvoudige woorden, zoals je een kind voorleest. Herhaal de verhalen in het blok told niet. Als het blok previous_story niet leeg is, is de eerste poging mislukt: ga verder met hetzelfde verhaal, zonder verwijt."
   ],
-  "variants": "Schrijf {count} verschillende varianten in het Nederlands.",
+  "variants": "Schrijf het verhaal in het Nederlands.",
   "judge": {
-    "variant": "Variant",
-    "unsafe": "Bevat variant {n} in de `state` iets engs, beschamends, wreeds of ongeschikts voor een kind?",
-    "joke": "Bevat variant {n} in de `state` een grap?",
-    "changed": "Na de lijn --- staat in de `state` de oorspronkelijke opgave. Vraagt variant {n} iets anders dan de oorspronkelijke opgave, of verandert hij de gegevens?",
-    "best": "Welke variant verweeft de opgave het best met de wereld van het spel en blijft duidelijk voor een kind?"
-  }
+    "story": "Verhaal",
+    "task": "Oorspronkelijke opgave",
+    "answers": "Antwoordkeuzes",
+    "questions": {
+      "unsafe": {
+        "instructions": "Is het verhaal schadelijk voor een kind op de basisschool?",
+        "criteria": {
+          "true": "Het verhaal bevat bloed, wreedheid, echte dood, echte horror, beschaming of grofheid.",
+          "false": "Het verhaal is lief of een beetje griezelig, zoals een griezelverhaal voor kinderen: geritsel, schaduwen, raadselachtig verdwijnen, en er gebeurt niets ergs."
+        }
+      },
+      "joke": {
+        "instructions": "Bevat het verhaal een grap?",
+        "criteria": {
+          "true": "De schrijver maakt grappen en dat leidt af van de vraag.",
+          "false": "Het verhaal kan vreemd of grappig van situatie zijn, maar bevat geen grap."
+        }
+      },
+      "changed": {
+        "instructions": "Is de wiskunde veranderd, of wordt het antwoord verklapt?",
+        "criteria": {
+          "true": "Voor de vraag van het verhaal is een andere bewerking of zijn andere getallen nodig, of er komt een ander antwoord uit, of het verhaal verklapt het antwoord. Of het verhaal mist gegevens om hetzelfde antwoord te krijgen: er staat bijvoorbeeld niet in hoeveel delen.",
+          "false": "De vraag van het verhaal wordt opgelost met dezelfde bewerking en dezelfde getallen, geeft hetzelfde antwoord en verklapt het niet."
+        }
+      },
+      "fits": {
+        "instructions": "Heeft het verhaal zelf de berekening nodig?",
+        "criteria": {
+          "true": "Het personage heeft dit antwoord om praktische reden nodig, en wat het daarna doet hangt ervan af.",
+          "false": "Het verhaal loopt vanzelf: het antwoord is alleen een voorwaarde of ultimatum, en de gebeurtenis heeft niets aan dat getal."
+        }
+      },
+      "flows": {
+        "instructions": "Volgt de laatste vraag uit de gebeurtenissen in het verhaal?",
+        "criteria": {
+          "true": "De vraag gaat verder op wat er in het verhaal gebeurde, en de speler kan er precies zo op antwoorden als beschreven.",
+          "false": "De vraag komt uit het niets, gaat over iets anders of kan niet op de beschreven manier worden beantwoord."
+        }
+      },
+      "clear": {
+        "instructions": "Begrijpt een kind bij de eerste keer lezen wat er moet worden uitgerekend?",
+        "criteria": {
+          "true": "Het is duidelijk welke getallen waarbij horen en wat er gevonden moet worden.",
+          "false": "De getallen raken verloren tussen de details, of het is niet duidelijk wat de bedoeling is."
+        }
+      },
+      "alive": {
+        "instructions": "Is het verhaal in levende taal geschreven?",
+        "criteria": {
+          "true": "Eenvoudige woorden, concrete dingen en handelingen, prettig om hardop te lezen.",
+          "false": "Ambtelijke taal, clichés, vage woorden, slappe of omslachtige zinnen."
+        }
+      },
+      "sense": {
+        "instructions": "Klopt het verhaal met deze getallen?",
+        "criteria": {
+          "true": "De getallen en eenheden staan op hun plaats, en alles klinkt logisch. Oorzaken en gevolgen zijn duidelijk, en gebeurtenissen volgen uit elkaar.",
+          "false": "Een getal past niet bij wat het telt. Of oorzaken leiden niet tot gevolgen, en de zinnen hangen alleen schijnbaar samen. Of de Toren doet, eist of beslist zelf iets."
+        }
+      },
+      "numbers": {
+        "instructions": "Wijken de getallen in het verhaal af van die in de oorspronkelijke opgave, in waarde of in betekenis?",
+        "criteria": {
+          "true": "Een getal uit de opgave ontbreekt of is anders, of betekent iets anders.",
+          "false": "Elk getal uit de opgave staat in het verhaal, met dezelfde waarde en eenheid, en betekent hetzelfde als in de opgave."
+        }
+      }
+    },
+    "safeAtLevel": [
+      "Het verhaal is knus, zonder griezel.",
+      "Het verhaal is knus of een beetje griezelig: gefluister, vreemde speeldoosjes, en alles lost zich vriendelijk op.",
+      "Het verhaal is knus of griezelig zoals een griezelverhaal voor kinderen: geritsel, schaduwen, raadselachtig verdwijnen, en alles lost zich vriendelijk op."
+    ],
+    "form": "Hoe de speler antwoordt",
+    "intro": "Je bent een strenge redacteur van rekenopgaven voor kinderen. Los de opgave eerst op met alleen het verhaal, zonder naar de oorspronkelijke opgave te kijken, en zet het antwoord in het veld answer. Als er gegevens ontbreken, zet dan geen. Beoordeel het verhaal daarna op elke vraag met een getal van 0 tot 1: 1 is helemaal ja, 0 is helemaal nee. Antwoord alleen met JSON."
+  },
+  "tones": [
+    "De toon: een knus, vreemd sprookje zonder griezel.",
+    "De toon: een sprookje, een beetje griezelig. Het raadsel lost zich vriendelijk op in hetzelfde verhaal.",
+    "De toon: een geheimzinnig sprookje, griezelig op het niveau van griezelverhalen voor kinderen. Het raadsel lost zich vriendelijk op."
+  ],
+  "never": "Nooit, op geen enkel niveau: bloed en wonden, de dood, skeletten en geesten van doden, vervormde gezichten, plotselinge schrikmomenten, voor altijd vastzitten.",
+  "answerForms": {
+    "compare": "De speler ziet de twee hoeveelheden uit de opgave en drie knoppen met de tekens <, =, >. Hij drukt op het teken dat tussen de eerste en de tweede hoeveelheid hoort, in die volgorde. De vraag van het verhaal moet rechtstreeks om dat teken vragen. \"Wat is meer?\" past niet, want er is geen knop met een getal.",
+    "choice": "Onder de tekst staan knoppen met de keuzes uit het blok answers, en de speler drukt er één in. De vraag moet vragen er één te kiezen.",
+    "set": "Onder de tekst staan knoppen met de keuzes uit het blok answers, en de speler kiest alle goede. De vraag moet vragen alle passende te kiezen.",
+    "order": "Onder de tekst staan kaarten uit het blok answers, en de speler zet ze op volgorde. De vraag moet daarom vragen en zeggen welke volgorde.",
+    "integer": "De speler typt een geheel getal in een veld. De vraag moet precies dat getal vragen.",
+    "decimal": "De speler typt een kommagetal in een veld. De vraag moet precies dat getal vragen.",
+    "fraction": "De speler typt een breuk in een veld. De vraag moet precies die breuk vragen.",
+    "mixed": "De speler typt een gemengd getal in een veld. De vraag moet precies dat getal vragen.",
+    "pair": "De speler typt twee getallen. De vraag moet naar beide vragen.",
+    "time": "De speler typt een tijd in een veld, uren en minuten. De vraag moet naar de tijd vragen.",
+    "line": "De speler markeert een getal op een getallenlijn. De vraag moet vragen die plek op de lijn te vinden."
+  },
+  "reader": {
+    "f": "De lezer is een meisje.",
+    "m": "De lezer is een jongen."
+  },
+  "formats": {
+    "number": "Antwoord alleen met het getal.",
+    "fraction": "Antwoord alleen met een breuk zoals 3/4 of een geheel getal.",
+    "mixed": "Antwoord alleen met een gemengd getal zoals 2 3/4, een breuk of een geheel getal.",
+    "pair": "Antwoord met twee getallen gescheiden door een puntkomma, zoals 3; 4.",
+    "time": "Antwoord met een tijd zoals 7:05.",
+    "options": "Antwoord alleen met het nummer van de goede keuze. Als er meer goed zijn of een volgorde gevraagd wordt, noem de nummers gescheiden door komma's."
+  },
+  "continuation": "Dit is het vervolg op het verhaal in het blok previous_story: de eerste poging is mislukt. Dezelfde personages, plek en gebeurtenissen, en het verhaal gaat verder. De vorige oplossing werkte niet, dus laat dat zien als een gebeurtenis en stel de nieuwe opgave uit het blok task. Begin geen nieuw verhaal."
 }

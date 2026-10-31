@@ -5,13 +5,6 @@ import type { GatewayConfig, RouteName, Tier } from "./config.js";
 import { providersFor } from "./config.js";
 import { costOf } from "./prices.js";
 
-export type JudgeQuestion =
-  | string
-  | {
-      readonly instructions: string;
-      readonly criteria: Readonly<Record<string, string>>;
-    };
-
 export interface RouteRequest {
   readonly model: string;
   readonly tier: Tier;
@@ -21,8 +14,6 @@ export interface RouteRequest {
   readonly timeoutMs: number;
   /** The JSON schema the reply must match, where the reply is structured. */
   readonly schema?: Readonly<Record<string, unknown>>;
-  /** Named questions for a judge, which writes no text: a string asks yes or no, an object offers a choice. */
-  readonly questions?: Readonly<Record<string, JudgeQuestion>>;
 }
 
 export interface RouteReply {
@@ -43,7 +34,7 @@ export interface Route {
 
 export type Routes = Readonly<Record<RouteName, Route>>;
 
-/** Thinking stays low: a frame is a short text, and thinking tokens bill as output. */
+/** Effort stays low: reasoning takes most of the time, and a player waits for each story. */
 const anthropicBody = ({
   model,
   system,
@@ -53,7 +44,14 @@ const anthropicBody = ({
 }: RouteRequest) => ({
   model,
   max_tokens: maxTokens,
-  system,
+  // The rules and the setting repeat on every frame, so they are cached.
+  system: [
+    {
+      type: "text" as const,
+      text: system,
+      cache_control: { type: "ephemeral" as const },
+    },
+  ],
   messages: [{ role: "user" as const, content: user }],
   output_config: {
     effort: "low" as const,
@@ -96,14 +94,6 @@ export function anthropicRoute(client: Anthropic): Route {
 
 const OPENROUTER = "https://openrouter.ai/api/v1";
 
-interface JudgeReply {
-  answers?: Record<
-    string,
-    { noul?: number; choice?: string; probabilities?: Record<string, number> }
-  >;
-  usage?: { input_tokens?: number; output_tokens?: number; cost?: number };
-}
-
 interface OpenRouterReply {
   choices?: { message?: { content?: string }; finish_reason?: string }[];
   usage?: {
@@ -121,47 +111,6 @@ export function openRouterRoute(
     authorization: `Bearer ${config.openrouterKey ?? ""}`,
     "content-type": "application/json",
   };
-  /** Jev answers each named question with the probability of yes, and writes no text. */
-  const judgeBody = ({ model, user, questions }: RouteRequest) => ({
-    model,
-    state: user,
-    questions: Object.fromEntries(
-      Object.entries(questions ?? {}).map(([name, question]) => [
-        name,
-        typeof question === "string"
-          ? { type: "noul", instructions: question }
-          : { type: "choice", ...question },
-      ]),
-    ),
-  });
-  const callJudge = async (request: RouteRequest): Promise<RouteReply> => {
-    const res = await send(`${OPENROUTER}/systemone`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(judgeBody(request)),
-      signal: AbortSignal.timeout(request.timeoutMs),
-    });
-    if (!res.ok) throw new Error(`openrouter_${res.status.toString()}`);
-    const reply = (await res.json()) as JudgeReply;
-    const inputTokens = reply.usage?.input_tokens ?? 0;
-    const outputTokens = reply.usage?.output_tokens ?? 0;
-    return {
-      text: JSON.stringify(
-        Object.fromEntries(
-          Object.entries(reply.answers ?? {}).map(([k, v]) => [
-            k,
-            v.choice === undefined
-              ? v.noul
-              : { choice: v.choice, probabilities: v.probabilities },
-          ]),
-        ),
-      ),
-      stopReason: "end_turn",
-      inputTokens,
-      outputTokens,
-      costUsd: reply.usage?.cost ?? costOf(request.model, inputTokens, 0),
-    };
-  };
   const chatBody = (request: RouteRequest) => ({
     model: request.model,
     max_tokens: request.maxTokens,
@@ -176,6 +125,7 @@ export function openRouterRoute(
       ...(request.schema ? { require_parameters: true } : {}),
     },
     usage: { include: true },
+    reasoning: { effort: "low" },
     ...(request.schema
       ? {
           response_format: {
@@ -190,10 +140,8 @@ export function openRouterRoute(
       : {}),
   });
   return {
-    body: (request) =>
-      request.questions ? judgeBody(request) : chatBody(request),
+    body: chatBody,
     async call(request) {
-      if (request.questions) return callJudge(request);
       const res = await send(`${OPENROUTER}/chat/completions`, {
         method: "POST",
         headers,
@@ -217,11 +165,7 @@ export function openRouterRoute(
       const res = await send(`${OPENROUTER}/models`);
       if (!res.ok) throw new Error(`openrouter_${res.status.toString()}`);
       const list = (await res.json()) as { data?: { id?: string }[] };
-      // Jev answers on its own endpoint, so the chat catalogue may leave it out.
-      return (
-        model.startsWith("typesafe/") ||
-        (list.data ?? []).some((m) => m.id === model)
-      );
+      return (list.data ?? []).some((m) => m.id === model);
     },
   };
 }

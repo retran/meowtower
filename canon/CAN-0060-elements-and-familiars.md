@@ -2,7 +2,7 @@
 id: CAN-0060
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # Elements and familiars
@@ -83,9 +83,9 @@ it's never sad "because of her". In dreamcore scenes the familiar is always
 beside the heroine and is the first to light a lamp.
 
 The names below are placeholders. The player names a familiar when it hatches
-and can choose one or two character traits for it. The System offers the
-placeholder first among its suggestions, and never suggests a move's name or
-a name the heroine or another familiar already has. For example, a player
+and can choose one or two character traits for it. The placeholder comes
+first among the suggestions, which never hold a move's name or a name the
+heroine or another familiar already has. For example, a player
 might call «Пуговка» «Искорка» (Little Spark) and the paper moth «Шуршик»
 «Шелестун» (Rustlekin); from then on only her name lives in the game.
 

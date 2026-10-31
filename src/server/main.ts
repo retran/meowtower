@@ -1,4 +1,5 @@
 import { serve } from "@hono/node-server";
+import { parentSettings } from "./parent-room.js";
 import { createFrameQueue, type FrameQueue } from "./frames/queue.js";
 import { ConfigInvalid, readConfig } from "./gateway/config.js";
 import { createGateway, verifyModels } from "./gateway/gateway.js";
@@ -158,6 +159,8 @@ try {
           .filter((n) => n !== ""),
       }),
       zone,
+      level: () => parentSettings(db).creepiness,
+      gender: () => parentSettings(db).gender,
     });
     if (await turnOn()) frames = queue;
     else {
@@ -190,8 +193,8 @@ const game = serve({
       process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry",
     frames: {
       prepare: (task) => live.current?.prepare(task) ?? Promise.resolve(),
+      ready: (task, ms) => live.current?.ready(task, ms) ?? Promise.resolve(),
       take: (task) => live.current?.take(task) ?? null,
-      textOf: (id) => live.current?.textOf(id) ?? null,
     },
   }).fetch,
   port,

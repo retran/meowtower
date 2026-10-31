@@ -511,3 +511,34 @@ test("Enter sends the code of the pairing screen", async ({ page }) => {
   await page.locator("#pair-code").press("Enter");
   await expect(page.getByRole("status")).toHaveText(/Готово/);
 });
+
+test("«Не знаю» shows the solution and asks for no next task until the player does", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  await play(page);
+  await expect(page.locator('[data-action="play-dont-know"]')).toBeVisible();
+  const nexts: string[] = [];
+  page.on("request", (r) => {
+    if (r.url().endsWith("/next")) nexts.push(r.url());
+  });
+  await page.locator('[data-action="play-dont-know"]').click();
+  await expect(page.locator(".solution")).toBeVisible();
+  await page.waitForTimeout(800);
+  await expect(page.locator(".solution")).toBeVisible();
+  expect(nexts).toHaveLength(0);
+});
+
+test("REQ-7164: a failed first attempt offers a second one, a new task the player can answer", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  await play(page);
+  await page.locator('[data-action="play-dont-know"]').click();
+  await page.locator('[data-action="play-again"]').click();
+  await expect(page.locator(".play .task")).toBeVisible();
+  await expect(page.locator('[data-action="play-again"]')).toHaveCount(0);
+  await page.locator('[data-action="play-dont-know"]').click();
+  await expect(page.locator(".solution")).toBeVisible();
+  await expect(page.locator('[data-action="play-again"]')).toHaveCount(0);
+});

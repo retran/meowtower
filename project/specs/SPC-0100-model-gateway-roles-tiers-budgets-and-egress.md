@@ -3,7 +3,7 @@ id: SPC-0100
 artifact: spec
 status: live
 revised: 2026-10-31
-states: [REQ-7750, REQ-7650, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688, REQ-7590, REQ-7600, REQ-7610, REQ-7620, REQ-7630, REQ-7690, REQ-7700, REQ-7710, REQ-7740]
+states: [REQ-7880, REQ-7870, REQ-7810, REQ-7750, REQ-7650, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688, REQ-7590, REQ-7600, REQ-7610, REQ-7620, REQ-7630, REQ-7690, REQ-7700, REQ-7710, REQ-7740]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -42,7 +42,7 @@ Each role takes its model id from `.env` (REQ-1642). The code fixes each role's 
 | `PLANNER_MODEL` | player | play | adventure | `z-ai/glm-5.3` |
 | `FREE_PEN_MODEL` | player | play | adventure | the adventure's Master model |
 | `LIVE_GEN_MODEL` | content | play | adventure | set in `.env` |
-| `FRAME_JUDGE_MODEL` | content | play | adventure | unset; ADR-3210 names `typesafe/jev-1.14` |
+| `FRAME_JUDGE_MODEL` | content | play | adventure | unset; ADR-3210 names Claude Haiku 5.5 |
 | `TASK_TEXT_MODEL` | content | play | adventure | unset; ADR-3100 names `claude-haiku-5-5` |
 | `LIVE_CHECK_MODEL` | player | play | adventure for frames, explanations for explanations | set in `.env` |
 | `SAFETY_MODEL` | player | play | the caller's bucket | set in `.env` |
@@ -110,7 +110,7 @@ The dependencies run one way. Only `src/server/gateway/` opens a connection to a
 
 ### Routes
 
-The gateway has two routes, `openrouter` and `anthropic`. Jev answers on OpenRouter at `/api/v1/systemone`. Each role's value is `<route>:<model>`, such as `anthropic:claude-haiku-5-5` (REQ-7590), and a value with no known route stops the start as `model_config_invalid`. Each request goes by exactly its role's route, with no failover to the other (REQ-7600). A player-tier role may name `anthropic` only while `ANTHROPIC_ZDR_ATTESTED` is `true`, the owner's statement that the organisation has zero retention (REQ-7610). An image-output role may name only `openrouter` (REQ-7630).
+The gateway has two routes, `openrouter` and `anthropic`. Each role's value is `<route>:<model>`, such as `anthropic:claude-haiku-5-5` (REQ-7590), and a value with no known route stops the start as `model_config_invalid`. Each request goes by exactly its role's route, with no failover to the other (REQ-7600). A player-tier role may name `anthropic` only while `ANTHROPIC_ZDR_ATTESTED` is `true`, the owner's statement that the organisation has zero retention (REQ-7610). An image-output role may name only `openrouter` (REQ-7630).
 
 Both routes return text, a stop reason, tokens and a cost in US dollars. OpenRouter's cost comes from `usage.cost`. A direct call's cost comes from the dated price table in `src/server/gateway/prices.ts`. The month of play counts `llm_log` across every route (REQ-7620), and OpenRouter's key limit is a second ceiling on that route alone.
 
@@ -124,7 +124,8 @@ Every call carries its role's `max_tokens` and ends at its role's timeout. Both 
 | --- | --- | --- |
 | `MASTER_MODEL`, `MASTER_FALLBACK_MODEL`, `FREE_PEN_MODEL` | what remains of the 12 seconds since the order | 2,000 |
 | `PLANNER_MODEL` | 60 s | 4,000 |
-| `LIVE_GEN_MODEL`, `TASK_TEXT_MODEL` | 30 s | 4,000 |
+| `LIVE_GEN_MODEL` | 30 s | 4,000 |
+| `TASK_TEXT_MODEL` | 90 s | 12,000 |
 | `LIVE_CHECK_MODEL` | 10 s | 1,000 |
 | `EXPLAIN_MODEL` | 15 s | 2,000 |
 | `SAFETY_MODEL` | 5 s | 200 |
@@ -165,7 +166,7 @@ An `ExplainRequest` carries only the fields the class table lists, with no name 
 
 A `ParseRequest` carries the riddle with every number replaced by a token, `n1` to `nm` in text order (REQ-5036). A number is a digit run, a decimal, a fraction or a Russian numeral word from `content/numerals.ru.json`, such as «пять» (five) or «полтора» (one and a half). The map from tokens to numbers stays on the Mac, and no request class has a field for it. A `ParseRequest` holds no target expression, node id, topic name or task id (REQ-5038). `PARSE_MODEL` runs on the player tier with `zdr: true`, so only an endpoint that keeps nothing receives a riddle (REQ-5040). Its timeout is 10 seconds and its `max_tokens` 4,000.
 
-No request class has a field for a figure the Parent Room computes: the ability profile, the weekly breakdown, retention checks, transfer figures, the quadrants, the probe's results and every other addendum 2 figure stay on the Mac, as do the hypotheses ADR-0450 keeps (REQ-6686). A test searches every request schema and fails on a field typed with a Parent Room figure, probe result or hypothesis schema, and on a numeric field other than `readerAge`, the one answer an `ExplainRequest` carries and the probe run's target length, a rule I chose.
+One exception holds: the `ContentRequest` for a second attempt's story may show that the first attempt failed, by carrying the first story, and holds no answer, name or time (REQ-7870), and a frame request may carry the player's gender (REQ-7880). No request class has a field for a figure the Parent Room computes: the ability profile, the weekly breakdown, retention checks, transfer figures, the quadrants, the probe's results and every other addendum 2 figure stay on the Mac, as do the hypotheses ADR-0450 keeps (REQ-6686). A test searches every request schema and fails on a field typed with a Parent Room figure, probe result or hypothesis schema, and on a numeric field other than `readerAge`, the one answer an `ExplainRequest` carries and the probe run's target length, a rule I chose.
 
 After the MVP, the Dutch probe's Russian and Dutch texts are written only by the offline probe run, under `PROBE_TEXT_MODEL`, `CHECK_MODEL` and `PROBE_LANGUAGE_MODEL` on the content tier and the offline key, in `ContentRequest`s whose fields hold no answer, tap, opened word or other data about the player (REQ-6688). ADR-0430 states the run and its import rule. No Dutch probe text is built until the owner amends the rule in `CLAUDE.md` that text the player sees is in Russian only.
 
@@ -226,7 +227,7 @@ When any bucket runs out, a check whose cost was reserved with its Master reply 
 
 ### The log
 
-The Parent Room shows every row in full, with the request as it left and the reply as it came (REQ-7650).
+The Parent Room shows every row in full, with the request as it left and the reply as it came (REQ-7650), and a call its budget refuses writes a row with outcome `budget_exhausted` (REQ-7810).
 
 Every call to an external model service writes an `llm_log` row with its cost and appends an `llm_call` event, the judge's calls included (REQ-2700). A sandbox call writes both to the sandbox's database file, as ADR-0340 states. `llm_log` keeps every request and reply for good (REQ-7740). The gateway reports once to the owner when an adventure's Master calls read less than half their input from the cache.
 

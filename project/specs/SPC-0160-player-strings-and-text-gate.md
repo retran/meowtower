@@ -3,7 +3,7 @@ id: SPC-0160
 artifact: spec
 status: live
 revised: 2026-10-31
-states: [REQ-7730, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-7544, REQ-3312, REQ-3314, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-7172, REQ-5470]
+states: [REQ-7730, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-7920, REQ-3312, REQ-3314, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-7172, REQ-5470]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -83,7 +83,7 @@ A render test loads a pseudo-language file directly, outside the shipped set, wh
 
 ### Fixed labels
 
-Tests pin the world's labels to their exact values (REQ-7544): «Схема узла» (the knot scheme) and «Как легла нить» (how the thread lay) for the review, «Твоё заклинание» (your spell) for her answer, «Готово» (Done), «Не знаю» (I don't know) for the task buttons, «Путеводная нить» (guiding thread) as the text before « · {n}» in `ui.task.thread`, «Распутан начисто» (untangled cleanly), «Почти чисто» (nearly clean), «Узел ослаблен» (the knot is loosened) and «Принято» (accepted) for outcomes, «Привал» (rest stop), «Сохранить и уйти» (Save and leave) and «Ещё один ряд» (One more row) for leaving, and «Дней в Башне» (Days in the Tower) for the day counter.
+Tests pin the world's labels to their exact values (REQ-7920): «Схема узла» (the knot scheme) and «Как легла нить» (how the thread lay) for the review, «Ответ» (answer) for her answer, «Готово» (Done), «Не знаю» (I don't know) for the task buttons, «Путеводная нить» (guiding thread) as the text before « · {n}» in `ui.task.thread`, «Распутан начисто» (untangled cleanly), «Почти чисто» (nearly clean), «Узел ослаблен» (the knot is loosened) and «Принято» (accepted) for outcomes, «Привал» (rest stop), «Сохранить и уйти» (Save and leave) and «Ещё один ряд» (One more row) for leaving, and «Дней в Башне» (Days in the Tower) for the day counter.
 
 The key `ui.task.cantKnow` holds «Нельзя узнать» (can't be known), and a test pins it, so the button that claims a word problem can't be answered never reads like «Не знаю» (REQ-5470).
 

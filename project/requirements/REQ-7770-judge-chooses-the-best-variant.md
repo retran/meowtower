@@ -3,7 +3,7 @@ id: REQ-7770
 artifact: requirement
 topic: task-text
 class: functional
-status: approved
+status: superseded
 revised: 2026-10-31
 elaborates: RES-4310
 verification: behavioural

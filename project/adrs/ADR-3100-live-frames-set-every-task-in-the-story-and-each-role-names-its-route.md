@@ -4,7 +4,7 @@ artifact: adr
 status: done
 pr: 70
 revised: 2026-10-31
-addresses: [REQ-7550, REQ-7560, REQ-7570, REQ-7580, REQ-7590, REQ-7600, REQ-7610, REQ-7620, REQ-7630, REQ-7640, REQ-7650, REQ-7660, REQ-7670, REQ-7680]
+addresses: [REQ-7550, REQ-7570, REQ-7580, REQ-7590, REQ-7600, REQ-7610, REQ-7620, REQ-7630, REQ-7640, REQ-7650, REQ-7660, REQ-7670, REQ-7680]
 supersedes: []
 ---
 
@@ -95,6 +95,8 @@ The parent no longer reads a frame before the player does, so the checks carry t
 - ADR-0130: every task a frame can carry takes a live frame; the frame library, its review screen, its rotation and «В библиотеку» are gone; a task with no ready frame shows its template text; frames exist in all three languages.
 
 Amended by ADR-3200, approved on 2026-10-31, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended on 2026-10-31: this record no longer addresses REQ-7560, which REQ-7890 superseded.
 
 ## Plan
 

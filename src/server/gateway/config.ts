@@ -11,8 +11,8 @@ export interface RoleSpec {
 }
 
 export const ROLES: Readonly<Record<RoleName, RoleSpec>> = {
-  TASK_TEXT_MODEL: { tier: "content", timeoutMs: 30_000, maxTokens: 4000 },
-  FRAME_JUDGE_MODEL: { tier: "content", timeoutMs: 1500, maxTokens: 200 },
+  TASK_TEXT_MODEL: { tier: "content", timeoutMs: 90_000, maxTokens: 12_000 },
+  FRAME_JUDGE_MODEL: { tier: "content", timeoutMs: 30_000, maxTokens: 4000 },
 };
 
 /** The roles that draw a picture have no direct route, because Claude models give text only (REQ-7630). */

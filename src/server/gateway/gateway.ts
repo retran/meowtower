@@ -6,7 +6,7 @@ import type { Db } from "../database.js";
 import { ROLES, type GatewayConfig, type RoleName } from "./config.js";
 import { cleanEgress } from "./egress.js";
 import { costOf } from "./prices.js";
-import type { JudgeQuestion, RouteReply, Routes } from "./routes.js";
+import type { RouteReply, Routes } from "./routes.js";
 
 export const ADVENTURE_LIMIT_USD = 5;
 export const MONTH_LIMIT_USD = 200;
@@ -18,7 +18,6 @@ export interface GatewayRequest {
   readonly system: string;
   readonly user: string;
   readonly schema?: Readonly<Record<string, unknown>>;
-  readonly questions?: Readonly<Record<string, JudgeQuestion>>;
 }
 
 export type GatewayResult =
@@ -79,7 +78,7 @@ export function createGateway({
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   return {
-    async call({ role, bucket, system, user: raw, schema, questions }) {
+    async call({ role, bucket, system, user: raw, schema }) {
       const spec = ROLES[role];
       const user = cleanEgress(raw, names);
       const { route: name, model } = config.roles[role];
@@ -92,7 +91,6 @@ export function createGateway({
         maxTokens: spec.maxTokens,
         timeoutMs: spec.timeoutMs,
         ...(schema ? { schema } : {}),
-        ...(questions ? { questions } : {}),
       };
       const started = new Date(now());
       const month = `${started.toISOString().slice(0, 7)}-01`;
@@ -103,6 +101,41 @@ export function createGateway({
       );
       const monthOver =
         spentSince(month) + heldOn("month") + worst > limits.month;
+      const row = (
+        outcome: string,
+        reply: RouteReply | null,
+        response: string,
+      ): number | bigint =>
+        insert.run(
+          started.toISOString(),
+          role,
+          name,
+          model,
+          spec.tier,
+          bucket,
+          reply?.inputTokens ?? 0,
+          reply?.outputTokens ?? 0,
+          reply?.costUsd ?? 0,
+          now() - started.getTime(),
+          outcome,
+          JSON.stringify(route.body(request)),
+          response,
+        ).lastInsertRowid;
+      const log = (
+        outcome: string,
+        reply: RouteReply | null,
+        response: string,
+      ): void => {
+        const id = row(outcome, reply, response);
+        appendEvents(db, [
+          {
+            type: "llm_call",
+            v: 1,
+            payload: { llmLogId: String(id), role },
+            origin: { deviceId: "server", clientMs: now() },
+          },
+        ]);
+      };
       if (
         spentOn(bucket) + heldOn(bucket) + worst > limits.adventure ||
         monthOver
@@ -118,42 +151,11 @@ export function createGateway({
             },
           ]);
         }
+        row("budget_exhausted", null, `reserve ${worst.toFixed(6)}`);
         return { ok: false, reason: "budget_exhausted" };
       }
       hold(bucket, worst);
       hold("month", worst);
-      const log = (
-        outcome: string,
-        reply: RouteReply | null,
-        response: string,
-      ): void => {
-        const row = insert.run(
-          started.toISOString(),
-          role,
-          name,
-          model,
-          spec.tier,
-          bucket,
-          reply?.inputTokens ?? 0,
-          reply?.outputTokens ?? 0,
-          reply?.costUsd ?? 0,
-          now() - started.getTime(),
-          outcome,
-          JSON.stringify(route.body(request)),
-          response,
-        );
-        appendEvents(db, [
-          {
-            type: "llm_call",
-            v: 1,
-            payload: {
-              llmLogId: String(row.lastInsertRowid),
-              role,
-            },
-            origin: { deviceId: "server", clientMs: now() },
-          },
-        ]);
-      };
       try {
         const reply = await route.call(request);
         const finished = reply.stopReason !== "refusal" && reply.text !== "";

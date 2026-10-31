@@ -32,22 +32,23 @@ main { margin: 0 auto; }
 /* A screen and a step of play arrive with a short fade; the waiting scene knits a thread until the server answers. */
 @keyframes arrive { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes knit { to { background-position: 40px 0; } }
-main > *, .step { animation: arrive 220ms ease-out; }
+@keyframes breathe { 50% { opacity: 0.55; } }
+.waiting { font-size: 1.1em; text-align: center; padding: var(--space-6) var(--space-4); animation: breathe 2.4s ease-in-out infinite; }
+main > *, section > * { animation: arrive 220ms ease-out; }
 [data-busy] { cursor: progress; }
-[data-busy]::after, .waiting::after {
+.waiting::after {
   content: ""; display: block; height: 4px; margin-top: var(--space-3); border-radius: 2px;
   background: repeating-linear-gradient(90deg, var(--accent) 0 16px, transparent 16px 40px);
   background-size: 40px 4px; animation: knit 900ms linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  main > *, .step, [data-busy]::after, .waiting::after { animation: none; }
+  main > *, section > *, .waiting, .waiting::after { animation: none; }
 }
 h1 { font-size: 1.6em; line-height: 1.2; }
 .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.15; margin: 0 0.15em; }
 .frac > span { padding: 0 0.2em; }
 .frac > span:first-child { border-bottom: 2px solid currentColor; }
 .badge { font-size: 1.6em; font-weight: 700; line-height: 1.2; }
-.battle { opacity: 0.75; }
 .task { font-size: 1.1em; }
 /* Things that belong together sit closer than the blocks of a screen. */
 .entry, .result, .hints { display: flex; flex-direction: column; gap: var(--space-2); }
@@ -64,8 +65,9 @@ h1 { font-size: 1.6em; line-height: 1.2; }
 .format { font-size: 0.85em; opacity: 0.8; }
 .preview, .picked { font-size: 1.2em; }
 .right { font-weight: 600; }
-.picture { margin: 0; text-align: center; }
-.picture svg { display: block; margin: 0 auto; max-width: 100%; max-height: 40vh; height: auto; }
+/* A picture's labels can sit just past its frame, so it clips nothing and keeps room around it. */
+.picture { margin: 0; padding: var(--space-3); text-align: center; }
+.picture svg { display: block; margin: 0 auto; max-width: 100%; max-height: 40vh; height: auto; overflow: visible; }
 h1, p, fieldset, form { margin: 0; }
 
 /* One card a screen, its blocks one gap apart. */

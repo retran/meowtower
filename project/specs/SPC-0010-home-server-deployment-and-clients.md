@@ -2,8 +2,8 @@
 id: SPC-0010
 artifact: spec
 status: live
-revised: 2026-10-10
-states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-3714]
+revised: 2026-10-31
+states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-7930]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -70,7 +70,7 @@ The permitted dependencies run one way. `proxy` depends on `meowtower`, the clie
 
 ### Names
 
-The game is Meowtower, «Мяубашня» (Meow tower) in the player's language, and every technical name carries it (REQ-3714): the repository `retran/meowtower`, the operator command `./meowtower`, which carries every operator subcommand a decision names, the Compose project and the server service `meowtower`, the volume `meowtower-db`, the database directory `/var/lib/meowtower`, the database file `meowtower.sqlite` and the snapshot files `meowtower-<UTC timestamp>.sqlite` (REQ-3714). The proxy service is `proxy`. The Tower («Башня», the Tower) that the heroine climbs is a place in the story, and its name stays.
+The game is Meowtower, «Туманный Брод» (Misty Ford) in the player's language, and every technical name carries it (REQ-7930): the repository `retran/meowtower`, the operator command `./meowtower`, which carries every operator subcommand a decision names, the Compose project and the server service `meowtower`, the volume `meowtower-db`, the database directory `/var/lib/meowtower`, the database file `meowtower.sqlite` and the snapshot files `meowtower-<UTC timestamp>.sqlite` (REQ-7930). The proxy service is `proxy`. The Tower («Башня», the Tower) that the heroine climbs is a place in the story, and its name stays.
 
 ### Where it runs and where the data lives
 
