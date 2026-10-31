@@ -19,6 +19,7 @@ import {
   MOVED,
   nextPacket,
   nextSeq,
+  buyHint,
   pause,
   pickChest,
   resumeAdventure,
@@ -65,6 +66,9 @@ function picture(svg: string): HTMLElement {
     holder.append(document.importNode(root, true));
   return holder;
 }
+
+/** The rungs of the hint ladder a player can buy on screen. */
+const HINT_RUNGS = 2;
 
 /** The badge's word for an outcome; the server decides the outcome. */
 function badgeKey(reply: AnswerOut, dontKnow: boolean): UiKey {
@@ -429,6 +433,39 @@ export const playScreen: Screen = {
         pickedLine.replaceChildren(...math(chosen()));
       };
       const typed = room.input.kind === "integer" || room.input.kind === "text";
+      const hints = el("div", { className: "hints" });
+      let threads = room.threads;
+      let rung = 0;
+      const hintButton = el("button", { type: "button", className: "control" });
+      hintButton.dataset["action"] = "play-hint";
+      const showRung = (text: string): void => {
+        rung += 1;
+        hints.append(el("p", { className: "hint" }, ...math(text)));
+        hintButton.textContent = t("ui.play.hint", { n: threads });
+        // The third rung of a template states the answer, so the ladder on screen ends at the second.
+        if (rung >= HINT_RUNGS) hintButton.remove();
+      };
+      hintButton.textContent = t("ui.play.hint", { n: threads });
+      hintButton.addEventListener("click", () => {
+        act("play-hint");
+        if (threads < 1) {
+          note.textContent = t("ui.play.noThreads");
+          return;
+        }
+        void buyHint(room.itemId, rung + 1).then((got) => {
+          if (!got) {
+            note.textContent = t("ui.play.noThreads");
+            return;
+          }
+          threads = got.threads;
+          showRung(got.text);
+        });
+      });
+      for (const level of room.hintLevels)
+        if (level <= HINT_RUNGS)
+          void buyHint(room.itemId, level).then((got) => {
+            if (got) showRung(got.text);
+          });
       draw(
         ...(room.view.svg ? [picture(room.view.svg)] : []),
         el("p", { className: "task" }, ...math(room.view.text)),
@@ -452,6 +489,7 @@ export const playScreen: Screen = {
               el("div", { className: "options" }, ...buttons),
               ...(room.input.kind === "order" ? [pickedLine] : []),
             ]),
+        hints,
         note,
         el(
           "nav",
@@ -464,6 +502,7 @@ export const playScreen: Screen = {
           ...(room.input.kind === "order"
             ? [button("ui.play.undo", "play-undo", undo)]
             : []),
+          hintButton,
           button("ui.play.dontKnow", "play-dont-know", () => submit(true)),
           button("ui.play.leave", "play-leave", () => stop("leave")),
         ),
@@ -700,6 +739,9 @@ export const playScreen: Screen = {
           `${t("ui.play.right")} `,
           ...math(reply.feedback.correctAnswer),
         ),
+        ...(reply.note
+          ? [el("p", { className: "note" }, ...math(reply.note))]
+          : []),
         el("p", { className: "battle" }, reply.battleLine),
         el("p", {}, t("ui.play.solution")),
         solution,

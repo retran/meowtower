@@ -139,4 +139,18 @@ describe("the registry as the source of tasks", () => {
     expect(shown.templateId).toBe(first.templateId);
     expect(shown.seed).not.toBe(first.seed);
   });
+
+  it("names a known wrong answer on the result and logs it", async () => {
+    const sessionId = await start();
+    for (let i = 0; i < 12; i += 1) {
+      const room = await next(sessionId);
+      const shown = shownOf(room.itemId);
+      const item = rebuild(shown.templateId, shown.seed);
+      const trap = item?.made.traps[0];
+      const raw = trap?.entry ?? "";
+      const res = await answer(sessionId, room.itemId, raw);
+      const out = AnswerOut.parse(await res.json());
+      expect(out.note, shown.templateId).toBe(trap?.explanation);
+    }
+  });
 });

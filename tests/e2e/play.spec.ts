@@ -371,3 +371,44 @@ test("REQ-7524, REQ-7526, REQ-7528: a fraction's field shows its format, its key
   await page.locator("#play-answer").fill("2/4");
   await expect(page.locator(".preview .frac")).toHaveCount(1);
 });
+
+test("REQ-7538, REQ-7540: the task offers two hints, and the result names a known wrong answer", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  await page.route("**/api/session/*/next", (route) =>
+    route.fulfill({ json: room({}) }),
+  );
+  let level = 0;
+  await page.route("**/api/item/*/hint", (route) => {
+    level += 1;
+    return route.fulfill({
+      json: { level, text: `Подсказка ${level}.`, threads: 5 - level },
+    });
+  });
+  await page.route("**/api/session/*/answer", (route) =>
+    route.fulfill({
+      json: {
+        outcome: "alt",
+        streak: 0,
+        grants: [],
+        threads: 3,
+        feedback: { correctAnswer: "7" },
+        note: "Число 12 — произведение, а нужна сумма.",
+        shortSolution: ["3 + 4 = 7."],
+        battleLine: "Нить легла ровно.",
+      },
+    }),
+  );
+  await ready(page, "/play");
+  const hint = page.locator('[data-action="play-hint"]');
+  await expect(hint).toContainText("осталось 5");
+  await hint.click();
+  await expect(page.locator(".hint")).toHaveCount(1);
+  await hint.click();
+  await expect(page.locator(".hint")).toHaveCount(2);
+  await expect(hint).toBeHidden();
+  await page.locator("#play-answer").fill("12");
+  await page.locator('[data-action="play-submit"]').click();
+  await expect(page.locator(".note")).toContainText("произведение");
+});

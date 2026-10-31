@@ -3,7 +3,7 @@ id: ADR-0080
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552, REQ-7516, REQ-7518]
+addresses: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552, REQ-7516, REQ-7518, REQ-7538, REQ-7540]
 supersedes: []
 ---
 
@@ -48,7 +48,7 @@ A typical day of 28 tasks at a clean share near 0.7 yields 8 to 10 threads (REQ-
 
 Once this decision is accepted, a task can be answered, reviewed, retried once and helped with paid hints end to end on the server, with the thread stock correct across leaving and resuming. The flow works before ADR-0090 exists, because a task needs only the task window and a place to return to. It doesn't yet give an outcome its spell, streak or rewards (ADR-0140), a detailed explanation its text (ADR-0120, which falls back to template explanations), or a knowledge estimate from the attempts (ADR-0060).
 
-The owner added on 2026-10-31, after watching the player: the result of an answer says in plain words whether it was right, and shows the entry and the correct answer above the short solution, because the game words alone left the child unsure. The result stays free of the words REQ-2414 forbids, and the battle line stays beneath it.
+The owner added on 2026-10-31, after watching the player: the result of an answer says in plain words whether it was right, and shows the entry and the correct answer above the short solution, because the game words alone left the child unsure. The result stays free of the words REQ-2414 forbids, and the battle line stays beneath it. The task window offers two rungs of the hint ladder, because the third states the answer in most templates, and a known wrong answer shows its own explanation.
 
 ## Why
 

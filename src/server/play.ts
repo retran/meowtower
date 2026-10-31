@@ -35,6 +35,7 @@ import {
   pick,
   present,
   rebuild,
+  trapOf,
   twinOf,
 } from "./task-source.js";
 import {
@@ -234,8 +235,17 @@ function answerReply(
   const upTo = log.filter((e) => e.seq <= verdictSeq);
   const verdicts = upTo
     .filter((e) => e.type === "verdict")
-    .map((e) => payloadOf<{ attemptNo: number; outcome: Outcome }>(e));
-  const outcome = verdicts[verdicts.length - 1]?.outcome ?? "alt";
+    .map((e) =>
+      payloadOf<{
+        attemptNo: number;
+        outcome: Outcome;
+        trapId: string | null;
+      }>(e),
+    );
+  const last = verdicts[verdicts.length - 1];
+  const outcome = last?.outcome ?? "alt";
+  const item = shown.templateId ? rebuild(shown.templateId, shown.seed) : null;
+  const note = item?.made.traps.find((t) => t.id === last?.trapId)?.explanation;
   // The streak counts clean first attempts in a row.
   const firsts = verdicts.filter((v) => v.attemptNo === 1);
   let streak = 0;
@@ -247,6 +257,7 @@ function answerReply(
     grants: [],
     threads: stockAt(upTo),
     feedback: { correctAnswer: shown.correctAnswer },
+    ...(note ? { note } : {}),
     shortSolution: shown.shortSolution,
     battleLine: t(keyFor(`battle.${outcome}.1`)),
   };
@@ -1304,7 +1315,10 @@ export function mountPlay(
               attemptNo: shown.attemptNo,
               verdict,
               outcome,
-              trapId: null,
+              trapId:
+                registry && verdict === "wrong"
+                  ? trapOf(registry, a.raw)
+                  : null,
               errorClass: null,
               steps: [],
             },

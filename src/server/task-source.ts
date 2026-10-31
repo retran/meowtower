@@ -168,6 +168,14 @@ export function inputOf(
   return item ? present(item).input : { kind: "integer" };
 }
 
+const plain = (entry: string): string =>
+  entry.replace(/\s/g, "").replace(".", ",");
+
+/** The trap an entry falls into, by the wrong answer it wrote. */
+export function trapOf(item: RegistryItem, raw: string): string | null {
+  return item.made.traps.find((t) => plain(t.entry) === plain(raw))?.id ?? null;
+}
+
 export type RegistryVerdict = "correct" | "wrong" | "unparsed" | "dont_know";
 
 /** The check of the template's own checker; a half-right entry is not yet right. */

@@ -1,6 +1,7 @@
 // The routes the shell calls. The device token and the parent session travel
 // as HttpOnly cookies. Every body is read, because an unread one stays open.
 import type {
+  HintOut,
   AnswerIn,
   Chest,
   Grant,
@@ -233,6 +234,18 @@ export async function heartbeat(
  * after a lost reply is recorded once (REQ-2432). `status` is `UNREACHABLE`
  * when no reply came.
  */
+/** Buys a rung of the hint ladder, or shows one already bought; null when it can't be had. */
+export async function buyHint(
+  itemId: string,
+  level: number,
+): Promise<HintOut | null> {
+  const { status, body } = await call(
+    `/api/item/${encodeURIComponent(itemId)}/hint`,
+    { method: "POST", body: JSON.stringify({ level, clientSeq: nextSeq() }) },
+  );
+  return status === 200 ? (body as unknown as HintOut) : null;
+}
+
 export function postAnswer(
   sessionId: string,
   sent: AnswerIn,

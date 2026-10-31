@@ -163,6 +163,8 @@ export const AnswerOut = z
     ),
     threads: z.number().int().nonnegative(),
     feedback: z.object({ correctAnswer: z.string() }).strict(),
+    /** What went differently, when the entry is a known wrong answer of the task. */
+    note: z.string().min(1).optional(),
     shortSolution: z.array(z.string()).min(1),
     battleLine: z.string().min(1),
   })
@@ -233,6 +235,8 @@ export const HintOut = z
     threads: z.number().int().nonnegative(),
   })
   .strict();
+
+export type HintOut = z.infer<typeof HintOut>;
 
 /** The extension by one row: the reply once the extension is logged. */
 export const ExtendOut = z.object({ status: z.literal("extended") }).strict();

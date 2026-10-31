@@ -177,6 +177,8 @@ export interface StringParams {
   "ui.play.key.colon.ruMac": NoParams;
   "ui.play.key.colon.ruPc": NoParams;
   "ui.play.key.colon.touch": NoParams;
+  "ui.play.hint": { n: string | number };
+  "ui.play.noThreads": NoParams;
 }
 
 export type Key = keyof StringParams;
