@@ -10,6 +10,7 @@ import { openDatabase } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { rebuild } from "../../src/server/task-source.js";
 import { AnswerOut, HintOut, Room } from "../../src/shared/api.js";
+import { setLang } from "../../src/shared/i18n.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-registry-"));
 const path = join(dir, "meowtower.sqlite");
@@ -86,6 +87,35 @@ async function answer(
 }
 
 describe("the registry as the source of tasks", () => {
+  it("REQ-7548: speaks the parent's language, also about a task shown before the change", async () => {
+    const sessionId = await start();
+    const room = await next(sessionId);
+    expect(room.view.locale).toBe("ru");
+    setLang("nl");
+    try {
+      const res = await app.request(`/api/session/${sessionId}/answer`, {
+        method: "POST",
+        headers: json,
+        body: JSON.stringify({
+          itemId: room.itemId,
+          raw: "",
+          dontKnow: true,
+          input,
+          clientSeq: ++seq,
+        }),
+      });
+      expect(res.status).toBe(200);
+      const out = AnswerOut.parse(await res.json());
+      expect(JSON.stringify(out)).not.toMatch(/[\u0400-\u04FF]/);
+      expect(out.shortSolution?.length).toBeGreaterThan(0);
+      const after = await next(sessionId);
+      expect(after.view.locale).toBe("nl");
+      expect(after.view.text).not.toMatch(/[\u0400-\u04FF]/);
+    } finally {
+      setLang("ru");
+    }
+  });
+
   it("shows tasks of many templates and takes each one's own answer as clean", async () => {
     const sessionId = await start();
     const templates = new Set<string>();
