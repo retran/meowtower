@@ -5,6 +5,9 @@ status: approved
 revised: 2026-09-28
 addresses: [REQ-2648, REQ-2732, REQ-3910, REQ-3912, REQ-3914, REQ-3916, REQ-3918, REQ-3920, REQ-3922, REQ-3924]
 supersedes: []
+issue: 55
+projected: e08a36ddc462
+tracked: aabe04bc0663
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

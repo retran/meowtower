@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-31
 addresses: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552]
 supersedes: []
+issue: 28
+projected: 07afeffdc9c6
+tracked: 213cd57b22e0
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

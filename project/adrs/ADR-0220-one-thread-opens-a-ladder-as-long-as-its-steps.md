@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-5100, REQ-5102, REQ-5104, REQ-5106, REQ-5108, REQ-5110, REQ-5112, REQ-5114, REQ-5116, REQ-5118, REQ-5120, REQ-5122, REQ-5124, REQ-5126, REQ-5128, REQ-5132, REQ-5134, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5146, REQ-5148, REQ-5150, REQ-5152, REQ-5154, REQ-5156, REQ-5158, REQ-5160, REQ-5162, REQ-5164, REQ-5166, REQ-5168]
 supersedes: []
+issue: 42
+projected: 1ff9ac3fef2f
+tracked: 8316dbfd88e3
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

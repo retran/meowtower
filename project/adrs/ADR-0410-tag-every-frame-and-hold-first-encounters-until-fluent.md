@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6928, REQ-6930, REQ-6932, REQ-6934, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980, REQ-6982]
 supersedes: []
+issue: 61
+projected: bde9e92f5671
+tracked: 16837d47f572
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

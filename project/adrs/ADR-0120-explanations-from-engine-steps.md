@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-0600, REQ-0602, REQ-0604, REQ-0606, REQ-0610, REQ-0612, REQ-0614, REQ-0616, REQ-0618, REQ-0620, REQ-0622, REQ-0624, REQ-0628, REQ-0630, REQ-0632, REQ-0634, REQ-0636, REQ-0638, REQ-2604, REQ-2606, REQ-2716]
 supersedes: []
+issue: 32
+projected: fb5d809065cd
+tracked: 96faad4ff28d
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

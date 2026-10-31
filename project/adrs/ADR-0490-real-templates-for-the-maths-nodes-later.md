@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-31
 addresses: [REQ-7548, REQ-1232, REQ-7520, REQ-7522, REQ-7530, REQ-7532, REQ-7534, REQ-7542, REQ-7516, REQ-7518, REQ-7524, REQ-7526, REQ-7528, REQ-7536, REQ-7538, REQ-7540, REQ-7546]
 supersedes: []
+issue: 68
+projected: 9b1ab174a5c2
+tracked: 103d512f9c2a
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

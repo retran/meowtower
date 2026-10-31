@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-7300, REQ-7302, REQ-7304, REQ-7306, REQ-7308, REQ-7310, REQ-7312, REQ-7314, REQ-7316, REQ-7318, REQ-7320, REQ-7322, REQ-7324, REQ-7326, REQ-7328, REQ-7330, REQ-7332, REQ-7334, REQ-7336, REQ-7338, REQ-7340, REQ-7342, REQ-7344, REQ-7346, REQ-7348, REQ-7350, REQ-7352, REQ-7354, REQ-7356, REQ-7358, REQ-7362, REQ-7364, REQ-7366, REQ-7368, REQ-7370, REQ-7372, REQ-7374]
 supersedes: []
+issue: 65
+projected: b0987cff282e
+tracked: 7d87be13ffc4
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
