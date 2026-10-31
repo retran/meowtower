@@ -412,3 +412,102 @@ test("REQ-7538, REQ-7540: the task offers two hints, and the result names a know
   await page.locator('[data-action="play-submit"]').click();
   await expect(page.locator(".note")).toContainText("произведение");
 });
+
+test("the keyboard answers a task: digits, signs, Backspace and Enter", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "computer");
+  await pairDevice(page);
+  const sent: string[] = [];
+  await page.route("**/api/session/*/answer", (route) => {
+    sent.push((route.request().postDataJSON() as { raw: string }).raw);
+    return route.fulfill({
+      json: {
+        outcome: "clean",
+        streak: 1,
+        grants: [],
+        threads: 5,
+        feedback: { correctAnswer: "3" },
+        shortSolution: ["1 + 2 = 3."],
+        battleLine: "Нить легла ровно.",
+      },
+    });
+  });
+  const rooms = [
+    room({ input: { kind: "text", format: "decimal" } }),
+    room({
+      view: {
+        locale: "ru",
+        text: "Сравни.",
+        svg: null,
+        options: ["<", "=", ">"],
+        terms: [],
+      },
+      input: { kind: "choice", values: ["<", "=", ">"] },
+    }),
+    room({
+      view: {
+        locale: "ru",
+        text: "Выбери.",
+        svg: null,
+        options: ["один", "два", "три"],
+        terms: [],
+      },
+      input: { kind: "choice", values: ["1", "2", "3"] },
+    }),
+    room({
+      view: {
+        locale: "ru",
+        text: "По порядку.",
+        svg: null,
+        options: ["10", "20", "30"],
+        terms: [],
+      },
+      input: { kind: "order", values: ["1", "2", "3"] },
+    }),
+  ];
+  let at = 0;
+  await page.route("**/api/session/*/next", (route) =>
+    route.fulfill({ json: rooms[Math.min(at++, 3)] }),
+  );
+  await ready(page, "/play");
+  // The cursor stands in the field at once, and Enter sends the answer.
+  await page.keyboard.type("2,5");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".badge")).toBeVisible();
+  expect(sent.at(-1)).toBe("2,5");
+  // Enter moves on from the result.
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".task")).toHaveText("Сравни.");
+  await page.keyboard.press(">");
+  await expect(page.locator(".badge")).toBeVisible();
+  expect(sent.at(-1)).toBe(">");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".option").first()).toHaveAttribute(
+    "data-key",
+    "1",
+  );
+  await page.keyboard.press("2");
+  await expect(page.locator(".badge")).toBeVisible();
+  expect(sent.at(-1)).toBe("2");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".task")).toHaveText("По порядку.");
+  await page.keyboard.press("3");
+  await page.keyboard.press("1");
+  await page.keyboard.press("Backspace");
+  await page.keyboard.press("2");
+  await page.keyboard.press("1");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".badge")).toBeVisible();
+  expect(sent.at(-1)).toBe("3,2,1");
+});
+
+test("Enter sends the code of the pairing screen", async ({ page }) => {
+  const { code } = (await (
+    await page.request.post(`${PARENT}/pair-code`)
+  ).json()) as { code: string };
+  await ready(page, "/pair");
+  await page.locator("#pair-code").fill(code);
+  await page.locator("#pair-code").press("Enter");
+  await expect(page.getByRole("status")).toHaveText(/Готово/);
+});

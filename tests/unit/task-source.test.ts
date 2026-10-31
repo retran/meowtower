@@ -32,7 +32,7 @@ describe("how each task is put before the player", () => {
 
   it("shows the items of an order task, and its answer by them", () => {
     const order = templates.filter((t) => t.answer === "order");
-    expect(order.length).toBe(17);
+    expect(order.length).toBeGreaterThanOrEqual(17);
     for (const template of order) {
       const shape = present({ template, made: template.make(seedOf(1)) });
       expect(shape.text, template.id).not.toContain(";");

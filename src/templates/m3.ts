@@ -13,6 +13,10 @@ const unless = (
   ...seen: (typeof SIGNS)[number][]
 ): (typeof SIGNS)[number] | null => (seen.includes(x) ? null : x);
 const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
+/** A whole positive wrong answer, or null when it is not one or repeats a value in `no`. */
+const w = (v: number, ...no: number[]): Q | null =>
+  Number.isInteger(v) && v > 0 && !no.includes(v) ? q(v) : null;
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
 
 const M5_grid = calc("M5", "grid");
 const M5_grid_specs: readonly Spec<never>[] = [
@@ -182,6 +186,64 @@ const M5_grid_specs: readonly Spec<never>[] = [
     },
     c: [1, 2],
   }),
+  M5_grid({
+    id: "M5.grid.12",
+    form: "cells-with-a-side-of-five-millimetres",
+    g: [6, 7],
+    kind: "decimal",
+    p: [rg(10, 40)],
+    f: (a) => q(a, 4),
+    t: {
+      "side-not-squared": (a) => q(a, 2),
+      "square-millimetres": (a) => q(25 * a),
+    },
+    c: [5],
+  }),
+  M5_grid({
+    id: "M5.grid.13",
+    form: "two-overlapping-rectangles-on-a-grid",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(4, 8), rg(3, 6), rg(4, 8), rg(3, 6), rg(2, 3), rg(1, 2)],
+    ok: (a, b, c, d) => a !== c || b !== d,
+    f: (a, b, c, d, e, f) => q(a * b + c * d - e * f),
+    t: {
+      "overlap-counted-twice": (a, b, c, d) => q(a * b + c * d),
+      "overlap-removed-twice": (a, b, c, d, e, f) =>
+        q(a * b + c * d - 2 * e * f),
+    },
+    roles: {
+      a: "length of the first rectangle",
+      b: "width of the first",
+      c: "length of the second",
+      d: "width of the second",
+      e: "length of the common part",
+      f: "width of the common part",
+    },
+  }),
+  M5_grid({
+    id: "M5.grid.14",
+    form: "black-cells-of-a-chessboard",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 9), rg(3, 9)],
+    f: (a, b) => q(Math.ceil((a * b) / 2)),
+    t: {
+      "rounded-down": (a, b) => q(Math.floor((a * b) / 2)),
+      "rows-halved-down": (a, b) => q(a * Math.floor(b / 2)),
+    },
+    x: (a, b) => ({
+      e:
+        (a * b) % 2 === 0
+          ? `${a * b} : 2 = ${(a * b) / 2}`
+          : `(${a * b} + 1) : 2 = ${(a * b + 1) / 2}`,
+    }),
+    c: [1, 2],
+    origin: {
+      olympiad:
+        "a chessboard with black corners: the parity of the number of cells decides the count, in the spirit of the parity items of the Kangoeroe and MCCME papers (RES-4286)",
+    },
+  }),
 ];
 
 const M5_sides = calc("M5", "sides");
@@ -314,27 +376,26 @@ const M5_sides_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 9), rg(2, 8)],
     ok: (a, b) => a !== b,
-    f: (a, b) => q(2 * a * b),
+    f: (a, b) => q(2 * a * (b + 1)),
     t: {
-      "both-doubled": (a, b) => q(4 * a * b),
-      "area-unchanged": (a, b) => q(a * b),
-      "perimeter-of-the-new": (a, b) => q(2 * (2 * a + b)),
+      "doubled-only": (a, b) => q(2 * a * b),
+      "one-added-to-area": (a, b) => q(2 * a * b + 1),
     },
+    c: [1, 2],
   }),
   M5_sides({
     id: "M5.sides.10",
     form: "a-square-from-its-perimeter",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 10)],
-    f: (a) => q(a * a),
+    p: [rg(2, 9)],
+    f: (a) => q(100 * a * a),
     t: {
-      "side-only": (a) => q(a),
-      "half-perimeter-squared": (a) => q(4 * a * a),
-      "perimeter-itself": (a) => q(4 * a),
+      "square-decimetres": (a) => q(a * a),
+      "ten-not-squared": (a) => q(10 * a * a),
     },
     x: (a) => ({ x: String(4 * a) }),
-    c: [4],
+    c: [4, 10],
   }),
   M5_sides({
     id: "M5.sides.11",
@@ -348,6 +409,81 @@ const M5_sides_specs: readonly Spec<never>[] = [
       "area-only": (a, b) => q(a * b),
       "perimeter-priced": (a, b, c) => q(2 * (a + b) * c),
       "area-and-price-added": (a, b, c) => q(a * b + c),
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.12",
+    form: "the-length-of-a-roll-of-carpet",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 4), rg(2, 3), rg(4, 9)],
+    f: (a, b, c) => q(b * c),
+    t: {
+      "area-instead": (a, b, c) => q(a * b * c),
+      "one-strip": (a, b, c) => q(c),
+    },
+    x: (a, b, c) => ({ x: String(a * b), y: String(c) }),
+    roles: {
+      a: "width of the roll",
+      b: "number of strips",
+      y: "length of the floor",
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.13",
+    form: "cans-of-paint-for-a-wall",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(4, 9), rg(3, 5), of(4, 5, 6), of(2, 3, 5)],
+    ok: (a, b, c, d) => (a * b) % (c * d) !== 0 && a * b > c * d,
+    f: (a, b, c, d) => q(Math.ceil((a * b) / (c * d))),
+    t: {
+      "rounded-down": (a, b, c, d) => q(Math.floor((a * b) / (c * d))),
+      "litres-as-cans": (a, b, c) => q(Math.ceil((a * b) / c)),
+    },
+    c: [1],
+    roles: {
+      a: "length of the wall",
+      b: "height of the wall",
+      c: "area one litre covers",
+      d: "litres in a can",
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.14",
+    form: "tiles-with-a-side-in-centimetres",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 5), rg(3, 6), of(20, 25, 50)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(((100 * a) / c) * ((100 * b) / c)),
+    t: {
+      "side-as-area": (a, b, c) => q((100 * a * b) / c),
+      "area-over-side": (a, b, c) => q((10000 * a * b) / c),
+    },
+    c: [100],
+    roles: {
+      a: "length of the floor in metres",
+      b: "width of the floor in metres",
+      c: "side of a tile in centimetres",
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.15",
+    form: "the-fewest-equal-square-tiles",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(2, 5), rg(2, 6), rg(2, 6)],
+    ok: (a, b, c) => b !== c && gcd(b, c) === 1,
+    f: (a, b, c) => q(b * c),
+    t: {
+      "tile-side-taken": (a) => q(a),
+      "metre-tiles": (a, b, c) => q(a * a * b * c),
+    },
+    x: (a, b, c) => ({ x: String(a * b), y: String(a * c) }),
+    origin: {
+      olympiad:
+        "the largest square tile that fits a rectangle exactly is set by the greatest common divisor, a tiling item in the spirit of the MCCME papers (RES-4286)",
     },
   }),
 ];
@@ -474,16 +610,19 @@ const M5_formula_specs: readonly Spec<never>[] = [
     form: "the-largest-area-for-a-given-wire",
     g: [6, 8],
     kind: "integer",
-    p: [rg(3, 9)],
-    ok: (a) => a * a !== 2 * a - 1,
-    f: (a) => q(a * a),
+    p: [rg(7, 19)],
+    f: (a) => q(Math.floor(a / 2) * Math.ceil(a / 2)),
     t: {
-      "long-thin": (a) => q(2 * a - 1),
-      "half-perimeter-squared": (a) => q(4 * a * a),
-      "side-of-the-square": (a) => q(a),
+      "long-thin": (a) => q(a - 1),
+      "square-side-rounded-down": (a) => q(Math.floor(a / 2) ** 2),
     },
-    x: (a) => ({ x: String(4 * a), y: String(2 * a - 1) }),
-    c: [1, 4],
+    x: (a) => ({
+      x: String(2 * a),
+      y: String(a - 1),
+      s1: String(Math.floor(a / 2)),
+      s2: String(Math.ceil(a / 2)),
+    }),
+    c: [1, 2],
     origin: { olympiad: "the rectangle of the largest area (RES-4286)" },
   }),
   M5_formula({
@@ -511,6 +650,63 @@ const M5_formula_specs: readonly Spec<never>[] = [
       "side-ratio": (a, b) => q(b),
       "squared-as-doubled": (a, b) => q(2 * b),
       "side-difference": (a, b) => q(a * b - a),
+    },
+    x: (a, b) => ({ x: String(a * b) }),
+  }),
+  M5_formula({
+    id: "M5.formula.12",
+    form: "the-area-of-a-square-cut-into-two-rectangles",
+    g: [6, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10, 12, 14, 16)],
+    f: (a) => q(a * a),
+    t: {
+      "perimeter-over-four": (a) =>
+        (3 * a) % 4 === 0 ? q(((3 * a) / 4) ** 2) : null,
+      "one-rectangle": (a) => q((a * a) / 2),
+    },
+    x: (a) => ({ x: String(3 * a) }),
+    c: [3, 4],
+    origin: {
+      olympiad:
+        "a square cut into two equal rectangles: the perimeter of one holds three sides of the square, in the spirit of the perimeter items of the MCCME papers (RES-4286)",
+    },
+  }),
+  M5_formula({
+    id: "M5.formula.13",
+    form: "the-shorter-side-from-the-ratio-and-the-area",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(1, 3), rg(2, 5), rg(2, 6)],
+    ok: (a, b) => a < b && gcd(a, b) === 1,
+    f: (a, b, c) => q(a * c),
+    t: {
+      "square-of-a-part": (a, b, c) => q(c * c),
+      "longer-side": (a, b, c) => q(b * c),
+    },
+    x: (a, b, c) => ({
+      m: String(a),
+      n: String(b),
+      k: String(c),
+      x: String(a * b * c * c),
+    }),
+    roles: {
+      m: "parts of the first side",
+      n: "parts of the second side",
+      x: "area",
+    },
+  }),
+  M5_formula({
+    id: "M5.formula.14",
+    form: "the-other-side-from-the-growth-of-the-area",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(2, 5), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(b),
+    t: {
+      multiplied: (a, b) => q(a * a * b),
+      subtracted: (a, b) => w(a * b - a, b),
     },
     x: (a, b) => ({ x: String(a * b) }),
   }),
@@ -551,15 +747,14 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     form: "the-height-from-the-area-and-the-base",
     g: [7, 8],
     kind: "decimal",
-    p: [of(4, 6, 8, 10), rg(3, 8)],
-    ok: (a, b) => a !== b && (a * b) % 4 === 0,
-    f: (a, b) => q(b),
+    p: [rg(6, 30), of(4, 5, 8, 10)],
+    ok: (a, b) => a !== b && (2 * a) % b !== 0,
+    f: (a, b) => q(2 * a, b),
     t: {
-      "area-over-base": (a, b) => q(b, 2),
-      "area-times-base": (a, b) => q((a * a * b) / 2),
-      "area-minus-base": (a, b) => q((a * b) / 2 - a),
+      "area-over-base": (a, b) => q(a, b),
+      "area-times-base": (a, b) => q(a * b),
+      "area-minus-base": (a, b) => (a > b ? q(a - b) : null),
     },
-    x: (a, b) => ({ x: String((a * b) / 2) }),
     c: [2],
   }),
   M6_triangle({
@@ -674,6 +869,79 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     t: {
       parallelogram: (a, b) => q(a * b),
       "sides-added": (a, b) => q(a + b),
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.12",
+    form: "a-triangle-in-a-rectangle-with-its-apex-on-a-side",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(4, 12), rg(3, 9)],
+    ok: (a, b) => a !== b && (a * b) % 2 === 0,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      "whole-rectangle": (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
+    c: [2],
+    origin: {
+      olympiad:
+        "the area of a triangle on a side of a rectangle with its apex on the opposite side does not depend on where the apex is, in the spirit of the area items of the MCCME papers (RES-4286)",
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.13",
+    form: "an-octagon-from-a-square-with-cut-corners",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(8, 14), rg(2, 3)],
+    f: (a, b) => q(a * a - 2 * b * b),
+    t: {
+      "squares-instead-of-triangles": (a, b) => q(a * a - 4 * b * b),
+      "one-triangle-cut": (a, b) =>
+        (b * b) % 2 === 0 ? q(a * a - (b * b) / 2) : null,
+    },
+    c: [4],
+  }),
+  M6_triangle({
+    id: "M6.triangle.14",
+    form: "a-part-of-a-triangle-cut-by-a-line-to-the-base",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(1, 3), rg(2, 5), rg(2, 6)],
+    ok: (a, b) => a < b,
+    f: (a, b, c) => q(a * c),
+    t: {
+      "parts-swapped": (a, b, c) => q(b * c),
+      "half-of-the-whole": (a, b, c) =>
+        ((a + b) * c) % 2 === 0 ? w(((a + b) * c) / 2, a * c) : null,
+    },
+    x: (a, b, c) => ({ x: String((a + b) * c), k: String(c) }),
+    origin: {
+      olympiad:
+        "triangles with a common height have areas in the ratio of their bases, in the spirit of the area items of the MCCME papers (RES-4286)",
+    },
+    roles: {
+      a: "length of the first part of the base",
+      b: "length of the second part",
+      x: "area of the whole triangle",
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.15",
+    form: "a-triangle-from-a-corner-to-two-midpoints-of-a-square",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 8, 12, 16, 20)],
+    f: (a) => q((3 * a * a) / 8),
+    t: {
+      "half-of-the-square": (a) => q((a * a) / 2),
+      "quarter-of-the-square": (a) => q((a * a) / 4),
+    },
+    c: [2],
+    origin: {
+      olympiad:
+        "a triangle from a corner to the midpoints of two sides of a square, found by cutting away three corner triangles, a classic item in the spirit of the Kangaroo papers (RES-4286)",
     },
   }),
 ];

@@ -2,8 +2,8 @@
 // thousands at group 6 and to the accuracy a goal sets at group 7, and they estimate with rounded
 // numbers ("ongeveer"). An estimate is checked as a number on a line: right within a stated distance.
 // Texts are plain blanks in `content/tasks-n.ru.json`, keyed by the template id.
-import { between, digits, qi } from "./draw.js";
-import { defineSpec, type Spec } from "./spec.js";
+import { between, digits, qi, signOf } from "./draw.js";
+import { defineSpec, SIGNS, type Spec } from "./spec.js";
 import { formatQ } from "../math/format.js";
 import { Q } from "../math/q.js";
 
@@ -34,6 +34,7 @@ const rounding = (o: {
     wrong: (n: number) => number | null;
   }[];
   vars?: (n: number) => Record<string, string>;
+  roles?: Readonly<Record<string, string>>;
   constants?: readonly number[];
 }) => {
   /** A trap's wrong answer, or null where it repeats an earlier trap of the same task. */
@@ -50,6 +51,7 @@ const rounding = (o: {
     form: o.form,
     groups: o.groups,
     ...(o.origin ? { origin: o.origin } : {}),
+    ...(o.roles ? { roles: o.roles } : {}),
     answer: "integer",
     draw: (r) => ({ n: o.draw(r) }),
     ...(o.valid ? { valid: (p: N) => o.valid?.(p.n) ?? true } : {}),
@@ -75,6 +77,91 @@ const rounding = (o: {
       ),
     }),
     constants: o.constants ?? [5, 10, 100, 1000],
+  });
+};
+
+interface Pick4 {
+  n: number;
+  off: number;
+  by: number;
+}
+interface Sign4 {
+  a: number;
+  b: number;
+}
+interface Near4 {
+  a: number;
+  b: number;
+  by: number;
+}
+/** Rotates a list of options by a drawn offset, so the right one is not always first. */
+const rotate = <T>(list: readonly T[], by: number): T[] =>
+  list.map((_, i) => list[(i + by) % list.length] as T);
+
+/** An estimate answered by choosing the nearest of four numbers: the estimate and three that are far from it. */
+const nearestOf = (o: {
+  id: string;
+  form: string;
+  groups: readonly [number, number];
+  draw: (r: Parameters<Spec<Near4>["draw"]>[0]) => Near4;
+  valid: (p: Near4) => boolean;
+  exact: (p: Near4) => number;
+  est: (p: Near4) => number;
+  wrongs: readonly (readonly [string, (p: Near4) => number])[];
+  vars: (p: Near4) => Record<string, string>;
+}) => {
+  const list = (p: Near4): number[] => [
+    o.est(p),
+    ...o.wrongs.map(([, f]) => f(p)),
+  ];
+  return defineSpec<Near4>({
+    id: o.id,
+    node: "N4",
+    subtype: "estimate",
+    form: o.form,
+    groups: o.groups,
+    answer: "choice",
+    draw: o.draw,
+    valid: (p) => {
+      const all = list(p);
+      return (
+        o.valid(p) &&
+        new Set(all).size === all.length &&
+        all.every((x) => x > 0 && x === Math.round(x)) &&
+        all
+          .slice(1)
+          .every(
+            (x) =>
+              Math.abs(x - o.exact(p)) >
+              2 * Math.abs(o.est(p) - o.exact(p)) + 10,
+          )
+      );
+    },
+    options: (p) => rotate(list(p).map(digits), p.by),
+    solve: (p) => digits(o.est(p)),
+    reference: (p) => {
+      const exact = o.exact(p);
+      return (
+        [...list(p)]
+          .sort((x, y) => Math.abs(x - exact) - Math.abs(y - exact))
+          .map(digits)[0] ?? ""
+      );
+    },
+    traps: o.wrongs.map(([id, f]) => ({
+      id,
+      kind: "conceptual" as const,
+      wrong: (p: Near4) => digits(f(p)),
+    })),
+    vars: (p) => ({
+      a: digits(p.a),
+      b: digits(p.b),
+      r: digits(o.est(p)),
+      ...Object.fromEntries(
+        o.wrongs.map(([id, f]) => [`w_${id.replace(/-/g, "_")}`, digits(f(p))]),
+      ),
+      ...o.vars(p),
+    }),
+    constants: [10],
   });
 };
 
@@ -192,12 +279,18 @@ const roundSpecs = [
         wrong: (n) => nearest(n, 100_000),
       },
     ],
-    vars: (n) => ({ t: s(n % 10_000) }),
-    constants: [1000, 10_000],
+    vars: (n) => ({
+      t: s(n % 10_000),
+      th: s(Math.floor(n / 1000) % 10),
+      lo: digits(down(n, 10_000)),
+      hi: digits(up(n, 10_000)),
+    }),
+    constants: [5, 1000, 10_000],
   }),
   rounding({
     id: "N4.round.07",
     form: "a-price-to-the-nearest-ten-euro",
+    roles: { n: "price of the item in euro" },
     groups: [5, 5],
     draw: (r) => between(r, 11, 199),
     valid: (n) => n % 10 !== 0 && n % 10 !== 5,
@@ -305,6 +398,112 @@ const roundSpecs = [
     ],
     vars: (n) => ({ o: s(n % 10) }),
   }),
+  rounding({
+    id: "N4.round.14",
+    form: "round-twice-to-tens-then-hundreds",
+    groups: [6, 7],
+    origin: {
+      olympiad:
+        "rounding twice does not round once; the rounding-boundary reasoning of RES-4281",
+    },
+    draw: (r) => 100 * between(r, 1, 9) + between(r, 45, 49),
+    solve: (n) => down(n, 100) + 100,
+    reference: (n) => nearest(nearest(n, 10), 100),
+    traps: [
+      { id: "round-once", kind: "conceptual", wrong: (n) => nearest(n, 100) },
+      { id: "only-to-tens", kind: "procedural", wrong: (n) => nearest(n, 10) },
+    ],
+    vars: (n) => ({
+      o: s(n % 10),
+      m: digits(nearest(n, 10)),
+      d: digits(nearest(n, 100)),
+    }),
+    constants: [5, 10, 100],
+  }),
+  rounding({
+    id: "N4.round.15",
+    form: "metres-to-whole-kilometres",
+    roles: { n: "distance between the two cities in metres" },
+    groups: [6, 7],
+    draw: (r) => between(r, 1001, 99_999),
+    valid: (n) => n % 1000 !== 0 && n % 1000 !== 500,
+    solve: (n) => nearest(n, 1000) / 1000,
+    reference: (n) => Math.round(n / 1000 + 1e-9),
+    traps: [
+      { id: "cut-off", kind: "procedural", wrong: (n) => down(n, 1000) / 1000 },
+      { id: "metres-kept", kind: "conceptual", wrong: (n) => nearest(n, 1000) },
+    ],
+    vars: (n) => ({ m: digits(nearest(n, 1000)) }),
+    constants: [500, 1000],
+  }),
+  rounding({
+    id: "N4.round.16",
+    form: "how-far-the-rounded-number-is-from-the-number",
+    groups: [6, 6],
+    draw: (r) => between(r, 1001, 9999),
+    valid: (n) => n % 100 !== 0 && n % 100 !== 50,
+    solve: (n) => Math.abs(n - nearest(n, 100)),
+    reference: (n) => Math.min(n % 100, 100 - (n % 100)),
+    traps: [
+      {
+        id: "to-the-other-hundred",
+        kind: "conceptual",
+        wrong: (n) => 100 - Math.min(n % 100, 100 - (n % 100)),
+      },
+      {
+        id: "the-rounded-number",
+        kind: "conceptual",
+        wrong: (n) => nearest(n, 100),
+      },
+    ],
+    vars: (n) => ({ m: digits(nearest(n, 100)) }),
+    constants: [100],
+  }),
+  defineSpec<Pick4>({
+    id: "N4.round.13",
+    node: "N4",
+    subtype: "round",
+    form: "which-number-could-have-been-rounded-to-a-round-number",
+    groups: [5, 6],
+    answer: "choice",
+    draw: (r) => ({
+      n: 100 * between(r, 3, 98),
+      off: [between(r, -49, -1), between(r, 1, 49)][r.int(2)] ?? 1,
+      by: r.int(4),
+    }),
+    options: (p) =>
+      rotate(
+        [p.n + p.off, p.n - 51, p.n + 50, p.n + 100 + p.off].map(digits),
+        p.by,
+      ),
+    solve: (p) => digits(p.n + p.off),
+    reference: (p) =>
+      rotate(
+        [p.n + p.off, p.n - 51, p.n + 50, p.n + 100 + p.off].map(digits),
+        p.by,
+      ).find((o) => nearest(Number(o.replace(/ /g, "")), 100) === p.n) ?? "",
+    traps: [
+      {
+        id: "just-below",
+        kind: "conceptual",
+        wrong: (p) => digits(p.n - 51),
+      },
+      {
+        id: "half-above",
+        kind: "conceptual",
+        wrong: (p) => digits(p.n + 50),
+      },
+    ],
+    vars: (p) => ({
+      n: digits(p.n),
+      lo: digits(p.n - 50),
+      hi: digits(p.n + 49),
+      r: digits(p.n + p.off),
+      w_just_below: digits(p.n - 51),
+      w_half_above: digits(p.n + 50),
+    }),
+    constants: [49, 50],
+  }),
 ];
 
 const q = (n: number): Q => qi(n);
@@ -330,6 +529,7 @@ const estimating = (o: {
   slack: (p: Est) => number;
   traps: readonly { id: string; wrong: (p: Est) => Q | null }[];
   vars?: (p: Est) => Record<string, string>;
+  roles?: Readonly<Record<string, string>>;
   constants?: readonly number[];
 }) => {
   /** A trap's wrong answer, or null where it falls inside the slack or repeats an earlier trap. */
@@ -350,6 +550,7 @@ const estimating = (o: {
     subtype: "estimate",
     form: o.form,
     groups: o.groups,
+    ...(o.roles ? { roles: o.roles } : {}),
     answer: "line",
     draw: o.draw,
     ...(o.valid ? { valid: o.valid } : {}),
@@ -366,6 +567,7 @@ const estimating = (o: {
       b: digits(p.b),
       c: digits(p.c),
       exact: fq(o.exact(p)),
+      r: fq(o.exact(p)),
       slack: s(o.slack(p)),
       ...(o.vars ? o.vars(p) : {}),
       ...Object.fromEntries(
@@ -385,6 +587,7 @@ const estimateSpecs = [
     form: "estimate-a-sum-of-two-numbers",
     groups: [5, 5],
     draw: (r) => ({ a: between(r, 21, 98), b: between(r, 21, 98), c: 0 }),
+    valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
     exact: (p) => q(p.a + p.b),
     second: (p) => q(p.b + p.a),
     slack: () => 10,
@@ -405,6 +608,7 @@ const estimateSpecs = [
     form: "estimate-a-difference-of-two-numbers",
     groups: [5, 5],
     draw: (r) => ({ a: between(r, 301, 999), b: between(r, 101, 299), c: 0 }),
+    valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
     exact: (p) => q(p.a - p.b),
     second: (p) => q(p.a + -p.b),
     slack: () => 10,
@@ -429,6 +633,7 @@ const estimateSpecs = [
     form: "estimate-a-product-of-two-digit-and-one-digit",
     groups: [5, 6],
     draw: (r) => ({ a: between(r, 21, 98), b: between(r, 3, 9), c: 0 }),
+    valid: (p) => p.a % 10 !== 0,
     exact: (p) => q(p.a * p.b),
     second: (p) =>
       q(Array.from({ length: p.b }, () => p.a).reduce((x, y) => x + y, 0)),
@@ -449,6 +654,7 @@ const estimateSpecs = [
     form: "estimate-a-product-of-two-two-digit-numbers",
     groups: [6, 6],
     draw: (r) => ({ a: between(r, 21, 79), b: between(r, 21, 79), c: 0 }),
+    valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
     exact: (p) => q(p.a * p.b),
     second: (p) => q(p.b * p.a),
     slack: (p) => 5 * (p.a + p.b) + 25,
@@ -492,8 +698,10 @@ const estimateSpecs = [
   estimating({
     id: "N4.estimate.06",
     form: "estimate-the-total-price-of-several-items",
+    roles: { a: "price of one item in euro", b: "number of items" },
     groups: [5, 6],
     draw: (r) => ({ a: between(r, 12, 98), b: between(r, 3, 9), c: 0 }),
+    valid: (p) => p.a % 10 !== 0,
     exact: (p) => q(p.a * p.b),
     second: (p) => q(p.b * p.a),
     slack: (p) => 5 * p.b,
@@ -517,6 +725,7 @@ const estimateSpecs = [
       b: between(r, 21, 98),
       c: between(r, 21, 98),
     }),
+    valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0 && p.c % 10 !== 0,
     exact: (p) => q(p.a + p.b + p.c),
     second: (p) => q(p.c + p.b + p.a),
     slack: () => 15,
@@ -545,12 +754,18 @@ const estimateSpecs = [
   estimating({
     id: "N4.estimate.08",
     form: "estimate-the-length-of-a-trip-in-three-legs",
+    roles: {
+      a: "length of the first part of the trip in metres",
+      b: "length of the second part in metres",
+      c: "length of the third part in metres",
+    },
     groups: [6, 6],
     draw: (r) => ({
       a: between(r, 201, 899),
       b: between(r, 201, 899),
       c: between(r, 201, 899),
     }),
+    valid: (p) => p.a % 100 !== 0 && p.b % 100 !== 0 && p.c % 100 !== 0,
     exact: (p) => q(p.a + p.b + p.c),
     second: (p) => q(p.b + p.c + p.a),
     slack: () => 150,
@@ -619,6 +834,163 @@ const estimateSpecs = [
       rs: s(Math.ceil(p.a / 100) * p.b),
     }),
     constants: [1],
+  }),
+  nearestOf({
+    id: "N4.estimate.11",
+    form: "choose-the-nearest-estimate-of-a-sum",
+    groups: [5, 6],
+    draw: (r) => ({
+      a: between(r, 21, 98),
+      b: between(r, 21, 98),
+      by: r.int(4),
+    }),
+    valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
+    exact: (p) => p.a + p.b,
+    est: (p) => nearest(p.a, 10) + nearest(p.b, 10),
+    wrongs: [
+      ["ten-times-off", (p) => 10 * (nearest(p.a, 10) + nearest(p.b, 10))],
+      ["ten-times-less", (p) => (nearest(p.a, 10) + nearest(p.b, 10)) / 10],
+      [
+        "difference-instead",
+        (p) => Math.abs(nearest(p.a, 10) - nearest(p.b, 10)),
+      ],
+    ],
+    vars: (p) => ({
+      ra: digits(nearest(p.a, 10)),
+      rb: digits(nearest(p.b, 10)),
+    }),
+  }),
+  nearestOf({
+    id: "N4.estimate.12",
+    form: "choose-the-nearest-estimate-of-a-product",
+    groups: [5, 6],
+    draw: (r) => ({ a: between(r, 21, 98), b: between(r, 3, 9), by: r.int(4) }),
+    valid: (p) => p.a % 10 !== 0,
+    exact: (p) => p.a * p.b,
+    est: (p) => nearest(p.a, 10) * p.b,
+    wrongs: [
+      ["ten-times-off", (p) => 10 * nearest(p.a, 10) * p.b],
+      ["ten-times-less", (p) => (nearest(p.a, 10) * p.b) / 10],
+      ["sum-instead", (p) => nearest(p.a, 10) + p.b],
+    ],
+    vars: (p) => ({ ra: digits(nearest(p.a, 10)) }),
+  }),
+  defineSpec<Sign4>({
+    id: "N4.estimate.13",
+    node: "N4",
+    subtype: "estimate",
+    form: "exact-sum-against-a-one-up-one-down-estimate",
+    groups: [6, 7],
+    answer: "compare",
+    draw: (r) => ({ a: between(r, 21, 98), b: between(r, 21, 98) }),
+    valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
+    solve: (p) => signOf(p.a + p.b, up(p.a, 10) + down(p.b, 10)),
+    reference: (p) => {
+      const gap = p.a - up(p.a, 10) + (p.b - down(p.b, 10));
+      return SIGNS[Math.sign(gap) + 1] ?? "=";
+    },
+    traps: [
+      {
+        id: "first-addend-only",
+        kind: "conceptual",
+        wrong: (p) => signOf(p.a, up(p.a, 10)),
+      },
+      { id: "equal-approx", kind: "conceptual", wrong: () => "=" },
+      {
+        id: "swapped-sign",
+        kind: "fact",
+        wrong: (p) => {
+          const sg = signOf(p.a + p.b, up(p.a, 10) + down(p.b, 10));
+          return sg === "<" ? ">" : sg === ">" ? "<" : null;
+        },
+      },
+    ],
+    vars: (p) => ({
+      a: s(p.a),
+      b: s(p.b),
+      ua: s(up(p.a, 10)),
+      db: s(down(p.b, 10)),
+      da: s(up(p.a, 10) - p.a),
+      eb: s(p.b - down(p.b, 10)),
+      est: s(up(p.a, 10) + down(p.b, 10)),
+      w_first_addend_only: signOf(p.a, up(p.a, 10)),
+      w_equal_approx: "=",
+      w_swapped_sign:
+        signOf(p.a + p.b, up(p.a, 10) + down(p.b, 10)) === "<" ? ">" : "<",
+      sum: s(p.a + p.b),
+      sign: signOf(p.a + p.b, up(p.a, 10) + down(p.b, 10)),
+    }),
+    constants: [10],
+  }),
+  defineSpec<Est>({
+    id: "N4.estimate.14",
+    node: "N4",
+    subtype: "estimate",
+    form: "how-many-digits-has-a-product",
+    groups: [6, 7],
+    origin: {
+      olympiad:
+        "bounding a product from below and above to count its digits; RES-4281 (Kangaroo-style estimation)",
+    },
+    answer: "integer",
+    draw: (r) => ({ a: between(r, 101, 999), b: between(r, 11, 99), c: 0 }),
+    valid: (p) => {
+      const lo = Math.floor(p.a / 100) * 100 * (Math.floor(p.b / 10) * 10);
+      const hi =
+        (Math.floor(p.a / 100) * 100 + 100) * (Math.floor(p.b / 10) * 10 + 10);
+      return (
+        String(lo).length === String(hi).length &&
+        p.a % 100 !== 0 &&
+        p.b % 10 !== 0
+      );
+    },
+    solve: (p) => qi(String(p.a * p.b).length),
+    reference: (p) => qi(Math.floor(Math.log10(p.a * p.b)) + 1),
+    traps: [
+      {
+        id: "digits-added",
+        kind: "conceptual",
+        wrong: (p) => qi(String(p.a).length + String(p.b).length),
+      },
+      {
+        id: "larger-factor-digits",
+        kind: "conceptual",
+        wrong: (p) => qi(String(p.a).length),
+      },
+    ],
+    vars: (p) => {
+      const la = Math.floor(p.a / 100) * 100;
+      const lb = Math.floor(p.b / 10) * 10;
+      return {
+        a: digits(p.a),
+        b: digits(p.b),
+        la: digits(la),
+        lb: digits(lb),
+        ha: digits(la + 100),
+        hb: digits(lb + 10),
+        lo: digits(la * lb),
+        hi: digits((la + 100) * (lb + 10)),
+        r: s(String(p.a * p.b).length),
+        w_digits_added: s(String(p.a).length + String(p.b).length),
+        w_larger_factor_digits: s(String(p.a).length),
+      };
+    },
+    constants: [10, 100],
+  }),
+  estimating({
+    id: "N4.estimate.15",
+    form: "estimate-how-many-circles-are-drawn",
+    groups: [5, 6],
+    draw: (r) => ({ a: between(r, 8, 30), b: 4, c: 0 }),
+    exact: (p) => q(4 * p.a),
+    second: (p) => q(p.a + p.a + p.a + p.a),
+    slack: (p) => Math.ceil((4 * p.a) / 10),
+    traps: [
+      { id: "one-part", wrong: (p) => q(p.a) },
+      { id: "three-parts", wrong: (p) => q(3 * p.a) },
+    ],
+    vars: (p) => ({ m: s(p.a) }),
+    constants: [4],
   }),
 ];
 

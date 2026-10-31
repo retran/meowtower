@@ -15,6 +15,14 @@ const opposite = (s: (typeof SIGNS)[number]): (typeof SIGNS)[number] =>
   s === "<" ? ">" : s === ">" ? "<" : "=";
 const tens = (n: number): number => Math.floor(n / 10);
 const CONSTANTS = [1, 2, 10];
+const sumOfDigits = (n: number): number =>
+  [...String(n)].reduce((a, c) => a + Number(c), 0);
+/** The one element with the greatest key, or null where two share it. */
+const uniqueMax = (v: readonly number[], key: (n: number) => number) => {
+  const top = Math.max(...v.map(key));
+  const hits = v.filter((n) => key(n) === top);
+  return hits.length === 1 ? (hits[0] ?? null) : null;
+};
 
 interface Pair {
   a: number;
@@ -74,6 +82,23 @@ const twoDigit = signTraps<Pair>([
   ["swapped-sign", "fact", swapped],
   ["tens-only", "conceptual", (p) => signOf(tens(p.a), tens(p.b))],
 ]);
+interface Four {
+  v: number[];
+  by: number;
+}
+interface TensOnes {
+  t: number;
+  n: number;
+}
+interface Unnormalised {
+  t: number;
+  o: number;
+  t2: number;
+  o2: number;
+}
+/** Rotates a list of options by a drawn offset, so the right one is not always first. */
+const rotate = <T>(list: readonly T[], by: number): T[] =>
+  list.map((_, i) => list[(i + by) % list.length] as T);
 interface Tom {
   t: number;
   o: number;
@@ -127,6 +152,7 @@ const compare: readonly Spec<never>[] = [
     groups: [2, 3],
     answer: "compare",
     draw: (r): Pair => ({ a: between(r, 1, 20), b: between(r, 1, 20) }),
+    valid: (p: Pair) => p.a !== p.b,
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
     traps: toTwenty,
@@ -141,6 +167,7 @@ const compare: readonly Spec<never>[] = [
     groups: [4, 4],
     answer: "compare",
     draw: (r): Pair => ({ a: between(r, 10, 99), b: between(r, 10, 99) }),
+    valid: (p: Pair) => p.a !== p.b,
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
     traps: twoDigit,
@@ -152,9 +179,19 @@ const compare: readonly Spec<never>[] = [
     node: "N1",
     subtype: "compare",
     form: "prices-in-euro",
+    roles: {
+      a: "price of the first item in euro",
+      b: "price of the second item in euro",
+    },
     groups: [4, 4],
     answer: "compare",
-    draw: (r): Pair => ({ a: between(r, 10, 99), b: between(r, 10, 99) }),
+    // The two prices are written with the same two digits, so the digits alone cannot decide.
+    draw: (r): Pair => {
+      const x = between(r, 1, 9);
+      const y = between(r, 1, 9);
+      return { a: 10 * x + y, b: 10 * y + x };
+    },
+    valid: (p: Pair) => p.a !== p.b,
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
     traps: twoDigit,
@@ -166,9 +203,14 @@ const compare: readonly Spec<never>[] = [
     node: "N1",
     subtype: "compare",
     form: "children-in-two-classes",
+    roles: {
+      a: "children in the first class",
+      b: "children in the second class",
+    },
     groups: [3, 4],
     answer: "compare",
     draw: (r): Pair => ({ a: between(r, 12, 35), b: between(r, 12, 35) }),
+    valid: (p: Pair) => p.a !== p.b,
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
     traps: twoDigit,
@@ -180,9 +222,18 @@ const compare: readonly Spec<never>[] = [
     node: "N1",
     subtype: "compare",
     form: "two-lengths-in-centimetres",
+    roles: {
+      a: "length of the first ribbon in centimetres",
+      b: "length of the second ribbon in centimetres",
+    },
     groups: [4, 4],
     answer: "compare",
-    draw: (r): Pair => ({ a: between(r, 10, 99), b: between(r, 10, 99) }),
+    // Both lengths have the same tens, so only the ones decide.
+    draw: (r): Pair => {
+      const t = 10 * between(r, 1, 9);
+      return { a: t + between(r, 0, 9), b: t + between(r, 0, 9) };
+    },
+    valid: (p: Pair) => p.a !== p.b,
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
     traps: twoDigit,
@@ -198,7 +249,7 @@ const compare: readonly Spec<never>[] = [
     answer: "compare",
     draw: (r) => ({
       t: between(r, 1, 9),
-      o: between(r, 0, 9),
+      o: between(r, 1, 9),
       n: between(r, 10, 99),
     }),
     solve: (p: { t: number; o: number; n: number }) =>
@@ -428,6 +479,212 @@ const compare: readonly Spec<never>[] = [
     }),
     constants: CONSTANTS,
   } satisfies Spec<Pair>,
+  {
+    id: "N1.compare.14",
+    node: "N1",
+    subtype: "compare",
+    form: "largest-of-four-two-digit-numbers",
+    groups: [4, 4],
+    answer: "choice",
+    draw: (r): Four => {
+      const v: number[] = [];
+      while (v.length < 4) {
+        const x = between(r, 21, 98);
+        if (!v.includes(x)) v.push(x);
+      }
+      return { v, by: r.int(4) };
+    },
+    // One option wins by its ones digit and another by its digit sum, and neither is the greatest.
+    valid: (p: Four) => {
+      const top = Math.max(...p.v);
+      const last = uniqueMax(p.v, (n) => n % 10);
+      const sum = uniqueMax(p.v, sumOfDigits);
+      return (
+        last !== null &&
+        sum !== null &&
+        last !== top &&
+        sum !== top &&
+        last !== sum
+      );
+    },
+    options: (p: Four) => rotate(p.v.map(digits), p.by),
+    solve: (p: Four) => digits(Math.max(...p.v)),
+    reference: (p: Four) =>
+      rotate(p.v.map(digits), p.by).reduce((a, b) =>
+        Number(a) > Number(b) ? a : b,
+      ),
+    traps: [
+      {
+        id: "last-digit",
+        kind: "conceptual" as const,
+        wrong: (p: Four) => digits(uniqueMax(p.v, (n) => n % 10) ?? 0),
+      },
+      {
+        id: "digit-sum",
+        kind: "conceptual" as const,
+        wrong: (p: Four) => digits(uniqueMax(p.v, sumOfDigits) ?? 0),
+      },
+    ],
+    vars: (p: Four) => ({
+      a: String(p.v[0]),
+      b: String(p.v[1]),
+      c: String(p.v[2]),
+      d: String(p.v[3]),
+      r: digits(Math.max(...p.v)),
+    }),
+    constants: CONSTANTS,
+  } satisfies Spec<Four>,
+  {
+    id: "N1.compare.15",
+    node: "N1",
+    subtype: "compare",
+    form: "tens-against-ones",
+    groups: [4, 4],
+    answer: "compare",
+    draw: (r): TensOnes => {
+      const t = between(r, 2, 9);
+      const u = between(r, 1, 9);
+      const k = r.int(3);
+      return {
+        t,
+        n: k === 0 ? 10 * t : k === 1 ? Math.min(99, 10 * t + u) : 10 * t - u,
+      };
+    },
+    solve: (p: TensOnes) => signOf(10 * p.t, p.n),
+    reference: (p: TensOnes) => bySubtraction(10 * p.t, p.n),
+    traps: signTraps<TensOnes>([
+      ["face-value", "conceptual", (p) => signOf(p.t, p.n)],
+      ["tens-only", "conceptual", (p) => signOf(p.t, tens(p.n))],
+      ["swapped-sign", "fact", (p) => turned(signOf(10 * p.t, p.n))],
+    ]),
+    vars: (p: TensOnes) => ({
+      t: String(p.t),
+      n: String(p.n),
+      m: String(10 * p.t),
+      sign: signOf(10 * p.t, p.n),
+    }),
+    constants: CONSTANTS,
+  } satisfies Spec<TensOnes>,
+  {
+    id: "N1.compare.16",
+    node: "N1",
+    subtype: "compare",
+    form: "how-many-digits-make-the-number-greater",
+    groups: [4, 4],
+    origin: {
+      olympiad:
+        "digit puzzle: how many digits fit an inequality, the counting items of RES-4281 (Kangoeroe 2003, Dutch group 5 'one 9 in it')",
+    },
+    answer: "integer",
+    draw: (r): Pair => ({ a: between(r, 1, 9), b: between(r, 1, 8) }),
+    solve: (p: Pair) => qi(9 - p.b),
+    reference: (p: Pair) =>
+      qi(
+        Array.from({ length: 10 }, (_, d) => d).filter(
+          (d) => 10 * p.a + d > 10 * p.a + p.b,
+        ).length,
+      ),
+    traps: numberTraps<Pair>([
+      ["equal-counts", "conceptual", (p) => 10 - p.b],
+      ["opposite-side", "conceptual", (p) => p.b],
+    ]),
+    vars: (p: Pair) => ({
+      t: String(p.a),
+      u: String(p.b),
+      n: String(10 * p.a + p.b),
+      r: String(9 - p.b),
+    }),
+    constants: [1, 9, 10],
+  } satisfies Spec<Pair>,
+  {
+    id: "N1.compare.17",
+    node: "N1",
+    subtype: "compare",
+    form: "how-many-two-digit-numbers-are-greater",
+    groups: [4, 4],
+    origin: {
+      olympiad:
+        "a clever count of the numbers above a given one, the 'how many whole numbers fit' items of RES-4281 (Kangoeroe 2003)",
+    },
+    answer: "integer",
+    draw: (r): One => ({ a: between(r, 10, 96) }),
+    valid: (p: One) => p.a % 10 !== 9,
+    solve: (p: One) => qi(99 - p.a),
+    reference: (p: One) =>
+      qi(
+        Array.from({ length: 90 }, (_, i) => 10 + i).filter((x) => x > p.a)
+          .length,
+      ),
+    traps: numberTraps<One>([
+      ["counts-the-number-itself", "conceptual", (p) => 100 - p.a],
+      ["whole-tens-only", "procedural", (p) => 10 * (9 - tens(p.a))],
+    ]),
+    vars: (p: One) => ({
+      a: String(p.a),
+      f: String(p.a + 1),
+      r: String(99 - p.a),
+    }),
+    constants: [1, 99],
+  } satisfies Spec<One>,
+  {
+    id: "N1.compare.18",
+    node: "N1",
+    subtype: "compare",
+    form: "tens-and-ones-with-ten-or-more-ones",
+    groups: [4, 4],
+    answer: "compare",
+    draw: (r) => {
+      const t2 = between(r, 2, 8);
+      return {
+        t: between(r, 1, t2),
+        o: between(r, 10, 19),
+        t2,
+        o2: between(r, 1, 9),
+      };
+    },
+    valid: (p: Unnormalised) =>
+      10 * p.t + p.o <= 99 &&
+      signOf(p.t, p.t2) !== signOf(10 * p.t + p.o, 10 * p.t2 + p.o2),
+    solve: (p: Unnormalised) => signOf(10 * p.t + p.o, 10 * p.t2 + p.o2),
+    reference: (p: Unnormalised) =>
+      bySubtraction(10 * p.t + p.o - 10 * p.t2, p.o2),
+    traps: signTraps<Unnormalised>([
+      ["tens-only", "conceptual", (p) => signOf(p.t, p.t2)],
+      ["ones-only", "conceptual", (p) => signOf(p.o, p.o2)],
+      [
+        "swapped-sign",
+        "fact",
+        (p) => turned(signOf(10 * p.t + p.o, 10 * p.t2 + p.o2)),
+      ],
+    ]),
+    vars: (p: Unnormalised) => ({
+      t: String(p.t),
+      o: String(p.o),
+      t2: String(p.t2),
+      o2: String(p.o2),
+      m: String(10 * p.t + p.o),
+      k: String(10 * p.t2 + p.o2),
+      sign: signOf(10 * p.t + p.o, 10 * p.t2 + p.o2),
+    }),
+    constants: CONSTANTS,
+  } satisfies Spec<Unnormalised>,
+  {
+    id: "N1.compare.19",
+    node: "N1",
+    subtype: "compare",
+    form: "two-groups-of-circles-in-a-picture",
+    groups: [2, 3],
+    answer: "compare",
+    draw: (r): Pair => {
+      const a = between(r, 3, 19);
+      return { a, b: r.int(6) === 0 ? a : between(r, 3, 19) };
+    },
+    solve: (p: Pair) => signOf(p.a, p.b),
+    reference: (p: Pair) => bySubtraction(p.a, p.b),
+    traps: toTwenty,
+    vars: pairVars,
+    constants: CONSTANTS,
+  } satisfies Spec<Pair>,
 ] as unknown as readonly Spec<never>[];
 
 interface One {
@@ -564,16 +821,29 @@ const beforeAfter: readonly Spec<never>[] = [
     node: "N1",
     subtype: "before-after",
     form: "next-house-number",
+    roles: {
+      a: "first house number on one side of a street",
+      b: "second house number on the same side",
+      c: "third house number on the same side",
+    },
     groups: [3, 4],
     answer: "integer",
-    draw: (r): One => ({ a: between(r, 1, 98) }),
-    solve: (p: One) => qi(p.a + 1),
-    reference: (p: One) => qi(p.a - -1),
+    // The houses of one side of a street are numbered in twos.
+    draw: (r): One => ({ a: between(r, 1, 93) }),
+    solve: (p: One) => qi(p.a + 6),
+    reference: (p: One) =>
+      qi([p.a, p.a + 2, p.a + 4].map((x) => x + 2).at(-1) ?? -1),
     traps: numberTraps<One>([
-      ["before-instead", "conceptual", (p) => p.a - 1],
-      ["same-side-house", "conceptual", (p) => p.a + 2],
+      ["next-number", "conceptual", (p) => p.a + 5],
+      ["repeat-last", "conceptual", (p) => p.a + 4],
     ]),
-    vars: (p: One) => ({ a: r1(p.a), r: r1(p.a + 1), p: r1(p.a - 1) }),
+    vars: (p: One) => ({
+      a: r1(p.a),
+      b: r1(p.a + 2),
+      c: r1(p.a + 4),
+      r: r1(p.a + 6),
+      n: r1(p.a + 5),
+    }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
   {
@@ -646,14 +916,14 @@ const beforeAfter: readonly Spec<never>[] = [
     form: "one-more-than",
     groups: [3, 4],
     answer: "integer",
-    draw: (r): One => ({ a: between(r, 10, 98) }),
-    solve: (p: One) => qi(p.a + 1),
-    reference: (p: One) => qi(p.a + 11 - 10),
+    draw: (r): One => ({ a: between(r, 10, 97) }),
+    solve: (p: One) => qi(p.a + 2),
+    reference: (p: One) => qi(p.a + 11 - 9),
     traps: numberTraps<One>([
-      ["plus-ten", "procedural", (p) => p.a + 10],
-      ["less-instead", "conceptual", (p) => p.a - 1],
+      ["one-step", "procedural", (p) => p.a + 1],
+      ["back-and-forth", "conceptual", (p) => p.a],
     ]),
-    vars: (p: One) => ({ a: r1(p.a), r: r1(p.a + 1), w: r1(p.a + 10) }),
+    vars: (p: One) => ({ a: r1(p.a), m: r1(p.a + 1), r: r1(p.a + 2) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
   {
@@ -663,14 +933,14 @@ const beforeAfter: readonly Spec<never>[] = [
     form: "one-less-than",
     groups: [3, 4],
     answer: "integer",
-    draw: (r): One => ({ a: between(r, 11, 99) }),
-    solve: (p: One) => qi(p.a - 1),
-    reference: (p: One) => qi(p.a - 11 + 10),
+    draw: (r): One => ({ a: between(r, 12, 99) }),
+    solve: (p: One) => qi(p.a - 2),
+    reference: (p: One) => qi(p.a - 11 + 9),
     traps: numberTraps<One>([
-      ["minus-ten", "procedural", (p) => p.a - 10],
-      ["more-instead", "conceptual", (p) => p.a + 1],
+      ["one-step", "procedural", (p) => p.a - 1],
+      ["back-and-forth", "conceptual", (p) => p.a],
     ]),
-    vars: (p: One) => ({ a: r1(p.a), r: r1(p.a - 1), w: r1(p.a - 10) }),
+    vars: (p: One) => ({ a: r1(p.a), m: r1(p.a - 1), r: r1(p.a - 2) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
   {
@@ -760,6 +1030,174 @@ const beforeAfter: readonly Spec<never>[] = [
       words: numberWords(p.a),
       r: r1(p.a + 1),
       p: r1(p.a - 1),
+    }),
+    constants: CONSTANTS,
+  } satisfies Spec<One>,
+  {
+    id: "N1.before-after.16",
+    node: "N1",
+    subtype: "before-after",
+    form: "sum-of-the-two-neighbours",
+    groups: [4, 4],
+    origin: {
+      olympiad:
+        "the two neighbours of a number are balanced around it, so their sum is twice the number; RES-4281 (MCCME school stage 2021 style)",
+    },
+    answer: "integer",
+    draw: (r): One => ({ a: between(r, 6, 49) }),
+    solve: (p: One) => qi((2 * p.a) / 2),
+    reference: (p: One) => {
+      const s = 2 * p.a;
+      for (let n = 1; n < s; n += 1) if (n - 1 + (n + 1) === s) return qi(n);
+      return qi(-1);
+    },
+    traps: numberTraps<One>([
+      ["the-number-before", "conceptual", (p) => p.a - 1],
+      ["the-number-after", "conceptual", (p) => p.a + 1],
+    ]),
+    vars: (p: One) => ({
+      s: r1(2 * p.a),
+      r: r1(p.a),
+      lo: r1(p.a - 1),
+      hi: r1(p.a + 1),
+    }),
+    constants: CONSTANTS,
+  } satisfies Spec<One>,
+  {
+    id: "N1.before-after.17",
+    node: "N1",
+    subtype: "before-after",
+    form: "even-numbers-between",
+    groups: [4, 4],
+    answer: "integer",
+    draw: (r) => {
+      const a = between(r, 11, 60);
+      return { a, b: a + between(r, 8, 25) };
+    },
+    solve: (p: { a: number; b: number }) =>
+      qi(Math.floor((p.b - 1) / 2) - Math.floor(p.a / 2)),
+    reference: (p: { a: number; b: number }) =>
+      qi(
+        Array.from({ length: p.b - p.a - 1 }, (_, i) => p.a + 1 + i).filter(
+          (x) => x % 2 === 0,
+        ).length,
+      ),
+    traps: numberTraps<{ a: number; b: number }>([
+      ["all-numbers", "conceptual", (p) => p.b - p.a - 1],
+      [
+        "ends-included",
+        "conceptual",
+        (p) => Math.floor(p.b / 2) - Math.floor((p.a - 1) / 2),
+      ],
+      ["half-of-difference", "procedural", (p) => Math.floor((p.b - p.a) / 2)],
+    ]),
+    vars: (p: { a: number; b: number }) => {
+      const first = p.a % 2 === 0 ? p.a + 2 : p.a + 1;
+      const last = p.b % 2 === 0 ? p.b - 2 : p.b - 1;
+      return {
+        a: r1(p.a),
+        b: r1(p.b),
+        n: r1(p.b - p.a - 1),
+        f: r1(first),
+        l: r1(last),
+        r: r1(Math.floor((p.b - 1) / 2) - Math.floor(p.a / 2)),
+      };
+    },
+    constants: CONSTANTS,
+  } satisfies Spec<{ a: number; b: number }>,
+  {
+    id: "N1.before-after.18",
+    node: "N1",
+    subtype: "before-after",
+    form: "digits-in-the-page-numbers",
+    roles: { a: "number of the last page of the book" },
+    groups: [4, 4],
+    origin: {
+      olympiad:
+        "a clever count of digits in a row of numbers, split by the number of digits; RES-4281 (MCCME school stage 2021, Kangaroo style)",
+    },
+    answer: "integer",
+    draw: (r): One => ({ a: between(r, 12, 39) }),
+    solve: (p: One) => qi(9 + 2 * (p.a - 9)),
+    reference: (p: One) =>
+      qi(
+        Array.from({ length: p.a }, (_, i) => String(i + 1).length).reduce(
+          (x, y) => x + y,
+          0,
+        ),
+      ),
+    traps: numberTraps<One>([
+      ["one-digit-each", "conceptual", (p) => p.a],
+      ["two-digits-each", "conceptual", (p) => 2 * p.a],
+      ["single-pages-forgotten", "procedural", (p) => 2 * (p.a - 9)],
+    ]),
+    vars: (p: One) => ({
+      a: r1(p.a),
+      m: r1(p.a - 9),
+      d: r1(2 * (p.a - 9)),
+      r: r1(9 + 2 * (p.a - 9)),
+    }),
+    constants: [1, 2, 9, 10],
+  } satisfies Spec<One>,
+  {
+    id: "N1.before-after.19",
+    node: "N1",
+    subtype: "before-after",
+    form: "last-number-of-a-row",
+    roles: {
+      a: "first number of the row",
+      k: "how many numbers the row holds",
+    },
+    groups: [4, 4],
+    answer: "integer",
+    draw: (r) => ({ a: between(r, 5, 80), k: between(r, 5, 15) }),
+    solve: (p: { a: number; k: number }) => qi(p.a + p.k - 1),
+    reference: (p: { a: number; k: number }) =>
+      qi(Array.from({ length: p.k }, (_, i) => p.a + i).at(-1) ?? -1),
+    traps: numberTraps<{ a: number; k: number }>([
+      ["first-counted-twice", "conceptual", (p) => p.a + p.k],
+      ["both-ends-removed", "procedural", (p) => p.a + p.k - 2],
+    ]),
+    vars: (p: { a: number; k: number }) => ({
+      a: r1(p.a),
+      k: r1(p.k),
+      j: r1(p.k - 1),
+      r: r1(p.a + p.k - 1),
+    }),
+    constants: CONSTANTS,
+  } satisfies Spec<{ a: number; k: number }>,
+  {
+    id: "N1.before-after.20",
+    node: "N1",
+    subtype: "before-after",
+    form: "the-number-before-and-the-number-after",
+    groups: [3, 4],
+    answer: "pair",
+    draw: (r): One => ({ a: between(r, 11, 98) }),
+    solve: (p: One) => [qi(p.a - 1), qi(p.a + 1)] as const,
+    reference: (p: One) => [qi(p.a + 1 - 2), qi(p.a - 1 + 2)] as const,
+    traps: [
+      {
+        id: "order-swapped",
+        kind: "conceptual" as const,
+        wrong: (p: One) => [qi(p.a + 1), qi(p.a - 1)] as const,
+      },
+      {
+        id: "two-away",
+        kind: "procedural" as const,
+        wrong: (p: One) => [qi(p.a - 2), qi(p.a + 2)] as const,
+      },
+      {
+        id: "both-after",
+        kind: "conceptual" as const,
+        wrong: (p: One) => [qi(p.a + 1), qi(p.a + 2)] as const,
+      },
+    ],
+    vars: (p: One) => ({
+      a: r1(p.a),
+      lo: r1(p.a - 1),
+      hi: r1(p.a + 1),
+      r: `${p.a - 1}; ${p.a + 1}`,
     }),
     constants: CONSTANTS,
   } satisfies Spec<One>,

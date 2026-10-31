@@ -28,7 +28,16 @@ import {
   UNREACHABLE,
 } from "./api.js";
 import { flushOnce, retryClock, submitAnswer } from "./answer-queue.js";
-import { act, button, el, heading, link, math, status } from "./controls.js";
+import {
+  act,
+  button,
+  el,
+  focusField,
+  heading,
+  link,
+  math,
+  status,
+} from "./controls.js";
 import type { Screen } from "./screens.js";
 import {
   firstLayout,
@@ -135,6 +144,7 @@ export const playScreen: Screen = {
     const draw = (...children: Node[]): void => {
       section.replaceChildren(heading("ui.play.title"), ...children);
       delete section.dataset["busy"];
+      focusField(section);
     };
 
     /** Another device holds the adventure: nothing here can play or answer any more (REQ-0222). */
@@ -432,6 +442,8 @@ export const playScreen: Screen = {
             pickedLine.replaceChildren(...math(chosen()));
           }
         });
+        if (label.length > 1 || /\d/.test(label))
+          b.dataset["key"] = String(i + 1);
         return b;
       });
       const undo = (): void => {
@@ -559,6 +571,13 @@ export const playScreen: Screen = {
         value: scene.draft ?? "",
       });
       field.dataset["action"] = "scene-draft";
+      field.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" || e.shiftKey || e.isComposing) return;
+        e.preventDefault();
+        document
+          .querySelector<HTMLElement>('[data-action="scene-send"]')
+          ?.click();
+      });
       // The draft goes out at once when none went in the last 10 seconds and
       // otherwise once the 10 seconds are up, so the last text isn't lost.
       let sentAt = -Infinity;

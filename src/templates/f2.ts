@@ -61,28 +61,21 @@ const equivalent = [
     id: "F4.equivalent.03",
     form: "write-a-fraction-equal-to-a-given-one",
     groups: [6, 7],
-    kind: "fraction",
-    rule: "equivalent",
+    kind: "pair",
     draw: (r) => [between(r, 1, 5), between(r, 2, 8), between(r, 2, 5)],
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
-    solve: ([n = 0, d = 0]) => q(n, d),
-    ref: ([n = 0, d = 0, k = 0]) => q(n * k, d * k),
+    solve: ([n = 0, d = 0, k = 0]) => [q(n * k), q(d * k)],
+    ref: ([n = 0, d = 0, k = 0]) => [q(n).mul(q(k)), q(d).mul(q(k))],
     traps: [
-      [
-        "different-value",
-        "conceptual",
-        ([n = 0, d = 0, k = 0]) => q(n + k, d + k),
-      ],
       [
         "numerator-unchanged",
         "conceptual",
-        ([n = 0, d = 0, k = 0]) => q(n, d * k),
+        ([n = 0, d = 0, k = 0]) => [q(n), q(d * k)],
       ],
       [
-        "numerator-only-multiplied",
+        "same-difference",
         "conceptual",
-        ([n = 0, d = 0, k = 0]) =>
-          n * k * (d + k) === (n + k) * d ? null : q(n * k, d),
+        ([n = 0, d = 0, k = 0]) => [q(n + d * k - d), q(d * k)],
       ],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n, d), e: String(d * k) }),
@@ -343,25 +336,28 @@ const simplify = [
     kind: "integer",
     draw: (r) => [between(r, 1, 5), between(r, 2, 7), pick(r, COMPOSITE)],
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
-    solve: ([n = 0]) => q(n),
-    ref: ([n = 0, d = 0, k = 0]) => q(n * k).div(q(gcd(n * k, d * k))),
+    solve: ([n = 0, , k = 0]) => q((n * k) / (k % 2 === 0 ? 2 : 3)),
+    ref: ([n = 0, , k = 0]) => q(n * k).div(q(k % 2 === 0 ? 2 : 3)),
     traps: [
-      ["the-denominator", "conceptual", ([, d = 0]) => q(d)],
+      ["reduced-fully", "conceptual", ([n = 0]) => q(n)],
       [
-        "numerator-unreduced",
+        "numerator-minus-the-divisor",
         "procedural",
-        ([n = 0, d = 0, k = 0]) => (n * k === d ? null : q(n * k)),
-      ],
-      [
-        "reduced-halfway",
-        "procedural",
-        ([n = 0, d = 0, k = 0]) => {
-          const h = k % 2 === 0 ? (n * k) / 2 : (n * k) / 3;
-          return h === d ? null : q(h);
+        ([n = 0, , k = 0]) => {
+          const m = k % 2 === 0 ? 2 : 3;
+          return n * k - m === (n * k) / m ? null : q(n * k - m);
         },
       ],
+      [
+        "the-denominator-divided",
+        "conceptual",
+        ([, d = 0, k = 0]) => q((d * k) / (k % 2 === 0 ? 2 : 3)),
+      ],
     ],
-    extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n * k, d * k) }),
+    extra: ([n = 0, d = 0, k = 0]) => ({
+      f: fr(n * k, d * k),
+      m: String(k % 2 === 0 ? 2 : 3),
+    }),
   }),
   f4s({
     id: "F4.simplify.04",
@@ -632,7 +628,11 @@ const addLike = [
         ([a = 0, b = 0, d = 0]) => (a === b ? null : q(Math.abs(a - b), d)),
       ],
     ],
-    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+    extra: ([a = 0, b = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(b, d),
+      r: fr(a + b, d),
+    }),
   }),
   f5({
     id: "F5.add-same-den.02",
@@ -652,7 +652,11 @@ const addLike = [
       ],
       ["dropped-the-denominator", "conceptual", ([a = 0, b = 0]) => q(a - b)],
     ],
-    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+    extra: ([a = 0, b = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(b, d),
+      r: fr(a - b, d),
+    }),
   }),
   f5({
     id: "F5.add-same-den.03",
@@ -694,7 +698,7 @@ const addLike = [
         ([a = 0, d = 0]) => ((d - a) % a === 0 ? null : q(d - a, a)),
       ],
     ],
-    extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
+    extra: ([a = 0, d = 0]) => ({ f: fr(a, d), r: fr(d - a, d) }),
     consts: [1],
   }),
   f5({
@@ -720,7 +724,11 @@ const addLike = [
         ([a = 0, b = 0, d = 0]) => (a === b ? null : q(Math.abs(a - b), d)),
       ],
     ],
-    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+    extra: ([a = 0, b = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(b, d),
+      r: fr(a + b, d),
+    }),
   }),
   f5({
     id: "F5.add-same-den.06",
@@ -741,7 +749,7 @@ const addLike = [
         ([a = 0, d = 0]) => ((d - a) % a === 0 ? null : q(d - a, a)),
       ],
     ],
-    extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
+    extra: ([a = 0, d = 0]) => ({ f: fr(a, d), r: fr(d - a, d) }),
     consts: [1],
   }),
   f5({
@@ -839,6 +847,7 @@ const addLike = [
       f: fr(x, d),
       g: fr(a, d),
       h: fr(b, d),
+      r: fr(x - a - b, d),
     }),
   }),
   f5({
@@ -1210,9 +1219,713 @@ const mixedNumbers = [
   }),
 ];
 
+const argmax = (list: readonly number[]): number =>
+  list.indexOf(Math.max(...list));
+const reducedText = (n: number, d: number): string =>
+  fr(n / gcd(n, d), d / gcd(n, d));
+
+/** Three equal fractions and one that differs, the odd one placed at index `pos`. */
+function oddOne(v: readonly number[]): {
+  readonly list: readonly string[];
+  readonly numerators: readonly number[];
+  readonly denominators: readonly number[];
+  readonly pos: number;
+} {
+  const [n = 0, d = 0, k1 = 0, k2 = 0, k3 = 0, k4 = 0, pos = 0, shift = 0] = v;
+  const equal = [k1, k2, k3].map((k) => [n * k, d * k] as const);
+  const odd = [n * k4 + shift, d * k4] as const;
+  const all = [...equal.slice(0, pos), odd, ...equal.slice(pos)];
+  return {
+    list: all.map(([x, y]) => fr(x, y)),
+    numerators: all.map(([x]) => x),
+    denominators: all.map(([, y]) => y),
+    pos,
+  };
+}
+
+const IRREDUCIBLE: readonly (readonly [number, number])[] = [
+  [3, 8],
+  [5, 12],
+  [7, 9],
+  [4, 9],
+  [5, 8],
+  [7, 10],
+  [9, 14],
+  [11, 12],
+  [5, 6],
+  [2, 9],
+  [8, 15],
+  [7, 12],
+];
+const BOTH_EVEN: readonly (readonly [number, number])[] = [
+  [4, 6],
+  [6, 10],
+  [4, 10],
+  [8, 12],
+  [6, 8],
+  [10, 14],
+];
+const BY_THREE: readonly (readonly [number, number])[] = [
+  [3, 9],
+  [3, 15],
+  [9, 15],
+  [15, 21],
+];
+const BY_FIVE: readonly (readonly [number, number])[] = [
+  [5, 10],
+  [10, 15],
+  [5, 15],
+  [15, 20],
+];
+
+/** The four fractions of the "which is irreducible" task, the irreducible one at `pos`. */
+function irreducibleLayout(v: readonly number[]): {
+  readonly list: readonly string[];
+  readonly at: Record<"irr" | "even" | "three" | "five", number>;
+  readonly parts: Record<"irr" | "even" | "three" | "five", string>;
+} {
+  const [pos = 0, i = 0, j = 0, k = 0, m = 0] = v;
+  const irr = IRREDUCIBLE[i] ?? [3, 8];
+  const even = BOTH_EVEN[j] ?? [4, 6];
+  const three = BY_THREE[k] ?? [3, 9];
+  const five = BY_FIVE[m] ?? [5, 10];
+  const others = [
+    ["even", even],
+    ["three", three],
+    ["five", five],
+  ] as const;
+  const order: ("irr" | "even" | "three" | "five")[] = [];
+  let next = 0;
+  for (let slot = 0; slot < 4; slot += 1)
+    order.push(slot === pos ? "irr" : (others[next++]?.[0] ?? "even"));
+  const pair = { irr, even, three, five };
+  const text = (key: keyof typeof pair): string => fr(...pair[key]);
+  return {
+    list: order.map(text),
+    at: {
+      irr: order.indexOf("irr"),
+      even: order.indexOf("even"),
+      three: order.indexOf("three"),
+      five: order.indexOf("five"),
+    },
+    parts: {
+      irr: text("irr"),
+      even: text("even"),
+      three: text("three"),
+      five: text("five"),
+    },
+  };
+}
+
+const equivalentMore = [
+  f4({
+    id: "F4.equivalent.12",
+    form: "the-odd-one-out-among-equal-fractions",
+    groups: [6, 7],
+    kind: "choice",
+    draw: (r) => {
+      const k1 = between(r, 2, 3);
+      const k2 = k1 + between(r, 1, 2);
+      const k3 = k2 + between(r, 1, 2);
+      return [
+        between(r, 1, 5),
+        between(r, 2, 8),
+        k1,
+        k2,
+        k3,
+        between(r, 2, 6),
+        r.int(4),
+        between(r, 1, 2),
+      ];
+    },
+    valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
+    options: () => ["1", "2", "3", "4"],
+    solve: (v) => String(oddOne(v).pos + 1),
+    ref: (v) => {
+      const o = oddOne(v);
+      const [n = 0, d = 0] = v;
+      return String(
+        o.numerators.findIndex(
+          (x, i) => x * d !== n * (o.denominators[i] ?? 1),
+        ) + 1,
+      );
+    },
+    traps: [
+      [
+        "largest-numerator",
+        "conceptual",
+        (v) => {
+          const o = oddOne(v);
+          const i = argmax(o.numerators);
+          return i === o.pos ? null : String(i + 1);
+        },
+      ],
+      [
+        "largest-denominator",
+        "conceptual",
+        (v) => {
+          const o = oddOne(v);
+          const i = argmax(o.denominators);
+          return i === o.pos || i === argmax(o.numerators)
+            ? null
+            : String(i + 1);
+        },
+      ],
+      [
+        "looks-different",
+        "conceptual",
+        (v) => {
+          const o = oddOne(v);
+          const used = [o.pos, argmax(o.numerators), argmax(o.denominators)];
+          const free = [0, 1, 2, 3].find((i) => !used.includes(i));
+          return free === undefined ? null : String(free + 1);
+        },
+      ],
+    ],
+    extra: (v) => {
+      const o = oddOne(v);
+      const [n = 0, d = 0] = v;
+      const reduced = o.numerators.map((x, i) =>
+        reducedText(x, o.denominators[i] ?? 1),
+      );
+      return {
+        p: o.list[0] ?? "",
+        s: o.list[1] ?? "",
+        t: o.list[2] ?? "",
+        u: o.list[3] ?? "",
+        x: reduced[0] ?? "",
+        y: reduced[1] ?? "",
+        z: reduced[2] ?? "",
+        w: reduced[3] ?? "",
+        e: fr(n, d),
+      };
+    },
+    consts: [1, 2, 3, 4],
+  }),
+  f4({
+    id: "F4.equivalent.13",
+    form: "two-missing-numbers-in-a-chain-of-equal-fractions",
+    groups: [6, 7],
+    kind: "pair",
+    draw: (r) => [
+      between(r, 1, 5),
+      between(r, 2, 8),
+      between(r, 2, 5),
+      between(r, 2, 5),
+    ],
+    valid: ([n = 0, d = 0, k1 = 0, k2 = 0]) =>
+      n < d && coprime(n, d) && k1 !== k2,
+    solve: ([n = 0, d = 0, k1 = 0, k2 = 0]) => [q(n * k1), q(d * k2)],
+    ref: ([n = 0, d = 0, k1 = 0, k2 = 0]) => [q(n).mul(q(k1)), q(d).mul(q(k2))],
+    traps: [
+      [
+        "swapped",
+        "conceptual",
+        ([n = 0, d = 0, k1 = 0, k2 = 0]) => [q(d * k2), q(n * k1)],
+      ],
+      [
+        "same-gap",
+        "conceptual",
+        ([n = 0, d = 0, k1 = 0, k2 = 0]) => [
+          q(n + d * k1 - d),
+          q(d + n * k2 - n),
+        ],
+      ],
+    ],
+    extra: ([n = 0, d = 0, k1 = 0, k2 = 0]) => ({
+      f: fr(n, d),
+      e: String(d * k1),
+      g: String(n * k2),
+    }),
+  }),
+  f4({
+    id: "F4.equivalent.14",
+    form: "the-numerator-from-the-sum-of-its-parts",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "the parts of a fraction from the sum of numerator and denominator, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) => [between(r, 1, 5), between(r, 2, 8), between(r, 2, 9)],
+    valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
+    solve: ([n = 0, , k = 0]) => q(n * k),
+    ref: ([n = 0, d = 0, k = 0]) => q((n + d) * k).mul(q(n, n + d)),
+    traps: [
+      ["the-denominator", "conceptual", ([, d = 0, k = 0]) => q(d * k)],
+      ["the-given-numerator", "conceptual", ([n = 0]) => q(n)],
+      [
+        "half-of-the-sum",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) =>
+          ((n + d) * k) % 2 === 0 && ((n + d) * k) / 2 !== n * k
+            ? q(((n + d) * k) / 2)
+            : null,
+      ],
+    ],
+    extra: ([n = 0, d = 0, k = 0]) => ({
+      f: fr(n, d),
+      s: String((n + d) * k),
+    }),
+  }),
+  f4({
+    id: "F4.equivalent.15",
+    form: "is-the-equality-of-two-fractions-right",
+    groups: [6, 7],
+    kind: "choice",
+    draw: (r) => [
+      between(r, 1, 5),
+      between(r, 3, 8),
+      between(r, 2, 4),
+      pick(r, [0, 0, 1, 2]),
+    ],
+    valid: ([n = 0, d = 0, k = 0, t = 0]) =>
+      n < d && coprime(n, d) && !(t === 2 && d === 2 && k === 2),
+    options: () => ["1", "2"],
+    solve: ([, , , t = 0]) => (t === 0 ? "1" : "2"),
+    ref: ([n = 0, d = 0, k = 0, t = 0]) => {
+      const [x, y] =
+        t === 0 ? [n * k, d * k] : t === 1 ? [n + k, d + k] : [n * k, d + k];
+      return x * d === n * y ? "1" : "2";
+    },
+    traps: [
+      [
+        "thought-different",
+        "conceptual",
+        ([, , , t = 0]) => (t === 0 ? "2" : null),
+      ],
+      [
+        "added-the-same-number",
+        "conceptual",
+        ([, , , t = 0]) => (t === 1 ? "1" : null),
+      ],
+      [
+        "multiplied-only-the-numerator",
+        "conceptual",
+        ([, , , t = 0]) => (t === 2 ? "1" : null),
+      ],
+    ],
+    extra: ([n = 0, d = 0, k = 0, t = 0]) => {
+      const [x, y] =
+        t === 0 ? [n * k, d * k] : t === 1 ? [n + k, d + k] : [n * k, d + k];
+      return { f: fr(n, d), g: fr(x, y), x: String(x), y: String(y) };
+    },
+    consts: [1, 2],
+  }),
+];
+
+const phi = (d: number): number =>
+  Array.from({ length: d - 1 }, (_, i) => i + 1).filter((n) => gcd(n, d) === 1)
+    .length;
+
+const simplifyMore = [
+  f4s({
+    id: "F4.simplify.12",
+    form: "how-many-proper-fractions-are-irreducible",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "counting irreducible fractions with a given denominator, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) => [pick(r, [6, 8, 9, 10, 12, 14, 15])],
+    solve: ([d = 0]) => q(phi(d)),
+    ref: ([d = 0]) =>
+      q(
+        Array.from({ length: d - 1 }, (_, i) => i + 1).filter((n) =>
+          coprime(n, d),
+        ).length,
+      ),
+    traps: [
+      ["all-numerators", "conceptual", ([d = 0]) => q(d - 1)],
+      [
+        "only-evens-crossed-out",
+        "conceptual",
+        ([d = 0]) => {
+          const odd = Array.from({ length: d - 1 }, (_, i) => i + 1).filter(
+            (n) => n % 2 === 1,
+          ).length;
+          return odd === phi(d) ? null : q(odd);
+        },
+      ],
+    ],
+    extra: ([d = 0]) => {
+      const all = Array.from({ length: d - 1 }, (_, i) => i + 1);
+      return {
+        k: all.filter((n) => gcd(n, d) > 1).join("; "),
+        l: all.filter((n) => gcd(n, d) === 1).join("; "),
+      };
+    },
+    consts: [1],
+  }),
+  f4s({
+    id: "F4.simplify.13",
+    form: "cancel-a-fraction-of-products-before-multiplying",
+    groups: [7, 8],
+    kind: "fraction",
+    rule: "simplest",
+    draw: (r) => {
+      for (let tries = 0; tries < 200; tries += 1) {
+        const g1 = pick(r, [2, 3, 4]);
+        const g2 = pick(r, [2, 3, 5]);
+        const [p, u, w, s] = [
+          between(r, 1, 4),
+          between(r, 1, 5),
+          between(r, 1, 4),
+          between(r, 1, 5),
+        ];
+        if (
+          coprime(p, u) &&
+          coprime(w, s) &&
+          coprime(p * w, u * s) &&
+          w !== s &&
+          u * s > 1
+        )
+          return [p * g1, w * g2, u * g1, s * g2];
+      }
+      return [4, 9, 6, 6];
+    },
+    solve: ([a = 0, b = 0, c = 0, d = 0]) => q(a * b, c * d),
+    ref: ([a = 0, b = 0, c = 0, d = 0]) => q(a * b).div(q(c * d)),
+    traps: [
+      [
+        "factors-added",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) =>
+          (a + b) * c * d === (c + d) * a * b ? null : q(a + b, c + d),
+      ],
+      [
+        "upside-down",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) =>
+          a * b === c * d ? null : q(c * d, a * b),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
+      g: String(gcd(a, c)),
+      h: String(gcd(b, d)),
+    }),
+  }),
+  f4s({
+    id: "F4.simplify.14",
+    form: "wholes-out-of-an-improper-fraction-then-reduce",
+    groups: [7, 8],
+    kind: "mixed",
+    rule: "simplest",
+    draw: (r) => [
+      between(r, 1, 5),
+      between(r, 1, 5),
+      between(r, 2, 8),
+      between(r, 2, 4),
+    ],
+    valid: ([, n = 0, d = 0]) => n < d && coprime(n, d),
+    solve: ([w = 0, n = 0, d = 0]) => mix(w, n, d),
+    ref: ([w = 0, n = 0, d = 0, k = 0]) => q((w * d + n) * k, d * k),
+    traps: [
+      ["wholes-only", "conceptual", ([w = 0]) => q(w)],
+      ["remainder-only", "conceptual", ([, n = 0, d = 0]) => q(n, d)],
+    ],
+    extra: ([w = 0, n = 0, d = 0, k = 0]) => ({
+      f: fr((w * d + n) * k, d * k),
+      N: String((w * d + n) * k),
+      D: String(d * k),
+    }),
+  }),
+  f4s({
+    id: "F4.simplify.15",
+    form: "which-of-four-fractions-is-irreducible",
+    groups: [7, 8],
+    kind: "choice",
+    draw: (r) => [
+      r.int(4),
+      r.int(IRREDUCIBLE.length),
+      r.int(BOTH_EVEN.length),
+      r.int(BY_THREE.length),
+      r.int(BY_FIVE.length),
+    ],
+    options: () => ["1", "2", "3", "4"],
+    solve: (v) => String(irreducibleLayout(v).at.irr + 1),
+    ref: (v) => {
+      const l = irreducibleLayout(v);
+      const found = l.list.findIndex((text) => {
+        const [x = 0, y = 0] = text.split("⁄").map(Number);
+        return gcd(x, y) === 1;
+      });
+      return String(found + 1);
+    },
+    traps: [
+      [
+        "checked-only-evens",
+        "conceptual",
+        (v) => String(irreducibleLayout(v).at.three + 1),
+      ],
+      [
+        "checked-only-two-and-three",
+        "conceptual",
+        (v) => String(irreducibleLayout(v).at.five + 1),
+      ],
+    ],
+    extra: (v) => {
+      const l = irreducibleLayout(v);
+      return {
+        p: l.list[0] ?? "",
+        s: l.list[1] ?? "",
+        t: l.list[2] ?? "",
+        u: l.list[3] ?? "",
+        x: l.parts.even,
+        y: l.parts.three,
+        z: l.parts.five,
+        w: l.parts.irr,
+      };
+    },
+    consts: [1, 2, 3, 4, 5],
+  }),
+];
+
+const addLikeMore = [
+  f5({
+    id: "F5.add-same-den.12",
+    form: "the-missing-numerator-of-a-sum-of-like-fractions",
+    groups: [7, 7],
+    kind: "integer",
+    draw: (r) => [between(r, 1, 6), between(r, 1, 6), between(r, 8, 13)],
+    valid: ([a = 0, b = 0, d = 0]) => a + b < d && a !== b,
+    solve: ([, b = 0]) => q(b),
+    ref: ([a = 0, b = 0]) => q(a + b).sub(q(a)),
+    traps: [
+      ["the-sum-itself", "conceptual", ([a = 0, b = 0]) => q(a + b)],
+      ["added-instead", "procedural", ([a = 0, b = 0]) => q(2 * a + b)],
+    ],
+    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(a + b, d) }),
+  }),
+  f5({
+    id: "F5.add-same-den.13",
+    form: "two-colours-on-a-strip",
+    groups: [7, 7],
+    kind: "fraction",
+    rule: "equivalent",
+    draw: (r) => [between(r, 1, 5), between(r, 1, 5), between(r, 8, 12)],
+    valid: ([a = 0, b = 0, d = 0]) => a + b < d - 1 && a !== b,
+    solve: ([a = 0, b = 0, d = 0]) => q(a + b, d),
+    ref: ([a = 0, b = 0, d = 0]) => q(a, d).add(q(b, d)),
+    traps: [
+      ["only-red", "conceptual", ([a = 0, d = 0]) => q(a, d)],
+      ["unshaded", "conceptual", ([a = 0, b = 0, d = 0]) => q(d - a - b, d)],
+      [
+        "against-the-rest",
+        "conceptual",
+        ([a = 0, b = 0, d = 0]) =>
+          d - a - b === d ? null : q(a + b, d - a - b),
+      ],
+    ],
+    extra: ([a = 0, b = 0, d = 0]) => ({ r: fr(a + b, d) }),
+  }),
+  f5({
+    id: "F5.add-same-den.14",
+    form: "three-fractions-with-consecutive-numerators",
+    groups: [7, 8],
+    origin: { olympiad: "three consecutive numbers from their sum, RES-4284" },
+    kind: "fraction",
+    rule: "equivalent",
+    draw: (r) => [between(r, 1, 7), between(r, 10, 14)],
+    valid: ([m = 0, d = 0]) => m + 2 < d,
+    solve: ([m = 0, d = 0]) => q(m, d),
+    ref: ([m = 0, d = 0]) =>
+      q(3 * m + 3, d)
+        .sub(q(m + 1, d))
+        .sub(q(m + 2, d)),
+    traps: [
+      ["the-middle-fraction", "conceptual", ([m = 0, d = 0]) => q(m + 1, d)],
+      ["the-largest", "conceptual", ([m = 0, d = 0]) => q(m + 2, d)],
+    ],
+    extra: ([m = 0, d = 0]) => ({ s: fr(3 * m + 3, d), r: fr(m, d) }),
+    consts: [3],
+  }),
+  f5({
+    id: "F5.add-same-den.15",
+    form: "how-many-equal-fractions-pass-one",
+    groups: [7, 7],
+    kind: "integer",
+    draw: (r) => [between(r, 2, 5), between(r, 7, 13)],
+    valid: ([a = 0, d = 0]) => a < d,
+    solve: ([a = 0, d = 0]) => q(Math.floor(d / a) + 1),
+    ref: ([a = 0, d = 0]) => {
+      let k = 1;
+      while (k * a <= d) k += 1;
+      return q(k);
+    },
+    traps: [
+      ["rounded-down", "procedural", ([a = 0, d = 0]) => q(Math.floor(d / a))],
+      [
+        "the-denominator",
+        "conceptual",
+        ([a = 0, d = 0]) => (d === Math.floor(d / a) ? null : q(d)),
+      ],
+    ],
+    extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
+    consts: [1],
+  }),
+];
+
+const mixedMore = [
+  f5m({
+    id: "F5.mixed.12",
+    form: "read-a-mixed-number-from-strips",
+    groups: [6, 7],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => [between(r, 1, 3), between(r, 1, 7), between(r, 5, 9)],
+    valid: ([, n = 0, d = 0]) => n < d,
+    solve: ([w = 0, n = 0, d = 0]) => mix(w, n, d),
+    ref: ([w = 0, n = 0, d = 0]) => q(w * d + n, d),
+    traps: [
+      ["wholes-only", "conceptual", ([w = 0]) => q(w)],
+      ["only-the-partial-strip", "conceptual", ([, n = 0, d = 0]) => q(n, d)],
+      ["strips-counted", "conceptual", ([w = 0]) => q(w + 1)],
+    ],
+  }),
+  f5m({
+    id: "F5.mixed.13",
+    form: "a-whole-number-minus-a-mixed-number",
+    groups: [7, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => [
+      between(r, 4, 9),
+      between(r, 1, 3),
+      between(r, 1, 5),
+      between(r, 5, 9),
+    ],
+    valid: ([w = 0, m = 0, n = 0, d = 0]) => n < d && w > m + 1,
+    solve: ([w = 0, m = 0, n = 0, d = 0]) => q(w).sub(mix(m, n, d)),
+    ref: ([w = 0, m = 0, n = 0, d = 0]) => q(w * d - m * d - n, d),
+    traps: [
+      ["wholes-only", "conceptual", ([w = 0, m = 0]) => q(w - m)],
+      [
+        "forgot-to-borrow",
+        "procedural",
+        ([w = 0, m = 0, n = 0, d = 0]) => mix(w - m, n, d),
+      ],
+    ],
+    extra: ([, m = 0, n = 0, d = 0]) => ({ m: mixText(m, n, d) }),
+  }),
+  f5m({
+    id: "F5.mixed.14",
+    form: "how-many-equal-fractions-make-a-whole-number",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "the smallest count of equal fractions with a whole sum, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) =>
+      pick(r, [
+        [2, 6],
+        [3, 6],
+        [4, 6],
+        [2, 8],
+        [4, 8],
+        [6, 8],
+        [3, 9],
+        [6, 9],
+        [2, 10],
+        [4, 10],
+        [5, 10],
+        [3, 12],
+        [4, 12],
+        [6, 12],
+        [3, 4],
+        [5, 6],
+        [5, 8],
+        [7, 9],
+        [2, 5],
+        [3, 10],
+      ]),
+    solve: ([a = 0, d = 0]) => q(d / gcd(a, d)),
+    ref: ([a = 0, d = 0]) => {
+      let k = 1;
+      while ((k * a) % d !== 0) k += 1;
+      return q(k);
+    },
+    traps: [
+      [
+        "the-denominator",
+        "conceptual",
+        ([a = 0, d = 0]) => (gcd(a, d) === 1 ? null : q(d)),
+      ],
+      [
+        "the-product",
+        "conceptual",
+        ([a = 0, d = 0]) => (gcd(a, d) === a ? null : q(a * d)),
+      ],
+      [
+        "the-common-divisor",
+        "conceptual",
+        ([a = 0, d = 0]) =>
+          gcd(a, d) === d / gcd(a, d) || gcd(a, d) === 1 ? null : q(gcd(a, d)),
+      ],
+    ],
+    extra: ([a = 0, d = 0]) => {
+      const g = gcd(a, d);
+      return {
+        f: fr(a, d),
+        g: String(g),
+        t: String((d / g) * a),
+        w: String(((d / g) * a) / d),
+      };
+    },
+  }),
+  f5m({
+    id: "F5.mixed.15",
+    form: "the-midpoint-of-two-mixed-numbers",
+    groups: [7, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => {
+      const w1 = between(r, 1, 4);
+      return [
+        w1,
+        between(r, 1, 5),
+        w1 + between(r, 1, 4),
+        between(r, 1, 5),
+        between(r, 6, 10),
+      ];
+    },
+    valid: ([, n = 0, , m = 0, d = 0]) => n < d && m < d && n !== m,
+    solve: ([w1 = 0, n = 0, w2 = 0, m = 0, d = 0]) =>
+      mix(w1, n, d)
+        .add(mix(w2, m, d))
+        .div(q(2)),
+    ref: ([w1 = 0, n = 0, w2 = 0, m = 0, d = 0]) =>
+      q(w1 * d + n + w2 * d + m, 2 * d),
+    traps: [
+      [
+        "sum-not-halved",
+        "procedural",
+        ([w1 = 0, n = 0, w2 = 0, m = 0, d = 0]) =>
+          mix(w1, n, d).add(mix(w2, m, d)),
+      ],
+      [
+        "average-of-the-wholes",
+        "conceptual",
+        ([w1 = 0, , w2 = 0]) => q(w1 + w2, 2),
+      ],
+    ],
+    extra: ([w1 = 0, n = 0, w2 = 0, m = 0, d = 0]) => ({
+      f: mixText(w1, n, d),
+      g: mixText(w2, m, d),
+    }),
+    consts: [2],
+  }),
+];
+
 export const fSpecs2: readonly Spec<never>[] = [
   ...equivalent,
+  ...equivalentMore,
   ...simplify,
+  ...simplifyMore,
   ...addLike,
+  ...addLikeMore,
   ...mixedNumbers,
+  ...mixedMore,
 ];

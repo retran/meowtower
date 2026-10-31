@@ -3,8 +3,66 @@
 // plain blanks in `content/tasks-g.ru.json`. Generated from one table with the strings.
 import type { Q } from "../math/q.js";
 import { calc, of, rg } from "./kitc.js";
-import { q } from "./kitf.js";
+import { signed } from "./draw.js";
+import { q, tm } from "./kitf.js";
 import { SIGNS, type Spec } from "./spec.js";
+
+/** The ends of the shortest-path tasks: the steps right and the steps up. */
+export const GRID_PATHS: readonly (readonly [number, number])[] = [
+  [2, 2],
+  [2, 3],
+  [3, 3],
+  [2, 4],
+  [3, 4],
+];
+const legsOf = (i: number): [number, number] => {
+  const [u = 2, v = 2] = GRID_PATHS[i] ?? [];
+  return [u, v];
+};
+/** The number of shortest paths right and up over `u` by `v` steps: the binomial of the steps. */
+const paths = (u: number, v: number): number => {
+  let result = 1;
+  for (let i = 1; i <= Math.min(u, v); i += 1)
+    result = (result * (u + v - i + 1)) / i;
+  return result;
+};
+
+/**
+ * Four positions for a piece that made `n` moves on a grid: one it can reach, two whose sum of coordinates has the
+ * wrong parity and one that has the right parity but lies too far. `v` is the drawn list of the template.
+ */
+function reachOptions(v: readonly number[]): {
+  readonly points: readonly (readonly [number, number])[];
+  readonly answer: number;
+  readonly parity: number;
+  readonly far: number;
+  readonly distinct: boolean;
+} {
+  const [n = 5, pos = 0, farPick = 0, jc = 0, jw1 = 0, jw2 = 0, jf = 0] = v;
+  const t = v.slice(7);
+  const others = [0, 1, 2, 3].filter((i) => i !== pos);
+  const far = others[farPick % 3] ?? 0;
+  const wrong = others.filter((i) => i !== far);
+  const sums: number[] = [0, 0, 0, 0];
+  sums[pos] = n - 2 * (jc % (Math.floor((n - 1) / 2) + 1));
+  sums[far] = n + 2 + 2 * jf;
+  sums[wrong[0] ?? 0] = n - 1 - 2 * (jw1 % (Math.floor((n - 2) / 2) + 1));
+  sums[wrong[1] ?? 0] = n - 1 - 2 * (jw2 % (Math.floor((n - 2) / 2) + 1));
+  const points = sums.map((s, i): readonly [number, number] => {
+    const k = t[i] ?? 0;
+    const x = k % (s + 1);
+    const y = s - x;
+    return [k % 2 === 1 && x > 0 ? -x : x, k >= 4 && y > 0 ? -y : y];
+  });
+  const keys = points.map((p) => `${p[0]},${p[1]}`);
+  return {
+    points,
+    answer: pos + 1,
+    parity: (wrong[0] ?? 0) + 1,
+    far: far + 1,
+    distinct: new Set(keys).size === 4,
+  };
+}
 
 const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
 
@@ -58,7 +116,7 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
   G3_symmetry({
     id: "G3.symmetry.04",
     form: "the-point-reflected-in-a-centre",
-    g: [5, 6],
+    g: [7, 8],
     kind: "pair",
     p: [rg(1, 4), rg(1, 4), rg(5, 7), rg(5, 7)],
     f: (a, b, c, d) => [q(2 * c - a), q(2 * d - b)] as const,
@@ -123,18 +181,37 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     form: "the-axes-of-a-rectangle",
     g: [5, 6],
     kind: "integer",
-    p: [rg(2, 9), rg(10, 19)],
-    f: () => q(2),
-    t: { "as-a-square": () => q(4), one: () => q(1) },
+    p: [rg(2, 9), rg(10, 19), rg(2, 5)],
+    f: (a, b, c) => q(2 * c),
+    t: {
+      "as-a-square": (a, b, c) => q(4 * c),
+      one: (a, b, c) => q(c),
+    },
+    c: [2],
+    roles: {
+      a: "length of the first side",
+      b: "length of the second side",
+      c: "count of rectangles",
+    },
   }),
   G3_symmetry({
     id: "G3.symmetry.09",
     form: "the-axes-of-an-isosceles-triangle",
     g: [5, 6],
     kind: "integer",
-    p: [rg(6, 9), rg(10, 11)],
-    f: () => q(1),
-    t: { equilateral: () => q(3), none: () => q(0) },
+    p: [rg(1, 4), rg(1, 3), rg(1, 4)],
+    f: (a, b) => q(a + 3 * b),
+    t: {
+      "scalene-with-an-axis": (a, b, c) => q(a + 3 * b + c),
+      "equilateral-with-one-axis": (a, b) => q(a + b),
+      "one-axis-each": (a, b, c) => q(a + b + c),
+    },
+    c: [0, 1, 3],
+    roles: {
+      a: "count of isosceles triangles",
+      b: "count of equilateral triangles",
+      c: "count of scalene triangles",
+    },
   }),
   G3_symmetry({
     id: "G3.symmetry.10",
@@ -155,25 +232,155 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     form: "the-card-flipped-twice",
     g: [5, 6],
     kind: "choice",
-    p: [rg(0, 19)],
-    f: () => "4",
+    p: [rg(2, 7)],
+    f: (a) => (a % 2 === 0 ? "2" : "1"),
     t: {
-      "mirror-image": () => "1",
-      "upside-down": () => "2",
-      "quarter-turn": () => "3",
+      "upside-down": () => "3",
+      "quarter-turn": () => "4",
+      "the-other-parity": (a) => (a % 2 === 0 ? "1" : "2"),
     },
     options: () => ["1", "2", "3", "4"],
     c: [1, 2, 3, 4],
+    roles: { a: "count of flips" },
   }),
   G3_symmetry({
     id: "G3.symmetry.12",
     form: "the-axes-of-a-square",
     g: [5, 6],
     kind: "integer",
-    p: [rg(2, 15)],
-    ok: (a) => a !== 4 && a !== 2,
-    f: () => q(4),
-    t: { "as-a-rectangle": () => q(2), side: (a) => q(a) },
+    p: [rg(1, 4), rg(1, 4)],
+    f: (a, b) => q(4 * a + 2 * b),
+    t: {
+      "as-a-rectangle": (a, b) => q(2 * a + 2 * b),
+      "diagonals-of-rectangles": (a, b) => q(4 * a + 4 * b),
+    },
+    c: [2, 4],
+    roles: { a: "count of squares", b: "count of rectangles" },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.13",
+    form: "the-time-in-a-mirror",
+    g: [6, 8],
+    kind: "time",
+    face: "analogue",
+    p: [rg(1, 10), of(10, 15, 20, 25, 30, 35, 40, 45, 50)],
+    f: (a, b) => [q(11 - a), q(60 - b)] as const,
+    alt: (a, b) => {
+      const gone = 720 - (60 * a + b);
+      return [q(Math.floor(gone / 60)), q(gone % 60)] as const;
+    },
+    t: {
+      "the-shown-time": (a, b) => [q(a), q(b)] as const,
+      "same-minutes": (a, b) => [q(11 - a), q(b)] as const,
+      "forgot-the-hour": (a, b) => [q(12 - a), q(60 - b)] as const,
+    },
+    x: (a, b) => ({ t: tm(a, b) }),
+    c: [0, 11, 12, 60],
+    roles: { a: "hours in the mirror", b: "minutes in the mirror" },
+    origin: {
+      olympiad:
+        "the time in a mirror and the time itself make 12 hours (RES-4285, Kangoeroe clock items)",
+    },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.14",
+    form: "the-perimeter-of-a-figure-and-its-mirror-image",
+    g: [5, 8],
+    kind: "integer",
+    p: [rg(2, 9), rg(2, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(2 * (2 * a + b)),
+    alt: (a, b) => q(4 * a + 2 * b),
+    t: {
+      "both-perimeters": (a, b) => q(4 * (a + b)),
+      "one-perimeter": (a, b) => q(2 * (a + b)),
+    },
+    c: [2],
+    roles: { a: "side across the mirror", b: "side along the mirror" },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.15",
+    form: "the-symmetric-colourings-of-a-strip",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(3, 10)],
+    f: (a) => q(2 ** Math.floor((a + 1) / 2)),
+    alt: (a) => {
+      let count = 1;
+      for (let i = 0; i < Math.floor((a + 1) / 2); i += 1) count *= 2;
+      return q(count);
+    },
+    t: {
+      "all-colourings": (a) => q(2 ** a),
+      "middle-cell-forgotten": (a) =>
+        a % 2 === 0 ? null : q(2 ** Math.floor(a / 2)),
+      "free-cells": (a) => q(Math.floor((a + 1) / 2)),
+    },
+    c: [2],
+    roles: { a: "count of cells" },
+    origin: {
+      olympiad:
+        "counting symmetric colourings: the free half decides (RES-4285, Kangoeroe and MCCME counting items)",
+    },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.16",
+    form: "the-numbers-that-read-the-same-in-a-mirror",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(3, 8)],
+    f: (a) => q(9 * 10 ** (Math.floor((a + 1) / 2) - 1)),
+    alt: (a) => {
+      let count = 9;
+      for (let i = 1; i < Math.floor((a + 1) / 2); i += 1) count *= 10;
+      return q(count);
+    },
+    t: {
+      "all-numbers": (a) => q(9 * 10 ** (a - 1)),
+      "zero-first": (a) => q(10 ** Math.floor((a + 1) / 2)),
+    },
+    c: [9, 121, 1331],
+    roles: { a: "count of digits" },
+    origin: {
+      olympiad:
+        "counting palindromic numbers: the free half decides (RES-4285, Kangoeroe and MCCME counting items)",
+    },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.17",
+    form: "the-centre-from-a-point-and-its-image",
+    g: [7, 8],
+    kind: "pair",
+    p: [rg(1, 4), rg(1, 4), rg(5, 10), rg(5, 10)],
+    ok: (a, b, c, d) =>
+      (a + c) % 2 === 0 && (b + d) % 2 === 0 && a + c !== b + d,
+    f: (a, b, c, d) => [q((a + c) / 2), q((b + d) / 2)] as const,
+    t: {
+      "sum-not-halved": (a, b, c, d) => [q(a + c), q(b + d)] as const,
+      swapped: (a, b, c, d) => [q((b + d) / 2), q((a + c) / 2)] as const,
+      "first-point": (a, b) => [q(a), q(b)] as const,
+    },
+    c: [2],
+    origin: {
+      extension:
+        "the symmetry about a centre and the coordinate plane, Russian grade 6 (RES-4285)",
+    },
+  }),
+  G3_symmetry({
+    id: "G3.symmetry.18",
+    form: "the-mirror-point-in-a-horizontal-line",
+    g: [5, 6],
+    kind: "pair",
+    p: [rg(1, 6), rg(1, 4), rg(5, 7)],
+    f: (a, b, c) => [q(a), q(2 * c - b)] as const,
+    t: {
+      "same-point": (a, b) => [q(a), q(b)] as const,
+      swapped: (a, b, c) => [q(2 * c - b), q(a)] as const,
+      "vertical-mirror": (a, b, c) =>
+        a === c ? null : ([q(2 * c - a), q(b)] as const),
+      "on-the-axis": (a, b, c) => [q(a), q(c)] as const,
+    },
+    c: [2],
   }),
 ];
 
@@ -337,6 +544,177 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     ok: (a, b) => a !== b,
     f: (a, b) => sign(q(a), q(b)),
     t: { reversed: (a, b) => sign(q(b), q(a)) },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.12",
+    form: "the-coordinates-of-a-marked-point",
+    g: [6, 7],
+    kind: "pair",
+    p: [rg(1, 9), rg(1, 7)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => [q(a), q(b)] as const,
+    t: {
+      swapped: (a, b) => [q(b), q(a)] as const,
+      "counted-from-one": (a, b) => [q(a + 1), q(b + 1)] as const,
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.13",
+    form: "the-points-inside-a-rectangle-on-a-grid",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(1, 3), rg(1, 3), rg(5, 9), rg(5, 9)],
+    f: (a, b, c, d) => q((c - a - 1) * (d - b - 1)),
+    alt: (a, b, c, d) => {
+      let count = 0;
+      for (let x = a + 1; x < c; x += 1)
+        for (let y = b + 1; y < d; y += 1) count += 1;
+      return q(count);
+    },
+    t: {
+      "all-points": (a, b, c, d) => q((c - a + 1) * (d - b + 1)),
+      area: (a, b, c, d) => q((c - a) * (d - b)),
+    },
+    c: [1],
+    origin: {
+      olympiad:
+        "counting the points of a grid inside a rectangle, the fence-post idea (RES-4285, Kangoeroe counting items)",
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.14",
+    form: "the-shortest-paths-on-a-grid",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(0, GRID_PATHS.length - 1)],
+    f: (i) => q(paths(...legsOf(i))),
+    alt: (i) => {
+      const [u, v] = legsOf(i);
+      const row: number[] = Array<number>(v + 1).fill(1);
+      for (let x = 1; x <= u; x += 1)
+        for (let y = 1; y <= v; y += 1)
+          row[y] = (row[y] ?? 0) + (row[y - 1] ?? 0);
+      return q(row[v] ?? 0);
+    },
+    t: {
+      "steps-count": (i) => q(legsOf(i)[0] + legsOf(i)[1]),
+      "two-corner-routes": (i) => (paths(...legsOf(i)) === 2 ? null : q(2)),
+      "points-count": (i) => q((legsOf(i)[0] + 1) * (legsOf(i)[1] + 1)),
+    },
+    x: (i) => {
+      const [u, v] = legsOf(i);
+      return {
+        u: String(u),
+        v: String(v),
+        p1: String(paths(u - 1, v)),
+        p2: String(paths(u, v - 1)),
+      };
+    },
+    c: [0],
+    origin: {
+      olympiad:
+        "counting shortest paths on a grid by adding the counts of the two neighbours (RES-4285, Kangoeroe and MCCME counting items)",
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.15",
+    form: "the-positions-a-piece-reaches-in-a-given-number-of-moves",
+    g: [6, 8],
+    kind: "choice",
+    p: [
+      rg(5, 9),
+      rg(0, 3),
+      rg(0, 2),
+      rg(0, 3),
+      rg(0, 3),
+      rg(0, 3),
+      rg(0, 1),
+      rg(0, 8),
+      rg(0, 8),
+      rg(0, 8),
+      rg(0, 8),
+    ],
+    ok: (...v) => reachOptions(v).distinct,
+    f: (...v) => String(reachOptions(v).answer),
+    t: {
+      "wrong-parity": (...v) => String(reachOptions(v).parity),
+      "too-far": (...v) => String(reachOptions(v).far),
+    },
+    x: (...v) => {
+      const o = reachOptions(v);
+      const text = (xy: readonly [number, number]): [string, string] => [
+        signed(xy[0]),
+        signed(xy[1]),
+      ];
+      return {
+        n: String(v[0] ?? 0),
+        ...Object.fromEntries(
+          o.points.flatMap((xy, i) => {
+            const [px, py] = text(xy);
+            return [
+              [`x${i + 1}`, px],
+              [`y${i + 1}`, py],
+              [`s${i + 1}`, String(Math.abs(xy[0]) + Math.abs(xy[1]))],
+            ];
+          }),
+        ),
+      };
+    },
+    options: () => ["1", "2", "3", "4"],
+    c: [0, 1, 2, 3, 4],
+    origin: {
+      olympiad:
+        "the parity of the sum of the coordinates after each move (RES-4285, MCCME parity and chessboard items)",
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.16",
+    form: "the-area-of-a-right-triangle-from-its-vertices",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(1, 3), rg(1, 3), rg(5, 9), rg(5, 9)],
+    ok: (a, b, c, d) => ((c - a) * (d - b)) % 2 === 0 && c - a !== d - b,
+    f: (a, b, c, d) => q(((c - a) * (d - b)) / 2),
+    alt: (a, b, c, d) => q((c - a) * ((d - b) / 2)),
+    t: {
+      "rectangle-area": (a, b, c, d) => q((c - a) * (d - b)),
+      "legs-added": (a, b, c, d) =>
+        (c - a) * (d - b) === 2 * (c - a + d - b) ? null : q(c - a + d - b),
+    },
+    c: [2],
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.17",
+    form: "the-points-on-a-line-of-equal-sums",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(5, 12)],
+    f: (a) => q(a - 1),
+    t: {
+      "with-zeros": (a) => q(a + 1),
+      "fence-post": (a) => q(a - 2),
+    },
+    x: () => ({ x: "x", y: "y" }),
+    c: [1],
+    origin: {
+      olympiad:
+        "counting the points of a grid on the line x + y = n (RES-4285, Kangoeroe counting items)",
+    },
+  }),
+  G4_coordinates({
+    id: "G4.coordinates.18",
+    form: "the-grid-reference-of-a-cell",
+    g: [6, 7],
+    kind: "pair",
+    p: [rg(2, 5), rg(1, 5)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => [q(a), q(b)] as const,
+    t: {
+      swapped: (a, b) => [q(b), q(a)] as const,
+      "counted-from-zero": (a, b) => [q(a - 1), q(b)] as const,
+    },
+    x: (a) => ({ l: String.fromCharCode(64 + a) }),
+    c: [1, 2, 3, 4, 5],
   }),
 ];
 

@@ -8,6 +8,44 @@ import { SIGNS, type Spec } from "./spec.js";
 
 const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
 
+/** A clock time n minutes after midnight, as an answer. */
+const hm = (n: number): readonly [Q, Q] => [q(Math.floor(n / 60)), q(n % 60)];
+/** The same as hours and minutes of a text. */
+const end = (n: number): [number, number] => [Math.floor(n / 60), n % 60];
+
+/** Years for the tasks of February and of centuries; a text writes one as two parts, so it is not grouped as a number. */
+const FEBRUARY_YEARS = [
+  2000, 2012, 2016, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2028,
+] as const;
+const CENTURY_YEARS = [
+  1066, 1147, 1492, 1703, 1812, 1900, 1941, 1961, 1999, 2000, 2001, 2024,
+] as const;
+const yearOf = (list: readonly number[], i: number): number => list[i] ?? 0;
+const isLeap = (y: number): boolean =>
+  y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0);
+const centuryOf = (y: number): number => Math.floor((y - 1) / 100) + 1;
+const yearParts = (y: number): Record<string, string> => ({
+  c: String(Math.floor(y / 100)),
+  d: String(y % 100).padStart(2, "0"),
+  y: String(y),
+});
+/** The weekday numbers of the days left over after whole weeks, for a month of len days starting on weekday s. */
+const extraDays = (s: number, len: number): number[] =>
+  Array.from({ length: len % 7 }, (_, i) => ((s - 1 + i) % 7) + 1);
+
+/** The fewest coins of 1 and 2 euros that make 0 to 4 euros. */
+const FEWEST = [0, 1, 1, 2, 2] as const;
+/** The numbers of 5-euro coins with which `sum` euros can be paid exactly, the rest in 2-euro coins. */
+const waysToPay = (sum: number): number[] =>
+  Array.from({ length: Math.floor(sum / 5) + 1 }, (_, y) => y).filter(
+    (y) => (sum - 5 * y) % 2 === 0,
+  );
+/** Option 1 when the money is more than the cost, 2 when equal, 3 when less. */
+const enough = (money: number, cost: number): string =>
+  money > cost ? "1" : money === cost ? "2" : "3";
+/** A price rounded to the nearest ten euros. */
+const tenth = (price: number): number => Math.round(price / 10) * 10;
+
 const M1_whole = calc("M1", "whole");
 const M1_whole_specs: readonly Spec<never>[] = [
   M1_whole({
@@ -155,24 +193,123 @@ const M1_whole_specs: readonly Spec<never>[] = [
     form: "decimetres-to-centimetres",
     g: [5, 5],
     kind: "integer",
-    p: [rg(2, 19)],
-    f: (a) => q(10 * a),
+    p: [rg(3, 6), rg(4, 9)],
+    f: (a, b) => q(10 * a * b),
     t: {
-      hundred: (a) => q(100 * a),
-      "number-kept": (a) => q(a),
+      "units-not-converted": (a, b) => q(a * b),
+      "wrong-factor": (a, b) => q(100 * a * b),
     },
     c: [10, 100],
+    roles: { a: "length of one step in decimetres", b: "number of steps" },
   }),
   M1_whole({
     id: "M1.whole.12",
     form: "a-metre-against-centimetres",
     g: [5, 5],
     kind: "compare",
-    p: [rg(1, 5), of(50, 120, 150, 250, 350)],
-    ok: (a, b) => 100 * a !== b && sign(q(100 * a), q(b)) !== sign(q(a), q(b)),
+    p: [rg(1, 5), of(50, 100, 120, 150, 200, 250, 300, 350, 400)],
     f: (a, b) => sign(q(100 * a), q(b)),
     t: { "numbers-compared": (a, b) => sign(q(a), q(b)) },
     x: (a, b) => ({ sign: sign(q(100 * a), q(b)) }),
+  }),
+  M1_whole({
+    id: "M1.whole.13",
+    form: "a-rope-after-a-piece-is-cut",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(2, 9), rg(11, 89), rg(101, 199)],
+    f: (a, b, c) => q(100 * a + b - c),
+    t: {
+      "extra-centimetres-forgotten": (a, b, c) => q(100 * a - c),
+      "metre-as-ten": (a, b, c) => (10 * a + b > c ? q(10 * a + b - c) : null),
+      "metre-as-thousand": (a, b, c) => q(1000 * a + b - c),
+    },
+    c: [100, 10, 1000],
+    roles: {
+      a: "whole metres of the rope",
+      b: "extra centimetres",
+      c: "centimetres cut off",
+    },
+  }),
+  M1_whole({
+    id: "M1.whole.14",
+    form: "a-ribbon-cut-into-pieces",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(2, 8), of(10, 20, 25, 50)],
+    f: (a, b) => q((100 * a) / b),
+    t: {
+      multiplied: (a, b) => q(100 * a * b),
+      "metre-as-thousand": (a, b) => q((1000 * a) / b),
+      "metre-as-ten": (a, b) => ((10 * a) % b === 0 ? q((10 * a) / b) : null),
+    },
+    c: [100, 10, 1000],
+    roles: {
+      a: "length of the ribbon in metres",
+      b: "length of one piece in centimetres",
+    },
+  }),
+  M1_whole({
+    id: "M1.whole.15",
+    form: "posts-along-a-road",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(1, 4), of(50, 100, 125, 200, 250, 500)],
+    f: (a, b) => q((1000 * a) / b + 1),
+    t: {
+      "no-extra-post": (a, b) => q((1000 * a) / b),
+      "metre-as-hundred": (a, b) =>
+        (100 * a) % b === 0 ? q((100 * a) / b + 1) : null,
+    },
+    c: [1000, 1],
+    origin: {
+      olympiad:
+        "posts at both ends of a road: one more post than gaps, in the spirit of the fence items of Kangaroo ecolier (RES-4286)",
+    },
+    roles: {
+      a: "length of the road in kilometres",
+      b: "distance between posts in metres",
+    },
+  }),
+  M1_whole({
+    id: "M1.whole.16",
+    form: "strips-glued-with-an-overlap",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(3, 6), rg(2, 5), rg(2, 5)],
+    f: (a, b, c) => q(10 * b * a - (a - 1) * c),
+    t: {
+      "no-overlap": (a, b) => q(10 * b * a),
+      "overlap-every-strip": (a, b, c) => q(10 * b * a - a * c),
+    },
+    c: [10],
+    origin: {
+      olympiad:
+        "one joint fewer than strips, in the spirit of the zigzag and stick items of the Kangoeroe reports (RES-4286)",
+    },
+    roles: {
+      a: "number of strips",
+      b: "length of a strip in decimetres",
+      c: "overlap in centimetres",
+    },
+  }),
+  M1_whole({
+    id: "M1.whole.17",
+    form: "bags-of-mixed-mass",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(3, 9), rg(1, 4), of(100, 200, 250, 500, 750)],
+    f: (a, b, c) => q(a * (1000 * b + c)),
+    t: {
+      "units-added-first": (a, b, c) => q(a * (b + c)),
+      "grams-once": (a, b, c) => q(1000 * a * b + c),
+    },
+    c: [1000],
+    roles: {
+      a: "number of bags",
+      b: "whole kilograms of one bag",
+      c: "extra grams of one bag",
+    },
   }),
 ];
 
@@ -334,7 +471,6 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     g: [6, 8],
     kind: "compare",
     p: [rg(11, 19), rg(100, 199)],
-    ok: (a, b) => 10 * a > b,
     f: (a, b) => sign(q(10 * a), q(b)),
     t: { "numbers-compared": (a, b) => sign(q(a), q(b)) },
     x: (a, b) => ({ x: dec(a, 1), sign: sign(q(10 * a), q(b)) }),
@@ -353,6 +489,82 @@ const M1_decimal_specs: readonly Spec<never>[] = [
       "moved-one-place": (a, b) => qd(10 * a + b, 1),
     },
     x: (a) => ({ x: dec(a, 1) }),
+  }),
+  M1_decimal({
+    id: "M1.decimal.13",
+    form: "a-decimal-length-after-a-cut",
+    g: [6, 8],
+    kind: "decimal",
+    p: [rg(15, 49), rg(11, 99)],
+    ok: (a, b) => a % 10 !== 0 && 10 * a - b >= 50,
+    f: (a, b) => qd(10 * a - b, 2),
+    t: {
+      "centimetres-as-thousandths": (a, b) => qd(100 * a - b, 3),
+      "centimetres-kept": (a, b) => q(10 * a - b),
+    },
+    x: (a) => ({ x: dec(a, 1) }),
+    c: [100],
+    roles: { a: "length in metres, tenths", b: "centimetres cut off" },
+  }),
+  M1_decimal({
+    id: "M1.decimal.14",
+    form: "a-decimal-length-against-metres-and-centimetres",
+    g: [6, 8],
+    kind: "compare",
+    p: [rg(11, 39), rg(5, 95)],
+    ok: (a) => a % 10 !== 0,
+    f: (a, b) => sign(q(10 * (a % 10)), q(b)),
+    t: {
+      "tenths-as-centimetres": (a, b) => sign(q(a % 10), q(b)),
+    },
+    x: (a) => ({ x: dec(a, 1), k: String(Math.floor(a / 10)) }),
+    c: [100],
+  }),
+  M1_decimal({
+    id: "M1.decimal.15",
+    form: "two-days-of-a-walk",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(12, 48), of(100, 200, 300, 400, 500)],
+    ok: (a) => a % 10 !== 0,
+    f: (a, b) => q(2 * 100 * a + b),
+    t: {
+      "second-day-only": (a, b) => q(100 * a + b),
+      "extra-metres-forgotten": (a) => q(200 * a),
+    },
+    x: (a) => ({ x: dec(a, 1) }),
+    c: [1000],
+    roles: {
+      a: "first day in kilometres, tenths",
+      b: "extra metres on the second day",
+    },
+  }),
+  M1_decimal({
+    id: "M1.decimal.16",
+    form: "a-snail-on-a-pole",
+    g: [6, 8],
+    kind: "integer",
+    p: [of(30, 40, 50, 60), of(10, 20), rg(3, 8)],
+    f: (a, b, c) => q(c + 1),
+    t: {
+      "gain-per-day-only": (a, b, c) =>
+        q(Math.ceil((a + c * (a - b)) / (a - b))),
+      "last-day-forgotten": (a, b, c) => q(c),
+    },
+    x: (a, b, c) => ({
+      x: dec(a + c * (a - b), 2, true),
+      h: String(a + c * (a - b)),
+    }),
+    c: [1],
+    origin: {
+      olympiad:
+        "the snail on a pole: no slide back on the last day, in the spirit of the rate items of the Kangoeroe reports (RES-4286)",
+    },
+    roles: {
+      a: "centimetres climbed by day",
+      b: "centimetres slid back by night",
+      c: "full days and nights before the last day",
+    },
   }),
 ];
 
@@ -381,8 +593,7 @@ const M2_clock_specs: readonly Spec<never>[] = [
     ok: (a, b, c) => b + c >= 60,
     f: (a, b, c) => [q(a + Math.floor((b + c) / 60)), q((b + c) % 60)],
     t: {
-      "no-carry": (a, b, c) => [q(a), q(b + c)],
-      "hour-added-minutes-kept": (a, b, c) => [q(a + 1), q(b + c)],
+      "hour-not-carried": (a, b, c) => [q(a), q((b + c) % 60)],
       "next-hour-rounded": (a) => [q(a + 1), q(0)],
     },
     x: (a, b) => ({ t: tm(a, b) }),
@@ -469,8 +680,7 @@ const M2_clock_specs: readonly Spec<never>[] = [
     ok: (a, b, c) => b + c >= 60,
     f: (a, b, c) => [q(a + Math.floor((b + c) / 60)), q((b + c) % 60)],
     t: {
-      "no-carry": (a, b, c) => [q(a), q(b + c)],
-      "hour-added-minutes-kept": (a, b, c) => [q(a + 1), q(b + c)],
+      "hour-not-carried": (a, b, c) => [q(a), q((b + c) % 60)],
       "next-hour-rounded": (a) => [q(a + 1), q(0)],
     },
     x: (a, b) => ({ t: tm(a, b) }),
@@ -531,6 +741,153 @@ const M2_clock_specs: readonly Spec<never>[] = [
       "hours-from-minutes": (a, b, c) => (b < c ? null : [q(a), q(b - c)]),
     },
     x: (a, b) => ({ t: tm(a, b) }),
+  }),
+  M2_clock({
+    id: "M2.clock.13",
+    form: "reading-an-analogue-clock-on-the-quarter",
+    g: [4, 5],
+    kind: "time",
+    face: "analogue",
+    p: [rg(1, 12), of(0, 15, 30, 45)],
+    f: (a, b) => [q(a), q(b)],
+    t: {
+      "hands-swapped": (a, b) => [q(b === 0 ? 12 : b / 5), q((a % 12) * 5)],
+      "next-hour-read": (a, b) => (b >= 30 ? [q((a % 12) + 1), q(b)] : null),
+    },
+    c: [5],
+  }),
+  M2_clock({
+    id: "M2.clock.14",
+    form: "reading-an-analogue-clock-to-five-minutes",
+    g: [5, 5],
+    kind: "time",
+    face: "analogue",
+    p: [rg(1, 12), of(5, 10, 20, 25, 35, 40, 50, 55)],
+    f: (a, b) => [q(a), q(b)],
+    t: {
+      "minutes-read-as-marks": (a, b) => [q(a), q(b / 5)],
+      "hands-swapped": (a, b) => [q(b / 5), q((a % 12) * 5)],
+      "next-hour-read": (a, b) => (b >= 35 ? [q((a % 12) + 1), q(b)] : null),
+    },
+    c: [5],
+  }),
+  M2_clock({
+    id: "M2.clock.15",
+    form: "the-arrival-after-hours-and-minutes",
+    g: [5, 5],
+    kind: "time",
+    p: [
+      rg(6, 15),
+      of(0, 10, 15, 20, 30, 40, 45, 50),
+      rg(1, 4),
+      of(15, 20, 25, 30, 35, 40, 45, 50),
+    ],
+    f: (a, b, c, d) => hm(60 * (a + c) + b + d),
+    t: {
+      "carry-forgotten": (a, b, c, d) =>
+        b + d >= 60 ? [q(a + c), q((b + d) % 60)] : null,
+      "hours-forgotten": (a, b, c, d) => hm(60 * a + b + d),
+    },
+    x: (a, b) => ({ t: tm(a, b) }),
+    c: [60],
+    roles: {
+      a: "start hour",
+      b: "start minutes",
+      c: "hours of travel",
+      d: "minutes of travel",
+    },
+  }),
+  M2_clock({
+    id: "M2.clock.16",
+    form: "a-journey-across-midnight",
+    g: [5, 5],
+    kind: "integer",
+    p: [rg(20, 23), of(30, 40, 45, 50), rg(0, 4), of(5, 10, 15, 20)],
+    f: (a, b, c, d) => q(60 * (24 - a + c) - (b - d)),
+    t: {
+      "borrow-reversed": (a, b, c, d) => q(60 * (24 - a + c) + (b - d)),
+      "hours-only": (a, b, c) => q(60 * (24 - a + c)),
+    },
+    x: (a, b, c, d) => ({ t1: tm(a, b), t2: tm(c, d) }),
+    c: [24, 60],
+    roles: {
+      a: "departure hour",
+      b: "departure minutes",
+      c: "arrival hour",
+      d: "arrival minutes",
+    },
+  }),
+  M2_clock({
+    id: "M2.clock.17",
+    form: "buses-at-a-fixed-interval",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(6, 9), of(0, 10, 20, 30), of(10, 15, 20, 30), rg(3, 7)],
+    f: (a, b, c, d) => q(d + 1),
+    t: {
+      "first-bus-left-out": (a, b, c, d) => q(d),
+      "hours-ignored": (a, b, c, d) => {
+        const total = c * d;
+        const rest = total % 60;
+        return total >= 60 && rest > 0 && rest % c === 0
+          ? q(rest / c + 1)
+          : null;
+      },
+    },
+    x: (a, b, c, d) => ({ t1: tm(a, b), t2: tm(...end(60 * a + b + c * d)) }),
+    c: [1, 60],
+    origin: {
+      olympiad:
+        "buses at a fixed interval with the first and the last counted: one more than the gaps, in the spirit of the fence items of Kangaroo ecolier (RES-4286)",
+    },
+    roles: {
+      a: "hour of the first bus",
+      b: "minutes of the first bus",
+      c: "interval in minutes",
+      d: "gaps between the first and the last bus",
+    },
+  }),
+  M2_clock({
+    id: "M2.clock.18",
+    form: "a-clock-that-gains-minutes-every-hour",
+    g: [5, 6],
+    kind: "time",
+    p: [rg(7, 12), of(2, 3, 4, 5), rg(3, 9)],
+    f: (a, b, c) => [q(a + c), q(b * c)],
+    t: {
+      "error-not-accumulated": (a, b, c) => [q(a + c), q(b)],
+      "slow-instead": (a, b, c) => [q(a + c - 1), q(60 - b * c)],
+    },
+    x: (a, b, c) => ({ t1: tm(a, 0), t2: tm(a + c, 0) }),
+    origin: {
+      olympiad:
+        "a clock that gains a fixed number of minutes each hour, so the error accumulates, in the spirit of the clock items of the Kangoeroe reports (RES-4286)",
+    },
+    roles: {
+      a: "hour when the clock was set",
+      b: "minutes gained per hour",
+      c: "hours that passed",
+    },
+  }),
+  M2_clock({
+    id: "M2.clock.19",
+    form: "the-start-of-a-later-lesson",
+    g: [5, 6],
+    kind: "time",
+    p: [rg(8, 9), of(0, 15, 30), of(35, 40, 45), of(5, 10, 15), rg(3, 5)],
+    f: (a, b, c, d, e) => hm(60 * a + b + (e - 1) * (c + d)),
+    t: {
+      "breaks-left-out": (a, b, c, d, e) => hm(60 * a + b + (e - 1) * c),
+      "one-lesson-too-many": (a, b, c, d, e) => hm(60 * a + b + e * (c + d)),
+    },
+    x: (a, b) => ({ t: tm(a, b) }),
+    roles: {
+      a: "start hour",
+      b: "start minutes",
+      c: "length of a lesson",
+      d: "length of a break",
+      e: "number of the lesson asked",
+    },
   }),
 ];
 
@@ -696,6 +1053,101 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     },
     c: [1, 7],
   }),
+  M2_calendar({
+    id: "M2.calendar.13",
+    form: "the-date-after-some-days",
+    g: [5, 7],
+    kind: "integer",
+    p: [of(28, 30, 31), rg(15, 27), rg(3, 20)],
+    f: (a, b, c) => q(c),
+    t: {
+      "no-wrap": (a, b, c) => q(a + c),
+      "thirty-days-assumed": (a, b, c) => (a === 30 ? null : q(a + c - 30)),
+      "today-counted": (a, b, c) => q(c - 1),
+    },
+    x: (a, b, c) => ({ x: String(a - b + c) }),
+    roles: { a: "days in the month", b: "today's date", x: "days to wait" },
+  }),
+  M2_calendar({
+    id: "M2.calendar.14",
+    form: "february-in-a-given-year",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(0, FEBRUARY_YEARS.length - 1)],
+    f: (a) => q(isLeap(yearOf(FEBRUARY_YEARS, a)) ? 29 : 28),
+    t: {
+      "every-year-28": (a) =>
+        isLeap(yearOf(FEBRUARY_YEARS, a)) ? q(28) : null,
+      "even-years": (a) => {
+        const y = yearOf(FEBRUARY_YEARS, a);
+        return y % 2 === 0 && !isLeap(y) ? q(29) : null;
+      },
+    },
+    x: (a) => yearParts(yearOf(FEBRUARY_YEARS, a)),
+    c: [...FEBRUARY_YEARS, 4],
+  }),
+  M2_calendar({
+    id: "M2.calendar.15",
+    form: "century-of-a-year",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(0, CENTURY_YEARS.length - 1)],
+    f: (a) => q(centuryOf(yearOf(CENTURY_YEARS, a))),
+    t: {
+      "first-digits": (a) => q(Math.floor(yearOf(CENTURY_YEARS, a) / 100)),
+      "plus-one-always": (a) =>
+        q(Math.floor(yearOf(CENTURY_YEARS, a) / 100) + 1),
+    },
+    x: (a) => yearParts(yearOf(CENTURY_YEARS, a)),
+    c: [...CENTURY_YEARS, 1, 100, 101, 200],
+  }),
+  M2_calendar({
+    id: "M2.calendar.16",
+    form: "how-often-a-weekday-comes-in-a-month",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(1, 7), of(29, 30, 31), rg(1, 7)],
+    f: (a, b, c) =>
+      q(Math.floor(b / 7) + (extraDays(a, b).includes(c) ? 1 : 0)),
+    t: {
+      "four-weeks-only": (a, b) => q(Math.floor(b / 7)),
+      "always-five": (a, b) => q(Math.floor(b / 7) + 1),
+    },
+    x: (a, b, c) => ({
+      e: extraDays(a, b).join(", "),
+      g: extraDays(a, b).includes(c) ? "1" : "0",
+    }),
+    c: [0, 1, 7],
+    origin: {
+      olympiad:
+        "the days left over after whole weeks repeat once more, in the spirit of the date items of the Kangoeroe reports (RES-4286)",
+    },
+    roles: {
+      a: "weekday of the first day",
+      b: "days in the month",
+      c: "weekday asked",
+    },
+  }),
+  M2_calendar({
+    id: "M2.calendar.17",
+    form: "a-square-of-four-dates",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(1, 20)],
+    ok: (a) => a % 7 !== 0,
+    f: (a) => q(a),
+    t: {
+      "average-taken": (a) => q(a + 4),
+      "eight-subtracted": (a) => q(a + 2),
+    },
+    x: (a) => ({ x: String(4 * a + 16) }),
+    c: [1, 4, 7, 8, 16],
+    origin: {
+      olympiad:
+        "dates in a block of the calendar written through the smallest one, an invariant item in the spirit of the MCCME papers of RES-4286",
+    },
+    roles: { x: "sum of the four dates" },
+  }),
 ];
 
 const M3_whole = calc("M3", "whole");
@@ -860,6 +1312,107 @@ const M3_whole_specs: readonly Spec<never>[] = [
       "divided-by-the-share": (a, b) => q(b),
     },
     x: (a, b) => ({ x: String(a * b) }),
+  }),
+  M3_whole({
+    id: "M3.whole.13",
+    form: "fewest-coins-for-a-sum",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(11, 39)],
+    f: (a) => q(Math.floor(a / 5) + (FEWEST[a % 5] ?? 0)),
+    t: {
+      "fives-and-ones-only": (a) => q(Math.floor(a / 5) + (a % 5)),
+      "twos-only": (a) => q(Math.ceil(a / 2)),
+    },
+    x: (a) => ({ k: String(FEWEST[a % 5] ?? 0) }),
+    c: [1, 2, 3, 4, 5],
+    roles: { a: "sum to make in euros" },
+  }),
+  M3_whole({
+    id: "M3.whole.14",
+    form: "ways-to-pay-with-two-coins",
+    g: [5, 6],
+    kind: "integer",
+    p: [of(10, 12, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28)],
+    f: (a) => q(waysToPay(a).length),
+    t: {
+      "fives-counted": (a) => q(Math.floor(a / 5) + 1),
+      "case-without-fives-forgotten": (a) =>
+        a % 2 === 0 ? q(waysToPay(a).length - 1) : null,
+    },
+    x: (a) => {
+      const fives = Array.from({ length: Math.floor(a / 5) + 1 }, (_, y) => y);
+      return {
+        e1: fives.join(", "),
+        e2: fives.map((y) => a - 5 * y).join(", "),
+        e3: waysToPay(a)
+          .map((y) => a - 5 * y)
+          .join(", "),
+        s: waysToPay(a)
+          .map(() => "1")
+          .join(" + "),
+      };
+    },
+    c: [1, 2, 5],
+    origin: {
+      olympiad:
+        "paying an exact sum with two kinds of coins, a clever count in the spirit of the payment items of MCCME 2021 grade 5 (RES-4286)",
+    },
+    roles: { a: "sum to pay in euros" },
+  }),
+  M3_whole({
+    id: "M3.whole.15",
+    form: "fewest-hundred-euro-notes",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(101, 199), rg(60, 150)],
+    ok: (a, b) => (a + b) % 100 !== 0,
+    f: (a, b) => q(Math.ceil((a + b) / 100)),
+    t: {
+      "rounded-down": (a, b) => q(Math.floor((a + b) / 100)),
+      "each-item-rounded-up": (a, b) =>
+        q(Math.ceil(a / 100) + Math.ceil(b / 100)),
+    },
+    c: [100, 1],
+    roles: { a: "price of the first item", b: "price of the second item" },
+  }),
+  M3_whole({
+    id: "M3.whole.16",
+    form: "coins-of-two-kinds-from-the-count-and-the-sum",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 8), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a) => q(a),
+    t: {
+      "difference-not-divided": (a) => q(3 * a),
+      "twos-counted": (a, b) => q(b),
+    },
+    x: (a, b) => ({ n: String(a + b), S: String(5 * a + 2 * b) }),
+    c: [2, 5],
+    origin: {
+      olympiad:
+        "two kinds of coins from their number and total value, solved by supposing all are the smaller kind, in the spirit of the coin items of MCCME 2021 grade 4 (RES-4286)",
+    },
+    roles: { n: "number of coins", S: "total value in euros" },
+  }),
+  M3_whole({
+    id: "M3.whole.17",
+    form: "is-the-money-enough",
+    g: [5, 6],
+    kind: "choice",
+    // The fourth number is how far the money lies from the cost; the text names the money itself.
+    p: [rg(35, 99), rg(35, 99), rg(35, 99), of(-7, -4, -2, 0, 0, 2, 4, 7)],
+    f: (a, b, c, d) => enough(a + b + c + d, a + b + c),
+    t: {
+      "tens-rounded": (a, b, c, d) =>
+        enough(a + b + c + d, tenth(a) + tenth(b) + tenth(c)),
+      "third-forgotten": (a, b, c, d) => enough(a + b + c + d, a + b),
+    },
+    x: (a, b, c, d) => ({ d: String(a + b + c + d) }),
+    options: () => ["1", "2", "3"],
+    c: [1, 2, 3],
+    roles: { a: "price", b: "price", c: "price", d: "money you have" },
   }),
 ];
 
@@ -1052,6 +1605,99 @@ const M3_cents_specs: readonly Spec<never>[] = [
     },
     x: (a) => ({ x: dec(a, 2) }),
     c: [100],
+  }),
+  M3_cents({
+    id: "M3.cents.13",
+    form: "the-price-of-a-part-of-a-kilogram",
+    g: [6, 7],
+    kind: "decimal",
+    p: [of(250, 500, 750), rg(2, 19)],
+    f: (a, b) => q(a * b, 1000),
+    t: {
+      "no-conversion": (a, b) => q(a * b),
+      "hundred-instead": (a, b) => q(a * b, 100),
+    },
+    c: [1000, 100],
+    roles: { a: "grams bought", b: "price of a kilogram in euros" },
+  }),
+  M3_cents({
+    id: "M3.cents.14",
+    form: "change-after-three-purchases",
+    g: [5, 7],
+    kind: "decimal",
+    p: [of(20, 50), rg(105, 799), rg(105, 799), rg(105, 799)],
+    f: (a, b, c, d) => qd(100 * a - b - c - d, 2),
+    t: {
+      "total-itself": (a, b, c, d) => qd(b + c + d, 2),
+      "last-item-forgotten": (a, b, c) => qd(100 * a - b - c, 2),
+    },
+    x: (a, b, c, d) => ({
+      x: dec(b, 2),
+      y: dec(c, 2),
+      z: dec(d, 2),
+      t: dec(b + c + d, 2),
+    }),
+    roles: { a: "banknote paid", x: "price", y: "price", z: "price" },
+  }),
+  M3_cents({
+    id: "M3.cents.15",
+    form: "the-price-of-more-from-the-price-of-some",
+    g: [5, 7],
+    kind: "decimal",
+    p: [rg(3, 6), rg(7, 12), of(45, 55, 65, 80, 95, 120, 150, 175)],
+    f: (a, b, c) => qd(b * c, 2),
+    t: {
+      "price-of-one": (a, b, c) => qd(c, 2),
+      "count-difference-added": (a, b, c) => qd(a * c + 100 * (b - a), 2),
+    },
+    x: (a, b, c) => ({ x: dec(a * c, 2), u: dec(c, 2) }),
+    roles: {
+      a: "number of notebooks priced together",
+      b: "number of notebooks asked",
+      x: "price of the first group",
+    },
+  }),
+  M3_cents({
+    id: "M3.cents.16",
+    form: "an-apple-and-a-pear-together",
+    g: [6, 7],
+    kind: "decimal",
+    p: [rg(10, 40), rg(10, 40)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => qd(5 * (a + b), 2),
+    t: {
+      "average-taken": (a, b) => q(25 * (a + b), 200),
+      "difference-taken": (a, b) => qd(5 * Math.abs(a - b), 2),
+    },
+    x: (a, b) => ({
+      x: dec(5 * (3 * a + 2 * b), 2),
+      y: dec(5 * (2 * a + 3 * b), 2),
+      s: dec(25 * (a + b), 2),
+    }),
+    c: [2, 3, 5],
+    origin: {
+      olympiad:
+        "adding two purchases to get five of each, a symmetric sum, in the spirit of the price items of the MCCME and Kangoeroe papers (RES-4286)",
+    },
+    roles: {
+      x: "price of 3 apples and 2 pears",
+      y: "price of 2 apples and 3 pears",
+    },
+  }),
+  M3_cents({
+    id: "M3.cents.17",
+    form: "estimating-a-price-by-rounding",
+    g: [5, 7],
+    kind: "line",
+    p: [rg(3, 9), rg(2, 9), of(95, 96, 97, 98, 99)],
+    f: (a, b, c) => qd(a * (100 * b + c), 2),
+    t: {
+      "cents-ignored": (a, b) => q(a * b),
+      added: (a, b, c) => qd(100 * b + c + 100 * a, 2),
+    },
+    within: () => q(1, 2),
+    x: (a, b, c) => ({ x: dec(100 * b + c, 2) }),
+    roles: { a: "kilograms", x: "price of a kilogram in euros" },
   }),
 ];
 

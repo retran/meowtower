@@ -14,6 +14,21 @@ const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
 const exact = (n: number, d: number): Q | null =>
   n % d === 0 ? q(n / d) : null;
 
+const at = (v: readonly number[], i: number): number => v[i] ?? 0;
+/** The number, from 1, of the pack with the lowest price per kilogram in P4.per-one.14. */
+const cheapest = (v: readonly number[]): number => {
+  const unit = [at(v, 1), at(v, 3), at(v, 5)];
+  return unit.indexOf(Math.min(...unit)) + 1;
+};
+const lowestTotal = (v: readonly number[]): number => {
+  const total = [at(v, 0) * at(v, 1), at(v, 2) * at(v, 3), at(v, 4) * at(v, 5)];
+  return total.indexOf(Math.min(...total)) + 1;
+};
+const largestPack = (v: readonly number[]): number => {
+  const amount = [at(v, 0), at(v, 2), at(v, 4)];
+  return amount.indexOf(Math.max(...amount)) + 1;
+};
+
 const p3 = forFraction("P3", "share-of");
 const shareOf = [
   p3({
@@ -141,19 +156,29 @@ const shareOf = [
     form: "a-share-of-a-population",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [between(r, 20, 400), pick(r, [200, 400, 500, 800, 1000])],
-    valid: ([a = 0, t = 0]) => a < t && (100 * a) % t === 0 && 2 * a !== t,
-    solve: ([a = 0, t = 0]) => q((100 * a) / t),
-    ref: ([a = 0, t = 0]) => q(a, t).mul(q(100)),
+    draw: (r) => {
+      const t = pick(r, [200, 400, 500, 800, 1000]);
+      const rest =
+        (t * (100 - pick(r, [20, 25, 30, 35, 40, 45, 50, 55, 60]))) / 100;
+      const c = 10 * between(r, 3, Math.floor(rest / 10) - 3);
+      return [t, c, rest - c];
+    },
+    solve: ([t = 0, c = 0, d = 0]) => q((100 * (t - c - d)) / t),
+    ref: ([t = 0, c = 0, d = 0]) => q(t - c - d, t).mul(q(100)),
     traps: [
-      ["count-itself", "conceptual", ([a = 0]) => q(a)],
-      ["forgot-the-division", "procedural", ([a = 0]) => q(100 * a)],
       [
-        "flipped",
+        "children-and-pensioners",
         "conceptual",
-        ([a = 0, t = 0]) => (t === a * a ? null : exact(100 * t, a)),
+        ([t = 0, c = 0, d = 0]) => q((100 * (c + d)) / t),
+      ],
+      [
+        "only-the-children-subtracted",
+        "conceptual",
+        ([t = 0, c = 0]) =>
+          (100 * (t - c)) % t === 0 ? q((100 * (t - c)) / t) : null,
       ],
     ],
+    roles: { a: "inhabitants", b: "children", c: "pensioners" },
     consts: [100],
   }),
   p3({
@@ -301,6 +326,150 @@ const shareOf = [
       ["one-plus-the-percentage", "procedural", ([p = 0]) => q(1 + p)],
     ],
     consts: [1],
+  }),
+];
+
+const shareOfMore = [
+  p3({
+    id: "P3.share-of.13",
+    form: "the-last-sector-of-a-pie-chart-in-people",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) => [
+      5 * between(r, 2, 9),
+      5 * between(r, 2, 9),
+      100 * between(r, 1, 6),
+    ],
+    valid: ([a = 0, b = 0, n = 0]) => {
+      const answer = (n * (100 - a - b)) / 100;
+      return a !== b && a + b <= 85 && answer !== a && answer !== b;
+    },
+    solve: ([a = 0, b = 0, n = 0]) => q((n * (100 - a - b)) / 100),
+    ref: ([a = 0, b = 0, n = 0]) => q(n).mul(qd(100 - a - b, 2)),
+    traps: [
+      [
+        "the-labelled-sectors",
+        "conceptual",
+        ([a = 0, b = 0, n = 0]) => q((n * (a + b)) / 100),
+      ],
+      [
+        "the-percentage-itself",
+        "conceptual",
+        ([a = 0, b = 0]) => q(100 - a - b),
+      ],
+    ],
+    roles: {
+      a: "first share, percent",
+      b: "second share, percent",
+      c: "people asked",
+    },
+    consts: [100],
+  }),
+  p3({
+    id: "P3.share-of.14",
+    form: "water-added-to-a-salt-solution",
+    groups: [8, 8],
+    origin: {
+      olympiad: "an invariant: the salt stays when water is added (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => {
+      const pair = pick(r, [
+        [10, 4],
+        [20, 8],
+        [20, 5],
+        [30, 10],
+        [30, 6],
+        [40, 10],
+        [50, 20],
+      ]);
+      return [pair[0] ?? 0, pair[1] ?? 0, 20 * between(r, 1, 4)];
+    },
+    solve: ([a = 0, b = 0, m = 0]) => q((m * a) / b - m),
+    ref: ([a = 0, b = 0, m = 0]) =>
+      q(m).mul(q(a, 100)).div(q(b, 100)).sub(q(m)),
+    traps: [
+      ["new-mass", "conceptual", ([a = 0, b = 0, m = 0]) => q((m * a) / b)],
+      [
+        "percent-difference",
+        "conceptual",
+        ([a = 0, b = 0, m = 0]) =>
+          (m * (a - b)) % 100 === 0 ? q((m * (a - b)) / 100) : null,
+      ],
+      [
+        "same-percent-of-the-mass",
+        "conceptual",
+        ([, b = 0, m = 0]) => ((m * b) % 100 === 0 ? q((m * b) / 100) : null),
+      ],
+    ],
+    roles: {
+      a: "percent of salt",
+      b: "target percent of salt",
+      c: "mass of the solution, kg",
+    },
+    consts: [100],
+  }),
+  p3({
+    id: "P3.share-of.15",
+    form: "the-base-of-a-percentage-changes",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "the same difference against a larger base is a smaller percentage (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => [
+      pick(r, [25, 100, 150, 300, 400, 900]),
+      20 * between(r, 1, 10),
+    ],
+    solve: ([p = 0]) => q((100 * p) / (100 + p)),
+    ref: ([p = 0, b = 0]) => {
+      const a = (b * (100 + p)) / 100;
+      return q(100 * (a - b), a);
+    },
+    traps: [
+      ["the-same-percentage", "conceptual", ([p = 0]) => q(p)],
+      [
+        "the-difference-itself",
+        "conceptual",
+        ([p = 0, b = 0]) => q((b * p) / 100),
+      ],
+    ],
+    consts: [100],
+  }),
+  p3({
+    id: "P3.share-of.16",
+    form: "a-share-of-the-votes-from-a-table",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) => {
+      const t = pick(r, [20, 25, 40, 50]);
+      const a = between(r, 1, t - 2);
+      const b = between(r, 1, t - a - 1);
+      return [a, b, t - a - b];
+    },
+    valid: ([a = 0, b = 0, c = 0]) => {
+      const t = a + b + c;
+      const answer = (100 * b) / t;
+      return (100 * b) % t === 0 && ![a, b, c].includes(answer);
+    },
+    solve: ([a = 0, b = 0, c = 0]) => q((100 * b) / (a + b + c)),
+    ref: ([a = 0, b = 0, c = 0]) => q(b, a + b + c).mul(q(100)),
+    traps: [
+      ["the-votes-itself", "conceptual", ([, b = 0]) => q(b)],
+      ["forgot-the-division", "procedural", ([, b = 0]) => q(100 * b)],
+      [
+        "against-the-others",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => exact(100 * b, a + c),
+      ],
+    ],
+    roles: {
+      a: "votes for the first option",
+      b: "votes for the second option",
+      c: "votes for the third option",
+    },
+    consts: [100],
   }),
 ];
 
@@ -482,18 +651,34 @@ const vat = [
     form: "a-sale-price",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [20, 25, 40, 50]), 20 * between(r, 2, 10)],
-    solve: ([p = 0, n = 0]) => q((n * (100 - p)) / 100),
-    ref: ([p = 0, n = 0]) => q(n).mul(q(100 - p, 100)),
-    traps: [
-      ["the-discount-only", "conceptual", ([p = 0, n = 0]) => q((n * p) / 100)],
-      ["increased", "procedural", ([p = 0, n = 0]) => q((n * (100 + p)) / 100)],
-      [
-        "percentage-subtracted-as-a-number",
-        "procedural",
-        ([p = 0, n = 0]) => (n > p ? q(n - p) : null),
-      ],
+    draw: (r) => [
+      pick(r, [10, 20, 25, 50]),
+      20 * between(r, 1, 8),
+      between(r, 2, 6),
     ],
+    solve: ([p = 0, b = 0, c = 0]) => q((b * c * (100 - p)) / 100),
+    ref: ([p = 0, b = 0, c = 0]) =>
+      q(b)
+        .mul(q(c))
+        .mul(q(100 - p, 100)),
+    traps: [
+      [
+        "the-discount-only",
+        "conceptual",
+        ([p = 0, b = 0, c = 0]) => q((b * c * p) / 100),
+      ],
+      [
+        "one-item-only",
+        "conceptual",
+        ([p = 0, b = 0]) => q((b * (100 - p)) / 100),
+      ],
+      ["no-discount", "conceptual", ([, b = 0, c = 0]) => q(b * c)],
+    ],
+    roles: {
+      a: "percent of the discount",
+      b: "price of one item",
+      c: "count of items",
+    },
     consts: [100],
   }),
   p3v({
@@ -501,18 +686,22 @@ const vat = [
     form: "a-sales-commission",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [2, 3, 4, 5]), 500 * between(r, 1, 8)],
-    solve: ([p = 0, n = 0]) => q((p * n) / 100),
-    ref: ([p = 0, n = 0]) => q(n).mul(qd(p, 2)),
+    draw: (r) => {
+      const p = pick(r, [2, 3, 4, 5]);
+      return [p, (p * 500 * between(r, 1, 8)) / 100];
+    },
+    solve: ([p = 0, c = 0]) => q((100 * c) / p),
+    ref: ([p = 0, c = 0]) => q(c).div(qd(p, 2)),
     traps: [
-      ["percentage-as-the-amount", "conceptual", ([p = 0]) => q(p)],
-      ["percentage-as-a-factor", "procedural", ([p = 0, n = 0]) => q(p * n)],
+      ["the-commission-itself", "conceptual", ([, c = 0]) => q(c)],
+      ["forgot-times-hundred", "procedural", ([p = 0, c = 0]) => exact(c, p)],
       [
-        "divided-by-the-percentage",
-        "procedural",
-        ([p = 0, n = 0]) => exact(n, p),
+        "percentage-of-the-commission",
+        "conceptual",
+        ([p = 0, c = 0]) => exact(c * p, 100),
       ],
     ],
+    roles: { a: "percent of commission", b: "commission in euros" },
     consts: [100],
   }),
   p3v({
@@ -530,6 +719,139 @@ const vat = [
     ],
     extra: ([n = 0]) => ({ x: String(50 * n) }),
     consts: [21, 50],
+  }),
+];
+
+/** The hundredths of a euro in the final price of shop A (discount first) and shop B (tax first) in P3.vat.14. */
+const shops = (price: number, d: number, kind: number) =>
+  kind === 0
+    ? {
+        discounted: price * (100 - d),
+        a: (price * (100 - d) * 121) / 100,
+        taxed: price * 121,
+        b: (price * 121 * (100 - d)) / 100,
+      }
+    : {
+        discounted: (price - d) * 100,
+        a: (price - d) * 121,
+        taxed: price * 121,
+        b: price * 121 - d * 100,
+      };
+
+const vatMore = [
+  p3v({
+    id: "P3.vat.13",
+    form: "the-tax-inside-a-price-with-tax",
+    groups: [8, 8],
+    kind: "decimal",
+    draw: (r) => [between(r, 2, 9)],
+    solve: ([k = 0]) => q(21 * k),
+    ref: ([k = 0]) => q(121 * k).sub(q(100 * k)),
+    traps: [
+      [
+        "twenty-one-percent-of-the-total",
+        "conceptual",
+        ([k = 0]) => qd(21 * 121 * k, 2),
+      ],
+      ["percentage-itself", "conceptual", () => q(21)],
+      ["tax-as-a-number", "procedural", ([k = 0]) => q(121 * k - 21)],
+    ],
+    extra: ([k = 0]) => ({ x: String(121 * k) }),
+    consts: [21, 100, 121],
+  }),
+  p3v({
+    id: "P3.vat.14",
+    form: "a-discount-before-or-after-the-tax",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "a percentage discount and a percentage tax commute, a discount in euros does not (RES-4287)",
+    },
+    kind: "choice",
+    draw: (r) => {
+      const kind = r.int(2);
+      return [
+        100 * between(r, 1, 5),
+        kind === 0 ? pick(r, [10, 20, 25]) : pick(r, [10, 20, 30, 50]),
+        kind,
+      ];
+    },
+    options: () => ["1", "2", "3"],
+    solve: ([a = 0, d = 0, kind = 0]) => {
+      const s = shops(a, d, kind);
+      return s.a < s.b ? "1" : s.a > s.b ? "2" : "3";
+    },
+    ref: ([a = 0, d = 0, kind = 0]) => {
+      const s = shops(a, d, kind);
+      return s.a - s.b < 0 ? "1" : s.a - s.b > 0 ? "2" : "3";
+    },
+    traps: [
+      [
+        "tax-first-is-cheaper",
+        "conceptual",
+        ([a = 0, d = 0, kind = 0]) => {
+          const s = shops(a, d, kind);
+          return s.a > s.b ? null : "2";
+        },
+      ],
+      [
+        "order-never-matters",
+        "conceptual",
+        ([a = 0, d = 0, kind = 0]) => {
+          const s = shops(a, d, kind);
+          return s.a === s.b ? null : "3";
+        },
+      ],
+      [
+        "discount-first-is-cheaper",
+        "conceptual",
+        ([a = 0, d = 0, kind = 0]) => {
+          const s = shops(a, d, kind);
+          return s.a < s.b ? null : "1";
+        },
+      ],
+    ],
+    extra: ([a = 0, d = 0, kind = 0]) => {
+      const s = shops(a, d, kind);
+      return {
+        dt: kind === 0 ? `${d}%` : `${d} €`,
+        pd: dec(s.discounted, 2, true),
+        pa: dec(s.a, 2, true),
+        pt: dec(s.taxed, 2, true),
+        pb: dec(s.b, 2, true),
+      };
+    },
+    consts: [21],
+  }),
+  p3v({
+    id: "P3.vat.15",
+    form: "a-receipt-with-tax",
+    groups: [8, 8],
+    kind: "decimal",
+    draw: (r) => [
+      5 * between(r, 2, 20),
+      5 * between(r, 2, 20),
+      5 * between(r, 2, 20),
+    ],
+    solve: ([a = 0, b = 0, c = 0]) => qd(121 * (a + b + c), 2),
+    ref: ([a = 0, b = 0, c = 0]) => q(a + b + c).mul(qd(121, 2)),
+    traps: [
+      ["tax-forgotten", "conceptual", ([a = 0, b = 0, c = 0]) => q(a + b + c)],
+      [
+        "the-tax-only",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => qd(21 * (a + b + c), 2),
+      ],
+      [
+        "tax-as-a-number",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => q(a + b + c + 21),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0]) => ({
+      tax: dec(21 * (a + b + c), 2, true),
+    }),
+    consts: [21, 100],
   }),
 ];
 
@@ -654,26 +976,23 @@ const ratio = [
     groups: [6, 7],
     kind: "integer",
     draw: (r) => [between(r, 2, 6), between(r, 3, 9), between(r, 2, 6)],
-    valid: ([a = 0, b = 0, k = 0]) => a !== b && k > 1,
-    solve: ([, b = 0, k = 0]) => q(b * k),
+    valid: ([a = 0, b = 0, k = 0]) =>
+      a !== b && k > 1 && ![a, b, b * k].includes(a * k),
+    solve: ([a = 0, , k = 0]) => q(a * k),
     ref: ([a = 0, b = 0, k = 0]) =>
-      q(b)
-        .div(q(a))
-        .mul(q(a * k)),
+      q(a)
+        .div(q(b))
+        .mul(q(b * k)),
     traps: [
       [
         "difference-kept",
         "conceptual",
-        ([a = 0, b = 0, k = 0]) => q(b + (a * k - a)),
+        ([a = 0, b = 0, k = 0]) => q(a + (b * k - b)),
       ],
       ["the-factor-only", "procedural", ([, , k = 0]) => q(k)],
-      [
-        "swapped-terms",
-        "conceptual",
-        ([a = 0, b = 0, k = 0]) => (a * a === b ? null : exact(a * a * k, b)),
-      ],
+      ["division-instead", "procedural", ([a = 0, , k = 0]) => exact(a, k)],
     ],
-    extra: ([a = 0, , k = 0]) => ({ s: String(a * k) }),
+    extra: ([, b = 0, k = 0]) => ({ bk: String(b * k) }),
   }),
   p4({
     id: "P4.ratio.08",
@@ -823,6 +1142,115 @@ const ratio = [
   }),
 ];
 
+const ratioMore = [
+  p4({
+    id: "P4.ratio.13",
+    form: "the-class-before-some-of-one-part-left",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "the part that did not change fixes the unit of the ratio (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => {
+      const pair = pick(r, [
+        [3, 2],
+        [5, 3],
+        [5, 4],
+        [7, 5],
+        [4, 1],
+        [7, 4],
+        [5, 1],
+        [6, 5],
+      ]);
+      const a = pair[0] ?? 0;
+      const b = pair[1] ?? 0;
+      return [a, b, (a - b) * between(r, 2, 6)];
+    },
+    solve: ([a = 0, b = 0, c = 0]) => q(((a + b) * c) / (a - b)),
+    ref: ([a = 0, b = 0, c = 0]) => q(a + b).mul(q(c, a - b)),
+    traps: [
+      ["those-who-left", "conceptual", ([, , c = 0]) => q(c)],
+      [
+        "one-part-only",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => q(c / (a - b)),
+      ],
+      [
+        "left-times-the-sum",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => q((a + b) * c),
+      ],
+    ],
+    extra: ([a = 0, b = 0]) => ({ dp: String(a - b) }),
+    roles: {
+      a: "boys in the ratio",
+      b: "girls in the ratio",
+      c: "boys who left",
+    },
+  }),
+  p4({
+    id: "P4.ratio.14",
+    form: "a-three-way-split-from-the-difference-of-two-parts",
+    groups: [7, 8],
+    kind: "integer",
+    draw: (r) => {
+      const t = pick(r, [
+        [2, 3, 5],
+        [1, 2, 4],
+        [2, 3, 7],
+        [3, 4, 6],
+        [1, 3, 5],
+        [2, 5, 7],
+      ]);
+      const x = t[0] ?? 0;
+      const z = t[2] ?? 0;
+      return [x, t[1] ?? 0, z, (z - x) * between(r, 2, 9)];
+    },
+    solve: ([x = 0, y = 0, z = 0, d = 0]) => q(((x + y + z) * d) / (z - x)),
+    ref: ([x = 0, y = 0, z = 0, d = 0]) => q(d, z - x).mul(q(x + y + z)),
+    traps: [
+      ["the-difference-itself", "conceptual", ([, , , d = 0]) => q(d)],
+      ["ratio-sum", "conceptual", ([x = 0, y = 0, z = 0]) => q(x + y + z)],
+      [
+        "one-part-only",
+        "conceptual",
+        ([x = 0, , z = 0, d = 0]) => (z - x === 1 ? null : q(d / (z - x))),
+      ],
+    ],
+    roles: {
+      a: "first part",
+      b: "second part",
+      c: "third part",
+      d: "difference",
+    },
+  }),
+  p4({
+    id: "P4.ratio.15",
+    form: "a-ratio-of-counted-circles",
+    groups: [6, 7],
+    kind: "pair",
+    draw: (r) => [between(r, 1, 5), between(r, 2, 7), between(r, 2, 4)],
+    valid: ([a = 0, b = 0]) => a !== b && gcd(a, b) === 1,
+    solve: ([a = 0, b = 0]) => [q(a), q(b)],
+    ref: ([a = 0, b = 0, k = 0]) => [q(a * k).div(q(k)), q(b * k).div(q(k))],
+    traps: [
+      [
+        "not-simplified",
+        "procedural",
+        ([a = 0, b = 0, k = 0]) => [q(a * k), q(b * k)],
+      ],
+      ["swapped-terms", "conceptual", ([a = 0, b = 0]) => [q(b), q(a)]],
+      [
+        "red-to-all",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) => [q(a * k), q((a + b) * k)],
+      ],
+    ],
+    extra: ([a = 0, b = 0, k = 0]) => ({ p: String(a * k), s: String(b * k) }),
+  }),
+];
+
 const p4p = forFraction("P4", "per-one");
 const perOne = [
   p4p({
@@ -899,13 +1327,15 @@ const perOne = [
     groups: [6, 7],
     kind: "compare",
     draw: (r) => [
-      pick(r, [4, 6, 8]),
-      pick(r, [200, 300, 400]),
-      pick(r, [10, 12, 15]),
-      pick(r, [450, 550, 600]),
+      pick(r, [4, 5, 6, 8, 10, 12, 15, 20]),
+      pick(r, [150, 200, 250, 300, 360, 400, 450, 600, 750]),
+      pick(r, [4, 5, 6, 8, 10, 12, 15, 20]),
+      pick(r, [150, 200, 250, 300, 360, 400, 450, 600, 750]),
     ],
     valid: ([n1 = 0, p1 = 0, n2 = 0, p2 = 0]) =>
-      p1 * n2 !== p2 * n1 && sign(q(p1, n1), q(p2, n2)) !== sign(q(p1), q(p2)),
+      n1 !== n2 &&
+      p1 !== p2 &&
+      sign(q(p1, n1), q(p2, n2)) !== sign(q(p1), q(p2)),
     solve: ([n1 = 0, p1 = 0, n2 = 0, p2 = 0]) => sign(q(p1, n1), q(p2, n2)),
     ref: ([n1 = 0, p1 = 0, n2 = 0, p2 = 0]) =>
       p1 * n2 < p2 * n1 ? "<" : p1 * n2 > p2 * n1 ? ">" : "=",
@@ -1041,9 +1471,140 @@ const perOne = [
   }),
 ];
 
+const perOneMore = [
+  p4p({
+    id: "P4.per-one.12",
+    form: "workers-and-days-in-inverse-proportion",
+    groups: [7, 8],
+    origin: {
+      extension:
+        "an inverse proportion, from the Russian grade 6 proportion topic (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => {
+      const w1 = pick(r, [2, 3, 4, 5, 6, 8, 9, 10, 12]);
+      const w2 = pick(r, [2, 3, 4, 5, 6, 8, 9, 10, 12]);
+      return [w1, between(r, 1, 4) * (w2 / gcd(w1, w2)), w2];
+    },
+    valid: ([w1 = 0, d = 0, w2 = 0]) =>
+      w1 !== w2 && (w1 * d) % w2 === 0 && (w1 * d) / w2 !== d,
+    solve: ([w1 = 0, d = 0, w2 = 0]) => q((w1 * d) / w2),
+    ref: ([w1 = 0, d = 0, w2 = 0]) => q(d).mul(q(w1, w2)),
+    traps: [
+      ["person-days", "conceptual", ([w1 = 0, d = 0]) => q(w1 * d)],
+      [
+        "more-workers-more-days",
+        "conceptual",
+        ([w1 = 0, d = 0, w2 = 0]) => exact(d * w2, w1),
+      ],
+    ],
+    extra: ([w1 = 0, d = 0]) => ({ pd: String(w1 * d) }),
+    roles: { a: "workers at first", b: "days at first", c: "workers later" },
+  }),
+  p4p({
+    id: "P4.per-one.13",
+    form: "the-same-rate-for-more-animals-and-more-time",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "k cats eat k fish in m minutes, a rate per one in the spirit of Kangoeroe (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => {
+      const m = pick(r, [2, 3, 4, 5, 6]);
+      return [
+        pick(r, [3, 4, 5, 6, 8]),
+        m,
+        pick(r, [2, 7, 9, 10, 12]),
+        m * between(r, 2, 6),
+      ];
+    },
+    valid: ([k = 0, , n = 0]) => k !== n,
+    solve: ([, m = 0, n = 0, t = 0]) => q((n * t) / m),
+    ref: ([k = 0, m = 0, n = 0, t = 0]) => q(k, k).mul(q(n)).mul(q(t, m)),
+    traps: [
+      ["one-fish-per-cat", "conceptual", ([, , n = 0]) => q(n)],
+      ["cats-times-minutes", "procedural", ([, , n = 0, t = 0]) => q(n * t)],
+    ],
+    extra: ([, m = 0, , t = 0]) => ({ k: String(t / m) }),
+    roles: {
+      a: "animals",
+      b: "minutes",
+      c: "other animals",
+      d: "other minutes",
+    },
+  }),
+  p4p({
+    id: "P4.per-one.14",
+    form: "the-cheapest-kilogram-among-three-packs",
+    groups: [6, 7],
+    kind: "choice",
+    draw: (r) => {
+      const n = [2, 3, 4, 5, 6];
+      const first = pick(r, n);
+      const rest = n.filter((x) => x !== first);
+      const second = pick(r, rest);
+      const third = pick(
+        r,
+        rest.filter((x) => x !== second),
+      );
+      const u = () => 5 * between(r, 24, 90);
+      return [first, u(), second, u(), third, u()];
+    },
+    valid: (v) => {
+      const best = cheapest(v);
+      const unit = [at(v, 1), at(v, 3), at(v, 5)];
+      return (
+        new Set(unit).size === 3 &&
+        new Set([at(v, 0) * at(v, 1), at(v, 2) * at(v, 3), at(v, 4) * at(v, 5)])
+          .size === 3 &&
+        lowestTotal(v) !== best &&
+        largestPack(v) !== best
+      );
+    },
+    options: () => ["1", "2", "3"],
+    solve: (v) => String(cheapest(v)),
+    ref: (v) => {
+      const unit = [q(at(v, 1)), q(at(v, 3)), q(at(v, 5))];
+      const least = unit.reduce((m, x) => (x.cmp(m) < 0 ? x : m));
+      return String(unit.findIndex((x) => x.cmp(least) === 0) + 1);
+    },
+    traps: [
+      ["lowest-total", "conceptual", (v) => String(lowestTotal(v))],
+      ["largest-pack", "conceptual", (v) => String(largestPack(v))],
+    ],
+    extra: (v) => ({
+      t1: dec(at(v, 0) * at(v, 1), 2),
+      t2: dec(at(v, 2) * at(v, 3), 2),
+      t3: dec(at(v, 4) * at(v, 5), 2),
+      u1: dec(at(v, 1), 2),
+      u2: dec(at(v, 3), 2),
+      u3: dec(at(v, 5), 2),
+    }),
+  }),
+  p4p({
+    id: "P4.per-one.15",
+    form: "metres-per-second-in-kilometres-per-hour",
+    groups: [7, 8],
+    kind: "integer",
+    draw: (r) => [5 * between(r, 1, 8)],
+    solve: ([v = 0]) => q((18 * v) / 5),
+    ref: ([v = 0]) => q(v * 3600, 1000),
+    traps: [
+      ["metres-per-hour", "conceptual", ([v = 0]) => q(v * 3600)],
+      ["metres-per-minute", "conceptual", ([v = 0]) => q(v * 60)],
+    ],
+    consts: [60, 1000, 3600],
+  }),
+];
+
 export const pSpecs2: readonly Spec<never>[] = [
   ...shareOf,
+  ...shareOfMore,
   ...vat,
+  ...vatMore,
   ...ratio,
+  ...ratioMore,
   ...perOne,
+  ...perOneMore,
 ];

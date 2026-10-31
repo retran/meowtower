@@ -4,13 +4,16 @@
 // Successive changes are stretch. Texts are plain blanks in `content/tasks-p.ru.json`.
 import { Q } from "../math/q.js";
 import { between, digits, pick } from "./draw.js";
-import { forFraction, q, qd } from "./kitf.js";
+import { dec, forFraction, q, qd } from "./kitf.js";
 import { SIGNS, type Spec } from "./spec.js";
 
 const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
 const flip = (s: (typeof SIGNS)[number]): (typeof SIGNS)[number] =>
   s === "<" ? ">" : s === ">" ? "<" : "=";
 const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
+/** The quotient `n / d` when it is a whole number, or null. */
+const exactOrNull = (n: number, d: number): Q | null =>
+  n % d === 0 ? q(n / d) : null;
 /** A sign, or `null` when it repeats a sign another trap of the same task already gives. */
 const unless = (
   x: (typeof SIGNS)[number],
@@ -132,9 +135,10 @@ const mapScale = [
     groups: [7, 8],
     kind: "compare",
     draw: (r) => [
-      pick(r, [100, 200, 500, 1000]),
-      pick(r, [2000, 5000, 10_000]),
+      pick(r, [100, 200, 500, 1000, 2000, 5000, 10_000, 20_000]),
+      pick(r, [100, 200, 500, 1000, 2000, 5000, 10_000, 20_000]),
     ],
+    valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => sign(q(1, a), q(1, b)),
     ref: ([a = 0, b = 0]) => (a < b ? ">" : a > b ? "<" : "="),
     traps: [
@@ -226,6 +230,96 @@ const mapScale = [
   }),
 ];
 
+const mapScaleMore = [
+  p5({
+    id: "P5.map-scale.12",
+    form: "a-segment-read-on-a-ruler-at-a-map-scale",
+    groups: [8, 8],
+    kind: "decimal",
+    draw: (r) => [
+      pick(r, [20_000, 50_000, 200_000, 250_000, 400_000, 500_000]),
+      between(r, 3, 10),
+    ],
+    solve: ([a = 0, b = 0]) => q(a * b, 100_000),
+    ref: ([a = 0, b = 0]) => q(b).mul(q(a)).div(q(100_000)),
+    traps: [
+      ["centimetres", "procedural", ([a = 0, b = 0]) => q(a * b)],
+      [
+        "metres-instead-of-kilometres",
+        "procedural",
+        ([a = 0, b = 0]) => q(a * b, 100),
+      ],
+      [
+        "map-length-itself",
+        "conceptual",
+        ([a = 0, b = 0]) => (a === 100_000 ? null : q(b)),
+      ],
+    ],
+    extra: ([a = 0]) => ({ a: digits(a) }),
+    consts: [1, 100000],
+  }),
+  p5({
+    id: "P5.map-scale.13",
+    form: "the-same-distance-on-a-map-of-another-scale",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) => [
+      pick(r, [20_000, 25_000, 50_000, 100_000, 200_000, 250_000]),
+      between(r, 2, 12),
+      pick(r, [20_000, 25_000, 50_000, 100_000, 200_000, 250_000]),
+    ],
+    valid: ([a = 0, b = 0, c = 0]) => a !== c && (a * b) % c === 0,
+    solve: ([a = 0, b = 0, c = 0]) => q((a * b) / c),
+    ref: ([a = 0, b = 0, c = 0]) => q(a).mul(q(b)).div(q(c)),
+    traps: [
+      [
+        "real-distance-in-centimetres",
+        "procedural",
+        ([a = 0, b = 0]) => q(a * b),
+      ],
+      [
+        "scales-swapped",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => whole(q(b * c, a)),
+      ],
+      ["same-length", "conceptual", ([, b = 0]) => q(b)],
+    ],
+    consts: [1],
+  }),
+  p5({
+    id: "P5.map-scale.14",
+    form: "the-area-of-a-room-from-a-plan",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "a scale stretches each side, so an area grows by the scale twice (RES-4287)",
+    },
+    kind: "decimal",
+    draw: (r) => [pick(r, [100, 200, 500]), between(r, 2, 8), between(r, 2, 8)],
+    valid: ([, b = 0, c = 0]) => b !== c,
+    solve: ([a = 0, b = 0, c = 0]) => q(a * a * b * c, 10_000),
+    ref: ([a = 0, b = 0, c = 0]) => q(a * b, 100).mul(q(a * c, 100)),
+    traps: [
+      [
+        "area-scaled-like-a-length",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => q(a * b * c, 100),
+      ],
+      [
+        "centimetres-squared",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => q(a * a * b * c),
+      ],
+      [
+        "one-side-scaled",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => q(a * b * c, 10_000),
+      ],
+    ],
+    consts: [1, 10000, 100],
+  }),
+];
+
 const p5s = forFraction("P5", "map-scale-1S");
 const mapScaleS = [
   p5s({
@@ -248,14 +342,15 @@ const mapScaleS = [
     form: "a-distance-at-one-to-four-hundred-thousand",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [between(r, 2, 20)],
-    solve: ([c = 0]) => q(4 * c),
-    ref: ([c = 0]) => q(400_000 * c).div(q(100_000)),
+    draw: (r) => [2 * between(r, 2, 19) + 1],
+    solve: ([k = 0]) => q(2 * k),
+    ref: ([k = 0]) => q(k, 2).mul(q(400_000)).div(q(100_000)),
     traps: [
-      ["ten-times", "procedural", ([c = 0]) => q(40 * c)],
-      ["centimetres", "procedural", ([c = 0]) => q(400_000 * c)],
-      ["metres-instead-of-kilometres", "procedural", ([c = 0]) => q(4000 * c)],
+      ["ten-times", "procedural", ([k = 0]) => q(20 * k)],
+      ["centimetres", "procedural", ([k = 0]) => q(200_000 * k)],
+      ["metres-instead-of-kilometres", "procedural", ([k = 0]) => q(2000 * k)],
     ],
+    extra: ([k = 0]) => ({ x: dec(5 * k, 1, true) }),
     consts: [1, 100000, 400000],
   }),
   p5s({
@@ -308,8 +403,8 @@ const mapScaleS = [
     groups: [8, 8],
     kind: "compare",
     draw: (r) => [
-      pick(r, [200_000, 400_000, 500_000]),
-      pick(r, [50_000, 100_000, 1_000_000]),
+      pick(r, [50_000, 100_000, 200_000, 400_000, 500_000, 1_000_000]),
+      pick(r, [50_000, 100_000, 200_000, 400_000, 500_000, 1_000_000]),
     ],
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => sign(q(a), q(b)),
@@ -443,6 +538,108 @@ const mapScaleS = [
   }),
 ];
 
+const mapScaleSMore = [
+  p5s({
+    id: "P5.map-scale-1S.12",
+    form: "a-bicycle-ride-measured-on-a-map",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) => [between(r, 3, 20), pick(r, [10, 12, 15, 18, 20, 30])],
+    valid: ([a = 0, b = 0]) => (30 * a) % b === 0,
+    solve: ([a = 0, b = 0]) => q((30 * a) / b),
+    ref: ([a = 0, b = 0]) =>
+      q(a * 50_000, 100_000)
+        .mul(q(60))
+        .div(q(b)),
+    traps: [
+      [
+        "hours-instead-of-minutes",
+        "procedural",
+        ([a = 0, b = 0]) => exactOrNull(a, 2 * b),
+      ],
+      [
+        "map-length-as-kilometres",
+        "conceptual",
+        ([a = 0, b = 0]) => exactOrNull(60 * a, b),
+      ],
+      ["the-distance-itself", "conceptual", ([a = 0]) => exactOrNull(a, 2)],
+    ],
+    extra: ([a = 0]) => ({ km: dec(5 * a, 1, true) }),
+    consts: [1, 50000, 100000],
+  }),
+  p5s({
+    id: "P5.map-scale-1S.13",
+    form: "where-two-cars-meet-on-a-map",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "speeds in a ratio split the road in the same ratio, MCCME 2023 grade 8 (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => {
+      const pair = pick(r, [
+        [1, 2],
+        [2, 3],
+        [3, 2],
+        [1, 3],
+        [3, 1],
+        [2, 5],
+        [3, 4],
+        [4, 3],
+      ]);
+      const b = pair[0] ?? 0;
+      const c = pair[1] ?? 0;
+      return [(b + c) * between(r, 1, 6), b, c];
+    },
+    solve: ([a = 0, b = 0, c = 0]) => q((2 * a * b) / (b + c)),
+    ref: ([a = 0, b = 0, c = 0]) => q(a * 200_000, 100_000).mul(q(b, b + c)),
+    traps: [
+      [
+        "second-car-distance",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => q((2 * a * c) / (b + c)),
+      ],
+      [
+        "half-way",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => (b === c ? null : q(a)),
+      ],
+      ["the-whole-distance", "conceptual", ([a = 0]) => q(2 * a)],
+    ],
+    extra: ([a = 0]) => ({ km: String(2 * a) }),
+    consts: [1, 200000, 100000],
+  }),
+  p5s({
+    id: "P5.map-scale-1S.14",
+    form: "a-route-of-two-legs-on-a-map",
+    groups: [8, 8],
+    kind: "decimal",
+    draw: (r) => [between(r, 3, 14), between(r, 3, 14)],
+    valid: ([a = 0, b = 0]) => a !== b,
+    solve: ([a = 0, b = 0]) => qd(25 * (a + b), 1),
+    ref: ([a = 0, b = 0]) => q((a + b) * 250_000, 100_000),
+    traps: [
+      ["one-leg-only", "conceptual", ([a = 0]) => qd(25 * a, 1)],
+      ["centimetres", "procedural", ([a = 0, b = 0]) => q((a + b) * 250_000)],
+      [
+        "comma-one-place-off",
+        "procedural",
+        ([a = 0, b = 0]) => qd(25 * (a + b), 2),
+      ],
+    ],
+    consts: [1, 250000, 100000],
+  }),
+];
+
+/** The price of six items under the three offers of P6.compare-offer.12, in euros. */
+const totals = (v: readonly number[]): number[] => {
+  const u = v[0] ?? 0;
+  const p = v[1] ?? 0;
+  const d = v[2] ?? 0;
+  return [(6 * u * (100 - p)) / 100, 4 * u, 6 * (u - d)];
+};
+/** The index of the least total. */
+const best = (t: readonly number[]): number => t.indexOf(Math.min(...t));
 const p6 = forFraction("P6", "compare-offer");
 const offers = [
   p6({
@@ -476,14 +673,34 @@ const offers = [
     form: "two-for-the-price-of-one-against-half-price",
     groups: [8, 8],
     kind: "compare",
-    draw: (r) => [between(r, 5, 30)],
-    solve: () => "=",
-    ref: () => "=",
+    draw: (r) => [between(r, 5, 30), pick(r, [30, 40, 50, 60, 70])],
+    solve: ([u = 0, p = 0]) => sign(q(u), q(2 * u * (100 - p), 100)),
+    ref: ([u = 0, p = 0]) =>
+      100 * u < 2 * u * (100 - p)
+        ? "<"
+        : 100 * u > 2 * u * (100 - p)
+          ? ">"
+          : "=",
     traps: [
-      ["first-is-cheaper", "conceptual", () => "<"],
-      ["second-is-cheaper", "conceptual", () => ">"],
+      [
+        "first-is-cheaper",
+        "conceptual",
+        ([u = 0, p = 0]) => unless("<", sign(q(u), q(2 * u * (100 - p), 100))),
+      ],
+      [
+        "second-is-cheaper",
+        "conceptual",
+        ([u = 0, p = 0]) => unless(">", sign(q(u), q(2 * u * (100 - p), 100))),
+      ],
+      [
+        "offers-look-equal",
+        "conceptual",
+        ([u = 0, p = 0]) => unless("=", sign(q(u), q(2 * u * (100 - p), 100))),
+      ],
     ],
-    extra: ([u = 0]) => ({ x: String(u) }),
+    extra: ([u = 0, p = 0]) => ({
+      sign: sign(q(u), q(2 * u * (100 - p), 100)),
+    }),
     consts: [50],
   }),
   p6({
@@ -580,20 +797,28 @@ const offers = [
     form: "the-saving-from-a-percentage-discount",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [10, 20, 25, 30, 40, 50]), 20 * between(r, 2, 10)],
-    solve: ([p = 0, u = 0]) => q((p * u) / 100),
-    ref: ([p = 0, u = 0]) => q(u).mul(qd(p, 2)),
+    draw: (r) => [pick(r, [10, 15, 20, 25]), 5 * between(r, 2, 10)],
+    solve: ([p = 0, u = 0]) => q((12 * u * p) / 100),
+    ref: ([p = 0, u = 0]) => q(u * 12).mul(qd(p, 2)),
     traps: [
       [
         "price-after-the-discount",
         "conceptual",
-        ([p = 0, u = 0]) => q(u - (p * u) / 100),
+        ([p = 0, u = 0]) => q(12 * u - (12 * u * p) / 100),
       ],
       ["percent-as-euros", "conceptual", ([p = 0]) => q(p)],
-      ["not-divided-by-a-hundred", "procedural", ([p = 0, u = 0]) => q(p * u)],
-      ["divided-by-ten", "procedural", ([p = 0, u = 0]) => q((p * u) / 10)],
+      [
+        "one-month-only",
+        "conceptual",
+        ([p = 0, u = 0]) => whole(q(u * p, 100)),
+      ],
+      [
+        "not-divided-by-a-hundred",
+        "procedural",
+        ([p = 0, u = 0]) => q(12 * p * u),
+      ],
     ],
-    consts: [100],
+    consts: [12, 100],
   }),
   p6({
     id: "P6.compare-offer.08",
@@ -686,6 +911,111 @@ const offers = [
       ["offers-look-equal", "conceptual", () => "="],
     ],
     extra: ([n = 0, p = 0]) => ({ sign: sign(q(100, n), q(p)) }),
+  }),
+];
+
+const offersMore = [
+  p6({
+    id: "P6.compare-offer.12",
+    form: "the-best-of-three-offers-for-six-items",
+    groups: [8, 8],
+    kind: "choice",
+    draw: (r) => [
+      pick(r, [12, 15, 20, 24, 30]),
+      pick(r, [20, 25, 30, 40]),
+      pick(r, [2, 3, 4, 5]),
+    ],
+    valid: (v) => {
+      return new Set(totals(v)).size === 3;
+    },
+    options: () => ["1", "2", "3"],
+    solve: (v) => String(best(totals(v)) + 1),
+    ref: (v) => {
+      const t = totals(v);
+      const least = t.reduce((m, x) => (x < m ? x : m));
+      return String(t.findIndex((x) => x === least) + 1);
+    },
+    traps: [
+      [
+        "free-item-always-best",
+        "conceptual",
+        (v) => (best(totals(v)) === 1 ? null : "2"),
+      ],
+      [
+        "largest-number-wins",
+        "conceptual",
+        (v) => {
+          const chosen = (v[1] ?? 0) > (v[2] ?? 0) ? 1 : 3;
+          return chosen === best(totals(v)) + 1 ? null : String(chosen);
+        },
+      ],
+    ],
+    extra: (v) => {
+      const t = totals(v);
+      return {
+        t1: dec(Math.round((t[0] ?? 0) * 100), 2, true),
+        t2: dec(Math.round((t[1] ?? 0) * 100), 2, true),
+        t3: dec(Math.round((t[2] ?? 0) * 100), 2, true),
+      };
+    },
+    consts: [1, 2, 3, 4, 6],
+  }),
+  p6({
+    id: "P6.compare-offer.13",
+    form: "every-third-item-free",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) => [between(r, 4, 20), between(r, 7, 20)],
+    valid: ([, n = 0]) => n % 3 !== 0,
+    solve: ([u = 0, n = 0]) => q(u * (n - Math.floor(n / 3))),
+    ref: ([u = 0, n = 0]) => q(u).mul(q(n - Math.floor(n / 3))),
+    traps: [
+      [
+        "one-third-free",
+        "conceptual",
+        ([u = 0, n = 0]) => whole(q(2 * u * n, 3)),
+      ],
+      [
+        "free-rounded-up",
+        "conceptual",
+        ([u = 0, n = 0]) => q(u * (n - Math.ceil(n / 3))),
+      ],
+      ["no-discount", "conceptual", ([u = 0, n = 0]) => q(u * n)],
+    ],
+    extra: ([, n = 0]) => ({ f: String(Math.floor(n / 3)) }),
+    roles: { a: "price of one item", b: "count of items" },
+    consts: [3],
+  }),
+  p6({
+    id: "P6.compare-offer.14",
+    form: "a-coupon-and-a-discount-in-either-order",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "the answer does not depend on the price: the coupon taken after the discount loses p per cent of itself (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => [
+      10 * between(r, 6, 20),
+      pick(r, [10, 20, 25, 30, 40, 50]),
+      pick(r, [10, 20, 50]),
+    ],
+    valid: ([u = 0, p = 0, c = 0]) =>
+      (c * p) % 100 === 0 && (u * (100 - p)) / 100 > c,
+    solve: ([, p = 0, c = 0]) => q((c * p) / 100),
+    ref: ([u = 0, p = 0, c = 0]) =>
+      q((u - c) * (100 - p), 100).sub(q(u * (100 - p), 100).sub(q(c))),
+    traps: [
+      ["order-does-not-matter", "conceptual", () => q(0)],
+      ["the-coupon-itself", "conceptual", ([, , c = 0]) => q(c)],
+      [
+        "the-discount-itself",
+        "conceptual",
+        ([u = 0, p = 0]) => whole(q(u * p, 100)),
+      ],
+    ],
+    roles: { a: "price", b: "percent of the discount", c: "coupon in euros" },
+    consts: [100],
   }),
 ];
 
@@ -782,7 +1112,8 @@ const relative = [
     groups: [8, 8],
     kind: "integer",
     draw: (r) => [pick(r, [40, 50, 80, 200]), pick(r, [10, 20, 25, 50])],
-    valid: ([o = 0, p = 0]) => (o * p) % 100 === 0,
+    valid: ([o = 0, p = 0]) =>
+      (o * p) % 100 === 0 && p !== o && p !== o + (o * p) / 100,
     solve: ([, p = 0]) => q(p),
     ref: ([o = 0, p = 0]) =>
       q((o * p) / 100)
@@ -806,7 +1137,8 @@ const relative = [
     groups: [8, 8],
     kind: "integer",
     draw: (r) => [pick(r, [40, 50, 80, 200]), pick(r, [10, 20, 25, 50])],
-    valid: ([o = 0, p = 0]) => (o * p) % 100 === 0,
+    valid: ([o = 0, p = 0]) =>
+      (o * p) % 100 === 0 && p !== o && p !== o - (o * p) / 100,
     solve: ([, p = 0]) => q(p),
     ref: ([o = 0, p = 0]) =>
       q((o * p) / 100)
@@ -918,26 +1250,30 @@ const relative = [
     form: "by-what-percentage-the-smaller-is-below-the-larger",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [40, 80, 120, 160, 200]), pick(r, [25, 100])],
-    solve: ([, p = 0]) => q(100 * p, 100 + p),
-    ref: ([b = 0, p = 0]) =>
-      q((b * p) / 100)
-        .div(q(b + (b * p) / 100))
-        .mul(q(100)),
+    draw: (r) => {
+      const a = 20 * between(r, 2, 12);
+      const x = pick(r, [10, 20, 25, 30, 40, 60, 75, 80]);
+      return [a, (a * (100 - x)) / 100];
+    },
+    valid: ([a = 0, b = 0]) => {
+      const x = (100 * (a - b)) / a;
+      return x !== a && x !== b;
+    },
+    solve: ([a = 0, b = 0]) => q((100 * (a - b)) / a),
+    ref: ([a = 0, b = 0]) => q(a - b, a).mul(q(100)),
     traps: [
-      ["measured-from-the-smaller", "conceptual", ([, p = 0]) => q(p)],
       [
-        "difference-in-units",
+        "measured-from-the-smaller",
         "conceptual",
-        ([b = 0, p = 0]) => q((b * p) / 100),
+        ([a = 0, b = 0]) => whole(q(100 * (a - b), b)),
       ],
+      ["difference-in-units", "conceptual", ([a = 0, b = 0]) => q(a - b)],
       [
-        "hundred-minus-p",
+        "the-share-itself",
         "conceptual",
-        ([, p = 0]) => (p >= 100 ? null : q(100 - p)),
+        ([a = 0, b = 0]) => whole(q(100 * b, a)),
       ],
     ],
-    extra: ([b = 0, p = 0]) => ({ big: String(b + (b * p) / 100) }),
     consts: [100],
   }),
   p6r({
@@ -984,29 +1320,19 @@ const relative = [
     id: "P6.relative.10",
     form: "a-rate-of-faulty-items",
     groups: [8, 8],
-    kind: "integer",
-    draw: (r) => [between(r, 1, 9), pick(r, [50, 100, 200, 250])],
-    valid: ([n = 0, t = 0]) => (100 * n) % t === 0,
-    solve: ([n = 0, t = 0]) => q((100 * n) / t),
+    kind: "decimal",
+    draw: (r) => [between(r, 1, 9), pick(r, [200, 250, 400, 500, 1000])],
+    valid: ([n = 0, t = 0]) => (100 * n) / t !== n,
+    solve: ([n = 0, t = 0]) => q(100 * n, t),
     ref: ([n = 0, t = 0]) => q(n, t).mul(q(100)),
     traps: [
       ["count-itself", "conceptual", ([n = 0]) => q(n)],
       [
         "good-share",
         "conceptual",
-        ([n = 0, t = 0]) => {
-          const w = 100 - (100 * n) / t;
-          return w === n ? null : q(w);
-        },
+        ([n = 0, t = 0]) => q(100).sub(q(100 * n, t)),
       ],
-      [
-        "good-count",
-        "conceptual",
-        ([n = 0, t = 0]) => {
-          const w = t - n;
-          return w === n || w === 100 - (100 * n) / t ? null : q(w);
-        },
-      ],
+      ["good-count", "conceptual", ([n = 0, t = 0]) => q(t - n)],
     ],
     consts: [100],
   }),
@@ -1036,6 +1362,100 @@ const relative = [
     ],
     extra: ([a = 0, , b = 0]) => ({ sign: sign(q(a, 20), q(b, 25)) }),
     consts: [20, 25],
+  }),
+];
+
+const relativeMore = [
+  p6r({
+    id: "P6.relative.12",
+    form: "two-languages-and-the-people-who-speak-both",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "the overlap of two percentages of one whole, Kangoeroe 397 lines 634 to 638 (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => [between(r, 56, 95), between(r, 56, 95)],
+    valid: ([a = 0, b = 0]) =>
+      a !== b && a + b > 100 && a + b - 100 !== a && a + b - 100 !== b,
+    solve: ([a = 0, b = 0]) => q(a + b - 100),
+    ref: ([a = 0, b = 0]) => q(a).sub(q(100 - b)),
+    traps: [
+      ["the-sum", "procedural", ([a = 0, b = 0]) => q(a + b)],
+      ["the-difference", "procedural", ([a = 0, b = 0]) => q(Math.abs(a - b))],
+    ],
+    consts: [100],
+  }),
+  p6r({
+    id: "P6.relative.13",
+    form: "a-percentage-of-a-percentage-in-two-groups",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "a share of a share in two groups, Kangoeroe 397 lines 736 to 743 (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => [
+      pick(r, [20, 25, 40, 50, 60, 75]),
+      pick(r, [10, 20, 30, 40, 50, 60, 80]),
+      pick(r, [10, 20, 30, 40, 50, 60, 80]),
+    ],
+    valid: ([p = 0, b = 0, c = 0]) =>
+      (p * b) % 100 === 0 && ((100 - p) * c) % 100 === 0 && b !== c,
+    solve: ([p = 0, b = 0, c = 0]) => q((p * b + (100 - p) * c) / 100),
+    ref: ([p = 0, b = 0, c = 0]) =>
+      q(p, 100)
+        .mul(q(b))
+        .add(q(100 - p, 100).mul(q(c))),
+    traps: [
+      [
+        "percentages-averaged",
+        "conceptual",
+        ([, b = 0, c = 0]) => whole(q(b + c, 2)),
+      ],
+      ["boys-only", "conceptual", ([p = 0, b = 0]) => q((p * b) / 100)],
+      ["percentages-added", "procedural", ([, b = 0, c = 0]) => q(b + c)],
+    ],
+    consts: [100],
+  }),
+  p6r({
+    id: "P6.relative.14",
+    form: "shots-needed-to-reach-a-target-share",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "the misses stay the same, so the target share fixes the total (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => {
+      const p = pick(r, [50, 60, 75, 80]);
+      const m = between(r, 2, 10);
+      const total = (100 * m) / (100 - p);
+      const n = between(r, m + 1, Math.max(m + 1, Math.ceil(total) - 1));
+      return [n, n - m, p];
+    },
+    valid: ([n = 0, h = 0, p = 0]) => {
+      const m = n - h;
+      const total = (100 * m) / (100 - p);
+      return Number.isInteger(total) && total > n && h >= 1 && total - n !== m;
+    },
+    solve: ([n = 0, h = 0, p = 0]) => q((100 * (n - h)) / (100 - p) - n),
+    ref: ([n = 0, h = 0, p = 0]) =>
+      q(n - h)
+        .div(q(100 - p, 100))
+        .sub(q(n)),
+    traps: [
+      [
+        "the-total-shots",
+        "conceptual",
+        ([n = 0, h = 0, p = 0]) => q((100 * (n - h)) / (100 - p)),
+      ],
+      ["the-misses", "conceptual", ([n = 0, h = 0]) => q(n - h)],
+    ],
+    extra: ([n = 0, h = 0, p = 0]) => ({
+      t: String((100 * (n - h)) / (100 - p)),
+    }),
+    consts: [100],
   }),
 ];
 
@@ -1132,25 +1552,45 @@ const successive = [
     groups: [8, 8],
     origin: EXT,
     kind: "integer",
-    draw: (r) => [between(r, 1, 9)],
-    solve: ([k = 0]) => q(100 * k),
-    ref: ([k = 0]) => q(132 * k).div(qd(132, 2)),
+    draw: (r) => [
+      pick(r, [10, 20, 25, 50]),
+      pick(r, [10, 20, 50]),
+      between(r, 1, 5),
+    ],
+    valid: ([a = 0, b = 0]) => a !== b,
+    solve: ([, , k = 0]) => q(400 * k),
+    ref: ([a = 0, b = 0, k = 0]) =>
+      q(((100 + a) * (100 + b) * 400 * k) / 10_000).div(
+        q((100 + a) * (100 + b), 10_000),
+      ),
     traps: [
       [
         "rises-subtracted",
         "conceptual",
-        ([k = 0]) => whole(q(132 * k * 70, 100)),
+        ([a = 0, b = 0, k = 0]) =>
+          whole(q((100 + a) * (100 + b) * 4 * k * (100 - a - b), 10_000)),
       ],
-      ["undo-only-the-last-rise", "conceptual", ([k = 0]) => q(120 * k)],
-      ["undo-only-the-first-rise", "conceptual", ([k = 0]) => q(110 * k)],
+      [
+        "undo-only-the-last-rise",
+        "conceptual",
+        ([a = 0, , k = 0]) => whole(q((100 + a) * 4 * k, 1)),
+      ],
+      [
+        "undo-only-the-first-rise",
+        "conceptual",
+        ([, b = 0, k = 0]) => whole(q((100 + b) * 4 * k, 1)),
+      ],
       [
         "percents-added-to-the-end",
         "conceptual",
-        ([k = 0]) => whole(q(132 * k * 130, 100)),
+        ([a = 0, b = 0, k = 0]) =>
+          whole(q((100 + a) * (100 + b) * 4 * k * (100 + a + b), 10_000)),
       ],
     ],
-    extra: ([k = 0]) => ({ m: String(132 * k) }),
-    consts: [20, 10],
+    extra: ([a = 0, b = 0, k = 0]) => ({
+      m: String(((100 + a) * (100 + b) * 4 * k) / 100),
+    }),
+    consts: [100],
   }),
   p7({
     id: "P7.successive.06",
@@ -1158,16 +1598,29 @@ const successive = [
     groups: [8, 8],
     origin: EXT,
     kind: "integer",
-    draw: (r) => [between(r, 1, 6)],
-    solve: ([k = 0]) => q(2 * k),
-    ref: ([k = 0]) => q(30 * k).sub(q(100 * k).sub(q(72 * k))),
+    draw: (r) => [
+      400 * between(r, 1, 5),
+      pick(r, [10, 20, 25, 30]),
+      pick(r, [10, 20, 25, 50]),
+    ],
+    solve: ([u = 0, b = 0, c = 0]) => q((u * b * c) / 10_000),
+    ref: ([u = 0, b = 0, c = 0]) =>
+      q(u * (100 - b) * (100 - c), 10_000).sub(q(u * (100 - b - c), 100)),
     traps: [
       ["no-difference", "conceptual", () => q(0)],
-      ["price-after-two-discounts", "conceptual", ([k = 0]) => q(72 * k)],
-      ["price-after-one-discount", "conceptual", ([k = 0]) => q(70 * k)],
+      [
+        "price-after-two-discounts",
+        "conceptual",
+        ([u = 0, b = 0, c = 0]) => q((u * (100 - b) * (100 - c)) / 10_000),
+      ],
+      [
+        "price-after-one-discount",
+        "conceptual",
+        ([u = 0, b = 0, c = 0]) => q((u * (100 - b - c)) / 100),
+      ],
     ],
-    extra: ([k = 0]) => ({ u: String(100 * k) }),
-    consts: [10, 20, 30],
+    extra: ([, b = 0, c = 0]) => ({ s: String(b + c) }),
+    consts: [100],
   }),
   p7({
     id: "P7.successive.07",
@@ -1263,10 +1716,155 @@ const successive = [
   }),
 ];
 
+const successiveMore = [
+  p7({
+    id: "P7.successive.12",
+    form: "two-rises-as-one-total-rise",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "successive rises multiply and do not add, in the spirit of Kangoeroe (RES-4287)",
+    },
+    kind: "integer",
+    draw: (r) => [
+      pick(r, [10, 20, 25, 30, 40, 50, 60, 100]),
+      pick(r, [10, 20, 25, 30, 40, 50, 60, 100]),
+    ],
+    valid: ([a = 0, b = 0]) => ((100 + a) * (100 + b)) % 100 === 0,
+    solve: ([a = 0, b = 0]) => q(((100 + a) * (100 + b)) / 100 - 100),
+    ref: ([a = 0, b = 0]) =>
+      q(100 + a, 100)
+        .mul(q(100 + b, 100))
+        .sub(q(1))
+        .mul(q(100)),
+    traps: [
+      ["percentages-added", "procedural", ([a = 0, b = 0]) => q(a + b)],
+      ["first-rise-only", "conceptual", ([a = 0]) => q(a)],
+    ],
+    consts: [100],
+  }),
+  p7({
+    id: "P7.successive.13",
+    form: "a-deposit-with-interest-on-interest",
+    groups: [8, 8],
+    origin: EXT,
+    kind: "integer",
+    draw: (r) => [1000 * between(r, 1, 4), pick(r, [10, 20, 50, 100])],
+    solve: ([a = 0, b = 0]) => q((a * (100 + b) ** 3) / 1_000_000),
+    ref: ([a = 0, b = 0]) =>
+      q(a)
+        .mul(q(100 + b, 100))
+        .mul(q(100 + b, 100))
+        .mul(q(100 + b, 100)),
+    traps: [
+      [
+        "simple-interest",
+        "conceptual",
+        ([a = 0, b = 0]) => q(a + (3 * a * b) / 100),
+      ],
+      [
+        "only-two-years",
+        "conceptual",
+        ([a = 0, b = 0]) => q((a * (100 + b) ** 2) / 10_000),
+      ],
+    ],
+    extra: ([a = 0, b = 0]) => ({
+      y1: String((a * (100 + b)) / 100),
+      y2: String((a * (100 + b) ** 2) / 10_000),
+    }),
+    consts: [100],
+  }),
+  p7({
+    id: "P7.successive.14",
+    form: "the-start-before-a-rise-and-a-fall",
+    groups: [8, 8],
+    origin: EXT,
+    kind: "integer",
+    draw: (r) => [
+      pick(r, [10, 20, 25, 50]),
+      pick(r, [10, 20, 25, 40, 50]),
+      between(r, 1, 5),
+    ],
+    solve: ([, , k = 0]) => q(400 * k),
+    ref: ([a = 0, b = 0, k = 0]) =>
+      q(((100 + a) * (100 - b) * 400 * k) / 10_000).div(
+        q((100 + a) * (100 - b), 10_000),
+      ),
+    traps: [
+      [
+        "undo-only-the-fall",
+        "conceptual",
+        ([a = 0, , k = 0]) => whole(q((100 + a) * 4 * k, 1)),
+      ],
+      [
+        "undo-only-the-rise",
+        "conceptual",
+        ([, b = 0, k = 0]) => whole(q((100 - b) * 4 * k, 1)),
+      ],
+      [
+        "percentages-combined",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) =>
+          a === b
+            ? null
+            : whole(q((100 + a) * (100 - b) * 4 * k * (100 - a + b), 10_000)),
+      ],
+    ],
+    extra: ([a = 0, b = 0, k = 0]) => ({
+      m: String(((100 + a) * (100 - b) * 4 * k) / 100),
+    }),
+    consts: [100],
+  }),
+  p7({
+    id: "P7.successive.15",
+    form: "a-fall-over-three-months-from-a-chart",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) => {
+      const a = pick(r, [100, 200, 400, 500]);
+      const rise = pick(r, [10, 20, 25, 50]);
+      const fall = pick(r, [20, 25, 40, 50, 60]);
+      const b = (a * (100 + rise)) / 100;
+      return [a, b, (b * (100 - fall)) / 100];
+    },
+    valid: ([a = 0, b = 0, c = 0]) => {
+      const x = (100 * (a - c)) / a;
+      return (
+        Number.isInteger(b) &&
+        Number.isInteger(c) &&
+        c < a &&
+        Number.isInteger(x) &&
+        ![a, b, c].includes(x)
+      );
+    },
+    solve: ([a = 0, , c = 0]) => q((100 * (a - c)) / a),
+    ref: ([a = 0, , c = 0]) => q(a - c, a).mul(q(100)),
+    traps: [
+      [
+        "the-last-fall-only",
+        "conceptual",
+        ([, b = 0, c = 0]) => whole(q(100 * (b - c), b)),
+      ],
+      ["the-difference-itself", "conceptual", ([a = 0, , c = 0]) => q(a - c)],
+      [
+        "compared-with-the-middle",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => whole(q(100 * (a - c), b)),
+      ],
+    ],
+    consts: [100],
+  }),
+];
+
 export const pSpecs3: readonly Spec<never>[] = [
   ...mapScale,
+  ...mapScaleMore,
   ...mapScaleS,
+  ...mapScaleSMore,
   ...offers,
+  ...offersMore,
   ...relative,
+  ...relativeMore,
   ...successive,
+  ...successiveMore,
 ];

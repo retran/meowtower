@@ -57,6 +57,29 @@ const defineSpec = <P>(spec: Spec<P>) => {
   });
 };
 
+interface Reading {
+  step: number;
+  parts: number;
+  lo: number;
+  k: number;
+}
+interface Between {
+  maj: number;
+  sub: number;
+  labels: number;
+  t: number;
+  lo: number;
+}
+interface Choose {
+  step: number;
+  lo: number;
+  idx: number;
+  ks: number[];
+}
+interface Pencil {
+  a: number;
+  len: number;
+}
 interface K {
   k: number;
 }
@@ -100,28 +123,22 @@ const pointSpecs = [
     groups: [5, 5],
     answer: "integer",
     draw: (r) => ({ k: between(r, 2, 9) }),
-    solve: (p) => qi(100 * p.k),
-    reference: (p) => qi(Number(`${p.k}00`)),
+    solve: (p) => qi(1000 - 100 * p.k),
+    reference: (p) => qi(100 * (10 - p.k)),
     traps: [
-      { id: "step-of-ten", kind: "conceptual", wrong: (p) => qi(10 * p.k) },
+      { id: "from-zero", kind: "conceptual", wrong: (p) => qi(100 * p.k) },
       {
-        id: "zero-counted",
+        id: "end-counted",
         kind: "conceptual",
-        wrong: (p) => qi(100 * (p.k - 1)),
+        wrong: (p) => qi(1000 - 100 * (p.k - 1)),
       },
-      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
       {
-        id: "extra-mark",
+        id: "step-of-ten",
         kind: "conceptual",
-        wrong: (p) => qi(100 * (p.k + 1)),
+        wrong: (p) => qi(1000 - 10 * p.k),
       },
     ],
-    vars: (p) => ({
-      k: s(p.k),
-      r: s(100 * p.k),
-      t: s(10 * p.k),
-      z: s(100 * (p.k - 1)),
-    }),
+    vars: (p) => ({ k: s(p.k), r: s(1000 - 100 * p.k) }),
     constants: [0, 10, 100, 1000],
   }),
   defineSpec<KB>({
@@ -354,35 +371,48 @@ const pointSpecs = [
     }),
     constants: [0, 1, 10],
   }),
-  defineSpec<{ step: number; k: number }>({
+  defineSpec<{ step: number; k: number; base: number }>({
     id: "N5.point.10",
     node: "N5",
     subtype: "point",
     form: "mark-when-the-step-is-given",
     groups: [4, 5],
     answer: "integer",
-    draw: (r) => ({ step: pick(r, [5, 20, 25, 50]), k: between(r, 2, 9) }),
-    solve: (p) => qi(p.step * p.k),
+    draw: (r) => {
+      const step = pick(r, [5, 20, 25, 50]);
+      const k = between(r, 2, 6);
+      return { step, k, base: step * (k + 2 + between(r, 0, 3)) };
+    },
+    solve: (p) => qi(p.base - p.step * p.k),
     reference: (p) =>
-      qi(Array.from({ length: p.k }, () => p.step).reduce((a, b) => a + b, 0)),
+      qi(
+        Array.from({ length: p.k }, () => p.step).reduce(
+          (a, b) => a - b,
+          p.base,
+        ),
+      ),
     traps: [
       {
-        id: "step-plus-count",
-        kind: "procedural",
-        wrong: (p) => qi(p.step + p.k),
-      },
-      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
-      {
-        id: "zero-counted",
+        id: "right-instead",
         kind: "conceptual",
-        wrong: (p) => qi(p.step * (p.k - 1)),
+        wrong: (p) => qi(p.base + p.step * p.k),
+      },
+      {
+        id: "base-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.base - p.step * (p.k - 1)),
+      },
+      {
+        id: "number-of-marks",
+        kind: "conceptual",
+        wrong: (p) => qi(p.base - p.k),
       },
     ],
     vars: (p) => ({
       step: s(p.step),
       k: s(p.k),
-      r: s(p.step * p.k),
-      w: s(p.step + p.k),
+      base: s(p.base),
+      r: s(p.base - p.step * p.k),
     }),
     constants: [0],
   }),
@@ -422,6 +452,270 @@ const pointSpecs = [
     }),
     constants: [1],
   }),
+  defineSpec<Reading>({
+    id: "N5.point.12",
+    node: "N5",
+    subtype: "point",
+    form: "read-a-point-from-a-line-labelled-at-its-ends",
+    groups: [5, 6],
+    answer: "integer",
+    draw: (r) => {
+      const step = pick(r, [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]);
+      const parts = pick(r, [5, 8, 10]);
+      return {
+        step,
+        parts,
+        lo: r.int(3) === 0 ? 0 : step * parts * between(r, 1, 4),
+        k: between(r, 1, parts - 1),
+      };
+    },
+    valid: (p) => p.k * 2 !== p.parts,
+    solve: (p) => qi(p.lo + p.k * p.step),
+    reference: (p) =>
+      qi(
+        Array.from({ length: p.k }, () => p.step).reduce((a, b) => a + b, p.lo),
+      ),
+    traps: [
+      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.lo + p.k) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.lo + (p.k - 1) * p.step),
+      },
+      {
+        id: "mirror",
+        kind: "conceptual",
+        wrong: (p) => qi(p.lo + p.parts * p.step - p.k * p.step),
+      },
+    ],
+    vars: (p) => ({
+      lo: digits(p.lo),
+      hi: digits(p.lo + p.parts * p.step),
+      gap: digits(p.parts * p.step),
+      parts: s(p.parts),
+      step: digits(p.step),
+      k: s(p.k),
+      r: digits(p.lo + p.k * p.step),
+    }),
+    constants: [],
+  }),
+  defineSpec<Between>({
+    id: "N5.point.13",
+    node: "N5",
+    subtype: "point",
+    form: "read-a-point-between-two-labelled-marks",
+    groups: [5, 6],
+    answer: "integer",
+    draw: (r) => {
+      const maj = pick(r, [20, 50, 100, 200]);
+      const sub = pick(r, [4, 5, 10]);
+      const labels = between(r, 2, 4);
+      const t = between(r, 1, (labels - 1) * sub - 1);
+      return {
+        maj,
+        sub,
+        labels,
+        t,
+        lo: maj * between(r, 0, 5),
+      };
+    },
+    valid: (p) => p.maj % p.sub === 0 && p.t % p.sub !== 0,
+    solve: (p) =>
+      qi(
+        p.lo +
+          Math.floor(p.t / p.sub) * p.maj +
+          (p.t % p.sub) * (p.maj / p.sub),
+      ),
+    reference: (p) => qi(p.lo + (p.t * p.maj) / p.sub),
+    traps: [
+      {
+        id: "label-only",
+        kind: "conceptual",
+        wrong: (p) => qi(p.lo + Math.floor(p.t / p.sub) * p.maj),
+      },
+      {
+        id: "next-label",
+        kind: "conceptual",
+        wrong: (p) => qi(p.lo + (Math.floor(p.t / p.sub) + 1) * p.maj),
+      },
+      {
+        id: "unit-forgotten",
+        kind: "conceptual",
+        wrong: (p) =>
+          qi(p.lo + Math.floor(p.t / p.sub) * p.maj + (p.t % p.sub)),
+      },
+    ],
+    vars: (p) => {
+      const l1 = p.lo + Math.floor(p.t / p.sub) * p.maj;
+      const e = p.t % p.sub;
+      return {
+        l1: digits(l1),
+        l2: digits(l1 + p.maj),
+        maj: digits(p.maj),
+        sub: s(p.sub),
+        unit: digits(p.maj / p.sub),
+        e: s(e),
+        add: digits(e * (p.maj / p.sub)),
+        r: digits(l1 + e * (p.maj / p.sub)),
+      };
+    },
+    constants: [],
+  }),
+  defineSpec<Choose>({
+    id: "N5.point.14",
+    node: "N5",
+    subtype: "point",
+    form: "which-numbered-point-shows-the-number",
+    groups: [5, 6],
+    answer: "choice",
+    draw: (r) => {
+      const step = pick(r, [10, 20, 25, 50, 100]);
+      const idx = pick(r, [2, 3, 4, 6, 7, 8]);
+      const mirror = 10 - idx;
+      const near =
+        idx + (idx < 5 ? 1 : -1) === mirror
+          ? idx - (idx < 5 ? 1 : -1)
+          : idx + (idx < 5 ? 1 : -1);
+      const set = new Set([idx, mirror, near]);
+      while (set.size < 4) set.add(between(r, 1, 9));
+      return {
+        step,
+        lo: r.int(2) === 0 ? 0 : step * between(r, 1, 9),
+        idx,
+        ks: [...set].sort((a, b) => a - b),
+      };
+    },
+    valid: (p) => p.idx !== 10 - p.idx && p.ks.length === 4,
+    options: () => ["1", "2", "3", "4"],
+    solve: (p) => s(p.ks.indexOf(p.idx) + 1),
+    reference: (p) => s(p.ks.filter((k) => k <= p.idx).length),
+    traps: [
+      {
+        id: "mirror",
+        kind: "conceptual",
+        wrong: (p) => s(p.ks.indexOf(10 - p.idx) + 1),
+      },
+      {
+        id: "neighbour",
+        kind: "conceptual",
+        wrong: (p) => {
+          const near = p.idx + (p.idx < 5 ? 1 : -1);
+          const at = p.ks.indexOf(
+            near === 10 - p.idx ? p.idx - (p.idx < 5 ? 1 : -1) : near,
+          );
+          return at < 0 ? null : s(at + 1);
+        },
+      },
+    ],
+    vars: (p) => {
+      const near = p.idx + (p.idx < 5 ? 1 : -1);
+      const nt = near === 10 - p.idx ? p.idx - (p.idx < 5 ? 1 : -1) : near;
+      return {
+        x: digits(p.lo + p.idx * p.step),
+        lo: digits(p.lo),
+        hi: digits(p.lo + 10 * p.step),
+        step: digits(p.step),
+        t: s(p.idx),
+        mt: s(10 - p.idx),
+        nt: s(nt),
+        r: s(p.ks.indexOf(p.idx) + 1),
+        w_mirror: s(p.ks.indexOf(10 - p.idx) + 1),
+        w_neighbour: s(p.ks.indexOf(nt) + 1),
+      };
+    },
+    constants: [1, 2, 3, 4, 10],
+  }),
+  defineSpec<{ a: number; b: number; n: number }>({
+    id: "N5.point.15",
+    node: "N5",
+    subtype: "point",
+    form: "a-grasshopper-jumps-right-then-left",
+    roles: {
+      a: "length of a jump to the right",
+      b: "length of a jump to the left",
+      n: "number of jumps",
+    },
+    groups: [5, 6],
+    origin: {
+      olympiad:
+        "alternating jumps taken as pairs on a number line; the grasshopper task of Kangaroo 2020, grades 3 and 4 (RES-4281)",
+    },
+    answer: "integer",
+    draw: (r) => {
+      const a = between(r, 4, 9);
+      return { a, b: between(r, 1, a - 2), n: pick(r, [5, 7, 9, 11, 13]) };
+    },
+    solve: (p) => qi(((p.n - 1) / 2) * (p.a - p.b) + p.a),
+    reference: (p) => {
+      let at = 0;
+      for (let j = 1; j <= p.n; j += 1) at += j % 2 === 1 ? p.a : -p.b;
+      return qi(at);
+    },
+    traps: [
+      {
+        id: "last-jump-forgotten",
+        kind: "procedural",
+        wrong: (p) => qi(((p.n - 1) / 2) * (p.a - p.b)),
+      },
+      {
+        id: "forgot-back",
+        kind: "conceptual",
+        wrong: (p) => qi(((p.n + 1) / 2) * p.a),
+      },
+      {
+        id: "every-jump-right",
+        kind: "conceptual",
+        wrong: (p) => qi(p.n * p.a),
+      },
+    ],
+    vars: (p) => ({
+      a: s(p.a),
+      b: s(p.b),
+      n: s(p.n),
+      d: s(p.a - p.b),
+      pairs: s((p.n - 1) / 2),
+      m: s(((p.n - 1) / 2) * (p.a - p.b)),
+      r: s(((p.n - 1) / 2) * (p.a - p.b) + p.a),
+    }),
+    constants: [1],
+  }),
+  defineSpec<{ w: number; k: number }>({
+    id: "N5.point.16",
+    node: "N5",
+    subtype: "point",
+    form: "read-a-decimal-point-from-a-line",
+    groups: [6, 7],
+    answer: "decimal",
+    draw: (r) => ({ w: between(r, 0, 9), k: between(r, 1, 9) }),
+    solve: (p) => Q.of(BigInt(10 * p.w + p.k), 10n),
+    reference: (p) => Q.fromDecimal(`${p.w},${p.k}`),
+    traps: [
+      {
+        id: "tenths-as-wholes",
+        kind: "conceptual",
+        wrong: (p) => qi(p.w + p.k),
+      },
+      {
+        id: "hundredths",
+        kind: "conceptual",
+        wrong: (p) => Q.of(BigInt(100 * p.w + p.k), 100n),
+      },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) =>
+          p.k === 1 ? null : Q.of(BigInt(10 * p.w + p.k - 1), 10n),
+      },
+    ],
+    vars: (p) => ({
+      w: s(p.w),
+      w1: s(p.w + 1),
+      k: s(p.k),
+      t: `0,${p.k}`,
+      r: `${p.w},${p.k}`,
+    }),
+    constants: [0.1, 1, 10],
+  }),
 ];
 
 const scaleSpecs = [
@@ -458,6 +752,11 @@ const scaleSpecs = [
     node: "N5",
     subtype: "scale",
     form: "level-in-a-measuring-cup",
+    roles: {
+      base: "millilitre mark the water level rose above",
+      step: "millilitres between two marks",
+      k: "marks the level rose",
+    },
     groups: [4, 5],
     answer: "integer",
     draw: (r) => ({
@@ -498,6 +797,10 @@ const scaleSpecs = [
     node: "N5",
     subtype: "scale",
     form: "pointer-half-way-between-two-labels",
+    roles: {
+      lo: "lower mark of the kitchen scale in grams",
+      hi: "upper mark in grams",
+    },
     groups: [5, 5],
     answer: "integer",
     draw: (r) => ({ lo: between(r, 1, 9) * 100 }),
@@ -521,30 +824,32 @@ const scaleSpecs = [
     node: "N5",
     subtype: "scale",
     form: "speedometer-pointer-on-a-mark",
+    roles: {
+      step: "km/h between two marks",
+      v: "speed the pointer shows in km/h",
+    },
     groups: [5, 5],
     answer: "integer",
     draw: (r) => ({ step: pick(r, [10, 20]), k: between(r, 2, 9) }),
-    solve: (p) => qi(p.step * p.k),
-    reference: (p) =>
-      qi(Array.from({ length: p.k }, () => p.step).reduce((a, b) => a + b, 0)),
+    solve: (p) => qi(p.k),
+    reference: (p) => qi((p.step * p.k) / p.step),
     traps: [
       {
-        id: "step-plus-count",
-        kind: "procedural",
-        wrong: (p) => qi(p.step + p.k),
-      },
-      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
-      {
-        id: "zero-counted",
+        id: "speed-as-mark",
         kind: "conceptual",
-        wrong: (p) => qi(p.step * (p.k - 1)),
+        wrong: (p) => qi(p.step * p.k),
       },
+      {
+        id: "multiplied",
+        kind: "procedural",
+        wrong: (p) => qi(p.step * p.step * p.k),
+      },
+      { id: "zero-counted", kind: "conceptual", wrong: (p) => qi(p.k + 1) },
     ],
     vars: (p) => ({
       step: s(p.step),
-      k: s(p.k),
-      r: s(p.step * p.k),
-      w: s(p.step + p.k),
+      v: s(p.step * p.k),
+      r: s(p.k),
     }),
     constants: [0],
   }),
@@ -675,6 +980,10 @@ const scaleSpecs = [
     node: "N5",
     subtype: "scale",
     form: "thermometer-marks-every-two-degrees",
+    roles: {
+      b: "degrees of the mark the column rose above",
+      k: "marks the column rose",
+    },
     groups: [5, 6],
     answer: "integer",
     draw: (r) => ({ b: 2 * between(r, 0, 12), k: between(r, 1, 6) }),
@@ -707,6 +1016,10 @@ const scaleSpecs = [
     node: "N5",
     subtype: "scale",
     form: "bar-height-on-an-axis-with-a-unit-cell",
+    roles: {
+      u: "value of one cell on the axis",
+      k: "height of the bar in cells",
+    },
     groups: [5, 6],
     answer: "integer",
     draw: (r) => ({ u: pick(r, [2, 5, 10, 20]), k: between(r, 6, 19) }),
@@ -738,6 +1051,10 @@ const scaleSpecs = [
     node: "N5",
     subtype: "scale",
     form: "difference-of-two-readings",
+    roles: {
+      a: "first reading of the scale",
+      b: "second reading of the scale",
+    },
     groups: [5, 5],
     answer: "integer",
     draw: (r) => {
@@ -758,6 +1075,10 @@ const scaleSpecs = [
     node: "N5",
     subtype: "scale",
     form: "length-on-a-map-with-a-scale",
+    roles: {
+      m: "metres on the ground for one centimetre of the map",
+      c: "length of the road on the map in centimetres",
+    },
     groups: [6, 7],
     answer: "integer",
     origin: { extension: "map scale, Russian grade 5 to 6 (RES-4281)" },
@@ -782,6 +1103,102 @@ const scaleSpecs = [
       w: s(p.m + p.c),
     }),
     constants: [1],
+  }),
+  defineSpec<Pencil>({
+    id: "N5.scale.12",
+    node: "N5",
+    subtype: "scale",
+    form: "length-of-an-object-on-a-ruler-that-starts-after-zero",
+    groups: [4, 5],
+    answer: "integer",
+    draw: (r) => {
+      const a = between(r, 2, 8);
+      return { a, len: between(r, 3, 9) };
+    },
+    valid: (p) =>
+      ![5, 10, 15].includes(p.len) &&
+      ![p.a, p.a + p.len].includes(p.len) &&
+      p.a + p.len <= 17,
+    solve: (p) => qi(p.len),
+    reference: (p) => qi(p.a + p.len - p.a),
+    traps: [
+      { id: "right-end", kind: "conceptual", wrong: (p) => qi(p.a + p.len) },
+      { id: "left-end", kind: "conceptual", wrong: (p) => qi(p.a) },
+      { id: "marks-counted", kind: "conceptual", wrong: (p) => qi(p.len + 1) },
+    ],
+    vars: (p) => ({
+      a: s(p.a),
+      b: s(p.a + p.len),
+      r: s(p.len),
+    }),
+    constants: [],
+  }),
+  defineSpec<{ m: number; d: number }>({
+    id: "N5.scale.13",
+    node: "N5",
+    subtype: "scale",
+    form: "trees-in-an-alley-marks-and-gaps",
+    roles: {
+      m: "number of trees in the alley",
+      d: "distance between neighbouring trees in metres",
+    },
+    groups: [5, 6],
+    origin: {
+      olympiad:
+        "marks against intervals: n marks have n - 1 gaps; the tick-counting trap of RES-1200 and a Kangaroo staple",
+    },
+    answer: "integer",
+    draw: (r) => ({ m: between(r, 5, 12), d: pick(r, [2, 3, 4, 5, 6, 8, 10]) }),
+    solve: (p) => qi((p.m - 1) * p.d),
+    reference: (p) =>
+      qi(Array.from({ length: p.m - 1 }, () => p.d).reduce((a, b) => a + b, 0)),
+    traps: [
+      { id: "trees-counted", kind: "conceptual", wrong: (p) => qi(p.m * p.d) },
+      {
+        id: "one-gap-too-many",
+        kind: "conceptual",
+        wrong: (p) => qi((p.m + 1) * p.d),
+      },
+    ],
+    vars: (p) => ({
+      m: s(p.m),
+      d: s(p.d),
+      gaps: s(p.m - 1),
+      r: s((p.m - 1) * p.d),
+    }),
+    constants: [1],
+  }),
+  defineSpec<{ lo: number; g: number; p: number }>({
+    id: "N5.scale.14",
+    node: "N5",
+    subtype: "scale",
+    form: "value-of-one-part-counted-in-a-picture",
+    groups: [5, 6],
+    answer: "integer",
+    draw: (r) => {
+      const parts = pick(r, [4, 5, 8, 10]);
+      const unit = pick(r, [2, 5, 10, 20, 25]);
+      return { lo: unit * parts * between(r, 0, 3), g: parts * unit, p: parts };
+    },
+    solve: (p) => qi(p.g / p.p),
+    reference: (p) => qi((p.lo + p.g - p.lo) / p.p),
+    traps: [
+      { id: "whole-gap", kind: "conceptual", wrong: (p) => qi(p.g) },
+      { id: "division-count", kind: "conceptual", wrong: (p) => qi(p.p) },
+      {
+        id: "marks-counted",
+        kind: "conceptual",
+        wrong: (p) => (p.g % (p.p + 1) === 0 ? qi(p.g / (p.p + 1)) : null),
+      },
+    ],
+    vars: (p) => ({
+      lo: s(p.lo),
+      hi: s(p.lo + p.g),
+      g: s(p.g),
+      p: s(p.p),
+      r: s(p.g / p.p),
+    }),
+    constants: [],
   }),
 ];
 

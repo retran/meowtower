@@ -3,7 +3,7 @@
 // 7, divide by one digit with a remainder at group 6 and by two digits at group 7. Texts are plain
 // blanks in `content/tasks-a.ru.json`, keyed by the template id.
 import { between, pick } from "./draw.js";
-import { forSubtype } from "./kit.js";
+import { FOUR, forChoice, forSubtype, placeOf, turn } from "./a1.js";
 import type { Spec } from "./spec.js";
 
 const sum = (n: number, x: number): number =>
@@ -17,6 +17,13 @@ const nat = (x: number): number | null =>
 /** A wrong answer that is a whole number and differs from the other traps' answers. */
 const apart = (x: number, ...others: number[]): number | null =>
   nat(x) !== null && !others.includes(x) ? x : null;
+/** Every divisor of `n`, in order. */
+const divisorsOf = (n: number): number[] =>
+  Array.from({ length: n }, (_, i) => i + 1).filter((d) => n % d === 0);
+/** The smallest divisor of `n` that is larger than `bound`, or null. */
+const smallestAbove = (n: number, bound: number): number | null =>
+  divisorsOf(n).find((d) => d > bound) ?? null;
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
 const flip = (n: number): number => Number([...String(n)].reverse().join(""));
 /** Subtracting without borrowing: the smaller digit is taken from the larger one in the units. */
 const noBorrow = (big: number, small: number): number | null => {
@@ -111,6 +118,7 @@ const byTwo = [
     id: "A7.by-two-digit.05",
     form: "the-price-of-many-items",
     groups: [7, 7],
+    roles: { a: "price of one item", b: "count of items" },
     draw: (r) => [between(r, 12, 39), between(r, 21, 49)],
     valid: ([a = 0, b = 0]) => a !== b && ones(a) > 1 && ones(b) > 1,
     solve: ([a = 0, b = 0]) => a * b,
@@ -230,6 +238,87 @@ const byTwo = [
     extra: ([a = 0, b = 0]) => ({ da: String(2 * a), hb: String(b / 2) }),
     consts: [2],
   }),
+  a7({
+    id: "A7.by-two-digit.12",
+    form: "how-much-more-is-a-square-than-a-nearby-product",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "a square against the product of its neighbours at equal distance (RES-4283, F14)",
+    },
+    draw: (r) => [pick(r, [20, 25, 30, 40, 50, 60]), between(r, 2, 6)],
+    solve: ([c = 0, d = 0]) => c * c - (c - d) * (c + d),
+    ref: ([, d = 0]) => sum(d, d),
+    traps: [
+      ["the-distance-itself", "conceptual", ([, d = 0]) => d],
+      ["the-whole-difference-of-factors", "conceptual", ([, d = 0]) => 2 * d],
+      [
+        "the-sum-of-the-two-products",
+        "procedural",
+        ([c = 0, d = 0]) => apart(c * c + (c - d) * (c + d), d * d),
+      ],
+    ],
+    extra: ([c = 0, d = 0]) => ({
+      x: String(c - d),
+      y: String(c + d),
+      sq: String(c * c),
+      pr: String((c - d) * (c + d)),
+    }),
+  }),
+  a7({
+    id: "A7.by-two-digit.13",
+    form: "the-hidden-ones-digit-of-a-two-digit-factor",
+    groups: [7, 7],
+    origin: { olympiad: "a hidden digit in a product (RES-4283, F10)" },
+    draw: (r) => [between(r, 12, 29), between(r, 2, 4), between(r, 1, 9)],
+    valid: ([a = 0]) => ones(a) > 1,
+    solve: ([, , o = 0]) => o,
+    ref: ([a = 0, t = 0, o = 0]) =>
+      Array.from({ length: 10 }, (_, k) => k).find(
+        (k) => a * (10 * t + k) === a * (10 * t + o),
+      ) ?? -1,
+    traps: [
+      ["the-whole-factor", "conceptual", ([, t = 0, o = 0]) => 10 * t + o],
+      [
+        "the-last-digit-of-the-product",
+        "conceptual",
+        ([a = 0, t = 0, o = 0]) => apart((a * (10 * t + o)) % 10, o),
+      ],
+      ["the-tens-digit", "conceptual", ([, t = 0]) => t],
+    ],
+    extra: ([a = 0, t = 0, o = 0]) => ({
+      p: String(a * (10 * t + o)),
+      n: String(10 * t + o),
+    }),
+    consts: [10],
+  }),
+  a7({
+    id: "A7.by-two-digit.14",
+    form: "three-digits-by-two-digits",
+    groups: [7, 8],
+    draw: (r) => [between(r, 121, 349), between(r, 12, 29)],
+    valid: ([n = 0, d = 0]) => ones(n) > 1 && tens(n) > 0 && ones(d) > 1,
+    solve: ([n = 0, d = 0]) => n * d,
+    ref: ([n = 0, d = 0]) => n * 10 * tens(d) + n * ones(d),
+    traps: [
+      [
+        "the-tens-part-only",
+        "procedural",
+        ([n = 0, d = 0]) => n * 10 * tens(d),
+      ],
+      [
+        "the-tens-not-shifted",
+        "procedural",
+        ([n = 0, d = 0]) => n * tens(d) + n * ones(d),
+      ],
+      ["the-hundreds-lost", "procedural", ([n = 0, d = 0]) => (n % 100) * d],
+    ],
+    extra: ([n = 0, d = 0]) => ({
+      u: String(n * 10 * tens(d)),
+      v: String(n * ones(d)),
+    }),
+    consts: [],
+  }),
 ];
 
 const a8 = forSubtype("A8", "remainder");
@@ -303,6 +392,7 @@ const remainder = [
     id: "A8.remainder.03",
     form: "full-boxes-and-what-is-left",
     groups: [5, 6],
+    roles: { a: "count of apples", b: "count in one box" },
     draw: (r) => [between(r, 31, 98), between(r, 4, 9)],
     valid: ([n = 0, d = 0]) => n % d !== 0 && Math.floor(n / d) !== n % d,
     solve: ([n = 0, d = 0]) => [Math.floor(n / d), n % d],
@@ -370,6 +460,7 @@ const remainder = [
     id: "A8.remainder.06",
     form: "how-many-are-needed-so-that-all-fit",
     groups: [5, 6],
+    roles: { a: "count of people", b: "count of seats in one bus" },
     draw: (r) => [between(r, 31, 98), between(r, 4, 9)],
     valid: ([n = 0, d = 0]) => n % d !== 0,
     solve: ([n = 0, d = 0]) => Math.floor(n / d) + 1,
@@ -394,13 +485,17 @@ const remainder = [
         (m, x) => Math.max(m, x),
         0,
       ),
-    traps: [["divisor-itself", "conceptual", ([d = 0]) => d]],
+    traps: [
+      ["divisor-itself", "conceptual", ([d = 0]) => d],
+      ["one-less-than-needed", "conceptual", ([d = 0]) => d - 2],
+    ],
     consts: [1],
   }),
   a8({
     id: "A8.remainder.08",
     form: "the-number-from-a-quotient-and-a-remainder",
     groups: [5, 6],
+    roles: { a: "divisor", b: "quotient", c: "remainder" },
     draw: (r) => [between(r, 4, 9), between(r, 3, 9), between(r, 1, 3)],
     valid: ([d = 0, q = 0, rem = 0]) => rem < d && d !== q,
     solve: ([d = 0, q = 0, rem = 0]) => d * q + rem,
@@ -492,6 +587,125 @@ const remainder = [
       ],
     ],
   }),
+  a8({
+    id: "A8.remainder.12",
+    form: "the-least-number-with-two-given-remainders",
+    groups: [6, 6],
+    origin: { olympiad: "a number with two given remainders (RES-4283, F12)" },
+    draw: (r) => {
+      const k = between(r, 1, 2);
+      const [a = 0, b = 0] = pick(r, [
+        [3, 4],
+        [4, 5],
+        [3, 5],
+        [4, 6],
+        [5, 6],
+        [3, 7],
+        [5, 7],
+      ]);
+      return [a, a - k, b, b - k];
+    },
+    valid: ([a = 0, c = 0, b = 0, d = 0]) => c >= 1 && d >= 1 && a !== b,
+    solve: ([a = 0, c = 0, b = 0]) => (a * b) / gcd(a, b) - (a - c),
+    ref: ([a = 0, c = 0, b = 0, d = 0]) =>
+      Array.from({ length: 200 }, (_, x) => x + 1).find(
+        (x) => x % a === c && x % b === d,
+      ) ?? -1,
+    traps: [
+      [
+        "the-common-multiple",
+        "conceptual",
+        ([a = 0, , b = 0]) => (a * b) / gcd(a, b),
+      ],
+      [
+        "the-product-less",
+        "procedural",
+        ([a = 0, c = 0, b = 0]) =>
+          apart(
+            a * b - (a - c),
+            (a * b) / gcd(a, b) - (a - c),
+            (a * b) / gcd(a, b),
+          ),
+      ],
+      ["the-remainder-itself", "conceptual", ([, c = 0]) => c],
+    ],
+    extra: ([a = 0, c = 0, b = 0, d = 0]) => {
+      const first = Array.from({ length: 60 }, (_, x) => x + 1).find(
+        (x) => x % a === c && x % b === d,
+      );
+      return {
+        l1: Array.from({ length: 60 }, (_, x) => x + 1)
+          .filter((x) => x % a === c)
+          .slice(0, 6)
+          .join(", "),
+        q: String(Math.floor((first ?? 0) / b)),
+      };
+    },
+  }),
+  a8({
+    id: "A8.remainder.13",
+    form: "the-place-of-a-bead-in-a-repeating-pattern",
+    groups: [5, 6],
+    draw: (r) => [between(r, 3, 5), between(r, 14, 60)],
+    valid: ([a = 0, b = 0]) => b % a !== 0 && Math.floor(b / a) !== b % a,
+    solve: ([a = 0, b = 0]) => ((b - 1) % a) + 1,
+    ref: ([a = 0, b = 0]) => {
+      let place = 0;
+      for (let i = 1; i <= b; i += 1) place = place === a ? 1 : place + 1;
+      return place;
+    },
+    traps: [
+      [
+        "the-number-of-whole-patterns",
+        "conceptual",
+        ([a = 0, b = 0]) => Math.floor(b / a),
+      ],
+      [
+        "the-pattern-not-closed",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          apart(a - (b % a) + 1, ((b - 1) % a) + 1, Math.floor(b / a)),
+      ],
+      [
+        "the-pattern-length",
+        "conceptual",
+        ([a = 0, b = 0]) => apart(a, ((b - 1) % a) + 1, Math.floor(b / a)),
+      ],
+    ],
+    consts: [1],
+  }),
+  a8({
+    id: "A8.remainder.14",
+    form: "the-sum-of-all-possible-remainders",
+    groups: [5, 6],
+    origin: {
+      olympiad: "all remainders of a division, a clever count (RES-4283, F15)",
+    },
+    draw: (r) => [between(r, 4, 8)],
+    solve: ([a = 0]) => (a * (a - 1)) / 2,
+    ref: ([a = 0]) =>
+      Array.from({ length: 6 * a }, (_, n) => n % a)
+        .filter((x, i, list) => list.indexOf(x) === i)
+        .reduce((p, q) => p + q, 0),
+    traps: [
+      [
+        "the-divisor-counted-as-a-remainder",
+        "conceptual",
+        ([a = 0]) => (a * (a + 1)) / 2,
+      ],
+      ["the-largest-remainder", "conceptual", ([a = 0]) => a - 1],
+      [
+        "the-divisor-times-the-largest",
+        "conceptual",
+        ([a = 0]) => apart(a * a - a, (a * (a - 1)) / 2),
+      ],
+    ],
+    extra: ([a = 0]) => ({
+      plus: Array.from({ length: a }, (_, i) => i).join(" + "),
+      list: Array.from({ length: a }, (_, i) => i).join(", "),
+    }),
+    consts: [0],
+  }),
 ];
 
 const a9 = forSubtype("A9", "long-one-digit");
@@ -500,8 +714,8 @@ const longOne = [
     id: "A9.long-one-digit.01",
     form: "an-exact-two-digit-quotient",
     groups: [6, 6],
-    draw: (r) => [between(r, 3, 9), between(r, 12, 49)],
-    valid: ([d = 0, q = 0]) => d !== q && ones(q) > 0,
+    draw: (r) => [between(r, 3, 9), between(r, 12, 33)],
+    valid: ([d = 0, q = 0]) => d !== q && ones(q) > 0 && d * q <= 99,
     solve: ([, q = 0]) => q,
     ref: ([d = 0, q = 0]) => (d * q) / d,
     traps: [
@@ -650,8 +864,8 @@ const longOne = [
     id: "A9.long-one-digit.09",
     form: "how-many-digits-the-quotient-has",
     groups: [6, 6],
-    draw: (r) => [between(r, 3, 9), between(r, 12, 199)],
-    valid: ([d = 0, q = 0]) => d * q >= 100 && d * q <= 999,
+    draw: (r) => [between(r, 3, 9), between(r, 12, 999)],
+    valid: ([d = 0, q = 0]) => d * q >= 100 && d * q <= 9999,
     solve: ([, q = 0]) => countDigits(q),
     ref: ([, q = 0]) => Math.floor(Math.log10(q)) + 1,
     traps: [
@@ -701,7 +915,89 @@ const longOne = [
         "procedural",
         ([n = 0]) => (n % 8 === 0 ? n / 8 : null),
       ],
+      ["two-taken-away-twice", "procedural", ([n = 0]) => n - 4],
     ],
+    consts: [2],
+  }),
+  a9({
+    id: "A9.long-one-digit.12",
+    form: "a-four-digit-dividend",
+    groups: [6, 6],
+    draw: (r) => [between(r, 3, 9), between(r, 201, 999)],
+    valid: ([d = 0, q = 0]) => d !== q && ones(q) > 0 && d * q >= 1000,
+    solve: ([, q = 0]) => q,
+    ref: ([d = 0, q = 0]) =>
+      Array.from({ length: 1000 }, (_, x) => x).find((x) => x * d === d * q) ??
+      -1,
+    traps: [
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d],
+      ["digits-swapped", "procedural", ([, q = 0]) => flip(q)],
+      ["a-hundred-short", "procedural", ([, q = 0]) => q - 100],
+    ],
+    extra: ([d = 0, q = 0]) => ({
+      n: String(d * q),
+      u: String(d * 100 * hundreds(q)),
+      v: String(d * (q % 100)),
+    }),
+  }),
+  a9({
+    id: "A9.long-one-digit.13",
+    form: "the-remainder-after-adding-to-the-number",
+    groups: [6, 7],
+    origin: { olympiad: "remainders and addition (RES-4283, F12)" },
+    roles: { a: "divisor", b: "remainder", c: "amount added" },
+    draw: (r) => {
+      const d = between(r, 5, 9);
+      return [d, between(r, 1, d - 1), between(r, 2, d + 3)];
+    },
+    valid: ([d = 0, rem = 0, k = 0]) =>
+      (rem + k) % d !== rem && (rem + k) % d !== 0 && rem + k >= d,
+    solve: ([d = 0, rem = 0, k = 0]) => (rem + k) % d,
+    ref: ([d = 0, rem = 0, k = 0]) => (d * 10 + rem + k) % d,
+    traps: [
+      [
+        "the-remainders-added-without-reducing",
+        "procedural",
+        ([, rem = 0, k = 0]) => rem + k,
+      ],
+      ["the-old-remainder", "conceptual", ([, rem = 0]) => rem],
+      [
+        "the-added-number-only",
+        "conceptual",
+        ([d = 0, rem = 0, k = 0]) => apart(k % d, (rem + k) % d, rem),
+      ],
+    ],
+    extra: ([, rem = 0, k = 0]) => ({ s: String(rem + k) }),
+  }),
+  a9({
+    id: "A9.long-one-digit.14",
+    form: "how-many-times-a-number-halves-evenly",
+    groups: [6, 7],
+    origin: { olympiad: "halving until the number is odd (RES-4283, F16)" },
+    draw: (r) => [pick(r, [3, 5, 7, 9, 11, 13, 15]), between(r, 2, 5)],
+    valid: ([odd = 0, k = 0]) => odd * 2 ** k <= 400,
+    solve: ([, k = 0]) => k,
+    ref: ([odd = 0, k = 0]) => {
+      let n = odd * 2 ** k;
+      let times = 0;
+      while (n % 2 === 0) {
+        n /= 2;
+        times += 1;
+      }
+      return times;
+    },
+    traps: [
+      ["the-last-number", "conceptual", ([odd = 0]) => odd],
+      ["one-step-too-many", "procedural", ([, k = 0]) => k + 1],
+      ["one-step-too-few", "procedural", ([, k = 0]) => k - 1],
+    ],
+    extra: ([odd = 0, k = 0]) => ({
+      n: String(odd * 2 ** k),
+      chain: Array.from({ length: k + 1 }, (_, i) => odd * 2 ** (k - i)).join(
+        ", ",
+      ),
+      q: String(odd * 2 ** k),
+    }),
     consts: [2],
   }),
 ];
@@ -712,7 +1008,7 @@ const longTwo = [
     id: "A10.by-two-digit-div.01",
     form: "an-exact-division-by-a-two-digit-number",
     groups: [7, 7],
-    draw: (r) => [between(r, 11, 35), between(r, 3, 19)],
+    draw: (r) => [between(r, 11, 35), between(r, 12, 29)],
     valid: ([d = 0, q = 0]) => d * q >= 100 && d * q <= 999 && d !== q,
     solve: ([, q = 0]) => q,
     ref: ([d = 0, q = 0]) => (d * q) / d,
@@ -954,6 +1250,143 @@ const longTwo = [
     extra: ([q = 0]) => ({ n: String(25 * q) }),
     consts: [25],
   }),
+  a10({
+    id: "A10.by-two-digit-div.12",
+    form: "a-quotient-that-ends-in-a-zero",
+    groups: [7, 7],
+    draw: (r) => [between(r, 12, 49), 10 * between(r, 2, 9)],
+    valid: ([d = 0, q = 0]) => d * q >= 100 && d * q <= 999,
+    solve: ([, q = 0]) => q,
+    ref: ([d = 0, q = 0]) =>
+      Array.from({ length: 100 }, (_, x) => x).find((x) => x * d === d * q) ??
+      -1,
+    traps: [
+      ["the-zero-lost", "procedural", ([, q = 0]) => q / 10],
+      ["an-extra-zero", "procedural", ([, q = 0]) => q * 10],
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d],
+    ],
+    extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
+  }),
+  a10({
+    id: "A10.by-two-digit-div.13",
+    form: "the-least-divisor-with-a-given-remainder",
+    groups: [7, 8],
+    origin: { olympiad: "a divisor larger than the remainder (RES-4283, F12)" },
+    roles: { a: "number divided", b: "remainder" },
+    draw: (r) => {
+      const d = between(r, 12, 30);
+      const q = between(r, 3, 9);
+      const rem = between(r, 4, 9);
+      return [d * q + rem, rem];
+    },
+    valid: ([n = 0, rem = 0]) => {
+      const m = n - rem;
+      const small = smallestAbove(m, rem);
+      const first = divisorsOf(m).find((x) => x > 1);
+      return (
+        small !== null && first !== undefined && first <= rem && small !== m
+      );
+    },
+    solve: ([n = 0, rem = 0]) => smallestAbove(n - rem, rem) ?? -1,
+    ref: ([n = 0, rem = 0]) =>
+      Math.min(...divisorsOf(n - rem).filter((x) => x > rem)),
+    traps: [
+      [
+        "a-divisor-not-above-the-remainder",
+        "conceptual",
+        ([n = 0, rem = 0]) => divisorsOf(n - rem).find((x) => x > 1) ?? null,
+      ],
+      [
+        "the-whole-number-less-the-remainder",
+        "conceptual",
+        ([n = 0, rem = 0]) => n - rem,
+      ],
+      ["the-remainder-itself", "conceptual", ([, rem = 0]) => rem],
+    ],
+    extra: ([n = 0, rem = 0]) => ({
+      m: String(n - rem),
+      divs: divisorsOf(n - rem).join(", "),
+      k: String((n - rem) / (smallestAbove(n - rem, rem) ?? 1)),
+    }),
+  }),
+  a10({
+    id: "A10.by-two-digit-div.14",
+    form: "the-remainder-after-doubling-both-numbers",
+    groups: [7, 8],
+    origin: {
+      olympiad: "the remainder when both numbers are doubled (RES-4283, F12)",
+    },
+    roles: { a: "divisor", b: "quotient", c: "remainder" },
+    draw: (r) => {
+      const d = between(r, 12, 30);
+      return [d, between(r, 3, 9), between(r, 2, d - 1)];
+    },
+    solve: ([, , rem = 0]) => 2 * rem,
+    ref: ([d = 0, q = 0, rem = 0]) => (2 * (d * q + rem)) % (2 * d),
+    traps: [
+      ["the-same-remainder", "conceptual", ([, , rem = 0]) => rem],
+      [
+        "the-quotient",
+        "conceptual",
+        ([, q = 0, rem = 0]) => apart(q, 2 * rem, rem),
+      ],
+      [
+        "the-divisor-less-the-remainder",
+        "procedural",
+        ([d = 0, , rem = 0]) => apart(d - rem, 2 * rem, rem),
+      ],
+    ],
+    extra: ([d = 0, q = 0, rem = 0]) => ({
+      n: String(d * q + rem),
+      n2: String(2 * (d * q + rem)),
+      d2: String(2 * d),
+    }),
+    consts: [2],
+  }),
+];
+
+const SIGNS = ["+", "−", "×", ":"] as const;
+/** `a ? b ? c` with the signs numbered 0 to 15, worked out in the usual order; null if it is not a whole number. */
+const withSigns = (
+  a: number,
+  b: number,
+  c: number,
+  i: number,
+): number | null => {
+  const first = SIGNS[Math.floor(i / 4)];
+  const second = SIGNS[i % 4];
+  const op = (
+    x: number | null,
+    sign: string | undefined,
+    y: number,
+  ): number | null => {
+    if (x === null) return null;
+    if (sign === "+") return x + y;
+    if (sign === "−") return x - y;
+    if (sign === "×") return x * y;
+    return y !== 0 && x % y === 0 ? x / y : null;
+  };
+  const weak = first === "+" || first === "−";
+  const strong = second === "×" || second === ":";
+  const value =
+    weak && strong
+      ? op(a, first, op(b, second, c) ?? Number.NaN)
+      : op(op(a, first, b), second, c);
+  return value !== null && Number.isInteger(value) && value >= 0 ? value : null;
+};
+const signsText = (i: number): string =>
+  `${SIGNS[Math.floor(i / 4)]} ${SIGNS[i % 4]}`;
+/** The four ways to put brackets in `a + b × c − d`, as a text and a value each. */
+const bracketings = (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+): readonly (readonly [string, number])[] => [
+  [`(${a} + ${b}) × ${c} − ${d}`, (a + b) * c - d],
+  [`${a} + ${b} × ${c} − ${d}`, a + b * c - d],
+  [`(${a} + ${b}) × (${c} − ${d})`, (a + b) * (c - d)],
+  [`${a} + ${b} × (${c} − ${d})`, a + b * (c - d)],
 ];
 
 const a11 = forSubtype("A11", "order-brackets");
@@ -1190,6 +1623,12 @@ const brackets = [
     id: "A11.order-brackets.10",
     form: "a-word-problem-with-two-purchases",
     groups: [6, 6],
+    roles: {
+      a: "count of notebooks",
+      b: "price of a notebook",
+      c: "count of pens",
+      d: "price of a pen",
+    },
     draw: (r) => [
       between(r, 3, 9),
       between(r, 5, 15),
@@ -1231,6 +1670,168 @@ const brackets = [
       ["bracket-added", "procedural", ([a = 0, b = 0, c = 0]) => a + b - c],
     ],
     extra: ([, b = 0, c = 0]) => ({ i: String(b - c) }),
+  }),
+  forChoice(
+    "A11",
+    "order-brackets",
+  )({
+    id: "A11.order-brackets.12",
+    form: "the-signs-that-make-an-equality-true",
+    groups: [6, 6],
+    kind: "choice",
+    origin: {
+      extension: "inserting the missing signs, Moro grade 2 (RES-4283, F9)",
+    },
+    draw: (r) => {
+      const a = between(r, 2, 9);
+      const b = between(r, 2, 9);
+      const c = between(r, 2, 9);
+      const p0 = r.int(16);
+      const p1 = r.int(16);
+      const p2 = r.int(16);
+      const p3 = r.int(16);
+      return [a, b, c, p0, p1, p2, p3, r.int(4)];
+    },
+    valid: ([a = 0, b = 0, c = 0, p0 = 0, p1 = 0, p2 = 0, p3 = 0]) => {
+      const list = [p0, p1, p2, p3];
+      if (new Set(list).size !== 4) return false;
+      const values = list.map((i) => withSigns(a, b, c, i));
+      if (values.some((v) => v === null)) return false;
+      return (
+        values.slice(1).every((v) => v !== values[0]) && (values[0] ?? 0) <= 90
+      );
+    },
+    solve: ([, , , , , , , by = 0]) => placeOf(0, by),
+    ref: ([a = 0, b = 0, c = 0, p0 = 0, p1 = 0, p2 = 0, p3 = 0, by = 0]) => {
+      const target = withSigns(a, b, c, p0);
+      return String(
+        turn([p0, p1, p2, p3], by).findIndex(
+          (i) => withSigns(a, b, c, i) === target,
+        ) + 1,
+      );
+    },
+    traps: [
+      [
+        "the-first-wrong-pair",
+        "procedural",
+        ([, , , , , , , by = 0]) => placeOf(1, by),
+      ],
+      [
+        "the-second-wrong-pair",
+        "procedural",
+        ([, , , , , , , by = 0]) => placeOf(2, by),
+      ],
+      [
+        "the-third-wrong-pair",
+        "procedural",
+        ([, , , , , , , by = 0]) => placeOf(3, by),
+      ],
+    ],
+    options: () => FOUR,
+    extra: ([a = 0, b = 0, c = 0, p0 = 0, p1 = 0, p2 = 0, p3 = 0, by = 0]) => {
+      const list = turn([p0, p1, p2, p3], by).map(signsText);
+      return {
+        o1: list[0] ?? "",
+        o2: list[1] ?? "",
+        o3: list[2] ?? "",
+        o4: list[3] ?? "",
+        t: String(withSigns(a, b, c, p0)),
+        x0: `${a} ${signsText(p0).replace(" ", ` ${b} `)} ${c}`,
+        x1: `${a} ${signsText(p1).replace(" ", ` ${b} `)} ${c}`,
+        x2: `${a} ${signsText(p2).replace(" ", ` ${b} `)} ${c}`,
+        x3: `${a} ${signsText(p3).replace(" ", ` ${b} `)} ${c}`,
+        y1: String(withSigns(a, b, c, p1)),
+        y2: String(withSigns(a, b, c, p2)),
+        y3: String(withSigns(a, b, c, p3)),
+      };
+    },
+    consts: [1, 2, 3, 4],
+  }),
+  a11({
+    id: "A11.order-brackets.13",
+    form: "the-largest-value-with-brackets-placed-freely",
+    groups: [6, 7],
+    origin: {
+      olympiad:
+        "the largest value under a condition, brackets placed freely (RES-4283, F14)",
+    },
+    draw: (r) => [
+      between(r, 2, 9),
+      between(r, 2, 9),
+      between(r, 4, 9),
+      between(r, 2, 3),
+    ],
+    valid: ([a = 0, b = 0, c = 0, d = 0]) => {
+      const values = bracketings(a, b, c, d).map(([, v]) => v);
+      const top = Math.max(...values);
+      return (
+        c > d &&
+        values.filter((v) => v === top).length === 1 &&
+        new Set(values).size === 4
+      );
+    },
+    solve: ([a = 0, b = 0, c = 0, d = 0]) =>
+      Math.max(...bracketings(a, b, c, d).map(([, v]) => v)),
+    ref: ([a = 0, b = 0, c = 0, d = 0]) =>
+      bracketings(a, b, c, d).reduce((m, [, v]) => (v > m ? v : m), -1),
+    traps: [
+      [
+        "no-brackets-at-all",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) => a + b * c - d,
+      ],
+      [
+        "brackets-only-round-the-sum",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => (a + b) * c - d,
+      ],
+      [
+        "brackets-only-round-the-difference",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => a + b * (c - d),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0, d = 0]) => {
+      const list = bracketings(a, b, c, d);
+      return {
+        e1: list[0]?.[0] ?? "",
+        v1: String(list[0]?.[1]),
+        e2: list[1]?.[0] ?? "",
+        v2: String(list[1]?.[1]),
+        e3: list[2]?.[0] ?? "",
+        v3: String(list[2]?.[1]),
+        e4: list[3]?.[0] ?? "",
+        v4: String(list[3]?.[1]),
+      };
+    },
+  }),
+  a11({
+    id: "A11.order-brackets.14",
+    form: "how-much-brackets-change-a-difference",
+    groups: [6, 7],
+    origin: { olympiad: "a bracket after a minus sign (RES-4283, F13)" },
+    draw: (r) => [between(r, 40, 90), between(r, 20, 39), between(r, 3, 19)],
+    valid: ([a = 0, b = 0, c = 0]) => b > c + 1 && a - b - c > 0,
+    solve: ([, , c = 0]) => 2 * c,
+    ref: ([a = 0, b = 0, c = 0]) => a - (b - c) - (a - b - c),
+    traps: [
+      ["the-number-itself", "conceptual", ([, , c = 0]) => c],
+      [
+        "the-difference-of-the-numbers",
+        "procedural",
+        ([, b = 0, c = 0]) => apart(b - c, 2 * c, c),
+      ],
+      [
+        "the-first-expression",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => apart(a - b + c, 2 * c),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0]) => ({
+      x: String(a - (b - c)),
+      y: String(a - b - c),
+    }),
+    consts: [2],
   }),
 ];
 
@@ -1337,14 +1938,27 @@ const unknown = [
     id: "A11.unknown.07",
     form: "a-thought-of-number-after-adding",
     groups: [6, 7],
-    draw: (r) => [between(r, 11, 49), between(r, 52, 99)],
-    solve: ([a = 0, b = 0]) => b - a,
-    ref: ([a = 0, b = 0]) =>
-      Array.from({ length: 150 }, (_, x) => x).find((x) => x + a === b) ?? -1,
+    roles: { a: "first amount added", b: "second amount added", c: "result" },
+    draw: (r) => {
+      const a = between(r, 11, 39);
+      const b = between(r, 11, 39);
+      return [a, b, a + b + between(r, 12, 49)];
+    },
+    valid: ([a = 0, b = 0]) => a !== b,
+    solve: ([a = 0, b = 0, c = 0]) => c - a - b,
+    ref: ([a = 0, b = 0, c = 0]) =>
+      Array.from({ length: 150 }, (_, x) => x).find((x) => x + a + b === c) ??
+      -1,
     traps: [
-      ["added", "procedural", ([a = 0, b = 0]) => a + b],
-      ["smaller-from-larger", "procedural", ([a = 0, b = 0]) => noBorrow(b, a)],
+      ["one-addition-undone", "procedural", ([a = 0, , c = 0]) => c - a],
+      ["added-instead", "procedural", ([a = 0, b = 0, c = 0]) => c + a + b],
+      [
+        "smaller-from-larger",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => noBorrow(c - a, b),
+      ],
     ],
+    extra: ([a = 0, , c = 0]) => ({ s: String(c - a) }),
   }),
   au({
     id: "A11.unknown.08",
@@ -1369,6 +1983,11 @@ const unknown = [
     id: "A11.unknown.09",
     form: "an-unknown-on-one-side-and-two-numbers-on-the-other",
     groups: [6, 7],
+    roles: {
+      a: "addend",
+      b: "first part of the right side",
+      c: "second part of the right side",
+    },
     draw: (r) => [between(r, 11, 39), between(r, 22, 60), between(r, 11, 29)],
     valid: ([a = 0, b = 0, c = 0]) => b + c > a + 2,
     solve: ([a = 0, b = 0, c = 0]) => b + c - a,
@@ -1412,6 +2031,107 @@ const unknown = [
       ["difference-only", "procedural", ([, b = 0, c = 0]) => b - c],
       ["c-sign-flipped", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
     ],
+  }),
+  au({
+    id: "A11.unknown.12",
+    form: "the-centre-of-a-magic-square",
+    groups: [6, 7],
+    origin: { olympiad: "a magic square and its centre (RES-4283, F11)" },
+    roles: { a: "sum in each line" },
+    draw: (r) => [3 * between(r, 5, 12)],
+    solve: ([s = 0]) => s / 3,
+    ref: ([s = 0]) =>
+      Array.from({ length: s }, (_, x) => x).find((x) => 3 * x === s) ?? -1,
+    traps: [
+      [
+        "half-of-the-sum",
+        "conceptual",
+        ([s = 0]) => (s % 2 === 0 ? s / 2 : null),
+      ],
+      ["the-sum-itself", "conceptual", ([s = 0]) => s],
+      ["a-fourth", "conceptual", ([s = 0]) => (s % 4 === 0 ? s / 4 : null)],
+      ["a-ninth", "conceptual", ([s = 0]) => (s % 9 === 0 ? s / 9 : null)],
+    ],
+    extra: ([s = 0]) => ({ t: String(3 * s), q: String(4 * s) }),
+    consts: [3, 4],
+  }),
+  au({
+    id: "A11.unknown.13",
+    form: "a-number-far-down-a-row-with-equal-triple-sums",
+    groups: [6, 8],
+    origin: {
+      olympiad: "a period in a row with equal sums of three (RES-4283, F16)",
+    },
+    draw: (r) => {
+      const a = between(r, 3, 15);
+      const b = between(r, 3, 15);
+      return [
+        a,
+        b,
+        a + b + between(r, 3, 15),
+        pick(r, [7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
+      ];
+    },
+    valid: ([a = 0, b = 0, c = 0]) =>
+      a !== b && c - a - b !== a && c - a - b !== b,
+    solve: ([a = 0, b = 0, c = 0, k = 0]) => [c - a - b, a, b][k % 3] ?? 0,
+    ref: ([a = 0, b = 0, c = 0, k = 0]) => {
+      const row = [a, b, c - a - b];
+      for (let i = 3; i < k; i += 1) row.push(row[i - 3] ?? 0);
+      return row[k - 1] ?? 0;
+    },
+    traps: [
+      [
+        "the-first-number",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, k = 0]) =>
+          [c - a - b, a, b][k % 3] === a ? null : a,
+      ],
+      [
+        "the-second-number",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, k = 0]) =>
+          [c - a - b, a, b][k % 3] === b ? null : b,
+      ],
+      [
+        "the-third-number",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, k = 0]) =>
+          [c - a - b, a, b][k % 3] === c - a - b ? null : c - a - b,
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0]) => ({ t: String(c - a - b) }),
+  }),
+  au({
+    id: "A11.unknown.14",
+    form: "the-other-number-from-the-mean",
+    groups: [7, 8],
+    origin: { olympiad: "the mean of two numbers (RES-4283, F12)" },
+    roles: { a: "mean of two numbers", b: "one of the numbers" },
+    draw: (r) => {
+      const m = between(r, 20, 60);
+      return [m, m + between(r, 5, 18)];
+    },
+    valid: ([m = 0, a = 0]) => a < 2 * m,
+    solve: ([m = 0, a = 0]) => 2 * m - a,
+    ref: ([m = 0, a = 0]) =>
+      Array.from({ length: 200 }, (_, x) => x).find((x) => (x + a) / 2 === m) ??
+      -1,
+    traps: [
+      [
+        "the-mean-less-the-number",
+        "procedural",
+        ([m = 0, a = 0]) => apart(a - m, 2 * m - a),
+      ],
+      [
+        "the-mean-and-the-number-added",
+        "procedural",
+        ([m = 0, a = 0]) => m + a,
+      ],
+      ["the-double-of-the-mean", "conceptual", ([m = 0]) => 2 * m],
+    ],
+    extra: ([m = 0]) => ({ s: String(2 * m) }),
+    consts: [2],
   }),
 ];
 

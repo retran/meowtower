@@ -13,6 +13,8 @@ const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
 const mix = (w: number, n: number, d: number): Q => q(w).add(q(n, d));
 const mixText = (w: number, n: number, d: number): string => `${w} ${fr(n, d)}`;
 const lessThanOne = (x: Q): boolean => x.cmp(q(1)) < 0;
+/** The number as a wrong answer of a whole-number task, or null where it is not a whole number. */
+const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
 
 const f6 = forFraction("F6", "add-unlike");
 const unlike = [
@@ -57,9 +59,18 @@ const unlike = [
     groups: [8, 8],
     kind: "fraction",
     rule: "equivalent",
-    draw: (r) => [1, pick(r, [2, 3, 4, 5]), 1, pick(r, [3, 5, 7])],
+    draw: (r) => [
+      between(r, 1, 2),
+      pick(r, [2, 3, 4, 5]),
+      between(r, 1, 3),
+      pick(r, [3, 5, 7]),
+    ],
     valid: ([a = 0, b = 0, c = 0, d = 0]) =>
-      b !== d && gcd(b, d) === 1 && lessThanOne(q(a, b).add(q(c, d))),
+      a < b &&
+      c < d &&
+      b !== d &&
+      gcd(b, d) === 1 &&
+      lessThanOne(q(a, b).add(q(c, d))),
     solve: ([a = 0, b = 0, c = 0, d = 0]) => q(a * d + c * b, b * d),
     ref: ([a = 0, b = 0, c = 0, d = 0]) => q(a, b).add(q(c, d)),
     traps: [
@@ -101,7 +112,7 @@ const unlike = [
       [
         "numerators-over-the-larger-denominator",
         "procedural",
-        ([x = 0, d = 0, y = 0, k = 0]) => q(x - y, d * k),
+        ([x = 0, d = 0, y = 0, k = 0]) => (x <= y ? null : q(x - y, d * k)),
       ],
       [
         "added",
@@ -111,7 +122,7 @@ const unlike = [
       [
         "numerators-over-the-smaller-denominator",
         "procedural",
-        ([x = 0, d = 0, y = 0]) => (x === y ? null : q(x - y, d)),
+        ([x = 0, d = 0, y = 0]) => (x <= y ? null : q(x - y, d)),
       ],
     ],
     extra: ([x = 0, d = 0, y = 0, k = 0]) => ({ f: fr(x, d), g: fr(y, d * k) }),
@@ -122,8 +133,12 @@ const unlike = [
     groups: [8, 8],
     kind: "fraction",
     rule: "equivalent",
-    draw: (r) => [1, pick(r, [2, 3]), 1, pick(r, [4, 6, 8])],
-    valid: ([, b = 0, , d = 0]) => d % b === 0 && d !== b,
+    draw: (r) => {
+      const b = pick(r, [2, 3, 4]);
+      const d = b * pick(r, [2, 3]);
+      return [between(r, 1, b - 1), b, between(r, 1, 3), d];
+    },
+    valid: ([a = 0, b = 0, c = 0, d = 0]) => lessThanOne(q(a, b).add(q(c, d))),
     solve: ([a = 0, b = 0, c = 0, d = 0]) => q(a * (d / b) + c, d),
     ref: ([a = 0, b = 0, c = 0, d = 0]) => q(a, b).add(q(c, d)),
     traps: [
@@ -190,7 +205,7 @@ const unlike = [
     form: "the-smallest-common-denominator",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [2, 3, 4, 5, 6]), pick(r, [3, 4, 5, 6, 8])],
+    draw: (r) => [pick(r, [2, 3, 4, 5, 6, 8]), pick(r, [3, 4, 5, 6, 8, 9, 10])],
     valid: ([b = 0, d = 0]) => b !== d && b * d !== lcm(b, d),
     solve: ([b = 0, d = 0]) => q(lcm(b, d)),
     ref: ([b = 0, d = 0]) =>
@@ -216,8 +231,12 @@ const unlike = [
     groups: [8, 8],
     kind: "fraction",
     rule: "equivalent",
-    draw: (r) => [1, pick(r, [2, 3]), 1, pick(r, [4, 6, 12])],
-    valid: ([, b = 0, , d = 0]) => d % b === 0 && d !== b,
+    draw: (r) => {
+      const b = pick(r, [2, 3, 4]);
+      const d = b * pick(r, [2, 3, 4]);
+      return [between(r, 1, b - 1), b, between(r, 1, 3), d];
+    },
+    valid: ([a = 0, b = 0, c = 0, d = 0]) => lessThanOne(q(a, b).add(q(c, d))),
     solve: ([a = 0, b = 0, c = 0, d = 0]) => q(d - a * (d / b) - c, d),
     ref: ([a = 0, b = 0, c = 0, d = 0]) => q(1).sub(q(a, b)).sub(q(c, d)),
     traps: [
@@ -249,7 +268,7 @@ const unlike = [
     },
     kind: "fraction",
     rule: "equivalent",
-    draw: (r) => [between(r, 2, 5)],
+    draw: (r) => [between(r, 2, 7)],
     solve: ([k = 0]) => q(2 ** k - 1, 2 ** k),
     ref: ([k = 0]) =>
       Array.from({ length: k }, (_, i) => q(1, 2 ** (i + 1))).reduce(
@@ -317,7 +336,7 @@ const unlike = [
       [
         "numerators-over-the-product",
         "procedural",
-        ([a = 0, b = 0, c = 0, d = 0]) => q(a - c, b * d),
+        ([a = 0, b = 0, c = 0, d = 0]) => (a <= c ? null : q(a - c, b * d)),
       ],
       [
         "second-not-converted",
@@ -338,9 +357,11 @@ const unlike = [
     groups: [8, 8],
     kind: "fraction",
     rule: "equivalent",
-    draw: (r) => [between(r, 1, 3), pick(r, [2, 3, 4]), 1, pick(r, [4, 6, 8])],
-    valid: ([a = 0, b = 0, c = 0, d = 0]) =>
-      d % b === 0 && a < b && q(a, b).cmp(q(c, d)) > 0,
+    draw: (r) => {
+      const b = pick(r, [2, 3, 4, 5]);
+      return [between(r, 1, b - 1), b, between(r, 1, 3), b * pick(r, [2, 3])];
+    },
+    valid: ([a = 0, b = 0, c = 0, d = 0]) => a < b && q(a, b).cmp(q(c, d)) > 0,
     solve: ([a = 0, b = 0, c = 0, d = 0]) => q(a * (d / b) - c, d),
     ref: ([a = 0, b = 0, c = 0, d = 0]) => q(a, b).sub(q(c, d)),
     traps: [
@@ -353,7 +374,7 @@ const unlike = [
       [
         "numerators-over-the-larger-denominator",
         "procedural",
-        ([a = 0, , c = 0, d = 0]) => q(a - c, d),
+        ([a = 0, , c = 0, d = 0]) => (a <= c ? null : q(a - c, d)),
       ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0]) => ({ f: fr(a, b), g: fr(c, d) }),
@@ -584,7 +605,7 @@ const unlikeS = [
     groups: [8, 8],
     kind: "fraction",
     rule: "simplest",
-    draw: (r) => [pick(r, [2, 3, 4]), pick(r, [4, 5, 6, 8])],
+    draw: (r) => [pick(r, [2, 3, 4, 5]), pick(r, [4, 5, 6, 8, 9, 10])],
     valid: ([a = 0, b = 0]) => a !== b && lessThanOne(q(1, a).add(q(1, b))),
     solve: ([a = 0, b = 0]) => q(1).sub(q(1, a)).sub(q(1, b)),
     ref: ([a = 0, b = 0]) => q(a * b - b - a, a * b),
@@ -630,7 +651,8 @@ const unlikeS = [
       [
         "numerators-over-the-product",
         "procedural",
-        ([a = 0, b = 0, c = 0, d = 0]) => q(Math.abs(a - c), b * d),
+        ([a = 0, b = 0, c = 0, d = 0]) =>
+          a === c ? null : q(Math.abs(a - c), b * d),
       ],
       [
         "reverse-order",
@@ -1482,19 +1504,33 @@ const divide = [
     form: "how-many-short-lessons-fit-in-some-hours",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [between(r, 2, 5), pick(r, [3, 4, 6])],
-    solve: ([h = 0, d = 0]) => q(h * d),
-    ref: ([h = 0, d = 0]) => q(h).div(q(1, d)),
+    roles: {
+      a: "number of hours",
+      b: "numerator of the length of a lesson",
+      c: "denominator of the length of a lesson",
+    },
+    draw: (r) => [between(r, 2, 4), pick(r, [2, 3, 4]), pick(r, [3, 4, 5, 6])],
+    valid: ([, n = 0, d = 0]) => n < d && gcd(n, d) === 1,
+    solve: ([k = 0, , d = 0]) => q(k * d),
+    ref: ([k = 0, n = 0, d = 0]) => q(n * k).div(q(n, d)),
     traps: [
-      ["added", "procedural", ([h = 0, d = 0]) => q(h + d)],
-      ["the-number-itself", "conceptual", ([h = 0]) => q(h)],
+      ["divided-by-the-numerator-only", "procedural", ([k = 0]) => q(k)],
       [
-        "divided-by-denominator",
+        "multiplied-by-the-denominator",
         "procedural",
-        ([h = 0, d = 0]) => (h % d === 0 ? q(h / d) : null),
+        ([k = 0, n = 0, d = 0]) => q(n * k * d),
+      ],
+      [
+        "multiplied-by-the-fraction",
+        "procedural",
+        ([k = 0, n = 0, d = 0]) => whole(q(n * k, d)),
       ],
     ],
-    extra: ([, d = 0]) => ({ f: fr(1, d) }),
+    extra: ([k = 0, n = 0, d = 0]) => ({
+      f: fr(n, d),
+      a: String(n * k),
+      k: String(k),
+    }),
     consts: [1],
   }),
   f8({
@@ -1538,7 +1574,10 @@ const divide = [
     form: "a-whole-number-divided-by-a-mixed-number",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [1, 1, 2, 2 * between(r, 2, 5)],
+    draw: (r) => {
+      const d = pick(r, [2, 3, 4]);
+      return [between(r, 1, 2), 1, d, d * between(r, 1, 3)];
+    },
     solve: ([, , , m = 0]) => q(m),
     ref: ([w = 0, n = 0, d = 0, m = 0]) =>
       q(((w * d + n) * m) / d).div(mix(w, n, d)),
@@ -1546,7 +1585,7 @@ const divide = [
       [
         "wholes-only",
         "conceptual",
-        ([w = 0, n = 0, d = 0, m = 0]) => q(((w * d + n) * m) / d / w),
+        ([w = 0, n = 0, d = 0, m = 0]) => whole(q(((w * d + n) * m) / d, w)),
       ],
       [
         "fraction-part-only",
@@ -1569,10 +1608,780 @@ const divide = [
   }),
 ];
 
+const unlikeMore = [
+  f6({
+    id: "F6.add-unlike.12",
+    form: "the-missing-fraction-in-a-sum",
+    groups: [8, 8],
+    kind: "fraction",
+    rule: "equivalent",
+    draw: (r) => {
+      const b = pick(r, [2, 3, 4, 5]);
+      const k = pick(r, [2, 3]);
+      const a = between(r, 1, b - 1);
+      return [a, b, a * k + between(r, 1, 3), b * k];
+    },
+    valid: ([, , c = 0, d = 0]) => c < d,
+    solve: ([a = 0, b = 0, c = 0, d = 0]) => q(c * b - a * d, b * d),
+    ref: ([a = 0, b = 0, c = 0, d = 0]) => q(c, d).sub(q(a, b)),
+    traps: [
+      [
+        "added",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => q((a * d) / b + c, d),
+      ],
+      [
+        "numerators-subtracted",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) =>
+          c <= a || q(c - a, d).eq(q(c * b - a * d, b * d))
+            ? null
+            : q(c - a, d),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
+      f: fr(a, b),
+      g: fr(c, d),
+      r: fr(c - (a * d) / b, d),
+    }),
+  }),
+  f6({
+    id: "F6.add-unlike.13",
+    form: "the-midpoint-of-two-unlike-fractions",
+    groups: [8, 8],
+    kind: "fraction",
+    rule: "equivalent",
+    draw: (r) => {
+      const b = pick(r, [2, 3, 4, 5]);
+      const k = pick(r, [2, 3]);
+      const a = between(r, 1, b - 1);
+      return [a, b, a * k + between(r, 1, 3), b * k];
+    },
+    valid: ([, , c = 0, d = 0]) => c < d,
+    solve: ([a = 0, b = 0, c = 0, d = 0]) => q(a, b).add(q(c, d)).div(q(2)),
+    ref: ([a = 0, b = 0, c = 0, d = 0]) => q((a * d) / b + c, 2 * d),
+    traps: [
+      [
+        "sum-not-halved",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => q((a * d) / b + c, d),
+      ],
+      ["the-left-end", "conceptual", ([a = 0, b = 0]) => q(a, b)],
+    ],
+    extra: ([a = 0, b = 0, c = 0, d = 0]) => ({ f: fr(a, b), g: fr(c, d) }),
+    consts: [2],
+  }),
+  f6({
+    id: "F6.add-unlike.14",
+    form: "two-unit-fractions-with-consecutive-denominators",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "two unit fractions with consecutive denominators, Kangaroo style, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) => [between(r, 2, 7)],
+    solve: ([x = 0]) => q(x),
+    ref: ([x = 0]) => {
+      const sum = q(2 * x + 1, x * (x + 1));
+      for (let k = 1; k < 100; k += 1)
+        if (
+          q(1, k)
+            .add(q(1, k + 1))
+            .eq(sum)
+        )
+          return q(k);
+      return q(0);
+    },
+    traps: [
+      ["the-larger-denominator", "conceptual", ([x = 0]) => q(x + 1)],
+      ["the-product", "conceptual", ([x = 0]) => q(x * (x + 1))],
+    ],
+    extra: ([x = 0]) => ({
+      s: fr(2 * x + 1, x * (x + 1)),
+      z: String(x * (x + 1)),
+    }),
+    consts: [1],
+  }),
+  f6({
+    id: "F6.add-unlike.15",
+    form: "the-numerator-over-the-common-denominator",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) =>
+      pick(r, [
+        [1, 3, 1, 4],
+        [1, 2, 1, 3],
+        [2, 3, 1, 4],
+        [1, 3, 2, 5],
+        [1, 4, 1, 6],
+        [3, 4, 1, 6],
+        [1, 2, 3, 5],
+        [3, 4, 2, 5],
+        [1, 5, 1, 6],
+        [2, 3, 3, 8],
+      ]),
+    solve: ([a = 0, b = 0, c = 0, d = 0]) =>
+      q((a * lcm(b, d)) / b + (c * lcm(b, d)) / d),
+    ref: ([a = 0, b = 0, c = 0, d = 0]) =>
+      q(a, b)
+        .add(q(c, d))
+        .mul(q(lcm(b, d))),
+    traps: [
+      ["numerators-added", "procedural", ([a = 0, , c = 0]) => q(a + c)],
+      [
+        "second-not-converted",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => q((a * lcm(b, d)) / b + c),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
+      f: fr(a, b),
+      g: fr(c, d),
+      e: String(lcm(b, d)),
+    }),
+  }),
+];
+
+const unlikeSMore = [
+  f6s({
+    id: "F6.add-unlike-1S.12",
+    form: "a-sum-of-fractions-with-products-in-the-denominators",
+    groups: [8, 8],
+    origin: {
+      olympiad: "a telescoping sum of one over n times n plus one, RES-4284",
+    },
+    kind: "fraction",
+    rule: "simplest",
+    draw: (r) => [between(r, 4, 9)],
+    solve: ([n = 0]) => q(n, n + 1),
+    ref: ([n = 0]) =>
+      Array.from({ length: n }, (_, i) => q(1, (i + 1) * (i + 2))).reduce(
+        (acc, x) => acc.add(x),
+        q(0),
+      ),
+    traps: [
+      ["reached-one", "conceptual", () => q(1)],
+      ["last-term-only", "conceptual", ([n = 0]) => q(1, n * (n + 1))],
+      [
+        "product-subtracted",
+        "procedural",
+        ([n = 0]) => q(1).sub(q(1, n * (n + 1))),
+      ],
+    ],
+  }),
+  f6s({
+    id: "F6.add-unlike-1S.13",
+    form: "add-two-mixed-numbers-with-unlike-fractions",
+    groups: [8, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => {
+      const c = pick(r, [2, 3, 4]);
+      const f = pick(r, [3, 4, 5, 6]);
+      return [
+        between(r, 1, 4),
+        between(r, 1, c - 1),
+        c,
+        between(r, 1, 4),
+        between(r, 1, f - 1),
+        f,
+      ];
+    },
+    valid: ([, , c = 0, , , f = 0]) => c !== f,
+    solve: ([w1 = 0, a = 0, b = 0, w2 = 0, c = 0, d = 0]) =>
+      mix(w1, a, b).add(mix(w2, c, d)),
+    ref: ([w1 = 0, a = 0, b = 0, w2 = 0, c = 0, d = 0]) =>
+      q(w1 * b * d + w2 * b * d + a * d + c * b, b * d),
+    traps: [
+      [
+        "denominators-added",
+        "procedural",
+        ([w1 = 0, a = 0, b = 0, w2 = 0, c = 0, d = 0]) =>
+          mix(w1 + w2, a + c, b + d),
+      ],
+      [
+        "carry-lost",
+        "procedural",
+        ([w1 = 0, a = 0, b = 0, w2 = 0, c = 0, d = 0]) => {
+          const parts = q(a, b).add(q(c, d));
+          return parts.cmp(q(1)) < 0
+            ? null
+            : mix(w1 + w2, 0, 1).add(parts.sub(q(1)));
+        },
+      ],
+      ["wholes-only", "conceptual", ([w1 = 0, , , w2 = 0]) => q(w1 + w2)],
+    ],
+    extra: ([w1 = 0, a = 0, b = 0, w2 = 0, c = 0, d = 0]) => ({
+      m: mixText(w1, a, b),
+      k: mixText(w2, c, d),
+      l: String(lcm(b, d)),
+    }),
+  }),
+  f6s({
+    id: "F6.add-unlike-1S.14",
+    form: "reduce-each-fraction-and-then-add",
+    groups: [8, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => [
+      pick(r, [1, 3, 3, 5]),
+      pick(r, [4, 4, 5, 8]),
+      pick(r, [2, 3]),
+      pick(r, [1, 2, 3]),
+      pick(r, [2, 3, 6]),
+      pick(r, [2, 3, 4]),
+    ],
+    valid: ([n1 = 0, d1 = 0, , n2 = 0, d2 = 0]) =>
+      n1 < d1 &&
+      n2 < d2 &&
+      gcd(n1, d1) === 1 &&
+      gcd(n2, d2) === 1 &&
+      d1 !== d2 &&
+      q(n1, d1).add(q(n2, d2)).d !== 1n,
+    solve: ([n1 = 0, d1 = 0, , n2 = 0, d2 = 0]) => q(n1, d1).add(q(n2, d2)),
+    ref: ([n1 = 0, d1 = 0, , n2 = 0, d2 = 0]) => q(n1 * d2 + n2 * d1, d1 * d2),
+    traps: [
+      [
+        "denominators-added",
+        "procedural",
+        ([n1 = 0, d1 = 0, , n2 = 0, d2 = 0]) => q(n1 + n2, d1 + d2),
+      ],
+      [
+        "numerators-over-the-product",
+        "procedural",
+        ([n1 = 0, d1 = 0, , n2 = 0, d2 = 0]) => q(n1 + n2, d1 * d2),
+      ],
+    ],
+    extra: ([n1 = 0, d1 = 0, k1 = 0, n2 = 0, d2 = 0, k2 = 0]) => ({
+      p: fr(n1 * k1, d1 * k1),
+      s: fr(n2 * k2, d2 * k2),
+      l: String(lcm(d1, d2)),
+    }),
+  }),
+  f6s({
+    id: "F6.add-unlike-1S.15",
+    form: "the-whole-after-two-different-fractions-are-taken",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "the whole from what remains after two fractions are taken, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) => [pick(r, [2, 3, 4]), pick(r, [3, 4, 5, 6]), between(r, 2, 9)],
+    valid: ([p = 0, qq = 0]) => p !== qq && lessThanOne(q(1, p).add(q(1, qq))),
+    solve: ([p = 0, qq = 0, k = 0]) => q(lcm(p, qq) * k),
+    ref: ([p = 0, qq = 0, k = 0]) => {
+      const l = lcm(p, qq);
+      return q((l - l / p - l / qq) * k).div(q(1).sub(q(1, p)).sub(q(1, qq)));
+    },
+    traps: [
+      [
+        "the-remaining-amount-itself",
+        "conceptual",
+        ([p = 0, qq = 0, k = 0]) => {
+          const l = lcm(p, qq);
+          return q((l - l / p - l / qq) * k);
+        },
+      ],
+      [
+        "only-the-first-fraction-taken",
+        "conceptual",
+        ([p = 0, qq = 0, k = 0]) => {
+          const l = lcm(p, qq);
+          return whole(q((l - l / p - l / qq) * k).div(q(p - 1, p)));
+        },
+      ],
+    ],
+    extra: ([p = 0, qq = 0, k = 0]) => {
+      const l = lcm(p, qq);
+      return {
+        f: fr(1, p),
+        g: fr(1, qq),
+        m: String((l - l / p - l / qq) * k),
+        l: String(l),
+      };
+    },
+  }),
+];
+
+const timesMore = [
+  f7({
+    id: "F7.times-fraction.12",
+    form: "a-fraction-of-a-number-with-a-mixed-result",
+    groups: [7, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => [
+      between(r, 1, 4),
+      pick(r, [3, 4, 5, 6, 8]),
+      between(r, 3, 11),
+    ],
+    valid: ([n = 0, d = 0, k = 0]) => n < d && (n * k) % d !== 0,
+    solve: ([n = 0, d = 0, k = 0]) => q(n * k, d),
+    ref: ([n = 0, d = 0, k = 0]) => q(k).mul(q(n, d)),
+    traps: [
+      [
+        "divided-only",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => (n === 1 ? null : q(k, d)),
+      ],
+      [
+        "denominator-multiplied",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => q(n, d * k),
+      ],
+    ],
+    extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n, d), k: String(k) }),
+  }),
+  f7({
+    id: "F7.times-fraction.13",
+    form: "does-multiplying-by-a-fraction-make-the-number-bigger",
+    groups: [8, 8],
+    kind: "compare",
+    draw: (r) => [between(r, 3, 12), between(r, 2, 9), between(r, 2, 9)],
+    valid: ([, n = 0, d = 0]) => n !== d && gcd(n, d) === 1,
+    solve: ([, n = 0, d = 0]) => sign(q(n, d), q(1)),
+    ref: ([k = 0, n = 0, d = 0]) => (n * k < d * k ? "<" : ">"),
+    traps: [
+      [
+        "multiplication-makes-bigger",
+        "conceptual",
+        ([, n = 0, d = 0]) => (n < d ? ">" : null),
+      ],
+      [
+        "multiplication-makes-smaller",
+        "conceptual",
+        ([, n = 0, d = 0]) => (n > d ? "<" : null),
+      ],
+      ["equal", "conceptual", () => "="],
+    ],
+    extra: ([k = 0, n = 0, d = 0]) => ({
+      k: String(k),
+      f: fr(n, d),
+      t: sign(q(n, d), q(1)),
+      sign: sign(q(n, d), q(1)),
+    }),
+    consts: [1],
+  }),
+  f7({
+    id: "F7.times-fraction.14",
+    form: "the-number-and-its-product-with-a-fraction-differ-by",
+    groups: [8, 8],
+    origin: {
+      olympiad: "the whole from its difference with a part, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) => {
+      const [p, qq] = pick(r, [
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [1, 3],
+        [3, 5],
+        [2, 5],
+        [4, 5],
+        [5, 6],
+        [1, 4],
+      ] as const);
+      return [p, qq, between(r, 2, 9)];
+    },
+    solve: ([, qq = 0, m = 0]) => q(qq * m),
+    ref: ([p = 0, qq = 0, m = 0]) => q((qq - p) * m).div(q(1).sub(q(p, qq))),
+    traps: [
+      [
+        "the-difference-itself",
+        "conceptual",
+        ([p = 0, qq = 0, m = 0]) => q((qq - p) * m),
+      ],
+      [
+        "divided-by-the-fraction",
+        "conceptual",
+        ([p = 0, qq = 0, m = 0]) => whole(q((qq - p) * m).div(q(p, qq))),
+      ],
+      [
+        "difference-times-denominator",
+        "procedural",
+        ([p = 0, qq = 0, m = 0]) =>
+          (qq - p) * m * qq === qq * m ? null : q((qq - p) * m * qq),
+      ],
+    ],
+    extra: ([p = 0, qq = 0, m = 0]) => ({
+      f: fr(p, qq),
+      s: String((qq - p) * m),
+    }),
+  }),
+  f7({
+    id: "F7.times-fraction.15",
+    form: "the-wire-of-a-cube-frame",
+    groups: [8, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => [between(r, 1, 4), pick(r, [5, 7, 8, 9])],
+    valid: ([n = 0, d = 0]) => n < d && (12 * n) % d !== 0,
+    solve: ([n = 0, d = 0]) => q(12 * n, d),
+    ref: ([n = 0, d = 0]) => q(n, d).mul(q(12)),
+    traps: [
+      ["only-one-edge", "conceptual", ([n = 0, d = 0]) => q(n, d)],
+      ["six-edges", "conceptual", ([n = 0, d = 0]) => q(6 * n, d)],
+      ["eight-edges", "conceptual", ([n = 0, d = 0]) => q(8 * n, d)],
+    ],
+    extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
+  }),
+];
+
+const BOUNCES: readonly (readonly [number, number])[] = [
+  [2, 3],
+  [3, 4],
+  [1, 2],
+  [3, 5],
+  [4, 5],
+  [2, 5],
+];
+
+const timesSMore = [
+  f7s({
+    id: "F7.times-fraction-1S.12",
+    form: "the-height-of-a-bouncing-ball",
+    groups: [8, 8],
+    origin: {
+      olympiad:
+        "repeated multiplication by a fraction, a bouncing ball, RES-4284",
+    },
+    kind: "integer",
+    roles: {
+      a: "numerator of the rebound fraction",
+      b: "denominator of the rebound fraction",
+      c: "number of bounces",
+    },
+    draw: (r) => {
+      const [p, d] = pick(r, BOUNCES);
+      return [p, d, between(r, 2, d <= 3 ? 4 : 3), between(r, 1, 3)];
+    },
+    solve: ([p = 0, , n = 0, m = 0]) => q(m * p ** n),
+    ref: ([p = 0, d = 0, n = 0, m = 0]) =>
+      Array.from({ length: n }, () => q(p, d)).reduce(
+        (acc, x) => acc.mul(x),
+        q(m * d ** n),
+      ),
+    traps: [
+      [
+        "one-bounce-only",
+        "conceptual",
+        ([p = 0, d = 0, n = 0, m = 0]) => q(m * d ** (n - 1) * p),
+      ],
+      [
+        "times-the-count",
+        "procedural",
+        ([p = 0, d = 0, n = 0, m = 0]) => q(m * d ** n * p * n, d),
+      ],
+    ],
+    extra: ([p = 0, d = 0, n = 0, m = 0]) => {
+      const heights = Array.from(
+        { length: n },
+        (_, i) => m * d ** (n - 1 - i) * p ** (i + 1),
+      );
+      return {
+        H: String(m * d ** n),
+        f: fr(p, d),
+        x: String(heights[0]),
+        chain: heights.join("; "),
+      };
+    },
+  }),
+  f7s({
+    id: "F7.times-fraction-1S.13",
+    form: "a-part-of-a-part-of-an-amount",
+    groups: [8, 8],
+    kind: "integer",
+    draw: (r) => {
+      const [n1, d1, n2, d2] = pick(r, [
+        [1, 2, 1, 3],
+        [2, 3, 1, 2],
+        [3, 4, 1, 3],
+        [1, 2, 3, 4],
+        [2, 3, 3, 4],
+        [1, 3, 2, 5],
+        [3, 5, 1, 2],
+        [1, 4, 2, 3],
+      ] as const);
+      return [n1, d1, n2, d2, between(r, 1, 4)];
+    },
+    solve: ([n1 = 0, , n2 = 0, , m = 0]) => q(n1 * n2 * m),
+    ref: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, m = 0]) =>
+      q(d1 * d2 * m)
+        .mul(q(n2, d2))
+        .mul(q(n1, d1)),
+    traps: [
+      [
+        "only-the-inner-part",
+        "conceptual",
+        ([, d1 = 0, n2 = 0, , m = 0]) => q(d1 * n2 * m),
+      ],
+      [
+        "only-the-outer-part",
+        "conceptual",
+        ([n1 = 0, , , d2 = 0, m = 0]) => q(n1 * d2 * m),
+      ],
+      [
+        "parts-added",
+        "procedural",
+        ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, m = 0]) => {
+          const total = q(d1 * d2 * m).mul(q(n1, d1).add(q(n2, d2)));
+          return total.eq(q(n1 * n2 * m)) ? null : total;
+        },
+      ],
+    ],
+    extra: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, m = 0]) => ({
+      f: fr(n1, d1),
+      g: fr(n2, d2),
+      k: String(d1 * d2 * m),
+      x: String(d1 * m * n2),
+    }),
+  }),
+  f7s({
+    id: "F7.times-fraction-1S.14",
+    form: "a-mixed-number-times-a-mixed-number",
+    groups: [8, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => [
+      between(r, 1, 3),
+      1,
+      pick(r, [2, 3, 4]),
+      between(r, 1, 3),
+      between(r, 1, 2),
+      pick(r, [3, 4, 5]),
+    ],
+    valid: ([, n1 = 0, d1 = 0, , n2 = 0, d2 = 0]) =>
+      n1 < d1 && n2 < d2 && q(1, d1).mul(q(n2, d2)).d !== 1n,
+    solve: ([w1 = 0, n1 = 0, d1 = 0, w2 = 0, n2 = 0, d2 = 0]) =>
+      mix(w1, n1, d1).mul(mix(w2, n2, d2)),
+    ref: ([w1 = 0, n1 = 0, d1 = 0, w2 = 0, n2 = 0, d2 = 0]) =>
+      q((w1 * d1 + n1) * (w2 * d2 + n2), d1 * d2),
+    traps: [
+      [
+        "parts-multiplied-separately",
+        "procedural",
+        ([w1 = 0, n1 = 0, d1 = 0, w2 = 0, n2 = 0, d2 = 0]) =>
+          mix(w1 * w2, n1 * n2, d1 * d2),
+      ],
+      ["wholes-only", "conceptual", ([w1 = 0, , , w2 = 0]) => q(w1 * w2)],
+    ],
+    extra: ([w1 = 0, n1 = 0, d1 = 0, w2 = 0, n2 = 0, d2 = 0]) => ({
+      m: mixText(w1, n1, d1),
+      k: mixText(w2, n2, d2),
+    }),
+  }),
+  f7s({
+    id: "F7.times-fraction-1S.15",
+    form: "a-product-of-three-fractions-with-cancelling",
+    groups: [8, 8],
+    kind: "fraction",
+    rule: "simplest",
+    draw: (r) => {
+      const g1 = pick(r, [2, 3]);
+      const g2 = pick(r, [2, 3, 5]);
+      const [a, b, c, d, e] = Array.from({ length: 5 }, () => between(r, 1, 4));
+      const f = between(r, 2, 4);
+      return [
+        a ?? 1,
+        (b ?? 1) * g1,
+        g1 * (c ?? 1),
+        (d ?? 1) * g2,
+        g2 * (e ?? 1),
+        f ?? 1,
+      ];
+    },
+    valid: ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) => {
+      const g1 = gcd(b, c);
+      const g2 = gcd(d, e);
+      return (
+        g1 > 1 &&
+        g2 > 1 &&
+        gcd(((a * c) / g1) * (e / g2), (b / g1) * (d / g2) * f) === 1 &&
+        (b / g1) * (d / g2) * f > 1
+      );
+    },
+    solve: ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) =>
+      q(a * c * e, b * d * f),
+    ref: ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) =>
+      q(a, b).mul(q(c, d)).mul(q(e, f)),
+    traps: [
+      [
+        "two-fractions-only",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => q(a * c, b * d),
+      ],
+      [
+        "upside-down",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) =>
+          a * c * e === b * d * f ? null : q(b * d * f, a * c * e),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) => ({
+      f1: fr(a, b),
+      g1: fr(c, d),
+      h1: fr(e, f),
+      x: String(gcd(b, c)),
+      y: String(gcd(d, e)),
+    }),
+  }),
+];
+
+const divideMore = [
+  f8({
+    id: "F8.divide-fraction.12",
+    form: "the-speed-from-a-fractional-distance-and-time",
+    groups: [8, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    roles: {
+      a: "numerator of the distance",
+      b: "denominator of the distance",
+      c: "numerator of the time",
+      d: "denominator of the time",
+    },
+    draw: (r) => [
+      between(r, 1, 3),
+      pick(r, [2, 3, 4, 5]),
+      between(r, 1, 2),
+      pick(r, [2, 3, 4]),
+    ],
+    valid: ([a = 0, b = 0, c = 0, d = 0]) =>
+      a < b && c < d && q(a * d, b * c).d !== 1n,
+    solve: ([a = 0, b = 0, c = 0, d = 0]) => q(a, b).div(q(c, d)),
+    ref: ([a = 0, b = 0, c = 0, d = 0]) => q(a * d, b * c),
+    traps: [
+      [
+        "time-not-inverted",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => q(a * c, b * d),
+      ],
+      [
+        "inverted",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) => q(b * c, a * d),
+      ],
+    ],
+    extra: ([a = 0, b = 0, c = 0, d = 0]) => ({ f: fr(a, b), g: fr(c, d) }),
+  }),
+  f8({
+    id: "F8.divide-fraction.13",
+    form: "divide-fractions-with-the-same-denominator",
+    groups: [8, 8],
+    kind: "mixed",
+    rule: "equivalent",
+    draw: (r) => [between(r, 3, 11), between(r, 2, 6), between(r, 7, 12)],
+    valid: ([a = 0, b = 0, d = 0]) => a < d && b < d && a !== b && a % b !== 0,
+    solve: ([a = 0, b = 0, d = 0]) => q(a, d).div(q(b, d)),
+    ref: ([a = 0, b = 0]) => q(a, b),
+    traps: [
+      ["denominators-divided", "conceptual", () => q(1)],
+      ["inverted", "conceptual", ([a = 0, b = 0]) => q(b, a)],
+      [
+        "multiplied-straight",
+        "procedural",
+        ([a = 0, b = 0, d = 0]) => q(a * b, d * d),
+      ],
+    ],
+    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+  }),
+  f8({
+    id: "F8.divide-fraction.14",
+    form: "how-many-whole-pieces-of-a-fractional-length-fit",
+    groups: [8, 8],
+    kind: "integer",
+    roles: {
+      a: "length of the ribbon",
+      b: "numerator of the length of a piece",
+      c: "denominator of the length of a piece",
+    },
+    draw: (r) => [
+      between(r, 3, 9),
+      pick(r, [3, 2, 3, 5, 5]),
+      pick(r, [4, 3, 5, 6, 8]),
+    ],
+    valid: ([a = 0, n = 0, d = 0]) =>
+      n < d && gcd(n, d) === 1 && (a * d) % n !== 0,
+    solve: ([a = 0, n = 0, d = 0]) => q(Math.floor((a * d) / n)),
+    ref: ([a = 0, n = 0, d = 0]) => {
+      let pieces = 0;
+      while ((pieces + 1) * n <= a * d) pieces += 1;
+      return q(pieces);
+    },
+    traps: [
+      [
+        "rounded-up",
+        "procedural",
+        ([a = 0, n = 0, d = 0]) => q(Math.ceil((a * d) / n)),
+      ],
+      [
+        "multiplied",
+        "procedural",
+        ([a = 0, n = 0, d = 0]) =>
+          Math.floor((a * n) / d) === Math.floor((a * d) / n) || a * n < d
+            ? null
+            : q(Math.floor((a * n) / d)),
+      ],
+    ],
+    extra: ([, n = 0, d = 0]) => ({ f: fr(n, d) }),
+  }),
+  f8({
+    id: "F8.divide-fraction.15",
+    form: "how-many-times-a-small-fraction-fits-in-a-sum",
+    groups: [8, 8],
+    origin: {
+      olympiad: "how many equal unit fractions fit in a sum, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) =>
+      pick(r, [
+        [2, 3],
+        [2, 4],
+        [3, 4],
+        [2, 5],
+        [3, 6],
+        [4, 6],
+        [3, 5],
+        [4, 5],
+        [5, 6],
+        [2, 6],
+      ]),
+    solve: ([a = 0, b = 0]) => q(lcm(a, b) / a + lcm(a, b) / b),
+    ref: ([a = 0, b = 0]) =>
+      q(1, a)
+        .add(q(1, b))
+        .div(q(1, lcm(a, b))),
+    traps: [
+      ["numerators-added", "procedural", () => q(2)],
+      [
+        "the-common-denominator",
+        "conceptual",
+        ([a = 0, b = 0]) => q(lcm(a, b)),
+      ],
+      ["denominators-added", "procedural", ([a = 0, b = 0]) => q(a + b)],
+    ],
+    extra: ([a = 0, b = 0]) => ({
+      f: fr(1, a),
+      h: fr(1, b),
+      g: fr(1, lcm(a, b)),
+      u: String(lcm(a, b)),
+    }),
+    consts: [1],
+  }),
+];
+
 export const fSpecs3: readonly Spec<never>[] = [
   ...unlike,
+  ...unlikeMore,
   ...unlikeS,
+  ...unlikeSMore,
   ...times,
+  ...timesMore,
   ...timesS,
+  ...timesSMore,
   ...divide,
+  ...divideMore,
 ];

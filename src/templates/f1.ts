@@ -509,27 +509,38 @@ const likeDen = [
   f3({
     id: "F3.same-den.02",
     form: "the-larger-of-two-like-fractions",
-    groups: [5, 6],
-    kind: "fraction",
-    rule: "equivalent",
-    draw: (r) => [between(r, 1, 9), between(r, 1, 9), between(r, 5, 12)],
-    valid: ([a = 0, b = 0, d = 0]) => a !== b && a < d && b < d,
-    solve: ([a = 0, b = 0, d = 0]) => q(Math.max(a, b), d),
-    ref: ([a = 0, b = 0, d = 0]) => (a > b ? q(a, d) : q(b, d)),
+    groups: [6, 7],
+    kind: "choice",
+    draw: (r) => [
+      between(r, 1, 4),
+      between(r, 1, 6),
+      between(r, 1, 3) * (r.int(2) === 0 ? 1 : -1),
+      between(r, 7, 12),
+    ],
+    // The improper fraction lies one or two parts away from the mixed number, above or below it.
+    valid: ([w = 0, n = 0, s = 0, d = 0]) =>
+      n < d && s !== 0 && w * d + n + s > d,
+    options: ([w = 0, n = 0, s = 0, d = 0]) => [
+      `${w} ${fr(n, d)}`,
+      fr(w * d + n + s, d),
+    ],
+    solve: ([w = 0, n = 0, s = 0, d = 0]) =>
+      s < 0 ? `${w} ${fr(n, d)}` : fr(w * d + n + s, d),
+    ref: ([w = 0, n = 0, s = 0, d = 0]) =>
+      w * d + n > w * d + n + s ? `${w} ${fr(n, d)}` : fr(w * d + n + s, d),
     traps: [
       [
-        "the-smaller",
+        "the-other-one",
         "conceptual",
-        ([a = 0, b = 0, d = 0]) => q(Math.min(a, b), d),
-      ],
-      [
-        "the-difference",
-        "conceptual",
-        ([a = 0, b = 0, d = 0]) =>
-          Math.abs(a - b) === Math.min(a, b) ? null : q(Math.abs(a - b), d),
+        ([w = 0, n = 0, s = 0, d = 0]) =>
+          s < 0 ? fr(w * d + n + s, d) : `${w} ${fr(n, d)}`,
       ],
     ],
-    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+    extra: ([w = 0, n = 0, s = 0, d = 0]) => ({
+      f: `${w} ${fr(n, d)}`,
+      g: fr(w * d + n + s, d),
+      c: String(w * d + n + s),
+    }),
   }),
   f3({
     id: "F3.same-den.03",
@@ -613,7 +624,11 @@ const likeDen = [
             : q(d - Math.max(a, b), d),
       ],
     ],
-    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+    extra: ([a = 0, b = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(b, d),
+      r: fr(Math.max(a, b), d),
+    }),
   }),
   f3({
     id: "F3.same-den.06",
@@ -857,8 +872,8 @@ const onLine = [
     form: "the-decimal-near-a-point-on-the-line",
     groups: [6, 7],
     kind: "line",
-    draw: (r) => [pick(r, [1, 3, 5, 7]), 8],
-    valid: ([n = 0]) => Math.abs(1 - (2 * n) / 8) > 0.2,
+    draw: (r) => [between(r, 1, 7), pick(r, [4, 5, 8, 10])],
+    valid: ([n = 0, d = 0]) => n < d && Math.abs(1 - (2 * n) / d) > 0.2,
     within: () => q(1, 20),
     solve: ([n = 0, d = 0]) => q(n, d),
     ref: ([n = 0, d = 0]) => Q.fromDecimal(String(n / d)),
@@ -867,7 +882,8 @@ const onLine = [
       [
         "digits-after-the-comma",
         "conceptual",
-        ([n = 0]) => (n === 1 ? null : Q.fromDecimal(`0,${n}`)),
+        ([n = 0, d = 0]) =>
+          Math.abs(n / d - n / 10) <= 0.06 ? null : Q.fromDecimal(`0,${n}`),
       ],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d), dec: decimalOf(q(n, d)) }),
@@ -987,7 +1003,11 @@ const onLine = [
         ([a = 0, d = 0]) => ((2 * a + 2) % d === 0 ? null : q(2 * a + 2, d)),
       ],
     ],
-    extra: ([a = 0, d = 0]) => ({ f: fr(a, d), g: fr(a + 2, d) }),
+    extra: ([a = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(a + 2, d),
+      r: fr(a + 1, d),
+    }),
     consts: [2],
   }),
   f3l({
@@ -1057,7 +1077,11 @@ const onLine = [
         ([, b = 0, d = 0]) => q(b, d),
       ],
     ],
-    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+    extra: ([a = 0, b = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(b, d),
+      r: fr(b - a, d),
+    }),
   }),
   f3l({
     id: "F3.line.11",
@@ -1085,9 +1109,469 @@ const onLine = [
   }),
 ];
 
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+const lcm = (a: number, b: number): number => (a / gcd(a, b)) * b;
+
+const shareMore = [
+  f1({
+    id: "F1.share.13",
+    form: "a-part-of-a-set-of-objects",
+    groups: [5, 6],
+    kind: "fraction",
+    rule: "equivalent",
+    roles: { a: "number of objects in the set", b: "number of marked objects" },
+    draw: (r) => [between(r, 8, 16), between(r, 2, 12)],
+    valid: ([a = 0, b = 0]) => b < a - 1 && 2 * b !== a,
+    solve: ([a = 0, b = 0]) => q(b, a),
+    ref: ([a = 0, b = 0]) => q(b).div(q(a)),
+    traps: [
+      ["against-the-others", "conceptual", ([a = 0, b = 0]) => q(b, a - b)],
+      ["the-other-colour", "conceptual", ([a = 0, b = 0]) => q(a - b, a)],
+    ],
+    extra: ([a = 0, b = 0]) => ({ r: fr(b, a) }),
+  }),
+  f1({
+    id: "F1.share.14",
+    form: "are-the-parts-equal",
+    groups: [5, 6],
+    kind: "choice",
+    draw: (r) => [between(r, 3, 5), pick(r, [1, 2, 2, 3, 4])],
+    options: () => ["1", "2"],
+    solve: ([, s = 0]) => (s === 2 ? "1" : "2"),
+    ref: ([d = 0, s = 0]) => (s * d === 2 * (d - 1) + s ? "1" : "2"),
+    traps: [
+      [
+        "counted-the-parts",
+        "conceptual",
+        ([, s = 0]) => (s === 2 ? null : "1"),
+      ],
+      ["thought-unequal", "conceptual", ([, s = 0]) => (s === 2 ? "2" : null)],
+    ],
+    extra: ([d = 0]) => ({ f: fr(1, d) }),
+    consts: [1, 2],
+  }),
+  f1({
+    id: "F1.share.15",
+    form: "working-backwards-through-two-halvings",
+    groups: [5, 6],
+    origin: { olympiad: "working backwards through halvings, RES-4284" },
+    kind: "integer",
+    roles: { a: "number of nuts left at the end" },
+    draw: (r) => [between(r, 2, 15)],
+    solve: ([a = 0]) => q(4 * a),
+    ref: ([a = 0]) => q(a).mul(q(2)).mul(q(2)),
+    traps: [
+      ["one-step-only", "conceptual", ([a = 0]) => q(2 * a)],
+      [
+        "halved-instead",
+        "procedural",
+        ([a = 0]) => (a % 2 === 0 ? q(a / 2) : null),
+      ],
+    ],
+    consts: [2],
+  }),
+  f1({
+    id: "F1.share.16",
+    form: "how-many-cuts-make-equal-parts",
+    groups: [5, 6],
+    origin: { olympiad: "cuts against pieces, the fence-post count, RES-4284" },
+    kind: "integer",
+    draw: (r) => [between(r, 3, 12)],
+    solve: ([a = 0]) => q(a - 1),
+    ref: ([a = 0]) => q(Array.from({ length: a }).length - 1),
+    traps: [
+      ["as-many-as-parts", "conceptual", ([a = 0]) => q(a)],
+      ["one-too-many", "conceptual", ([a = 0]) => q(a + 1)],
+    ],
+    consts: [1, 2],
+  }),
+];
+
+const CASES_MORE_THAN: readonly (readonly [number, number, number, number])[] =
+  [
+    [1, 2, 1, 4],
+    [1, 3, 1, 6],
+    [2, 3, 1, 2],
+    [3, 4, 1, 2],
+    [1, 2, 1, 3],
+    [2, 5, 1, 10],
+    [3, 5, 1, 2],
+    [1, 4, 1, 8],
+    [3, 4, 2, 3],
+    [5, 6, 1, 2],
+    [2, 3, 1, 6],
+    [3, 4, 1, 8],
+  ];
+const CASES_TWO_TAKES: readonly (readonly [number, number, number, number])[] =
+  [
+    [1, 2, 1, 3],
+    [1, 3, 1, 2],
+    [1, 4, 1, 3],
+    [1, 2, 1, 4],
+    [2, 3, 1, 2],
+    [1, 5, 1, 2],
+    [3, 4, 1, 3],
+    [1, 2, 2, 3],
+  ];
+
+const ofNumberMore = [
+  f2({
+    id: "F2.fraction-of.12",
+    form: "how-much-more-is-one-part-of-a-number-than-another",
+    groups: [7, 8],
+    kind: "integer",
+    draw: (r) => {
+      const [n1, d1, n2, d2] = pick(r, CASES_MORE_THAN);
+      return [n1, d1, n2, d2, lcm(d1, d2) * between(r, 2, 9)];
+    },
+    solve: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, c = 0]) =>
+      q(c).mul(q(n1, d1).sub(q(n2, d2))),
+    ref: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, c = 0]) =>
+      q((c / d1) * n1 - (c / d2) * n2),
+    traps: [
+      [
+        "sum-instead",
+        "conceptual",
+        ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, c = 0]) =>
+          q((c / d1) * n1 + (c / d2) * n2),
+      ],
+      [
+        "the-greater-part-only",
+        "conceptual",
+        ([n1 = 0, d1 = 0, , , c = 0]) => q((c / d1) * n1),
+      ],
+      [
+        "the-smaller-part-only",
+        "conceptual",
+        ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, c = 0]) =>
+          (c / d2) * n2 === (c / d1) * n1 - (c / d2) * n2
+            ? null
+            : q((c / d2) * n2),
+      ],
+    ],
+    extra: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, c = 0]) => ({
+      f: fr(n1, d1),
+      g: fr(n2, d2),
+      x: String((c / d1) * n1),
+      y: String((c / d2) * n2),
+    }),
+  }),
+  f2({
+    id: "F2.fraction-of.13",
+    form: "the-whole-from-the-difference-of-two-parts",
+    groups: [7, 8],
+    origin: {
+      olympiad: "the whole from the difference of two of its parts, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) => [between(r, 2, 9), pick(r, [2, 3, 4, 5])],
+    solve: ([a = 0, p = 0]) => q(a * p * (p + 1)),
+    ref: ([a = 0, p = 0]) => q(a).div(q(1, p).sub(q(1, p + 1))),
+    traps: [
+      ["the-difference-itself", "conceptual", ([a = 0]) => q(a)],
+      ["the-common-denominator", "conceptual", ([, p = 0]) => q(p * (p + 1))],
+      ["only-one-fraction", "conceptual", ([a = 0, p = 0]) => q(a * p)],
+    ],
+    extra: ([, p = 0]) => ({
+      f: fr(1, p),
+      g: fr(1, p + 1),
+      z: String(p * (p + 1)),
+      e: fr(p + 1, p * (p + 1)),
+      h: fr(p, p * (p + 1)),
+      k: fr(1, p * (p + 1)),
+    }),
+  }),
+  f2({
+    id: "F2.fraction-of.14",
+    form: "a-part-and-then-a-part-of-the-rest",
+    groups: [7, 8],
+    kind: "integer",
+    roles: { e: "number of nuts in the bag at the start" },
+    draw: (r) => {
+      const [n1, d1, n2, d2] = pick(r, CASES_TWO_TAKES);
+      return [n1, d1, n2, d2, d1 * d2 * between(r, 1, 4)];
+    },
+    solve: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, e = 0]) => {
+      const rest = e - (e / d1) * n1;
+      return q(rest - (rest / d2) * n2);
+    },
+    ref: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, e = 0]) =>
+      q(e)
+        .mul(q(d1 - n1, d1))
+        .mul(q(d2 - n2, d2)),
+    traps: [
+      [
+        "both-from-the-whole",
+        "conceptual",
+        ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, e = 0]) => {
+          const rest = e - (e / d1) * n1;
+          const w = e - (e / d1) * n1 - (e / d2) * n2;
+          return w === rest - (rest / d2) * n2 ? null : q(w);
+        },
+      ],
+      [
+        "only-the-first-step",
+        "procedural",
+        ([n1 = 0, d1 = 0, , , e = 0]) => q(e - (e / d1) * n1),
+      ],
+      [
+        "taken-instead",
+        "conceptual",
+        ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, e = 0]) => {
+          const rest = e - (e / d1) * n1;
+          const taken = (e / d1) * n1 + (rest / d2) * n2;
+          return taken === e - taken ? null : q(taken);
+        },
+      ],
+    ],
+    extra: ([n1 = 0, d1 = 0, n2 = 0, d2 = 0, e = 0]) => {
+      const x = (e / d1) * n1;
+      const y = e - x;
+      return {
+        f: fr(n1, d1),
+        g: fr(n2, d2),
+        x: String(x),
+        y: String(y),
+        z: String((y / d2) * n2),
+      };
+    },
+  }),
+  f2({
+    id: "F2.fraction-of.15",
+    form: "the-whole-from-what-is-left",
+    groups: [7, 8],
+    kind: "integer",
+    roles: {
+      a: "numerator of the spent share",
+      b: "denominator of the spent share",
+      c: "money left",
+    },
+    draw: (r) => [
+      between(r, 1, 4),
+      pick(r, [3, 4, 5, 6, 8]),
+      between(r, 2, 12),
+    ],
+    valid: ([n = 0, d = 0]) => n < d,
+    solve: ([, d = 0, k = 0]) => q(d * k),
+    ref: ([n = 0, d = 0, k = 0]) => q((d - n) * k).div(q(d - n, d)),
+    traps: [
+      [
+        "the-amount-left",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => q((d - n) * k),
+      ],
+      [
+        "left-times-denominator",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => (d - n === 1 ? null : q((d - n) * k * d)),
+      ],
+      [
+        "left-plus-the-numerator",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => q((d - n) * k + n),
+      ],
+    ],
+    extra: ([n = 0, d = 0, k = 0]) => ({
+      f: fr(n, d),
+      c: String((d - n) * k),
+      u: String(k),
+    }),
+  }),
+];
+
+const likeDenMore = [
+  f3({
+    id: "F3.same-den.12",
+    form: "compare-fractions-with-the-same-numerator",
+    groups: [6, 6],
+    kind: "compare",
+    draw: (r) => [between(r, 2, 7), between(r, 5, 12), between(r, 5, 12)],
+    valid: ([n = 0, d1 = 0, d2 = 0]) => d1 !== d2 && n < d1 && n < d2,
+    solve: ([n = 0, d1 = 0, d2 = 0]) => sign(q(n, d1), q(n, d2)),
+    ref: ([, d1 = 0, d2 = 0]) => (d1 < d2 ? ">" : "<"),
+    traps: [
+      [
+        "bigger-denominator-wins",
+        "conceptual",
+        ([, d1 = 0, d2 = 0]) => (d1 < d2 ? "<" : ">"),
+      ],
+      ["equal-numerators", "conceptual", () => "="],
+    ],
+    extra: ([n = 0, d1 = 0, d2 = 0]) => ({
+      f: fr(n, d1),
+      g: fr(n, d2),
+      sign: sign(q(n, d1), q(n, d2)),
+    }),
+  }),
+  f3({
+    id: "F3.same-den.13",
+    form: "how-many-like-fractions-lie-between-two",
+    groups: [6, 7],
+    origin: {
+      olympiad:
+        "fractions between two like fractions, the fence-post count, RES-4284",
+    },
+    kind: "integer",
+    draw: (r) => [between(r, 1, 6), between(r, 3, 8), between(r, 12, 16)],
+    valid: ([a = 0, k = 0, d = 0]) => a + k < d,
+    solve: ([, k = 0]) => q(k - 1),
+    ref: ([a = 0, k = 0]) => q(a + k - 1 - (a + 1) + 1),
+    traps: [
+      ["numbers-subtracted", "procedural", ([, k = 0]) => q(k)],
+      ["both-ends-counted", "conceptual", ([, k = 0]) => q(k + 1)],
+    ],
+    extra: ([a = 0, k = 0, d = 0]) => ({ f: fr(a, d), g: fr(a + k, d) }),
+    consts: [1],
+  }),
+  f3({
+    id: "F3.same-den.14",
+    form: "how-many-proper-fractions-exceed-a-half",
+    groups: [6, 7],
+    origin: { olympiad: "counting proper fractions above one half, RES-4284" },
+    kind: "integer",
+    draw: (r) => [between(r, 5, 20)],
+    solve: ([d = 0]) => q(d - 1 - Math.floor(d / 2)),
+    ref: ([d = 0]) =>
+      q(
+        Array.from({ length: d - 1 }, (_, i) => i + 1).filter((n) => 2 * n > d)
+          .length,
+      ),
+    traps: [
+      ["all-proper-fractions", "conceptual", ([d = 0]) => q(d - 1)],
+      ["the-half-counted", "conceptual", ([d = 0]) => q(d - Math.floor(d / 2))],
+    ],
+    extra: () => ({ h: fr(1, 2) }),
+    consts: [1, 2],
+  }),
+  f3({
+    id: "F3.same-den.15",
+    form: "the-second-fraction-has-more-parts",
+    groups: [6, 6],
+    kind: "fraction",
+    rule: "equivalent",
+    draw: (r) => [between(r, 1, 6), between(r, 2, 5), between(r, 8, 12)],
+    valid: ([a = 0, k = 0, d = 0]) => a + k < d,
+    solve: ([a = 0, k = 0, d = 0]) => q(a + k, d),
+    ref: ([a = 0, k = 0, d = 0]) => q(a, d).add(q(k, d)),
+    traps: [
+      [
+        "denominator-changed",
+        "conceptual",
+        ([a = 0, k = 0, d = 0]) => q(a + k, d + k),
+      ],
+      [
+        "added-to-denominator",
+        "conceptual",
+        ([a = 0, k = 0, d = 0]) => q(a, d + k),
+      ],
+      ["the-difference", "conceptual", ([, k = 0, d = 0]) => q(k, d)],
+    ],
+    extra: ([a = 0, k = 0, d = 0]) => ({
+      f: fr(a, d),
+      r: fr(a + k, d),
+    }),
+  }),
+];
+
+const onLineMore = [
+  f3l({
+    id: "F3.line.12",
+    form: "halfway-between-zero-and-a-fraction",
+    groups: [7, 7],
+    kind: "fraction",
+    rule: "equivalent",
+    draw: (r) => [between(r, 1, 9), between(r, 5, 12)],
+    valid: ([n = 0, d = 0]) => n < d,
+    solve: ([n = 0, d = 0]) => q(n, 2 * d),
+    ref: ([n = 0, d = 0]) => q(n, d).div(q(2)),
+    traps: [
+      ["the-fraction-itself", "conceptual", ([n = 0, d = 0]) => q(n, d)],
+      ["doubled-instead", "conceptual", ([n = 0, d = 0]) => q(2 * n, d)],
+    ],
+    extra: ([n = 0, d = 0]) => ({ z: "0", f: fr(n, d), r: fr(n, 2 * d) }),
+    consts: [0, 2],
+  }),
+  f3l({
+    id: "F3.line.13",
+    form: "jumps-of-a-unit-fraction-along-the-line",
+    groups: [6, 7],
+    kind: "mixed",
+    rule: "equivalent",
+    roles: { a: "number of jumps", b: "number of jumps that make one whole" },
+    draw: (r) => [between(r, 5, 20), between(r, 2, 6)],
+    valid: ([k = 0, d = 0]) => k > d && k % d !== 0,
+    solve: ([k = 0, d = 0]) => q(k, d),
+    ref: ([k = 0, d = 0]) => q(1, d).mul(q(k)),
+    traps: [
+      ["wholes-only", "procedural", ([k = 0, d = 0]) => q(Math.floor(k / d))],
+      ["the-fraction-part-only", "conceptual", ([k = 0, d = 0]) => q(k % d, d)],
+    ],
+    extra: ([, d = 0]) => ({ f: fr(1, d) }),
+  }),
+  f3l({
+    id: "F3.line.14",
+    form: "a-fraction-between-two-neighbours",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "a fraction between neighbours by doubling the denominator, RES-4284",
+    },
+    kind: "fraction",
+    rule: "equivalent",
+    draw: (r) => [between(r, 1, 8), between(r, 5, 12)],
+    valid: ([a = 0, d = 0]) => a + 1 < d,
+    solve: ([a = 0, d = 0]) => q(2 * a + 1, 2 * d),
+    ref: ([a = 0, d = 0]) =>
+      q(a, d)
+        .add(q(a + 1, d))
+        .div(q(2)),
+    traps: [
+      ["the-left-end", "conceptual", ([a = 0, d = 0]) => q(2 * a, 2 * d)],
+      ["the-right-end", "conceptual", ([a = 0, d = 0]) => q(2 * a + 2, 2 * d)],
+    ],
+    extra: ([a = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(a + 1, d),
+      h: String(2 * d),
+      e: fr(2 * a, 2 * d),
+      k: fr(2 * a + 2, 2 * d),
+      r: fr(2 * a + 1, 2 * d),
+    }),
+    consts: [2],
+  }),
+  f3l({
+    id: "F3.line.15",
+    form: "the-mark-of-a-fraction-on-a-finer-scale",
+    groups: [6, 7],
+    kind: "integer",
+    draw: (r) => [between(r, 1, 5), pick(r, [3, 4, 5]), pick(r, [2, 3, 4])],
+    valid: ([a = 0, b = 0]) => a < b,
+    solve: ([a = 0, , k = 0]) => q(a * k),
+    ref: ([a = 0, b = 0, k = 0]) => q(a, b).mul(q(b * k)),
+    traps: [
+      ["numerator-as-tick", "conceptual", ([a = 0]) => q(a)],
+      [
+        "from-the-other-end",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) => (b === 2 * a ? null : q((b - a) * k)),
+      ],
+    ],
+    extra: ([a = 0, b = 0, k = 0]) => ({
+      c: String(b * k),
+      f: fr(a, b),
+      u: String(k),
+    }),
+    consts: [0, 1],
+  }),
+];
+
 export const fSpecs1: readonly Spec<never>[] = [
   ...share,
+  ...shareMore,
   ...ofNumber,
+  ...ofNumberMore,
   ...likeDen,
+  ...likeDenMore,
   ...onLine,
+  ...onLineMore,
 ];

@@ -75,6 +75,8 @@ const temp = <P>(o: {
   id: string;
   form: string;
   groups?: readonly [number, number];
+  origin?: { olympiad: string } | { extension: string };
+  roles?: Spec<P>["roles"];
   answer?: "integer" | "compare";
   draw: Spec<P>["draw"];
   valid?: Spec<P>["valid"];
@@ -90,6 +92,8 @@ const temp = <P>(o: {
     subtype: "thermometer",
     form: o.form,
     groups: o.groups ?? [6, 7],
+    ...(o.origin ? { origin: o.origin } : {}),
+    ...(o.roles ? { roles: o.roles } : {}),
     answer: o.answer ?? "integer",
     draw: o.draw,
     ...(o.valid ? { valid: o.valid } : {}),
@@ -104,6 +108,7 @@ const thermometer = [
   temp<{ a: number }>({
     id: "N7.thermometer.01",
     form: "a-temperature-below-zero-as-a-number",
+    roles: { a: "degrees below zero" },
     draw: (r) => ({ a: between(r, 1, 25) }),
     solve: (p) => qi(-p.a),
     reference: (p) => qi(0 - p.a),
@@ -113,6 +118,7 @@ const thermometer = [
   temp<{ a: number; d: number }>({
     id: "N7.thermometer.02",
     form: "warmer-than-a-temperature-below-zero",
+    roles: { a: "degrees below zero at the start", d: "degrees of warming" },
     draw: (r) => ({ a: between(r, 1, 15), d: between(r, 1, 25) }),
     valid: (p) => p.a !== p.d,
     solve: (p) => qi(p.d - p.a),
@@ -136,6 +142,7 @@ const thermometer = [
   temp<{ t: number; d: number }>({
     id: "N7.thermometer.03",
     form: "colder-than-a-positive-temperature",
+    roles: { t: "degrees above zero at the start", d: "degrees of cooling" },
     draw: (r) => ({ t: between(r, 1, 15), d: between(r, 2, 30) }),
     valid: (p) => p.d > p.t,
     solve: (p) => qi(p.t - p.d),
@@ -163,6 +170,7 @@ const thermometer = [
   temp<{ a: number; b: number }>({
     id: "N7.thermometer.04",
     form: "rise-from-below-zero-to-above-zero",
+    roles: { a: "degrees below zero at night", b: "degrees above zero by day" },
     draw: (r) => ({ a: between(r, 1, 20), b: between(r, 1, 20) }),
     valid: (p) => p.a !== p.b,
     solve: (p) => qi(p.a + p.b),
@@ -244,6 +252,11 @@ const thermometer = [
   temp<{ s: number; f: number; u: number }>({
     id: "N7.thermometer.07",
     form: "falls-then-rises",
+    roles: {
+      s: "morning temperature in degrees",
+      f: "degrees of the fall by evening",
+      u: "degrees of the warming at night",
+    },
     draw: (r) => ({
       s: between(r, 1, 10),
       f: between(r, 8, 25),
@@ -277,6 +290,10 @@ const thermometer = [
   temp<{ a: number; b: number }>({
     id: "N7.thermometer.08",
     form: "difference-of-two-temperatures-below-zero",
+    roles: {
+      a: "degrees below zero in the morning",
+      b: "degrees below zero by day",
+    },
     draw: (r) => ({ a: between(r, 5, 30), b: between(r, 1, 25) }),
     valid: (p) => p.a > p.b,
     solve: (p) => qi(p.a - p.b),
@@ -294,6 +311,7 @@ const thermometer = [
   temp<{ a: number }>({
     id: "N7.thermometer.09",
     form: "degrees-to-rise-to-zero",
+    roles: { a: "degrees below zero now" },
     draw: (r) => ({ a: between(r, 1, 30) }),
     solve: (p) => qi(p.a),
     reference: (p) => qi(0 - -p.a),
@@ -305,6 +323,11 @@ const thermometer = [
   temp<T>({
     id: "N7.thermometer.10",
     form: "range-of-three-temperatures",
+    roles: {
+      a: "temperature on the first day",
+      b: "temperature on the second day",
+      c: "temperature on the third day",
+    },
     draw: (r) => ({
       a: between(r, -15, -1),
       b: between(r, -5, 12),
@@ -349,6 +372,11 @@ const thermometer = [
   temp<{ t: number; d: number; h: number }>({
     id: "N7.thermometer.11",
     form: "temperature-after-hours-of-falling",
+    roles: {
+      t: "starting temperature",
+      d: "degrees the temperature falls each hour",
+      h: "number of hours",
+    },
     draw: (r) => ({
       t: between(r, 5, 12),
       d: between(r, 2, 5),
@@ -379,6 +407,142 @@ const thermometer = [
       w: signed(p.t - p.d),
       f: s(p.d * p.h),
     }),
+  }),
+  temp<{ v: number }>({
+    id: "N7.thermometer.12",
+    form: "read-a-thermometer-with-tick-marks",
+    groups: [7, 8],
+    draw: (r) => ({ v: between(r, -19, 19) }),
+    valid: (p) => p.v % 5 !== 0,
+    solve: (p) => qi(p.v),
+    reference: (p) => qi(Number(`${p.v}`)),
+    traps: [
+      {
+        id: "sign-lost",
+        kind: "conceptual",
+        wrong: (p) => (p.v < 0 ? qi(-p.v) : null),
+      },
+      {
+        id: "wrong-direction",
+        kind: "conceptual",
+        wrong: (p) => qi(2 * Math.ceil(p.v / 5) * 5 - p.v),
+      },
+      {
+        id: "label-only",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.ceil(p.v / 5) * 5),
+      },
+    ],
+    vars: (p) => {
+      const top = Math.ceil(p.v / 5) * 5;
+      return {
+        L: signed(top),
+        k: s(top - p.v),
+        r: signed(p.v),
+      };
+    },
+    constants: [0, 1, 5],
+  }),
+  temp<{ q: number; step: number; k: number }>({
+    id: "N7.thermometer.13",
+    form: "read-a-point-on-a-line-that-crosses-zero",
+    groups: [7, 8],
+    draw: (r) => {
+      const step = pick(r, [1, 2, 5, 10]);
+      const q = r.int(3) === 0 ? between(r, 11, 15) : between(r, 4, 8);
+      return { step, q, k: between(r, 1, 9) };
+    },
+    valid: (p) => p.k !== p.q && p.k * 2 !== 10,
+    solve: (p) => qi(p.step * (p.k - p.q)),
+    reference: (p) => qi(-p.step * p.q + p.k * p.step),
+    traps: [
+      {
+        id: "sign-lost",
+        kind: "conceptual",
+        wrong: (p) => (p.k < p.q ? qi(p.step * (p.q - p.k)) : null),
+      },
+      {
+        id: "wrong-direction",
+        kind: "conceptual",
+        wrong: (p) => qi(-p.step * (p.q + p.k)),
+      },
+      {
+        id: "mirror",
+        kind: "conceptual",
+        wrong: (p) => qi(p.step * (10 - p.q - p.k)),
+      },
+    ],
+    vars: (p) => ({
+      lo: signed(-p.step * p.q),
+      hi: signed(p.step * (10 - p.q)),
+      gap: s(10 * p.step),
+      step: s(p.step),
+      k: s(p.k),
+      r: signed(p.step * (p.k - p.q)),
+    }),
+    constants: [0, 10],
+  }),
+  temp<{ s: number; a: number; b: number }>({
+    id: "N7.thermometer.14",
+    form: "a-snail-climbs-a-thermometer-and-slides-back",
+    roles: {
+      s: "degrees below zero where the snail starts",
+      a: "degrees it climbs by day",
+      b: "degrees it slides by night",
+    },
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "the snail that climbs by day and slides back by night, with the last day without a slide; RES-4281 (MCCME school stage style)",
+    },
+    draw: (r) => {
+      const a = between(r, 3, 7);
+      const b = between(r, 1, a - 2);
+      return { a, b, s: between(r, a + 2, a + 5 * (a - b)) };
+    },
+    valid: (p) => (p.s - p.a) % (p.a - p.b) !== 0 || p.s % p.a !== 0,
+    solve: (p) => qi(Math.ceil((p.s - p.a) / (p.a - p.b)) + 1),
+    reference: (p) => {
+      let at = -p.s;
+      for (let day = 1; day < 100; day += 1) {
+        at += p.a;
+        if (at >= 0) return qi(day);
+        at -= p.b;
+      }
+      return qi(-1);
+    },
+    traps: [
+      {
+        id: "no-slide",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.ceil(p.s / p.a)),
+      },
+      {
+        id: "forgot-last-day",
+        kind: "procedural",
+        wrong: (p) => qi(Math.ceil((p.s - p.a) / (p.a - p.b))),
+      },
+      {
+        id: "slide-in-last-day",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.ceil(p.s / (p.a - p.b))),
+      },
+    ],
+    vars: (p) => {
+      const g = p.a - p.b;
+      const c = Math.ceil((p.s - p.a) / g);
+      return {
+        s: s(p.s),
+        a: s(p.a),
+        b: s(p.b),
+        g: s(g),
+        m: s(p.s - p.a),
+        c: s(c),
+        cg: s(c * g),
+        r: s(c + 1),
+      };
+    },
+    constants: [0, 1],
   }),
 ];
 
@@ -702,6 +866,179 @@ const orderSpecs = [
         order: (v) => idx(v, (h) => -(h % 100)),
       },
     ],
+  }),
+  define<{ v: number[]; by: number }>({
+    id: "N7.order.12",
+    node: "N7",
+    subtype: "order",
+    form: "the-greatest-of-four-numbers-of-both-signs",
+    groups: [7, 8],
+    answer: "choice",
+    draw: (r) => {
+      const v = new Set<number>();
+      while (v.size < 4) v.add(between(r, -15, 15));
+      return { v: [...v], by: r.int(4) };
+    },
+    valid: (p) => {
+      const far = [...p.v].sort((x, y) => Math.abs(y) - Math.abs(x))[0] ?? 0;
+      const near = [...p.v].sort((x, y) => Math.abs(x) - Math.abs(y))[0] ?? 0;
+      const top = Math.max(...p.v);
+      return (
+        Math.min(...p.v) < 0 &&
+        top > 0 &&
+        far !== top &&
+        near !== top &&
+        new Set(p.v.map(Math.abs)).size === 4
+      );
+    },
+    options: (p) =>
+      p.v.map((_, i) => p.v[(i + p.by) % 4] ?? 0).map((x) => signed(x)),
+    solve: (p) => signed(Math.max(...p.v)),
+    reference: (p) => signed([...p.v].sort((x, y) => y - x)[0] ?? 0),
+    traps: [
+      {
+        id: "largest-magnitude",
+        kind: "conceptual",
+        wrong: (p) =>
+          signed([...p.v].sort((x, y) => Math.abs(y) - Math.abs(x))[0] ?? 0),
+      },
+      {
+        id: "smallest-magnitude",
+        kind: "conceptual",
+        wrong: (p) =>
+          signed([...p.v].sort((x, y) => Math.abs(x) - Math.abs(y))[0] ?? 0),
+      },
+    ],
+    vars: (p) => ({
+      r: signed(Math.max(...p.v)),
+      w_largest_magnitude: signed(
+        [...p.v].sort((x, y) => Math.abs(y) - Math.abs(x))[0] ?? 0,
+      ),
+      w_smallest_magnitude: signed(
+        [...p.v].sort((x, y) => Math.abs(x) - Math.abs(y))[0] ?? 0,
+      ),
+    }),
+    constants: [0],
+  }),
+  define<{ na: number; b: number }>({
+    id: "N7.order.13",
+    node: "N7",
+    subtype: "order",
+    form: "how-many-whole-numbers-lie-across-zero",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "counting the whole numbers across zero, the zero itself included; RES-4281 (Kangaroo-style count)",
+    },
+    answer: "integer",
+    draw: (r) => ({ na: between(r, 2, 9), b: between(r, 2, 9) }),
+    solve: (p) => qi(p.na + p.b - 1),
+    reference: (p) => {
+      let c = 0;
+      for (let x = -p.na + 1; x < p.b; x += 1) c += 1;
+      return qi(c);
+    },
+    traps: [
+      {
+        id: "forgot-zero",
+        kind: "conceptual",
+        wrong: (p) => qi(p.na + p.b - 2),
+      },
+      {
+        id: "ends-included",
+        kind: "conceptual",
+        wrong: (p) => qi(p.na + p.b + 1),
+      },
+      { id: "distance", kind: "conceptual", wrong: (p) => qi(p.na + p.b) },
+    ],
+    vars: (p) => ({
+      a: signed(-p.na),
+      na: s(p.na),
+      b: s(p.b),
+      r: s(p.na + p.b - 1),
+      w_forgot_zero: s(p.na + p.b - 2),
+      w_ends_included: s(p.na + p.b + 1),
+      w_distance: s(p.na + p.b),
+    }),
+    constants: [1],
+  }),
+  define<{ t: number }>({
+    id: "N7.order.14",
+    node: "N7",
+    subtype: "order",
+    form: "the-largest-whole-number-below-a-decimal",
+    groups: [7, 8],
+    origin: {
+      extension:
+        "negative decimals on the number line, Russian grade 6 (RES-4281)",
+    },
+    answer: "integer",
+    draw: (r) => ({ t: (r.int(4) === 0 ? 1 : -1) * between(r, 11, 99) }),
+    valid: (p) => p.t % 10 !== 0 && Math.abs(p.t) > 10,
+    solve: (p) => qi(Math.floor(p.t / 10)),
+    reference: (p) => {
+      let x = Math.floor(p.t / 10) + 2;
+      while (x * 10 >= p.t) x -= 1;
+      return qi(x);
+    },
+    traps: [
+      {
+        id: "toward-zero",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.trunc(p.t / 10)),
+      },
+      {
+        id: "nearest",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.sign(p.t) * Math.round(Math.abs(p.t) / 10)),
+      },
+    ],
+    vars: (p) => ({
+      x: tenthsText(p.t),
+      lo: signed(Math.floor(p.t / 10)),
+      hi: signed(Math.floor(p.t / 10) + 1),
+      r: signed(Math.floor(p.t / 10)),
+      w_toward_zero: signed(Math.trunc(p.t / 10)),
+      w_nearest: signed(Math.sign(p.t) * Math.round(Math.abs(p.t) / 10)),
+    }),
+    constants: [],
+  }),
+  define<{ w: number; ta: number; hb: number }>({
+    id: "N7.order.15",
+    node: "N7",
+    subtype: "order",
+    form: "compare-two-negative-decimals",
+    groups: [8, 8],
+    answer: "compare",
+    draw: (r) => ({
+      w: between(r, 1, 9),
+      ta: between(r, 1, 9),
+      hb: between(r, 1, 99),
+    }),
+    valid: (p) => p.hb % 10 !== 0,
+    solve: (p) => signOf(-(100 * p.w + 10 * p.ta), -(100 * p.w + p.hb)),
+    reference: (p) => (p.ta * 10 > p.hb ? "<" : ">"),
+    traps: [
+      {
+        id: "magnitude-wins",
+        kind: "conceptual",
+        wrong: (p) => signOf(100 * p.w + 10 * p.ta, 100 * p.w + p.hb),
+      },
+    ],
+    vars: (p) => {
+      const ma = 100 * p.w + 10 * p.ta;
+      const mb = 100 * p.w + p.hb;
+      return {
+        a: `−${tenthsText(10 * p.w + p.ta)}`,
+        b: `−${hundredthsText(mb)}`,
+        ma: tenthsText(10 * p.w + p.ta),
+        mb: hundredthsText(mb),
+        ms: signOf(ma, mb),
+        sign: signOf(-ma, -mb),
+        w_magnitude_wins: signOf(ma, mb),
+      };
+    },
+    constants: [0],
   }),
 ];
 

@@ -3,8 +3,11 @@
 // stands for, with no story, and `roles` names the part each number plays so the story writer can dress it (ADR-0130).
 // Texts are in `content/tasks-t.ru.json`. Generated from one table with the strings.
 import { calc, of, rg } from "./kitc.js";
-import { q } from "./kitf.js";
+import { q, tm } from "./kitf.js";
 import { type Spec } from "./spec.js";
+
+/** The button number of the calculation at place `k` of the fixed list, when the list is turned by `s`. */
+const seat = (k: number, s: number): string => String(((k - s + 4) % 4) + 1);
 
 const T1_one_step = calc("T1", "one-step");
 const T1_one_step_specs: readonly Spec<never>[] = [
@@ -171,12 +174,187 @@ const T1_one_step_specs: readonly Spec<never>[] = [
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
     t: {
-      "extra-number-used": (a, b, c) => q(c - a * b),
+      "extra-number-used": (a, b, c) => (c > a * b ? q(c - a * b) : null),
       "all-numbers-added": (a, b, c) => q(a + b + c),
     },
     roles: { a: "price", b: "count", c: "money in the purse, not needed" },
   }),
+  T1_one_step({
+    id: "T1.one-step.16",
+    form: "a-number-that-is-several-times-less",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(2, 9), rg(2, 9)],
+    ok: (a, b) => a !== b,
+    f: (a) => q(a),
+    alt: (a, b) => q(a * b).div(q(b)),
+    t: {
+      difference: (a, b) => q(a * b - b),
+      product: (a, b) => q(a * b * b),
+    },
+    x: (a, b) => ({ x: String(a * b) }),
+    roles: { a: "smaller", b: "factor" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.17",
+    form: "the-remainder-of-a-sharing",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(20, 80), rg(4, 9)],
+    ok: (a, b) => a % b !== 0,
+    f: (a, b) => q(a % b),
+    alt: (a, b) => q(a - b * Math.floor(a / b)),
+    t: {
+      "full-groups": (a, b) => q(Math.floor(a / b)),
+      "minus-one-group": (a, b) => q(a - b),
+    },
+    origin: {
+      extension: "division with a remainder, Russian grade 3 (RES-4289)",
+    },
+    roles: { a: "total", b: "in each group" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.18",
+    form: "the-boxes-needed-for-all-the-things",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(20, 70), rg(4, 9)],
+    ok: (a, b) => a % b !== 0,
+    f: (a, b) => q(Math.ceil(a / b)),
+    alt: (a, b) => q(Math.floor((a + b - 1) / b)),
+    t: {
+      "quotient-only": (a, b) => q(Math.floor(a / b)),
+      "remainder-added": (a, b) => q(Math.floor(a / b) + (a % b)),
+    },
+    roles: { a: "things", b: "capacity of a box" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.19",
+    form: "the-most-things-for-a-sum-of-money",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(3, 9), rg(20, 60)],
+    ok: (a, b) => b % a !== 0,
+    f: (a, b) => q(Math.floor(b / a)),
+    alt: (a, b) => q((b - (b % a)) / a),
+    t: {
+      "rounded-up": (a, b) => q(Math.floor(b / a) + 1),
+      "left-over-money": (a, b) => q(b % a),
+    },
+    roles: { a: "price", b: "money" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.20",
+    form: "the-price-of-one-of-equal-things",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(2, 9), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a) => q(a),
+    alt: (a, b) => q(a * b).div(q(b)),
+    t: { total: (a, b) => q(a * b), count: (a, b) => q(b) },
+    x: (a, b) => ({ x: String(a * b) }),
+    roles: { a: "price of one", b: "count" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.21",
+    form: "one-part-of-a-quantity",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(2, 9), of(2, 3, 4, 5, 10)],
+    ok: (a, b) => a !== b,
+    f: (a) => q(a),
+    alt: (a, b) => q(a * b).div(q(b)),
+    t: {
+      "the-rest": (a, b) => q(a * b - a),
+      "times-the-denominator": (a, b) => q(a * b * b),
+    },
+    x: (a, b) => ({ x: String(a * b) }),
+    c: [1],
+    origin: {
+      extension: "unit fractions of a quantity, Russian grade 3 (RES-4289)",
+    },
+    roles: { a: "one part", b: "parts in the whole" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.22",
+    form: "the-gaps-between-posts-in-a-row",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(5, 15)],
+    f: (a) => q(a - 1),
+    alt: (a) => q(a).sub(q(1)),
+    t: { "same-count": (a) => q(a), "one-more": (a) => q(a + 1) },
+    c: [1],
+    origin: {
+      olympiad: "posts and gaps in a row, a fence-post count (RES-4289)",
+    },
+    roles: { a: "posts" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.23",
+    form: "the-length-of-a-row-from-two-places",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(3, 12), rg(3, 12)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a + b - 1),
+    alt: (a, b) => q(a - 1 + (b - 1) + 1),
+    t: {
+      "counted-twice": (a, b) => q(a + b),
+      "both-others-only": (a, b) => q(a + b - 2),
+    },
+    c: [1],
+    origin: { olympiad: "a place counted from both ends of a row (RES-4289)" },
+    roles: { a: "place from the start", b: "place from the end" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.24",
+    form: "the-gap-in-age-that-does-not-change",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(25, 40), rg(5, 15), rg(2, 9)],
+    f: (a, b) => q(a - b),
+    alt: (a, b, c) => q(a + c - (b + c)),
+    t: {
+      grows: (a, b, c) => q(a - b + c),
+      shrinks: (a, b, c) => q(a - b - c),
+    },
+    origin: {
+      olympiad: "a difference that stays the same over time (RES-4289)",
+    },
+    roles: { a: "first age", b: "second age", c: "years later" },
+  }),
+  T1_one_step({
+    id: "T1.one-step.25",
+    form: "choose-the-calculation-for-equal-groups",
+    g: [3, 4],
+    kind: "choice",
+    p: [rg(3, 9), rg(3, 9), rg(0, 3)],
+    ok: (a, b) => a > b,
+    f: (a, b, s) => seat(0, s),
+    t: {
+      add: (a, b, s) => seat(1, s),
+      subtract: (a, b, s) => seat(2, s),
+      divide: (a, b, s) => seat(3, s),
+    },
+    options: () => ["1", "2", "3", "4"],
+    x: (a, b, s) => {
+      const list = [`${a} × ${b}`, `${a} + ${b}`, `${a} − ${b}`, `${a} : ${b}`];
+      return Object.fromEntries(
+        [0, 1, 2, 3].map((i) => [`o${i + 1}`, list[(i + s) % 4] ?? ""]),
+      );
+    },
+    roles: { a: "groups", b: "in each group" },
+  }),
 ];
+
+/** The five levels of the water graph: a first level and four rises. */
+const levels = (b: number, ...rises: number[]): number[] =>
+  rises.reduce<number[]>(
+    (out, r) => [...out, (out[out.length - 1] ?? b) + r],
+    [b],
+  );
 
 const T2_two_step = calc("T2", "two-step");
 const T2_two_step_specs: readonly Spec<never>[] = [
@@ -221,15 +399,16 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     form: "the-total-minus-equal-groups",
     g: [4, 5],
     kind: "integer",
-    p: [rg(40, 90), rg(2, 6), rg(3, 8)],
-    ok: (a, b, c) => a - b * c > 0 && b !== c,
-    f: (a, b, c) => q(a - b * c),
+    p: [rg(2, 8), rg(3, 9), rg(2, 20)],
+    ok: (a, b, c) => a !== b && c >= b,
+    f: (a) => q(a),
+    alt: (a, b, c) => q(a * b + c - c).div(q(b)),
     t: {
-      taken: (a, b, c) => q(b * c),
-      "one-group": (a, b, c) => q(a - c),
-      "add-all": (a, b, c) => q(a + b + c),
+      taken: (a, b) => q(a * b),
+      "total-over-size": (a, b, c) => q(Math.floor((a * b + c) / b)),
     },
-    roles: { a: "total", b: "groups taken", c: "in each group" },
+    x: (a, b, c) => ({ x: String(a * b + c) }),
+    roles: { a: "times taken", b: "taken each time", c: "left" },
   }),
   T2_two_step({
     id: "T2.two-step.04",
@@ -369,6 +548,203 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     },
     c: [2],
     roles: { a: "first", b: "extra of the third" },
+  }),
+  T2_two_step({
+    id: "T2.two-step.13",
+    form: "the-start-after-two-changes",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(5, 30), rg(5, 30), rg(20, 80)],
+    ok: (a, b, c) => a !== b && c + b - a > 0,
+    f: (a, b, c) => q(c - a + b),
+    alt: (a, b, c) => q(c - (a - b)),
+    t: {
+      "not-inverted": (a, b, c) => (c + a - b > 0 ? q(c + a - b) : null),
+      "only-one": (a, b, c) => (c - a > 0 ? q(c - a) : null),
+    },
+    roles: { a: "added", b: "removed", c: "result" },
+  }),
+  T2_two_step({
+    id: "T2.two-step.14",
+    form: "the-larger-number-from-the-sum-and-the-difference",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(10, 40), rg(1, 8)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a + 2 * b),
+    alt: (a, b) => q(2 * a + 4 * b).div(q(2)),
+    t: {
+      smaller: (a) => q(a),
+      "half-the-sum": (a, b) => q(a + b),
+      "sum-minus-difference": (a) => q(2 * a),
+    },
+    x: (a, b) => ({ x: String(2 * a + 2 * b), y: String(2 * b) }),
+    origin: {
+      olympiad:
+        "two numbers from their sum and difference, by equalising (RES-4289)",
+    },
+    roles: { a: "smaller number (hidden)", b: "half the difference (hidden)" },
+  }),
+  T2_two_step({
+    id: "T2.two-step.15",
+    form: "the-price-from-two-purchases-that-differ",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(2, 9), rg(2, 9), rg(2, 4), rg(3, 6), rg(1, 2)],
+    ok: (a, b, c, d, e) => a !== b && d - e >= 2,
+    f: (a, b) => q(b),
+    alt: (a, b, c, d, e) => q(c * a + d * b - (c * a + e * b)).div(q(d - e)),
+    t: {
+      "the-difference": (a, b, c, d, e) => q((d - e) * b),
+      "the-pen-price": (a) => q(a),
+    },
+    x: (a, b, c, d, e) => ({
+      x: String(c * a + d * b),
+      y: String(c * a + e * b),
+    }),
+    origin: {
+      olympiad: "a price from two purchases that differ in one item (RES-4289)",
+    },
+    roles: {
+      a: "pen price (hidden)",
+      b: "notebook price",
+      c: "pens in each purchase",
+      d: "notebooks in the first purchase",
+      e: "notebooks in the second purchase",
+    },
+  }),
+  T2_two_step({
+    id: "T2.two-step.16",
+    form: "the-length-of-a-path-between-posts",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(5, 12), rg(2, 9)],
+    f: (a, b) => q((a - 1) * b),
+    alt: (a, b) => q(a * b - b),
+    t: {
+      "posts-times-gap": (a, b) => q(a * b),
+      "one-gap-too-many": (a, b) => q((a + 1) * b),
+    },
+    origin: { olympiad: "posts and gaps, a fence-post count (RES-4289)" },
+    roles: { a: "posts", b: "gap between posts" },
+  }),
+  T2_two_step({
+    id: "T2.two-step.17",
+    form: "the-pairs-without-the-forbidden-ones",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(2, 5), rg(2, 5), rg(2, 3)],
+    ok: (a, b, c) => a !== b && a * b - c > 3,
+    f: (a, b, c) => q(a * b - c),
+    alt: (a, b, c) =>
+      q(Array.from({ length: a }, () => b).reduce((s, n) => s + n, 0) - c),
+    t: {
+      "no-restriction": (a, b) => q(a * b),
+      added: (a, b, c) => q(a + b - c),
+    },
+    origin: {
+      extension: "listing all the combinations, Russian grade 2 (RES-4289)",
+    },
+    roles: { a: "shirts", b: "skirts", c: "pairs that do not match" },
+  }),
+  T2_two_step({
+    id: "T2.two-step.18",
+    form: "the-minutes-between-two-times-over-an-hour",
+    g: [4, 5],
+    kind: "integer",
+    p: [
+      rg(8, 11),
+      of(10, 15, 20, 30, 40, 45),
+      rg(1, 3),
+      of(20, 25, 30, 35, 40, 45, 50, 55),
+    ],
+    ok: (a, b, c, d) => b + d - 60 >= 5 && c > 0 && a > 0,
+    f: (a, b, c, d) => q(c * 60 + d),
+    alt: (a, b, c, d) => q((a + c + 1) * 60 + (b + d - 60) - (a * 60 + b)),
+    t: {
+      "minutes-swapped": (a, b, c, d) => q((c + 1) * 60 + (b - (b + d - 60))),
+      "hour-is-a-hundred": (a, b, c, d) => q((c + 1) * 100 + (b + d - 60 - b)),
+    },
+    x: (a, b, c, d) => ({
+      t1: tm(a, b),
+      t2: tm(a + c + 1, b + d - 60),
+      h: String(a + c + 1),
+      m: String(b + d - 60),
+    }),
+    roles: {
+      a: "start hour",
+      b: "start minutes",
+      c: "whole hours",
+      d: "extra minutes",
+    },
+  }),
+  T2_two_step({
+    id: "T2.two-step.19",
+    form: "the-cost-of-the-trips-for-all-the-boxes",
+    g: [4, 5],
+    kind: "integer",
+    p: [rg(20, 60), rg(4, 8), rg(3, 9)],
+    ok: (a, b) => a % b !== 0,
+    f: (a, b, c) => q(Math.ceil(a / b) * c),
+    alt: (a, b, c) => q(Math.floor((a + b - 1) / b) * c),
+    t: {
+      "cars-only": (a, b) => q(Math.ceil(a / b)),
+      "rounded-down": (a, b, c) => q(Math.floor(a / b) * c),
+    },
+    roles: { a: "boxes", b: "boxes in a car", c: "price of a trip" },
+  }),
+  T2_two_step({
+    id: "T2.two-step.20",
+    form: "the-amount-to-move-to-make-two-piles-equal",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(10, 40), rg(2, 10)],
+    f: (a, b) => q(b),
+    alt: (a, b) => q(a + 2 * b - a).div(q(2)),
+    t: {
+      "the-whole-difference": (a, b) => q(2 * b),
+      "the-equal-amount": (a, b) => q(a + b),
+    },
+    x: (a, b) => ({ x: String(a + 2 * b) }),
+    origin: { olympiad: "equalising two piles by moving (RES-4289)" },
+    roles: { a: "smaller pile", b: "amount to move (hidden)" },
+  }),
+  T2_two_step({
+    id: "T2.two-step.21",
+    form: "the-minutes-to-reach-a-level-on-the-graph",
+    g: [4, 5],
+    kind: "integer",
+    p: [
+      of(5, 10, 15, 20),
+      rg(10, 30),
+      rg(5, 20),
+      rg(5, 20),
+      rg(5, 20),
+      rg(5, 20),
+      rg(2, 4),
+    ],
+    ok: (a, b, c, d, e, f, g) =>
+      levels(b, c, d, e, f).every((v) => v !== g * a),
+    f: (a, b, c, d, e, f, g) => q(g * a),
+    alt: (a, b, c, d, e, f, g) =>
+      q(
+        levels(b, c, d, e, f).findIndex((v) => v === levels(b, c, d, e, f)[g]) *
+          a,
+      ),
+    t: {
+      "one-interval-too-many": (a, b, c, d, e, f, g) => q((g + 1) * a),
+      "the-interval": (a) => q(a),
+    },
+    x: (a, b, c, d, e, f, g) => ({ x: String(levels(b, c, d, e, f)[g] ?? 0) }),
+    roles: {
+      a: "minutes between measurements",
+      b: "first level",
+      c: "first rise",
+      d: "second rise",
+      e: "third rise",
+      f: "fourth rise",
+      g: "number of the asked point (hidden)",
+    },
   }),
 ];
 

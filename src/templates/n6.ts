@@ -414,6 +414,7 @@ const million = [
     node: "N6",
     subtype: "million-decimal",
     form: "metres-and-centimetres-to-decimal-metres",
+    roles: { m: "whole metres", c: "centimetres" },
     groups: [6, 6],
     answer: "decimal",
     draw: (r) => ({ m: between(r, 1, 9), c: between(r, 1, 9) }),
@@ -474,6 +475,297 @@ const million = [
     }),
     constants: [0, 1],
   }),
+  define<{ t: number }>({
+    id: "N6.million-decimal.13",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "decimal-millions-to-digits",
+    roles: { x: "inhabitants of the country in millions" },
+    groups: [8, 8],
+    answer: "integer",
+    draw: (r) => ({ t: between(r, 11, 99) }),
+    valid: (p) => p.t % 10 !== 0,
+    solve: (p) => qi(100_000 * p.t),
+    reference: (p) => qi(Number(`${p.t}00000`)),
+    traps: [
+      {
+        id: "one-zero-short",
+        kind: "conceptual",
+        wrong: (p) => qi(10_000 * p.t),
+      },
+      {
+        id: "one-zero-extra",
+        kind: "conceptual",
+        wrong: (p) => qi(1_000_000 * p.t),
+      },
+    ],
+    vars: (p) => ({
+      x: tenthsText(p.t),
+      t: s(p.t),
+      r: digits(100_000 * p.t),
+    }),
+    constants: [1_000_000, 100_000, 10_000],
+  }),
+  define<{ m: number; t: number }>({
+    id: "N6.million-decimal.14",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "millions-and-thousands-to-a-number",
+    groups: [7, 7],
+    answer: "integer",
+    draw: (r) => ({ m: between(r, 1, 9), t: between(r, 1, 999) }),
+    valid: (p) => p.t < 100 || p.t % 100 !== 0,
+    solve: (p) => qi(1_000_000 * p.m + 1000 * p.t),
+    reference: (p) => qi(Number(`${p.m}${s(p.t).padStart(3, "0")}000`)),
+    traps: [
+      {
+        id: "glued",
+        kind: "conceptual",
+        wrong: (p) => qi(Number(`${p.m}${p.t}000`)),
+      },
+      {
+        id: "thousands-dropped",
+        kind: "conceptual",
+        wrong: (p) => qi(1_000_000 * p.m + p.t),
+      },
+    ],
+    vars: (p) => ({
+      m: s(p.m),
+      t: s(p.t),
+      r: digits(1_000_000 * p.m + 1000 * p.t),
+    }),
+    constants: [1000],
+  }),
+  define<{ b: number; m: number }>({
+    id: "N6.million-decimal.15",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "billions-and-millions-to-a-number",
+    groups: [8, 8],
+    answer: "integer",
+    draw: (r) => ({ b: between(r, 1, 9), m: between(r, 1, 999) }),
+    valid: (p) => p.m < 100 || p.m % 100 !== 0,
+    solve: (p) => qi(1_000_000_000 * p.b + 1_000_000 * p.m),
+    reference: (p) => qi(Number(`${p.b}${s(p.m).padStart(3, "0")}000000`)),
+    traps: [
+      {
+        id: "billion-as-million",
+        kind: "conceptual",
+        wrong: (p) => qi(1_000_000 * (p.b + p.m)),
+      },
+      {
+        id: "zeros-lost",
+        kind: "conceptual",
+        wrong: (p) => qi(Number(`${p.b}${p.m}000000`)),
+      },
+    ],
+    vars: (p) => ({
+      b: s(p.b),
+      m: s(p.m),
+      r: digits(1_000_000_000 * p.b + 1_000_000 * p.m),
+    }),
+    constants: [1000, 1_000_000],
+  }),
+  define<{ h: number }>({
+    id: "N6.million-decimal.16",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "digit-in-the-hundredths-place",
+    groups: [6, 7],
+    answer: "integer",
+    draw: (r) => ({ h: between(r, 10_123, 99_987) }),
+    valid: (p) => {
+      const d = [...s(p.h)].map(Number);
+      return new Set(d.slice(-3)).size === 3;
+    },
+    solve: (p) => qi(Math.floor(p.h / 10) % 10),
+    reference: (p) => qi(Number(s(p.h)[s(p.h).length - 2])),
+    traps: [
+      {
+        id: "tenths-digit",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.floor(p.h / 100) % 10),
+      },
+      {
+        id: "thousandths-digit",
+        kind: "conceptual",
+        wrong: (p) => qi(p.h % 10),
+      },
+    ],
+    vars: (p) => ({
+      n: `${Math.floor(p.h / 1000)},${s(p.h % 1000).padStart(3, "0")}`,
+      a: s(Math.floor(p.h / 100) % 10),
+      b: s(Math.floor(p.h / 10) % 10),
+      c: s(p.h % 10),
+      r: s(Math.floor(p.h / 10) % 10),
+    }),
+    constants: [],
+  }),
+  define<{ w: number; abc: number }>({
+    id: "N6.million-decimal.17",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "how-many-thousandths-in-a-decimal",
+    groups: [7, 7],
+    answer: "integer",
+    draw: (r) => ({ w: between(r, 1, 9), abc: between(r, 11, 999) }),
+    valid: (p) => p.abc % 10 !== 0 && p.abc >= 100,
+    solve: (p) => qi(1000 * p.w + p.abc),
+    reference: (p) => qi(Number(`${p.w}${s(p.abc).padStart(3, "0")}`)),
+    traps: [
+      { id: "wholes-forgotten", kind: "conceptual", wrong: (p) => qi(p.abc) },
+      {
+        id: "hundredths-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(100 * p.w + Math.floor(p.abc / 10)),
+      },
+    ],
+    vars: (p) => ({
+      n: `${p.w},${s(p.abc).padStart(3, "0")}`,
+      w: s(p.w),
+      abc: s(p.abc),
+      r: s(1000 * p.w + p.abc),
+    }),
+    constants: [1000],
+  }),
+  define<{ w: number; c1: number; c2: number; swap: number }>({
+    id: "N6.million-decimal.18",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "compare-two-prices-with-small-and-large-cents",
+    groups: [5, 6],
+    answer: "compare",
+    draw: (r) => ({
+      w: between(r, 2, 98),
+      c1: between(r, 1, 45),
+      c2: between(r, 55, 95),
+      swap: r.int(2),
+    }),
+    solve: (p) =>
+      p.swap === 0
+        ? signOf(100 * (p.w + 1) + p.c1, 100 * p.w + p.c2)
+        : signOf(100 * p.w + p.c2, 100 * (p.w + 1) + p.c1),
+    reference: (p) => (p.swap === 0 ? ">" : "<"),
+    traps: [
+      {
+        id: "cents-first",
+        kind: "conceptual",
+        wrong: (p) => (p.swap === 0 ? signOf(p.c1, p.c2) : signOf(p.c2, p.c1)),
+      },
+    ],
+    vars: (p) => {
+      const hi = hundredthsText(100 * (p.w + 1) + p.c1);
+      const lo = hundredthsText(100 * p.w + p.c2);
+      return {
+        a: p.swap === 0 ? hi : lo,
+        b: p.swap === 0 ? lo : hi,
+        wa: s(p.swap === 0 ? p.w + 1 : p.w),
+        wb: s(p.swap === 0 ? p.w : p.w + 1),
+        ca: s(p.swap === 0 ? p.c1 : p.c2),
+        cb: s(p.swap === 0 ? p.c2 : p.c1),
+        sign: p.swap === 0 ? ">" : "<",
+      };
+    },
+    constants: [],
+  }),
+  define<{ h: number; e: number }>({
+    id: "N6.million-decimal.19",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "a-decimal-made-ten-hundred-or-a-thousand-times-larger",
+    groups: [6, 7],
+    origin: {
+      extension:
+        "multiplying by 10, 100 and 1000 as a number-sense step, Russian grade 4 (RES-4281)",
+    },
+    answer: "decimal",
+    draw: (r) => ({ h: between(r, 101, 9999), e: between(r, 1, 3) }),
+    valid: (p) => p.h % 10 !== 0,
+    solve: (p) => Q.of(BigInt(p.h * 10 ** p.e), 100n),
+    reference: (p) =>
+      Q.fromDecimal(`${(p.h * 10 ** p.e) / 100}`.replace(".", ",")),
+    traps: [
+      { id: "unchanged", kind: "conceptual", wrong: (p) => qHundredths(p.h) },
+      {
+        id: "comma-wrong-way",
+        kind: "conceptual",
+        wrong: (p) => Q.of(BigInt(p.h), BigInt(100 * 10 ** p.e)),
+      },
+      {
+        id: "one-place-only",
+        kind: "procedural",
+        wrong: (p) => (p.e === 1 ? null : Q.of(BigInt(10 * p.h), 100n)),
+      },
+    ],
+    vars: (p) => ({
+      x: hundredthsText(p.h),
+      f: s(10 ** p.e),
+      e: s(p.e),
+      r: formatQ(Q.of(BigInt(p.h * 10 ** p.e), 100n)),
+    }),
+    constants: [],
+  }),
+  define<{ L: number; a: number; b: number }>({
+    id: "N6.million-decimal.20",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "how-many-numbers-start-and-end-with-given-digits",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "a clever count by choosing the free digits one after another; RES-4281 (Kangoeroe 2003 counting items)",
+    },
+    answer: "integer",
+    draw: (r) => ({
+      L: between(r, 4, 7),
+      a: between(r, 1, 9),
+      b: between(r, 0, 9),
+    }),
+    solve: (p) => qi(10 ** (p.L - 2)),
+    reference: (p) => qi(Number(`1${"0".repeat(p.L - 2)}`)),
+    traps: [
+      {
+        id: "one-end-fixed",
+        kind: "conceptual",
+        wrong: (p) => qi(10 ** (p.L - 1)),
+      },
+      {
+        id: "sum-instead",
+        kind: "procedural",
+        wrong: (p) => qi(10 * (p.L - 2)),
+      },
+    ],
+    vars: (p) => ({
+      L: s(p.L),
+      a: s(p.a),
+      b: s(p.b),
+      r: digits(10 ** (p.L - 2)),
+    }),
+    constants: [10],
+  }),
+  define<{ k: number }>({
+    id: "N6.million-decimal.21",
+    node: "N6",
+    subtype: "million-decimal",
+    form: "decimal-from-a-shaded-hundred-grid",
+    groups: [5, 6],
+    answer: "decimal",
+    draw: (r) => ({ k: between(r, 11, 98) }),
+    valid: (p) => p.k % 10 !== 0 && Math.floor(p.k / 10) !== p.k % 10,
+    solve: (p) => qHundredths(p.k),
+    reference: (p) => Q.fromDecimal(`0,${s(p.k).padStart(2, "0")}`),
+    traps: [
+      { id: "tenths-slip", kind: "conceptual", wrong: (p) => qTenths(p.k) },
+      { id: "whole", kind: "conceptual", wrong: (p) => qi(p.k) },
+      {
+        id: "reversed-digits",
+        kind: "conceptual",
+        wrong: (p) => qHundredths(10 * (p.k % 10) + Math.floor(p.k / 10)),
+      },
+    ],
+    vars: (p) => ({ k: s(p.k), r: hundredthsText(p.k) }),
+    constants: [100],
+  }),
 ];
 
 const rounding = <P>(o: {
@@ -482,6 +774,7 @@ const rounding = <P>(o: {
   groups: readonly [number, number];
   answer?: "integer" | "decimal";
   origin?: { olympiad: string };
+  roles?: Spec<P>["roles"];
   draw: Spec<P>["draw"];
   valid?: Spec<P>["valid"];
   solve: Spec<P>["solve"];
@@ -496,6 +789,7 @@ const rounding = <P>(o: {
     subtype: "round-million",
     form: o.form,
     groups: o.groups,
+    ...(o.roles ? { roles: o.roles } : {}),
     ...(o.origin ? { origin: o.origin } : {}),
     answer: o.answer ?? "integer",
     draw: o.draw,
@@ -787,6 +1081,116 @@ const roundSpecs = [
       w: digits(1000 * p.m + 500),
     }),
     constants: [5, 499, 500, 1000],
+  }),
+  rounding<{ n: number }>({
+    id: "N6.round-million.12",
+    form: "population-in-millions-rounded-to-a-tenth",
+    roles: { n: "inhabitants of the country" },
+    groups: [8, 8],
+    answer: "decimal",
+    draw: (r) => ({ n: between(r, 1_100_000, 9_900_000) }),
+    valid: (p) => p.n % 100_000 !== 50_000 && p.n % 100_000 !== 0,
+    solve: (p) => qTenths(Math.round(p.n / 100_000 + 1e-9)),
+    reference: (p) =>
+      qTenths(
+        p.n % 100_000 >= 50_000
+          ? Math.floor(p.n / 100_000) + 1
+          : Math.floor(p.n / 100_000),
+      ),
+    traps: [
+      {
+        id: "cut-off",
+        kind: "procedural",
+        wrong: (p) => qTenths(Math.floor(p.n / 100_000)),
+      },
+      {
+        id: "to-whole",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.round(p.n / 1_000_000)),
+      },
+    ],
+    vars: (p) => {
+      const t = Math.round(p.n / 100_000);
+      return {
+        n: digits(p.n),
+        lo: digits(100_000 * Math.floor(p.n / 100_000)),
+        hi: digits(100_000 * (Math.floor(p.n / 100_000) + 1)),
+        d: s(Math.floor(p.n / 10_000) % 10),
+        rr: digits(100_000 * t),
+        r: tenthsText(t),
+      };
+    },
+    constants: [5, 100_000],
+  }),
+  rounding<{ c: number }>({
+    id: "N6.round-million.13",
+    form: "a-bill-rounded-to-five-cents",
+    roles: { n: "total of the bill in euro" },
+    groups: [7, 8],
+    answer: "decimal",
+    draw: (r) => ({ c: between(r, 101, 9999) }),
+    valid: (p) => p.c % 5 !== 0,
+    solve: (p) => qHundredths(nearest(p.c, 5)),
+    reference: (p) =>
+      qHundredths(p.c % 5 > 2 ? down(p.c, 5) + 5 : down(p.c, 5)),
+    traps: [
+      {
+        id: "cut-off",
+        kind: "procedural",
+        wrong: (p) => qHundredths(down(p.c, 5)),
+      },
+      {
+        id: "to-ten-cents",
+        kind: "conceptual",
+        wrong: (p) => qHundredths(nearest(p.c, 10)),
+      },
+      { id: "unchanged", kind: "conceptual", wrong: (p) => qHundredths(p.c) },
+    ],
+    vars: (p) => ({
+      n: hundredthsText(p.c),
+      lo: hundredthsText(down(p.c, 5)),
+      hi: hundredthsText(down(p.c, 5) + 5),
+      r: hundredthsText(nearest(p.c, 5)),
+    }),
+    constants: [0, 5, 10],
+  }),
+  rounding<{ k: number; u: number }>({
+    id: "N6.round-million.14",
+    form: "how-many-whole-numbers-round-to-a-round-number",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "counting the whole numbers between two rounding borders, both ends included; RES-4281 (rounding-boundary reasoning)",
+    },
+    draw: (r) => ({
+      u: pick(r, [10, 100, 1000, 10_000]),
+      k: between(r, 2, 99),
+    }),
+    solve: (p) => qi(p.u),
+    reference: (p) => {
+      const m = p.k * p.u;
+      let c = 0;
+      for (let x = m - p.u; x <= m + p.u; x += 1)
+        if (nearest(x, p.u) === m) c += 1;
+      return qi(c);
+    },
+    traps: [
+      { id: "one-short", kind: "conceptual", wrong: (p) => qi(p.u - 1) },
+      { id: "one-extra", kind: "conceptual", wrong: (p) => qi(p.u + 1) },
+      { id: "half", kind: "conceptual", wrong: (p) => qi(p.u / 2) },
+    ],
+    vars: (p) => {
+      const m = p.k * p.u;
+      return {
+        m: digits(m),
+        u: digits(p.u),
+        h: digits(p.u / 2),
+        lo: digits(m - p.u / 2),
+        hi: digits(m + p.u / 2 - 1),
+        r: digits(p.u),
+      };
+    },
+    constants: [1],
   }),
 ];
 

@@ -47,6 +47,7 @@ h1 { font-size: 1.6em; line-height: 1.2; }
 .option { font-size: 1.15em; min-width: var(--touch-min); min-height: var(--touch-min); }
 .option[aria-pressed="true"] { background: var(--accent); color: var(--card); }
 .option:disabled { opacity: 0.4; }
+[data-interface="computer"] .option[data-key]::before { content: attr(data-key); margin-right: var(--space-2); font-size: 0.7em; opacity: 0.55; }
 .format { font-size: 0.85em; opacity: 0.8; }
 .preview, .picked { font-size: 1.2em; }
 .right { font-weight: 600; }

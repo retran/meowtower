@@ -26,6 +26,27 @@ const nearSquare = (n: number): number => {
   return 2 * (k + n / k);
 };
 
+/** Pairs of rectangles with the same area and different perimeters, each pair in both orders. */
+const EQUAL_AREA: readonly (readonly [number, number, number, number])[] = (
+  [
+    [2, 12, 4, 6],
+    [1, 12, 3, 4],
+    [2, 9, 3, 6],
+    [2, 10, 4, 5],
+    [3, 8, 4, 6],
+    [1, 16, 2, 8],
+    [3, 10, 5, 6],
+    [2, 15, 5, 6],
+    [4, 9, 6, 6],
+    [1, 8, 2, 4],
+    [3, 12, 4, 9],
+    [2, 18, 4, 9],
+  ] as const
+).flatMap(([a, b, c, d]) => [[a, b, c, d] as const, [c, d, a, b] as const]);
+export const equalArea = (
+  i: number,
+): readonly [number, number, number, number] => EQUAL_AREA[i] ?? [1, 1, 1, 1];
+
 const M4_rect_squares = calc("M4", "rect-squares");
 const M4_rect_squares_specs: readonly Spec<never>[] = [
   M4_rect_squares({
@@ -191,6 +212,52 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
       "all-squares": (a) => w(2 * a * (a + 1), 4 * a, (a * (a + 1)) / 2, 2 * a),
     },
     c: [1],
+  }),
+  M4_rect_squares({
+    id: "M4.rect-squares.12",
+    form: "perimeter-of-a-chain-of-squares",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(4, 12)],
+    f: (a) => q(2 * a + 2),
+    t: {
+      "separate-squares": (a) => q(4 * a),
+      "joins-hide-one": (a) => q(3 * a + 1),
+    },
+    c: [4, 2, 1],
+    origin: {
+      olympiad:
+        "the perimeter of a chain of squares does not depend on its bends: every joint hides two sides, in the spirit of the matchstick and zigzag items of the Kangoeroe reports (RES-4286)",
+    },
+    roles: { a: "number of squares in the chain" },
+  }),
+  M4_rect_squares({
+    id: "M4.rect-squares.13",
+    form: "perimeter-of-a-rectangle-with-a-hole",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(5, 10), rg(6, 12), rg(1, 2)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(2 * (a + b) + 4 * c),
+    t: {
+      "outer-only": (a, b) => q(2 * (a + b)),
+      "hole-area-added": (a, b, c) => q(2 * (a + b) + c * c),
+    },
+    c: [1, 2, 4],
+  }),
+  M4_rect_squares({
+    id: "M4.rect-squares.14",
+    form: "squares-in-a-frame-around-a-rectangle",
+    g: [5, 6],
+    kind: "integer",
+    p: [rg(3, 9), rg(2, 8)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(2 * (a + b) + 4),
+    t: {
+      "without-corners": (a, b) => q(2 * (a + b)),
+      "whole-figure": (a, b) => q((a + 2) * (b + 2)),
+    },
+    c: [2, 4],
   }),
 ];
 
@@ -369,6 +436,71 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
     },
     x: (a, b) => ({ x: String(2 * a), y: String(2 * b) }),
     c: [2, 4],
+  }),
+  M4_rect_sides({
+    id: "M4.rect-sides.12",
+    form: "a-baseboard-around-a-room",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(4, 9), rg(5, 12), rg(1, 2)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(2 * (a + b) - c),
+    t: {
+      "door-ignored": (a, b) => q(2 * (a + b)),
+      "door-twice": (a, b, c) => q(2 * (a + b) - 2 * c),
+    },
+    c: [2],
+    roles: {
+      a: "length of the room",
+      b: "width of the room",
+      c: "width of the door",
+    },
+  }),
+  M4_rect_sides({
+    id: "M4.rect-sides.13",
+    form: "perimeter-with-sides-in-different-units",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(2, 6), of(20, 25, 30, 40, 50, 60, 70, 75)],
+    f: (a, b) => q(2 * (100 * a + b)),
+    t: {
+      "units-added": (a, b) => q(2 * (a + b)),
+      "metre-as-ten": (a, b) => q(2 * (10 * a + b)),
+      "half-perimeter": (a, b) => q(100 * a + b),
+    },
+    c: [100, 2],
+  }),
+  M4_rect_sides({
+    id: "M4.rect-sides.14",
+    form: "a-pen-against-a-wall",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(3, 8), rg(6, 15)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(b + 2 * a),
+    t: {
+      "full-perimeter": (a, b) => q(2 * (a + b)),
+      "one-width-only": (a, b) => q(a + b),
+    },
+    roles: { a: "width of the pen", b: "length along the wall" },
+  }),
+  M4_rect_sides({
+    id: "M4.rect-sides.15",
+    form: "the-perimeters-after-a-cut",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(4, 12), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(2 * b),
+    t: {
+      "no-change": () => q(0),
+      "cut-once": (a, b) => q(b),
+    },
+    c: [2],
+    origin: {
+      olympiad:
+        "a cut adds its length twice to the sum of the perimeters, in the spirit of the perimeter items of MCCME 2021 grades 7 and 8 (RES-4286)",
+    },
   }),
 ];
 
@@ -571,6 +703,60 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
         w(a * a + b * b, 4 * a + 2 * b, 4 * a + 4 * b, 4 * a + 3 * b),
     },
   }),
+  M4_not_rect({
+    id: "M4.not-rect.12",
+    form: "area-of-an-l-shaped-path",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(8, 14), rg(7, 12), rg(2, 3)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(c * (a + b - c)),
+    t: {
+      "corner-twice": (a, b, c) => q(c * (a + b)),
+      "rest-of-the-plot": (a, b, c) => q((a - c) * (b - c)),
+    },
+    roles: {
+      a: "length of the plot",
+      b: "width of the plot",
+      c: "width of the path",
+    },
+  }),
+  M4_not_rect({
+    id: "M4.not-rect.13",
+    form: "a-garden-with-two-crossing-paths",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(8, 16), rg(6, 12), rg(1, 2)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q((a - c) * (b - c)),
+    t: {
+      "crossing-counted-twice": (a, b, c) => q(a * b - c * a - c * b),
+      "one-path-only": (a, b, c) => q(a * (b - c)),
+    },
+    origin: {
+      olympiad:
+        "paths moved to the edges leave the area without paths unchanged, in the spirit of the garden-path items of the Kangoeroe and MCCME papers (RES-4286)",
+    },
+    roles: {
+      a: "length of the garden",
+      b: "width of the garden",
+      c: "width of each path",
+    },
+  }),
+  M4_not_rect({
+    id: "M4.not-rect.14",
+    form: "perimeter-with-a-notch-in-a-side",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(8, 14), rg(6, 10), rg(2, 4), rg(2, 4)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c, d) => q(2 * (a + b) + 2 * d),
+    t: {
+      "perimeter-unchanged": (a, b) => q(2 * (a + b)),
+      "depth-once": (a, b, c, d) => q(2 * (a + b) + d),
+    },
+    c: [2],
+  }),
 ];
 
 const M4_side_from_perimeter = calc("M4", "side-from-perimeter");
@@ -595,16 +781,14 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
     form: "the-other-side-of-a-rectangle",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 14), rg(2, 12)],
-    ok: (a, b) => a !== b,
-    f: (a, b) => q(b),
+    p: [rg(2, 6), of(10, 20, 30, 40, 60, 70, 80)],
+    f: (a, b) => q(50 * a - b),
     t: {
-      "half-perimeter": (a, b) => q(a + b),
-      "perimeter-minus-side": (a, b) => w(2 * (a + b) - a, b, a + b),
-      "two-other-sides": (a, b) =>
-        w(2 * (a + b) - 2 * a, b, a + b, 2 * (a + b) - a),
+      "not-halved": (a, b) => q(100 * a - b),
+      "side-doubled-forgotten": (a, b) => q(50 * a - b / 2),
     },
-    x: (a, b) => ({ x: String(2 * (a + b)) }),
+    c: [100, 2],
+    roles: { a: "perimeter in metres", b: "one side in centimetres" },
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.03",
@@ -744,6 +928,74 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
     x: (a) => ({ x: String(10 * a), b: String(a) }),
     c: [2, 3, 10],
   }),
+  M4_side_from_perimeter({
+    id: "M4.side-from-perimeter.12",
+    form: "the-shorter-side-from-the-perimeter-and-the-difference",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 10), rg(2, 6)],
+    f: (a) => q(a),
+    t: {
+      "longer-side": (a, b) => q(a + b),
+      "difference-not-halved": (a) => q(2 * a),
+    },
+    x: (a, b) => ({ x: String(4 * a + 2 * b) }),
+    c: [2],
+  }),
+  M4_side_from_perimeter({
+    id: "M4.side-from-perimeter.13",
+    form: "how-many-rectangles-have-a-perimeter",
+    g: [6, 8],
+    kind: "integer",
+    p: [of(12, 14, 16, 18, 20, 22, 24, 26, 30)],
+    f: (a) => q(Math.floor(a / 4)),
+    t: {
+      "ordered-pairs": (a) => q(a / 2 - 1),
+      "square-left-out": (a) =>
+        w(Math.floor((a / 2 - 1) / 2), Math.floor(a / 4)),
+    },
+    x: (a) => {
+      const sides = Array.from({ length: Math.floor(a / 4) }, (_, i) => i + 1);
+      return {
+        e: sides.map((s) => `${s} + ${a / 2 - s}`).join(", "),
+        s: sides.map(() => "1").join(" + "),
+      };
+    },
+    c: [1, 2, 3],
+    origin: {
+      olympiad:
+        "counting rectangles of a given perimeter by cases of the pair of sides, a clever count in the spirit of the MCCME papers (RES-4286)",
+    },
+  }),
+  M4_side_from_perimeter({
+    id: "M4.side-from-perimeter.14",
+    form: "the-square-in-a-row-from-the-perimeter",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 6), rg(2, 7)],
+    f: (a, b) => q(b),
+    t: {
+      "half-perimeter-over-count": (a, b) =>
+        ((a + 1) * b) % a === 0 ? w(((a + 1) * b) / a, b) : null,
+      "not-halved": (a, b) => q(2 * b),
+    },
+    x: (a, b) => ({ x: String((2 * a + 2) * b) }),
+    c: [1],
+  }),
+  M4_side_from_perimeter({
+    id: "M4.side-from-perimeter.15",
+    form: "a-rectangle-with-the-perimeter-of-a-square",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(5, 12), rg(2, 9)],
+    ok: (a, b) => b < 2 * a && b !== a,
+    f: (a, b) => q(2 * a - b),
+    t: {
+      "square-side-taken": (a) => q(a),
+      "half-perimeter-only": (a) => q(2 * a),
+    },
+    c: [4, 2],
+  }),
 ];
 
 const M4_same_area = calc("M4", "same-area");
@@ -784,15 +1036,23 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     form: "which-has-the-longer-perimeter",
     g: [6, 8],
     kind: "compare",
-    p: [rg(2, 3), rg(2, 3)],
-    f: (a, b) => sign(q(2 * (a * a * b + b)), q(4 * a * b)),
-    t: { equal: () => "=", "square-longer": () => "<" },
-    x: (a, b) => ({
-      x: String(a * a * b),
-      y: String(a * b),
-      sign: sign(q(2 * (a * a * b + b)), q(4 * a * b)),
-    }),
-    c: [2, 4],
+    p: [rg(0, EQUAL_AREA.length - 1)],
+    f: (a) => {
+      const [m, n, k, l] = equalArea(a);
+      return sign(q(2 * (m + n)), q(2 * (k + l)));
+    },
+    t: {
+      equal: () => "=",
+      reversed: (a) => {
+        const [m, n, k, l] = equalArea(a);
+        return sign(q(2 * (m + n)), q(2 * (k + l))) === ">" ? "<" : ">";
+      },
+    },
+    x: (a) => {
+      const [m, n, k, l] = equalArea(a);
+      return { m: String(m), n: String(n), k: String(k), l: String(l) };
+    },
+    c: [2],
   }),
   M4_same_area({
     id: "M4.same-area.04",
@@ -863,13 +1123,18 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     form: "the-area-after-cutting-and-rearranging",
     g: [6, 8],
     kind: "integer",
-    p: [rg(3, 9), rg(2, 8)],
-    ok: (a, b) => a !== b && a * b !== 2 * (a + b),
+    p: [rg(1, 6), rg(2, 3)],
+    ok: (a, b) => a * b * b <= 36,
     f: (a, b) => q(a * b),
     t: {
-      perimeter: (a, b) => q(2 * (a + b)),
-      "doubled-parts": (a, b) => w(2 * a * b, a * b, 2 * (a + b)),
-      "one-pair": (a, b) => w(a + b, a * b, 2 * (a + b), 2 * a * b),
+      "mean-of-sides": (a, b) => w((a + a * b * b) / 2, a * b),
+      "area-over-four": (a, b) => w((a * a * b * b) / 4, a * b),
+    },
+    x: (a, b) => ({ x: String(a), y: String(a * b * b) }),
+    c: [4],
+    origin: {
+      olympiad:
+        "cutting a rectangle into pieces that form a square, so that the area is kept, in the spirit of the cut-and-fold items of the MCCME papers (RES-4286)",
     },
   }),
   M4_same_area({
@@ -877,15 +1142,25 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     form: "the-smallest-perimeter-for-a-square-area",
     g: [6, 8],
     kind: "integer",
-    p: [rg(3, 9)],
-    f: (a) => q(4 * a),
+    p: [of(16, 24, 25, 28, 30, 36, 40, 42, 48)],
+    f: (a) => q(nearSquare(a)),
     t: {
-      "long-thin": (a) => q(2 * (1 + a * a)),
-      "side-only": (a) => w(a, 4 * a, 2 * (1 + a * a)),
-      "two-sides": (a) => w(2 * a, 4 * a, 2 * (1 + a * a), a),
+      "long-thin": (a) => w(2 * (1 + a), nearSquare(a)),
+      "square-estimate": (a) => w(4 * Math.round(Math.sqrt(a)), nearSquare(a)),
+      "half-perimeter": (a) => w(nearSquare(a) / 2, nearSquare(a)),
     },
-    x: (a) => ({ x: String(a * a) }),
-    c: [1],
+    x: (a) => {
+      const sides = Array.from({ length: a }, (_, i) => i + 1).filter(
+        (k) => a % k === 0 && k * k <= a,
+      );
+      const k = sides[sides.length - 1] ?? 1;
+      return {
+        e1: sides.map((s) => `${s} × ${a / s}`).join(", "),
+        e2: sides.map((s) => String(2 * (s + a / s))).join(", "),
+        e3: `${2} × (${k} + ${a / k}) = ${2 * (k + a / k)}`,
+      };
+    },
+    c: [2],
   }),
   M4_same_area({
     id: "M4.same-area.09",
@@ -930,12 +1205,56 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 9), rg(3, 9)],
     ok: (a, b) => a !== b,
-    f: (a, b) => q(4 * a * b),
+    f: (a, b) => q(6 * a * b),
     t: {
-      doubled: (a, b) => q(2 * a * b),
-      "new-perimeter": (a, b) => w(4 * (a + b), 4 * a * b, 2 * a * b),
+      "factors-added": (a, b) => q(5 * a * b),
+      "one-factor-only": (a, b) => q(3 * a * b),
     },
-    c: [4],
+    c: [2, 3],
+  }),
+  M4_same_area({
+    id: "M4.same-area.12",
+    form: "the-side-of-a-square-from-the-growth-of-its-area",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(3, 12)],
+    f: (a) => q(a),
+    t: {
+      "increase-as-side": (a) => q(2 * a + 1),
+      "not-halved": (a) => q(2 * a),
+    },
+    x: (a) => ({ x: String(2 * a + 1) }),
+    c: [1, 2],
+    origin: {
+      olympiad:
+        "the strip added to a square is two sides and a corner, so the growth is twice the side plus one, in the spirit of the MCCME papers (RES-4286)",
+    },
+  }),
+  M4_same_area({
+    id: "M4.same-area.13",
+    form: "a-square-with-one-side-longer-and-the-other-shorter",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(6, 15), rg(1, 4)],
+    f: (a, b) => q(b * b),
+    t: {
+      unchanged: () => q(0),
+      "shift-taken": (a, b) => q(b),
+    },
+  }),
+  M4_same_area({
+    id: "M4.same-area.14",
+    form: "how-much-larger-the-square-is-at-an-equal-perimeter",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(5, 12), rg(1, 4)],
+    f: (a, b) => q(b * b),
+    t: {
+      "equal-areas": () => q(0),
+      "side-difference": (a, b) => q(2 * b),
+    },
+    x: (a, b) => ({ x: String(a + b), y: String(a - b) }),
+    c: [2],
   }),
 ];
 

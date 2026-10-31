@@ -40,6 +40,57 @@ export function math(text: string): (Node | string)[] {
   return parts;
 }
 
+/** The button Enter presses on a screen, when focus is on no control of its own. */
+const PRIMARY =
+  '[data-action="play"], [data-action="play-submit"], [data-action="play-next"]';
+
+/** The keys of the computer: Enter for the main button, and digits or signs for the answer buttons. */
+function onKey(e: KeyboardEvent): void {
+  if (e.repeat || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+  const target = e.target instanceof HTMLElement ? e.target : document.body;
+  if (target.closest("input, textarea")) return;
+  const options = [...document.querySelectorAll<HTMLButtonElement>(".option")];
+  const chosen =
+    options[Number(e.key) - 1] ??
+    options.find((b) => b.textContent === e.key && !/\d/.test(e.key));
+  if (chosen && !chosen.disabled) {
+    e.preventDefault();
+    chosen.click();
+    return;
+  }
+  if (e.key === "Backspace") {
+    document.querySelector<HTMLElement>('[data-action="play-undo"]')?.click();
+    return;
+  }
+  if (e.key !== "Enter" || target.closest("a, button:not(.option)")) return;
+  const primary = document.querySelector<HTMLElement>(PRIMARY);
+  if (primary) {
+    e.preventDefault();
+    primary.click();
+  }
+}
+
+/** Turns the keys on, once, for the life of the page. */
+export const installKeys = (): void => {
+  document.addEventListener("keydown", onKey);
+};
+
+/** Puts the cursor in a screen's field on a computer; on a tablet that would open the keyboard. */
+export function focusField(screen: HTMLElement): void {
+  if (document.documentElement.dataset["interface"] !== "computer") return;
+  screen
+    .querySelector<HTMLElement>('input:not([type="radio"]), textarea')
+    ?.focus();
+}
+
+/** A form's submit, which Enter in its field fires, as a press of its button. */
+export const enterPresses =
+  (send: HTMLButtonElement) =>
+  (e: Event): void => {
+    e.preventDefault();
+    send.click();
+  };
+
 export function heading(key: UiKey): HTMLHeadingElement {
   return el("h1", { id: "screen-title" }, t(key));
 }

@@ -13,7 +13,16 @@ import {
   type Tried,
 } from "./api.js";
 import { flushOnce, refusedAnswers, stuckEntries } from "./answer-queue.js";
-import { act, button, choice, el, heading, link, status } from "./controls.js";
+import {
+  act,
+  button,
+  choice,
+  el,
+  enterPresses,
+  heading,
+  link,
+  status,
+} from "./controls.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
 import { clock, t, uiKey, type UiKey } from "./strings.js";
@@ -155,25 +164,26 @@ const pairing: Screen = {
     code.addEventListener("input", () => {
       document.body.dataset["lastAction"] = "pair-code";
     });
+    const send = button("ui.pair.submit", "pair-submit", async () => {
+      const result = await pair(code.value.trim(), shell.current);
+      if (result.ok) shell.setPaired(true);
+      note.textContent = refusal(
+        result,
+        "ui.pair.done",
+        {
+          pairing_locked: "ui.pair.locked",
+        },
+        "ui.pair.failed",
+      );
+    });
     const form = el(
       "form",
       {},
       el("label", { htmlFor: "pair-code" }, t("ui.pair.code")),
       code,
-      button("ui.pair.submit", "pair-submit", async () => {
-        const result = await pair(code.value.trim(), shell.current);
-        if (result.ok) shell.setPaired(true);
-        note.textContent = refusal(
-          result,
-          "ui.pair.done",
-          {
-            pairing_locked: "ui.pair.locked",
-          },
-          "ui.pair.failed",
-        );
-      }),
+      send,
     );
-    form.addEventListener("submit", (e) => e.preventDefault());
+    form.addEventListener("submit", enterPresses(send));
     return el(
       "section",
       {},
@@ -209,31 +219,32 @@ function pinForm(note: HTMLElement, opened: () => void): HTMLFormElement {
   });
   pin.dataset["action"] = "parent-pin";
   pin.addEventListener("input", () => act("parent-pin"));
+  const enter = button("ui.parent.enter", "parent-login", async () => {
+    const result = await parentLogin(pin.value.trim());
+    if (result.ok) {
+      opened();
+      return;
+    }
+    note.textContent =
+      result.error === "pin_not_set"
+        ? t("ui.parent.noPin")
+        : refusal(
+            result,
+            "ui.parent.enter",
+            {
+              pin_locked: "ui.parent.locked",
+            },
+            "ui.parent.wrong",
+          );
+  });
   const form = el(
     "form",
     {},
     el("label", { htmlFor: "parent-pin" }, t("ui.parent.pin")),
     pin,
-    button("ui.parent.enter", "parent-login", async () => {
-      const result = await parentLogin(pin.value.trim());
-      if (result.ok) {
-        opened();
-        return;
-      }
-      note.textContent =
-        result.error === "pin_not_set"
-          ? t("ui.parent.noPin")
-          : refusal(
-              result,
-              "ui.parent.enter",
-              {
-                pin_locked: "ui.parent.locked",
-              },
-              "ui.parent.wrong",
-            );
-    }),
+    enter,
   );
-  form.addEventListener("submit", (e) => e.preventDefault());
+  form.addEventListener("submit", enterPresses(enter));
   return form;
 }
 

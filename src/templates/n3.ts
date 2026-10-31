@@ -118,6 +118,93 @@ const choiceSpec = (
   };
 };
 
+const ROMAN: readonly (readonly [number, string])[] = [
+  [100, "C"],
+  [90, "XC"],
+  [50, "L"],
+  [40, "XL"],
+  [10, "X"],
+  [9, "IX"],
+  [5, "V"],
+  [4, "IV"],
+  [1, "I"],
+];
+const toRoman = (n: number): string => {
+  let rest = n;
+  let out = "";
+  for (const [v, sym] of ROMAN)
+    while (rest >= v) {
+      out += sym;
+      rest -= v;
+    }
+  return out;
+};
+const LETTER: Readonly<Record<string, number>> = {
+  I: 1,
+  V: 5,
+  X: 10,
+  L: 50,
+  C: 100,
+};
+/** The value of a numeral by the rule that a smaller letter before a larger one is taken away. */
+const fromRoman = (t: string): number =>
+  [...t].reduce((acc, c, i) => {
+    const v = LETTER[c] ?? 0;
+    const next = LETTER[t[i + 1] ?? ""] ?? 0;
+    return acc + (v < next ? -v : v);
+  }, 0);
+const swapVX = (t: string): string =>
+  [...t].map((c) => (c === "V" ? "X" : c === "X" ? "V" : c)).join("");
+const hasTaking = (n: number): boolean => /IV|IX|XL|XC/.test(toRoman(n));
+
+interface Words4 {
+  k: number;
+  tail: number;
+  by: number;
+}
+const countDigit = (n: number, d: number): number =>
+  Array.from({ length: n }, (_, i) => String(i + 1))
+    .join("")
+    .split(String(d)).length - 1;
+
+interface Four6 {
+  v: number[];
+  by: number;
+}
+interface Gap {
+  digitsA: number[];
+  at: number;
+  x: number;
+  tailB: number[];
+}
+/** Six digits written with a space between the thousands, a square standing for the unknown digit. */
+const groupText = (t: string): string => `${t.slice(0, 3)}\u00A0${t.slice(3)}`;
+const countGreater = (p: Gap): number => {
+  const tailA = Number(p.digitsA.slice(p.at + 1).join(""));
+  const tailB = Number(p.tailB.join(""));
+  return 9 - p.x + (tailA > tailB ? 1 : 0);
+};
+const smallestWithSum = (sum: number): number => {
+  const nines = Math.floor((sum - 1) / 9);
+  const mid = sum - 9 * nines - 1;
+  const zeros = 6 - 1 - nines - (mid > 0 ? 1 : 0);
+  return Number(
+    `1${"0".repeat(zeros)}${mid > 0 ? String(mid) : ""}${"9".repeat(nines)}`,
+  );
+};
+let smallest: Map<number, number> | null = null;
+/** The smallest six-digit number of each digit sum, found by walking up from 100,000. */
+const scanSmallest = (sum: number): number => {
+  if (smallest === null) {
+    smallest = new Map();
+    for (let n = 100_000; n <= 999_999; n += 1) {
+      const t = sumDigits(n);
+      if (!smallest.has(t)) smallest.set(t, n);
+    }
+  }
+  return smallest.get(sum) ?? -1;
+};
+
 const wordsDigits = [
   {
     id: "N3.words-digits.01",
@@ -358,6 +445,205 @@ const wordsDigits = [
     ["thousand-lost", "one-zero-short", "one-zero-extra"],
     (n) => (n / 1000) % 10 !== 0,
   ),
+  {
+    id: "N3.words-digits.11",
+    node: "N3",
+    subtype: "words-digits",
+    form: "number-with-a-teen-in-words-to-digits",
+    groups: [5, 5],
+    answer: "integer",
+    draw: (r) => ({ h: between(r, 1, 9), u: between(r, 1, 9) }),
+    solve: (p: { h: number; u: number }) => qi(100 * p.h + 10 + p.u),
+    reference: (p: { h: number; u: number }) => qi(Number(`${p.h}1${p.u}`)),
+    traps: numberTraps<{ h: number; u: number }>([
+      ["units-first", "conceptual", (p) => Number(`${p.h}${p.u}1`)],
+      ["each-word-in-full", "conceptual", (p) => Number(`${p.h}00${10 + p.u}`)],
+      ["teen-as-ones", "procedural", (p) => 100 * p.h + p.u],
+    ]),
+    vars: (p: { h: number; u: number }) => ({
+      w: numberWords(100 * p.h + 10 + p.u),
+      r: s(100 * p.h + 10 + p.u),
+      hh: s(100 * p.h),
+      teen: s(10 + p.u),
+    }),
+    constants: [10],
+  } satisfies Spec<{ h: number; u: number }>,
+  {
+    id: "N3.words-digits.12",
+    node: "N3",
+    subtype: "words-digits",
+    form: "roman-numeral-to-digits",
+    groups: [7, 8],
+    origin: {
+      extension:
+        "Roman numerals, Russian grade 5 (RES-4281, federal programme for grades 5 to 9)",
+    },
+    answer: "integer",
+    draw: (r) => ({ n: between(r, 4, 89) }),
+    valid: (p: N) => hasTaking(p.n),
+    solve: (p: N) => qi(p.n),
+    reference: (p: N) => qi(fromRoman(toRoman(p.n))),
+    traps: numberTraps<N>([
+      [
+        "every-letter-added",
+        "conceptual",
+        (p) => [...toRoman(p.n)].reduce((a, c) => a + (LETTER[c] ?? 0), 0),
+      ],
+      ["v-and-x-swapped", "conceptual", (p) => fromRoman(swapVX(toRoman(p.n)))],
+    ]),
+    vars: (p: N) => ({
+      roman: toRoman(p.n),
+      r: s(p.n),
+      added: s([...toRoman(p.n)].reduce((a, c) => a + (LETTER[c] ?? 0), 0)),
+    }),
+    constants: [1, 5, 10, 50],
+  } satisfies Spec<N>,
+  {
+    id: "N3.words-digits.13",
+    node: "N3",
+    subtype: "words-digits",
+    form: "choose-the-words-for-a-six-digit-number",
+    groups: [6, 7],
+    answer: "choice",
+    draw: (r): Words4 => ({
+      k: between(r, 101, 999),
+      tail: between(r, 1, 99),
+      by: r.int(4),
+    }),
+    valid: (p: Words4) => p.k % 100 !== 0 && p.k !== p.tail,
+    options: (p: Words4) =>
+      rotate(
+        [
+          numberWords(1000 * p.k + p.tail),
+          numberWords(Number(`${p.k}${p.tail}`)),
+          numberWords(1000 * p.tail + p.k),
+          numberWords(1000 * p.k),
+        ],
+        p.by,
+      ),
+    solve: (p: Words4) => numberWords(1000 * p.k + p.tail),
+    reference: (p: Words4) =>
+      rotate(
+        [
+          numberWords(1000 * p.k + p.tail),
+          numberWords(Number(`${p.k}${p.tail}`)),
+          numberWords(1000 * p.tail + p.k),
+          numberWords(1000 * p.k),
+        ],
+        p.by,
+      ).find((o) => o === numberWords(1000 * p.k + p.tail)) ?? "",
+    traps: [
+      {
+        id: "zeros-lost",
+        kind: "conceptual" as const,
+        wrong: (p: Words4) => numberWords(Number(`${p.k}${p.tail}`)),
+      },
+      {
+        id: "groups-swapped",
+        kind: "conceptual" as const,
+        wrong: (p: Words4) => numberWords(1000 * p.tail + p.k),
+      },
+      {
+        id: "thousands-only",
+        kind: "procedural" as const,
+        wrong: (p: Words4) => numberWords(1000 * p.k),
+      },
+    ],
+    vars: (p: Words4) => ({
+      n: digits(1000 * p.k + p.tail),
+      r: numberWords(1000 * p.k + p.tail),
+      k: s(p.k),
+      tail: s(p.tail),
+      tg: s(p.tail).padStart(3, "0"),
+      lost: digits(Number(`${p.k}${p.tail}`)),
+      swapped: digits(1000 * p.tail + p.k),
+      kk: digits(1000 * p.k),
+    }),
+    constants: [1000],
+  } satisfies Spec<Words4>,
+  {
+    id: "N3.words-digits.14",
+    node: "N3",
+    subtype: "words-digits",
+    form: "how-many-tens-of-thousands-in-a-number",
+    groups: [6, 7],
+    answer: "integer",
+    draw: (r): N => ({ n: between(r, 110_000, 999_999) }),
+    valid: (p: N) => Math.floor(p.n / 10_000) % 10 !== 0 && p.n % 10_000 !== 0,
+    solve: (p: N) => qi(Math.floor(p.n / 10_000)),
+    reference: (p: N) => qi(Number(s(p.n).slice(0, -4))),
+    traps: numberTraps<N>([
+      [
+        "tens-of-thousands-digit",
+        "conceptual",
+        (p) => Math.floor(p.n / 10_000) % 10,
+      ],
+      ["thousands", "conceptual", (p) => Math.floor(p.n / 1000)],
+      [
+        "hundred-thousands-digit",
+        "conceptual",
+        (p) => Math.floor(p.n / 100_000),
+      ],
+    ]),
+    vars: (p: N) => ({
+      n: digits(p.n),
+      r: s(Math.floor(p.n / 10_000)),
+      rest: s(p.n % 10_000),
+      cut: digits(10_000 * Math.floor(p.n / 10_000)),
+      d: s(Math.floor(p.n / 10_000) % 10),
+      th: s(Math.floor(p.n / 1000)),
+    }),
+    constants: [10, 10_000],
+  } satisfies Spec<N>,
+  {
+    id: "N3.words-digits.15",
+    node: "N3",
+    subtype: "words-digits",
+    form: "how-many-times-a-digit-is-written-in-the-numbers-up-to",
+    groups: [5, 6],
+    origin: {
+      olympiad:
+        "counting how often a digit is written in a run of numbers; RES-4281 (Dutch group 5 example 'how many numbers have a 9', MCCME school stage)",
+    },
+    answer: "integer",
+    draw: (r) => ({ n: between(r, 30, 99), d: between(r, 1, 9) }),
+    valid: (p: { n: number; d: number }) => p.d <= Math.floor(p.n / 10) + 1,
+    solve: (p: { n: number; d: number }) => {
+      const tens = Math.floor(p.n / 10);
+      const ones = tens + (p.n % 10 >= p.d ? 1 : 0);
+      const asTens = tens > p.d ? 10 : tens === p.d ? (p.n % 10) + 1 : 0;
+      return qi(ones + asTens);
+    },
+    reference: (p: { n: number; d: number }) => qi(countDigit(p.n, p.d)),
+    traps: numberTraps<{ n: number; d: number }>([
+      [
+        "only-the-ones-place",
+        "conceptual",
+        (p) => Math.floor(p.n / 10) + (p.n % 10 >= p.d ? 1 : 0),
+      ],
+      [
+        "numbers-containing",
+        "conceptual",
+        (p) =>
+          Array.from({ length: p.n }, (_, i) => String(i + 1)).filter((x) =>
+            x.includes(String(p.d)),
+          ).length,
+      ],
+    ]),
+    vars: (p: { n: number; d: number }) => {
+      const tens = Math.floor(p.n / 10);
+      const ones = tens + (p.n % 10 >= p.d ? 1 : 0);
+      const asTens = tens > p.d ? 10 : tens === p.d ? (p.n % 10) + 1 : 0;
+      return {
+        n: s(p.n),
+        d: s(p.d),
+        ones: s(ones),
+        tensPlace: s(asTens),
+        r: s(ones + asTens),
+      };
+    },
+    constants: [1, 10],
+  } satisfies Spec<{ n: number; d: number }>,
 ] as const;
 
 type Cmp = (a: number, b: number) => (typeof SIGNS)[number];
@@ -372,6 +658,7 @@ const pairSpec = (
     vars?: (p: Pair) => Record<string, string>;
     groups?: readonly [number, number];
     reference?: Cmp;
+    roles?: Readonly<Record<string, string>>;
   },
 ): Spec<Pair> => ({
   id,
@@ -379,6 +666,7 @@ const pairSpec = (
   subtype: "compare-six",
   form,
   groups: extra.groups ?? [7, 7],
+  ...(extra.roles ? { roles: extra.roles } : {}),
   answer: "compare",
   draw,
   ...(extra.valid ? { valid: extra.valid } : {}),
@@ -500,8 +788,19 @@ const compareSix = [
   pairSpec(
     "N3.compare-six.05",
     "populations-of-two-cities",
-    (r) => ({ a: six(r), b: six(r) }),
+    (r) => {
+      const lead = between(r, 1, 9) * 100_000;
+      return {
+        a: lead + between(r, 0, 99_999),
+        b: lead + between(r, 0, 99_999),
+      };
+    },
     {
+      roles: {
+        a: "inhabitants of the first city",
+        b: "inhabitants of the second city",
+      },
+      valid: (p) => p.a !== p.b,
       traps: plainTraps,
     },
   ),
@@ -598,6 +897,182 @@ const compareSix = [
       ],
     },
   ),
+  {
+    id: "N3.compare-six.11",
+    node: "N3",
+    subtype: "compare-six",
+    form: "largest-of-four-numbers-of-five-and-six-digits",
+    groups: [7, 7],
+    answer: "choice",
+    draw: (r): Four6 => ({
+      v: [
+        between(r, 100_000, 899_999),
+        between(r, 100_000, 899_999),
+        between(r, 100_000, 899_999),
+        between(r, 90_000, 99_999),
+      ],
+      by: r.int(4),
+    }),
+    valid: (p: Four6) => {
+      const six3 = p.v.slice(0, 3);
+      const top = Math.max(...six3);
+      const lasts = six3.map((x) => x % 10);
+      const worst = Math.max(...lasts);
+      const at = six3.filter((x) => x % 10 === worst);
+      return (
+        new Set(p.v).size === 4 &&
+        at.length === 1 &&
+        at[0] !== top &&
+        firstDigit(top) < 9
+      );
+    },
+    options: (p: Four6) => rotate(p.v.map(digits), p.by),
+    solve: (p: Four6) => digits(Math.max(...p.v.slice(0, 3))),
+    reference: (p: Four6) =>
+      rotate(p.v.map(digits), p.by)
+        .filter((o) => o.replace(/ /g, "").length === 6)
+        .reduce((a, b) =>
+          Number(a.replace(/ /g, "")) > Number(b.replace(/ /g, "")) ? a : b,
+        ),
+    traps: [
+      {
+        id: "biggest-first-digit",
+        kind: "conceptual" as const,
+        wrong: (p: Four6) => digits(p.v[3] ?? 0),
+      },
+      {
+        id: "biggest-last-digit",
+        kind: "conceptual" as const,
+        wrong: (p: Four6) => {
+          const six3 = p.v.slice(0, 3);
+          const worst = Math.max(...six3.map((x) => x % 10));
+          return digits(six3.find((x) => x % 10 === worst) ?? 0);
+        },
+      },
+    ],
+    vars: (p: Four6) => ({
+      a: digits(p.v[0] ?? 0),
+      b: digits(p.v[1] ?? 0),
+      c: digits(p.v[2] ?? 0),
+      d: digits(p.v[3] ?? 0),
+      r: digits(Math.max(...p.v.slice(0, 3))),
+    }),
+    constants: [1, 10, 1000],
+  } satisfies Spec<Four6>,
+  {
+    id: "N3.compare-six.12",
+    node: "N3",
+    subtype: "compare-six",
+    form: "smallest-six-digit-number-with-a-digit-sum",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "the smallest number with a given digit sum, built by placing the nines on the right; RES-4281 (MCCME school stage 2021 style)",
+    },
+    answer: "integer",
+    draw: (r) => ({ sum: [12, 17, 19, 23, 28, 31, 37, 41][r.int(8)] ?? 17 }),
+    solve: (p: { sum: number }) => qi(smallestWithSum(p.sum)),
+    reference: (p: { sum: number }) => qi(scanSmallest(p.sum)),
+    traps: numberTraps<{ sum: number }>([
+      [
+        "digits-spread-evenly",
+        "conceptual",
+        (p) => {
+          const base = Math.floor(p.sum / 6);
+          const extra = p.sum % 6;
+          return Number(
+            Array.from({ length: 6 }, (_, i) =>
+              i >= 6 - extra ? base + 1 : base,
+            ).join(""),
+          );
+        },
+      ],
+      [
+        "the-largest-number",
+        "conceptual",
+        (p) => {
+          let rest = p.sum;
+          return Number(
+            Array.from({ length: 6 }, () => {
+              const d = Math.min(9, rest);
+              rest -= d;
+              return d;
+            }).join(""),
+          );
+        },
+      ],
+    ]),
+    vars: (p: { sum: number }) => {
+      const nines = Math.floor((p.sum - 1) / 9);
+      const mid = p.sum - 9 * nines - 1;
+      return {
+        sum: s(p.sum),
+        nines: s(nines),
+        mid: s(mid),
+        left: s(p.sum - 1),
+        r: s(smallestWithSum(p.sum)),
+      };
+    },
+    constants: [1, 9],
+  } satisfies Spec<{ sum: number }>,
+  {
+    id: "N3.compare-six.13",
+    node: "N3",
+    subtype: "compare-six",
+    form: "how-many-digits-make-a-six-digit-number-greater",
+    groups: [7, 8],
+    origin: {
+      olympiad:
+        "digit puzzle in which the equal digit is decided by the next places; RES-4281 (Kangoeroe 2003 counting items)",
+    },
+    answer: "integer",
+    draw: (r): Gap => {
+      const digitsA = Array.from({ length: 6 }, () => between(r, 1, 9));
+      const at = between(r, 1, 4);
+      const x = between(r, 1, 8);
+      const tailB = Array.from({ length: 5 - at }, () => between(r, 0, 9));
+      return { digitsA, at, x, tailB };
+    },
+    valid: (p: Gap) => {
+      const tailA = p.digitsA.slice(p.at + 1).join("");
+      return tailA !== p.tailB.join("");
+    },
+    solve: (p: Gap) => qi(countGreater(p)),
+    reference: (p: Gap) => {
+      let c = 0;
+      for (let d = 0; d <= 9; d += 1) {
+        const a = [...p.digitsA];
+        a[p.at] = d;
+        const b = [...p.digitsA.slice(0, p.at), p.x, ...p.tailB];
+        if (Number(a.join("")) > Number(b.join(""))) c += 1;
+      }
+      return qi(c);
+    },
+    traps: numberTraps<Gap>([
+      ["tail-ignored", "conceptual", (p) => 9 - p.x],
+      ["equal-digit-always-counted", "conceptual", (p) => 10 - p.x],
+      ["smaller-digits", "conceptual", (p) => p.x],
+    ]),
+    vars: (p: Gap) => {
+      const shown = p.digitsA.map(String);
+      shown[p.at] = "□";
+      const b = [...p.digitsA.slice(0, p.at), p.x, ...p.tailB];
+      const ta = p.digitsA.slice(p.at + 1).join("");
+      const tb = p.tailB.join("");
+      return {
+        a: groupText(shown.join("")),
+        b: digits(Number(b.join(""))),
+        x: s(p.x),
+        ta,
+        tb,
+        sign: signOf(Number(ta), Number(tb)),
+        greater: s(9 - p.x),
+        extra: s(countGreater(p) - (9 - p.x)),
+        r: s(countGreater(p)),
+      };
+    },
+    constants: [9],
+  } satisfies Spec<Gap>,
 ] as const;
 
 export const n3Specs = withWrongAnswers([
