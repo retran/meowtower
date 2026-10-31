@@ -332,6 +332,14 @@ function numbersIn(text: string): Q[] {
   );
 }
 
+/** The question of a text whose options are read out of it: a frame rewrites this part alone (ADR-3200). */
+const stemOf = (text: string): string => {
+  const numbered = /^(.*?)\s1\) /su.exec(text);
+  if (numbered?.[1]) return numbered[1];
+  const listed = /^(.*): [^:]*\.$/su.exec(text);
+  return listed?.[1] ? `${listed[1]}.` : text;
+};
+
 const MAX_CANDIDATES = 1000;
 
 /** Compiles a spec with its strings into a task builder (REQ-1202: the same seed gives the same task). */
@@ -352,8 +360,12 @@ export function compile<P>(
     answer: spec.answer,
     roles: spec.roles ?? {},
     blank: (lang) =>
-      (lang === "ru" ? source : (taskStrings(domain, lang)[spec.id] ?? source))
-        .text,
+      stemOf(
+        (lang === "ru"
+          ? source
+          : (taskStrings(domain, lang)[spec.id] ?? source)
+        ).text,
+      ),
     make(seed, lang = "ru", frame) {
       const text =
         lang === "ru" ? source : (taskStrings(domain, lang)[spec.id] ?? source);

@@ -2,7 +2,7 @@
 id: ADR-0160
 artifact: adr
 status: approved
-revised: 2026-10-10
+revised: 2026-10-31
 addresses: [REQ-3810, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-7544, REQ-3312, REQ-3314, REQ-3318, REQ-3320, REQ-3322, REQ-3324, REQ-3326, REQ-3328]
 supersedes: []
 issue: 36
@@ -125,6 +125,8 @@ Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change p
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3704 (superseded by REQ-5080, which ADR-0210, ADR-0370 addresses).
+
+Amended by ADR-3200, approved on 2026-10-31, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 ## Plan
 

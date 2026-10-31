@@ -5,7 +5,7 @@ status: live
 revised: 2026-09-28
 ---
 
-<!-- Every statement names the record it came from and how it was found: high where the record states it, medium where two statements combine, low where it was inferred. Onboarding recovered the first version on 2026-09-26; this version follows the approved research, requirements and decisions of the owner's addenda 1 and 2. -->
+<!-- Every statement names the record it came from and how it was found: high where the record states it, medium where two statements combine, low where it was inferred. Onboarding recovered the first version; this version follows the approved research, requirements and decisions of the owner's addenda 1 and 2. -->
 
 # Meowtower
 

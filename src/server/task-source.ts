@@ -51,10 +51,11 @@ export function rebuild(
   templateId: string,
   seed: string,
   lang: Lang = "ru",
+  frame?: string,
 ): RegistryItem | null {
   const template = byId.get(templateId);
   if (!template) return null;
-  return { template, made: template.make(seedOf(seed), lang), seed };
+  return { template, made: template.make(seedOf(seed), lang, frame), seed };
 }
 
 /** The parallel task of a second attempt: the same template drawn at another seed, with other numbers. */
@@ -104,6 +105,19 @@ const FORMATS = [
 ] as const;
 const formatOf = (kind: string): InputSpec["format"] =>
   FORMATS.find((f) => f === kind);
+
+/** A task as shown with a frame: the buttons come from the template's own text, the words from the frame. */
+export function presentFramed(
+  template: Compiled,
+  seed: Uint8Array,
+  lang: Lang,
+  frame: string,
+): Presented {
+  return {
+    ...present({ template, made: template.make(seed, lang) }),
+    text: template.make(seed, lang, frame).text,
+  };
+}
 
 /** The buttons of a compare, choice, set or order task, or the field of any other. */
 export function present({

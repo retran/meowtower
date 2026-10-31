@@ -4,11 +4,20 @@
   "rules": [
     "Verpak de opgave in een klein tafereel uit deze wereld dat past bij wat de opgave vraagt, en laat de vraag zelf ongewijzigd.",
     "Neem elke {plaatshouder} precies over zoals hij geschreven staat, even vaak als in de opgave, en voeg er geen toe.",
-    "Schrijf geen cijfers en geen telwoorden. Elk getal komt alleen uit een plaatshouder.",
-    "Hoogstens {sentences} zinnen van hoogstens {words} woorden per zin, met de vraag in de laatste zin.",
+    "Schrijf geen cijfers en geen telwoorden, behalve die al in de opgave staan. Elk ander getal komt alleen uit een plaatshouder.",
+    "Hoogstens {sentences} zinnen rond de opgave, met de vraag in de laatste zin.",
+    "Als de opgave naar een afbeelding verwijst, houd die verwijzing dan aan.",
     "Eenvoudige, duidelijke tekst zonder grappen."
   ],
   "variants": "Schrijf {count} verschillende varianten in het Nederlands.",
   "safety": "Je controleert een tekst voor een rekenspel voor een kind op de basisschool. `safe` is false als de tekst eng, beschamend, wreed of ongeschikt voor een kind is. `joke` is true als de tekst een grap bevat.",
-  "solve": "Los de opgave op. Antwoord alleen met het eindantwoord: een getal of een breuk zoals 3/4, zonder woorden en zonder eenheden."
+  "solve": "Los de opgave op.",
+  "formats": {
+    "number": "Antwoord alleen met het getal.",
+    "fraction": "Antwoord alleen met een breuk zoals 3/4 of een geheel getal.",
+    "mixed": "Antwoord alleen met een gemengd getal zoals 2 3/4, een breuk of een geheel getal.",
+    "pair": "Antwoord met twee getallen gescheiden door een puntkomma, zoals 3; 4.",
+    "time": "Antwoord met een tijd zoals 7:05.",
+    "options": "Antwoord alleen met het nummer van de goede keuze. Als er meer goed zijn of een volgorde gevraagd wordt, noem de nummers gescheiden door komma's."
+  }
 }

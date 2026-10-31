@@ -4,11 +4,20 @@
   "rules": [
     "Wrap the task in a small scene of this world that fits what the task asks, and keep the question itself unchanged.",
     "Copy every {placeholder} exactly as written, as many times as the task holds it, and add no other.",
-    "Write no digit and no number word. Every number comes only from a placeholder.",
-    "At most {sentences} sentences of at most {words} words each, with the question in the last sentence.",
+    "Write no digit and no number word beyond those the task already holds. Every other number comes only from a placeholder.",
+    "At most {sentences} sentences around the task, with the question in the last sentence.",
+    "If the task refers to a picture, keep that reference to the picture.",
     "Plain, clear text with no jokes."
   ],
   "variants": "Write {count} different variants in English.",
   "safety": "You check a text for a maths game for a primary-school child. `safe` is false if the text is frightening, shaming, cruel or unfit for a child. `joke` is true if the text holds a joke.",
-  "solve": "Solve the task. Reply with the final answer alone: a number or a fraction such as 3/4, with no words and no units."
+  "solve": "Solve the task.",
+  "formats": {
+    "number": "Reply with the number alone.",
+    "fraction": "Reply with a fraction such as 3/4 or a whole number alone.",
+    "mixed": "Reply with a mixed number such as 2 3/4, a fraction or a whole number alone.",
+    "pair": "Reply with two numbers separated by a semicolon, such as 3; 4.",
+    "time": "Reply with a time such as 7:05.",
+    "options": "Reply with the number of the right option alone. If several are right or an order is asked for, list the numbers separated by commas."
+  }
 }

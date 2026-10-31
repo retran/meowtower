@@ -35,6 +35,7 @@ import {
   judge,
   pick,
   present,
+  presentFramed,
   rebuild,
   trapOf,
   twinOf,
@@ -167,6 +168,8 @@ interface ItemShown {
   parentItemId?: string;
   /** The registry template of the task; absent for a stand-in task. */
   templateId?: string;
+  /** The live frame the task was shown with (ADR-3100). */
+  frameId?: number;
 }
 
 const payloadOf = <T>(e: StoredEvent): T => e.payload as T;
@@ -835,9 +838,11 @@ export function mountPlay(
       const frame =
         frames?.take({ template: chosen.template, base: chosen.base, lang }) ??
         null;
-      const made = chosen.template.make(chosen.base, lang, frame?.text);
+      const made = chosen.template.make(chosen.base, lang);
       const seed = hexOf(chosen.base);
-      const shape = present({ template: chosen.template, made });
+      const shape = frame
+        ? presentFramed(chosen.template, chosen.base, lang, frame.text)
+        : present({ template: chosen.template, made });
       const shown: ItemShown = {
         itemId: randomUUID(),
         view: {
@@ -853,6 +858,7 @@ export function mountPlay(
         subtype: chosen.template.subtype,
         seed,
         templateId: chosen.template.id,
+        ...(frame ? { frameId: frame.id } : {}),
       };
       appendEvents(db, [
         ...lifecycle,
@@ -868,7 +874,6 @@ export function mountPlay(
             effectiveSeed: `${seed}/0`,
             candidate: 0,
             frameSource: frame ? "live" : "template",
-            ...(frame ? { frameId: frame.id } : {}),
           },
           origin,
           ...within(sessionId),
@@ -1587,7 +1592,19 @@ export function mountPlay(
         shown.view.locale,
       );
       if (!other) return c.json({ error: "item_unknown" }, 404);
-      const shape = present(other);
+      // The second attempt keeps the frame's words with its own numbers; three draws have passed already.
+      const frameText =
+        shown.frameId === undefined
+          ? null
+          : (frames?.textOf(shown.frameId) ?? null);
+      const shape = frameText
+        ? presentFramed(
+            other.template,
+            Uint8Array.from(Buffer.from(other.seed, "hex")),
+            shown.view.locale,
+            frameText,
+          )
+        : present(other);
       const twin: ItemShown = {
         itemId: randomUUID(),
         view: {
@@ -1604,6 +1621,7 @@ export function mountPlay(
         seed: other.seed,
         parentItemId: itemId,
         templateId: shown.templateId,
+        ...(frameText ? { frameId: shown.frameId } : {}),
       };
       appendEvents(
         db,

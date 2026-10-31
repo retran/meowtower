@@ -12,6 +12,11 @@ import {
   type GatewayConfig,
 } from "../../src/server/gateway/config.js";
 import { createGateway } from "../../src/server/gateway/gateway.js";
+import { eventsOfType } from "../../src/engine/events/read.js";
+import {
+  recordRoute,
+  replayRoute,
+} from "../../src/server/gateway/recording.js";
 import { costOf } from "../../src/server/gateway/prices.js";
 import type { Route, Routes } from "../../src/server/gateway/routes.js";
 
@@ -113,7 +118,7 @@ describe("the gateway", () => {
   });
   it("counts the month across routes", async () => {
     const db = database();
-    const routes = { anthropic: fake(), openrouter: fake(59.9999) };
+    const routes = { anthropic: fake(), openrouter: fake(199.9999) };
     const gateway = createGateway({ db, config, routes: routes as Routes });
     await gateway.call({ role: "SAFETY_MODEL", ...asked, bucket: "first" });
     const refused = await gateway.call({
@@ -123,6 +128,8 @@ describe("the gateway", () => {
     });
     expect(refused).toEqual({ ok: false, reason: "budget_exhausted" });
     expect(routes.anthropic.calls).toBe(0);
+    expect(eventsOfType(db, "budget_month_spent")).toHaveLength(1);
+    expect(eventsOfType(db, "llm_call")).toHaveLength(1);
   });
   it("logs a failure and answers provider_failed", async () => {
     const db = database();
@@ -142,6 +149,71 @@ describe("the gateway", () => {
     expect(
       db.prepare("SELECT outcome, response FROM llm_log").get(),
     ).toMatchObject({ outcome: "provider_failed", response: "down" });
+  });
+  it("stops an adventure at $5 and leaves another adventure alone", async () => {
+    const db = database();
+    const routes = { anthropic: fake(4.9999), openrouter: fake() };
+    const gateway = createGateway({ db, config, routes: routes as Routes });
+    const first = { role: "TASK_TEXT_MODEL", ...asked } as const;
+    await gateway.call(first);
+    expect((await gateway.call(first)).ok).toBe(false);
+    expect((await gateway.call({ ...first, bucket: "other" })).ok).toBe(true);
+  });
+  it("cleans names and contact details, and leaves a blind solve's numbers", async () => {
+    const db = database();
+    const seen: string[] = [];
+    const route: Route = {
+      ...fake(),
+      call(r) {
+        seen.push(r.user);
+        return Promise.resolve({
+          text: "ok",
+          stopReason: "end_turn",
+          inputTokens: 1,
+          outputTokens: 1,
+          costUsd: 0,
+        });
+      },
+    };
+    const gateway = createGateway({
+      db,
+      config,
+      routes: { anthropic: route, openrouter: route },
+      names: ["Мурка"],
+    });
+    const user = "Мурка a@b.nl 1234 AB +31 6 1234 5678";
+    await gateway.call({ role: "TASK_TEXT_MODEL", ...asked, user });
+    await gateway.call({ role: "LIVE_CHECK_MODEL", ...asked, user });
+    expect(seen[0]).toBe("[имя] [почта] [адрес] [телефон]");
+    expect(seen[1]).toBe(user);
+  });
+  it("replays a recording, and a request with none fails as recording_missing", async () => {
+    const dir = mkdtempSync(join(root, "recordings-"));
+    const live = fake();
+    const request = {
+      model: "m",
+      tier: "content" as const,
+      system: "s",
+      user: "u",
+      maxTokens: 1,
+      timeoutMs: 1,
+    };
+    await recordRoute(live, dir).call(request);
+    const replay = replayRoute(live, dir);
+    expect((await replay.call(request)).text).toBe("ok");
+    expect(live.calls).toBe(1);
+    expect(() => replay.call({ ...request, user: "other" })).toThrow(
+      "recording_missing",
+    );
+  });
+  it("spends from the offline key in verify mode", () => {
+    const verify = readConfig({
+      ...env,
+      GATEWAY_MODE: "verify",
+      OPENROUTER_OFFLINE_KEY: "off",
+    });
+    expect(verify?.openrouterKey).toBe("off");
+    expect(() => readConfig({ ...env, GATEWAY_MODE: "x" })).toThrow("unknown");
   });
   it("computes a direct call's cost from the price table", () => {
     expect(costOf("claude-haiku-5-5", 1_000_000, 1_000_000)).toBeCloseTo(0.6);

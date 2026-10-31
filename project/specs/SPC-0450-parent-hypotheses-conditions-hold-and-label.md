@@ -2,7 +2,7 @@
 id: SPC-0450
 artifact: spec
 status: live
-revised: 2026-09-29
+revised: 2026-10-31
 states: [REQ-7300, REQ-7302, REQ-7304, REQ-7306, REQ-7308, REQ-7310, REQ-7312, REQ-7314, REQ-7316, REQ-7318, REQ-7320, REQ-7322, REQ-7324, REQ-7326, REQ-7328, REQ-7330, REQ-7332, REQ-7334, REQ-7336, REQ-7338, REQ-7340, REQ-7342, REQ-7344, REQ-7346, REQ-7348, REQ-7350, REQ-7352, REQ-7354, REQ-7356, REQ-7358, REQ-7504, REQ-7362, REQ-7364, REQ-7366, REQ-7368, REQ-7370, REQ-7372, REQ-7374]
 ---
 
@@ -26,7 +26,7 @@ Every route needs a paired device and a parent session opened with the PIN, as S
 
 | Route | What it does |
 | --- | --- |
-| `GET /api/parent/hypotheses` | Returns every hypothesis with each of its versions and the date each was replaced, the names of the nodes the graph holds for the node picker, and, after the MVP, each hypothesis's report line. It returns nothing else about a node: no state, share, count or estimate. |
+| `GET /api/parent/hypotheses` | Returns every hypothesis with each of its versions and the date each stopped being current, the names of the nodes the graph holds for the node picker, and, after the MVP, each hypothesis's report line. It returns nothing else about a node: no state, share, count or estimate. |
 | `POST /api/parent/hypotheses` | `{ text, criteria, links, clientSeq }`. Writes `hypothesis_recorded` and returns the new `hypothesisId`. |
 | `POST /api/parent/hypotheses/:id` | Either `{ text, criteria, links, reason?, clientSeq }`, a new version, or `{ action: "close" \| "reopen", reason?, clientSeq }`. Writes one `hypothesis_updated`, or nothing when the new version equals the current one. |
 
@@ -101,7 +101,7 @@ The server refuses a `text` over 2,000 characters, a `confirmText` or `refuteTex
 
 ### The first version: text criteria, node links and history
 
-The first version holds the tab, the form with the text, `confirmText`, `refuteText` and node links, and each hypothesis's history (REQ-7366, REQ-7372). The history lists every earlier version of the text, criteria and links, each with the date it was replaced (REQ-7308).
+The first version holds the tab, the form with the text, `confirmText`, `refuteText` and node links, and each hypothesis's history (REQ-7366, REQ-7372). The history lists every past version of the text, criteria and links, each with the date it stopped being current (REQ-7308).
 
 The form shows no current value of any measure: no state, share, count, estimate or label of a linked node or of a measure a condition names (REQ-7310). The form draws only the version's own fields and the node names of `GET /api/parent/hypotheses`, never its report line.
 
@@ -128,7 +128,7 @@ Every measure a condition names comes from `content/hypothesis-measures.json` (R
 
 Each measure counts raw attempts, never an estimate, and registers its floor of 20 observations in ADR-0380's registry. The list holds no school value. The list only grows: a kind or presentation name is never removed or reused. Its content and ADR-0390's mapping file belong to the rules version, which `hypothesis_measures_versioned` enforces, so a change to either is a change of `RULES_VERSION`.
 
-A condition on a `node.<id>` or `subtype.<id>` the active graph no longer holds reads «открыто» (open) under `measure_retired`. A condition on a measure whose source isn't built or unlocked reads «открыто» under `measure_not_collected`. The probe measures exist only once the probe does, and the probe's Dutch text waits on the owner amending the Russian-only rule in `CLAUDE.md`; until that amendment, every condition on a `probe.*` measure reads «открыто» under `measure_not_collected`.
+A condition on a `node.<id>` or `subtype.<id>` the active graph lacks reads «открыто» (open) under `measure_retired`. A condition on a measure whose source isn't built or unlocked reads «открыто» under `measure_not_collected`. The probe measures exist only once the probe does, and the probe's Dutch text waits on the owner amending the Russian-only rule in `CLAUDE.md`; until that amendment, every condition on a `probe.*` measure reads «открыто» under `measure_not_collected`.
 
 ### The judging window, after the MVP
 
@@ -204,7 +204,7 @@ On the synthetic logs of check 5's maths-gap and language-gap players (REQ-7500)
 | `hypothesis_form_invalid` | a field passes its ceiling, more than 10 node links, or a side holds 0 or more than 3 conditions | writes nothing; the form names the field it couldn't save and keeps the parent's text | parent |
 | `criteria_text_only` | a hypothesis has no numeric conditions | shows «Критерии записаны текстом — отчёт их не проверяет» in place of a label | parent |
 | `too_little_data` | a measure in a condition has fewer than 20 observations in the window | the condition reads «открыто» with its count; the label can't leave «мало данных» on that condition | parent |
-| `measure_retired` | a condition names a node or subtype the active graph no longer holds | the condition reads «открыто» with «этой меры больше нет — перепишите критерии» (this measure no longer exists; rewrite the criteria); a side that needs it can't be met until the criteria are rewritten | parent |
+| `measure_retired` | a condition names a node or subtype the active graph lacks | the condition reads «открыто» with «этой меры больше нет — перепишите критерии» (this measure is gone; rewrite the criteria); a side that needs it can't be met until the criteria are rewritten | parent |
 | `measure_not_collected` | a condition names a measure whose source isn't built or unlocked, such as the probe | the condition reads «открыто» with «эта мера пока не собирается» (this measure isn't collected yet) | parent |
 | `open_hypotheses_many` | open hypotheses rise above 20 | one notice on the tab | parent |
 | `hypothesis_days_large` | `hypothesis_days` passes 500,000 rows | one line in `./meowtower status`; nothing is deleted | owner |

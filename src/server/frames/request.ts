@@ -43,6 +43,12 @@ export interface FramePrompt {
   readonly variants: string;
   readonly safety: string;
   readonly solve: string;
+  readonly formats: Readonly<
+    Record<
+      "number" | "fraction" | "mixed" | "pair" | "time" | "options",
+      string
+    >
+  >;
 }
 
 const prompts = new Map<Lang, FramePrompt>();

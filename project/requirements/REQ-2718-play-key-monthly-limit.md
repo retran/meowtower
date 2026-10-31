@@ -3,8 +3,8 @@ id: REQ-2718
 artifact: requirement
 topic: cost
 class: non-functional
-status: approved
-revised: 2026-09-27
+status: superseded
+revised: 2026-10-31
 elaborates: RES-2700
 verification: judgement
 verifier: person

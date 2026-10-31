@@ -1,6 +1,7 @@
 // The live frame queue (ADR-3100): it prepares a task's frame ahead of the room, so the player never
 // waits, and keeps every frame with its status. A task with no ready frame shows its template text.
 import { z } from "zod";
+import { appendEvents } from "../../engine/events/append.js";
 import { baseSeed } from "../../math/rng.js";
 import type { Compiled, Lang } from "../../templates/spec.js";
 import type { Db } from "../database.js";
@@ -34,13 +35,9 @@ export interface FrameQueue {
   prepare(task: FrameTask): Promise<void>;
   /** The task's ready frame, which turns `used`, or null. */
   take(task: Omit<FrameTask, "bucket">): TakenFrame | null;
+  /** The text of a frame shown, which a second attempt reuses with its own numbers. */
+  textOf(id: number): string | null;
 }
-
-const FRAMED = new Set(["integer", "decimal", "fraction", "mixed"]);
-
-/** A frame can carry a task whose buttons aren't read from its text and that a blind solver can read. */
-export const framable = (template: Compiled, base: Uint8Array): boolean =>
-  FRAMED.has(template.answer) && template.make(base).svg === null;
 
 const Reply = z.object({ frames: z.array(z.string()) });
 const PAUSE_FROM = 10;
@@ -79,16 +76,29 @@ export function createFrameQueue({
       new Date(now()).toISOString(),
     );
   };
+  let pausedDay: number | null = null;
   const paused = (): boolean => {
+    const day = gameDayOf(now(), zone);
     const row = db
       .prepare(
         `SELECT COUNT(*) AS checked, COALESCE(SUM(status = 'rejected'), 0) AS rejected
          FROM frames WHERE game_day = ?`,
       )
-      .get(gameDayOf(now(), zone)) as { checked: number; rejected: number };
-    return (
-      row.checked >= PAUSE_FROM && row.rejected / row.checked > PAUSE_SHARE
-    );
+      .get(day) as { checked: number; rejected: number };
+    const pause =
+      row.checked >= PAUSE_FROM && row.rejected / row.checked > PAUSE_SHARE;
+    if (pause && pausedDay !== day) {
+      pausedDay = day;
+      appendEvents(db, [
+        {
+          type: "live_frames_paused",
+          v: 1,
+          payload: { gameDay: day },
+          origin: { deviceId: "server", clientMs: now() },
+        },
+      ]);
+    }
+    return pause;
   };
   const hasFrame = (task: Omit<FrameTask, "bucket">): boolean =>
     db
@@ -150,19 +160,18 @@ export function createFrameQueue({
   return {
     async prepare(task) {
       const key = `${task.template.id}/${hex(task.base)}/${task.lang}`;
-      if (
-        running.has(key) ||
-        !framable(task.template, task.base) ||
-        hasFrame(task) ||
-        paused()
-      )
-        return;
+      if (running.has(key) || hasFrame(task) || paused()) return;
       running.add(key);
       try {
         await run(task);
       } finally {
         running.delete(key);
       }
+    },
+    textOf(id) {
+      const row = db.prepare("SELECT text FROM frames WHERE id = ?").get(id) as
+        { text: string } | undefined;
+      return row?.text ?? null;
     },
     take({ template, base, lang }) {
       const row = db

@@ -2,7 +2,7 @@
 id: SPC-0120
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-10-31
 states: [REQ-0600, REQ-0602, REQ-0604, REQ-0606, REQ-6500, REQ-0610, REQ-0612, REQ-0614, REQ-0616, REQ-0618, REQ-0620, REQ-0622, REQ-0624, REQ-6502, REQ-0628, REQ-0630, REQ-0632, REQ-0634, REQ-0636, REQ-0638]
 ---
 
@@ -125,7 +125,7 @@ The server logs `explanation_shown` for each explanation she sees. The text stay
 
 ### The parent's hide control
 
-The Parent Room lists stored variants by group, each with its familiar and its reuse failure count, and a hide control on each (REQ-0632). Hiding turns a variant `hidden`: the server never shows it and never deletes it, and it no longer counts towards the group's 3 visible variants, so the group can fill again.
+The Parent Room lists stored variants by group, each with its familiar and its reuse failure count, and a hide control on each (REQ-0632). Hiding turns a variant `hidden`: the server never shows it and never deletes it, and it stops counting towards the group's 3 visible variants, so the group can fill again.
 
 ### The cache's size
 

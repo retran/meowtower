@@ -135,6 +135,9 @@ const onSessionEnded = (): void => {
 let frames: FrameQueue | undefined;
 try {
   const config = readConfig(process.env);
+  // The game runs only in `play`: the tools start the other modes (ADR-3200).
+  if (config && config.mode !== "play")
+    throw new ConfigInvalid("GATEWAY_MODE", "the server runs only in play");
   if (config) {
     const routes = liveRoutes(config);
     const zone = process.env["MEOWTOWER_ZONE"] ?? "UTC";
@@ -146,7 +149,14 @@ try {
     };
     const queue = createFrameQueue({
       db,
-      gateway: createGateway({ db, config, routes }),
+      gateway: createGateway({
+        db,
+        config,
+        routes,
+        names: (process.env["MEOWTOWER_EGRESS_NAMES"] ?? "")
+          .split(",")
+          .filter((n) => n !== ""),
+      }),
       zone,
     });
     if (await turnOn()) frames = queue;
@@ -181,6 +191,7 @@ const game = serve({
     frames: {
       prepare: (task) => live.current?.prepare(task) ?? Promise.resolve(),
       take: (task) => live.current?.take(task) ?? null,
+      textOf: (id) => live.current?.textOf(id) ?? null,
     },
   }).fetch,
   port,

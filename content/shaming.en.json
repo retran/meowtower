@@ -1,0 +1,167 @@
+{
+  "version": "v1",
+  "forms": [
+    {
+      "lemma": "wrong",
+      "diminutives": [],
+      "forms": ["wrong", "wrongly"]
+    },
+    {
+      "lemma": "incorrect",
+      "diminutives": [],
+      "forms": ["incorrect", "incorrectly"]
+    },
+    {
+      "lemma": "mistake",
+      "diminutives": [],
+      "forms": ["mistake", "mistakes", "mistaken"]
+    },
+    {
+      "lemma": "error",
+      "diminutives": [],
+      "forms": ["error", "errors"]
+    },
+    {
+      "lemma": "miss",
+      "diminutives": [],
+      "forms": ["miss", "missed", "misses"]
+    },
+    {
+      "lemma": "failure",
+      "diminutives": [],
+      "forms": ["failure", "failures", "fail", "failed", "fails", "failing"]
+    },
+    {
+      "lemma": "pity",
+      "diminutives": [],
+      "forms": ["pity"]
+    },
+    {
+      "lemma": "bad",
+      "diminutives": [],
+      "forms": ["bad", "badly"]
+    },
+    {
+      "lemma": "task",
+      "diminutives": [],
+      "forms": ["task", "tasks"]
+    },
+    {
+      "lemma": "sum",
+      "diminutives": [],
+      "forms": ["sum", "sums"]
+    },
+    {
+      "lemma": "exercise",
+      "diminutives": [],
+      "forms": ["exercise", "exercises"]
+    },
+    {
+      "lemma": "lesson",
+      "diminutives": [],
+      "forms": ["lesson", "lessons"]
+    },
+    {
+      "lemma": "school",
+      "diminutives": [],
+      "forms": ["school", "schools"]
+    },
+    {
+      "lemma": "mark",
+      "diminutives": [],
+      "forms": ["mark", "marks"]
+    },
+    {
+      "lemma": "grade",
+      "diminutives": [],
+      "forms": ["grade", "grades"]
+    },
+    {
+      "lemma": "genius",
+      "diminutives": [],
+      "forms": ["genius"]
+    },
+    {
+      "lemma": "clever",
+      "diminutives": [],
+      "forms": ["clever"]
+    }
+  ],
+  "phrases": [
+    {
+      "phrase": "did not work",
+      "runs": [["did", "not", "work"]]
+    },
+    {
+      "phrase": "didn't work",
+      "runs": [["didn't", "work"]]
+    },
+    {
+      "phrase": "could not",
+      "runs": [["could", "not"]]
+    },
+    {
+      "phrase": "couldn't",
+      "runs": [["couldn't"]]
+    },
+    {
+      "phrase": "you did not understand",
+      "runs": [["you", "did", "not", "understand"]]
+    },
+    {
+      "phrase": "you didn't understand",
+      "runs": [["you", "didn't", "understand"]]
+    },
+    {
+      "phrase": "it is easy",
+      "runs": [["it", "is", "easy"]]
+    },
+    {
+      "phrase": "it's easy",
+      "runs": [["it's", "easy"]]
+    },
+    {
+      "phrase": "you are smart",
+      "runs": [["you", "are", "smart"]]
+    },
+    {
+      "phrase": "you're smart",
+      "runs": [["you're", "smart"]]
+    },
+    {
+      "phrase": "you are the smartest",
+      "runs": [["you", "are", "the", "smartest"]]
+    },
+    {
+      "phrase": "you're the smartest",
+      "runs": [["you're", "the", "smartest"]]
+    }
+  ],
+  "shortage": [
+    {
+      "phrase": "threads ran out",
+      "runs": [["threads", "ran", "out"]]
+    },
+    {
+      "phrase": "no threads left",
+      "runs": [["no", "threads", "left"]]
+    },
+    {
+      "phrase": "no threads",
+      "runs": [["no", "threads"]]
+    }
+  ],
+  "rejectedLabels": [],
+  "labelPatterns": ["\\d+ minutes left", "in \\d+ minutes"],
+  "knot": {
+    "keys": [],
+    "lemma": "",
+    "diminutives": [],
+    "forms": []
+  },
+  "fixtures": {
+    "match": ["mistakes", "Lesson", "failed"],
+    "knot": [],
+    "pass": ["example", "right"]
+  }
+}

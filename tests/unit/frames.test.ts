@@ -1,6 +1,6 @@
 // ADR-3100: a frame keeps the engine's numbers, passes its checks ahead of the room, and a task with no
 // frame shows its template text.
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
@@ -8,8 +8,10 @@ import { baseSeed } from "../../src/math/rng.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
 import { adminPage } from "../../src/server/admin.js";
 import { llmAudit } from "../../src/server/audit.js";
-import { codeFault } from "../../src/server/frames/check.js";
-import { createFrameQueue, framable } from "../../src/server/frames/queue.js";
+import { codeFault, solvesBlind } from "../../src/server/frames/check.js";
+import { present, presentFramed } from "../../src/server/task-source.js";
+import { textGate } from "../../src/shared/voice/gate.js";
+import { createFrameQueue } from "../../src/server/frames/queue.js";
 import {
   frameSystem,
   frameUser,
@@ -38,7 +40,7 @@ const database = (): Db => {
 
 const base = baseSeed("s", "t", 0);
 const template = templates.find(
-  (t) => framable(t, base) && t.blank("ru").includes("{a}"),
+  (t) => t.answer === "integer" && t.blank("ru").includes("{a}"),
 );
 if (!template) throw new Error("no_framable_template");
 
@@ -102,10 +104,18 @@ describe("the code checks", () => {
         "number_word",
       );
   });
-  it("rejects a text that is too long", () => {
+  it("keeps a number the template writes itself", () => {
     expect(
-      codeFault(`Раз. Два слова. Ещё фраза. И {a} {=a+b}.`, blank, "en"),
-    ).toBe("length");
+      codeFault("Страж просит: 10 и {a}.", "Сложи 10 и {a}.", "ru"),
+    ).toBeNull();
+    expect(codeFault("Страж просит {a}.", "Сложи 10 и {a}.", "ru")).toBe(
+      "digit",
+    );
+  });
+  it("rejects a text that is too long", () => {
+    expect(codeFault("Ax. Bx. Cx. Dx. Ex. {a} {=a+b}.", blank, "en")).toBe(
+      "length",
+    );
   });
 });
 
@@ -171,6 +181,73 @@ describe("the queue", () => {
     });
     await queue.prepare(task);
     expect(queue.take(task)).toBeNull();
+  });
+});
+
+describe("every template", () => {
+  it("takes a frame in each language with its buttons and picture unchanged", () => {
+    for (const lang of ["ru", "en", "nl"] as const)
+      for (const t of templates) {
+        const framed = presentFramed(
+          t,
+          base,
+          lang,
+          `Страж ждёт. ${t.blank(lang)}`,
+        );
+        const plain = present({ template: t, made: t.make(base, lang) });
+        expect(framed.options).toEqual(plain.options);
+        expect(framed.input).toEqual(plain.input);
+        expect(framed.answer).toBe(plain.answer);
+        expect(framed.text).toContain("Страж ждёт.");
+      }
+  });
+  it("shows a blind solver the options and picture, and reads its answer by option", async () => {
+    const choice = templates.find(
+      (t) => t.answer === "choice" && t.make(base).svg !== null,
+    );
+    if (!choice) throw new Error("no_choice_with_picture");
+    const shape = present({ template: choice, made: choice.make(base) });
+    const seen: GatewayRequest[] = [];
+    const right = (shape.input.values ?? []).indexOf(choice.make(base).entry);
+    const ok = await solvesBlind(
+      {
+        call(r) {
+          seen.push(r);
+          return Promise.resolve({ ok: true, text: String(right + 1) });
+        },
+      },
+      "b",
+      choice,
+      base,
+      "ru",
+      choice.blank("ru"),
+    );
+    expect(ok).toBe(true);
+    expect(seen[0]?.user).toContain("1) ");
+    expect(seen[0]?.user).toContain("<svg");
+  });
+});
+
+describe("the forbidden lists", () => {
+  it("hold each language's words and leave its plain text alone", () => {
+    const gate = (text: string, lang: "en" | "nl") =>
+      textGate(text, { lang, kind: "task", source: "frame" }).ok;
+    expect(gate("You made a mistake.", "en")).toBe(false);
+    expect(gate("Solve this sum.", "en")).toBe(false);
+    expect(gate("Dat is een fout.", "nl")).toBe(false);
+    expect(gate("Een Toren vol draden.", "nl")).toBe(true);
+    expect(gate("A Tower of threads.", "en")).toBe(true);
+    for (const lang of ["en", "nl"] as const) {
+      const file = new URL(
+        `../../content/shaming.${lang}.json`,
+        import.meta.url,
+      );
+      const { fixtures } = JSON.parse(readFileSync(file, "utf8")) as {
+        fixtures: { match: string[]; pass: string[] };
+      };
+      for (const m of fixtures.match) expect(gate(m, lang)).toBe(false);
+      for (const m of fixtures.pass) expect(gate(m, lang)).toBe(true);
+    }
   });
 });
 

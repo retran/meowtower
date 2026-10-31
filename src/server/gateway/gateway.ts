@@ -1,13 +1,15 @@
 // The model gateway (ADR-0100, ADR-3100): one call per request, by the route its role names. It
 // reserves the worst case first, so concurrent calls can't pass a limit together, and writes the
 // whole request and reply to `llm_log`, which is the audit of everything that leaves the Mac.
+import { appendEvents } from "../../engine/events/append.js";
 import type { Db } from "../database.js";
 import { ROLES, type GatewayConfig, type RoleName } from "./config.js";
+import { cleanEgress } from "./egress.js";
 import { costOf } from "./prices.js";
 import type { RouteReply, Routes } from "./routes.js";
 
-export const ADVENTURE_LIMIT_USD = 1.5;
-export const MONTH_LIMIT_USD = 60;
+export const ADVENTURE_LIMIT_USD = 5;
+export const MONTH_LIMIT_USD = 200;
 
 export interface GatewayRequest {
   readonly role: RoleName;
@@ -37,12 +39,18 @@ export function createGateway({
   config,
   routes,
   now = Date.now,
+  limits = { adventure: ADVENTURE_LIMIT_USD, month: MONTH_LIMIT_USD },
+  names = [],
 }: {
   db: Db;
   config: GatewayConfig;
   routes: Routes;
   now?: () => number;
+  limits?: { readonly adventure: number; readonly month: number };
+  /** The names the parent set, which the egress guard cleans. */
+  names?: readonly string[];
 }): Gateway {
+  let monthSpent: string | null = null;
   const held = new Map<string, number>();
   const hold = (key: string, amount: number): void => {
     held.set(key, (held.get(key) ?? 0) + amount);
@@ -70,8 +78,10 @@ export function createGateway({
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   return {
-    async call({ role, bucket, system, user, schema }) {
+    async call({ role, bucket, system, user: raw, schema }) {
       const spec = ROLES[role];
+      // The blind solve holds the engine's own numbers, which the guard must leave alone (SPC-0100).
+      const user = role === "LIVE_CHECK_MODEL" ? raw : cleanEgress(raw, names);
       const { route: name, model } = config.roles[role];
       const route = routes[name];
       const request = {
@@ -90,11 +100,25 @@ export function createGateway({
         tokensIn(system) + tokensIn(user),
         spec.maxTokens,
       );
+      const monthOver =
+        spentSince(month) + heldOn("month") + worst > limits.month;
       if (
-        spentOn(bucket) + heldOn(bucket) + worst > ADVENTURE_LIMIT_USD ||
-        spentSince(month) + heldOn("month") + worst > MONTH_LIMIT_USD
-      )
+        spentOn(bucket) + heldOn(bucket) + worst > limits.adventure ||
+        monthOver
+      ) {
+        if (monthOver && monthSpent !== month) {
+          monthSpent = month;
+          appendEvents(db, [
+            {
+              type: "budget_month_spent",
+              v: 1,
+              payload: { month: month.slice(0, 7) },
+              origin: { deviceId: "server", clientMs: now() },
+            },
+          ]);
+        }
         return { ok: false, reason: "budget_exhausted" };
+      }
       hold(bucket, worst);
       hold("month", worst);
       const log = (
@@ -102,7 +126,7 @@ export function createGateway({
         reply: RouteReply | null,
         response: string,
       ): void => {
-        insert.run(
+        const row = insert.run(
           started.toISOString(),
           role,
           name,
@@ -117,6 +141,17 @@ export function createGateway({
           JSON.stringify(route.body(request)),
           response,
         );
+        appendEvents(db, [
+          {
+            type: "llm_call",
+            v: 1,
+            payload: {
+              llmLogId: String(row.lastInsertRowid),
+              role,
+            },
+            origin: { deviceId: "server", clientMs: now() },
+          },
+        ]);
       };
       try {
         const reply = await route.call(request);
