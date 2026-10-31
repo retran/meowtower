@@ -3,6 +3,7 @@
 import type { PictureLabels } from "./spec.js";
 import {
   angle,
+  barBetween,
   based,
   circle,
   crossOf,
@@ -102,15 +103,25 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "S2.bar-line.07": (v) => bars([n(v, 0), n(v, 1), n(v, 2), n(v, 3)]),
   "S2.bar-line.08": (v) => bars([n(v, 0), n(v, 1), n(v, 2)]),
   "S2.bar-line.09": (v) =>
-    lineGraph([n(v, 0), n(v, 0) + n(v, 1), n(v, 0) + n(v, 1) - n(v, 2)]),
+    lineGraph(
+      [n(v, 0), n(v, 0) + n(v, 1), n(v, 0) + n(v, 1) - n(v, 2)],
+      [],
+      [2],
+    ),
   "S2.bar-line.11": (v) => bars([n(v, 1), n(v, 2)]),
   "S2.bar-line.12": (v) => bars([n(v, 1), n(v, 2)]),
   // S4: sectors
   "S4.pie.01": (v) => pie([n(v, 1)]),
-  "S4.pie.02": (v) => pie(Array.from({ length: n(v, 0) }, () => 100 / n(v, 0))),
+  "S4.pie.02": (v) =>
+    pie(
+      n(v, 0) > 12
+        ? [100 / n(v, 0)]
+        : Array.from({ length: n(v, 0) }, () => 100 / n(v, 0)),
+      false,
+    ),
   "S4.pie.03": (v) => pie([n(v, 0), n(v, 1), n(v, 2)]),
   "S4.pie.04": (v) => pie([n(v, 0)]),
-  "S4.pie.05": (v) => pie([(100 * n(v, 1)) / n(v, 0)]),
+  "S4.pie.05": (v) => pie([(100 * n(v, 1)) / n(v, 0)], false),
   "S4.pie.06": (v) => pie([n(v, 0)]),
   "S4.pie.07": (v) => pie([n(v, 1), n(v, 2)]),
   "S4.pie.08": (v) => pie([n(v, 1), n(v, 2)]),
@@ -190,10 +201,7 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
       ],
     ),
   "G4.coordinates.04": (v) =>
-    onGrid([
-      [n(v, 0), n(v, 1)],
-      [n(v, 0) + n(v, 2), n(v, 1) + n(v, 3)],
-    ]),
+    grid(n(v, 0) + n(v, 2) + 1, n(v, 1) + n(v, 3) + 1, pts([n(v, 0), n(v, 1)])),
   "G4.coordinates.05": (v) =>
     onGrid(
       [
@@ -220,8 +228,6 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
       [0, 0],
       [n(v, 0), 0],
       [n(v, 0), n(v, 1)],
-      [n(v, 0) - n(v, 2), n(v, 1)],
-      [n(v, 0) - n(v, 2), n(v, 1) - n(v, 3)],
     ]),
   // G5 and G6: solids, views and builds
   "G5.solids-nets.09": (v) => block(n(v, 0), n(v, 0)),
@@ -262,28 +268,37 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "G7.plan.05": (_v, l) => compass(l.compass),
   "G7.plan.06": (_v, l) => compass(l.compass),
   "G7.plan.07": (v) =>
-    path([
-      [0, 0],
-      [0, n(v, 0)],
-      [n(v, 1), n(v, 0)],
-    ]),
+    path(
+      [
+        [0, 0],
+        [0, n(v, 0)],
+        [n(v, 1), n(v, 0)],
+      ],
+      false,
+    ),
   "G7.plan.09": (v) =>
-    path([
-      [0, 0],
-      [n(v, 0), 0],
-      [n(v, 0), n(v, 1)],
-      [0, n(v, 1)],
-    ]),
+    path(
+      [
+        [0, 0],
+        [n(v, 0), 0],
+        [n(v, 0), n(v, 1)],
+        [0, n(v, 1)],
+      ],
+      false,
+    ),
   "G7.plan-1S.01": (v) => scaleBar(Math.min(12, n(v, 1))),
-  "G7.plan-1S.02": (v) => scaleBar(Math.min(12, n(v, 1))),
+  "G7.plan-1S.02": () => scaleBar(1),
   "G7.plan-1S.03": (v) => rectangle(n(v, 1), n(v, 2)),
   "G7.plan-1S.05": (v) =>
-    path([
-      [0, 0],
-      [n(v, 0), 0],
-      [n(v, 0), n(v, 1)],
-      [n(v, 0) + n(v, 2), n(v, 1)],
-    ]),
+    path(
+      [
+        [0, 0],
+        [n(v, 0), 0],
+        [n(v, 0), n(v, 1)],
+        [n(v, 0) + n(v, 2), n(v, 1)],
+      ],
+      false,
+    ),
   "G7.plan-1S.07": () => rectangle(3, 4),
   "G7.plan-1S.09": (v) =>
     onGrid([
@@ -331,17 +346,23 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "G6.blocks.06": (v) => cube(n(v, 0)),
   "G6.blocks.10": (v) => layers(n(v, 0)),
   "G7.plan.08": (v) =>
-    path([
-      [0, 0],
-      [0, n(v, 0)],
-      [0, n(v, 0) - n(v, 1)],
-    ]),
+    path(
+      [
+        [0, 0],
+        [0, n(v, 0)],
+        [0, n(v, 0) - n(v, 1)],
+      ],
+      false,
+    ),
   "G7.plan.10": (v) =>
-    path([
-      [n(v, 1), n(v, 0)],
-      [n(v, 1), 0],
-      [0, 0],
-    ]),
+    path(
+      [
+        [n(v, 1), n(v, 0)],
+        [n(v, 1), 0],
+        [0, 0],
+      ],
+      false,
+    ),
   "G7.plan-1S.04": (v) => pictogram(n(v, 1)),
   "G7.plan-1S.06": (v) => scaleBar(Math.min(12, n(v, 1))),
   "G7.plan-1S.08": (v) => block(n(v, 1), 1),
@@ -357,7 +378,7 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "S1.tables.11": (v) => table([[n(v, 0), n(v, 1)]]),
   "S1.tables.12": (v) => table([[n(v, 0), n(v, 1)]]),
   "S2.bar-line.01": (v) => pictogram(n(v, 1)),
-  "S2.bar-line.04": (v) => bars([n(v, 0) + 5]),
+  "S2.bar-line.04": (v) => barBetween(n(v, 0), n(v, 0) + 10, n(v, 0) + 5),
   "S2.bar-line.10": (v) => bars([n(v, 0)]),
   // S3 and S7: the numbers of a set
   "S3.mean.01": (v) => numberRow([n(v, 0), n(v, 1)]),
@@ -368,8 +389,7 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
       ...Array<number>(n(v, 2)).fill(n(v, 0)),
       ...Array<number>(n(v, 3)).fill(n(v, 1)),
     ]),
-  "S3.mean.07": (v) =>
-    numberRow([n(v, 0), n(v, 0) + 1, n(v, 0) + 2, n(v, 0) + 3, n(v, 0) + 4]),
+  "S3.mean.07": (v) => numberRow([n(v, 0), n(v, 0) + 1, "…"]),
   "S3.mean.08": (v) => bars([n(v, 0), n(v, 1), 0]),
   "S3.mean.09": (v) => bars([n(v, 0), n(v, 1), n(v, 2)]),
   "S3.missing.01": (v) => numberRow([n(v, 1), n(v, 2), "?"]),
@@ -379,10 +399,12 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "S3.missing.06": (v) => numberRow([n(v, 0), n(v, 1), "?"]),
   "S3.missing.07": (v) =>
     stackRows([[n(v, 0), n(v, 1), n(v, 2)], ["?", "?"], ["?"]]),
-  "S4.pie.09": (v) => pie([100 / n(v, 1)]),
+  "S4.pie.09": (v) => pie([100 / n(v, 1)], false),
   "S5.global.05": (v) =>
     lineGraph(
       Array.from({ length: n(v, 2) + 1 }, (_, i) => n(v, 1) + n(v, 0) * i),
+      [],
+      [n(v, 2)],
     ),
   "S5.global.06": (v) => lineGraph([n(v, 1), n(v, 1) + n(v, 0) * n(v, 2)]),
   "S5.global-1S.02": (v) => lineGraph([n(v, 0), n(v, 0) + n(v, 1)]),
@@ -558,7 +580,16 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "M4.not-rect.07": (v) => stairs(n(v, 1), n(v, 0)),
   "M4.not-rect.08": (v) =>
     framed(n(v, 0) + 2 * n(v, 2), n(v, 1) + 2 * n(v, 2), n(v, 0), n(v, 1)),
-  "M4.not-rect.09": (v) => joined([n(v, 0), n(v, 1)], [n(v, 2), n(v, 1)]),
+  "M4.not-rect.09": (v) =>
+    fig(
+      [[box4(0, 0, n(v, 0), n(v, 1))], [box4(n(v, 0), 0, n(v, 2), n(v, 3))]],
+      {
+        labels: [
+          { x: n(v, 0) / 2, y: n(v, 1) / 2, t: `${n(v, 0)}\u00d7${n(v, 1)}` },
+          { x: n(v, 0) + n(v, 2) / 2, y: n(v, 3) / 2, t: `${n(v, 2)}\u00d7?` },
+        ],
+      },
+    ),
   "M4.not-rect.10": (v) => notched(n(v, 0), n(v, 1), n(v, 2), n(v, 2), true),
   "M4.not-rect.11": (v) =>
     fig(
@@ -674,10 +705,14 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
       dashed: [[0, 0, 1, 1]],
       labels: [{ x: 0.6, y: 0.35, t: n(v, 0) }],
     }),
-  "M5.formula.11": (v) => joined([n(v, 0), n(v, 0)], [n(v, 0), n(v, 0)]),
+  "M5.formula.11": (v) =>
+    fig([
+      [box4(0, 0, n(v, 0), n(v, 0))],
+      [box4(n(v, 0) + 1, 0, n(v, 0) * n(v, 1), n(v, 0) * n(v, 1))],
+    ]),
   "M6.triangle.01": (v) => based(n(v, 0), n(v, 1), true),
   "M6.triangle.02": (v) => based(n(v, 0), n(v, 1)),
-  "M6.triangle.03": (v) => based(n(v, 0), n(v, 1), false),
+  "M6.triangle.03": (v) => based(n(v, 0), n(v, 1), false, [n(v, 0), "?"]),
   "M6.triangle.04": (v) =>
     fig([[box4(0, 0, n(v, 0), n(v, 1))]], {
       dashed: [[0, 0, n(v, 0), n(v, 1)]],
@@ -745,7 +780,7 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
         ],
       },
     ),
-  "M6.triangle.08": (v) => based(n(v, 0), n(v, 1)),
+  "M6.triangle.08": (v) => based(n(v, 0), n(v, 1), false, ["?", n(v, 1)]),
   "M6.triangle.09": (v) => based(n(v, 0), n(v, 1)),
   "M6.triangle.10": (v) =>
     fig(
@@ -779,7 +814,8 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "M7.formula.01": (v) => cuboid(n(v, 0), n(v, 1), n(v, 2)),
   "M7.formula.02": (v) => cuboid(n(v, 0), n(v, 1), n(v, 2)),
   "M7.formula.03": (v) => cuboid(n(v, 0), n(v, 0), n(v, 0)),
-  "M7.formula.04": (v) => cuboid(n(v, 0), n(v, 1), n(v, 2)),
+  "M7.formula.04": (v) =>
+    cuboid(n(v, 0), n(v, 1), n(v, 2), false, [n(v, 0), n(v, 1), "?"]),
   "M7.formula.05": (v) => cuboid(n(v, 0), n(v, 1), n(v, 2)),
   "M7.formula.08": (v) => cuboid(4, 3, n(v, 1)),
   "M7.formula.09": () => cuboid(3, 2, 2),

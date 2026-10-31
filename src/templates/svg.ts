@@ -53,10 +53,11 @@ export function bars(values: readonly number[]): string {
   );
 }
 
-/** A line graph through the values, equally spaced; `marks` are the texts under the points. */
+/** A line graph through the values, equally spaced; `marks` are the texts under the points, and an `asked` point shows "?". */
 export function lineGraph(
   values: readonly number[],
   marks: readonly (string | number)[] = [],
+  asked: readonly number[] = [],
 ): string {
   const max = Math.max(1, ...values);
   const min = Math.min(0, ...values);
@@ -67,7 +68,7 @@ export function lineGraph(
   const dots = pts
     .map(
       ([px, py], i) =>
-        `${dot(px, py, 3, pal(1))}${label(px, py - 8, values[i] ?? 0)}`,
+        `${dot(px, py, 3, pal(1))}${label(px, py - 8, asked.includes(i) ? "?" : (values[i] ?? 0))}`,
     )
     .join("");
   const under = marks.map((m, i) => label(30 + i * 50, 135, m)).join("");
@@ -79,7 +80,7 @@ export function lineGraph(
 }
 
 /** A circle cut into sectors by percentages; what is left of 100 is one more sector without a label. */
-export function pie(percents: readonly number[]): string {
+export function pie(percents: readonly number[], labelled = true): string {
   const rest = 100 - percents.reduce((s, p) => s + p, 0);
   const all = rest > 0 ? [...percents, rest] : [...percents];
   let at = -Math.PI / 2;
@@ -100,7 +101,7 @@ export function pie(percents: readonly number[]): string {
           ? `<circle cx="${cx}" cy="${cy}" r="${r}" ${tint(i, 0.5)}/>`
           : `<path d="M${cx},${cy} L${num(x1)},${num(y1)} A${r},${r} 0 ${big} 1 ${num(x2)},${num(y2)} Z" ${tint(i, 0.5)}/>`;
       const t =
-        i < percents.length
+        labelled && i < percents.length
           ? label(cx + 38 * Math.cos(mid), cy + 38 * Math.sin(mid) + 4, p)
           : "";
       at = next;
@@ -122,6 +123,7 @@ export function grid(
   rows: number,
   points: readonly GridMark[] = [],
   segments: readonly (readonly [number, number, number, number])[] = [],
+  numbered = true,
 ): string {
   const s = 20;
   const ox = 24;
@@ -130,9 +132,9 @@ export function grid(
   const py = (y: number): number => oy - y * s;
   let body = "";
   for (let i = 0; i <= cols; i += 1)
-    body += `<line x1="${px(i)}" y1="${py(0)}" x2="${px(i)}" y2="${py(rows)}" stroke-opacity="0.25"/>${label(px(i), py(0) + 13, i, 9)}`;
+    body += `<line x1="${px(i)}" y1="${py(0)}" x2="${px(i)}" y2="${py(rows)}" stroke-opacity="0.25"/>${numbered ? label(px(i), py(0) + 13, i, 9) : ""}`;
   for (let j = 0; j <= rows; j += 1)
-    body += `<line x1="${px(0)}" y1="${py(j)}" x2="${px(cols)}" y2="${py(j)}" stroke-opacity="0.25"/>${label(px(0) - 10, py(j) + 3, j, 9)}`;
+    body += `<line x1="${px(0)}" y1="${py(j)}" x2="${px(cols)}" y2="${py(j)}" stroke-opacity="0.25"/>${numbered ? label(px(0) - 10, py(j) + 3, j, 9) : ""}`;
   body += segments
     .map(([a, b, c, d]) =>
       line(px(a), py(b), px(c), py(d)).replace(
@@ -388,7 +390,10 @@ export function compass(l: CompassLabels): string {
 }
 
 /** A walk drawn on a grid: a polyline through the points, each leg a grid step. */
-export function path(points: readonly (readonly [number, number])[]): string {
+export function path(
+  points: readonly (readonly [number, number])[],
+  numbered = true,
+): string {
   const xs = points.map((p) => p[0]);
   const ys = points.map((p) => p[1]);
   const cols = Math.max(1, ...xs);
@@ -407,6 +412,7 @@ export function path(points: readonly (readonly [number, number])[]): string {
       last ? { x: last[0], y: last[1] } : { x: 0, y: 0 },
     ],
     segs,
+    numbered,
   );
 }
 
@@ -1010,7 +1016,12 @@ export function framed(w: number, h: number, iw: number, ih: number): string {
 }
 
 /** A triangle by a base and a height, with the height dashed; `right` puts the right angle at the base's end. */
-export function based(base: number, height: number, right = false): string {
+export function based(
+  base: number,
+  height: number,
+  right = false,
+  names: readonly [string | number, string | number] = [base, height],
+): string {
   const apex = right ? 0 : base * 0.35;
   return fig(
     [
@@ -1025,11 +1036,11 @@ export function based(base: number, height: number, right = false): string {
     {
       dashed: right ? [] : [[apex, 0, apex, height]],
       labels: [
-        { x: base / 2, y: -height * 0.12, t: base },
+        { x: base / 2, y: -height * 0.12, t: names[0] },
         {
           x: apex + (right ? -base * 0.1 : base * 0.08),
           y: height / 2,
-          t: height,
+          t: names[1],
         },
       ],
     },
@@ -1134,7 +1145,17 @@ export function circle(
 }
 
 /** A cuboid with its three edges written beside it, and the unit cubes it holds drawn on its front face. */
-export function cuboid(a: number, b: number, c: number, cubes = false): string {
+export function cuboid(
+  a: number,
+  b: number,
+  c: number,
+  cubes = false,
+  names: readonly [string | number, string | number, string | number] = [
+    a,
+    b,
+    c,
+  ],
+): string {
   const k = 100 / Math.max(a, b, c, 1);
   const w = a * k;
   const hgt = c * k;
@@ -1151,7 +1172,7 @@ export function cuboid(a: number, b: number, c: number, cubes = false): string {
   }
   const body = `${iso(x, y, w, hgt, d)}${lines}`;
   // Length under the front, height beside the front, depth along the lower slanted edge.
-  const labels = `${label(x + w / 2, front + hgt + 16, a)}${label(x - 12, front + hgt / 2 + 4, c)}${label(x + w + d * 0.25 + 13, front + hgt - d * 0.25 + 12, b)}`;
+  const labels = `${label(x + w / 2, front + hgt + 16, names[0])}${label(x - 12, front + hgt / 2 + 4, names[2])}${label(x + w + d * 0.25 + 13, front + hgt - d * 0.25 + 12, names[1])}`;
   return wrap(w + d * 0.5 + 60, hgt + d * 0.5 + 46, body + labels);
 }
 
@@ -1169,5 +1190,15 @@ export function regular(n: number, side: string | number = "?"): string {
     140,
     140,
     `${poly(pts, tint(0, 0.2))}${label((m0[0] + m1[0]) / 2 + 8, (m0[1] + m1[1]) / 2 - 4, side)}`,
+  );
+}
+
+/** A bar that ends between two marks of its axis: only the marks are written, and the bar's height is the question. */
+export function barBetween(lo: number, hi: number, value: number): string {
+  const y = (v: number): number => 120 - ((v - lo + 10) / (hi - lo + 20)) * 100;
+  return wrap(
+    110,
+    135,
+    `${line(36, 10, 36, 125)}${line(36, 125, 100, 125)}${line(30, y(lo), 42, y(lo))}${label(18, y(lo) + 4, lo)}${line(30, y(hi), 42, y(hi))}${label(18, y(hi) + 4, hi)}<rect x="50" y="${num(y(value))}" width="34" height="${num(125 - y(value))}" ${tint(0, 0.6)}/>`,
   );
 }
