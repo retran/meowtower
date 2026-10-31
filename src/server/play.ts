@@ -192,10 +192,33 @@ const hintLevels = (log: StoredEvent[], itemId: string): number[] =>
     .filter((h) => h.itemId === itemId)
     .map((h) => h.level);
 
+/** A shown item in the parent's language: the log keeps the words of the language it was shown in (REQ-7548). */
+function shownOf(event: StoredEvent): ItemShown {
+  const shown = payloadOf<ItemShown>(event);
+  if (shown.view.locale === lang) return shown;
+  const item = shown.templateId
+    ? rebuild(shown.templateId, shown.seed, lang)
+    : null;
+  if (!item) return shown;
+  const shape = present(item);
+  return {
+    ...shown,
+    view: {
+      ...shown.view,
+      locale: lang,
+      text: shape.text,
+      svg: item.made.svg,
+      options: shape.options,
+    },
+    correctAnswer: notation(shape.answer, lang),
+    shortSolution: [...item.made.solution],
+  };
+}
+
 const firstsOf = (log: StoredEvent[]): ItemShown[] =>
   log
     .filter((e) => e.type === "item_shown")
-    .map((e) => payloadOf<ItemShown>(e))
+    .map(shownOf)
     .filter((s) => s.attemptNo === 1);
 
 const answeredIn = (log: StoredEvent[]): Set<string> =>
@@ -397,7 +420,7 @@ export function mountPlay(
     const event = itemEvents(db, itemId).find((e) => e.type === "item_shown");
     if (!event?.sessionId) return c.json({ error: "item_unknown" }, 404);
     return {
-      shown: payloadOf<ItemShown>(event),
+      shown: shownOf(event),
       sessionId: event.sessionId,
       log: sessionEvents(db, event.sessionId),
       shownBy: event.deviceId,
@@ -531,6 +554,9 @@ export function mountPlay(
     const point = resumePoint(db, adventureId);
     const index = point?.index ?? 0;
     const roomIndex = Math.floor(index / ROOM_LENGTH);
+    const openEvent = point?.open
+      ? itemEvents(db, point.open.itemId).find((e) => e.type === "item_shown")
+      : undefined;
     return {
       sessionId,
       adventureId,
@@ -538,7 +564,7 @@ export function mountPlay(
       room: (roomIndex % STANDIN_ROOMS_PER_FLOOR) + 1,
       slot: index % ROOM_LENGTH,
       itemId: point?.open?.itemId ?? null,
-      view: point?.open ? { ...point.open.view, locale: lang } : null,
+      view: openEvent ? shownOf(openEvent).view : null,
       attemptNo: point?.open?.attemptNo ?? null,
       hintLevels: point?.open?.hintLevels ?? [],
       explainedItemIds: (point?.explained ?? []).filter(
@@ -672,7 +698,7 @@ export function mountPlay(
     // and a second attempt left open alike (REQ-0204).
     const open = played
       .filter((e) => e.type === "item_shown")
-      .map((e) => payloadOf<ItemShown>(e))
+      .map(shownOf)
       .find((s) => !answered.has(s.itemId));
     if (open) {
       if (lifecycle.length) appendEvents(db, lifecycle);
@@ -1509,7 +1535,7 @@ export function mountPlay(
     // parallel task created the first time (REQ-2426).
     const created = log
       .filter((e) => e.type === "item_shown")
-      .map((e) => payloadOf<ItemShown>(e))
+      .map(shownOf)
       .find((s) => s.parentItemId === itemId);
     if (created)
       return send(c, Room, roomFor(created, log, playLog(sessionId)));

@@ -108,9 +108,12 @@ export function translator(language: Lang) {
   };
 }
 
-const russian = translator("ru");
-export const t = russian.t;
-export const lines = russian.lines;
+/** The string for `key` in the language the parent set. */
+export const t: ReturnType<typeof translator>["t"] = (key, ...args) =>
+  translator(lang).t(key, ...args);
+/** A System message in the language the parent set. */
+export const lines: ReturnType<typeof translator>["lines"] = (key, ...args) =>
+  translator(lang).lines(key, ...args);
 
 /** Keys whose value is a plain string with no placeholder. */
 export type PlainKey = {
