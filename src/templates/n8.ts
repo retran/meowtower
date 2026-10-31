@@ -1,10 +1,56 @@
 // Node N8, arithmetic with negative numbers (stretch) (RES-4281). The Dutch goals keep negative
 // numbers to reading, placing and comparing, so these templates are an extension from the Russian
 // programme (grade 6) and stay at stretch. Texts are plain blanks in `content/tasks-n.ru.json`.
+import { Q } from "../math/q.js";
 import { between, qi, signed } from "./draw.js";
+import { formatQ } from "../math/format.js";
 import { defineSpec, type Spec } from "./spec.js";
 
 const s = String;
+
+const keyOf = (a: unknown): string =>
+  a instanceof Q
+    ? a.toString()
+    : Array.isArray(a)
+      ? a.map(String).join("|")
+      : String(a);
+
+/**
+ * Builds a spec whose later traps give way to an earlier one with the same wrong answer, and whose
+ * texts can name each trap's wrong answer as `w_<trap_id_with_underscores>`.
+ */
+const define = <P>(sp: Spec<P>): Spec<never> => {
+  const traps = (sp.traps ?? []).map((t, i, all) => ({
+    ...t,
+    wrong: (p: P) => {
+      const w = t.wrong(p);
+      if (w === null) return null;
+      for (const e of all.slice(0, i)) {
+        const o = e.wrong(p);
+        if (o !== null && keyOf(o) === keyOf(w)) return null;
+      }
+      return w;
+    },
+  }));
+  return defineSpec<P>({
+    ...sp,
+    traps,
+    vars: (p) => ({
+      ...sp.vars(p),
+      ...Object.fromEntries(
+        traps.flatMap((t) => {
+          const w = t.wrong(p);
+          const key = `w_${t.id.replace(/-/g, "_")}`;
+          return w instanceof Q
+            ? [[key, formatQ(w)]]
+            : typeof w === "string"
+              ? [[key, w]]
+              : [];
+        }),
+      ),
+    }),
+  });
+};
 const EXTENSION = {
   extension: "negative-number arithmetic, Russian grade 6 (RES-4281)",
 };
@@ -21,7 +67,7 @@ const op = <P>(o: {
   vars: Spec<P>["vars"];
   constants?: readonly number[];
 }) =>
-  defineSpec<P>({
+  define<P>({
     id: o.id,
     node: "N8",
     subtype: o.subtype,
@@ -58,6 +104,8 @@ const operate = [
         kind: "conceptual",
         wrong: (p) => qi(-(p.a + p.b)),
       },
+      { id: "sign-of-first", kind: "conceptual", wrong: (p) => qi(p.a - p.b) },
+      { id: "sign-lost", kind: "conceptual", wrong: (p) => qi(p.a + p.b) },
     ],
     vars: (p) => ({ ...ab(p), r: s(p.b - p.a), w: signed(-(p.a + p.b)) }),
   }),
@@ -73,6 +121,11 @@ const operate = [
         id: "positive-result",
         kind: "conceptual",
         wrong: (p) => qi(p.a + p.b),
+      },
+      {
+        id: "minus-became-plus",
+        kind: "conceptual",
+        wrong: (p) => qi(p.b - p.a),
       },
     ],
     vars: (p) => ({ ...ab(p), r: signed(-(p.a + p.b)), w: s(p.a + p.b) }),
@@ -91,6 +144,12 @@ const operate = [
         kind: "conceptual",
         wrong: (p) => qi(p.b - p.a),
       },
+      { id: "added", kind: "procedural", wrong: (p) => qi(p.a + p.b) },
+      {
+        id: "negative-sum",
+        kind: "procedural",
+        wrong: (p) => qi(-(p.a + p.b)),
+      },
     ],
     vars: (p) => ({ ...ab(p), r: signed(p.a - p.b), w: s(p.b - p.a) }),
   }),
@@ -106,6 +165,11 @@ const operate = [
         id: "positive-result",
         kind: "conceptual",
         wrong: (p) => qi(p.a * p.b),
+      },
+      {
+        id: "added-instead",
+        kind: "procedural",
+        wrong: (p) => qi(-(p.a + p.b)),
       },
     ],
     vars: (p) => ({ ...ab(p), r: signed(-p.a * p.b), w: s(p.a * p.b) }),
@@ -123,6 +187,7 @@ const operate = [
         kind: "conceptual",
         wrong: (p) => qi(-p.a * p.b),
       },
+      { id: "added-instead", kind: "procedural", wrong: (p) => qi(p.a + p.b) },
     ],
     vars: (p) => ({ ...ab(p), r: s(p.a * p.b), w: signed(-p.a * p.b) }),
   }),
@@ -152,6 +217,12 @@ const operate = [
         kind: "procedural",
         wrong: (p) => qi(p.a - p.b),
       },
+      {
+        id: "negative-sum",
+        kind: "conceptual",
+        wrong: (p) => qi(-(p.a + p.b)),
+      },
+      { id: "swapped", kind: "procedural", wrong: (p) => qi(p.b - p.a) },
     ],
     vars: (p) => ({ ...ab(p), r: s(p.a + p.b), w: signed(p.a - p.b) }),
   }),
@@ -168,6 +239,12 @@ const operate = [
         id: "both-subtracted",
         kind: "procedural",
         wrong: (p) => qi(-(p.a + p.b)),
+      },
+      { id: "swapped-sign", kind: "conceptual", wrong: (p) => qi(p.a - p.b) },
+      {
+        id: "added-magnitudes",
+        kind: "conceptual",
+        wrong: (p) => qi(p.a + p.b),
       },
     ],
     vars: (p) => ({ ...ab(p), r: signed(p.b - p.a), w: signed(-(p.a + p.b)) }),
@@ -189,6 +266,16 @@ const operate = [
         id: "last-sign-lost",
         kind: "procedural",
         wrong: (p) => qi(p.st + p.x - p.y + p.z),
+      },
+      {
+        id: "all-plus",
+        kind: "conceptual",
+        wrong: (p) => qi(p.st + p.x + p.y + p.z),
+      },
+      {
+        id: "second-sign-lost",
+        kind: "procedural",
+        wrong: (p) => qi(p.st + p.x + p.y - p.z),
       },
     ],
     vars: (p) => ({
@@ -218,6 +305,16 @@ const operate = [
         kind: "procedural",
         wrong: (p) => qi((-p.a + p.b) * p.c),
       },
+      {
+        id: "minus-lost",
+        kind: "conceptual",
+        wrong: (p) => qi(p.a + p.b * p.c),
+      },
+      {
+        id: "all-negative",
+        kind: "conceptual",
+        wrong: (p) => qi(-p.a - p.b * p.c),
+      },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -241,6 +338,11 @@ const operate = [
         kind: "conceptual",
         wrong: (p) => qi(-(p.a + p.b)),
       },
+      {
+        id: "abs-difference",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.abs(p.a - p.b)),
+      },
     ],
     vars: (p) => ({ ...ab(p), r: s(p.a + p.b), w: signed(-(p.a + p.b)) }),
   }),
@@ -260,6 +362,12 @@ const scale = [
         id: "magnitudes-added",
         kind: "conceptual",
         wrong: (p) => qi((p.a + p.b) / 2),
+      },
+      { id: "not-halved", kind: "procedural", wrong: (p) => qi(p.b - p.a) },
+      {
+        id: "all-negative",
+        kind: "conceptual",
+        wrong: (p) => qi(-(p.a + p.b) / 2),
       },
     ],
     vars: (p) => ({
@@ -285,6 +393,21 @@ const scale = [
     reference: (p) => qi((p.x + p.y + (3 * p.m - p.x - p.y)) / 3),
     traps: [
       { id: "not-divided", kind: "procedural", wrong: (p) => qi(3 * p.m) },
+      {
+        id: "middle-value",
+        kind: "conceptual",
+        wrong: (p) =>
+          qi([p.x, p.y, 3 * p.m - p.x - p.y].sort((a, b) => a - b)[1] ?? 0),
+      },
+      {
+        id: "signs-ignored",
+        kind: "conceptual",
+        wrong: (p) => {
+          const sum =
+            Math.abs(p.x) + Math.abs(p.y) + Math.abs(3 * p.m - p.x - p.y);
+          return sum % 3 === 0 ? qi(sum / 3) : null;
+        },
+      },
     ],
     vars: (p) => ({
       x: signed(p.x),
@@ -304,6 +427,12 @@ const scale = [
     reference: (p) => qi(-(p.d - p.u)),
     traps: [
       { id: "went-deeper", kind: "conceptual", wrong: (p) => qi(-(p.d + p.u)) },
+      {
+        id: "positive-difference",
+        kind: "conceptual",
+        wrong: (p) => qi(p.d - p.u),
+      },
+      { id: "added", kind: "procedural", wrong: (p) => qi(p.d + p.u) },
     ],
     vars: (p) => ({
       d: s(p.d),
@@ -325,6 +454,12 @@ const scale = [
         kind: "conceptual",
         wrong: (p) => qi(p.b - p.a),
       },
+      {
+        id: "counted-floors",
+        kind: "conceptual",
+        wrong: (p) => qi(p.a + p.b + 1),
+      },
+      { id: "above-ground-only", kind: "conceptual", wrong: (p) => qi(p.b) },
     ],
     vars: (p) => ({ ...ab(p), r: s(p.a + p.b), w: s(p.b - p.a) }),
   }),
@@ -345,6 +480,12 @@ const scale = [
         id: "purchase-added",
         kind: "procedural",
         wrong: (p) => qi(-p.a + p.b + p.c),
+      },
+      { id: "debt-forgotten", kind: "conceptual", wrong: (p) => qi(p.b - p.c) },
+      {
+        id: "debt-as-money",
+        kind: "conceptual",
+        wrong: (p) => qi(p.a + p.b - p.c),
       },
     ],
     vars: (p) => ({
@@ -370,6 +511,12 @@ const scale = [
       qi(Array.from({ length: p.h }, () => -p.d).reduce((a, b) => a + b, p.t)),
     traps: [
       { id: "one-hour", kind: "procedural", wrong: (p) => qi(p.t - p.d) },
+      { id: "start-ignored", kind: "conceptual", wrong: (p) => qi(-p.d * p.h) },
+      {
+        id: "fall-added",
+        kind: "procedural",
+        wrong: (p) => qi(p.t + p.d * p.h),
+      },
     ],
     vars: (p) => ({
       t: signed(p.t),
@@ -389,6 +536,8 @@ const scale = [
     reference: (p) => qi(p.a + -p.b),
     traps: [
       { id: "tare-added", kind: "procedural", wrong: (p) => qi(p.a + p.b) },
+      { id: "swapped", kind: "procedural", wrong: (p) => qi(p.b - p.a) },
+      { id: "gross-weight", kind: "conceptual", wrong: (p) => qi(p.a) },
     ],
     vars: (p) => ({ ...ab(p), r: s(p.a - p.b), w: s(p.a + p.b) }),
   }),
@@ -405,6 +554,8 @@ const scale = [
         kind: "conceptual",
         wrong: (p) => qi(Math.abs(p.a - p.b)),
       },
+      { id: "mountain-only", kind: "conceptual", wrong: (p) => qi(p.a) },
+      { id: "trench-only", kind: "conceptual", wrong: (p) => qi(p.b) },
     ],
     vars: (p) => ({ ...ab(p), r: s(p.a + p.b), w: s(Math.abs(p.a - p.b)) }),
     constants: [0, 100],
@@ -418,6 +569,12 @@ const scale = [
     reference: (p) => qi((p.r * p.k) / p.r),
     traps: [
       { id: "multiplied", kind: "procedural", wrong: (p) => qi(p.r * p.k) },
+      {
+        id: "subtracted",
+        kind: "procedural",
+        wrong: (p) => qi(p.r * p.k - p.r),
+      },
+      { id: "added", kind: "procedural", wrong: (p) => qi(p.r * p.k + p.r) },
     ],
     vars: (p) => ({ a: s(p.r * p.k), u: s(p.r), r: s(p.k), w: s(p.r * p.k) }),
   }),
@@ -434,6 +591,12 @@ const scale = [
         id: "fall-subtracted-again",
         kind: "conceptual",
         wrong: (p) => qi(-p.r - p.d),
+      },
+      { id: "sign-flipped", kind: "conceptual", wrong: (p) => qi(p.r - p.d) },
+      {
+        id: "magnitudes-added",
+        kind: "conceptual",
+        wrong: (p) => qi(p.r + p.d),
       },
     ],
     vars: (p) => ({

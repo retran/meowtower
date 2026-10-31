@@ -12,6 +12,18 @@ const ones = (n: number): number => n % 10;
 const tens = (n: number): number => Math.floor(n / 10) % 10;
 const hundreds = (n: number): number => Math.floor(n / 100);
 const countDigits = (n: number): number => String(n).length;
+const nat = (x: number): number | null =>
+  Number.isInteger(x) && x >= 0 ? x : null;
+/** A wrong answer that is a whole number and differs from the other traps' answers. */
+const apart = (x: number, ...others: number[]): number | null =>
+  nat(x) !== null && !others.includes(x) ? x : null;
+const flip = (n: number): number => Number([...String(n)].reverse().join(""));
+/** Subtracting without borrowing: the smaller digit is taken from the larger one in the units. */
+const noBorrow = (big: number, small: number): number | null => {
+  const r =
+    big - ones(big) - (small - ones(small)) + Math.abs(ones(big) - ones(small));
+  return r === big - small ? null : nat(r);
+};
 
 const a7 = forSubtype("A7", "by-two-digit");
 const byTwo = [
@@ -25,6 +37,16 @@ const byTwo = [
     ref: ([a = 0, b = 0]) => a * 10 * tens(b) + a * ones(b),
     traps: [
       ["tens-part-only", "procedural", ([a = 0, b = 0]) => a * 10 * tens(b)],
+      [
+        "tens-not-shifted",
+        "procedural",
+        ([a = 0, b = 0]) => a * tens(b) + a * ones(b),
+      ],
+      [
+        "parts-only",
+        "procedural",
+        ([a = 0, b = 0]) => 100 * tens(a) * tens(b) + ones(a) * ones(b),
+      ],
     ],
   }),
   a7({
@@ -36,7 +58,19 @@ const byTwo = [
     solve: ([d = 0, n = 0]) => d * n,
     ref: ([d = 0, n = 0]) =>
       d * 100 * hundreds(n) + d * 10 * tens(n) + d * ones(n),
-    traps: [["hundreds-lost", "procedural", ([d = 0, n = 0]) => d * (n % 100)]],
+    traps: [
+      ["hundreds-lost", "procedural", ([d = 0, n = 0]) => d * (n % 100)],
+      [
+        "parts-not-shifted",
+        "procedural",
+        ([d = 0, n = 0]) => d * (hundreds(n) + tens(n) + ones(n)),
+      ],
+      [
+        "tens-lost",
+        "procedural",
+        ([d = 0, n = 0]) => d * (100 * hundreds(n) + ones(n)),
+      ],
+    ],
   }),
   a7({
     id: "A7.by-two-digit.03",
@@ -46,7 +80,10 @@ const byTwo = [
     valid: ([a = 0]) => ones(a) > 1,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => a * (b / 10) * 10,
-    traps: [["zero-dropped", "procedural", ([a = 0, b = 0]) => a * (b / 10)]],
+    traps: [
+      ["zero-dropped", "procedural", ([a = 0, b = 0]) => a * (b / 10)],
+      ["zero-twice", "procedural", ([a = 0, b = 0]) => a * b * 10],
+    ],
   }),
   a7({
     id: "A7.by-two-digit.04",
@@ -62,6 +99,12 @@ const byTwo = [
         "procedural",
         ([a = 0, b = 0]) => 100 * tens(a) * tens(b) + ones(a) * ones(b),
       ],
+      ["tens-part-only", "procedural", ([a = 0, b = 0]) => a * 10 * tens(b)],
+      [
+        "tens-not-shifted",
+        "procedural",
+        ([a = 0, b = 0]) => a * tens(b) + a * ones(b),
+      ],
     ],
   }),
   a7({
@@ -72,7 +115,19 @@ const byTwo = [
     valid: ([a = 0, b = 0]) => a !== b && ones(a) > 1 && ones(b) > 1,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => sum(a, b),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "tens-not-shifted",
+        "procedural",
+        ([a = 0, b = 0]) => a * tens(b) + a * ones(b),
+      ],
+      [
+        "parts-only",
+        "procedural",
+        ([a = 0, b = 0]) => 100 * tens(a) * tens(b) + ones(a) * ones(b),
+      ],
+    ],
   }),
   a7({
     id: "A7.by-two-digit.06",
@@ -82,7 +137,19 @@ const byTwo = [
     valid: ([a = 0, b = 0]) => a !== b && ones(a) > 1 && ones(b) > 1,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => b * a,
-    traps: [["perimeter", "conceptual", ([a = 0, b = 0]) => 2 * (a + b)]],
+    traps: [
+      ["perimeter", "conceptual", ([a = 0, b = 0]) => 2 * (a + b)],
+      [
+        "tens-not-shifted",
+        "procedural",
+        ([a = 0, b = 0]) => a * tens(b) + a * ones(b),
+      ],
+      [
+        "parts-only",
+        "procedural",
+        ([a = 0, b = 0]) => 100 * tens(a) * tens(b) + ones(a) * ones(b),
+      ],
+    ],
   }),
   a7({
     id: "A7.by-two-digit.07",
@@ -92,7 +159,11 @@ const byTwo = [
     draw: (r) => [between(r, 12, 60)],
     solve: ([a = 0]) => 99 * a,
     ref: ([a = 0]) => 100 * a - a,
-    traps: [["hundred-only", "conceptual", ([a = 0]) => 100 * a]],
+    traps: [
+      ["hundred-only", "conceptual", ([a = 0]) => 100 * a],
+      ["one-subtracted", "procedural", ([a = 0]) => 100 * a - 1],
+      ["hundred-plus", "procedural", ([a = 0]) => 101 * a],
+    ],
     consts: [100, 99],
   }),
   a7({
@@ -104,7 +175,11 @@ const byTwo = [
     valid: ([a = 0]) => ones(a) > 0,
     solve: ([a = 0]) => 11 * a,
     ref: ([a = 0]) => 10 * a + a,
-    traps: [["ten-only", "conceptual", ([a = 0]) => 10 * a]],
+    traps: [
+      ["ten-only", "conceptual", ([a = 0]) => 10 * a],
+      ["one-added", "procedural", ([a = 0]) => 10 * a + 1],
+      ["digits-repeated", "procedural", ([a = 0]) => Number(`${a}${a}`)],
+    ],
     consts: [11, 10],
   }),
   a7({
@@ -115,7 +190,11 @@ const byTwo = [
     draw: (r) => [between(r, 3, 24)],
     solve: ([q = 0]) => 100 * q,
     ref: ([q = 0]) => 25 * (4 * q),
-    traps: [["quarter-lost", "procedural", ([q = 0]) => 25 * q]],
+    traps: [
+      ["quarter-lost", "procedural", ([q = 0]) => 25 * q],
+      ["hundred-times-n", "procedural", ([q = 0]) => 400 * q],
+      ["only-divided", "procedural", ([q = 0]) => q],
+    ],
     extra: ([q = 0]) => ({ n: String(4 * q) }),
     consts: [25, 4, 100],
   }),
@@ -129,6 +208,8 @@ const byTwo = [
     ref: ([a = 0, b = 0]) => (a * b) / b,
     traps: [
       ["product-minus-factor", "procedural", ([a = 0, b = 0]) => a * b - b],
+      ["multiplied", "procedural", ([a = 0, b = 0]) => a * b * b],
+      ["added", "procedural", ([a = 0, b = 0]) => a * b + b],
     ],
     extra: ([a = 0, b = 0]) => ({ p: String(a * b) }),
   }),
@@ -141,7 +222,11 @@ const byTwo = [
     valid: ([a = 0, b = 0]) => ones(a) > 1 && a !== b,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => 2 * a * (b / 2),
-    traps: [["halved-only", "procedural", ([a = 0, b = 0]) => a * (b / 2)]],
+    traps: [
+      ["halved-only", "procedural", ([a = 0, b = 0]) => a * (b / 2)],
+      ["doubled-only", "procedural", ([a = 0, b = 0]) => 2 * a * b],
+      ["both-doubled", "procedural", ([a = 0, b = 0]) => 4 * a * b],
+    ],
     extra: ([a = 0, b = 0]) => ({ da: String(2 * a), hb: String(b / 2) }),
     consts: [2],
   }),
@@ -168,6 +253,16 @@ const remainder = [
         "remainder-from-divisor",
         "procedural",
         ([d = 0, q = 0, rem = 0]) => [q, d - rem],
+      ],
+      [
+        "remainder-too-big",
+        "procedural",
+        ([d = 0, q = 0, rem = 0]) => [q - 1, rem + d],
+      ],
+      [
+        "rounded-up",
+        "procedural",
+        ([d = 0, q = 0, rem = 0]) => [q + 1, d - rem],
       ],
     ],
     extra: ([d = 0, q = 0, rem = 0]) => ({
@@ -196,6 +291,12 @@ const remainder = [
         "procedural",
         ([n = 0, d = 0]) => [Math.floor(n / d) + 1, d - (n % d)],
       ],
+      [
+        "remainder-too-big",
+        "procedural",
+        ([n = 0, d = 0]) => [Math.floor(n / d) - 1, (n % d) + d],
+      ],
+      ["swapped", "conceptual", ([n = 0, d = 0]) => [n % d, Math.floor(n / d)]],
     ],
   }),
   a8({
@@ -208,6 +309,16 @@ const remainder = [
     ref: ([n = 0, d = 0]) => [(n - (n % d)) / d, n - d * Math.floor(n / d)],
     traps: [
       ["swapped", "conceptual", ([n = 0, d = 0]) => [n % d, Math.floor(n / d)]],
+      [
+        "rounded-up",
+        "procedural",
+        ([n = 0, d = 0]) => [Math.floor(n / d) + 1, d - (n % d)],
+      ],
+      [
+        "remainder-too-big",
+        "procedural",
+        ([n = 0, d = 0]) => [Math.floor(n / d) - 1, (n % d) + d],
+      ],
     ],
   }),
   a8({
@@ -218,7 +329,19 @@ const remainder = [
     valid: ([n = 0, d = 0]) => n % d !== 0 && Math.floor(n / d) !== n % d,
     solve: ([n = 0, d = 0]) => n % d,
     ref: ([n = 0, d = 0]) => n - d * Math.floor(n / d),
-    traps: [["quotient", "conceptual", ([n = 0, d = 0]) => Math.floor(n / d)]],
+    traps: [
+      ["quotient", "conceptual", ([n = 0, d = 0]) => Math.floor(n / d)],
+      [
+        "to-next-multiple",
+        "conceptual",
+        ([n = 0, d = 0]) => apart(d - (n % d), Math.floor(n / d)),
+      ],
+      [
+        "remainder-too-big",
+        "procedural",
+        ([n = 0, d = 0]) => apart((n % d) + d, Math.floor(n / d)),
+      ],
+    ],
   }),
   a8({
     id: "A8.remainder.05",
@@ -228,7 +351,20 @@ const remainder = [
     valid: ([n = 0, d = 0]) => n % d !== 0 && Math.floor(n / d) !== n % d,
     solve: ([n = 0, d = 0]) => Math.floor(n / d),
     ref: ([n = 0, d = 0]) => (n - (n % d)) / d,
-    traps: [["remainder", "conceptual", ([n = 0, d = 0]) => n % d]],
+    traps: [
+      [
+        "remainder",
+        "conceptual",
+        ([n = 0, d = 0]) =>
+          apart(n % d, Math.floor(n / d) + 1, Math.floor(n / d) - 1),
+      ],
+      ["rounded-up", "procedural", ([n = 0, d = 0]) => Math.floor(n / d) + 1],
+      [
+        "one-too-small",
+        "procedural",
+        ([n = 0, d = 0]) => Math.floor(n / d) - 1,
+      ],
+    ],
   }),
   a8({
     id: "A8.remainder.06",
@@ -240,6 +376,11 @@ const remainder = [
     ref: ([n = 0, d = 0]) => Math.ceil(n / d),
     traps: [
       ["whole-only", "conceptual", ([n = 0, d = 0]) => Math.floor(n / d)],
+      [
+        "remainder",
+        "conceptual",
+        ([n = 0, d = 0]) => apart(n % d, Math.floor(n / d)),
+      ],
     ],
   }),
   a8({
@@ -264,7 +405,15 @@ const remainder = [
     valid: ([d = 0, q = 0, rem = 0]) => rem < d && d !== q,
     solve: ([d = 0, q = 0, rem = 0]) => d * q + rem,
     ref: ([d = 0, q = 0, rem = 0]) => sum(q, d) + rem,
-    traps: [["remainder-forgotten", "procedural", ([d = 0, q = 0]) => d * q]],
+    traps: [
+      ["remainder-forgotten", "procedural", ([d = 0, q = 0]) => d * q],
+      ["all-added", "procedural", ([d = 0, q = 0, rem = 0]) => d + q + rem],
+      [
+        "remainder-subtracted",
+        "procedural",
+        ([d = 0, q = 0, rem = 0]) => d * q - rem,
+      ],
+    ],
   }),
   a8({
     id: "A8.remainder.09",
@@ -274,7 +423,11 @@ const remainder = [
     valid: ([n = 0]) => ones(n) !== tens(n) && ones(n) > 0,
     solve: ([n = 0]) => n % 10,
     ref: ([n = 0]) => Number(String(n).slice(-1)),
-    traps: [["tens-digit", "conceptual", ([n = 0]) => tens(n)]],
+    traps: [
+      ["tens-digit", "conceptual", ([n = 0]) => tens(n)],
+      ["quotient", "conceptual", ([n = 0]) => Math.floor(n / 10)],
+      ["last-two-digits", "conceptual", ([n = 0]) => n % 100],
+    ],
     consts: [10],
   }),
   a8({
@@ -292,7 +445,19 @@ const remainder = [
       for (let i = 0; i < b; i += 1) day = day === 7 ? 1 : day + 1;
       return day;
     },
-    traps: [["start-forgotten", "procedural", ([, b = 0]) => b % 7]],
+    traps: [
+      ["start-forgotten", "procedural", ([, b = 0]) => b % 7],
+      [
+        "no-wrap",
+        "procedural",
+        ([a = 0, b = 0]) => (a + (b % 7) > 7 ? a + (b % 7) : null),
+      ],
+      [
+        "start-counted",
+        "procedural",
+        ([a = 0, b = 0]) => apart(((a - 1 + b - 1) % 7) + 1, b % 7),
+      ],
+    ],
     consts: [1, 7],
   }),
   a8({
@@ -318,6 +483,13 @@ const remainder = [
         ([n = 0, d = 0, rem = 0]) =>
           n - (n % d) + rem > n ? null : n - (n % d) + rem,
       ],
+      ["remainder-added", "procedural", ([n = 0, , rem = 0]) => n + rem],
+      [
+        "block-skipped",
+        "procedural",
+        ([n = 0, d = 0, rem = 0]) =>
+          n - (n % d) + rem > n ? n - (n % d) + rem + d : null,
+      ],
     ],
   }),
 ];
@@ -332,7 +504,11 @@ const longOne = [
     valid: ([d = 0, q = 0]) => d !== q && ones(q) > 0,
     solve: ([, q = 0]) => q,
     ref: ([d = 0, q = 0]) => (d * q) / d,
-    traps: [["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d]],
+    traps: [
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d],
+      ["digits-swapped", "procedural", ([, q = 0]) => flip(q)],
+      ["tens-too-small", "procedural", ([, q = 0]) => q - 10],
+    ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
   a9({
@@ -345,7 +521,11 @@ const longOne = [
     ref: ([d = 0, q = 0]) =>
       Array.from({ length: 140 }, (_, x) => x).find((x) => x * d === d * q) ??
       -1,
-    traps: [["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d]],
+    traps: [
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d],
+      ["digits-swapped", "procedural", ([, q = 0]) => flip(q)],
+      ["tens-too-big", "procedural", ([, q = 0]) => q + 10],
+    ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
   a9({
@@ -356,7 +536,11 @@ const longOne = [
     valid: ([d = 0, x = 0, y = 0]) => d * (100 * x + y) < 1000,
     solve: ([, x = 0, y = 0]) => 100 * x + y,
     ref: ([d = 0, x = 0, y = 0]) => (d * (100 * x + y)) / d,
-    traps: [["zero-dropped", "procedural", ([, x = 0, y = 0]) => 10 * x + y]],
+    traps: [
+      ["zero-dropped", "procedural", ([, x = 0, y = 0]) => 10 * x + y],
+      ["zero-misplaced", "procedural", ([, x = 0, y = 0]) => 100 * x + 10 * y],
+      ["digits-swapped", "procedural", ([, x = 0, y = 0]) => 100 * y + x],
+    ],
     extra: ([d = 0, x = 0, y = 0]) => ({ n: String(d * (100 * x + y)) }),
   }),
   a9({
@@ -382,6 +566,12 @@ const longOne = [
         "procedural",
         ([n = 0, d = 0]) => [Math.floor(n / d) + 1, d - (n % d)],
       ],
+      [
+        "remainder-too-big",
+        "procedural",
+        ([n = 0, d = 0]) => [Math.floor(n / d) - 1, (n % d) + d],
+      ],
+      ["swapped", "conceptual", ([n = 0, d = 0]) => [n % d, Math.floor(n / d)]],
     ],
   }),
   a9({
@@ -392,7 +582,11 @@ const longOne = [
     valid: ([d = 0, q = 0]) => d !== q && ones(q) > 0,
     solve: ([, q = 0]) => q,
     ref: ([d = 0, q = 0]) => sum(d, q) / d,
-    traps: [["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d]],
+    traps: [
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d],
+      ["digits-swapped", "procedural", ([, q = 0]) => flip(q)],
+      ["tens-too-small", "procedural", ([, q = 0]) => q - 10],
+    ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
   a9({
@@ -405,6 +599,17 @@ const longOne = [
     ref: ([n = 0, d = 0]) => (n - (n % d)) / d,
     traps: [
       ["rounded-up", "procedural", ([n = 0, d = 0]) => Math.floor(n / d) + 1],
+      [
+        "remainder",
+        "conceptual",
+        ([n = 0, d = 0]) =>
+          apart(n % d, Math.floor(n / d) + 1, Math.floor(n / d) - 1),
+      ],
+      [
+        "one-too-small",
+        "procedural",
+        ([n = 0, d = 0]) => Math.floor(n / d) - 1,
+      ],
     ],
   }),
   a9({
@@ -415,7 +620,15 @@ const longOne = [
     valid: ([q = 0, d = 0]) => ones(q) > 0 && q !== d,
     solve: ([q = 0, d = 0]) => q * d,
     ref: ([q = 0, d = 0]) => sum(d, q),
-    traps: [["added", "procedural", ([q = 0, d = 0]) => q + d]],
+    traps: [
+      ["added", "procedural", ([q = 0, d = 0]) => q + d],
+      ["units-forgotten", "procedural", ([q = 0, d = 0]) => d * 10 * tens(q)],
+      [
+        "tens-not-shifted",
+        "procedural",
+        ([q = 0, d = 0]) => apart(d * (tens(q) + ones(q)), d * 10 * tens(q)),
+      ],
+    ],
   }),
   a9({
     id: "A9.long-one-digit.08",
@@ -427,7 +640,10 @@ const longOne = [
     ref: ([d = 0, q = 0]) =>
       Array.from({ length: 10 }, (_, x) => x).find((x) => x * q === d * q) ??
       -1,
-    traps: [["quotient", "conceptual", ([, q = 0]) => q]],
+    traps: [
+      ["quotient", "conceptual", ([, q = 0]) => q],
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - q],
+    ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
   a9({
@@ -440,6 +656,12 @@ const longOne = [
     ref: ([, q = 0]) => Math.floor(Math.log10(q)) + 1,
     traps: [
       ["dividend-digits", "conceptual", ([d = 0, q = 0]) => countDigits(d * q)],
+      [
+        "one-fewer-digit",
+        "conceptual",
+        ([d = 0, q = 0]) => countDigits(d * q) - 1,
+      ],
+      ["quotient-itself", "conceptual", ([, q = 0]) => q],
     ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
@@ -453,7 +675,16 @@ const longOne = [
     ref: ([a = 0, b = 0, d = 0]) =>
       Array.from({ length: 200 }, (_, x) => x).find((x) => x * d === a + b) ??
       -1,
-    traps: [["not-divided", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["not-divided", "procedural", ([a = 0, b = 0]) => a + b],
+      ["subtracted", "procedural", ([a = 0, b = 0, d = 0]) => a + b - d],
+      [
+        "one-addend-only",
+        "procedural",
+        ([a = 0, b = 0, d = 0]) =>
+          a % d === 0 ? a / d + b : b % d === 0 ? b / d + a : null,
+      ],
+    ],
     extra: ([a = 0, b = 0]) => ({ s: String(a + b) }),
   }),
   a9({
@@ -463,7 +694,14 @@ const longOne = [
     draw: (r) => [4 * between(r, 12, 99)],
     solve: ([n = 0]) => n / 4,
     ref: ([n = 0]) => n / 2 / 2,
-    traps: [["halved-once", "procedural", ([n = 0]) => n / 2]],
+    traps: [
+      ["halved-once", "procedural", ([n = 0]) => n / 2],
+      [
+        "halved-three-times",
+        "procedural",
+        ([n = 0]) => (n % 8 === 0 ? n / 8 : null),
+      ],
+    ],
     consts: [2],
   }),
 ];
@@ -478,7 +716,11 @@ const longTwo = [
     valid: ([d = 0, q = 0]) => d * q >= 100 && d * q <= 999 && d !== q,
     solve: ([, q = 0]) => q,
     ref: ([d = 0, q = 0]) => (d * q) / d,
-    traps: [["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d]],
+    traps: [
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - d],
+      ["one-too-big", "procedural", ([, q = 0]) => q + 1],
+      ["one-too-small", "procedural", ([, q = 0]) => q - 1],
+    ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
   a10({
@@ -504,6 +746,12 @@ const longTwo = [
         "procedural",
         ([n = 0, d = 0]) => [Math.floor(n / d) + 1, d - (n % d)],
       ],
+      [
+        "remainder-too-big",
+        "procedural",
+        ([n = 0, d = 0]) => [Math.floor(n / d) - 1, (n % d) + d],
+      ],
+      ["swapped", "conceptual", ([n = 0, d = 0]) => [n % d, Math.floor(n / d)]],
     ],
   }),
   a10({
@@ -516,6 +764,17 @@ const longTwo = [
     ref: ([n = 0, d = 0]) => (n - (n % d)) / d,
     traps: [
       ["rounded-up", "procedural", ([n = 0, d = 0]) => Math.floor(n / d) + 1],
+      [
+        "one-too-small",
+        "procedural",
+        ([n = 0, d = 0]) => Math.floor(n / d) - 1,
+      ],
+      [
+        "remainder",
+        "conceptual",
+        ([n = 0, d = 0]) =>
+          apart(n % d, Math.floor(n / d) + 1, Math.floor(n / d) - 1),
+      ],
     ],
   }),
   a10({
@@ -526,7 +785,19 @@ const longTwo = [
     valid: ([n = 0, d = 0]) => n % d !== 0 && Math.floor(n / d) !== n % d,
     solve: ([n = 0, d = 0]) => n % d,
     ref: ([n = 0, d = 0]) => n - d * Math.floor(n / d),
-    traps: [["quotient", "conceptual", ([n = 0, d = 0]) => Math.floor(n / d)]],
+    traps: [
+      ["quotient", "conceptual", ([n = 0, d = 0]) => Math.floor(n / d)],
+      [
+        "remainder-too-big",
+        "procedural",
+        ([n = 0, d = 0]) => apart((n % d) + d, Math.floor(n / d)),
+      ],
+      [
+        "to-next-multiple",
+        "conceptual",
+        ([n = 0, d = 0]) => apart(d - (n % d), Math.floor(n / d)),
+      ],
+    ],
   }),
   a10({
     id: "A10.by-two-digit-div.05",
@@ -538,6 +809,11 @@ const longTwo = [
     ref: ([n = 0, d = 0]) => Math.ceil(n / d),
     traps: [
       ["whole-only", "conceptual", ([n = 0, d = 0]) => Math.floor(n / d)],
+      [
+        "remainder",
+        "conceptual",
+        ([n = 0, d = 0]) => apart(n % d, Math.floor(n / d)),
+      ],
     ],
   }),
   a10({
@@ -549,7 +825,15 @@ const longTwo = [
       rem < d && d * q + rem <= 999 && d !== q,
     solve: ([d = 0, q = 0, rem = 0]) => d * q + rem,
     ref: ([d = 0, q = 0, rem = 0]) => sum(q, d) + rem,
-    traps: [["remainder-forgotten", "procedural", ([d = 0, q = 0]) => d * q]],
+    traps: [
+      ["remainder-forgotten", "procedural", ([d = 0, q = 0]) => d * q],
+      ["all-added", "procedural", ([d = 0, q = 0, rem = 0]) => d + q + rem],
+      [
+        "remainder-subtracted",
+        "procedural",
+        ([d = 0, q = 0, rem = 0]) => d * q - rem,
+      ],
+    ],
   }),
   a10({
     id: "A10.by-two-digit-div.07",
@@ -569,6 +853,17 @@ const longTwo = [
     },
     traps: [
       ["rounded-up", "procedural", ([n = 0, d = 0]) => Math.floor(n / d) + 1],
+      [
+        "one-too-small",
+        "procedural",
+        ([n = 0, d = 0]) => Math.floor(n / d) - 1,
+      ],
+      [
+        "remainder",
+        "conceptual",
+        ([n = 0, d = 0]) =>
+          apart(n % d, Math.floor(n / d) + 1, Math.floor(n / d) - 1),
+      ],
     ],
   }),
   a10({
@@ -581,7 +876,11 @@ const longTwo = [
     ref: ([d = 0, q = 0]) =>
       Array.from({ length: 100 }, (_, x) => x).find((x) => x * q === d * q) ??
       -1,
-    traps: [["quotient", "conceptual", ([, q = 0]) => q]],
+    traps: [
+      ["quotient", "conceptual", ([, q = 0]) => q],
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - q],
+      ["digits-swapped", "procedural", ([d = 0, q = 0]) => apart(flip(d), q)],
+    ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
   a10({
@@ -594,6 +893,13 @@ const longTwo = [
     ref: ([d = 0, q = 0, k = 0]) => (d * q) / d + k,
     traps: [
       ["not-divided", "procedural", ([d = 0, q = 0, k = 0]) => d * q + k],
+      ["addend-forgotten", "procedural", ([, q = 0]) => q],
+      [
+        "whole-divided",
+        "procedural",
+        ([d = 0, q = 0, k = 0]) =>
+          (d * q + k) % d === 0 ? (d * q + k) / d : null,
+      ],
     ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
@@ -619,6 +925,12 @@ const longTwo = [
         "procedural",
         ([n = 0]) => [Math.floor(n / 60) + 1, 60 - (n % 60)],
       ],
+      [
+        "hundred-base",
+        "conceptual",
+        ([n = 0]) => [Math.floor(n / 100), n % 100],
+      ],
+      ["swapped", "conceptual", ([n = 0]) => [n % 60, Math.floor(n / 60)]],
     ],
     consts: [60],
   }),
@@ -630,7 +942,15 @@ const longTwo = [
     draw: (r) => [between(r, 4, 39)],
     solve: ([q = 0]) => q,
     ref: ([q = 0]) => (25 * q) / 25,
-    traps: [["quartered", "procedural", ([q = 0]) => 4 * q]],
+    traps: [
+      ["quartered", "procedural", ([q = 0]) => 4 * q],
+      ["times-four", "procedural", ([q = 0]) => 100 * q],
+      [
+        "divided-by-four",
+        "procedural",
+        ([q = 0]) => ((25 * q) % 4 === 0 ? (25 * q) / 4 : null),
+      ],
+    ],
     extra: ([q = 0]) => ({ n: String(25 * q) }),
     consts: [25],
   }),
@@ -648,6 +968,8 @@ const brackets = [
     ref: ([a = 0, b = 0, c = 0]) => sum(c, b) + a,
     traps: [
       ["left-to-right", "procedural", ([a = 0, b = 0, c = 0]) => (a + b) * c],
+      ["added-all", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
+      ["multiplied-all", "procedural", ([a = 0, b = 0, c = 0]) => a * b * c],
     ],
     extra: ([, b = 0, c = 0]) => ({ m: String(b * c) }),
   }),
@@ -661,6 +983,12 @@ const brackets = [
     ref: ([a = 0, b = 0, c = 0]) => a * c + b * c,
     traps: [
       ["brackets-ignored", "procedural", ([a = 0, b = 0, c = 0]) => a + b * c],
+      [
+        "one-term-multiplied",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => apart(a * c + b, a + b * c),
+      ],
+      ["sum-only", "procedural", ([a = 0, b = 0]) => a + b],
     ],
     extra: ([a = 0, b = 0]) => ({ s: String(a + b) }),
   }),
@@ -674,6 +1002,8 @@ const brackets = [
     ref: ([a = 0, b = 0, c = 0]) => a + c - b,
     traps: [
       ["addition-first", "procedural", ([a = 0, b = 0, c = 0]) => a - (b + c)],
+      ["added-all", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
+      ["last-number-forgotten", "procedural", ([a = 0, b = 0]) => a - b],
     ],
   }),
   a11({
@@ -688,7 +1018,19 @@ const brackets = [
     valid: ([b = 0, q = 0, c = 0]) => b !== q && b * q * c !== 0 && q !== c,
     solve: ([, q = 0, c = 0]) => q * c,
     ref: ([b = 0, q = 0, c = 0]) => ((b * q) / b) * c,
-    traps: [["multiplication-forgotten", "procedural", ([, q = 0]) => q]],
+    traps: [
+      ["multiplication-forgotten", "procedural", ([, q = 0]) => q],
+      [
+        "division-forgotten",
+        "procedural",
+        ([b = 0, q = 0, c = 0]) => b * q * c,
+      ],
+      [
+        "multiplication-first",
+        "procedural",
+        ([, q = 0, c = 0]) => (q % c === 0 ? q / c : null),
+      ],
+    ],
     extra: ([b = 0, q = 0]) => ({ n: String(b * q) }),
   }),
   a11({
@@ -704,6 +1046,13 @@ const brackets = [
         "division-forgotten",
         "procedural",
         ([a = 0, b = 0, q = 0]) => a + b * q,
+      ],
+      ["addend-forgotten", "procedural", ([, , q = 0]) => q],
+      [
+        "sum-divided",
+        "procedural",
+        ([a = 0, b = 0, q = 0]) =>
+          (a + b * q) % b === 0 ? (a + b * q) / b : null,
       ],
     ],
     extra: ([, b = 0, q = 0]) => ({ n: String(b * q) }),
@@ -726,6 +1075,16 @@ const brackets = [
         "first-bracket-only",
         "procedural",
         ([a = 0, b = 0, c = 0]) => (a + b) * c,
+      ],
+      [
+        "brackets-ignored",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => nat(a + b * c - d),
+      ],
+      [
+        "brackets-added",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => a + b + (c - d),
       ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
@@ -752,6 +1111,16 @@ const brackets = [
         "procedural",
         ([a = 0, b = 0, c = 0, d = 0]) => (a + b) * d - c,
       ],
+      [
+        "outer-bracket-ignored",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => a + (b - c) * d,
+      ],
+      [
+        "brackets-ignored",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => nat(a + b - c * d),
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0]) => ({
       i: String(b - c),
@@ -766,7 +1135,19 @@ const brackets = [
     valid: ([a = 0, b = 0, c = 0]) => a * (c - 1) !== 0 && a !== b,
     solve: ([a = 0, b = 0, c = 0]) => (a + b) * c - (a + b * c),
     ref: ([a = 0, , c = 0]) => a * (c - 1),
-    traps: [["brackets-ignored", "conceptual", () => 0]],
+    traps: [
+      ["brackets-ignored", "conceptual", ([]) => 0],
+      [
+        "first-value-only",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => (a + b) * c,
+      ],
+      [
+        "sum-of-values",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => (a + b) * c + a + b * c,
+      ],
+    ],
     extra: ([a = 0, b = 0, c = 0]) => ({
       x: String((a + b) * c),
       y: String(a + b * c),
@@ -793,6 +1174,16 @@ const brackets = [
         "procedural",
         ([a = 0, b = 0, c = 0, d = 0]) => (a * b - c) * d,
       ],
+      [
+        "added-products",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => a * b + c * d,
+      ],
+      [
+        "second-product-lost",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => a * b - c,
+      ],
     ],
   }),
   a11({
@@ -814,6 +1205,12 @@ const brackets = [
         "procedural",
         ([a = 0, b = 0, c = 0, d = 0]) => (a + c) * (b + d),
       ],
+      [
+        "all-added",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => a + b + c + d,
+      ],
+      ["first-purchase-only", "procedural", ([a = 0, b = 0]) => a * b],
     ],
   }),
   a11({
@@ -825,7 +1222,13 @@ const brackets = [
     solve: ([a = 0, b = 0, c = 0]) => a - (b - c),
     ref: ([a = 0, b = 0, c = 0]) => a - b + c,
     traps: [
-      ["brackets-ignored", "procedural", ([a = 0, b = 0, c = 0]) => a - b - c],
+      [
+        "brackets-ignored",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => nat(a - b - c),
+      ],
+      ["bracket-only", "procedural", ([, b = 0, c = 0]) => b - c],
+      ["bracket-added", "procedural", ([a = 0, b = 0, c = 0]) => a + b - c],
     ],
     extra: ([, b = 0, c = 0]) => ({ i: String(b - c) }),
   }),
@@ -842,7 +1245,10 @@ const unknown = [
     solve: ([a = 0, b = 0]) => b - a,
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: 200 }, (_, x) => x).find((x) => a + x === b) ?? -1,
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["smaller-from-larger", "procedural", ([a = 0, b = 0]) => noBorrow(b, a)],
+    ],
   }),
   au({
     id: "A11.unknown.02",
@@ -852,7 +1258,10 @@ const unknown = [
     solve: ([a = 0, b = 0]) => a - b,
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: 200 }, (_, x) => x).find((x) => a - x === b) ?? -1,
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["smaller-from-larger", "procedural", ([a = 0, b = 0]) => noBorrow(a, b)],
+    ],
   }),
   au({
     id: "A11.unknown.03",
@@ -864,6 +1273,8 @@ const unknown = [
     ref: ([a = 0, x = 0]) => (a * x) / a,
     traps: [
       ["product-minus-factor", "procedural", ([a = 0, x = 0]) => a * x - a],
+      ["multiplied", "procedural", ([a = 0, x = 0]) => a * a * x],
+      ["added", "procedural", ([a = 0, x = 0]) => a + a * x],
     ],
     extra: ([a = 0, x = 0]) => ({ c: String(a * x) }),
   }),
@@ -875,7 +1286,15 @@ const unknown = [
     valid: ([a = 0, q = 0]) => a !== q,
     solve: ([a = 0, q = 0]) => a * q,
     ref: ([a = 0, q = 0]) => sum(q, a),
-    traps: [["added", "procedural", ([a = 0, q = 0]) => a + q]],
+    traps: [
+      ["added", "procedural", ([a = 0, q = 0]) => a + q],
+      [
+        "divided",
+        "procedural",
+        ([a = 0, q = 0]) => (q % a === 0 ? q / a : null),
+      ],
+      ["subtracted", "procedural", ([a = 0, q = 0]) => nat(q - a)],
+    ],
   }),
   au({
     id: "A11.unknown.05",
@@ -888,7 +1307,10 @@ const unknown = [
       Array.from({ length: 12 }, (_, x) => x).find(
         (x) => x > 0 && (d * q) / x === q,
       ) ?? -1,
-    traps: [["quotient", "conceptual", ([, q = 0]) => q]],
+    traps: [
+      ["quotient", "conceptual", ([, q = 0]) => q],
+      ["subtracted", "procedural", ([d = 0, q = 0]) => d * q - q],
+    ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
   au({
@@ -899,7 +1321,17 @@ const unknown = [
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => a + b,
     ref: ([a = 0, b = 0]) => b + a,
-    traps: [["subtracted", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)]],
+    traps: [
+      ["subtracted", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)],
+      [
+        "carry-forgotten",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          ones(a) + ones(b) >= 10
+            ? (tens(a) + tens(b)) * 10 + ones(a) + ones(b) - 10
+            : null,
+      ],
+    ],
   }),
   au({
     id: "A11.unknown.07",
@@ -909,7 +1341,10 @@ const unknown = [
     solve: ([a = 0, b = 0]) => b - a,
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: 150 }, (_, x) => x).find((x) => x + a === b) ?? -1,
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["smaller-from-larger", "procedural", ([a = 0, b = 0]) => noBorrow(b, a)],
+    ],
   }),
   au({
     id: "A11.unknown.08",
@@ -918,7 +1353,15 @@ const unknown = [
     draw: (r) => [between(r, 3, 29), between(r, 5, 25)],
     solve: ([, x = 0]) => x,
     ref: ([a = 0, x = 0]) => (2 * x + a - a) / 2,
-    traps: [["halved-forgotten", "procedural", ([, x = 0]) => 2 * x]],
+    traps: [
+      ["halved-forgotten", "procedural", ([, x = 0]) => 2 * x],
+      [
+        "total-halved",
+        "procedural",
+        ([a = 0, x = 0]) => ((2 * x + a) % 2 === 0 ? (2 * x + a) / 2 : null),
+      ],
+      ["added", "procedural", ([a = 0, x = 0]) => 2 * x + 2 * a],
+    ],
     extra: ([a = 0, x = 0]) => ({ c: String(2 * x + a) }),
     consts: [2],
   }),
@@ -932,7 +1375,11 @@ const unknown = [
     ref: ([a = 0, b = 0, c = 0]) =>
       Array.from({ length: 200 }, (_, x) => x).find((x) => x + a === b + c) ??
       -1,
-    traps: [["wrong-side", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c]],
+    traps: [
+      ["wrong-side", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
+      ["sum-only", "procedural", ([, b = 0, c = 0]) => b + c],
+      ["one-addend-lost", "procedural", ([a = 0, b = 0]) => nat(b - a)],
+    ],
   }),
   au({
     id: "A11.unknown.10",
@@ -944,7 +1391,11 @@ const unknown = [
     ref: ([a = 0, b = 0, c = 0]) =>
       Array.from({ length: 60 }, (_, x) => x).find((x) => a * x === b + c) ??
       -1,
-    traps: [["not-divided", "procedural", ([, b = 0, c = 0]) => b + c]],
+    traps: [
+      ["not-divided", "procedural", ([, b = 0, c = 0]) => b + c],
+      ["subtracted", "procedural", ([a = 0, b = 0, c = 0]) => nat(b + c - a)],
+      ["multiplied", "procedural", ([a = 0, b = 0, c = 0]) => (b + c) * a],
+    ],
   }),
   au({
     id: "A11.unknown.11",
@@ -956,7 +1407,11 @@ const unknown = [
     ref: ([a = 0, b = 0, c = 0]) =>
       Array.from({ length: 200 }, (_, x) => x).find((x) => x - a === b - c) ??
       -1,
-    traps: [["wrong-sign", "procedural", ([a = 0, b = 0, c = 0]) => b - c - a]],
+    traps: [
+      ["wrong-sign", "procedural", ([a = 0, b = 0, c = 0]) => nat(b - c - a)],
+      ["difference-only", "procedural", ([, b = 0, c = 0]) => b - c],
+      ["c-sign-flipped", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
+    ],
   }),
 ];
 

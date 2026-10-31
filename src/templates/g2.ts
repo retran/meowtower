@@ -17,7 +17,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(3, 4, 5, 6, 8)],
     f: (a) => q(a),
-    t: { "one-axis": () => q(1), doubled: (a) => q(2 * a) },
+    t: {
+      "one-axis": () => q(1),
+      doubled: (a) => q(2 * a),
+      "half-of-sides": (a) => (a % 2 === 0 ? q(a / 2) : null),
+    },
     c: [1, 2],
   }),
   G3_symmetry({
@@ -27,7 +31,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 8), rg(9, 15)],
     f: (a, b) => q(2 * b - a),
-    t: { "distance-only": (a, b) => q(b - a), "mirror-itself": (a, b) => q(b) },
+    t: {
+      "distance-only": (a, b) => q(b - a),
+      "mirror-itself": (a, b) => q(b),
+      "wrong-side": (a, b) => (2 * a - b === b - a ? null : q(2 * a - b)),
+    },
     c: [2],
   }),
   G3_symmetry({
@@ -41,6 +49,9 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     t: {
       "same-point": (a, b) => [q(a), q(b)] as const,
       swapped: (a, b, c) => [q(b), q(2 * c - a)] as const,
+      "on-the-axis": (a, b, c) => [q(c), q(b)] as const,
+      "horizontal-mirror": (a, b, c) =>
+        a === b ? null : ([q(a), q(2 * c - b)] as const),
     },
     c: [2],
   }),
@@ -54,6 +65,7 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     t: {
       centre: (a, b, c, d) => [q(c), q(d)] as const,
       "line-mirror": (a, b, c) => [q(2 * c - a), q(b)] as const,
+      "horizontal-mirror": (a, b, c, d) => [q(a), q(2 * d - b)] as const,
     },
     c: [2],
     origin: {
@@ -70,6 +82,7 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     f: () => ["1", "3"],
     t: {
       "only-the-first": () => ["1"],
+      "only-the-third": () => ["3"],
       "with-the-fourth": () => ["1", "3", "4"],
     },
     options: () => ["1", "2", "3", "4"],
@@ -84,6 +97,7 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     f: () => ["1", "3"],
     t: {
       "only-the-first": () => ["1"],
+      "only-the-third": () => ["3"],
       "with-the-second": () => ["1", "2", "3"],
     },
     options: () => ["1", "2", "3", "4"],
@@ -129,7 +143,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 5)],
     f: (a) => q(2 ** a),
-    t: { "one-hole": () => q(1), "per-fold": (a) => q(a) },
+    t: {
+      "one-hole": () => q(1),
+      "per-fold": (a) => (a === 2 ? null : q(a)),
+      "one-fold-less": (a) => (a <= 2 ? null : q(2 ** (a - 1))),
+    },
     c: [2],
   }),
   G3_symmetry({
@@ -171,6 +189,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "far-coordinate": (a, b) => q(b),
       "coordinates-added": (a, b) => q(a + b),
+      "counted-points": (a, b) => q(b - a + 1),
     },
   }),
   G4_coordinates({
@@ -183,6 +202,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "far-coordinate": (a, b, c) => q(c),
       "coordinates-added": (a, b, c) => q(b + c),
+      "counted-points": (a, b, c) => q(c - b + 1),
     },
   }),
   G4_coordinates({
@@ -195,6 +215,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "first-vertex": (a, b) => [q(a), q(b)] as const,
       "third-vertex": (a, b, c, d) => [q(c), q(d)] as const,
+      swapped: (a, b, c, d) => [q(d), q(a)] as const,
     },
   }),
   G4_coordinates({
@@ -208,6 +229,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "swapped-shifts": (a, b, c, d) => [q(a + d), q(b + c)] as const,
       "shifts-only": (a, b, c, d) => [q(c), q(d)] as const,
+      swapped: (a, b, c, d) => [q(b + d), q(a + c)] as const,
     },
   }),
   G4_coordinates({
@@ -221,6 +243,8 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "left-end": (a, b, c) => [q(a), q(c)] as const,
       "half-the-sum": (a, b) => [q((a + b) / 2), q((a + b) / 2)] as const,
+      swapped: (a, b, c) => [q(c), q((a + b) / 2)] as const,
+      "not-halved": (a, b, c) => [q(a + b), q(c)] as const,
     },
     c: [2],
   }),
@@ -235,6 +259,10 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       perimeter: (a, b, c, d) => q(2 * (c - a + (d - b))),
       "sides-added": (a, b, c, d) => q(c - a + (d - b)),
+      "far-vertex-product": (a, b, c, d) =>
+        c * d === 2 * (c - a + (d - b)) || c * d === c - a + (d - b)
+          ? null
+          : q(c * d),
     },
     c: [2],
   }),
@@ -249,6 +277,11 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "longer-side": (a, b, c, d) => q(Math.max(c - a, d - b)),
       "end-coordinates": (a, b, c, d) => q(c + d),
+      area: (a, b, c, d) =>
+        (c - a) * (d - b) === c + d ||
+        (c - a) * (d - b) === Math.max(c - a, d - b)
+          ? null
+          : q((c - a) * (d - b)),
     },
   }),
   G4_coordinates({
@@ -258,7 +291,11 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 6)],
     f: (a) => q((a + 1) * (a + 1)),
-    t: { "without-zero": (a) => q(a * a), "one-axis": (a) => q(a + 1) },
+    t: {
+      "without-zero": (a) => q(a * a),
+      "one-axis": (a) => q(a + 1),
+      "counts-added": (a) => q(2 * a + 2),
+    },
     x: () => ({ x: "x", y: "y" }),
     c: [0, 1],
   }),
@@ -286,6 +323,8 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "all-added": (a, b, c, d) => [q(a + c), q(b + d)] as const,
       "first-part": (a, b) => [q(a), q(b)] as const,
+      swapped: (a, b, c, d) =>
+        a - c === b - d ? null : ([q(b - d), q(a - c)] as const),
     },
     c: [0],
   }),

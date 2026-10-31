@@ -3,6 +3,7 @@
 // numbers under 100,000 and decimals from group 6. An order task lists the items; the player's entry
 // is the list of their positions, so the answer is a sequence of positions. Texts are plain blanks in
 // `content/tasks-n.ru.json`.
+import { Q } from "../math/q.js";
 import {
   between,
   digits,
@@ -13,9 +14,54 @@ import {
   signOf,
   tenthsText,
 } from "./draw.js";
+import { formatQ } from "../math/format.js";
 import { defineSpec, type Spec } from "./spec.js";
 
 const s = String;
+
+const keyOf = (a: unknown): string =>
+  a instanceof Q
+    ? a.toString()
+    : Array.isArray(a)
+      ? a.map(String).join("|")
+      : String(a);
+
+/**
+ * Builds a spec whose later traps give way to an earlier one with the same wrong answer, and whose
+ * texts can name each trap's wrong answer as `w_<trap_id_with_underscores>`.
+ */
+const define = <P>(sp: Spec<P>): Spec<never> => {
+  const traps = (sp.traps ?? []).map((t, i, all) => ({
+    ...t,
+    wrong: (p: P) => {
+      const w = t.wrong(p);
+      if (w === null) return null;
+      for (const e of all.slice(0, i)) {
+        const o = e.wrong(p);
+        if (o !== null && keyOf(o) === keyOf(w)) return null;
+      }
+      return w;
+    },
+  }));
+  return defineSpec<P>({
+    ...sp,
+    traps,
+    vars: (p) => ({
+      ...sp.vars(p),
+      ...Object.fromEntries(
+        traps.flatMap((t) => {
+          const w = t.wrong(p);
+          const key = `w_${t.id.replace(/-/g, "_")}`;
+          return w instanceof Q
+            ? [[key, formatQ(w)]]
+            : typeof w === "string"
+              ? [[key, w]]
+              : [];
+        }),
+      ),
+    }),
+  });
+};
 const flip = (sign: "<" | "=" | ">"): "<" | "=" | ">" =>
   sign === "<" ? ">" : sign === ">" ? "<" : "=";
 
@@ -38,7 +84,7 @@ const temp = <P>(o: {
   vars: Spec<P>["vars"];
   constants?: readonly number[];
 }) =>
-  defineSpec<P>({
+  define<P>({
     id: o.id,
     node: "N7",
     subtype: "thermometer",
@@ -77,6 +123,8 @@ const thermometer = [
         kind: "procedural",
         wrong: (p) => qi(-(p.a + p.d)),
       },
+      { id: "positive-sum", kind: "procedural", wrong: (p) => qi(p.a + p.d) },
+      { id: "sign-flipped", kind: "conceptual", wrong: (p) => qi(p.a - p.d) },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -97,6 +145,12 @@ const thermometer = [
         id: "positive-result",
         kind: "conceptual",
         wrong: (p) => qi(p.d - p.t),
+      },
+      { id: "start-ignored", kind: "conceptual", wrong: (p) => qi(-p.d) },
+      {
+        id: "negative-sum",
+        kind: "procedural",
+        wrong: (p) => qi(-(p.t + p.d)),
       },
     ],
     vars: (p) => ({
@@ -119,6 +173,8 @@ const thermometer = [
         kind: "conceptual",
         wrong: (p) => qi(Math.abs(p.b - p.a)),
       },
+      { id: "above-zero-only", kind: "conceptual", wrong: (p) => qi(p.b) },
+      { id: "below-zero-only", kind: "conceptual", wrong: (p) => qi(p.a) },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -171,6 +227,13 @@ const thermometer = [
         wrong: (p) =>
           qi([...p.v].sort((x, y) => Math.abs(y) - Math.abs(x))[0] ?? 0),
       },
+      {
+        id: "smallest-magnitude",
+        kind: "conceptual",
+        wrong: (p) =>
+          qi([...p.v].sort((x, y) => Math.abs(x) - Math.abs(y))[0] ?? 0),
+      },
+      { id: "warmest", kind: "conceptual", wrong: (p) => qi(Math.max(...p.v)) },
     ],
     vars: (p) => ({
       list: p.v.map(signed).join("; "),
@@ -195,6 +258,12 @@ const thermometer = [
         kind: "procedural",
         wrong: (p) => qi(p.s - p.f - p.u),
       },
+      {
+        id: "swapped-moves",
+        kind: "procedural",
+        wrong: (p) => qi(p.s + p.f - p.u),
+      },
+      { id: "ignored-start", kind: "conceptual", wrong: (p) => qi(p.u - p.f) },
     ],
     vars: (p) => ({
       s: s(p.s),
@@ -218,6 +287,7 @@ const thermometer = [
         kind: "procedural",
         wrong: (p) => qi(p.a + p.b),
       },
+      { id: "sign-flipped", kind: "conceptual", wrong: (p) => qi(p.b - p.a) },
     ],
     vars: (p) => ({ a: s(p.a), b: s(p.b), r: s(p.a - p.b), w: s(p.a + p.b) }),
   }),
@@ -255,6 +325,16 @@ const thermometer = [
         kind: "conceptual",
         wrong: (p) => qi(Math.max(p.a, p.b, p.c) + Math.min(p.a, p.b, p.c)),
       },
+      {
+        id: "from-zero",
+        kind: "conceptual",
+        wrong: (p) => qi(-Math.min(p.a, p.b, p.c)),
+      },
+      {
+        id: "above-zero-only",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.max(p.a, p.b, p.c)),
+      },
     ],
     vars: (p) => ({
       a: signed(p.a),
@@ -280,6 +360,16 @@ const thermometer = [
       qi(Array.from({ length: p.h }, () => -p.d).reduce((a, b) => a + b, p.t)),
     traps: [
       { id: "one-hour", kind: "procedural", wrong: (p) => qi(p.t - p.d) },
+      {
+        id: "start-ignored",
+        kind: "conceptual",
+        wrong: (p) => qi(-p.d * p.h),
+      },
+      {
+        id: "fall-added",
+        kind: "procedural",
+        wrong: (p) => qi(p.t + p.d * p.h),
+      },
     ],
     vars: (p) => ({
       t: s(p.t),
@@ -306,6 +396,7 @@ const ordering = (o: {
   label: (v: number, i: number, all: readonly number[]) => string;
   dir: "asc" | "desc";
   trap: { id: string; order: (v: readonly number[]) => number[] };
+  more?: { id: string; order: (v: readonly number[]) => number[] }[];
   constants?: readonly number[];
 }) => {
   const sortIdx = (v: readonly number[], key: (i: number) => number) =>
@@ -314,7 +405,7 @@ const ordering = (o: {
     sortIdx(v, (i) => (o.dir === "asc" ? 1 : -1) * (v[i] ?? 0)).map((i) =>
       s(i + 1),
     );
-  return defineSpec<V>({
+  return define<V>({
     id: o.id,
     node: "N7",
     subtype: "order",
@@ -341,13 +432,11 @@ const ordering = (o: {
       });
       return out.map((i) => s(i + 1));
     },
-    traps: [
-      {
-        id: o.trap.id,
-        kind: "conceptual",
-        wrong: (p) => o.trap.order(p.v).map((i) => s(i + 1)),
-      },
-    ],
+    traps: [o.trap, ...(o.more ?? [])].map((tr) => ({
+      id: tr.id,
+      kind: "conceptual" as const,
+      wrong: (p: V) => tr.order(p.v).map((i) => s(i + 1)),
+    })),
     vars: (p) => {
       const labels = p.v.map((x, i) => o.label(x, i, p.v));
       const order = sortIdx(
@@ -362,6 +451,15 @@ const ordering = (o: {
         wrongList: wrong.map((i) => labels[i] ?? "").join(join),
         first: labels[order[0] ?? 0] ?? "",
         last: labels[order[order.length - 1] ?? 0] ?? "",
+        ...Object.fromEntries(
+          [o.trap, ...(o.more ?? [])].map((tr) => [
+            `w_${tr.id.replace(/-/g, "_")}`,
+            tr
+              .order(p.v)
+              .map((i) => labels[i] ?? "")
+              .join(join),
+          ]),
+        ),
       };
     },
     constants: o.constants ?? [],
@@ -389,6 +487,16 @@ const draw4 = (
   while (v.size < n) v.add(between(r, lo, hi));
   return [...v];
 };
+const reversed = {
+  id: "descending-instead",
+  order: (v: readonly number[]) => idx(v, (x) => -x),
+};
+/** The order of a child who thinks that, of two negative numbers, the one with the bigger digit is bigger. */
+const negativesBySize = (sign: 1 | -1) => ({
+  id: "negatives-by-size",
+  order: (v: readonly number[]) =>
+    idx(v, (x) => sign * (x < 0 ? -1_000_000 + Math.abs(x) : x)),
+});
 const decLabel = (h: number): string =>
   h % 10 === 0 ? tenthsText(h / 10) : hundredthsText(h);
 
@@ -401,6 +509,12 @@ const orderSpecs = [
     label: (x) => s(x),
     dir: "asc",
     trap: { id: "largest-first", order: (v) => idx(v, (x) => -x) },
+    more: [
+      {
+        id: "by-first-digit-as-text",
+        order: (v) => idx(v, (x) => String(x)),
+      },
+    ],
   }),
   ordering({
     id: "N7.order.02",
@@ -413,6 +527,7 @@ const orderSpecs = [
       id: "by-size-without-sign",
       order: (v) => idx(v, (x) => Math.abs(x)),
     },
+    more: [negativesBySize(1), reversed],
   }),
   ordering({
     id: "N7.order.03",
@@ -430,6 +545,7 @@ const orderSpecs = [
       id: "longer-is-bigger",
       order: (v) => idx(v, (h) => Number(decLabel(h).split(",")[1] ?? "0")),
     },
+    more: [reversed],
   }),
   ordering({
     id: "N7.order.04",
@@ -451,6 +567,7 @@ const orderSpecs = [
       id: "by-first-digit-as-text",
       order: (v) => idx(v, (x) => String(x)),
     },
+    more: [reversed],
   }),
   ordering({
     id: "N7.order.05",
@@ -460,6 +577,13 @@ const orderSpecs = [
     label: (x) => signed(x),
     dir: "desc",
     trap: { id: "smallest-first", order: (v) => idx(v, (x) => x) },
+    more: [
+      {
+        id: "by-size-without-sign",
+        order: (v) => idx(v, (x) => -Math.abs(x)),
+      },
+      negativesBySize(-1),
+    ],
   }),
   ordering({
     id: "N7.order.06",
@@ -479,6 +603,7 @@ const orderSpecs = [
           Number((t % 10 === 0 ? s(t / 10) : tenthsText(t)).replace(",", "")),
         ),
     },
+    more: [reversed],
   }),
   ordering({
     id: "N7.order.07",
@@ -493,6 +618,7 @@ const orderSpecs = [
     label: (x) => s(x),
     dir: "asc",
     trap: { id: "by-last-digit", order: (v) => idx(v, (x) => x % 10) },
+    more: [reversed],
   }),
   ordering({
     id: "N7.order.08",
@@ -505,6 +631,7 @@ const orderSpecs = [
       id: "by-size-without-sign",
       order: (v) => idx(v, (x) => Math.abs(x)),
     },
+    more: [negativesBySize(1), reversed],
   }),
   ordering({
     id: "N7.order.09",
@@ -522,6 +649,14 @@ const orderSpecs = [
       order: (v) =>
         idx(v, (x, i) => Number(`${10 + ((x * 7 + i * 13) % (x - 19))}`)),
     },
+    more: [
+      {
+        id: "by-second-addend",
+        order: (v) =>
+          idx(v, (x, i) => x - (10 + ((x * 7 + i * 13) % (x - 19)))),
+      },
+      reversed,
+    ],
   }),
   ordering({
     id: "N7.order.10",
@@ -547,6 +682,7 @@ const orderSpecs = [
     label: (x) => s(x),
     dir: "asc",
     trap: { id: "by-last-digit", order: (v) => idx(v, (x) => x % 10) },
+    more: [reversed],
   }),
   ordering({
     id: "N7.order.11",
@@ -560,6 +696,12 @@ const orderSpecs = [
     label: (h) => hundredthsText(h),
     dir: "desc",
     trap: { id: "smallest-first", order: (v) => idx(v, (x) => x) },
+    more: [
+      {
+        id: "by-digits-after-comma",
+        order: (v) => idx(v, (h) => -(h % 100)),
+      },
+    ],
   }),
 ];
 

@@ -141,7 +141,11 @@ const G7_plan_1S_specs: readonly Spec<never>[] = [
     p: [rg(2, 9), rg(3, 12)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { sum: (a, b) => q(a + b) },
+    t: {
+      sum: (a, b) => q(a + b),
+      "map-distance": (a, b) => q(b),
+      divided: (a, b) => (b % a === 0 ? q(b / a) : null),
+    },
     c: [1],
   }),
   G7_plan_1S({

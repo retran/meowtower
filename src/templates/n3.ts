@@ -5,6 +5,7 @@
 import type { Xoshiro128 } from "../math/rng.js";
 import { between, digits, qi, signOf } from "./draw.js";
 import { SIGNS, type Spec } from "./spec.js";
+import { withWrongAnswers } from "./n1.js";
 import { numberWords } from "./words.js";
 
 const s = String;
@@ -25,6 +26,40 @@ interface Pair {
   x?: number;
   y?: number;
 }
+
+type Sign = (typeof SIGNS)[number];
+type Kind = "conceptual" | "procedural" | "fact";
+/** Traps that give a whole number: one that gives a number an earlier trap already gives returns null. */
+const numberTraps = <P>(
+  list: readonly (readonly [string, Kind, (p: P) => number | null])[],
+) =>
+  list.map(([id, kind, fn], i) => ({
+    id,
+    kind,
+    wrong: (p: P) => {
+      const w = fn(p);
+      return w === null || list.slice(0, i).some(([, , g]) => g(p) === w)
+        ? null
+        : qi(w);
+    },
+  }));
+/** Traps that give a sign, with the same rule for a sign an earlier trap already gives. */
+const signTraps = <P>(
+  list: readonly (readonly [string, Kind, (p: P) => Sign | null])[],
+) =>
+  list.map(([id, kind, fn], i) => ({
+    id,
+    kind,
+    wrong: (p: P) => {
+      const w = fn(p);
+      return w !== null && list.slice(0, i).some(([, , g]) => g(p) === w)
+        ? null
+        : w;
+    },
+  }));
+/** Both parts of a number of thousands written in full: 2312 as 2000312. */
+const partsInFull = (n: number): number =>
+  Number(`${Math.floor(n / 1000) * 1000}${n % 1000}`);
 
 const wordsVars = (p: N) => ({ w: numberWords(p.n), r: s(p.n) });
 
@@ -95,13 +130,15 @@ const wordsDigits = [
     valid: (p: N) => p.n % 10 !== 0 && Math.floor(p.n / 10) !== p.n % 10,
     solve: (p: N) => qi(p.n),
     reference: (p: N) => qi(10 * Math.floor(p.n / 10) + (p.n % 10)),
-    traps: [
-      {
-        id: "reversed",
-        kind: "conceptual",
-        wrong: (p: N) => qi(10 * (p.n % 10) + Math.floor(p.n / 10)),
-      },
-    ],
+    traps: numberTraps<N>([
+      ["reversed", "conceptual", (p) => 10 * (p.n % 10) + Math.floor(p.n / 10)],
+      [
+        "each-word-in-full",
+        "conceptual",
+        (p) => Number(`${10 * Math.floor(p.n / 10)}${p.n % 10}`),
+      ],
+      ["tens-word-only", "procedural", (p) => 10 * Math.floor(p.n / 10)],
+    ]),
     vars: (p: N) => ({
       ...wordsVars(p),
       rev: s(10 * (p.n % 10) + Math.floor(p.n / 10)),
@@ -120,13 +157,23 @@ const wordsDigits = [
     draw: (r): N => ({ n: 100 * between(r, 1, 9) + between(r, 1, 9) }),
     solve: (p: N) => qi(p.n),
     reference: (p: N) => qi(Number(`${Math.floor(p.n / 100)}0${p.n % 10}`)),
-    traps: [
-      {
-        id: "dropped-zero",
-        kind: "conceptual",
-        wrong: (p: N) => qi(10 * Math.floor(p.n / 100) + (p.n % 10)),
-      },
-    ],
+    traps: numberTraps<N>([
+      [
+        "dropped-zero",
+        "conceptual",
+        (p) => 10 * Math.floor(p.n / 100) + (p.n % 10),
+      ],
+      [
+        "two-zeros",
+        "conceptual",
+        (p) => Number(`${Math.floor(p.n / 100)}00${p.n % 10}`),
+      ],
+      [
+        "zero-at-end",
+        "conceptual",
+        (p) => Number(`${Math.floor(p.n / 100)}${p.n % 10}0`),
+      ],
+    ]),
     vars: (p: N) => ({
       ...wordsVars(p),
       short: s(10 * Math.floor(p.n / 100) + (p.n % 10)),
@@ -146,18 +193,29 @@ const wordsDigits = [
     solve: (p: N) => qi(p.n),
     reference: (p: N) =>
       qi([...s(p.n)].reduce((acc, c, i) => acc + Number(c) * 10 ** (2 - i), 0)),
-    traps: [
-      {
-        id: "each-word-in-full",
-        kind: "conceptual",
-        wrong: (p: N) =>
-          qi(
-            Number(
-              `${Math.floor(p.n / 100)}${(Math.floor(p.n / 10) % 10) * 10}${p.n % 10}`,
-            ),
+    traps: numberTraps<N>([
+      [
+        "each-word-in-full",
+        "conceptual",
+        (p) =>
+          Number(
+            `${Math.floor(p.n / 100)}${(Math.floor(p.n / 10) % 10) * 10}${p.n % 10}`,
           ),
-      },
-    ],
+      ],
+      [
+        "forgot-tens",
+        "procedural",
+        (p) => Number(`${Math.floor(p.n / 100)}0${p.n % 10}`),
+      ],
+      [
+        "tens-not-scaled",
+        "procedural",
+        (p) =>
+          100 * Math.floor(p.n / 100) +
+          (Math.floor(p.n / 10) % 10) +
+          (p.n % 10),
+      ],
+    ]),
     vars: (p: N) => ({
       ...wordsVars(p),
       long: s(
@@ -179,19 +237,16 @@ const wordsDigits = [
     solve: (p: N) => qi(p.n),
     reference: (p: N) =>
       qi(Number(`${Math.floor(p.n / 1000)}${s(p.n % 1000).padStart(3, "0")}`)),
-    traps: [
-      {
-        id: "joined-without-zeros",
-        kind: "conceptual",
-        wrong: (p: N) => {
-          const j = joined(p.n);
-          return j === null ? null : qi(j);
-        },
-      },
-    ],
+    traps: numberTraps<N>([
+      ["joined-without-zeros", "conceptual", (p) => joined(p.n)],
+      ["each-part-in-full", "conceptual", (p) => partsInFull(p.n)],
+      ["thousands-only", "procedural", (p) => 1000 * Math.floor(p.n / 1000)],
+    ]),
     vars: (p: N) => ({
       ...wordsVars(p),
       joined: s(joined(p.n) ?? 0),
+      k: s(Math.floor(p.n / 1000)),
+      rem: s(p.n % 1000),
     }),
     constants: [0, 1000],
   } satisfies Spec<N>,
@@ -205,19 +260,16 @@ const wordsDigits = [
     draw: (r): N => ({ n: thousands(r, 10, 999) }),
     solve: (p: N) => qi(p.n),
     reference: (p: N) => qi(Math.floor(p.n / 1000) * 1000 + (p.n % 1000)),
-    traps: [
-      {
-        id: "joined-without-zeros",
-        kind: "conceptual",
-        wrong: (p: N) => {
-          const j = joined(p.n);
-          return j === null ? null : qi(j);
-        },
-      },
-    ],
+    traps: numberTraps<N>([
+      ["joined-without-zeros", "conceptual", (p) => joined(p.n)],
+      ["each-part-in-full", "conceptual", (p) => partsInFull(p.n)],
+      ["thousands-only", "procedural", (p) => 1000 * Math.floor(p.n / 1000)],
+    ]),
     vars: (p: N) => ({
       ...wordsVars(p),
       joined: s(joined(p.n) ?? 0),
+      k: s(Math.floor(p.n / 1000)),
+      rem: s(p.n % 1000),
     }),
     constants: [0, 1000],
   } satisfies Spec<N>,
@@ -236,13 +288,20 @@ const wordsDigits = [
     valid: (p: N) => p.n % 1000 !== 0,
     solve: (p: N) => qi(s(p.n).length),
     reference: (p: N) => qi(Math.floor(Math.log10(p.n)) + 1),
-    traps: [
-      {
-        id: "count-words",
-        kind: "conceptual",
-        wrong: (p: N) => qi(numberWords(p.n).split(" ").length),
-      },
-    ],
+    traps: numberTraps<N>([
+      ["count-words", "conceptual", (p) => numberWords(p.n).split(" ").length],
+      ["zeros-forgotten", "conceptual", (p) => s(p.n).replace(/0/g, "").length],
+      [
+        "each-part-in-full",
+        "conceptual",
+        (p) =>
+          p.n >= 1000
+            ? s(partsInFull(p.n)).length
+            : p.n % 10 === 0
+              ? null
+              : s(Number(`${10 * Math.floor(p.n / 10)}${p.n % 10}`)).length,
+      ],
+    ]),
     vars: (p: N) => ({
       w: numberWords(p.n),
       r: s(s(p.n).length),
@@ -309,7 +368,7 @@ const pairSpec = (
   draw: (r: Xoshiro128) => Pair,
   extra: {
     valid?: (p: Pair) => boolean;
-    trap: { id: string; wrong: (p: Pair) => (typeof SIGNS)[number] };
+    traps: readonly (readonly [string, Kind, (p: Pair) => Sign | null])[];
     vars?: (p: Pair) => Record<string, string>;
     groups?: readonly [number, number];
     reference?: Cmp;
@@ -325,7 +384,7 @@ const pairSpec = (
   ...(extra.valid ? { valid: extra.valid } : {}),
   solve: (p) => signOf(p.a, p.b),
   reference: (p) => (extra.reference ?? bySubtraction)(p.a, p.b),
-  traps: [{ id: extra.trap.id, kind: "conceptual", wrong: extra.trap.wrong }],
+  traps: signTraps<Pair>(extra.traps),
   vars: (p) => ({
     a: digits(p.a),
     b: digits(p.b),
@@ -334,6 +393,25 @@ const pairSpec = (
   }),
   constants: [1, 10, 1000],
 });
+
+const swappedSign = (p: Pair): Sign | null => {
+  const sign = signOf(p.a, p.b);
+  return sign === "=" ? null : flip(sign);
+};
+const lastDigits = (p: Pair): Sign => signOf(p.a % 10, p.b % 10);
+const firstDigits = (p: Pair): Sign => signOf(firstDigit(p.a), firstDigit(p.b));
+const digitSum = (p: Pair): Sign => signOf(sumDigits(p.a), sumDigits(p.b));
+/** The traps of two plain six-digit numbers. */
+const plainTraps: readonly (readonly [
+  string,
+  Kind,
+  (p: Pair) => Sign | null,
+])[] = [
+  ["last-digits", "conceptual", lastDigits],
+  ["swapped-sign", "fact", swappedSign],
+  ["digit-sum", "conceptual", digitSum],
+  ["first-digits", "conceptual", firstDigits],
+];
 
 const six = (r: Xoshiro128): number => between(r, 100_000, 999_999);
 
@@ -344,10 +422,7 @@ const compareSix = [
     (r) => ({ a: six(r), b: six(r) }),
     {
       groups: [7, 7],
-      trap: {
-        id: "swapped-sign",
-        wrong: (p) => flip(signOf(p.a, p.b)),
-      },
+      traps: plainTraps,
     },
   ),
   pairSpec(
@@ -359,7 +434,16 @@ const compareSix = [
     },
     {
       valid: (p) => p.a !== p.b,
-      trap: { id: "heads-equal", wrong: () => "=" },
+      traps: [
+        ["heads-equal", "conceptual", () => "="],
+        [
+          "tail-first-digits",
+          "conceptual",
+          (p) => signOf(firstDigit(p.a % 1000), firstDigit(p.b % 1000)),
+        ],
+        ["last-digits", "conceptual", lastDigits],
+        ["swapped-sign", "fact", swappedSign],
+      ],
       vars: (p) => ({
         head: s(Math.floor(p.a / 1000)),
         ta: s(p.a % 1000),
@@ -377,10 +461,11 @@ const compareSix = [
     },
     {
       groups: [6, 7],
-      trap: {
-        id: "first-digits",
-        wrong: (p) => signOf(firstDigit(p.a), firstDigit(p.b)),
-      },
+      traps: [
+        ["first-digits", "conceptual", firstDigits],
+        ["last-digits", "conceptual", lastDigits],
+        ["swapped-sign", "fact", swappedSign],
+      ],
     },
   ),
   pairSpec(
@@ -388,11 +473,28 @@ const compareSix = [
     "six-digit-number-in-words-against-digits",
     (r) => ({ a: six(r), b: six(r) }),
     {
-      trap: {
-        id: "swapped-sign",
-        wrong: (p) => flip(signOf(p.a, p.b)),
-      },
-      vars: (p) => ({ w: numberWords(p.a) }),
+      traps: [
+        ["written-in-full", "conceptual", (p) => signOf(partsInFull(p.a), p.b)],
+        [
+          "joined-without-zeros",
+          "conceptual",
+          (p) => {
+            const j = joined(p.a);
+            return j === null ? null : signOf(j, p.b);
+          },
+        ],
+        [
+          "thousands-only",
+          "procedural",
+          (p) => signOf(1000 * Math.floor(p.a / 1000), p.b),
+        ],
+        ["swapped-sign", "fact", swappedSign],
+      ],
+      vars: (p) => ({
+        w: numberWords(p.a),
+        k: s(Math.floor(p.a / 1000)),
+        rem: s(p.a % 1000),
+      }),
     },
   ),
   pairSpec(
@@ -400,10 +502,7 @@ const compareSix = [
     "populations-of-two-cities",
     (r) => ({ a: six(r), b: six(r) }),
     {
-      trap: {
-        id: "swapped-sign",
-        wrong: (p) => flip(signOf(p.a, p.b)),
-      },
+      traps: plainTraps,
     },
   ),
   pairSpec(
@@ -418,10 +517,10 @@ const compareSix = [
     },
     {
       valid: (p) => p.a !== p.b,
-      trap: {
-        id: "last-digits",
-        wrong: (p) => signOf(p.a % 10, p.b % 10),
-      },
+      traps: [
+        ["last-digits", "conceptual", lastDigits],
+        ["swapped-sign", "fact", swappedSign],
+      ],
       vars: (p) => ({
         ha: s(Math.floor((p.a % 1000) / 100)),
         hb: s(Math.floor((p.b % 1000) / 100)),
@@ -436,10 +535,11 @@ const compareSix = [
       return r.int(2) === 0 ? { a: x, b: x - 1 } : { a: x - 1, b: x };
     },
     {
-      trap: {
-        id: "digit-sum",
-        wrong: (p) => signOf(sumDigits(p.a), sumDigits(p.b)),
-      },
+      traps: [
+        ["digit-sum", "conceptual", digitSum],
+        ["same-length-equal", "conceptual", () => "="],
+        ["swapped-sign", "fact", swappedSign],
+      ],
     },
   ),
   pairSpec(
@@ -447,10 +547,12 @@ const compareSix = [
     "thousands-against-a-number",
     (r) => ({ a: between(r, 100, 999) * 1000, b: six(r) }),
     {
-      trap: {
-        id: "thousands-ignored",
-        wrong: (p) => signOf(p.a / 1000, p.b),
-      },
+      traps: [
+        ["thousands-ignored", "conceptual", (p) => signOf(p.a / 1000, p.b)],
+        ["last-digits", "conceptual", lastDigits],
+        ["swapped-sign", "fact", swappedSign],
+        ["first-digits", "conceptual", firstDigits],
+      ],
       vars: (p) => ({ k: s(p.a / 1000) }),
     },
   ),
@@ -463,10 +565,15 @@ const compareSix = [
       return { a: x + y, b: six(r), x, y };
     },
     {
-      trap: {
-        id: "first-addend",
-        wrong: (p) => signOf(p.x ?? 0, p.b),
-      },
+      traps: [
+        ["first-addend", "procedural", (p) => signOf(p.x ?? 0, p.b)],
+        [
+          "larger-addend",
+          "procedural",
+          (p) => signOf(Math.max(p.x ?? 0, p.y ?? 0), p.b),
+        ],
+        ["swapped-sign", "fact", swappedSign],
+      ],
       vars: (p) => ({
         x: digits(p.x ?? 0),
         y: digits(p.y ?? 0),
@@ -484,12 +591,16 @@ const compareSix = [
     },
     {
       valid: (p) => p.a !== p.b && p.b >= 100_000,
-      trap: { id: "same-digits-equal", wrong: () => "=" },
+      traps: [
+        ["same-digits-equal", "conceptual", () => "="],
+        ["last-digits", "conceptual", lastDigits],
+        ["swapped-sign", "fact", swappedSign],
+      ],
     },
   ),
 ] as const;
 
-export const n3Specs = [
+export const n3Specs = withWrongAnswers([
   ...wordsDigits,
   ...compareSix,
-] as unknown as readonly Spec<never>[];
+] as unknown as readonly Spec<never>[]);

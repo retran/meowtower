@@ -17,6 +17,8 @@ const fin = (x: Q): Q | null => {
   while (d % 5n === 0n) d /= 5n;
   return d === 1n ? x : null;
 };
+/** The number when it is whole, or null. */
+const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
 const roundHundredths = (n: number, d: number): number =>
   Math.floor((2 * 100 * n + d) / (2 * d));
 const cutHundredths = (n: number, d: number): number =>
@@ -34,6 +36,8 @@ const multiply = [
     solve: ([t = 0, k = 0]) => qd(t * k, 1),
     ref: ([t = 0, k = 0]) => qd(t, 1).mul(q(k)),
     traps: [
+      ["comma-lost", "procedural", ([t = 0, k = 0]) => q(t * k)],
+      ["added", "procedural", ([t = 0, k = 0]) => qd(t + 10 * k, 1)],
       [
         "comma-in-the-wrong-place",
         "procedural",
@@ -52,6 +56,8 @@ const multiply = [
     solve: ([k = 0, h = 0]) => qd(k * h, 2),
     ref: ([k = 0, h = 0]) => q(k).mul(qd(h, 2)),
     traps: [
+      ["comma-lost", "procedural", ([k = 0, h = 0]) => q(k * h)],
+      ["added", "procedural", ([k = 0, h = 0]) => qd(h + 100 * k, 2)],
       [
         "comma-in-the-wrong-place",
         "procedural",
@@ -68,7 +74,15 @@ const multiply = [
     draw: (r) => [between(r, 3, 12), between(r, 2, 9)],
     solve: ([k = 0, n = 0]) => qd(k * (100 * n - 1), 2),
     ref: ([k = 0, n = 0]) => q(k * n).sub(qd(k, 2)),
-    traps: [["rounded-price", "conceptual", ([k = 0, n = 0]) => q(k * n)]],
+    traps: [
+      [
+        "cent-subtracted-once",
+        "conceptual",
+        ([k = 0, n = 0]) => q(k * n).sub(qd(1, 2)),
+      ],
+      ["added", "procedural", ([k = 0, n = 0]) => q(k).add(qd(100 * n - 1, 2))],
+      ["rounded-price", "conceptual", ([k = 0, n = 0]) => q(k * n)],
+    ],
     extra: ([, n = 0]) => ({ p: dec(100 * n - 1, 2), n: String(n) }),
   }),
   d4({
@@ -81,6 +95,8 @@ const multiply = [
     solve: ([h = 0, k = 0]) => qd(h * k, 2),
     ref: ([h = 0, k = 0]) => qd(h, 2).mul(q(k)),
     traps: [
+      ["comma-lost", "procedural", ([h = 0, k = 0]) => q(h * k)],
+      ["added", "procedural", ([h = 0, k = 0]) => qd(h + 100 * k, 2)],
       [
         "comma-in-the-wrong-place",
         "procedural",
@@ -98,7 +114,11 @@ const multiply = [
     valid: ([k = 0]) => k % 2 === 1,
     solve: ([k = 0]) => qd(5 * k, 1),
     ref: ([k = 0]) => q(k).div(q(2)),
-    traps: [["comma-lost", "procedural", ([k = 0]) => q(5 * k)]],
+    traps: [
+      ["comma-in-the-wrong-place", "procedural", ([k = 0]) => qd(5 * k, 2)],
+      ["added", "procedural", ([k = 0]) => q(k).add(qd(5, 1))],
+      ["comma-lost", "procedural", ([k = 0]) => q(5 * k)],
+    ],
     extra: () => ({ x: dec(5, 1) }),
   }),
   d4({
@@ -114,7 +134,15 @@ const multiply = [
         (a, b) => a.add(b),
         q(0),
       ),
-    traps: [["comma-lost", "procedural", ([t = 0, k = 0]) => q(t * k)]],
+    traps: [
+      [
+        "comma-in-the-wrong-place",
+        "procedural",
+        ([t = 0, k = 0]) => qd(t * k, 2),
+      ],
+      ["added", "procedural", ([t = 0, k = 0]) => qd(t + 10 * k, 1)],
+      ["comma-lost", "procedural", ([t = 0, k = 0]) => q(t * k)],
+    ],
     extra: ([t = 0]) => ({ x: dec(t, 1) }),
   }),
   d4({
@@ -127,6 +155,8 @@ const multiply = [
     solve: ([h = 0, k = 0]) => qd(h * k, 2),
     ref: ([h = 0, k = 0]) => qd(h, 2).mul(q(k)),
     traps: [
+      ["comma-lost", "procedural", ([h = 0, k = 0]) => q(h * k)],
+      ["added", "procedural", ([h = 0, k = 0]) => qd(h + 100 * k, 2)],
       [
         "comma-in-the-wrong-place",
         "procedural",
@@ -145,6 +175,12 @@ const multiply = [
     solve: ([w = 0, k = 0]) => qd((10 * w + 5) * k, 1),
     ref: ([w = 0, k = 0]) => qd(10 * w + 5, 1).mul(q(k)),
     traps: [
+      ["comma-lost", "procedural", ([w = 0, k = 0]) => q((10 * w + 5) * k)],
+      [
+        "parts-multiplied-separately",
+        "conceptual",
+        ([w = 0, k = 0]) => Q.fromDecimal(`${w * k},${5 * k}`),
+      ],
       [
         "comma-in-the-wrong-place",
         "procedural",
@@ -166,7 +202,15 @@ const multiply = [
         (a, b) => a.add(b),
         q(0),
       ),
-    traps: [["added", "procedural", ([h = 0, k = 0]) => qd(h + k, 2)]],
+    traps: [
+      [
+        "comma-in-the-wrong-place",
+        "procedural",
+        ([h = 0, k = 0]) => qd(h * k, 1),
+      ],
+      ["comma-lost", "procedural", ([h = 0, k = 0]) => q(h * k)],
+      ["added", "procedural", ([h = 0, k = 0]) => qd(h + 100 * k, 2)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
   }),
   d4({
@@ -179,6 +223,8 @@ const multiply = [
     solve: ([k = 0, t = 0]) => qd(k * t, 1),
     ref: ([k = 0, t = 0]) => q(k).mul(qd(t, 1)),
     traps: [
+      ["comma-lost", "procedural", ([k = 0, t = 0]) => q(k * t)],
+      ["added", "procedural", ([k = 0, t = 0]) => qd(t + 10 * k, 1)],
       [
         "comma-in-the-wrong-place",
         "procedural",
@@ -197,6 +243,12 @@ const multiply = [
     solve: ([h = 0]) => qd(2 * h, 2),
     ref: ([h = 0]) => qd(h, 2).add(qd(h, 2)),
     traps: [
+      ["comma-lost", "procedural", ([h = 0]) => q(2 * h)],
+      [
+        "decimal-part-not-doubled",
+        "conceptual",
+        ([h = 0]) => qd(h + 100 * Math.floor(h / 100), 2),
+      ],
       ["comma-in-the-wrong-place", "procedural", ([h = 0]) => qd(2 * h, 1)],
     ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
@@ -211,7 +263,15 @@ const multiply = [
     valid: ([h = 0, k = 0]) => (h * k) % 100 !== 0,
     solve: ([h = 0, k = 0]) => qd(h * k, 2),
     ref: ([h = 0, k = 0]) => qd(h, 2).mul(q(k)),
-    traps: [["comma-lost", "procedural", ([h = 0, k = 0]) => q(h * k)]],
+    traps: [
+      [
+        "comma-in-the-wrong-place",
+        "procedural",
+        ([h = 0, k = 0]) => qd(h * k, 1),
+      ],
+      ["added", "procedural", ([h = 0, k = 0]) => qd(h + 100 * k, 2)],
+      ["comma-lost", "procedural", ([h = 0, k = 0]) => q(h * k)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
   }),
 ];
@@ -227,7 +287,11 @@ const multiplyS = [
     valid: ([a = 0, b = 0]) => a !== b && (a * b) % 10 !== 0,
     solve: ([a = 0, b = 0]) => qd(a * b, 2),
     ref: ([a = 0, b = 0]) => qd(a, 1).mul(qd(b, 1)),
-    traps: [["one-place", "procedural", ([a = 0, b = 0]) => qd(a * b, 1)]],
+    traps: [
+      ["whole-product", "procedural", ([a = 0, b = 0]) => q(a * b)],
+      ["added", "procedural", ([a = 0, b = 0]) => qd(a + b, 1)],
+      ["one-place", "procedural", ([a = 0, b = 0]) => qd(a * b, 1)],
+    ],
     extra: ([a = 0, b = 0]) => ({ x: dec(a, 1), y: dec(b, 1) }),
   }),
   d4s({
@@ -239,7 +303,11 @@ const multiplyS = [
     valid: ([t = 0, b = 0]) => t % 10 !== 0 && (t * b) % 10 !== 0,
     solve: ([t = 0, b = 0]) => qd(t * b, 2),
     ref: ([t = 0, b = 0]) => qd(t, 1).mul(qd(b, 1)),
-    traps: [["one-place", "procedural", ([t = 0, b = 0]) => qd(t * b, 1)]],
+    traps: [
+      ["added", "procedural", ([t = 0, b = 0]) => qd(t + b, 1)],
+      ["comma-lost", "procedural", ([t = 0, b = 0]) => q(t * b)],
+      ["one-place", "procedural", ([t = 0, b = 0]) => qd(t * b, 1)],
+    ],
     extra: ([t = 0, b = 0]) => ({ x: dec(t, 1), y: dec(b, 1) }),
   }),
   d4s({
@@ -251,7 +319,11 @@ const multiplyS = [
     valid: ([h = 0, b = 0]) => (h * b) % 10 !== 0,
     solve: ([h = 0, b = 0]) => qd(h * b, 3),
     ref: ([h = 0, b = 0]) => qd(h, 2).mul(qd(b, 1)),
-    traps: [["two-places", "procedural", ([h = 0, b = 0]) => qd(h * b, 2)]],
+    traps: [
+      ["one-place", "procedural", ([h = 0, b = 0]) => qd(h * b, 1)],
+      ["added", "procedural", ([h = 0, b = 0]) => qd(h + 10 * b, 2)],
+      ["two-places", "procedural", ([h = 0, b = 0]) => qd(h * b, 2)],
+    ],
     extra: ([h = 0, b = 0]) => ({ x: dec(h, 2), y: dec(b, 1) }),
   }),
   d4s({
@@ -263,7 +335,11 @@ const multiplyS = [
     valid: ([a = 0, b = 0]) => a !== b && a % 10 !== 0 && b % 10 !== 0,
     solve: ([a = 0, b = 0]) => qd(a * b, 2),
     ref: ([a = 0, b = 0]) => qd(a, 1).mul(qd(b, 1)),
-    traps: [["one-place", "procedural", ([a = 0, b = 0]) => qd(a * b, 1)]],
+    traps: [
+      ["perimeter", "conceptual", ([a = 0, b = 0]) => qd(2 * (a + b), 1)],
+      ["sides-added", "procedural", ([a = 0, b = 0]) => qd(a + b, 1)],
+      ["one-place", "procedural", ([a = 0, b = 0]) => qd(a * b, 1)],
+    ],
     extra: ([a = 0, b = 0]) => ({ x: dec(a, 1), y: dec(b, 1) }),
   }),
   d4s({
@@ -274,7 +350,11 @@ const multiplyS = [
     draw: (r) => [between(r, 2, 9)],
     solve: ([a = 0]) => qd(a * a, 2),
     ref: ([a = 0]) => qd(a, 1).mul(qd(a, 1)),
-    traps: [["one-place", "procedural", ([a = 0]) => qd(a * a, 1)]],
+    traps: [
+      ["doubled", "conceptual", ([a = 0]) => (a === 2 ? null : qd(2 * a, 1))],
+      ["comma-lost", "procedural", ([a = 0]) => q(a * a)],
+      ["one-place", "procedural", ([a = 0]) => qd(a * a, 1)],
+    ],
     extra: ([a = 0]) => ({ x: dec(a, 1) }),
   }),
   d4s({
@@ -285,7 +365,11 @@ const multiplyS = [
     draw: (r) => [between(r, 11, 19)],
     solve: ([t = 0]) => qd(t * t, 2),
     ref: ([t = 0]) => qd(t, 1).mul(qd(t, 1)),
-    traps: [["one-place", "procedural", ([t = 0]) => qd(t * t, 1)]],
+    traps: [
+      ["doubled", "conceptual", ([t = 0]) => qd(2 * t, 1)],
+      ["comma-lost", "procedural", ([t = 0]) => q(t * t)],
+      ["one-place", "procedural", ([t = 0]) => qd(t * t, 1)],
+    ],
     extra: ([t = 0]) => ({ x: dec(t, 1) }),
   }),
   d4s({
@@ -297,7 +381,11 @@ const multiplyS = [
     valid: ([a = 0, b = 0]) => a !== b && a % 10 !== 0 && b % 10 !== 0,
     solve: ([a = 0, b = 0]) => qd(a * b, 2),
     ref: ([a = 0, b = 0]) => qd(b, 1).mul(qd(a, 1)),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => qd(a + b, 1)]],
+    traps: [
+      ["one-place", "procedural", ([a = 0, b = 0]) => qd(a * b, 1)],
+      ["comma-lost", "procedural", ([a = 0, b = 0]) => q(a * b)],
+      ["added", "procedural", ([a = 0, b = 0]) => qd(a + b, 1)],
+    ],
     extra: ([a = 0, b = 0]) => ({ x: dec(a, 1), y: dec(b, 1) }),
   }),
   d4s({
@@ -309,7 +397,11 @@ const multiplyS = [
     valid: ([a = 0, t = 0]) => t % 10 !== 0 && (a * t) % 10 !== 0,
     solve: ([a = 0, t = 0]) => qd(a * t, 2),
     ref: ([a = 0, t = 0]) => qd(t, 1).mul(qd(a, 1)),
-    traps: [["one-place", "procedural", ([a = 0, t = 0]) => qd(a * t, 1)]],
+    traps: [
+      ["added", "procedural", ([a = 0, t = 0]) => qd(a + t, 1)],
+      ["comma-lost", "procedural", ([a = 0, t = 0]) => q(a * t)],
+      ["one-place", "procedural", ([a = 0, t = 0]) => qd(a * t, 1)],
+    ],
     extra: ([a = 0, t = 0]) => ({ x: dec(a, 1), y: dec(t, 1) }),
   }),
   d4s({
@@ -321,7 +413,11 @@ const multiplyS = [
     valid: ([k = 0]) => k % 2 === 1,
     solve: ([k = 0]) => qd(5 * k, 2),
     ref: ([k = 0]) => qd(5, 2).mul(q(k)),
-    traps: [["one-place", "procedural", ([k = 0]) => qd(5 * k, 1)]],
+    traps: [
+      ["added", "procedural", ([k = 0]) => qd(5 + 100 * k, 2)],
+      ["comma-lost", "procedural", ([k = 0]) => q(5 * k)],
+      ["one-place", "procedural", ([k = 0]) => qd(5 * k, 1)],
+    ],
     consts: [],
     extra: () => ({ x: dec(5, 2) }),
   }),
@@ -335,6 +431,12 @@ const multiplyS = [
     solve: ([h = 0, k = 0]) => qd(h * k, 2),
     ref: ([h = 0, k = 0]) => qd(h, 2).mul(q(k)),
     traps: [
+      [
+        "comma-in-the-wrong-place",
+        "procedural",
+        ([h = 0, k = 0]) => qd(h * k, 1),
+      ],
+      ["added", "procedural", ([h = 0, k = 0]) => qd(h + 100 * k, 2)],
       ["zero-dropped", "procedural", ([h = 0, k = 0]) => qd(h * (k / 10), 2)],
     ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
@@ -347,7 +449,11 @@ const multiplyS = [
     draw: (r) => [between(r, 2, 9)],
     solve: ([a = 0]) => qd(a, 2),
     ref: ([a = 0]) => qd(a, 1).mul(qd(1, 1)),
-    traps: [["one-place", "procedural", ([a = 0]) => qd(a, 1)]],
+    traps: [
+      ["times-ten", "conceptual", ([a = 0]) => q(a)],
+      ["added", "procedural", ([a = 0]) => qd(a + 1, 1)],
+      ["one-place", "procedural", ([a = 0]) => qd(a, 1)],
+    ],
     extra: ([a = 0]) => ({ y: dec(1, 1), x: dec(a, 1) }),
   }),
   d4s({
@@ -359,7 +465,11 @@ const multiplyS = [
     valid: ([a = 0]) => (a * 5) % 10 === 0,
     solve: ([a = 0, b = 0]) => qd(a * b, 2),
     ref: ([a = 0, b = 0]) => qd(a, 1).mul(qd(b, 1)),
-    traps: [["one-place", "procedural", ([a = 0, b = 0]) => qd(a * b, 1)]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => qd(a + b, 1)],
+      ["whole-product", "procedural", ([a = 0, b = 0]) => q(a * b)],
+      ["one-place", "procedural", ([a = 0, b = 0]) => qd(a * b, 1)],
+    ],
     extra: ([a = 0, b = 0]) => ({ x: dec(a, 1), y: dec(b, 1) }),
   }),
 ];
@@ -375,7 +485,14 @@ const divide = [
     valid: ([t = 0, k = 0]) => (t * k) % 10 === 0,
     solve: ([, k = 0]) => q(k),
     ref: ([t = 0, k = 0]) => q((t * k) / 10).div(qd(t, 1)),
-    traps: [["comma-ignored", "procedural", ([, k = 0]) => qd(k, 1)]],
+    traps: [
+      [
+        "multiplied",
+        "procedural",
+        ([t = 0, k = 0]) => q(t * k, 10).mul(qd(t, 1)),
+      ],
+      ["comma-ignored", "procedural", ([, k = 0]) => qd(k, 1)],
+    ],
     extra: ([t = 0, k = 0]) => ({ x: dec(t, 1), n: String((t * k) / 10) }),
     consts: [10],
   }),
@@ -388,7 +505,11 @@ const divide = [
     valid: ([k = 0, m = 0]) => (k * m) % 10 !== 0 && k !== m,
     solve: ([, m = 0]) => qd(m, 1),
     ref: ([k = 0, m = 0]) => qd(k * m, 1).div(q(k)),
-    traps: [["comma-moved", "procedural", ([, m = 0]) => qd(m, 2)]],
+    traps: [
+      ["whole-answer", "procedural", ([, m = 0]) => q(m)],
+      ["multiplied", "procedural", ([k = 0, m = 0]) => qd(k * m, 1).mul(q(k))],
+      ["comma-moved", "procedural", ([, m = 0]) => qd(m, 2)],
+    ],
     extra: ([k = 0, m = 0]) => ({ x: dec(k * m, 1) }),
   }),
   d5({
@@ -399,7 +520,11 @@ const divide = [
     draw: (r) => [2 * between(r, 2, 12)],
     solve: ([n = 0]) => q(2 * n),
     ref: ([n = 0]) => q(n).div(qd(5, 1)),
-    traps: [["halved", "conceptual", ([n = 0]) => q(n / 2)]],
+    traps: [
+      ["times-five", "procedural", ([n = 0]) => q(5 * n)],
+      ["comma-ignored", "procedural", ([n = 0]) => whole(q(n, 5))],
+      ["halved", "conceptual", ([n = 0]) => q(n / 2)],
+    ],
     extra: () => ({ x: dec(5, 1) }),
     consts: [2],
   }),
@@ -411,7 +536,10 @@ const divide = [
     draw: (r) => [4 * between(r, 1, 6)],
     solve: ([n = 0]) => q(4 * n),
     ref: ([n = 0]) => q(n).div(qd(25, 2)),
-    traps: [["quartered", "conceptual", ([n = 0]) => q(n / 4)]],
+    traps: [
+      ["doubled", "conceptual", ([n = 0]) => q(2 * n)],
+      ["quartered", "conceptual", ([n = 0]) => q(n / 4)],
+    ],
     extra: () => ({ x: dec(25, 2) }),
     consts: [4],
   }),
@@ -424,7 +552,11 @@ const divide = [
     valid: ([k = 0, m = 0]) => k !== m && (k * m) % 10 !== 0,
     solve: ([, m = 0]) => qd(m, 1),
     ref: ([k = 0, m = 0]) => qd(k * m, 1).div(q(k)),
-    traps: [["whole-answer", "conceptual", ([, m = 0]) => q(m)]],
+    traps: [
+      ["comma-moved", "procedural", ([, m = 0]) => qd(m, 2)],
+      ["multiplied", "procedural", ([k = 0, m = 0]) => qd(k * m, 1).mul(q(k))],
+      ["whole-answer", "conceptual", ([, m = 0]) => q(m)],
+    ],
     extra: ([k = 0, m = 0]) => ({ x: dec(k * m, 1) }),
   }),
   d5({
@@ -435,7 +567,11 @@ const divide = [
     draw: (r) => [between(r, 2, 9), pick(r, [2, 5])],
     solve: ([n = 0, t = 0]) => q((10 * n) / t),
     ref: ([n = 0, t = 0]) => q(n).div(qd(t, 1)),
-    traps: [["multiplied", "procedural", ([n = 0, t = 0]) => q(n * t)]],
+    traps: [
+      ["comma-ignored", "procedural", ([n = 0, t = 0]) => whole(q(n, t))],
+      ["comma-moved-twice", "procedural", ([n = 0, t = 0]) => q((100 * n) / t)],
+      ["multiplied", "procedural", ([n = 0, t = 0]) => q(n * t)],
+    ],
     extra: ([, t = 0]) => ({ x: dec(t, 1) }),
   }),
   d5({
@@ -446,7 +582,15 @@ const divide = [
     draw: (r) => [pick(r, [2, 4, 5, 10])],
     solve: ([i = 0]) => q(i),
     ref: ([i = 0]) => q(1).div(qd(100 / i, 2)),
-    traps: [["comma-moved", "procedural", ([i = 0]) => qd(i, 1)]],
+    traps: [
+      ["comma-ignored", "procedural", ([i = 0]) => qd(i, 2)],
+      [
+        "multiplied",
+        "procedural",
+        ([i = 0]) => (i === 10 ? null : qd(100 / i, 2)),
+      ],
+      ["comma-moved", "procedural", ([i = 0]) => qd(i, 1)],
+    ],
     extra: ([i = 0]) => ({ x: dec(100 / i, 2) }),
     consts: [1],
   }),
@@ -461,6 +605,12 @@ const divide = [
     solve: ([n = 0, d = 0]) => qd(roundHundredths(n, d), 2),
     ref: ([n = 0, d = 0]) => qd(Math.round((100 * n) / d + 1e-9), 2),
     traps: [
+      [
+        "tenths",
+        "procedural",
+        ([n = 0, d = 0]) => qd(Math.round((10 * n) / d), 1),
+      ],
+      ["swapped", "procedural", ([n = 0, d = 0]) => fin(q(d, n))],
       ["cut-off", "procedural", ([n = 0, d = 0]) => qd(cutHundredths(n, d), 2)],
     ],
     consts: [],
@@ -475,7 +625,15 @@ const divide = [
       h % k === 0 && h % 10 !== 0 && (h / k) % 10 !== 0,
     solve: ([h = 0, k = 0]) => qd(h / k, 2),
     ref: ([h = 0, k = 0]) => qd(h, 2).div(q(k)),
-    traps: [["multiplied", "procedural", ([h = 0, k = 0]) => qd(h * k, 2)]],
+    traps: [
+      [
+        "comma-in-the-wrong-place",
+        "procedural",
+        ([h = 0, k = 0]) => qd(h / k, 1),
+      ],
+      ["comma-lost", "procedural", ([h = 0, k = 0]) => q(h / k)],
+      ["multiplied", "procedural", ([h = 0, k = 0]) => qd(h * k, 2)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
   }),
   d5({
@@ -486,7 +644,11 @@ const divide = [
     draw: (r) => [between(r, 2, 8)],
     solve: ([j = 0]) => q(4 * j),
     ref: ([j = 0]) => q(3 * j).div(qd(75, 2)),
-    traps: [["divided-by-three", "conceptual", ([j = 0]) => q(j)]],
+    traps: [
+      ["quarters-not-grouped", "conceptual", ([j = 0]) => q(12 * j)],
+      ["multiplied", "procedural", ([j = 0]) => whole(q(9 * j, 4))],
+      ["divided-by-three", "conceptual", ([j = 0]) => q(j)],
+    ],
     extra: ([j = 0]) => ({ x: dec(75, 2), n: String(3 * j) }),
     consts: [3],
   }),
@@ -499,7 +661,10 @@ const divide = [
     valid: ([d = 0, k = 0]) => d !== k,
     solve: ([, k = 0]) => q(k),
     ref: ([d = 0, k = 0]) => qd(d * k, 1).div(qd(d, 1)),
-    traps: [["comma-ignored", "procedural", ([, k = 0]) => qd(k, 1)]],
+    traps: [
+      ["multiplied", "procedural", ([d = 0, k = 0]) => qd(d * d * k, 2)],
+      ["comma-ignored", "procedural", ([, k = 0]) => qd(k, 1)],
+    ],
     extra: ([d = 0, k = 0]) => ({ x: dec(d * k, 1), y: dec(d, 1) }),
     consts: [10],
   }),
@@ -518,6 +683,12 @@ const convert = [
     solve: ([n = 0, d = 0]) => q(n, d),
     ref: ([n = 0, d = 0]) => qd((100 * n) / d, 2),
     traps: [
+      ["numerator-tenths", "conceptual", ([n = 0]) => qd(n, 1)],
+      [
+        "denominator-as-decimal",
+        "conceptual",
+        ([, d = 0]) => Q.fromDecimal(`0,${d}`),
+      ],
       [
         "digits-side-by-side",
         "conceptual",
@@ -534,7 +705,11 @@ const convert = [
     draw: (r) => [between(r, 1, 9)],
     solve: ([n = 0]) => qd(n, 2),
     ref: ([n = 0]) => Q.fromDecimal(`0,0${n}`),
-    traps: [["tenths", "conceptual", ([n = 0]) => qd(n, 1)]],
+    traps: [
+      ["whole", "conceptual", ([n = 0]) => q(n)],
+      ["thousandths", "procedural", ([n = 0]) => qd(n, 3)],
+      ["tenths", "conceptual", ([n = 0]) => qd(n, 1)],
+    ],
     extra: ([n = 0]) => ({ f: fr(n, 100) }),
     consts: [100],
   }),
@@ -547,7 +722,11 @@ const convert = [
     draw: (r) => [between(r, 1, 9)],
     solve: ([t = 0]) => qd(t, 1),
     ref: ([t = 0]) => q(t, 10),
-    traps: [["reciprocal", "conceptual", ([t = 0]) => q(1, t + 1)]],
+    traps: [
+      ["hundredths-denominator", "procedural", ([t = 0]) => q(t, 100)],
+      ["inverted", "conceptual", ([t = 0]) => q(10, t)],
+      ["reciprocal", "conceptual", ([t = 0]) => q(1, t)],
+    ],
     extra: ([t = 0]) => ({ x: dec(t, 1) }),
     consts: [10],
   }),
@@ -560,7 +739,11 @@ const convert = [
     draw: (r) => [pick(r, [25, 75, 20, 40, 60, 80, 12, 16, 24, 36])],
     solve: ([h = 0]) => qd(h, 2),
     ref: ([h = 0]) => q(h, 100),
-    traps: [["reciprocal", "conceptual", ([h = 0]) => q(1, h)]],
+    traps: [
+      ["tenths-denominator", "procedural", ([h = 0]) => q(h, 10)],
+      ["inverted", "conceptual", ([h = 0]) => q(100, h)],
+      ["reciprocal", "conceptual", ([h = 0]) => q(1, h)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
     consts: [100],
   }),
@@ -574,7 +757,19 @@ const convert = [
     valid: ([, t = 0]) => t !== 5,
     solve: ([w = 0, t = 0]) => qd(10 * w + t, 1),
     ref: ([w = 0, t = 0]) => q(w).add(q(t, 10)),
-    traps: [["sum-over-ten", "conceptual", ([w = 0, t = 0]) => q(w + t, 10)]],
+    traps: [
+      [
+        "digit-as-denominator",
+        "conceptual",
+        ([w = 0, t = 0]) => q(w).add(q(1, t)),
+      ],
+      [
+        "wrong-denominator",
+        "procedural",
+        ([w = 0, t = 0]) => q(w).add(q(t, 100)),
+      ],
+      ["sum-over-ten", "conceptual", ([w = 0, t = 0]) => q(w + t, 10)],
+    ],
     extra: ([w = 0, t = 0]) => ({ x: dec(10 * w + t, 1) }),
   }),
   d6({
@@ -586,7 +781,11 @@ const convert = [
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, d = 0]) => q((100 * n) / d),
     ref: ([n = 0, d = 0]) => q(n, d).mul(q(100)),
-    traps: [["numerator-itself", "conceptual", ([n = 0]) => q(n)]],
+    traps: [
+      ["denominator-itself", "conceptual", ([, d = 0]) => q(d)],
+      ["one-part", "conceptual", ([, d = 0]) => (d === 10 ? null : q(100 / d))],
+      ["numerator-itself", "conceptual", ([n = 0]) => q(n)],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
     consts: [100],
   }),
@@ -599,7 +798,11 @@ const convert = [
     draw: (r) => [pick(r, [2, 4, 5, 6, 8])],
     solve: ([t = 0]) => qd(t, 1),
     ref: ([t = 0]) => q(t, 10),
-    traps: [["reciprocal", "conceptual", ([t = 0]) => q(1, t)]],
+    traps: [
+      ["hundredths-denominator", "procedural", ([t = 0]) => q(t, 100)],
+      ["inverted", "conceptual", ([t = 0]) => q(10, t)],
+      ["reciprocal", "conceptual", ([t = 0]) => q(1, t)],
+    ],
     extra: ([t = 0]) => ({ x: dec(t, 1) }),
     consts: [10],
   }),
@@ -612,7 +815,11 @@ const convert = [
     valid: ([h = 0]) => h % 10 !== 0,
     solve: ([h = 0]) => qd(h, 2),
     ref: ([h = 0]) => q(h, 100),
-    traps: [["tenths", "conceptual", ([h = 0]) => qd(h, 1)]],
+    traps: [
+      ["whole", "conceptual", ([h = 0]) => q(h)],
+      ["thousandths", "procedural", ([h = 0]) => qd(h, 3)],
+      ["tenths", "conceptual", ([h = 0]) => qd(h, 1)],
+    ],
     extra: ([h = 0]) => ({ f: fr(h, 100) }),
     consts: [100],
   }),
@@ -628,9 +835,14 @@ const convert = [
       n * 10 > t * d ? ">" : n * 10 < t * d ? "<" : "=",
     traps: [
       [
+        "digits-side-by-side",
+        "conceptual",
+        ([n = 0, d = 0, t = 0]) => (n * 10 < t * d ? ">" : null),
+      ],
+      [
         "flipped",
         "conceptual",
-        ([n = 0, d = 0, t = 0]) => (n * 10 > t * d ? "<" : ">"),
+        ([n = 0, d = 0, t = 0]) => (n * 10 > t * d ? "<" : null),
       ],
     ],
     extra: ([n = 0, d = 0, t = 0]) => ({
@@ -650,6 +862,16 @@ const convert = [
     ref: ([w = 0, n = 0, d = 0]) => qd(100 * w + (100 * n) / d, 2),
     traps: [
       [
+        "numerator-only",
+        "conceptual",
+        ([w = 0, n = 0]) => Q.fromDecimal(`${w},${n}`),
+      ],
+      [
+        "denominator-only",
+        "conceptual",
+        ([w = 0, , d = 0]) => Q.fromDecimal(`${w},${d}`),
+      ],
+      [
         "digits-side-by-side",
         "conceptual",
         ([w = 0, n = 0, d = 0]) => Q.fromDecimal(`${w},${n}${d}`),
@@ -666,7 +888,11 @@ const convert = [
     draw: (r) => [pick(r, [3, 7, 9, 11, 13, 17, 19, 21, 23, 27])],
     solve: ([h = 0]) => qd(h, 2),
     ref: ([h = 0]) => q(h, 100),
-    traps: [["tenths", "conceptual", ([h = 0]) => q(h, 10)]],
+    traps: [
+      ["reciprocal", "conceptual", ([h = 0]) => q(1, h)],
+      ["thousandths", "procedural", ([h = 0]) => q(h, 1000)],
+      ["tenths", "conceptual", ([h = 0]) => q(h, 10)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
     consts: [10, 100],
   }),
@@ -684,6 +910,8 @@ const convertS = [
     solve: ([n = 0]) => q(n, 8),
     ref: ([n = 0]) => qd(125 * n, 3),
     traps: [
+      ["numerator-tenths", "conceptual", ([n = 0]) => qd(n, 1)],
+      ["denominator-as-decimal", "conceptual", ([]) => qd(8, 1)],
       [
         "digits-side-by-side",
         "conceptual",
@@ -701,7 +929,11 @@ const convertS = [
     draw: (r) => [pick(r, [22, 26, 34, 38, 42, 46, 14, 18])],
     solve: ([h = 0]) => qd(h, 2),
     ref: ([h = 0]) => q(h, 100),
-    traps: [["reciprocal", "conceptual", ([h = 0]) => q(1, h)]],
+    traps: [
+      ["denominator-halved", "procedural", ([h = 0]) => q(h, 50)],
+      ["numerator-halved-only", "procedural", ([h = 0]) => q(h / 2, 100)],
+      ["reciprocal", "conceptual", ([h = 0]) => q(1, h)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
     consts: [100],
   }),
@@ -718,6 +950,16 @@ const convertS = [
     solve: ([n = 0, d = 0]) => qd(roundHundredths(n, d), 2),
     ref: ([n = 0, d = 0]) => qd(Math.round((100 * n) / d + 1e-9), 2),
     traps: [
+      [
+        "tenths",
+        "procedural",
+        ([n = 0, d = 0]) => qd(Math.round((10 * n) / d), 1),
+      ],
+      [
+        "digits-side-by-side",
+        "conceptual",
+        ([n = 0, d = 0]) => Q.fromDecimal(`0,${n}${d}`),
+      ],
       ["cut-off", "procedural", ([n = 0, d = 0]) => qd(cutHundredths(n, d), 2)],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
@@ -742,6 +984,15 @@ const convertS = [
       );
     },
     traps: [
+      [
+        "fraction-last",
+        "conceptual",
+        ([n = 0, d = 0, t = 0, u = 0]) =>
+          [n + d / 10, t / 10, u / 10]
+            .map((x, i) => [x, i] as const)
+            .sort((a, b) => a[0] - b[0])
+            .map(([, i]) => String(i + 1)),
+      ],
       [
         "largest-first",
         "conceptual",
@@ -776,9 +1027,14 @@ const convertS = [
       10 * n > 8 * t ? ">" : 10 * n < 8 * t ? "<" : "=",
     traps: [
       [
+        "digits-side-by-side",
+        "conceptual",
+        ([n = 0, t = 0]) => (10 * n < 8 * t ? ">" : null),
+      ],
+      [
         "flipped",
         "conceptual",
-        ([n = 0, t = 0]) => (10 * n > 8 * t ? "<" : ">"),
+        ([n = 0, t = 0]) => (10 * n > 8 * t ? "<" : null),
       ],
     ],
     extra: ([n = 0, t = 0]) => ({
@@ -797,6 +1053,8 @@ const convertS = [
     solve: ([n = 0, t = 0]) => qd(25 * n + 10 * t, 2),
     ref: ([n = 0, t = 0]) => q(n, 4).add(qd(t, 1)),
     traps: [
+      ["numerator-tenths", "conceptual", ([n = 0, t = 0]) => qd(n + t, 1)],
+      ["denominator-tenths", "conceptual", ([, t = 0]) => qd(4 + t, 1)],
       [
         "digits-side-by-side",
         "conceptual",
@@ -815,6 +1073,12 @@ const convertS = [
     ref: ([w = 0, n = 0]) => qd(1000 * w + 125 * n, 3),
     traps: [
       [
+        "numerator-only",
+        "conceptual",
+        ([w = 0, n = 0]) => Q.fromDecimal(`${w},${n}`),
+      ],
+      ["denominator-only", "conceptual", ([w = 0]) => Q.fromDecimal(`${w},8`)],
+      [
         "digits-side-by-side",
         "conceptual",
         ([w = 0, n = 0]) => Q.fromDecimal(`${w},${n}8`),
@@ -831,7 +1095,11 @@ const convertS = [
     draw: (r) => [pick(r, [125, 375, 625, 875])],
     solve: ([h = 0]) => qd(h, 3),
     ref: ([h = 0]) => q(h, 1000),
-    traps: [["reciprocal", "conceptual", ([h = 0]) => q(1, h)]],
+    traps: [
+      ["hundredths-denominator", "procedural", ([h = 0]) => q(h, 100)],
+      ["inverted", "conceptual", ([h = 0]) => q(1000, h)],
+      ["reciprocal", "conceptual", ([h = 0]) => q(1, h)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 3) }),
     consts: [1000],
   }),
@@ -844,7 +1112,11 @@ const convertS = [
     draw: (r) => [pick(r, [4, 8, 12, 16, 24, 28, 36, 44])],
     solve: ([h = 0]) => qd(h, 2),
     ref: ([h = 0]) => q(h, 100),
-    traps: [["tenths", "conceptual", ([h = 0]) => q(h, 10)]],
+    traps: [
+      ["reciprocal", "conceptual", ([h = 0]) => q(1, h)],
+      ["inverted", "conceptual", ([h = 0]) => q(100, h)],
+      ["tenths", "conceptual", ([h = 0]) => q(h, 10)],
+    ],
     extra: ([h = 0]) => ({ x: dec(h, 2) }),
     consts: [10, 100],
   }),
@@ -860,9 +1132,14 @@ const convertS = [
       n * 100 > h * 20 ? ">" : n * 100 < h * 20 ? "<" : "=",
     traps: [
       [
+        "digits-side-by-side",
+        "conceptual",
+        ([n = 0, h = 0]) => (n * 100 < h * 20 ? ">" : null),
+      ],
+      [
         "flipped",
         "conceptual",
-        ([n = 0, h = 0]) => (n * 100 > h * 20 ? "<" : ">"),
+        ([n = 0, h = 0]) => (n * 100 > h * 20 ? "<" : null),
       ],
     ],
     extra: ([n = 0, h = 0]) => ({
@@ -881,6 +1158,8 @@ const convertS = [
     solve: ([n = 0, h = 0]) => qd(20 * n + h, 2),
     ref: ([n = 0, h = 0]) => q(n, 5).add(qd(h, 2)),
     traps: [
+      ["numerator-tenths", "conceptual", ([n = 0, h = 0]) => qd(10 * n + h, 2)],
+      ["denominator-tenths", "conceptual", ([, h = 0]) => qd(50 + h, 2)],
       ["digits-side-by-side", "conceptual", ([n = 0, h = 0]) => qd(n + h, 2)],
     ],
     extra: ([n = 0, h = 0]) => ({ f: fr(n, 5), x: dec(h, 2) }),
@@ -893,7 +1172,12 @@ const convertS = [
     draw: (r) => [pick(r, [1, 3, 5, 7])],
     solve: ([n = 0]) => qd(125 * n, 1),
     ref: ([n = 0]) => q(n, 8).mul(q(100)),
-    traps: [["numerator-itself", "conceptual", ([n = 0]) => q(n)]],
+    traps: [
+      ["denominator-itself", "conceptual", ([]) => q(8)],
+      ["one-part", "conceptual", ([]) => qd(125, 1)],
+      ["comma-in-the-wrong-place", "procedural", ([n = 0]) => q(125 * n)],
+      ["numerator-itself", "conceptual", ([n = 0]) => q(n)],
+    ],
     extra: ([n = 0]) => ({ f: fr(n, 8) }),
     consts: [100],
   }),
@@ -915,6 +1199,17 @@ const mixedOps = [
     solve: ([t = 0, n = 0, d = 0, k = 0]) => qd(t, 1).add(q(n, d).mul(q(k))),
     ref: ([t = 0, n = 0, d = 0, k = 0]) => q(n * k, d).add(qd(t, 1)),
     traps: [
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([t = 0, n = 0, d = 0, k = 0]) =>
+          qd(t, 1).add(Q.fromDecimal(`0,${n}${d}`).mul(q(k))),
+      ],
+      [
+        "multiplier-forgotten",
+        "procedural",
+        ([t = 0, n = 0, d = 0]) => qd(t, 1).add(q(n, d)),
+      ],
       [
         "left-to-right",
         "procedural",
@@ -944,6 +1239,22 @@ const mixedOps = [
     ref: ([n = 0, d = 0, t = 0, k = 0]) => qd(t * k, 1).add(q(n, d)),
     traps: [
       [
+        "first-term-multiplied",
+        "procedural",
+        ([n = 0, d = 0, t = 0, k = 0]) => q(n, d).mul(q(k)).add(qd(t, 1)),
+      ],
+      [
+        "multiplier-forgotten",
+        "procedural",
+        ([n = 0, d = 0, t = 0]) => q(n, d).add(qd(t, 1)),
+      ],
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([n = 0, d = 0, t = 0, k = 0]) =>
+          Q.fromDecimal(`0,${n}${d}`).add(qd(t, 1).mul(q(k))),
+      ],
+      [
         "left-to-right",
         "procedural",
         ([n = 0, d = 0, t = 0, k = 0]) => q(n, d).add(qd(t, 1)).mul(q(k)),
@@ -967,6 +1278,16 @@ const mixedOps = [
     ref: ([w = 0, t = 0, k = 0]) => qd(10 * w - t * k, 1),
     traps: [
       [
+        "multiplier-forgotten",
+        "procedural",
+        ([w = 0, t = 0]) => q(w).sub(qd(t, 1)),
+      ],
+      [
+        "wrong-term-multiplied",
+        "procedural",
+        ([w = 0, t = 0, k = 0]) => q(w * k).sub(qd(t, 1)),
+      ],
+      [
         "left-to-right",
         "procedural",
         ([w = 0, t = 0, k = 0]) => q(w).sub(qd(t, 1)).mul(q(k)),
@@ -987,6 +1308,19 @@ const mixedOps = [
         .mul(qd(t, 1))
         .add(q(k * n, d)),
     traps: [
+      [
+        "multiplier-forgotten",
+        "procedural",
+        ([t = 0, n = 0, d = 0]) => qd(t, 1).add(q(n, d)),
+      ],
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([t = 0, n = 0, d = 0, k = 0]) =>
+          qd(t, 1)
+            .add(Q.fromDecimal(`0,${n}${d}`))
+            .mul(q(k)),
+      ],
       [
         "brackets-ignored",
         "procedural",
@@ -1011,6 +1345,11 @@ const mixedOps = [
     ref: ([u = 0, t = 0, n = 0, d = 0]) =>
       Q.fromDecimal(String(Number((u / 10 - t / 10 / (n / d)).toFixed(3)))),
     traps: [
+      [
+        "multiplied-by-the-fraction",
+        "conceptual",
+        ([u = 0, t = 0, n = 0, d = 0]) => qd(u, 1).sub(qd(t, 1).mul(q(n, d))),
+      ],
       [
         "left-to-right",
         "procedural",
@@ -1037,6 +1376,11 @@ const mixedOps = [
         .add(q(k)),
     traps: [
       [
+        "multiplied-by-the-fraction",
+        "conceptual",
+        ([t = 0, n = 0, d = 0, k = 0]) => qd(t, 1).mul(q(n, d)).add(q(k)),
+      ],
+      [
         "brackets-ignored",
         "procedural",
         ([t = 0, n = 0, d = 0, k = 0]) => fin(qd(t, 1).div(q(n, d).add(q(k)))),
@@ -1060,6 +1404,16 @@ const mixedOps = [
       Q.fromDecimal(String(Number((w - n / d / (t / 10)).toFixed(3)))),
     traps: [
       [
+        "division-reversed",
+        "procedural",
+        ([w = 0, n = 0, d = 0, t = 0]) => q(w).sub(qd(t, 1).div(q(n, d))),
+      ],
+      [
+        "multiplied",
+        "procedural",
+        ([w = 0, n = 0, d = 0, t = 0]) => q(w).sub(q(n, d).mul(qd(t, 1))),
+      ],
+      [
         "left-to-right",
         "procedural",
         ([w = 0, n = 0, d = 0, t = 0]) => q(w).sub(q(n, d)).div(qd(t, 1)),
@@ -1081,6 +1435,19 @@ const mixedOps = [
     solve: ([t = 0, k = 0, n = 0, d = 0]) => qd(t, 1).mul(q(k)).add(q(n, d)),
     ref: ([t = 0, k = 0, n = 0, d = 0]) => qd(t * k, 1).add(q(n, d)),
     traps: [
+      [
+        "wrong-term-multiplied",
+        "procedural",
+        ([t = 0, k = 0, n = 0, d = 0]) => qd(t, 1).add(q(n, d).mul(q(k))),
+      ],
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([t = 0, k = 0, n = 0, d = 0]) =>
+          qd(t, 1)
+            .mul(q(k))
+            .add(Q.fromDecimal(`0,${n}${d}`)),
+      ],
       [
         "left-to-right",
         "procedural",
@@ -1104,6 +1471,13 @@ const mixedOps = [
     solve: ([h = 0, n = 0, d = 0]) => q(1).sub(qd(h, 2)).mul(q(n, d)),
     ref: ([h = 0, n = 0, d = 0]) => qd(100 - h, 2).mul(q(n, d)),
     traps: [
+      ["multiplier-forgotten", "procedural", ([h = 0, ,]) => qd(100 - h, 2)],
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([h = 0, n = 0, d = 0]) =>
+          qd(100 - h, 2).mul(Q.fromDecimal(`0,${n}${d}`)),
+      ],
       [
         "brackets-ignored",
         "procedural",
@@ -1123,6 +1497,22 @@ const mixedOps = [
     solve: ([t = 0, n = 0, d = 0, k = 0]) => qd(t, 1).sub(q(n, d).mul(q(k))),
     ref: ([t = 0, n = 0, d = 0, k = 0]) => qd(t, 1).sub(q(n * k, d)),
     traps: [
+      [
+        "multiplier-forgotten",
+        "procedural",
+        ([t = 0, n = 0, d = 0]) => qd(t, 1).sub(q(n, d)),
+      ],
+      [
+        "wrong-term-multiplied",
+        "procedural",
+        ([t = 0, n = 0, d = 0, k = 0]) => qd(t, 1).mul(q(k)).sub(q(n, d)),
+      ],
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([t = 0, n = 0, d = 0, k = 0]) =>
+          qd(t, 1).sub(Q.fromDecimal(`0,${n}${d}`).mul(q(k))),
+      ],
       [
         "left-to-right",
         "procedural",
@@ -1147,6 +1537,17 @@ const mixedOps = [
     ref: ([n = 0, d = 0, t = 0, u = 0]) => qd(t * u, 2).add(q(n, d)),
     traps: [
       [
+        "one-place",
+        "procedural",
+        ([n = 0, d = 0, t = 0, u = 0]) => q(n, d).add(qd(t * u, 1)),
+      ],
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([n = 0, d = 0, t = 0, u = 0]) =>
+          Q.fromDecimal(`0,${n}${d}`).add(qd(t * u, 2)),
+      ],
+      [
         "left-to-right",
         "procedural",
         ([n = 0, d = 0, t = 0, u = 0]) => q(n, d).add(qd(t, 1)).mul(qd(u, 1)),
@@ -1165,10 +1566,24 @@ const mixedOps = [
     origin: EXT,
     kind: "decimal",
     draw: (r) => [between(r, 21, 49), 1, 2, pick(r, [2, 4, 5])],
+    valid: ([t = 0]) => t % 10 !== 0,
     solve: ([t = 0, n = 0, d = 0, k = 0]) => qd(t, 1).sub(q(n, d)).div(q(k)),
     ref: ([t = 0, n = 0, d = 0, k = 0]) =>
       Q.fromDecimal(String(Number(((t / 10 - n / d) / k).toFixed(3)))),
     traps: [
+      [
+        "division-forgotten",
+        "procedural",
+        ([t = 0, n = 0, d = 0]) => qd(t, 1).sub(q(n, d)),
+      ],
+      [
+        "fraction-as-digits",
+        "conceptual",
+        ([t = 0, n = 0, d = 0, k = 0]) =>
+          qd(t, 1)
+            .sub(Q.fromDecimal(`0,${n}${d}`))
+            .div(q(k)),
+      ],
       [
         "brackets-ignored",
         "procedural",

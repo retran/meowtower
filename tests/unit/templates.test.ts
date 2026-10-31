@@ -46,6 +46,17 @@ describe("domain N and A templates", () => {
     expect(bare).toEqual([]);
   });
 
+  it("REQ-7542: knows the typical mistakes of every task, two where the form allows", () => {
+    const counts = compiled.map((c) => {
+      const ids = new Set<string>();
+      for (let i = 0; i < 40; i += 1)
+        for (const t of c.make(seedOf(i)).traps) ids.add(t.id);
+      return { id: c.id, n: ids.size };
+    });
+    expect(counts.filter((c) => c.n === 0)).toEqual([]);
+    expect(counts.filter((c) => c.n === 1).length).toBeLessThan(40);
+  });
+
   it("labels a picture in the language asked for", () => {
     const rose = compiled.find((c) => c.id === "G7.plan.01");
     expect(rose).toBeDefined();

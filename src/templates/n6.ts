@@ -13,9 +13,54 @@ import {
   signOf,
   tenthsText,
 } from "./draw.js";
+import { formatQ } from "../math/format.js";
 import { defineSpec, type Spec } from "./spec.js";
 
 const s = String;
+
+const keyOf = (a: unknown): string =>
+  a instanceof Q
+    ? a.toString()
+    : Array.isArray(a)
+      ? a.map(String).join("|")
+      : String(a);
+
+/**
+ * Builds a spec whose later traps give way to an earlier one with the same wrong answer, and whose
+ * texts can name each trap's wrong answer as `w_<trap_id_with_underscores>`.
+ */
+const define = <P>(sp: Spec<P>): Spec<never> => {
+  const traps = (sp.traps ?? []).map((t, i, all) => ({
+    ...t,
+    wrong: (p: P) => {
+      const w = t.wrong(p);
+      if (w === null) return null;
+      for (const e of all.slice(0, i)) {
+        const o = e.wrong(p);
+        if (o !== null && keyOf(o) === keyOf(w)) return null;
+      }
+      return w;
+    },
+  }));
+  return defineSpec<P>({
+    ...sp,
+    traps,
+    vars: (p) => ({
+      ...sp.vars(p),
+      ...Object.fromEntries(
+        traps.flatMap((t) => {
+          const w = t.wrong(p);
+          const key = `w_${t.id.replace(/-/g, "_")}`;
+          return w instanceof Q
+            ? [[key, formatQ(w)]]
+            : typeof w === "string"
+              ? [[key, w]]
+              : [];
+        }),
+      ),
+    }),
+  });
+};
 const nearest = (n: number, step: number): number =>
   Math.floor((n + step / 2) / step) * step;
 const down = (n: number, step: number): number => Math.floor(n / step) * step;
@@ -26,7 +71,7 @@ interface N {
 }
 
 const million = [
-  defineSpec<{ k: number; rem: number }>({
+  define<{ k: number; rem: number }>({
     id: "N6.million-decimal.01",
     node: "N6",
     subtype: "million-decimal",
@@ -45,6 +90,17 @@ const million = [
         kind: "conceptual",
         wrong: (p) => (p.rem >= 100 ? null : qi(Number(`${p.k}${p.rem}`))),
       },
+      {
+        id: "one-zero-short",
+        kind: "conceptual",
+        wrong: (p) => (p.rem >= 10 ? null : qi(Number(`${p.k}0${p.rem}`))),
+      },
+      { id: "added", kind: "conceptual", wrong: (p) => qi(p.k + p.rem) },
+      {
+        id: "swapped",
+        kind: "conceptual",
+        wrong: (p) => qi(Number(`${p.rem}${p.k}`)),
+      },
     ],
     vars: (p) => ({
       k: s(p.k),
@@ -54,7 +110,7 @@ const million = [
     }),
     constants: [0, 1000],
   }),
-  defineSpec<N>({
+  define<N>({
     id: "N6.million-decimal.02",
     node: "N6",
     subtype: "million-decimal",
@@ -71,6 +127,16 @@ const million = [
         kind: "conceptual",
         wrong: (p) => qi(Number(s(p.n)[1])),
       },
+      {
+        id: "hundreds-digit",
+        kind: "conceptual",
+        wrong: (p) => qi(Number(s(p.n)[3])),
+      },
+      {
+        id: "thousands-digit",
+        kind: "conceptual",
+        wrong: (p) => qi(Number(s(p.n)[2])),
+      },
     ],
     vars: (p) => ({
       n: digits(p.n),
@@ -78,7 +144,7 @@ const million = [
       t: s(Number(s(p.n)[1])),
     }),
   }),
-  defineSpec<N>({
+  define<N>({
     id: "N6.million-decimal.03",
     node: "N6",
     subtype: "million-decimal",
@@ -97,6 +163,12 @@ const million = [
         kind: "conceptual",
         wrong: (p) => qi(Math.floor(p.n / 1000) % 10),
       },
+      { id: "last-three", kind: "conceptual", wrong: (p) => qi(p.n % 1000) },
+      {
+        id: "as-number",
+        kind: "conceptual",
+        wrong: (p) => qi(1000 * Math.floor(p.n / 1000)),
+      },
     ],
     vars: (p) => ({
       n: digits(p.n),
@@ -105,7 +177,7 @@ const million = [
     }),
     constants: [1000],
   }),
-  defineSpec<N>({
+  define<N>({
     id: "N6.million-decimal.04",
     node: "N6",
     subtype: "million-decimal",
@@ -122,6 +194,11 @@ const million = [
         wrong: (p) => qi(p.n + 10_000),
       },
       { id: "hundred-more", kind: "procedural", wrong: (p) => qi(p.n + 100) },
+      {
+        id: "hundred-thousand-more",
+        kind: "procedural",
+        wrong: (p) => qi(p.n + 100_000),
+      },
     ],
     vars: (p) => ({
       n: digits(p.n),
@@ -131,7 +208,7 @@ const million = [
     }),
     constants: [1000],
   }),
-  defineSpec<{ w: number; k: number }>({
+  define<{ w: number; k: number }>({
     id: "N6.million-decimal.05",
     node: "N6",
     subtype: "million-decimal",
@@ -141,7 +218,19 @@ const million = [
     draw: (r) => ({ w: between(r, 1, 30), k: between(r, 1, 9) }),
     solve: (p) => qTenths(10 * p.w + p.k),
     reference: (p) => Q.fromDecimal(`${p.w},${p.k}`),
-    traps: [{ id: "added", kind: "conceptual", wrong: (p) => qi(p.w + p.k) }],
+    traps: [
+      { id: "added", kind: "conceptual", wrong: (p) => qi(p.w + p.k) },
+      {
+        id: "tenths-as-hundredths",
+        kind: "conceptual",
+        wrong: (p) => Q.fromDecimal(`${p.w},0${p.k}`),
+      },
+      {
+        id: "no-comma",
+        kind: "conceptual",
+        wrong: (p) => qi(10 * p.w + p.k),
+      },
+    ],
     vars: (p) => ({
       w: s(p.w),
       k: s(p.k),
@@ -150,7 +239,7 @@ const million = [
     }),
     constants: [0],
   }),
-  defineSpec<{ w: number; k: number }>({
+  define<{ w: number; k: number }>({
     id: "N6.million-decimal.06",
     node: "N6",
     subtype: "million-decimal",
@@ -166,6 +255,16 @@ const million = [
         kind: "conceptual",
         wrong: (p) => qTenths(10 * p.w + p.k),
       },
+      {
+        id: "thousandths",
+        kind: "conceptual",
+        wrong: (p) => Q.of(BigInt(1000 * p.w + p.k), 1000n),
+      },
+      {
+        id: "no-comma",
+        kind: "conceptual",
+        wrong: (p) => qi(100 * p.w + p.k),
+      },
     ],
     vars: (p) => ({
       w: s(p.w),
@@ -175,7 +274,7 @@ const million = [
     }),
     constants: [0],
   }),
-  defineSpec<{ x: number; p: number; q: number; swap: boolean }>({
+  define<{ x: number; p: number; q: number; swap: boolean }>({
     id: "N6.million-decimal.07",
     node: "N6",
     subtype: "million-decimal",
@@ -214,7 +313,7 @@ const million = [
       };
     },
   }),
-  defineSpec<{ x: number; y: number }>({
+  define<{ x: number; y: number }>({
     id: "N6.million-decimal.08",
     node: "N6",
     subtype: "million-decimal",
@@ -224,11 +323,24 @@ const million = [
     draw: (r) => ({ x: between(r, 1, 30), y: between(r, 1, 9) }),
     solve: (p) => qi(10 * p.x + p.y),
     reference: (p) => qi(Number(`${p.x}${p.y}`)),
-    traps: [{ id: "wholes-only", kind: "conceptual", wrong: (p) => qi(p.x) }],
-    vars: (p) => ({ n: `${p.x},${p.y}`, x: s(p.x), r: s(10 * p.x + p.y) }),
+    traps: [
+      { id: "wholes-only", kind: "conceptual", wrong: (p) => qi(p.x) },
+      { id: "tenths-digit", kind: "conceptual", wrong: (p) => qi(p.y) },
+      {
+        id: "tenths-of-wholes",
+        kind: "conceptual",
+        wrong: (p) => qi(10 * p.x),
+      },
+    ],
+    vars: (p) => ({
+      n: `${p.x},${p.y}`,
+      x: s(p.x),
+      y: s(p.y),
+      r: s(10 * p.x + p.y),
+    }),
     constants: [10],
   }),
-  defineSpec<{ x: number; y: number }>({
+  define<{ x: number; y: number }>({
     id: "N6.million-decimal.09",
     node: "N6",
     subtype: "million-decimal",
@@ -244,6 +356,16 @@ const million = [
         kind: "conceptual",
         wrong: (p) => qTenths(10 * p.x + p.y + 1),
       },
+      {
+        id: "left-end",
+        kind: "conceptual",
+        wrong: (p) => qTenths(10 * p.x + p.y),
+      },
+      {
+        id: "right-with-five",
+        kind: "conceptual",
+        wrong: (p) => qHundredths(100 * p.x + 10 * (p.y + 1) + 5),
+      },
     ],
     vars: (p) => ({
       a: `${p.x},${p.y}`,
@@ -252,7 +374,7 @@ const million = [
     }),
     constants: [0],
   }),
-  defineSpec<{ d: number }>({
+  define<{ d: number }>({
     id: "N6.million-decimal.10",
     node: "N6",
     subtype: "million-decimal",
@@ -269,6 +391,16 @@ const million = [
         kind: "procedural",
         wrong: (p) => qi(999_000 + p.d),
       },
+      {
+        id: "forgot-one",
+        kind: "procedural",
+        wrong: (p) => qi(999_999 - p.d),
+      },
+      {
+        id: "wrong-direction",
+        kind: "conceptual",
+        wrong: (p) => qi(1_000_000 + p.d),
+      },
     ],
     vars: (p) => ({
       d: s(p.d),
@@ -277,7 +409,7 @@ const million = [
     }),
     constants: [1_000_000, 1],
   }),
-  defineSpec<{ m: number; c: number }>({
+  define<{ m: number; c: number }>({
     id: "N6.million-decimal.11",
     node: "N6",
     subtype: "million-decimal",
@@ -293,6 +425,16 @@ const million = [
         kind: "conceptual",
         wrong: (p) => qTenths(10 * p.m + p.c),
       },
+      {
+        id: "in-centimetres",
+        kind: "conceptual",
+        wrong: (p) => qi(100 * p.m + p.c),
+      },
+      {
+        id: "thousandths",
+        kind: "conceptual",
+        wrong: (p) => Q.of(BigInt(1000 * p.m + p.c), 1000n),
+      },
     ],
     vars: (p) => ({
       m: s(p.m),
@@ -302,7 +444,7 @@ const million = [
     }),
     constants: [0, 100],
   }),
-  defineSpec<{ t: number }>({
+  define<{ t: number }>({
     id: "N6.million-decimal.12",
     node: "N6",
     subtype: "million-decimal",
@@ -318,6 +460,11 @@ const million = [
         id: "one-hundredth-more",
         kind: "conceptual",
         wrong: (p) => qHundredths(10 * p.t + 1),
+      },
+      {
+        id: "one-whole-more",
+        kind: "conceptual",
+        wrong: (p) => qTenths(p.t + 10),
       },
     ],
     vars: (p) => ({
@@ -343,7 +490,7 @@ const rounding = <P>(o: {
   vars: Spec<P>["vars"];
   constants?: readonly number[];
 }) =>
-  defineSpec<P>({
+  define<P>({
     id: o.id,
     node: "N6",
     subtype: "round-million",
@@ -387,8 +534,14 @@ const whole = (
         kind: "conceptual",
         wrong: (p) => qi(nearest(p.n, wrongStep)),
       },
+      {
+        id: "always-up",
+        kind: "conceptual",
+        wrong: (p) => qi(down(p.n, step) + step),
+      },
     ],
     vars: (p) => ({
+      next: s(Math.floor((p.n % step) / (step / 10))),
       n: digits(p.n),
       r: digits(nearest(p.n, step)),
       cut: digits(down(p.n, step)),
@@ -457,8 +610,19 @@ const roundSpecs = [
         kind: "procedural",
         wrong: (p) => qi(Math.floor(p.t / 10)),
       },
+      {
+        id: "always-up",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.floor(p.t / 10) + 1),
+      },
+      {
+        id: "to-tens",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.floor((p.t + 50) / 100) * 10),
+      },
     ],
     vars: (p) => ({
+      last: s(p.t % 10),
       n: tenthsText(p.t),
       r: s(Math.round(p.t / 10)),
       cut: s(Math.floor(p.t / 10)),
@@ -481,8 +645,19 @@ const roundSpecs = [
         kind: "procedural",
         wrong: (p) => qTenths(Math.floor(p.h / 10)),
       },
+      {
+        id: "always-up",
+        kind: "conceptual",
+        wrong: (p) => qTenths(Math.floor(p.h / 10) + 1),
+      },
+      {
+        id: "to-wholes",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.floor((p.h + 50) / 100)),
+      },
     ],
     vars: (p) => ({
+      last: s(p.h % 10),
       n: hundredthsText(p.h),
       r: tenthsText(Math.round(p.h / 10)),
       cut: tenthsText(Math.floor(p.h / 10)),
@@ -518,7 +693,14 @@ const roundSpecs = [
     draw: (r) => ({ w: between(r, 1, 99) }),
     solve: (p) => qi(p.w + 1),
     reference: (p) => qi(Math.round((10 * p.w + 5) / 10 + 1e-9)),
-    traps: [{ id: "half-down", kind: "conceptual", wrong: (p) => qi(p.w) }],
+    traps: [
+      { id: "half-down", kind: "conceptual", wrong: (p) => qi(p.w) },
+      {
+        id: "to-tens",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.floor((10 * p.w + 55) / 100) * 10),
+      },
+    ],
     vars: (p) => ({ n: `${p.w},5`, r: s(p.w + 1), down: s(p.w) }),
   }),
   whole(
@@ -550,8 +732,19 @@ const roundSpecs = [
         kind: "procedural",
         wrong: (p) => qHundredths(Math.floor(p.q / 10)),
       },
+      {
+        id: "always-up",
+        kind: "conceptual",
+        wrong: (p) => qHundredths(Math.floor(p.q / 10) + 1),
+      },
+      {
+        id: "to-tenths",
+        kind: "conceptual",
+        wrong: (p) => qTenths(Math.floor((p.q + 50) / 100)),
+      },
     ],
     vars: (p) => ({
+      last: s(p.q % 10),
       n: `${Math.floor(p.q / 1000)},${s(p.q % 1000).padStart(3, "0")}`,
       r: hundredthsText(Math.round(p.q / 10)),
       cut: hundredthsText(Math.floor(p.q / 10)),
@@ -576,6 +769,16 @@ const roundSpecs = [
         id: "next-round-number",
         kind: "conceptual",
         wrong: (p) => qi(1000 * p.m + 500),
+      },
+      {
+        id: "smallest-instead",
+        kind: "conceptual",
+        wrong: (p) => qi(1000 * p.m - 500),
+      },
+      {
+        id: "cut-thinking",
+        kind: "conceptual",
+        wrong: (p) => qi(1000 * p.m + 999),
       },
     ],
     vars: (p) => ({

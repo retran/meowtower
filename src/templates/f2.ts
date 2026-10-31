@@ -27,6 +27,13 @@ const equivalent = [
     ref: ([n = 0, d = 0, k = 0]) => q(n, d).mul(q(d * k)),
     traps: [
       ["same-gap", "conceptual", ([n = 0, d = 0, k = 0]) => q(n + (d * k - d))],
+      ["numerator-unchanged", "conceptual", ([n = 0]) => q(n)],
+      [
+        "the-denominator",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) =>
+          n + (d * k - d) === d * k ? null : q(d * k),
+      ],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n, d), e: String(d * k) }),
   }),
@@ -41,6 +48,12 @@ const equivalent = [
     ref: ([n = 0, d = 0, k = 0]) => q(n * k).div(q(n, d)),
     traps: [
       ["same-gap", "conceptual", ([n = 0, d = 0, k = 0]) => q(d + (n * k - n))],
+      [
+        "denominator-unchanged",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => (n * k === d ? null : q(d)),
+      ],
+      ["the-given-numerator", "conceptual", ([n = 0, , k = 0]) => q(n * k)],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n, d), m: String(n * k) }),
   }),
@@ -60,6 +73,17 @@ const equivalent = [
         "conceptual",
         ([n = 0, d = 0, k = 0]) => q(n + k, d + k),
       ],
+      [
+        "numerator-unchanged",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => q(n, d * k),
+      ],
+      [
+        "numerator-only-multiplied",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) =>
+          n * k * (d + k) === (n + k) * d ? null : q(n * k, d),
+      ],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n, d), e: String(d * k) }),
   }),
@@ -72,7 +96,19 @@ const equivalent = [
     valid: ([n = 0, d = 0, k = 0]) => n < d && coprime(n, d) && k !== d,
     solve: ([, , k = 0]) => q(k),
     ref: ([n = 0, , k = 0]) => q(n * k).div(q(n)),
-    traps: [["difference", "procedural", ([n = 0, , k = 0]) => q(n * k - n)]],
+    traps: [
+      ["difference", "procedural", ([n = 0, , k = 0]) => q(n * k - n)],
+      [
+        "the-new-numerator",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => (n * k === d * k - d ? null : q(n * k)),
+      ],
+      [
+        "denominator-difference",
+        "procedural",
+        ([, d = 0, k = 0]) => q(d * k - d),
+      ],
+    ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n, d), g: fr(n * k, d * k) }),
   }),
   f4({
@@ -131,7 +167,11 @@ const equivalent = [
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, d = 0]) => q((100 * n) / d),
     ref: ([n = 0, d = 0]) => q(n, d).mul(q(100)),
-    traps: [["numerator-itself", "conceptual", ([n = 0]) => q(n)]],
+    traps: [
+      ["numerator-itself", "conceptual", ([n = 0]) => q(n)],
+      ["times-hundred", "procedural", ([n = 0]) => q(100 * n)],
+      ["same-gap", "conceptual", ([n = 0, d = 0]) => q(n + 100 - d)],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
     consts: [100],
   }),
@@ -143,7 +183,11 @@ const equivalent = [
     draw: (r) => [2 * between(r, 2, 6)],
     solve: ([e = 0]) => q(e / 2),
     ref: ([e = 0]) => q(1, 2).mul(q(e)),
-    traps: [["all-pieces", "conceptual", ([e = 0]) => q(e)]],
+    traps: [
+      ["all-pieces", "conceptual", ([e = 0]) => q(e)],
+      ["doubled", "procedural", ([e = 0]) => q(2 * e)],
+      ["a-quarter", "conceptual", ([e = 0]) => (e % 4 === 0 ? q(e / 4) : null)],
+    ],
   }),
   f4({
     id: "F4.equivalent.08",
@@ -154,7 +198,11 @@ const equivalent = [
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([n = 0]) => q(4 * n),
     ref: ([n = 0]) => q(n + n + n + n),
-    traps: [["step-of-one", "procedural", ([n = 0]) => q(3 * n + 1)]],
+    traps: [
+      ["step-of-one", "procedural", ([n = 0]) => q(3 * n + 1)],
+      ["last-numerator-repeated", "conceptual", ([n = 0]) => q(3 * n)],
+      ["the-denominator", "conceptual", ([, d = 0]) => q(4 * d)],
+    ],
     extra: ([n = 0, d = 0]) => ({
       f: fr(n, d),
       g: fr(2 * n, 2 * d),
@@ -173,6 +221,14 @@ const equivalent = [
     ref: ([n = 0, , k = 0]) => q(n * k).div(q(k)),
     traps: [
       ["the-large-numerator", "conceptual", ([n = 0, , k = 0]) => q(n * k)],
+      [
+        "same-gap-subtracted",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => {
+          const w = n * k - (d * k - d);
+          return w > 0 ? q(w) : null;
+        },
+      ],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n * k, d * k) }),
   }),
@@ -191,6 +247,17 @@ const equivalent = [
       ),
     traps: [
       ["rounded-up", "procedural", ([, d = 0, c = 0]) => q(Math.ceil(c / d))],
+      [
+        "first-fraction-skipped",
+        "procedural",
+        ([, d = 0, c = 0]) =>
+          Math.floor(c / d) > 1 ? q(Math.floor(c / d) - 1) : null,
+      ],
+      [
+        "largest-denominator",
+        "conceptual",
+        ([, d = 0, c = 0]) => q(d * Math.floor(c / d)),
+      ],
     ],
     valid: ([, d = 0, c = 0]) => c % d !== 0,
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
@@ -203,7 +270,11 @@ const equivalent = [
     draw: (r) => [1, pick(r, [2, 3, 4, 5, 6, 10, 12])],
     solve: ([n = 0, d = 0]) => q((60 * n) / d),
     ref: ([n = 0, d = 0]) => q(n, d).mul(q(60)),
-    traps: [["denominator-itself", "conceptual", ([, d = 0]) => q(d)]],
+    traps: [
+      ["denominator-itself", "conceptual", ([, d = 0]) => q(d)],
+      ["multiplied", "procedural", ([, d = 0]) => q(60 * d)],
+      ["whole-hour", "conceptual", () => q(60)],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
     consts: [60],
   }),
@@ -224,12 +295,19 @@ const simplify = [
     ref: ([n = 0, d = 0, k = 0]) => q(n * k, d * k),
     traps: [
       [
-        "reduced-only-halfway",
+        "divided-only-the-numerator",
         "procedural",
-        ([n = 0, d = 0, k = 0]) =>
-          k % 2 === 0
-            ? q((n * k) / 2, (d * k) / 2)
-            : q((n * k) / 3, (d * k) / 3),
+        ([n = 0, d = 0, k = 0]) => q(n, d * k),
+      ],
+      [
+        "divided-only-the-denominator",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => ((n * k) % d === 0 ? null : q(n * k, d)),
+      ],
+      [
+        "subtracted-the-same-number",
+        "conceptual",
+        ([n = 0, d = 0]) => (n === 1 ? null : q(n - 1, d - 1)),
       ],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n * k, d * k) }),
@@ -249,6 +327,12 @@ const simplify = [
         "procedural",
         ([, , k = 0]) => q(k % 2 === 0 ? 2 : 3),
       ],
+      [
+        "half-of-the-largest",
+        "conceptual",
+        ([, , k = 0]) => (k % 2 === 0 && k !== 4 ? q(k / 2) : null),
+      ],
+      ["the-reduced-numerator", "conceptual", ([n = 0]) => q(n)],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n * k, d * k) }),
   }),
@@ -261,7 +345,22 @@ const simplify = [
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([n = 0]) => q(n),
     ref: ([n = 0, d = 0, k = 0]) => q(n * k).div(q(gcd(n * k, d * k))),
-    traps: [["the-denominator", "conceptual", ([, d = 0]) => q(d)]],
+    traps: [
+      ["the-denominator", "conceptual", ([, d = 0]) => q(d)],
+      [
+        "numerator-unreduced",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => (n * k === d ? null : q(n * k)),
+      ],
+      [
+        "reduced-halfway",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => {
+          const h = k % 2 === 0 ? (n * k) / 2 : (n * k) / 3;
+          return h === d ? null : q(h);
+        },
+      ],
+    ],
     extra: ([n = 0, d = 0, k = 0]) => ({ f: fr(n * k, d * k) }),
   }),
   f4s({
@@ -274,7 +373,15 @@ const simplify = [
     valid: ([, n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([w = 0, n = 0, d = 0]) => mix(w, n, d),
     ref: ([w = 0, n = 0, d = 0]) => q(w * d + n, d),
-    traps: [["wholes-only", "conceptual", ([w = 0]) => q(w)]],
+    traps: [
+      ["wholes-only", "conceptual", ([w = 0]) => q(w)],
+      ["remainder-only", "conceptual", ([, n = 0, d = 0]) => q(n, d)],
+      [
+        "swapped-parts",
+        "conceptual",
+        ([w = 0, n = 0, d = 0]) => (w === n ? null : mix(n, w, d)),
+      ],
+    ],
     extra: ([w = 0, n = 0, d = 0]) => ({
       f: fr(w * d + n, d),
       nn: String(w * d + n),
@@ -296,6 +403,17 @@ const simplify = [
         "procedural",
         ([w = 0, n = 0, d = 0]) => q(w * n, d),
       ],
+      [
+        "wholes-added-to-numerator",
+        "procedural",
+        ([w = 0, n = 0, d = 0]) =>
+          w * n === w + n || (w + n) % d === 0 ? null : q(w + n, d),
+      ],
+      [
+        "denominator-also-multiplied",
+        "conceptual",
+        ([w = 0, n = 0, d = 0]) => q(w * d + n, w * d),
+      ],
     ],
     extra: ([w = 0, n = 0, d = 0]) => ({ m: mixText(w, n, d) }),
   }),
@@ -309,7 +427,15 @@ const simplify = [
     valid: ([a = 0, b = 0]) => a < b && gcd(a, b) > 1,
     solve: ([a = 0, b = 0]) => q(a, b),
     ref: ([a = 0, b = 0]) => q(a / gcd(a, b), b / gcd(a, b)),
-    traps: [["the-other-part", "conceptual", ([a = 0, b = 0]) => q(b - a, b)]],
+    traps: [
+      ["the-other-part", "conceptual", ([a = 0, b = 0]) => q(b - a, b)],
+      ["against-the-boys", "conceptual", ([a = 0, b = 0]) => q(a, b - a)],
+      [
+        "cancelled-top-only",
+        "procedural",
+        ([a = 0, b = 0]) => q(a / gcd(a, b), b),
+      ],
+    ],
   }),
   f4s({
     id: "F4.simplify.07",
@@ -321,11 +447,9 @@ const simplify = [
     solve: ([n = 0]) => q(n, 100),
     ref: ([n = 0]) => q(n / gcd(n, 100), 100 / gcd(n, 100)),
     traps: [
-      [
-        "cancelled-only-by-five",
-        "procedural",
-        ([n = 0]) => (gcd(n / 5, 20) > 1 ? q(n / 5, 20) : null),
-      ],
+      ["divided-only-the-numerator", "procedural", ([n = 0]) => q(n / 5, 100)],
+      ["divided-only-the-denominator", "procedural", ([n = 0]) => q(n, 20)],
+      ["crossed-out-a-zero", "conceptual", ([n = 0]) => q(n, 10)],
     ],
     extra: ([n = 0]) => ({ f: fr(n, 100) }),
     consts: [100],
@@ -340,7 +464,19 @@ const simplify = [
     valid: ([m = 0, k = 0]) => m !== k,
     solve: ([, k = 0]) => q(1, k),
     ref: ([m = 0, k = 0]) => q(m, m * k),
-    traps: [["upside-down", "conceptual", ([, k = 0]) => q(k)]],
+    traps: [
+      ["upside-down", "conceptual", ([, k = 0]) => q(k)],
+      [
+        "denominator-only-cancelled",
+        "procedural",
+        ([m = 0, k = 0]) => (m === k * k ? null : q(m, k)),
+      ],
+      [
+        "numerator-only-cancelled",
+        "procedural",
+        ([m = 0, k = 0]) => q(1, m * k),
+      ],
+    ],
     extra: ([m = 0, k = 0]) => ({ f: fr(m, m * k) }),
     consts: [1],
   }),
@@ -353,7 +489,20 @@ const simplify = [
     draw: (r) => [pick(r, [10, 15, 20, 30, 45, 50])],
     solve: ([m = 0]) => q(m, 60),
     ref: ([m = 0]) => q(m / gcd(m, 60), 60 / gcd(m, 60)),
-    traps: [["out-of-a-hundred", "conceptual", ([m = 0]) => q(m, 100)]],
+    traps: [
+      ["out-of-a-hundred", "conceptual", ([m = 0]) => q(m, 100)],
+      [
+        "cancelled-numerator-only",
+        "procedural",
+        ([m = 0]) => q(m / gcd(m, 60), 60),
+      ],
+      [
+        "cancelled-denominator-only",
+        "procedural",
+        ([m = 0]) =>
+          m % (60 / gcd(m, 60)) === 0 ? null : q(m, 60 / gcd(m, 60)),
+      ],
+    ],
     consts: [60, 100],
   }),
   f4s({
@@ -411,6 +560,25 @@ const simplify = [
               ].filter(Boolean).length,
           ),
       ],
+      [
+        "reduced-only-by-two",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0]) => {
+          const ps = [
+            [a, b],
+            [c, d],
+            [e, f],
+            [g, h],
+          ];
+          const even = ps.filter(
+            ([x = 0, y = 0]) => x % 2 === 0 && y % 2 === 0,
+          );
+          const reducible = ps.filter(([x = 0, y = 0]) => gcd(x, y) > 1);
+          return 4 - even.length === reducible.length
+            ? null
+            : q(4 - even.length);
+        },
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0]) => ({
       list: [fr(a, b), fr(c, d), fr(e, f), fr(g, h)].join("; "),
@@ -426,7 +594,15 @@ const simplify = [
     valid: ([n = 0, d = 0]) => n > d && n % d !== 0,
     solve: ([n = 0, d = 0]) => q(Math.floor(n / d)),
     ref: ([n = 0, d = 0]) => q((n - (n % d)) / d),
-    traps: [["the-remainder", "conceptual", ([n = 0, d = 0]) => q(n % d)]],
+    traps: [
+      ["the-remainder", "conceptual", ([n = 0, d = 0]) => q(n % d)],
+      [
+        "rounded-up",
+        "procedural",
+        ([n = 0, d = 0]) =>
+          Math.floor(n / d) + 1 === n % d ? null : q(Math.floor(n / d) + 1),
+      ],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
 ];
@@ -449,6 +625,12 @@ const addLike = [
         "procedural",
         ([a = 0, b = 0, d = 0]) => q(a + b, 2 * d),
       ],
+      ["dropped-the-denominator", "conceptual", ([a = 0, b = 0]) => q(a + b)],
+      [
+        "subtracted",
+        "procedural",
+        ([a = 0, b = 0, d = 0]) => (a === b ? null : q(Math.abs(a - b), d)),
+      ],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
   }),
@@ -468,6 +650,7 @@ const addLike = [
         "procedural",
         ([a = 0, b = 0, d = 0]) => q(a + b, d),
       ],
+      ["dropped-the-denominator", "conceptual", ([a = 0, b = 0]) => q(a - b)],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
   }),
@@ -487,6 +670,8 @@ const addLike = [
         "procedural",
         ([a = 0, b = 0, d = 0]) => q(a + b, 2 * d),
       ],
+      ["dropped-the-denominator", "conceptual", ([a = 0, b = 0]) => q(a + b)],
+      ["whole-lost", "conceptual", ([a = 0, b = 0, d = 0]) => q(a + b - d, d)],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
   }),
@@ -500,7 +685,15 @@ const addLike = [
     valid: ([a = 0, d = 0]) => a < d && a !== d - a,
     solve: ([a = 0, d = 0]) => q(d - a, d),
     ref: ([a = 0, d = 0]) => q(1).sub(q(a, d)),
-    traps: [["the-given-fraction", "conceptual", ([a = 0, d = 0]) => q(a, d)]],
+    traps: [
+      ["the-given-fraction", "conceptual", ([a = 0, d = 0]) => q(a, d)],
+      ["dropped-the-denominator", "conceptual", ([a = 0, d = 0]) => q(d - a)],
+      [
+        "against-the-part",
+        "conceptual",
+        ([a = 0, d = 0]) => ((d - a) % a === 0 ? null : q(d - a, a)),
+      ],
+    ],
     extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
     consts: [1],
   }),
@@ -520,6 +713,12 @@ const addLike = [
         "procedural",
         ([a = 0, b = 0, d = 0]) => q(a + b, 2 * d),
       ],
+      ["dropped-the-denominator", "conceptual", ([a = 0, b = 0]) => q(a + b)],
+      [
+        "subtracted",
+        "procedural",
+        ([a = 0, b = 0, d = 0]) => (a === b ? null : q(Math.abs(a - b), d)),
+      ],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
   }),
@@ -535,6 +734,12 @@ const addLike = [
     ref: ([a = 0, d = 0]) => q(d, d).sub(q(a, d)),
     traps: [
       ["numerator-minus-one", "procedural", ([a = 0, d = 0]) => q(a - 1, d)],
+      ["the-given-fraction", "conceptual", ([a = 0, d = 0]) => q(a, d)],
+      [
+        "against-the-part",
+        "conceptual",
+        ([a = 0, d = 0]) => ((d - a) % a === 0 ? null : q(d - a, a)),
+      ],
     ],
     extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
     consts: [1],
@@ -561,6 +766,17 @@ const addLike = [
         "procedural",
         ([a = 0, b = 0, , d = 0]) => q(a + b, d),
       ],
+      [
+        "denominators-added",
+        "procedural",
+        ([a = 0, b = 0, c = 0, d = 0]) => q(a + b + c, 3 * d),
+      ],
+      [
+        "whole-lost",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) =>
+          (a + b + c - d) % d === 0 ? null : q(a + b + c - d, d),
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
       f: fr(a, d),
@@ -580,6 +796,8 @@ const addLike = [
     ref: ([a = 0, d = 0]) => q(3).sub(q(a, d)),
     traps: [
       ["only-the-fraction-part", "conceptual", ([a = 0, d = 0]) => q(d - a, d)],
+      ["forgot-to-borrow", "conceptual", ([a = 0, d = 0]) => q(4 * d - a, d)],
+      ["added", "procedural", ([a = 0, d = 0]) => q(3 * d + a, d)],
     ],
     extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
     consts: [3],
@@ -605,6 +823,17 @@ const addLike = [
         "procedural",
         ([x = 0, a = 0, b = 0, d = 0]) => q(x - a + b, d),
       ],
+      [
+        "first-portion-only",
+        "procedural",
+        ([x = 0, a = 0, , d = 0]) => q(x - a, d),
+      ],
+      [
+        "the-eaten-part",
+        "conceptual",
+        ([x = 0, a = 0, b = 0, d = 0]) =>
+          x === 2 * (a + b) ? null : q(a + b, d),
+      ],
     ],
     extra: ([x = 0, a = 0, b = 0, d = 0]) => ({
       f: fr(x, d),
@@ -621,7 +850,10 @@ const addLike = [
     valid: ([a = 0, d = 0]) => a < d && a !== d - a,
     solve: ([a = 0, d = 0]) => q(d - a),
     ref: ([a = 0, d = 0]) => q(d).sub(q(a)),
-    traps: [["the-given-numerator", "conceptual", ([a = 0]) => q(a)]],
+    traps: [
+      ["the-given-numerator", "conceptual", ([a = 0]) => q(a)],
+      ["all-the-parts", "conceptual", ([, d = 0]) => q(d)],
+    ],
     extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
   }),
   f5({
@@ -636,6 +868,8 @@ const addLike = [
     ref: ([a = 0, d = 0]) => q(a, d).add(q(a, d)),
     traps: [
       ["denominators-added", "procedural", ([a = 0, d = 0]) => q(2 * a, 2 * d)],
+      ["multiplied-numerators", "procedural", ([a = 0, d = 0]) => q(a * a, d)],
+      ["denominator-doubled", "conceptual", ([a = 0, d = 0]) => q(a, 2 * d)],
     ],
     extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
   }),
@@ -653,7 +887,15 @@ const mixedNumbers = [
     valid: ([, n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([w = 0, n = 0, d = 0]) => mix(w, n, d),
     ref: ([w = 0, n = 0, d = 0]) => q(w * d + n, d),
-    traps: [["wholes-only", "conceptual", ([w = 0]) => q(w)]],
+    traps: [
+      ["wholes-only", "conceptual", ([w = 0]) => q(w)],
+      ["remainder-only", "conceptual", ([, n = 0, d = 0]) => q(n, d)],
+      [
+        "swapped-parts",
+        "conceptual",
+        ([w = 0, n = 0, d = 0]) => (w === n ? null : mix(n, w, d)),
+      ],
+    ],
     extra: ([w = 0, n = 0, d = 0]) => ({ f: fr(w * d + n, d) }),
   }),
   f5m({
@@ -671,6 +913,17 @@ const mixedNumbers = [
         "wholes-added-to-numerator",
         "procedural",
         ([w = 0, n = 0, d = 0]) => q(w + n, d),
+      ],
+      [
+        "whole-times-numerator",
+        "procedural",
+        ([w = 0, n = 0, d = 0]) =>
+          w === 1 || w * n === w + n || (w * n) % d === 0 ? null : q(w * n, d),
+      ],
+      [
+        "wholes-dropped",
+        "conceptual",
+        ([w = 0, n = 0, d = 0]) => (w === 1 ? null : q(n, d)),
       ],
     ],
     extra: ([w = 0, n = 0, d = 0]) => ({ m: mixText(w, n, d) }),
@@ -692,7 +945,19 @@ const mixedNumbers = [
     solve: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b, d),
     ref: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) =>
       mix(w1, a, d).add(mix(w2, b, d)),
-    traps: [["wholes-only", "conceptual", ([w1 = 0, , w2 = 0]) => q(w1 + w2)]],
+    traps: [
+      ["wholes-only", "conceptual", ([w1 = 0, , w2 = 0]) => q(w1 + w2)],
+      [
+        "fractions-only",
+        "conceptual",
+        ([, a = 0, , b = 0, d = 0]) => q(a + b, d),
+      ],
+      [
+        "denominators-added",
+        "procedural",
+        ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b, 2 * d),
+      ],
+    ],
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
       k: mixText(w2, b, d),
@@ -720,6 +985,12 @@ const mixedNumbers = [
         "carry-lost",
         "procedural",
         ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b - d, d),
+      ],
+      ["wholes-only", "conceptual", ([w1 = 0, , w2 = 0]) => q(w1 + w2)],
+      [
+        "denominators-added",
+        "procedural",
+        ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b, 2 * d),
       ],
     ],
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
@@ -750,6 +1021,12 @@ const mixedNumbers = [
         "procedural",
         ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 - w2, a + b, d),
       ],
+      ["wholes-only", "conceptual", ([w1 = 0, , w2 = 0]) => q(w1 - w2)],
+      [
+        "numerators-only",
+        "conceptual",
+        ([, a = 0, , b = 0, d = 0]) => q(a - b, d),
+      ],
     ],
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
@@ -779,6 +1056,13 @@ const mixedNumbers = [
         "procedural",
         ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 - w2, b - a, d),
       ],
+      ["wholes-only", "conceptual", ([w1 = 0, , w2 = 0]) => q(w1 - w2)],
+      [
+        "borrowed-wholes-kept",
+        "procedural",
+        ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) =>
+          d + a - b === b - a ? null : mix(w1 - w2, d + a - b, d),
+      ],
     ],
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
@@ -797,6 +1081,13 @@ const mixedNumbers = [
     ref: ([w = 0, n = 0, d = 0]) => q(w).add(q(n, d)),
     traps: [
       ["multiplied", "procedural", ([w = 0, n = 0, d = 0]) => q(w * n, d)],
+      [
+        "wholes-added-to-numerator",
+        "procedural",
+        ([w = 0, n = 0, d = 0]) =>
+          w * n === w + n || (w + n) % d === 0 ? null : q(w + n, d),
+      ],
+      ["fraction-only", "conceptual", ([, n = 0, d = 0]) => q(n, d)],
     ],
     extra: ([, n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
@@ -814,6 +1105,11 @@ const mixedNumbers = [
         "rounded-up",
         "procedural",
         ([n = 0, d = 0]) => q(Math.floor(n / d) + 1),
+      ],
+      [
+        "the-remainder",
+        "conceptual",
+        ([n = 0, d = 0]) => (n % d === Math.floor(n / d) + 1 ? null : q(n % d)),
       ],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
@@ -845,6 +1141,11 @@ const mixedNumbers = [
         "conceptual",
         ([, a = 0, , b = 0]) => (a < b ? "<" : a > b ? ">" : "="),
       ],
+      [
+        "same-sum",
+        "conceptual",
+        ([w1 = 0, a = 0, w2 = 0, b = 0]) => (w1 + a === w2 + b ? "=" : null),
+      ],
     ],
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
@@ -875,6 +1176,12 @@ const mixedNumbers = [
         "procedural",
         ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b - d, d),
       ],
+      ["wholes-only", "conceptual", ([w1 = 0, , w2 = 0]) => q(w1 + w2)],
+      [
+        "denominators-added",
+        "procedural",
+        ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b, 2 * d),
+      ],
     ],
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
@@ -892,6 +1199,12 @@ const mixedNumbers = [
     ref: ([w = 0, n = 0, d = 0]) => mix(w, n, d).mul(q(d)),
     traps: [
       ["wholes-added-to-numerator", "procedural", ([w = 0, n = 0]) => q(w + n)],
+      [
+        "whole-times-numerator",
+        "procedural",
+        ([w = 0, n = 0]) => (w * n === w + n ? null : q(w * n)),
+      ],
+      ["forgot-the-numerator", "conceptual", ([w = 0, , d = 0]) => q(w * d)],
     ],
     extra: ([w = 0, n = 0, d = 0]) => ({ m: mixText(w, n, d), u: fr(1, d) }),
   }),

@@ -3,7 +3,7 @@ id: ADR-0490
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-1232, REQ-7520, REQ-7522, REQ-7530, REQ-7532, REQ-7534]
+addresses: [REQ-1232, REQ-7520, REQ-7522, REQ-7530, REQ-7532, REQ-7534, REQ-7542]
 supersedes: []
 ---
 

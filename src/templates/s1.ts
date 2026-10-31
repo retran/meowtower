@@ -18,7 +18,11 @@ const S1_tables_specs: readonly Spec<never>[] = [
     p: [rg(5, 30), rg(5, 30), rg(5, 30)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b) => q(b),
-    t: { monday: (a) => q(a), wednesday: (a, b, c) => q(c) },
+    t: {
+      monday: (a) => q(a),
+      wednesday: (a, b, c) => q(c),
+      "all-added": (a, b, c) => q(a + b + c),
+    },
   }),
   S1_tables({
     id: "S1.tables.02",
@@ -77,7 +81,11 @@ const S1_tables_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(20, 50), rg(5, 15)],
     f: (a, b) => q(60 - a + b),
-    t: { "minutes-subtracted": (a, b) => q(a - b), "hour-only": () => q(60) },
+    t: {
+      "minutes-subtracted": (a, b) => q(a - b),
+      "hour-only": () => q(60),
+      "hour-added": (a, b) => q(60 + b),
+    },
     c: [8, 9, 60],
   }),
   S1_tables({
@@ -146,7 +154,16 @@ const S1_tables_specs: readonly Spec<never>[] = [
     p: [rg(10, 99), rg(10, 99)],
     ok: (a, b) => a !== b,
     f: (a, b) => sign(q(a), q(b)),
-    t: { reversed: (a, b) => sign(q(b), q(a)) },
+    t: {
+      reversed: (a, b) => {
+        const w = sign(q(b), q(a));
+        return w === sign(q(a % 10), q(b % 10)) ? null : w;
+      },
+      "units-first": (a, b) => {
+        const w = sign(q(a % 10), q(b % 10));
+        return w === sign(q(a), q(b)) ? null : w;
+      },
+    },
   }),
   S1_tables({
     id: "S1.tables.12",
@@ -201,7 +218,12 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(10, 20, 30, 40)],
     f: (a) => q(a + 5),
-    t: { "lower-mark": (a) => q(a), "upper-mark": (a) => q(a + 10) },
+    t: {
+      "lower-mark": (a) => q(a),
+      "upper-mark": (a) => q(a + 10),
+      "half-of-upper": (a) => (a === 10 ? null : q((a + 10) / 2)),
+      "half-gap": () => q(5),
+    },
     x: (a) => ({ y: String(a + 10) }),
     c: [2, 5, 10],
   }),
@@ -334,6 +356,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
     t: {
       sum: (a, b, c) => q(a + b + c),
       "two-numbers": (a, b) => q((a + b) / 2),
+      "middle-of-list": (a, b) => q(b),
     },
     c: [2, 3],
   }),
@@ -349,6 +372,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
     t: {
       sum: (a, b, c, d) => q(a + b + c + d),
       "divided-by-three": (a, b, c, d) => q((a + b + c + d) / 3),
+      "middle-two": (a, b, c) => ((b + c) % 2 === 0 ? q((b + c) / 2) : null),
     },
     c: [3, 4],
   }),
@@ -397,7 +421,11 @@ const S3_mean_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 40)],
     f: (a) => q(a + 2),
-    t: { smallest: (a) => q(a), largest: (a) => q(a + 4) },
+    t: {
+      smallest: (a) => q(a),
+      largest: (a) => q(a + 4),
+      sum: (a) => q(5 * a + 10),
+    },
     c: [1, 2, 3, 4],
   }),
   S3_mean({
@@ -419,7 +447,16 @@ const S3_mean_specs: readonly Spec<never>[] = [
     p: [rg(2, 12), rg(2, 12), rg(2, 12), rg(2, 12)],
     ok: (a, b, c, d) => (a + b + c) % 3 === 0 && (a + b + c) / 3 !== d,
     f: (a, b, c, d) => sign(q((a + b + c) / 3), q(d)),
-    t: { reversed: (a, b, c, d) => sign(q(d), q((a + b + c) / 3)) },
+    t: {
+      reversed: (a, b, c, d) => {
+        const w = sign(q(d), q((a + b + c) / 3));
+        return w === sign(q(a + b + c), q(d)) ? null : w;
+      },
+      "sum-compared": (a, b, c, d) => {
+        const w = sign(q(a + b + c), q(d));
+        return w === sign(q((a + b + c) / 3), q(d)) ? null : w;
+      },
+    },
     c: [3],
   }),
   S3_mean({
@@ -429,7 +466,11 @@ const S3_mean_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(5, 7, 9, 11, 13, 15, 17, 19)],
     f: (a) => q((a + 1) / 2),
-    t: { "last-number": (a) => q(a), "first-number": () => q(1) },
+    t: {
+      "last-number": (a) => q(a),
+      "first-number": () => q(1),
+      sum: (a) => q((a * (a + 1)) / 2),
+    },
     c: [1, 2],
   }),
 ];
@@ -444,7 +485,11 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(8, 15), rg(3, 20), rg(3, 20)],
     ok: (a, b, c) => 3 * a - b - c > 0 && 3 * a - b - c !== a && b !== c,
     f: (a, b, c) => q(3 * a - b - c),
-    t: { "mean-itself": (a) => q(a), sum: (a) => q(3 * a) },
+    t: {
+      "mean-itself": (a) => q(a),
+      sum: (a) => q(3 * a),
+      "known-sum": (a, b, c) => q(b + c),
+    },
     c: [3],
   }),
   S3_missing({
@@ -455,7 +500,11 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(8, 20), rg(3, 20)],
     ok: (a, b) => 2 * a - b > 0 && 2 * a - b !== a && a - b > 0 && a !== b,
     f: (a, b) => q(2 * a - b),
-    t: { "mean-itself": (a) => q(a), "mean-minus-number": (a, b) => q(a - b) },
+    t: {
+      "mean-itself": (a) => q(a),
+      "mean-minus-number": (a, b) => q(a - b),
+      added: (a, b) => q(a + b),
+    },
     c: [2],
   }),
   S3_missing({
@@ -472,6 +521,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
     t: {
       "three-times": (a, b, c, d) => q(3 * a - b - c - d),
       "mean-itself": (a) => q(a),
+      "known-sum": (a, b, c, d) => q(b + c + d),
     },
     c: [3, 4],
   }),

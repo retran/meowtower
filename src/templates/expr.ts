@@ -138,7 +138,7 @@ export function agree(
 ): string {
   const parsed = readValue(value);
   if (parsed === null) return many;
-  if (parsed.d !== 1n) return few;
+  if (parsed.d !== 1n || value.includes(SLASH)) return few;
   const n = parsed.n < 0n ? -parsed.n : parsed.n;
   const hundred = n % 100n;
   const ten = n % 10n;

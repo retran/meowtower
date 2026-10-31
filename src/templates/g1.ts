@@ -15,7 +15,7 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(3, 8)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { "figures-added": (a, b) => q(a + b) },
+    t: { "figures-added": (a, b) => q(a + b), "one-polygon": (a, b) => q(b) },
   }),
   G1_shapes({
     id: "G1.shapes.02",
@@ -62,7 +62,7 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(4, 8, 12, 16, 20)],
     f: (a) => q(a / 2),
-    t: { quarter: (a) => q(a / 4) },
+    t: { quarter: (a) => q(a / 4), "whole-side": (a) => q(a) },
     c: [2, 4],
   }),
   G1_shapes({
@@ -91,7 +91,13 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 5)],
     f: (a) => q((a * (a + 1) * (2 * a + 1)) / 6),
-    t: { "unit-squares-only": (a) => q(a * a) },
+    t: {
+      "unit-squares-only": (a) => q(a * a),
+      "without-the-big-one": (a) =>
+        a === 2 ? null : q((a * (a + 1) * (2 * a + 1)) / 6 - 1),
+      "two-sizes-only": (a) =>
+        a === 2 || a === 3 ? null : q(a * a + (a - 1) * (a - 1)),
+    },
     c: [1, 2],
   }),
   G1_shapes({
@@ -154,6 +160,7 @@ const G2_angles_specs: readonly Spec<never>[] = [
     t: {
       "sum-of-two": (a, b) => q(a + b),
       "from-360": (a, b) => q(360 - a - b),
+      "one-angle": (a) => q(180 - a),
     },
     c: [180, 360],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
@@ -166,7 +173,14 @@ const G2_angles_specs: readonly Spec<never>[] = [
     p: [rg(20, 160)],
     ok: (a) => a !== 90,
     f: (a) => q(180 - a),
-    t: { "same-angle": (a) => q(a) },
+    t: {
+      "same-angle": (a) => q(a),
+      "from-90": (a) => {
+        const w = Math.abs(90 - a);
+        return w === a || w === 180 - a ? null : q(w);
+      },
+      "from-360": (a) => q(360 - a),
+    },
     c: [180],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
@@ -178,7 +192,7 @@ const G2_angles_specs: readonly Spec<never>[] = [
     p: [rg(10, 80)],
     ok: (a) => a !== 45,
     f: (a) => q(90 - a),
-    t: { "from-180": (a) => q(180 - a) },
+    t: { "from-180": (a) => q(180 - a), sum: (a) => q(90 + a) },
     c: [90, 180],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
@@ -297,7 +311,14 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(10, 70), rg(80, 170)],
     f: (a, b) => q(b - a),
-    t: { "far-mark": (a, b) => q(b), "marks-added": (a, b) => q(a + b) },
+    t: {
+      "far-mark": (a, b) => q(b),
+      "marks-added": (a, b) => q(a + b),
+      "wrong-scale": (a, b) => {
+        const w = Math.abs(a + b - 180);
+        return w === b - a ? null : q(w);
+      },
+    },
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
 ];

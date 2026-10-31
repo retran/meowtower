@@ -17,6 +17,10 @@ const sorted = (v: readonly Q[], desc = false): string[] =>
     .sort((a, b) => (desc ? -1 : 1) * a[0].cmp(b[0]) || a[1] - b[1])
     .map(([, i]) => String(i + 1));
 
+const same = (x: readonly string[], y: readonly string[]): boolean =>
+  x.join() === y.join();
+const order = (v: readonly number[]): string[] => sorted(v.map((x) => q(x)));
+
 const f1 = forFraction("F1", "share");
 const share = [
   f1({
@@ -31,6 +35,12 @@ const share = [
     ref: ([n = 0, d = 0]) => q(2 * n, 2 * d),
     traps: [
       ["against-the-rest", "conceptual", ([n = 0, d = 0]) => q(n, d - n)],
+      ["the-unshaded-part", "conceptual", ([n = 0, d = 0]) => q(d - n, d)],
+      [
+        "upside-down",
+        "conceptual",
+        ([n = 0, d = 0]) => (d % n === 0 ? null : q(d, n)),
+      ],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
@@ -44,7 +54,14 @@ const share = [
     valid: ([n = 0, d = 0]) => n < d && n !== d - n,
     solve: ([n = 0, d = 0]) => q(d - n, d),
     ref: ([n = 0, d = 0]) => q(1).sub(q(n, d)),
-    traps: [["the-shaded-part", "conceptual", ([n = 0, d = 0]) => q(n, d)]],
+    traps: [
+      ["the-shaded-part", "conceptual", ([n = 0, d = 0]) => q(n, d)],
+      [
+        "against-the-shaded",
+        "conceptual",
+        ([n = 0, d = 0]) => ((d - n) % n === 0 ? null : q(d - n, n)),
+      ],
+    ],
   }),
   f1({
     id: "F1.share.03",
@@ -54,7 +71,14 @@ const share = [
     draw: (r) => [between(r, 2, 10)],
     solve: ([d = 0]) => q(d),
     ref: ([d = 0]) => q(Array.from({ length: d }).length),
-    traps: [["one-part", "conceptual", () => q(1)]],
+    traps: [
+      ["one-part", "conceptual", () => q(1)],
+      [
+        "counted-the-cuts",
+        "conceptual",
+        ([d = 0]) => (d === 2 ? null : q(d - 1)),
+      ],
+    ],
     consts: [1],
   }),
   f1({
@@ -67,7 +91,10 @@ const share = [
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, d = 0]) => q(n, d),
     ref: ([n = 0, d = 0]) => q(3 * n, 3 * d),
-    traps: [["upside-down", "conceptual", ([n = 0, d = 0]) => q(d, n)]],
+    traps: [
+      ["upside-down", "conceptual", ([n = 0, d = 0]) => q(d, n)],
+      ["against-the-rest", "conceptual", ([n = 0, d = 0]) => q(n, d - n)],
+    ],
   }),
   f1({
     id: "F1.share.05",
@@ -103,7 +130,15 @@ const share = [
     valid: ([c = 0, d = 0]) => c !== d && c % d !== 0,
     solve: ([, d = 0]) => q(1, d),
     ref: ([, d = 0]) => q(2, 2 * d),
-    traps: [["against-the-amount", "conceptual", ([c = 0]) => q(1, c)]],
+    traps: [
+      ["against-the-amount", "conceptual", ([c = 0]) => q(1, c)],
+      ["apples-per-child", "conceptual", ([c = 0, d = 0]) => q(c, d)],
+      [
+        "against-the-others",
+        "conceptual",
+        ([, d = 0]) => (d === 2 ? null : q(1, d - 1)),
+      ],
+    ],
   }),
   f1({
     id: "F1.share.08",
@@ -113,7 +148,11 @@ const share = [
     draw: (r) => [2 * between(r, 3, 25)],
     solve: ([x = 0]) => q(2 * x),
     ref: ([x = 0]) => q(x + x),
-    traps: [["half-again", "conceptual", ([x = 0]) => q(x / 2)]],
+    traps: [
+      ["half-again", "conceptual", ([x = 0]) => q(x / 2)],
+      ["the-half-itself", "conceptual", ([x = 0]) => q(x)],
+      ["added-half", "procedural", ([x = 0]) => q(x + x / 2)],
+    ],
     consts: [2],
   }),
   f1({
@@ -131,6 +170,7 @@ const share = [
         "conceptual",
         ([a = 0, b = 0]) => (a < b ? "<" : ">"),
       ],
+      ["equal-numerators", "conceptual", () => "="],
     ],
     extra: ([a = 0, b = 0]) => ({
       f: fr(1, a),
@@ -148,7 +188,15 @@ const share = [
     valid: ([d = 0, k = 0]) => d !== k,
     solve: ([, k = 0]) => q(k),
     ref: ([d = 0, k = 0]) => q(d * k).div(q(d)),
-    traps: [["difference", "procedural", ([d = 0, k = 0]) => q(d * k - d)]],
+    traps: [
+      ["difference", "procedural", ([d = 0, k = 0]) => q(d * k - d)],
+      [
+        "number-of-parts",
+        "conceptual",
+        ([d = 0, k = 0]) => (k === 2 ? null : q(d)),
+      ],
+      ["multiplied", "procedural", ([d = 0, k = 0]) => q(d * d * k)],
+    ],
     extra: ([d = 0, k = 0]) => ({ c: String(d * k) }),
   }),
   f1({
@@ -161,7 +209,14 @@ const share = [
     valid: ([n = 0, d = 0]) => n < d && n !== d - n,
     solve: ([n = 0, d = 0]) => q(d - n, d),
     ref: ([n = 0, d = 0]) => q(1).sub(q(n, d)),
-    traps: [["the-eaten-part", "conceptual", ([n = 0, d = 0]) => q(n, d)]],
+    traps: [
+      ["the-eaten-part", "conceptual", ([n = 0, d = 0]) => q(n, d)],
+      [
+        "against-the-eaten",
+        "conceptual",
+        ([n = 0, d = 0]) => ((d - n) % n === 0 ? null : q(d - n, n)),
+      ],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
   f1({
@@ -172,7 +227,11 @@ const share = [
     draw: (r) => [between(r, 2, 9)],
     solve: ([k = 0]) => q(4 * k),
     ref: ([k = 0]) => q(k + k + k + k),
-    traps: [["halves", "conceptual", ([k = 0]) => q(2 * k)]],
+    traps: [
+      ["halves", "conceptual", ([k = 0]) => q(2 * k)],
+      ["the-number-of-wholes", "conceptual", ([k = 0]) => q(k)],
+      ["added-four", "procedural", ([k = 0]) => (k === 4 ? null : q(k + 4))],
+    ],
   }),
 ];
 
@@ -186,7 +245,10 @@ const ofNumber = [
     draw: (r) => [2 * between(r, 6, 60)],
     solve: ([c = 0]) => q(c / 2),
     ref: ([c = 0]) => q(c).mul(q(1, 2)),
-    traps: [["doubled", "conceptual", ([c = 0]) => q(2 * c)]],
+    traps: [
+      ["doubled", "conceptual", ([c = 0]) => q(2 * c)],
+      ["a-quarter", "conceptual", ([c = 0]) => (c % 4 === 0 ? q(c / 4) : null)],
+    ],
     consts: [2],
   }),
   f2({
@@ -197,7 +259,11 @@ const ofNumber = [
     draw: (r) => [4 * between(r, 4, 40)],
     solve: ([c = 0]) => q(c / 4),
     ref: ([c = 0]) => q(c).mul(q(1, 4)),
-    traps: [["half", "conceptual", ([c = 0]) => q(c / 2)]],
+    traps: [
+      ["half", "conceptual", ([c = 0]) => q(c / 2)],
+      ["times-four", "procedural", ([c = 0]) => q(4 * c)],
+      ["three-quarters", "conceptual", ([c = 0]) => q((3 * c) / 4)],
+    ],
   }),
   f2({
     id: "F2.fraction-of.03",
@@ -207,7 +273,11 @@ const ofNumber = [
     draw: (r) => [3 * between(r, 4, 40)],
     solve: ([c = 0]) => q(c / 3),
     ref: ([c = 0]) => q(c).mul(q(1, 3)),
-    traps: [["the-rest", "conceptual", ([c = 0]) => q((2 * c) / 3)]],
+    traps: [
+      ["the-rest", "conceptual", ([c = 0]) => q((2 * c) / 3)],
+      ["half", "conceptual", ([c = 0]) => (c % 2 === 0 ? q(c / 2) : null)],
+      ["times-three", "procedural", ([c = 0]) => q(3 * c)],
+    ],
   }),
   f2({
     id: "F2.fraction-of.04",
@@ -217,7 +287,15 @@ const ofNumber = [
     draw: (r) => [10 * between(r, 5, 90)],
     solve: ([c = 0]) => q(c / 10),
     ref: ([c = 0]) => q(c).mul(q(1, 10)),
-    traps: [["ten-times", "procedural", ([c = 0]) => q(10 * c)]],
+    traps: [
+      ["ten-times", "procedural", ([c = 0]) => q(10 * c)],
+      ["nine-tenths", "conceptual", ([c = 0]) => q((9 * c) / 10)],
+      [
+        "subtract-ten",
+        "procedural",
+        ([c = 0]) => (c === 100 ? null : q(c - 10)),
+      ],
+    ],
     consts: [10],
   }),
   f2({
@@ -228,7 +306,15 @@ const ofNumber = [
     draw: (r) => [pick(r, [2, 4, 5, 8, 10]), between(r, 3, 30)],
     solve: ([, k = 0]) => q(k),
     ref: ([d = 0, k = 0]) => q(d * k).mul(q(1, d)),
-    traps: [["multiplied", "procedural", ([d = 0, k = 0]) => q(d * d * k)]],
+    traps: [
+      ["multiplied", "procedural", ([d = 0, k = 0]) => q(d * d * k)],
+      ["number-of-parts", "conceptual", ([d = 0]) => q(d)],
+      [
+        "subtracted",
+        "procedural",
+        ([d = 0, k = 0]) => (k === 2 ? null : q(d * k - d)),
+      ],
+    ],
     extra: ([d = 0, k = 0]) => ({ c: String(d * k), f: fr(1, d) }),
     consts: [1],
   }),
@@ -245,7 +331,19 @@ const ofNumber = [
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, , k = 0]) => q(n * k),
     ref: ([n = 0, d = 0, k = 0]) => q(d * k).mul(q(n, d)),
-    traps: [["unit-part-only", "procedural", ([, , k = 0]) => q(k)]],
+    traps: [
+      ["unit-part-only", "procedural", ([, , k = 0]) => q(k)],
+      [
+        "whole-times-numerator",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => q(n * d * k),
+      ],
+      [
+        "remaining-parts",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => (d - n === 1 ? null : q((d - n) * k)),
+      ],
+    ],
     extra: ([n = 0, d = 0, k = 0]) => ({
       c: String(d * k),
       f: fr(n, d),
@@ -266,6 +364,16 @@ const ofNumber = [
         "unit-part-only",
         "procedural",
         ([n = 0, , k = 0]) => (n === 1 ? null : q(k)),
+      ],
+      [
+        "whole-times-numerator",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => q(n * d * k),
+      ],
+      [
+        "remaining-parts",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => (d - n === 1 ? null : q((d - n) * k)),
       ],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({
@@ -293,6 +401,17 @@ const ofNumber = [
         ([n = 0, d = 0, k = 0]) =>
           (n * n * k) % d === 0 ? q((n * n * k) / d) : null,
       ],
+      ["the-part-itself", "conceptual", ([n = 0, , k = 0]) => q(n * k)],
+      [
+        "one-part-only",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => (n * n === d ? null : q(k)),
+      ],
+      [
+        "part-times-denominator",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => q(n * k * d),
+      ],
     ],
     extra: ([n = 0, d = 0, k = 0]) => ({ p: String(n * k), f: fr(n, d) }),
   }),
@@ -309,7 +428,19 @@ const ofNumber = [
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, d = 0, k = 0]) => q(d * k - n * k),
     ref: ([n = 0, d = 0, k = 0]) => q(d * k).mul(q(d - n, d)),
-    traps: [["the-part-taken", "conceptual", ([n = 0, , k = 0]) => q(n * k)]],
+    traps: [
+      ["the-part-taken", "conceptual", ([n = 0, , k = 0]) => q(n * k)],
+      [
+        "subtracted-the-numerator",
+        "procedural",
+        ([n = 0, d = 0, k = 0]) => q(d * k - n),
+      ],
+      [
+        "count-of-remaining-parts",
+        "conceptual",
+        ([n = 0, d = 0, k = 0]) => (d - n === n * k ? null : q(d - n)),
+      ],
+    ],
     extra: ([n = 0, d = 0, k = 0]) => ({
       c: String(d * k),
       f: fr(n, d),
@@ -324,7 +455,11 @@ const ofNumber = [
     draw: (r) => [6 * between(r, 3, 30)],
     solve: ([c = 0]) => q(c / 6),
     ref: ([c = 0]) => q(c).mul(q(1, 3)).mul(q(1, 2)),
-    traps: [["only-the-third", "procedural", ([c = 0]) => q(c / 3)]],
+    traps: [
+      ["only-the-third", "procedural", ([c = 0]) => q(c / 3)],
+      ["only-the-half", "conceptual", ([c = 0]) => q(c / 2)],
+      ["added-the-parts", "procedural", ([c = 0]) => q(c / 3 + c / 2)],
+    ],
     consts: [2, 3],
   }),
   f2({
@@ -336,7 +471,15 @@ const ofNumber = [
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, d = 0]) => q((60 * n) / d),
     ref: ([n = 0, d = 0]) => q(60).mul(q(n, d)),
-    traps: [["numerator-as-minutes", "conceptual", ([n = 0]) => q(n)]],
+    traps: [
+      ["numerator-as-minutes", "conceptual", ([n = 0]) => q(n)],
+      ["one-part-only", "procedural", ([, d = 0]) => q(60 / d)],
+      [
+        "the-rest-of-the-hour",
+        "conceptual",
+        ([n = 0, d = 0]) => q((60 * (d - n)) / d),
+      ],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
     consts: [60],
   }),
@@ -353,7 +496,10 @@ const likeDen = [
     valid: ([a = 0, b = 0, d = 0]) => a !== b && a < d && b < d,
     solve: ([a = 0, b = 0, d = 0]) => sign(q(a, d), q(b, d)),
     ref: ([a = 0, b = 0]) => (a < b ? "<" : ">"),
-    traps: [["flipped", "conceptual", ([a = 0, b = 0]) => (a < b ? ">" : "<")]],
+    traps: [
+      ["flipped", "conceptual", ([a = 0, b = 0]) => (a < b ? ">" : "<")],
+      ["equal-denominators", "conceptual", () => "="],
+    ],
     extra: ([a = 0, b = 0, d = 0]) => ({
       f: fr(a, d),
       g: fr(b, d),
@@ -375,6 +521,12 @@ const likeDen = [
         "the-smaller",
         "conceptual",
         ([a = 0, b = 0, d = 0]) => q(Math.min(a, b), d),
+      ],
+      [
+        "the-difference",
+        "conceptual",
+        ([a = 0, b = 0, d = 0]) =>
+          Math.abs(a - b) === Math.min(a, b) ? null : q(Math.abs(a - b), d),
       ],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
@@ -402,6 +554,17 @@ const likeDen = [
         ([a = 0, b = 0, c = 0, d = 0]) =>
           sorted([q(a, d), q(b, d), q(c, d)], true),
       ],
+      [
+        "as-listed",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) => {
+          const listed = ["1", "2", "3"];
+          return same(listed, sorted([q(a, d), q(b, d), q(c, d)])) ||
+            same(listed, sorted([q(a, d), q(b, d), q(c, d)], true))
+            ? null
+            : listed;
+        },
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
       list: [fr(a, d), fr(b, d), fr(c, d)].join("; "),
@@ -419,7 +582,10 @@ const likeDen = [
     valid: ([a = 0, b = 0, d = 0]) => a > b && a < d,
     solve: ([a = 0, b = 0]) => q(a - b),
     ref: ([a = 0, b = 0]) => q(Math.abs(b - a)),
-    traps: [["parts-added", "procedural", ([a = 0, b = 0]) => q(a + b)]],
+    traps: [
+      ["parts-added", "procedural", ([a = 0, b = 0]) => q(a + b)],
+      ["the-larger-numerator", "procedural", ([a = 0]) => q(a)],
+    ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
   }),
   f3({
@@ -438,6 +604,14 @@ const likeDen = [
         "conceptual",
         ([a = 0, b = 0, d = 0]) => q(Math.min(a, b), d),
       ],
+      [
+        "distance-to-one",
+        "conceptual",
+        ([a = 0, b = 0, d = 0]) =>
+          d - Math.max(a, b) === Math.min(a, b)
+            ? null
+            : q(d - Math.max(a, b), d),
+      ],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
   }),
@@ -450,7 +624,10 @@ const likeDen = [
     valid: ([n = 0, d = 0]) => n !== d,
     solve: ([n = 0, d = 0]) => sign(q(n, d), q(1)),
     ref: ([n = 0, d = 0]) => (n < d ? "<" : ">"),
-    traps: [["equal", "conceptual", () => "="]],
+    traps: [
+      ["equal", "conceptual", () => "="],
+      ["flipped", "conceptual", ([n = 0, d = 0]) => (n < d ? ">" : "<")],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d), sign: sign(q(n, d), q(1)) }),
     consts: [1],
   }),
@@ -462,7 +639,11 @@ const likeDen = [
     draw: (r) => [between(r, 1, 7), between(r, 8, 12)],
     solve: ([a = 0]) => q(a + 1),
     ref: ([a = 0]) => q((a + (a + 2)) / 2),
-    traps: [["the-larger-end", "conceptual", ([a = 0]) => q(a + 2)]],
+    traps: [
+      ["the-larger-end", "conceptual", ([a = 0]) => q(a + 2)],
+      ["the-smaller-end", "conceptual", ([a = 0]) => q(a)],
+      ["sum-not-halved", "procedural", ([a = 0]) => q(2 * a + 2)],
+    ],
     extra: ([a = 0, d = 0]) => ({ f: fr(a, d), g: fr(a + 2, d) }),
   }),
   f3({
@@ -474,7 +655,15 @@ const likeDen = [
     valid: ([n = 0, d = 0]) => n > d,
     solve: ([n = 0, d = 0]) => q(n - d),
     ref: ([n = 0, d = 0]) => q(n).sub(q(d)),
-    traps: [["numerator", "conceptual", ([n = 0]) => q(n)]],
+    traps: [
+      ["numerator", "conceptual", ([n = 0]) => q(n)],
+      ["added", "procedural", ([n = 0, d = 0]) => q(n + d)],
+      [
+        "parts-in-the-whole",
+        "conceptual",
+        ([n = 0, d = 0]) => (n === 2 * d ? null : q(d)),
+      ],
+    ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
   f3({
@@ -491,6 +680,17 @@ const likeDen = [
         "by-denominator",
         "conceptual",
         ([a = 0, b = 0, c = 0]) => sorted([q(a), q(b), q(c)]),
+      ],
+      [
+        "as-listed",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => {
+          const listed = ["1", "2", "3"];
+          return same(listed, sorted([q(1, a), q(1, b), q(1, c)])) ||
+            same(listed, sorted([q(a), q(b), q(c)]))
+            ? null
+            : listed;
+        },
       ],
     ],
     extra: ([a = 0, b = 0, c = 0]) => ({
@@ -512,6 +712,7 @@ const likeDen = [
     ref: ([n = 0, d = 0]) => (2 * n < d ? "<" : ">"),
     traps: [
       ["flipped", "conceptual", ([n = 0, d = 0]) => (2 * n < d ? ">" : "<")],
+      ["equal", "conceptual", () => "="],
     ],
     extra: ([n = 0, d = 0]) => ({
       f: fr(n, d),
@@ -557,6 +758,15 @@ const likeDen = [
         ([a = 0, b = 0, c = 0, e = 0, d = 0]) =>
           [a, b, c, e].flatMap((n, i) => (2 * n < d ? [String(i + 1)] : [])),
       ],
+      [
+        "only-the-largest",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, e = 0, d = 0]) => {
+          const ns = [a, b, c, e];
+          const over = ns.filter((n) => 2 * n > d).length;
+          return over === 1 ? null : [String(ns.indexOf(Math.max(...ns)) + 1)];
+        },
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0, e = 0, d = 0]) => ({
       list: [fr(a, d), fr(b, d), fr(c, d), fr(e, d)].join("; "),
@@ -587,6 +797,11 @@ const onLine = [
         "conceptual",
         ([n = 0, d = 0]) => q(Math.floor(n / d) + 1),
       ],
+      [
+        "the-remainder",
+        "procedural",
+        ([n = 0, d = 0]) => (n % d === Math.floor(n / d) + 1 ? null : q(n % d)),
+      ],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
@@ -600,7 +815,15 @@ const onLine = [
     valid: ([d = 0, k = 0]) => k < d,
     solve: ([d = 0, k = 0]) => q(k, d),
     ref: ([d = 0, k = 0]) => q(2 * k, 2 * d),
-    traps: [["counted-the-end", "conceptual", ([d = 0, k = 0]) => q(k, d + 1)]],
+    traps: [
+      ["counted-the-end", "conceptual", ([d = 0, k = 0]) => q(k, d + 1)],
+      ["counted-the-zero", "conceptual", ([d = 0, k = 0]) => q(k + 1, d)],
+      [
+        "from-the-other-end",
+        "conceptual",
+        ([d = 0, k = 0]) => (d - k === k + 1 ? null : q(d - k, d)),
+      ],
+    ],
     consts: [0, 1],
   }),
   f3l({
@@ -619,6 +842,12 @@ const onLine = [
         "conceptual",
         ([d = 0, k = 0]) => q(d + k, 2 * d),
       ],
+      ["forgot-the-whole", "conceptual", ([d = 0, k = 0]) => q(k, d)],
+      [
+        "whole-line-denominator",
+        "conceptual",
+        ([d = 0, k = 0]) => q(2 * d + k, 2 * d),
+      ],
     ],
     extra: ([d = 0, k = 0]) => ({ m: String(d + k), c: String(2 * d) }),
     consts: [0, 1, 2],
@@ -635,6 +864,11 @@ const onLine = [
     ref: ([n = 0, d = 0]) => Q.fromDecimal(String(n / d)),
     traps: [
       ["from-the-other-end", "conceptual", ([n = 0, d = 0]) => q(d - n, d)],
+      [
+        "digits-after-the-comma",
+        "conceptual",
+        ([n = 0]) => (n === 1 ? null : Q.fromDecimal(`0,${n}`)),
+      ],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d), dec: decimalOf(q(n, d)) }),
     consts: [0, 1],
@@ -655,12 +889,21 @@ const onLine = [
       c < d &&
       b !== d &&
       a * d !== b * c &&
-      sign(q(a, b), q(c, d)) !== sign(q(a), q(c)),
+      (sign(q(a, b), q(c, d)) !== sign(q(a), q(c)) ||
+        sign(q(a, b), q(c, d)) !== sign(q(b), q(d))),
     solve: ([a = 0, b = 0, c = 0, d = 0]) => sign(q(a, b), q(c, d)),
     ref: ([a = 0, b = 0, c = 0, d = 0]) =>
       a * d < c * b ? "<" : a * d > c * b ? ">" : "=",
     traps: [
       ["numerators-only", "procedural", ([a = 0, , c = 0]) => sign(q(a), q(c))],
+      [
+        "bigger-denominator-wins",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) => {
+          const s = sign(q(b), q(d));
+          return s === sign(q(a), q(c)) ? null : s;
+        },
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
       f: fr(a, b),
@@ -696,6 +939,24 @@ const onLine = [
         "conceptual",
         ([a = 0, , c = 0, , e = 0]) => sorted([q(a), q(c), q(e)]),
       ],
+      [
+        "by-denominator",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) => {
+          const w = order([b, d, f]);
+          return same(w, order([a, c, e])) ? null : w;
+        },
+      ],
+      [
+        "largest-first",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) => {
+          const w = sorted([q(a, b), q(c, d), q(e, f)], true);
+          return same(w, order([a, c, e])) || same(w, order([b, d, f]))
+            ? null
+            : w;
+        },
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0, e = 0, f = 0]) => ({
       list: [fr(a, b), fr(c, d), fr(e, f)].join("; "),
@@ -717,7 +978,15 @@ const onLine = [
       q(a, d)
         .add(q(a + 2, d))
         .div(q(2)),
-    traps: [["the-right-end", "conceptual", ([a = 0, d = 0]) => q(a + 2, d)]],
+    traps: [
+      ["the-right-end", "conceptual", ([a = 0, d = 0]) => q(a + 2, d)],
+      ["the-left-end", "conceptual", ([a = 0, d = 0]) => q(a, d)],
+      [
+        "sum-not-halved",
+        "procedural",
+        ([a = 0, d = 0]) => ((2 * a + 2) % d === 0 ? null : q(2 * a + 2, d)),
+      ],
+    ],
     extra: ([a = 0, d = 0]) => ({ f: fr(a, d), g: fr(a + 2, d) }),
     consts: [2],
   }),
@@ -737,6 +1006,16 @@ const onLine = [
         "conceptual",
         ([n = 0, d = 0]) => Q.fromDecimal(`0,${n}${d}`),
       ],
+      [
+        "numerator-after-the-comma",
+        "conceptual",
+        ([n = 0]) => Q.fromDecimal(`0,${n}`),
+      ],
+      [
+        "denominator-after-the-comma",
+        "conceptual",
+        ([n = 0, d = 0]) => (n * 10 === d ? null : Q.fromDecimal(`0,${d}`)),
+      ],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),
   }),
@@ -749,7 +1028,10 @@ const onLine = [
     valid: ([, n = 0, d = 0]) => n < d,
     solve: ([w = 0]) => q(w + 1),
     ref: ([w = 0]) => q(w).add(q(1)),
-    traps: [["the-lower-whole", "conceptual", ([w = 0]) => q(w)]],
+    traps: [
+      ["the-lower-whole", "conceptual", ([w = 0]) => q(w)],
+      ["added-the-numerator", "procedural", ([w = 0, n = 0]) => q(w + n)],
+    ],
     extra: ([w = 0, n = 0, d = 0]) => ({ m: `${w} ${fr(n, d)}` }),
     consts: [1],
   }),
@@ -769,6 +1051,11 @@ const onLine = [
         "procedural",
         ([a = 0, b = 0, d = 0]) => q(a + b, d),
       ],
+      [
+        "position-of-the-second-point",
+        "conceptual",
+        ([, b = 0, d = 0]) => q(b, d),
+      ],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
   }),
@@ -787,6 +1074,11 @@ const onLine = [
         "the-lower-whole",
         "procedural",
         ([n = 0, d = 0]) => q(Math.floor(n / d)),
+      ],
+      [
+        "the-upper-whole",
+        "conceptual",
+        ([n = 0, d = 0]) => q(Math.floor(n / d) + 1),
       ],
     ],
     extra: ([n = 0, d = 0]) => ({ f: fr(n, d) }),

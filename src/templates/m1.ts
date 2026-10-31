@@ -17,7 +17,11 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(1000 * a),
-    t: { "zeros-lost": (a) => q(100 * a) },
+    t: {
+      "zeros-lost": (a) => q(100 * a),
+      "tens-only": (a) => q(10 * a),
+      "extra-zero": (a) => q(10000 * a),
+    },
     c: [100, 1000],
   }),
   M1_whole({
@@ -27,7 +31,10 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(100 * a),
-    t: { "tens-only": (a) => q(10 * a) },
+    t: {
+      "tens-only": (a) => q(10 * a),
+      thousand: (a) => q(1000 * a),
+    },
     c: [10, 100],
   }),
   M1_whole({
@@ -37,7 +44,10 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(10 * a),
-    t: { hundred: (a) => q(100 * a) },
+    t: {
+      hundred: (a) => q(100 * a),
+      "number-kept": (a) => q(a),
+    },
     c: [10, 100],
   }),
   M1_whole({
@@ -47,7 +57,11 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(1000 * a),
-    t: { "zeros-lost": (a) => q(100 * a) },
+    t: {
+      "zeros-lost": (a) => q(100 * a),
+      "tens-only": (a) => q(10 * a),
+      "extra-zero": (a) => q(10000 * a),
+    },
     c: [100, 1000],
   }),
   M1_whole({
@@ -57,7 +71,11 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(1000 * a),
-    t: { "zeros-lost": (a) => q(100 * a) },
+    t: {
+      "zeros-lost": (a) => q(100 * a),
+      "tens-only": (a) => q(10 * a),
+      "extra-zero": (a) => q(10000 * a),
+    },
     c: [100, 1000],
   }),
   M1_whole({
@@ -70,6 +88,7 @@ const M1_whole_specs: readonly Spec<never>[] = [
     t: {
       "metres-forgotten": (a) => q(1000 * a),
       "counts-added": (a, b) => q(a + b),
+      "wrong-factor": (a, b) => q(100 * a + b),
     },
     c: [1000],
   }),
@@ -80,7 +99,11 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 9), rg(11, 99)],
     f: (a, b) => q(100 * a + b),
-    t: { "counts-added": (a, b) => q(a + b) },
+    t: {
+      "counts-added": (a, b) => q(a + b),
+      "metres-only": (a) => q(100 * a),
+      "wrong-factor": (a, b) => q(10 * a + b),
+    },
     c: [100],
   }),
   M1_whole({
@@ -90,7 +113,11 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 9), of(100, 200, 300, 400, 500, 600, 700, 800, 900)],
     f: (a, b) => q(1000 * a + b),
-    t: { "counts-added": (a, b) => q(a + b) },
+    t: {
+      "counts-added": (a, b) => q(a + b),
+      "grams-forgotten": (a) => q(1000 * a),
+      "wrong-factor": (a, b) => q(100 * a + b),
+    },
     c: [1000],
   }),
   M1_whole({
@@ -100,7 +127,11 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(a),
-    t: { "too-many": (a) => q(100 * a) },
+    t: {
+      "too-many": (a) => q(100 * a),
+      "not-divided": (a) => q(1000 * a),
+      "tens-only": (a) => q(10 * a),
+    },
     x: (a) => ({ x: String(1000 * a) }),
     c: [10, 1000],
   }),
@@ -111,7 +142,11 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(a),
-    t: { "too-many": (a) => q(100 * a) },
+    t: {
+      "too-many": (a) => q(100 * a),
+      "not-divided": (a) => q(1000 * a),
+      "tens-only": (a) => q(10 * a),
+    },
     x: (a) => ({ x: String(1000 * a) }),
     c: [10, 1000],
   }),
@@ -122,7 +157,10 @@ const M1_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(10 * a),
-    t: { hundred: (a) => q(100 * a) },
+    t: {
+      hundred: (a) => q(100 * a),
+      "number-kept": (a) => q(a),
+    },
     c: [10, 100],
   }),
   M1_whole({
@@ -148,7 +186,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(11, 59)],
     ok: (a) => a % 10 !== 0,
     f: (a) => q(100 * a),
-    t: { "ten-times-too-big": (a) => q(1000 * a) },
+    t: {
+      "ten-times-too-big": (a) => q(1000 * a),
+      "wrong-factor": (a) => q(10 * a),
+      "tenths-dropped": (a) => q(1000 * Math.floor(a / 10)),
+    },
     x: (a) => ({ x: dec(a, 1) }),
     c: [100, 1000],
   }),
@@ -160,7 +202,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(11, 59)],
     ok: (a) => a % 10 !== 0,
     f: (a) => q(10 * a),
-    t: { "ten-times-too-big": (a) => q(100 * a) },
+    t: {
+      "ten-times-too-big": (a) => q(100 * a),
+      "wrong-factor": (a) => q(a),
+      "tenths-dropped": (a) => q(100 * Math.floor(a / 10)),
+    },
     x: (a) => ({ x: dec(a, 1) }),
     c: [10, 100],
   }),
@@ -172,7 +218,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(101, 899)],
     ok: (a) => a % 10 !== 0,
     f: (a) => q(a),
-    t: { "moved-one-place": (a) => qd(a, 1) },
+    t: {
+      "moved-one-place": (a) => qd(a, 1),
+      "moved-two-places": (a) => qd(a, 2),
+      "number-kept": (a) => qd(a, 3),
+    },
     x: (a) => ({ x: dec(a, 3) }),
     c: [1000],
   }),
@@ -184,7 +234,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(101, 899)],
     ok: (a) => a % 10 !== 0,
     f: (a) => qd(a, 3),
-    t: { "moved-two-places": (a) => qd(a, 2) },
+    t: {
+      "moved-two-places": (a) => qd(a, 2),
+      "moved-one-place": (a) => qd(a, 1),
+      "number-kept": (a) => q(a),
+    },
     c: [1000],
   }),
   M1_decimal({
@@ -195,7 +249,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(105, 395)],
     ok: (a) => a % 10 !== 0,
     f: (a) => qd(a, 2),
-    t: { "moved-one-place": (a) => qd(a, 1) },
+    t: {
+      "moved-one-place": (a) => qd(a, 1),
+      "moved-three-places": (a) => qd(a, 3),
+      "number-kept": (a) => q(a),
+    },
     c: [100],
   }),
   M1_decimal({
@@ -205,7 +263,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     kind: "decimal",
     p: [of(1500, 2500, 3500, 4200, 4800, 6300)],
     f: (a) => qd(a, 3),
-    t: { "moved-two-places": (a) => qd(a, 2) },
+    t: {
+      "moved-two-places": (a) => qd(a, 2),
+      "moved-four-places": (a) => qd(a, 4),
+      "whole-only": (a) => q(Math.floor(a / 1000)),
+    },
     c: [1000],
   }),
   M1_decimal({
@@ -216,7 +278,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(111, 499)],
     ok: (a) => a % 10 !== 0,
     f: (a) => q(10 * a),
-    t: { "comma-lost": (a) => q(a) },
+    t: {
+      "comma-lost": (a) => q(a),
+      "hundredths-as-grams": (a) => q(1000 * Math.floor(a / 100) + (a % 100)),
+      "kilograms-only": (a) => q(1000 * Math.floor(a / 100)),
+    },
     x: (a) => ({ x: dec(a, 2) }),
     c: [1000],
   }),
@@ -228,7 +294,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(11, 99)],
     ok: (a) => a % 10 !== 0,
     f: (a) => qd(a, 1),
-    t: { "moved-two-places": (a) => qd(a, 2) },
+    t: {
+      "moved-two-places": (a) => qd(a, 2),
+      "multiplied-by-ten": (a) => q(10 * a),
+      "number-kept": (a) => q(a),
+    },
     c: [10],
   }),
   M1_decimal({
@@ -238,7 +308,10 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     kind: "decimal",
     p: [rg(1, 9), rg(1, 9)],
     f: (a, b) => qd(100 * a + b, 2),
-    t: { tenths: (a, b) => qd(10 * a + b, 1) },
+    t: {
+      tenths: (a, b) => qd(10 * a + b, 1),
+      "comma-forgotten": (a, b) => q(100 * a + b),
+    },
   }),
   M1_decimal({
     id: "M1.decimal.10",
@@ -248,7 +321,10 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(11, 99)],
     ok: (a) => a % 10 !== 0,
     f: (a) => q(10 * a),
-    t: { "comma-lost": (a) => q(a) },
+    t: {
+      "comma-lost": (a) => q(a),
+      "comma-ignored": (a) => q(1000 * a),
+    },
     x: (a) => ({ x: dec(a, 2) }),
     c: [1000],
   }),
@@ -271,7 +347,11 @@ const M1_decimal_specs: readonly Spec<never>[] = [
     p: [rg(11, 29), of(10, 20, 30, 40, 50)],
     ok: (a) => a % 10 !== 0,
     f: (a, b) => qd(10 * a + b, 2),
-    t: { "added-as-numbers": (a, b) => qd(a + b, 1) },
+    t: {
+      "added-as-numbers": (a, b) => qd(a + b, 1),
+      "centimetres-kept": (a, b) => q(10 * a + b),
+      "moved-one-place": (a, b) => qd(10 * a + b, 1),
+    },
     x: (a) => ({ x: dec(a, 1) }),
   }),
 ];
@@ -286,7 +366,10 @@ const M2_clock_specs: readonly Spec<never>[] = [
     p: [rg(1, 9), of(0, 15, 30, 45), rg(1, 4)],
     ok: (a, b) => b > 0,
     f: (a, b, c) => [q(a + c), q(b)],
-    t: { "minutes-dropped": (a, b, c) => [q(a + c), q(0)] },
+    t: {
+      "minutes-dropped": (a, b, c) => [q(a + c), q(0)],
+      "hours-added-to-minutes": (a, b, c) => [q(a), q(b + c)],
+    },
     x: (a, b) => ({ t: tm(a, b) }),
   }),
   M2_clock({
@@ -297,7 +380,11 @@ const M2_clock_specs: readonly Spec<never>[] = [
     p: [rg(1, 10), of(20, 30, 40, 45, 50), of(20, 25, 30, 40)],
     ok: (a, b, c) => b + c >= 60,
     f: (a, b, c) => [q(a + Math.floor((b + c) / 60)), q((b + c) % 60)],
-    t: { "no-carry": (a, b, c) => [q(a), q(b + c)] },
+    t: {
+      "no-carry": (a, b, c) => [q(a), q(b + c)],
+      "hour-added-minutes-kept": (a, b, c) => [q(a + 1), q(b + c)],
+      "next-hour-rounded": (a) => [q(a + 1), q(0)],
+    },
     x: (a, b) => ({ t: tm(a, b) }),
     c: [60],
   }),
@@ -312,6 +399,7 @@ const M2_clock_specs: readonly Spec<never>[] = [
     t: {
       "hours-only": (a, b, c) => q(60 * c),
       "minutes-only": (a, b, c, d) => q(d),
+      "hour-as-hundred": (a, b, c, d) => q(100 * c + d),
     },
     x: (a, b, c, d) => ({ t1: tm(a, b), t2: tm(a + c, b + d) }),
     c: [60],
@@ -324,7 +412,11 @@ const M2_clock_specs: readonly Spec<never>[] = [
     p: [rg(8, 12), of(0, 15, 30, 45), rg(1, 3), of(10, 20, 35, 40)],
     ok: (a, b, c, d) => b + d < 60,
     f: (a, b, c, d) => [q(c), q(d)],
-    t: { swapped: (a, b, c, d) => [q(d), q(c)] },
+    t: {
+      swapped: (a, b, c, d) => [q(d), q(c)],
+      "minutes-forgotten": (a, b, c) => [q(c), q(0)],
+      "hours-forgotten": (a, b, c, d) => [q(0), q(d)],
+    },
     x: (a, b, c, d) => ({ t1: tm(a, b), t2: tm(a + c, b + d) }),
   }),
   M2_clock({
@@ -334,7 +426,10 @@ const M2_clock_specs: readonly Spec<never>[] = [
     kind: "time",
     p: [rg(2, 12)],
     f: (a) => [q(a - 1), q(30)],
-    t: { "the-named-hour": (a) => [q(a), q(30)] },
+    t: {
+      "the-named-hour": (a) => [q(a), q(30)],
+      "half-as-fifty": (a) => [q(a - 1), q(50)],
+    },
     c: [30],
   }),
   M2_clock({
@@ -344,7 +439,11 @@ const M2_clock_specs: readonly Spec<never>[] = [
     kind: "time",
     p: [rg(2, 12)],
     f: (a) => [q(a - 1), q(45)],
-    t: { "the-named-hour": (a) => [q(a), q(45)] },
+    t: {
+      "the-named-hour": (a) => [q(a), q(45)],
+      "quarter-as-fifteen": (a) => [q(a - 1), q(15)],
+      "quarter-to-the-hour": (a) => [q(a), q(15)],
+    },
     c: [15, 45],
   }),
   M2_clock({
@@ -354,7 +453,11 @@ const M2_clock_specs: readonly Spec<never>[] = [
     kind: "time",
     p: [rg(2, 12)],
     f: (a) => [q(a - 1), q(15)],
-    t: { "the-named-hour": (a) => [q(a), q(15)] },
+    t: {
+      "the-named-hour": (a) => [q(a), q(15)],
+      "quarter-as-forty-five": (a) => [q(a - 1), q(45)],
+      "quarter-as-twenty-five": (a) => [q(a - 1), q(25)],
+    },
     c: [15],
   }),
   M2_clock({
@@ -365,7 +468,11 @@ const M2_clock_specs: readonly Spec<never>[] = [
     p: [rg(8, 14), of(0, 15, 30), of(30, 40, 45, 50)],
     ok: (a, b, c) => b + c >= 60,
     f: (a, b, c) => [q(a + Math.floor((b + c) / 60)), q((b + c) % 60)],
-    t: { "no-carry": (a, b, c) => [q(a), q(b + c)] },
+    t: {
+      "no-carry": (a, b, c) => [q(a), q(b + c)],
+      "hour-added-minutes-kept": (a, b, c) => [q(a + 1), q(b + c)],
+      "next-hour-rounded": (a) => [q(a + 1), q(0)],
+    },
     x: (a, b) => ({ t: tm(a, b) }),
     c: [60],
   }),
@@ -376,7 +483,11 @@ const M2_clock_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 5), rg(5, 55)],
     f: (a, b) => q(60 * a + b),
-    t: { "counts-added": (a, b) => q(a + b) },
+    t: {
+      "counts-added": (a, b) => q(a + b),
+      "hour-as-hundred": (a, b) => q(100 * a + b),
+      "minutes-forgotten": (a) => q(60 * a),
+    },
     c: [60],
   }),
   M2_clock({
@@ -386,7 +497,10 @@ const M2_clock_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(13, 23), of(0, 15, 30, 45)],
     f: (a) => q(a - 12),
-    t: { "same-number": (a) => q(a) },
+    t: {
+      "same-number": (a) => q(a),
+      "twelve-added": (a) => q(a + 12),
+    },
     x: (a, b) => ({ t: tm(a, b) }),
     c: [12],
   }),
@@ -398,7 +512,10 @@ const M2_clock_specs: readonly Spec<never>[] = [
     p: [rg(9, 15), of(30, 40, 45, 50, 55), of(10, 15, 20, 25)],
     ok: (a, b, c) => b + c < 60,
     f: (a, b, c) => [q(a), q(b - c)],
-    t: { added: (a, b, c) => [q(a), q(b + c)] },
+    t: {
+      added: (a, b, c) => [q(a), q(b + c)],
+      "needless-borrow": (a, b, c) => [q(a - 1), q(b - c)],
+    },
     x: (a, b) => ({ t: tm(a, b) }),
   }),
   M2_clock({
@@ -408,7 +525,11 @@ const M2_clock_specs: readonly Spec<never>[] = [
     kind: "time",
     p: [rg(9, 15), of(0, 15, 30, 45), rg(1, 3)],
     f: (a, b, c) => [q(a - c), q(b)],
-    t: { added: (a, b, c) => [q(a + c), q(b)] },
+    t: {
+      added: (a, b, c) => [q(a + c), q(b)],
+      "minutes-dropped": (a, b, c) => [q(a - c), q(0)],
+      "hours-from-minutes": (a, b, c) => (b < c ? null : [q(a), q(b - c)]),
+    },
     x: (a, b) => ({ t: tm(a, b) }),
   }),
 ];
@@ -422,7 +543,10 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(7 * a),
-    t: { added: (a) => q(a + 7) },
+    t: {
+      added: (a) => q(a + 7),
+      "working-days": (a) => q(5 * a),
+    },
     c: [7],
   }),
   M2_calendar({
@@ -432,7 +556,11 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 14), rg(16, 28)],
     f: (a, b) => q(b - a),
-    t: { "inclusive-count": (a, b) => q(b - a + 1) },
+    t: {
+      "inclusive-count": (a, b) => q(b - a + 1),
+      "dates-added": (a, b) => q(a + b),
+      "both-ends-left-out": (a, b) => q(b - a - 1),
+    },
   }),
   M2_calendar({
     id: "M2.calendar.03",
@@ -441,7 +569,10 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 28)],
     f: (a) => q(30 - a),
-    t: { "one-day-too-many": (a) => q(31 - a) },
+    t: {
+      "one-day-too-many": (a) => q(31 - a),
+      added: (a) => q(30 + a),
+    },
     c: [30],
   }),
   M2_calendar({
@@ -451,7 +582,11 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 6), rg(1, 11)],
     f: (a, b) => q(12 * a + b),
-    t: { "counts-added": (a, b) => q(a + b) },
+    t: {
+      "counts-added": (a, b) => q(a + b),
+      "year-as-ten": (a, b) => q(10 * a + b),
+      "months-forgotten": (a) => q(12 * a),
+    },
     c: [12],
   }),
   M2_calendar({
@@ -461,7 +596,11 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 5)],
     f: (a) => q(365 * a),
-    t: { "months-counted": (a) => q(360 * a) },
+    t: {
+      "months-counted": (a) => q(360 * a),
+      "leap-year-days": (a) => q(366 * a),
+      added: (a) => q(a + 365),
+    },
     c: [12, 30, 365],
   }),
   M2_calendar({
@@ -471,7 +610,10 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(24 * a),
-    t: { added: (a) => q(a + 24) },
+    t: {
+      added: (a) => q(a + 24),
+      "twelve-hour-day": (a) => q(12 * a),
+    },
     c: [24],
   }),
   M2_calendar({
@@ -481,7 +623,11 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(10, 28), rg(3, 25)],
     f: (a, b) => q(31 - a + b),
-    t: { "days-added": (a, b) => q(a + b) },
+    t: {
+      "days-added": (a, b) => (2 * a === 30 ? null : q(a + b)),
+      "thirty-day-month": (a, b) => (2 * a === 30 ? null : q(30 - a + b)),
+      "inclusive-count": (a, b) => (2 * a === 32 ? null : q(32 - a + b)),
+    },
     c: [31],
   }),
   M2_calendar({
@@ -492,7 +638,11 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     p: [rg(15, 60)],
     ok: (a) => a % 7 !== 0 && Math.floor(a / 7) !== a % 7,
     f: (a) => [q(Math.floor(a / 7)), q(a % 7)],
-    t: { swapped: (a) => [q(a % 7), q(Math.floor(a / 7))] },
+    t: {
+      swapped: (a) => [q(a % 7), q(Math.floor(a / 7))],
+      "week-as-ten-days": (a) => [q(Math.floor(a / 10)), q(a % 10)],
+      "days-left-out": (a) => [q(Math.floor(a / 7)), q(0)],
+    },
     c: [7],
   }),
   M2_calendar({
@@ -502,7 +652,10 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(8, 14), rg(3, 9)],
     f: (a, b) => q(a + b),
-    t: { multiplied: (a, b) => q(a * b) },
+    t: {
+      multiplied: (a, b) => q(a * b),
+      subtracted: (a, b) => (a - b > 0 ? q(a - b) : null),
+    },
   }),
   M2_calendar({
     id: "M2.calendar.10",
@@ -511,7 +664,10 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(100 * a),
-    t: { "tens-only": (a) => q(10 * a) },
+    t: {
+      "tens-only": (a) => q(10 * a),
+      thousand: (a) => q(1000 * a),
+    },
     c: [10, 100],
   }),
   M2_calendar({
@@ -521,7 +677,10 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(30, 31), of(28, 30, 31)],
     f: (a, b) => q(a + b),
-    t: { multiplied: (a, b) => q(a * b) },
+    t: {
+      multiplied: (a, b) => q(a * b),
+      "thirty-days-each": (a, b) => (a === 30 && b === 30 ? null : q(60)),
+    },
   }),
   M2_calendar({
     id: "M2.calendar.12",
@@ -531,7 +690,10 @@ const M2_calendar_specs: readonly Spec<never>[] = [
     p: [rg(1, 7), rg(10, 40)],
     ok: (a, b) => b % 7 !== 0 && ((a - 1 + b) % 7) + 1 !== b % 7,
     f: (a, b) => q(((a - 1 + b) % 7) + 1),
-    t: { "start-forgotten": (a, b) => q(b % 7) },
+    t: {
+      "start-forgotten": (a, b) => q(b % 7),
+      "no-wrap": (a, b) => q(a + b),
+    },
     c: [1, 7],
   }),
 ];
@@ -545,7 +707,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(10, 20, 50), rg(3, 9)],
     f: (a, b) => q(a - b),
-    t: { added: (a, b) => q(a + b) },
+    t: {
+      added: (a, b) => q(a + b),
+      "price-itself": (a, b) => q(b),
+    },
   }),
   M3_whole({
     id: "M3.whole.02",
@@ -555,7 +720,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     p: [rg(3, 19), rg(3, 19)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a + b),
-    t: { difference: (a, b) => q(Math.abs(a - b)) },
+    t: {
+      difference: (a, b) => q(Math.abs(a - b)),
+      product: (a, b) => q(a * b),
+    },
   }),
   M3_whole({
     id: "M3.whole.03",
@@ -564,7 +732,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 9)],
     f: (a) => q(2 * a),
-    t: { added: (a) => q(a + 2) },
+    t: {
+      added: (a) => q(a + 2),
+      "count-itself": (a) => q(a),
+    },
     c: [2],
   }),
   M3_whole({
@@ -574,7 +745,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(20, 35, 45, 60, 75, 90)],
     f: (a) => q(a / 5),
-    t: { multiplied: (a) => q(5 * a) },
+    t: {
+      multiplied: (a) => q(5 * a),
+      subtracted: (a) => q(a - 5),
+    },
     c: [5],
   }),
   M3_whole({
@@ -585,7 +759,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     p: [rg(2, 9), rg(3, 15)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { added: (a, b) => q(a + b) },
+    t: {
+      added: (a, b) => q(a + b),
+      difference: (a, b) => q(Math.abs(a - b)),
+    },
   }),
   M3_whole({
     id: "M3.whole.06",
@@ -594,7 +771,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 9)],
     f: (a) => q(10 - a),
-    t: { "price-itself": (a) => q(a) },
+    t: {
+      "price-itself": (a) => q(a),
+      added: (a) => q(10 + a),
+    },
     c: [1, 10],
   }),
   M3_whole({
@@ -604,7 +784,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(a),
-    t: { "moved-too-far": (a) => q(100 * a) },
+    t: {
+      "moved-too-far": (a) => q(100 * a),
+      "divided-by-ten": (a) => q(10 * a),
+    },
     x: (a) => ({ x: String(100 * a) }),
     c: [100],
   }),
@@ -616,7 +799,11 @@ const M3_whole_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(2, 6)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(10 * a + 2 * b),
-    t: { "counts-added": (a, b) => q(a + b) },
+    t: {
+      "counts-added": (a, b) => q(a + b),
+      "coins-as-ones": (a, b) => q(10 * a + b),
+      "notes-as-ones": (a, b) => q(a + 2 * b),
+    },
     c: [2, 10],
   }),
   M3_whole({
@@ -627,7 +814,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(4, 12)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { added: (a, b) => q(a + b) },
+    t: {
+      added: (a, b) => q(a + b),
+      difference: (a, b) => q(Math.abs(a - b)),
+    },
   }),
   M3_whole({
     id: "M3.whole.10",
@@ -637,7 +827,11 @@ const M3_whole_specs: readonly Spec<never>[] = [
     p: [rg(30, 60), rg(2, 5), rg(3, 8)],
     ok: (a, b, c) => a > b * c,
     f: (a, b, c) => q(a - b * c),
-    t: { "spent-itself": (a, b, c) => q(b * c) },
+    t: {
+      "spent-itself": (a, b, c) => q(b * c),
+      "one-item-only": (a, b, c) => q(a - c),
+      "numbers-subtracted": (a, b, c) => q(a - b - c),
+    },
   }),
   M3_whole({
     id: "M3.whole.11",
@@ -647,7 +841,11 @@ const M3_whole_specs: readonly Spec<never>[] = [
     p: [rg(20, 90), rg(3, 9)],
     ok: (a, b) => a % b !== 0,
     f: (a, b) => q(Math.floor(a / b)),
-    t: { "rounded-up": (a, b) => q(Math.ceil(a / b)) },
+    t: {
+      "rounded-up": (a, b) => q(Math.ceil(a / b)),
+      "remainder-as-answer": (a, b) =>
+        a % b === Math.ceil(a / b) ? null : q(a % b),
+    },
   }),
   M3_whole({
     id: "M3.whole.12",
@@ -657,7 +855,10 @@ const M3_whole_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 5)],
     ok: (a, b) => a !== b,
     f: (a) => q(a),
-    t: { multiplied: (a, b) => q(a * b) },
+    t: {
+      multiplied: (a, b) => q(a * b),
+      "divided-by-the-share": (a, b) => q(b),
+    },
     x: (a, b) => ({ x: String(a * b) }),
   }),
 ];
@@ -672,7 +873,12 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [of(20, 50), rg(1111, 1999)],
     ok: (a, b) => b % 10 !== 0,
     f: (a, b) => qd(100 * a - b, 2),
-    t: { "price-itself": (a, b) => qd(b, 2) },
+    t: {
+      "price-itself": (a, b) => qd(b, 2),
+      "cents-copied": (a, b) =>
+        qd(100 * (a - Math.floor(b / 100)) + (b % 100), 2),
+      "euros-only": (a, b) => q(a - Math.floor(b / 100)),
+    },
     x: (a, b) => ({ x: dec(b, 2) }),
   }),
   M3_cents({
@@ -683,7 +889,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(111, 899), rg(111, 899)],
     ok: (a, b) => a % 10 !== 0 && b % 10 !== 0,
     f: (a, b) => qd(a + b, 2),
-    t: { "comma-ignored": (a, b) => q(a + b) },
+    t: {
+      "comma-ignored": (a, b) => q(a + b),
+      difference: (a, b) => (a === b ? null : qd(Math.abs(a - b), 2)),
+      "comma-one-place-off": (a, b) => qd(a + b, 1),
+    },
     x: (a, b) => ({ x: dec(a, 2), y: dec(b, 2) }),
   }),
   M3_cents({
@@ -694,7 +904,12 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(111, 499), rg(2, 6)],
     ok: (a, b) => a % 10 !== 0 && (a * b) % 10 !== 0,
     f: (a, b) => qd(a * b, 2),
-    t: { "comma-in-the-wrong-place": (a, b) => qd(a * b, 1) },
+    t: {
+      "comma-in-the-wrong-place": (a, b) => qd(a * b, 1),
+      "comma-ignored": (a, b) => q(a * b),
+      "only-euros-multiplied": (a, b) =>
+        qd(100 * Math.floor(a / 100) * b + (a % 100), 2),
+    },
     x: (a) => ({ x: dec(a, 2) }),
   }),
   M3_cents({
@@ -705,7 +920,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(101, 899)],
     ok: (a) => a % 10 !== 0,
     f: (a) => qd(a, 2),
-    t: { "moved-one-place": (a) => qd(a, 1) },
+    t: {
+      "moved-one-place": (a) => qd(a, 1),
+      "moved-three-places": (a) => qd(a, 3),
+      "number-kept": (a) => q(a),
+    },
     c: [100],
   }),
   M3_cents({
@@ -716,7 +935,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(111, 899)],
     ok: (a) => a % 10 !== 0,
     f: (a) => q(a),
-    t: { "moved-one-place": (a) => qd(a, 1) },
+    t: {
+      "moved-one-place": (a) => qd(a, 1),
+      "number-kept": (a) => qd(a, 2),
+      "euros-only": (a) => q(100 * Math.floor(a / 100)),
+    },
     x: (a) => ({ x: dec(a, 2) }),
     c: [100],
   }),
@@ -728,7 +951,13 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(1001, 2999)],
     ok: (a) => a % 5 !== 0 && Math.round(a / 5) !== Math.floor(a / 5),
     f: (a) => qd(5 * Math.round(a / 5), 2),
-    t: { "cut-off": (a) => qd(5 * Math.floor(a / 5), 2) },
+    t: {
+      "cut-off": (a) => qd(5 * Math.floor(a / 5), 2),
+      "rounded-to-euro": (a) =>
+        100 * Math.round(a / 100) === 5 * Math.floor(a / 5)
+          ? null
+          : qd(100 * Math.round(a / 100), 2),
+    },
     x: (a) => ({ x: dec(a, 2) }),
     c: [5],
   }),
@@ -740,7 +969,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(11, 99)],
     ok: (a) => a % 10 !== 0 && Math.floor(a / 10) !== a % 10,
     f: (a) => [q(Math.floor(a / 10)), q(a % 10)],
-    t: { swapped: (a) => [q(a % 10), q(Math.floor(a / 10))] },
+    t: {
+      swapped: (a) => [q(a % 10), q(Math.floor(a / 10))],
+      "rest-forgotten": (a) => [q(Math.floor(a / 10)), q(0)],
+      "all-cents-as-rest": (a) => [q(Math.floor(a / 10)), q(a)],
+    },
     c: [10],
   }),
   M3_cents({
@@ -751,7 +984,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(111, 499), rg(2, 5)],
     ok: (a, b) => a % 10 !== 0 && ((a - 10) * b) % 10 !== 0,
     f: (a, b) => qd((a - 10) * b, 2),
-    t: { "discount-forgotten": (a, b) => qd(a * b, 2) },
+    t: {
+      "discount-forgotten": (a, b) => qd(a * b, 2),
+      "discount-once": (a, b) => qd(a * b - 10, 2),
+      "discount-added": (a, b) => qd((a + 10) * b, 2),
+    },
     x: (a) => ({ x: dec(a, 2) }),
     c: [10],
   }),
@@ -763,7 +1000,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(111, 599), rg(111, 599), rg(111, 599)],
     ok: (a, b, c) => a % 10 !== 0 && b % 10 !== 0 && c % 10 !== 0,
     f: (a, b, c) => qd(a + b + c, 2),
-    t: { "two-amounts-only": (a, b) => qd(a + b, 2) },
+    t: {
+      "two-amounts-only": (a, b) => qd(a + b, 2),
+      "comma-ignored": (a, b, c) => q(a + b + c),
+      "comma-one-place-off": (a, b, c) => qd(a + b + c, 1),
+    },
     x: (a, b, c) => ({ x: dec(a, 2), y: dec(b, 2), z: dec(c, 2) }),
   }),
   M3_cents({
@@ -774,7 +1015,10 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(111, 499)],
     ok: (a) => a % 10 !== 0,
     f: (a) => qd(a, 2),
-    t: { "total-itself": (a) => qd(3 * a, 2) },
+    t: {
+      "total-itself": (a) => qd(3 * a, 2),
+      multiplied: (a) => qd(9 * a, 2),
+    },
     x: (a) => ({ x: dec(3 * a, 2) }),
     c: [3],
   }),
@@ -786,7 +1030,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(3, 19)],
     ok: (a) => a % 2 === 1,
     f: (a) => qd(50 * a, 2),
-    t: { "cents-as-euros": (a) => q(50 * a) },
+    t: {
+      "cents-as-euros": (a) => q(50 * a),
+      "moved-one-place": (a) => q(5 * a),
+      "one-euro-each": (a) => q(a),
+    },
     c: [50],
   }),
   M3_cents({
@@ -797,7 +1045,11 @@ const M3_cents_specs: readonly Spec<never>[] = [
     p: [rg(111, 899)],
     ok: (a) => a % 10 !== 0 && a >= 100,
     f: (a) => q(a),
-    t: { "euros-only": (a) => q(Math.floor(a / 100)) },
+    t: {
+      "euros-only": (a) => q(Math.floor(a / 100)),
+      "cents-part-only": (a) => q(a % 100),
+      "euros-in-cents": (a) => q(100 * Math.floor(a / 100)),
+    },
     x: (a) => ({ x: dec(a, 2) }),
     c: [100],
   }),

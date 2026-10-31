@@ -2,6 +2,7 @@
 // (RES-4281). The Dutch goals split numbers into tens and ones at group 4, reach 1,000 at group 5 and
 // 100,000 at group 6. Texts are plain blanks in `content/tasks-n.ru.json`, keyed by the template id.
 import { between, qi } from "./draw.js";
+import { withWrongAnswers } from "./n1.js";
 import type { Spec } from "./spec.js";
 
 interface TO {
@@ -20,6 +21,23 @@ interface N {
 const s = String;
 const digitsOf = (n: number): number[] => [...s(n)].map(Number);
 
+type Kind = "conceptual" | "procedural" | "fact";
+/** Traps that give a whole number: one that gives a number an earlier trap already gives returns null. */
+const numberTraps = <P>(
+  list: readonly (readonly [string, Kind, (p: P) => number | null])[],
+) =>
+  list.map(([id, kind, fn], i) => ({
+    id,
+    kind,
+    wrong: (p: P) => {
+      const w = fn(p);
+      return w === null || list.slice(0, i).some(([, , g]) => g(p) === w)
+        ? null
+        : qi(w);
+    },
+  }));
+const tensOf = (n: number): number => Math.floor(n / 10);
+
 const specs = [
   {
     id: "N2.compose.01",
@@ -31,14 +49,11 @@ const specs = [
     draw: (r): TO => ({ t: between(r, 1, 9), o: between(r, 1, 9) }),
     solve: (p: TO) => qi(10 * p.t + p.o),
     reference: (p: TO) => qi(Number(`${p.t}${p.o}`)),
-    traps: [
-      {
-        id: "swapped",
-        kind: "conceptual",
-        wrong: (p: TO) => qi(10 * p.o + p.t),
-      },
-      { id: "added", kind: "procedural", wrong: (p: TO) => qi(p.t + p.o) },
-    ],
+    traps: numberTraps<TO>([
+      ["swapped", "conceptual", (p) => 10 * p.o + p.t],
+      ["added", "procedural", (p) => p.t + p.o],
+      ["only-tens", "procedural", (p) => 10 * p.t],
+    ]),
     roles: { t: "count of tens", o: "count of ones" },
     vars: (p: TO) => ({
       t: s(p.t),
@@ -60,9 +75,10 @@ const specs = [
     valid: (p: N) => p.n % 10 !== 0 && Math.floor(p.n / 10) !== p.n % 10,
     solve: (p: N) => qi(Math.floor(p.n / 10)),
     reference: (p: N) => qi(digitsOf(p.n)[0] ?? 0),
-    traps: [
-      { id: "ones-digit", kind: "conceptual", wrong: (p: N) => qi(p.n % 10) },
-    ],
+    traps: numberTraps<N>([
+      ["ones-digit", "conceptual", (p) => p.n % 10],
+      ["tens-value", "conceptual", (p) => 10 * tensOf(p.n)],
+    ]),
     vars: (p: N) => ({
       n: s(p.n),
       r: s(Math.floor(p.n / 10)),
@@ -114,13 +130,11 @@ const specs = [
     draw: (r): TO => ({ t: between(r, 2, 9), o: between(r, 1, 9) }),
     solve: (p: TO) => qi(10 * p.t + p.o),
     reference: (p: TO) => qi(Number(`${p.t}${p.o}`)),
-    traps: [
-      {
-        id: "added-digits",
-        kind: "procedural",
-        wrong: (p: TO) => qi(p.t + p.o),
-      },
-    ],
+    traps: numberTraps<TO>([
+      ["added-digits", "procedural", (p) => p.t + p.o],
+      ["glued", "procedural", (p) => Number(`${10 * p.t}${p.o}`)],
+      ["swapped", "conceptual", (p) => 10 * p.o + p.t],
+    ]),
     vars: (p: TO) => ({
       tv: s(10 * p.t),
       o: s(p.o),
@@ -143,18 +157,12 @@ const specs = [
     }),
     solve: (p: HTO) => qi(100 * p.h + 10 * p.t + p.o),
     reference: (p: HTO) => qi(Number(`${p.h}${p.t}${p.o}`)),
-    traps: [
-      {
-        id: "added",
-        kind: "procedural",
-        wrong: (p: HTO) => qi(p.h + p.t + p.o),
-      },
-      {
-        id: "reversed",
-        kind: "conceptual",
-        wrong: (p: HTO) => qi(100 * p.o + 10 * p.t + p.h),
-      },
-    ],
+    traps: numberTraps<HTO>([
+      ["added", "procedural", (p) => p.h + p.t + p.o],
+      ["reversed", "conceptual", (p) => 100 * p.o + 10 * p.t + p.h],
+      ["tens-as-ones", "procedural", (p) => 100 * p.h + p.t + p.o],
+      ["each-in-full", "conceptual", (p) => Number(`${p.h}${10 * p.t}${p.o}`)],
+    ]),
     vars: (p: HTO) => ({
       h: s(p.h),
       t: s(p.t),
@@ -176,13 +184,11 @@ const specs = [
     valid: (p: N) => p.n % 10 !== 0 && Math.floor(p.n / 10) % 10 !== 0,
     solve: (p: N) => qi(Math.floor(p.n / 10)),
     reference: (p: N) => qi(Number(s(p.n).slice(0, -1))),
-    traps: [
-      {
-        id: "tens-digit",
-        kind: "conceptual",
-        wrong: (p: N) => qi(Math.floor(p.n / 10) % 10),
-      },
-    ],
+    traps: numberTraps<N>([
+      ["tens-digit", "conceptual", (p) => tensOf(p.n) % 10],
+      ["hundreds-only-tens", "conceptual", (p) => 10 * Math.floor(p.n / 100)],
+      ["hundreds-digit", "conceptual", (p) => Math.floor(p.n / 100)],
+    ]),
     vars: (p: N) => ({
       n: s(p.n),
       r: s(Math.floor(p.n / 10)),
@@ -206,13 +212,11 @@ const specs = [
           .concat(Array(p.o).fill(1))
           .reduce((a: number, b: number) => a + b, 0),
       ),
-    traps: [
-      {
-        id: "counted-coins",
-        kind: "conceptual",
-        wrong: (p: TO) => qi(p.t + p.o),
-      },
-    ],
+    traps: numberTraps<TO>([
+      ["counted-coins", "conceptual", (p) => p.t + p.o],
+      ["all-as-tens", "conceptual", (p) => 10 * (p.t + p.o)],
+      ["swapped-counts", "conceptual", (p) => 10 * p.o + p.t],
+    ]),
     roles: { t: "count of ten-euro notes", o: "count of one-euro coins" },
     vars: (p: TO) => ({
       t: s(p.t),
@@ -237,9 +241,11 @@ const specs = [
     valid: (p: HTO) => new Set([p.h, p.t, p.o]).size === 3,
     solve: (p: HTO) => qi(10 * p.t),
     reference: (p: HTO) => qi(Number(`${p.t}0`)),
-    traps: [
-      { id: "face-value", kind: "conceptual", wrong: (p: HTO) => qi(p.t) },
-    ],
+    traps: numberTraps<HTO>([
+      ["face-value", "conceptual", (p) => p.t],
+      ["digit-with-ones", "conceptual", (p) => 10 * p.t + p.o],
+      ["hundreds-value", "conceptual", (p) => 100 * p.t],
+    ]),
     vars: (p: HTO) => ({
       n: s(100 * p.h + 10 * p.t + p.o),
       d: s(p.t),
@@ -262,13 +268,11 @@ const specs = [
     solve: (p: { n: number; t: number }) => qi(p.n - 10 * p.t),
     reference: (p: { n: number; t: number }) =>
       qi((Math.floor(p.n / 10) - p.t) * 10 + (p.n % 10)),
-    traps: [
-      {
-        id: "ones-digit-only",
-        kind: "conceptual",
-        wrong: (p: { n: number; t: number }) => qi(p.n % 10),
-      },
-    ],
+    traps: numberTraps<{ n: number; t: number }>([
+      ["ones-digit-only", "conceptual", (p) => p.n % 10],
+      ["tens-subtracted", "procedural", (p) => p.n - p.t],
+      ["remaining-tens", "conceptual", (p) => tensOf(p.n) - p.t],
+    ]),
     vars: (p: { n: number; t: number }) => ({
       n: s(p.n),
       t: s(p.t),
@@ -289,13 +293,10 @@ const specs = [
     valid: (p: TO) => p.t !== p.o,
     solve: (p: TO) => qi(10 * p.o + p.t),
     reference: (p: TO) => qi(Number([...`${p.t}${p.o}`].reverse().join(""))),
-    traps: [
-      {
-        id: "unchanged",
-        kind: "conceptual",
-        wrong: (p: TO) => qi(10 * p.t + p.o),
-      },
-    ],
+    traps: numberTraps<TO>([
+      ["unchanged", "conceptual", (p) => 10 * p.t + p.o],
+      ["added-digits", "procedural", (p) => p.t + p.o],
+    ]),
     vars: (p: TO) => ({
       n: s(10 * p.t + p.o),
       r: s(10 * p.o + p.t),
@@ -321,14 +322,24 @@ const specs = [
       qi(1000 * p.k + 100 * p.h + 10 * p.t + p.o),
     reference: (p: { k: number; h: number; t: number; o: number }) =>
       qi(Number(`${p.k}${p.h}${p.t}${p.o}`)),
-    traps: [
-      {
-        id: "dropped-place",
-        kind: "conceptual",
-        wrong: (p: { k: number; h: number; t: number; o: number }) =>
-          qi(Number(`${p.k}${p.t}${p.o}`)),
-      },
-    ],
+    traps: numberTraps<{ k: number; h: number; t: number; o: number }>([
+      [
+        "dropped-place",
+        "conceptual",
+        (p) => (p.h === 0 ? Number(`${p.k}${p.t}${p.o}`) : null),
+      ],
+      [
+        "zero-at-end",
+        "conceptual",
+        (p) => (p.h === 0 ? Number(`${p.k}${p.t}${p.o}0`) : null),
+      ],
+      ["digits-added", "procedural", (p) => p.k + p.h + p.t + p.o],
+      [
+        "unscaled-places",
+        "procedural",
+        (p) => 1000 * p.k + 100 * p.h + p.t + p.o,
+      ],
+    ]),
     vars: (p: { k: number; h: number; t: number; o: number }) => ({
       k: s(p.k),
       h: s(p.h),
@@ -357,13 +368,15 @@ const specs = [
         .sort((a, b) => a - b);
       return qi(all[0] ?? -1);
     },
-    traps: [
-      {
-        id: "largest",
-        kind: "conceptual",
-        wrong: (p: TO) => qi(Math.max(10 * p.t + p.o, 10 * p.o + p.t)),
-      },
-    ],
+    traps: numberTraps<TO>([
+      [
+        "largest",
+        "conceptual",
+        (p) => Math.max(10 * p.t + p.o, 10 * p.o + p.t),
+      ],
+      ["leading-zero", "conceptual", (p) => (p.t === 0 ? p.o : null)],
+      ["single-digit", "conceptual", (p) => Math.min(p.t, p.o)],
+    ]),
     vars: (p: TO) => ({
       a: s(p.t),
       b: s(p.o),
@@ -392,18 +405,26 @@ const specs = [
       }
       return qi(c);
     },
-    traps: [
-      {
-        id: "count-single-digit",
-        kind: "conceptual",
-        wrong: (p: { sum: number }) => (p.sum <= 9 ? qi(p.sum + 1) : null),
-      },
-      {
-        id: "small-case-formula",
-        kind: "procedural",
-        wrong: (p: { sum: number }) => (p.sum > 9 ? qi(p.sum) : null),
-      },
-    ],
+    traps: numberTraps<{ sum: number }>([
+      [
+        "count-single-digit",
+        "conceptual",
+        (p) => (p.sum <= 9 ? p.sum + 1 : null),
+      ],
+      ["small-case-formula", "procedural", (p) => (p.sum > 9 ? p.sum : null)],
+      [
+        "ignored-order",
+        "conceptual",
+        (p) => {
+          let c = 0;
+          for (let y = 0; y <= 9; y += 1) {
+            const x = p.sum - y;
+            if (x >= Math.max(y, 1) && x <= 9) c += 1;
+          }
+          return c;
+        },
+      ],
+    ]),
     vars: (p: { sum: number }) => ({
       sum: s(p.sum),
       r: s(p.sum <= 9 ? p.sum : 19 - p.sum),
@@ -421,13 +442,11 @@ const specs = [
     draw: (r) => ({ h: between(r, 1, 9), o: between(r, 1, 9) }),
     solve: (p: { h: number; o: number }) => qi(100 * p.h + p.o),
     reference: (p: { h: number; o: number }) => qi(Number(`${p.h}0${p.o}`)),
-    traps: [
-      {
-        id: "no-empty-place",
-        kind: "conceptual",
-        wrong: (p: { h: number; o: number }) => qi(10 * p.h + p.o),
-      },
-    ],
+    traps: numberTraps<{ h: number; o: number }>([
+      ["no-empty-place", "conceptual", (p) => 10 * p.h + p.o],
+      ["zero-at-end", "conceptual", (p) => Number(`${p.h}${p.o}0`)],
+      ["added-digits", "procedural", (p) => p.h + p.o],
+    ]),
     vars: (p: { h: number; o: number }) => ({
       h: s(p.h),
       o: s(p.o),
@@ -438,4 +457,6 @@ const specs = [
   } satisfies Spec<{ h: number; o: number }>,
 ] as const;
 
-export const n2Specs = specs as unknown as readonly Spec<never>[];
+export const n2Specs = withWrongAnswers(
+  specs as unknown as readonly Spec<never>[],
+);

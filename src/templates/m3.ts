@@ -7,6 +7,12 @@ import { dec, q, qd } from "./kitf.js";
 import { SIGNS, type Spec } from "./spec.js";
 
 const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
+/** A sign, or `null` when it repeats a sign another trap of the same task already gives. */
+const unless = (
+  x: (typeof SIGNS)[number],
+  ...seen: (typeof SIGNS)[number][]
+): (typeof SIGNS)[number] | null => (seen.includes(x) ? null : x);
+const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
 
 const M5_grid = calc("M5", "grid");
 const M5_grid_specs: readonly Spec<never>[] = [
@@ -17,7 +23,10 @@ const M5_grid_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(5, 20), of(2, 4, 6, 8)],
     f: (a, b) => q(a + b / 2),
-    t: { "halves-as-wholes": (a, b) => q(a + b) },
+    t: {
+      "halves-as-wholes": (a, b) => q(a + b),
+      "halves-ignored": (a) => q(a),
+    },
     c: [1, 2],
   }),
   M5_grid({
@@ -27,7 +36,10 @@ const M5_grid_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(2, 4, 6, 8), rg(3, 9)],
     f: (a, b) => q((a * b) / 2),
-    t: { rectangle: (a, b) => q(a * b) },
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "legs-added": (a, b) => q(a + b),
+    },
     c: [1],
   }),
   M5_grid({
@@ -38,7 +50,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(4, 12)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { added: (a, b) => q(a + b) },
+    t: {
+      added: (a, b) => q(a + b),
+      perimeter: (a, b) => q(2 * (a + b)),
+      "one-row-only": (a, b) => q(b),
+    },
     c: [1],
   }),
   M5_grid({
@@ -49,7 +65,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
     p: [rg(2, 4), rg(5, 8), rg(2, 4), rg(2, 4)],
     ok: (a, b, c, d) => b > d && a * b !== c * d,
     f: (a, b, c, d) => q(a * b + c * d),
-    t: { "rows-added": (a, b, c, d) => q(a + b + c + d) },
+    t: {
+      "rows-added": (a, b, c, d) => q(a + b + c + d),
+      "second-block-forgotten": (a, b) => q(a * b),
+      "all-rows-as-long-as-the-first": (a, b, c) => q((a + c) * b),
+    },
     c: [1],
   }),
   M5_grid({
@@ -60,7 +80,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
     p: [rg(5, 9), rg(4, 8), rg(1, 4)],
     ok: (a, b) => a !== b,
     f: (a, b, c) => q(a * b - c),
-    t: { "holes-added": (a, b, c) => q(a * b + c) },
+    t: {
+      "holes-added": (a, b, c) => q(a * b + c),
+      "holes-ignored": (a, b) => q(a * b),
+      "holes-taken-off-one-side": (a, b, c) => q(a * (b - c)),
+    },
     c: [1],
   }),
   M5_grid({
@@ -70,7 +94,10 @@ const M5_grid_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(6, 20)],
     f: (a) => q(4 * a),
-    t: { cells: (a) => q(a), "side-not-squared": (a) => q(2 * a) },
+    t: {
+      cells: (a) => q(a),
+      "side-not-squared": (a) => q(2 * a),
+    },
     c: [1, 2, 4],
   }),
   M5_grid({
@@ -81,7 +108,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
     p: [rg(4, 9), rg(4, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b - (a - 2) * (b - 2)),
-    t: { perimeter: (a, b) => q(2 * (a + b)) },
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "inner-cells": (a, b) => q((a - 2) * (b - 2)),
+      "whole-rectangle": (a, b) => q(a * b),
+    },
     c: [2],
   }),
   M5_grid({
@@ -92,7 +123,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(3, 7), rg(2, 6), rg(2, 5)],
     ok: (a, b, c, d) => a * b !== c * d,
     f: (a, b, c, d) => q(a * b + c * d),
-    t: { "sides-added": (a, b, c, d) => q(a + b + c + d) },
+    t: {
+      "sides-added": (a, b, c, d) => q(a + b + c + d),
+      "second-rectangle-forgotten": (a, b) => q(a * b),
+      "perimeters-added": (a, b, c, d) => q(2 * (a + b) + 2 * (c + d)),
+    },
   }),
   M5_grid({
     id: "M5.grid.09",
@@ -107,7 +142,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
           0,
         ),
       ),
-    t: { "unit-only": (a) => q(a * a) },
+    t: {
+      "unit-only": (a) => q(a * a),
+      "sum-of-sizes": (a) => q((a * (a + 1)) / 2),
+      "units-and-the-whole": (a) => q(a * a + 1),
+    },
     c: [1],
     origin: { olympiad: "counting squares in a grid (RES-4286)" },
   }),
@@ -119,7 +158,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 6)],
     ok: (a, b) => a !== b && a * b !== 2 * (a + b),
     f: (a, b) => q(a * b),
-    t: { "perimeter-like": (a, b) => q(2 * (a + b)) },
+    t: {
+      "perimeter-like": (a, b) => q(2 * (a + b)),
+      "half-of-the-product": (a, b) => whole(q(a * b, 2)),
+      "sides-added": (a, b) => q(a + b),
+    },
     c: [1],
   }),
   M5_grid({
@@ -129,7 +172,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(4, 9)],
     f: (a) => q((a * (a + 1)) / 2),
-    t: { square: (a) => q(a * a) },
+    t: {
+      square: (a) => q(a * a),
+      "half-of-the-square": (a) => whole(q(a * a, 2)),
+      "last-row-forgotten": (a) => q((a * (a - 1)) / 2),
+    },
     c: [1, 2],
   }),
 ];
@@ -144,7 +191,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(3, 15), rg(2, 12)],
     ok: (a, b) => a !== b && a * b !== 2 * (a + b),
     f: (a, b) => q(a * b),
-    t: { perimeter: (a, b) => q(2 * (a + b)) },
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "sides-added": (a, b) => q(a + b),
+      "one-side-doubled": (a, b) => q(2 * a + b),
+    },
   }),
   M5_sides({
     id: "M5.sides.02",
@@ -154,7 +205,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 8)],
     ok: (a, b) => a !== b && a * b !== 2 * (a + b),
     f: (a, b) => q(a * b),
-    t: { perimeter: (a, b) => q(2 * (a + b)) },
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "sides-added": (a, b) => q(a + b),
+      "one-side-doubled": (a, b) => q(2 * a + b),
+    },
   }),
   M5_sides({
     id: "M5.sides.03",
@@ -164,7 +219,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(3, 15)],
     ok: (a) => a !== 4,
     f: (a) => q(a * a),
-    t: { perimeter: (a) => q(4 * a) },
+    t: {
+      perimeter: (a) => q(4 * a),
+      "side-doubled": (a) => q(2 * a),
+      "side-cubed": (a) => q(a * a * a),
+    },
   }),
   M5_sides({
     id: "M5.sides.04",
@@ -174,7 +233,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(3, 12), rg(2, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(b),
-    t: { "area-minus-side": (a, b) => q(a * b - a) },
+    t: {
+      "area-minus-side": (a, b) => q(a * b - a),
+      "area-times-side": (a, b) => q(a * a * b),
+      "area-plus-side": (a, b) => q(a * b + a),
+    },
     x: (a, b) => ({ x: String(a * b) }),
   }),
   M5_sides({
@@ -186,7 +249,16 @@ const M5_sides_specs: readonly Spec<never>[] = [
     ok: (a, b, c, d) =>
       a * b !== c * d && sign(q(a * b), q(c * d)) !== sign(q(a + b), q(c + d)),
     f: (a, b, c, d) => sign(q(a * b), q(c * d)),
-    t: { "perimeters-compared": (a, b, c, d) => sign(q(a + b), q(c + d)) },
+    t: {
+      "perimeters-compared": (a, b, c, d) => sign(q(a + b), q(c + d)),
+      "longer-side-compared": (a, b, c, d) =>
+        unless(
+          sign(q(Math.max(a, b)), q(Math.max(c, d))),
+          sign(q(a + b), q(c + d)),
+        ),
+      "areas-look-equal": (a, b, c, d) =>
+        a + b === c + d || Math.max(a, b) === Math.max(c, d) ? null : "=",
+    },
     x: (a, b, c, d) => ({ sign: sign(q(a * b), q(c * d)) }),
   }),
   M5_sides({
@@ -197,7 +269,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(4, 9), rg(3, 5), rg(1, 2), rg(1, 2)],
     ok: (a, b) => a !== b,
     f: (a, b, c, d) => q(a * b - c * d),
-    t: { "window-added": (a, b, c, d) => q(a * b + c * d) },
+    t: {
+      "window-added": (a, b, c, d) => q(a * b + c * d),
+      "window-forgotten": (a, b) => q(a * b),
+      "window-sides-subtracted": (a, b, c, d) => q(a * b - c - d),
+    },
   }),
   M5_sides({
     id: "M5.sides.07",
@@ -207,7 +283,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 8)],
     ok: (a, b) => a !== b && a * b !== 2 * (a + b),
     f: (a, b) => q(a * b),
-    t: { perimeter: (a, b) => q(2 * (a + b)) },
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "sides-added": (a, b) => q(a + b),
+      "one-side-doubled": (a, b) => q(2 * a + b),
+    },
     c: [1],
   }),
   M5_sides({
@@ -218,7 +298,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(5, 9), rg(4, 8), rg(2, 4), rg(2, 4)],
     ok: (a, b) => a !== b,
     f: (a, b, c, d) => q(a * b - c * d),
-    t: { added: (a, b, c, d) => q(a * b + c * d) },
+    t: {
+      added: (a, b, c, d) => q(a * b + c * d),
+      "larger-room-only": (a, b) => q(a * b),
+      "sides-subtracted": (a, b, c, d) => q((a - c) * (b - d)),
+    },
   }),
   M5_sides({
     id: "M5.sides.09",
@@ -228,7 +312,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 8)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(2 * a * b),
-    t: { "both-doubled": (a, b) => q(4 * a * b) },
+    t: {
+      "both-doubled": (a, b) => q(4 * a * b),
+      "area-unchanged": (a, b) => q(a * b),
+      "perimeter-of-the-new": (a, b) => q(2 * (2 * a + b)),
+    },
   }),
   M5_sides({
     id: "M5.sides.10",
@@ -237,7 +325,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 10)],
     f: (a) => q(a * a),
-    t: { "side-only": (a) => q(a) },
+    t: {
+      "side-only": (a) => q(a),
+      "half-perimeter-squared": (a) => q(4 * a * a),
+      "perimeter-itself": (a) => q(4 * a),
+    },
     x: (a) => ({ x: String(4 * a) }),
     c: [4],
   }),
@@ -252,6 +344,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
     t: {
       "area-only": (a, b) => q(a * b),
       "perimeter-priced": (a, b, c) => q(2 * (a + b) * c),
+      "area-and-price-added": (a, b, c) => q(a * b + c),
     },
   }),
 ];
@@ -266,7 +359,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     p: [rg(11, 49), rg(11, 49)],
     ok: (a, b) => a % 10 !== 0 && b % 10 !== 0 && a !== b,
     f: (a, b) => qd(a * b, 2),
-    t: { "one-place": (a, b) => qd(a * b, 1) },
+    t: {
+      "one-place": (a, b) => qd(a * b, 1),
+      "no-comma": (a, b) => q(a * b),
+      "sides-added": (a, b) => qd(a + b, 1),
+    },
     x: (a, b) => ({ x: dec(a, 1), y: dec(b, 1) }),
   }),
   M5_formula({
@@ -276,7 +373,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     kind: "decimal",
     p: [rg(2, 5), of(25, 50, 75)],
     f: (a, b) => qd(a * b, 2),
-    t: { "units-mixed": (a, b) => q(a * b) },
+    t: {
+      "units-mixed": (a, b) => q(a * b),
+      "divided-by-ten": (a, b) => qd(a * b, 1),
+      "sides-added": (a, b) => qd(100 * a + b, 2),
+    },
   }),
   M5_formula({
     id: "M5.formula.03",
@@ -286,7 +387,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     p: [of(100, 200, 300, 400), of(100, 200, 500, 600)],
     ok: (a, b) => a !== b,
     f: (a, b) => q((a * b) / 10000),
-    t: { "square-metres": (a, b) => q(a * b) },
+    t: {
+      "square-metres": (a, b) => q(a * b),
+      "divided-by-a-hundred": (a, b) => q((a * b) / 100),
+      "divided-by-a-thousand": (a, b) => q((a * b) / 1000),
+    },
     c: [10000],
   }),
   M5_formula({
@@ -296,7 +401,10 @@ const M5_formula_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 9)],
     f: (a) => q(9 * a),
-    t: { tripled: (a) => q(3 * a) },
+    t: {
+      tripled: (a) => q(3 * a),
+      "factors-added": (a) => q(6 * a),
+    },
     c: [3, 9],
   }),
   M5_formula({
@@ -307,7 +415,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     p: [rg(4, 12), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { "slanted-side": (a, b) => q(a * (b + 2)) },
+    t: {
+      "slanted-side": (a, b) => q(a * (b + 2)),
+      "half-of-the-product": (a, b) => whole(q(a * b, 2)),
+      perimeter: (a, b) => q(2 * (a + b + 2)),
+    },
     c: [2],
   }),
   M5_formula({
@@ -318,7 +430,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8, 10, 12), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q((a * b) / 2),
-    t: { product: (a, b) => q(a * b) },
+    t: {
+      product: (a, b) => q(a * b),
+      "diagonals-added": (a, b) => q(a + b),
+      "half-of-the-sum": (a, b) => whole(q(a + b, 2)),
+    },
     c: [2],
   }),
   M5_formula({
@@ -329,7 +445,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     p: [rg(11, 29), rg(2, 6)],
     ok: (a) => a % 10 !== 0,
     f: (a) => qd(a, 1),
-    t: { "area-minus-side": (a, b) => qd(a * b - 10 * b, 1) },
+    t: {
+      "area-minus-side": (a, b) => qd(a * b - 10 * b, 1),
+      "area-times-side": (a, b) => qd(a * b * b, 1),
+      "comma-in-the-wrong-place": (a) => qd(a, 2),
+    },
     x: (a, b) => ({ x: dec(a * b, 1) }),
   }),
   M5_formula({
@@ -340,7 +460,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     p: [rg(6, 12), rg(4, 9), rg(1, 3)],
     ok: (a, b) => a !== b,
     f: (a, b, c) => q((a - c) * b),
-    t: { "strip-added": (a, b, c) => q((a + c) * b) },
+    t: {
+      "strip-added": (a, b, c) => q((a + c) * b),
+      "strip-ignored": (a, b) => q(a * b),
+      "strip-taken-from-both-sides": (a, b, c) => q((a - c) * (b - c)),
+    },
   }),
   M5_formula({
     id: "M5.formula.09",
@@ -350,7 +474,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     p: [rg(3, 9)],
     ok: (a) => a * a !== 2 * a - 1,
     f: (a) => q(a * a),
-    t: { "long-thin": (a) => q(2 * a - 1) },
+    t: {
+      "long-thin": (a) => q(2 * a - 1),
+      "half-perimeter-squared": (a) => q(4 * a * a),
+      "side-of-the-square": (a) => q(a),
+    },
     x: (a) => ({ x: String(4 * a), y: String(2 * a - 1) }),
     c: [1, 4],
     origin: { olympiad: "the rectangle of the largest area (RES-4286)" },
@@ -362,7 +490,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(4, 6, 8, 10, 12)],
     f: (a) => q((a * a) / 2),
-    t: { "diagonal-squared": (a) => q(a * a) },
+    t: {
+      "diagonal-squared": (a) => q(a * a),
+      "half-diagonal-squared": (a) => q((a * a) / 4),
+      "half-diagonal": (a) => q(a / 2),
+    },
     c: [2],
   }),
   M5_formula({
@@ -372,7 +504,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 4), rg(2, 3)],
     f: (a, b) => q(b * b),
-    t: { "side-ratio": (a, b) => q(b) },
+    t: {
+      "side-ratio": (a, b) => q(b),
+      "squared-as-doubled": (a, b) => q(2 * b),
+      "side-difference": (a, b) => q(a * b - a),
+    },
     x: (a, b) => ({ x: String(a * b) }),
   }),
 ];
@@ -387,7 +523,10 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8, 10), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q((a * b) / 2),
-    t: { rectangle: (a, b) => q(a * b) },
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "legs-added": (a, b) => q(a + b),
+    },
     c: [2],
   }),
   M6_triangle({
@@ -398,7 +537,10 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8, 10, 12), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q((a * b) / 2),
-    t: { product: (a, b) => q(a * b) },
+    t: {
+      product: (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
     c: [2],
   }),
   M6_triangle({
@@ -409,7 +551,11 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8, 10), rg(3, 8)],
     ok: (a, b) => a !== b && (a * b) % 4 === 0,
     f: (a, b) => q(b),
-    t: { "area-over-base": (a, b) => q(b, 2) },
+    t: {
+      "area-over-base": (a, b) => q(b, 2),
+      "area-times-base": (a, b) => q((a * a * b) / 2),
+      "area-minus-base": (a, b) => q((a * b) / 2 - a),
+    },
     x: (a, b) => ({ x: String((a * b) / 2) }),
     c: [2],
   }),
@@ -421,7 +567,10 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(4, 10)],
     ok: (a, b) => a !== b && (a * b) % 2 === 0,
     f: (a, b) => q((a * b) / 2),
-    t: { rectangle: (a, b) => q(a * b) },
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
   }),
   M6_triangle({
     id: "M6.triangle.05",
@@ -431,7 +580,11 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [rg(3, 8), rg(3, 6), of(2, 4, 6)],
     ok: (a, b, c) => a % 2 === 0 || c % 2 === 0,
     f: (a, b, c) => q(a * b + (a * c) / 2),
-    t: { "triangle-as-rectangle": (a, b, c) => q(a * b + a * c) },
+    t: {
+      "triangle-as-rectangle": (a, b, c) => q(a * b + a * c),
+      "triangle-forgotten": (a, b) => q(a * b),
+      "rectangle-forgotten": (a, b, c) => q((a * c) / 2),
+    },
     c: [2],
   }),
   M6_triangle({
@@ -442,7 +595,11 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8), rg(2, 5), rg(2, 5)],
     ok: (a, b, c) => b !== c,
     f: (a, b, c) => q((a * (b + c)) / 2),
-    t: { "one-triangle": (a, b) => q((a * b) / 2) },
+    t: {
+      "one-triangle": (a, b) => q((a * b) / 2),
+      "second-triangle-only": (a, b, c) => q((a * c) / 2),
+      "not-halved": (a, b, c) => q(a * (b + c)),
+    },
     c: [2],
   }),
   M6_triangle({
@@ -453,7 +610,11 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(4, 9), rg(4, 9)],
     ok: (a, b, c) => a + b > c && a + c > b && b + c > a && b !== c && a !== b,
     f: (a, b, c) => q(a + b + c),
-    t: { "two-sides": (a, b) => q(a + b) },
+    t: {
+      "two-sides": (a, b) => q(a + b),
+      "doubled-sum": (a, b, c) => q(2 * (a + b + c)),
+      "last-two-sides": (a, b, c) => (a === c ? null : q(b + c)),
+    },
   }),
   M6_triangle({
     id: "M6.triangle.08",
@@ -463,7 +624,11 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8, 10), rg(3, 8)],
     ok: (a, b) => a !== b && (a * b) % 4 === 0,
     f: (a) => q(a),
-    t: { "area-over-height": (a) => q(a / 2) },
+    t: {
+      "area-over-height": (a) => q(a / 2),
+      "area-times-height": (a, b) => q((a * b * b) / 2),
+      "area-minus-height": (a, b) => q((a * b) / 2 - b),
+    },
     x: (a, b) => ({ x: String((a * b) / 2) }),
     c: [2],
   }),
@@ -475,7 +640,10 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8), rg(3, 8)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { unchanged: (a, b) => q((a * b) / 2) },
+    t: {
+      unchanged: (a, b) => q((a * b) / 2),
+      "not-halved": (a, b) => q(2 * a * b),
+    },
     c: [2],
   }),
   M6_triangle({
@@ -486,7 +654,10 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [of(4, 6, 8), rg(3, 7)],
     ok: (a, b) => a !== b,
     f: (a, b) => q((a * b) / 2),
-    t: { rectangle: (a, b) => q(a * b) },
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "coordinates-added": (a, b) => q(a + b),
+    },
     c: [0, 2],
   }),
   M6_triangle({
@@ -497,7 +668,10 @@ const M6_triangle_specs: readonly Spec<never>[] = [
     p: [rg(4, 12), rg(3, 8)],
     ok: (a, b) => a !== b && (a * b) % 2 === 0,
     f: (a, b) => q((a * b) / 2),
-    t: { parallelogram: (a, b) => q(a * b) },
+    t: {
+      parallelogram: (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
   }),
 ];
 

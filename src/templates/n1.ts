@@ -21,10 +21,39 @@ interface Pair {
   b: number;
 }
 
-const swapped = (p: Pair) => {
-  const s = signOf(p.a, p.b);
-  return s === "=" ? null : opposite(s);
-};
+type Sign = (typeof SIGNS)[number];
+type Kind = "conceptual" | "procedural" | "fact";
+/** The sign turned the other way, or null for an equality. */
+const turned = (s: Sign): Sign | null => (s === "=" ? null : opposite(s));
+const swapped = (p: Pair) => turned(signOf(p.a, p.b));
+/** Traps that give a sign: one that gives the sign an earlier trap already gives returns null. */
+const signTraps = <P>(
+  list: readonly (readonly [string, Kind, (p: P) => Sign | null])[],
+) =>
+  list.map(([id, kind, fn], i) => ({
+    id,
+    kind,
+    wrong: (p: P) => {
+      const w = fn(p);
+      return w !== null && list.slice(0, i).some(([, , g]) => g(p) === w)
+        ? null
+        : w;
+    },
+  }));
+/** Traps that give a whole number, with the same rule for a number an earlier trap gives. */
+const numberTraps = <P>(
+  list: readonly (readonly [string, Kind, (p: P) => number | null])[],
+) =>
+  list.map(([id, kind, fn], i) => ({
+    id,
+    kind,
+    wrong: (p: P) => {
+      const w = fn(p);
+      return w === null || list.slice(0, i).some(([, , g]) => g(p) === w)
+        ? null
+        : qi(w);
+    },
+  }));
 const pairVars = (p: Pair) => ({
   a: digits(p.a),
   b: digits(p.b),
@@ -32,9 +61,61 @@ const pairVars = (p: Pair) => ({
   tb: String(tens(p.b)),
   sign: signOf(p.a, p.b),
 });
-const pairTrap = [
-  { id: "swapped-sign", kind: "fact" as const, wrong: swapped },
-];
+const lastDigit = (p: Pair) => signOf(p.a % 10, p.b % 10);
+const firstDigit = (p: Pair) =>
+  signOf(Number(String(p.a)[0]), Number(String(p.b)[0]));
+const toTwenty = signTraps<Pair>([
+  ["last-digit", "conceptual", lastDigit],
+  ["first-digit", "conceptual", firstDigit],
+  ["swapped-sign", "fact", swapped],
+]);
+const twoDigit = signTraps<Pair>([
+  ["last-digit", "conceptual", lastDigit],
+  ["swapped-sign", "fact", swapped],
+  ["tens-only", "conceptual", (p) => signOf(tens(p.a), tens(p.b))],
+]);
+interface Tom {
+  t: number;
+  o: number;
+  n: number;
+}
+interface Abc {
+  a: number;
+  b: number;
+  c: number;
+}
+interface Abcd extends Abc {
+  d: number;
+}
+const rev2 = (n: number): number => 10 * (n % 10) + tens(n);
+/** The number read with both words in full: "twenty three" as 203. */
+const inFull = (n: number): number | null =>
+  n < 21 || n % 10 === 0 ? null : Number(`${10 * tens(n)}${n % 10}`);
+
+/** Gives every spec the wrong answers of its traps as `w_<trap_id_with_underscores>` in its texts. */
+export const withWrongAnswers = (
+  list: readonly Spec<never>[],
+): readonly Spec<never>[] =>
+  list.map((sp) => {
+    const one = sp as unknown as Spec<unknown>;
+    return {
+      ...one,
+      vars: (p: unknown) => ({
+        ...one.vars(p),
+        ...Object.fromEntries(
+          (one.traps ?? []).flatMap((t) => {
+            const w = t.wrong(p);
+            const key = `w_${t.id.replace(/-/g, "_")}`;
+            return w instanceof Q
+              ? [[key, digits(Number(w.toString()))]]
+              : typeof w === "string"
+                ? [[key, w]]
+                : [];
+          }),
+        ),
+      }),
+    } as unknown as Spec<never>;
+  });
 
 /** Comparison templates: the answer is the sign that stands between the two numbers. */
 const compare: readonly Spec<never>[] = [
@@ -48,7 +129,7 @@ const compare: readonly Spec<never>[] = [
     draw: (r): Pair => ({ a: between(r, 1, 20), b: between(r, 1, 20) }),
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: pairTrap,
+    traps: toTwenty,
     vars: pairVars,
     constants: CONSTANTS,
   } satisfies Spec<Pair>,
@@ -62,7 +143,7 @@ const compare: readonly Spec<never>[] = [
     draw: (r): Pair => ({ a: between(r, 10, 99), b: between(r, 10, 99) }),
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: pairTrap,
+    traps: twoDigit,
     vars: pairVars,
     constants: CONSTANTS,
   } satisfies Spec<Pair>,
@@ -76,7 +157,7 @@ const compare: readonly Spec<never>[] = [
     draw: (r): Pair => ({ a: between(r, 10, 99), b: between(r, 10, 99) }),
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: pairTrap,
+    traps: twoDigit,
     vars: pairVars,
     constants: CONSTANTS,
   } satisfies Spec<Pair>,
@@ -90,7 +171,7 @@ const compare: readonly Spec<never>[] = [
     draw: (r): Pair => ({ a: between(r, 12, 35), b: between(r, 12, 35) }),
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: pairTrap,
+    traps: twoDigit,
     vars: pairVars,
     constants: CONSTANTS,
   } satisfies Spec<Pair>,
@@ -104,7 +185,7 @@ const compare: readonly Spec<never>[] = [
     draw: (r): Pair => ({ a: between(r, 10, 99), b: between(r, 10, 99) }),
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: pairTrap,
+    traps: twoDigit,
     vars: pairVars,
     constants: CONSTANTS,
   } satisfies Spec<Pair>,
@@ -124,14 +205,12 @@ const compare: readonly Spec<never>[] = [
       signOf(10 * p.t + p.o, p.n),
     reference: (p: { t: number; o: number; n: number }) =>
       bySubtraction(Number(`${p.t}${p.o}`), p.n),
-    traps: [
-      {
-        id: "tens-only",
-        kind: "conceptual" as const,
-        wrong: (p: { t: number; o: number; n: number }) =>
-          signOf(p.t, tens(p.n)),
-      },
-    ],
+    traps: signTraps<Tom>([
+      ["last-digit", "conceptual", (p) => signOf(p.o, p.n % 10)],
+      ["tens-only", "conceptual", (p) => signOf(p.t, tens(p.n))],
+      ["added-digits", "procedural", (p) => signOf(p.t + p.o, p.n)],
+      ["swapped-sign", "fact", (p) => turned(signOf(10 * p.t + p.o, p.n))],
+    ]),
     vars: (p: { t: number; o: number; n: number }) => ({
       t: String(p.t),
       o: String(p.o),
@@ -155,13 +234,10 @@ const compare: readonly Spec<never>[] = [
       Math.sign(tens(p.a) - tens(p.b)) !== Math.sign((p.a % 10) - (p.b % 10)),
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: [
-      {
-        id: "last-digit",
-        kind: "conceptual" as const,
-        wrong: (p: Pair) => signOf(p.a % 10, p.b % 10),
-      },
-    ],
+    traps: signTraps<Pair>([
+      ["last-digit", "conceptual", lastDigit],
+      ["tens-and-ones-cancel", "conceptual", () => "="],
+    ]),
     vars: pairVars,
     constants: CONSTANTS,
   } satisfies Spec<Pair>,
@@ -179,14 +255,11 @@ const compare: readonly Spec<never>[] = [
     },
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: [
-      {
-        id: "first-digit",
-        kind: "conceptual" as const,
-        wrong: (p: Pair) =>
-          signOf(Number(String(p.a)[0]), Number(String(p.b)[0])),
-      },
-    ],
+    traps: signTraps<Pair>([
+      ["last-digit", "conceptual", lastDigit],
+      ["first-digit", "conceptual", firstDigit],
+      ["swapped-sign", "fact", swapped],
+    ]),
     vars: (p: Pair) => ({
       ...pairVars(p),
       short: String(Math.min(p.a, p.b)),
@@ -204,7 +277,22 @@ const compare: readonly Spec<never>[] = [
     draw: (r): Pair => ({ a: between(r, 11, 99), b: between(r, 11, 99) }),
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a, p.b),
-    traps: pairTrap,
+    traps: signTraps<Pair>([
+      [
+        "reversed-digits",
+        "conceptual",
+        (p) => (p.a % 10 === 0 ? null : signOf(rev2(p.a), p.b)),
+      ],
+      [
+        "written-in-full",
+        "conceptual",
+        (p) => {
+          const full = inFull(p.a);
+          return full === null ? null : signOf(full, p.b);
+        },
+      ],
+      ["swapped-sign", "fact", swapped],
+    ]),
     vars: (p: Pair) => ({
       ...pairVars(p),
       words: numberWords(p.a),
@@ -233,13 +321,16 @@ const compare: readonly Spec<never>[] = [
         : bySubtraction(p.c, p.a + p.b) === ">"
           ? "<"
           : "=",
-    traps: [
-      {
-        id: "first-addend",
-        kind: "procedural" as const,
-        wrong: (p: { a: number; b: number; c: number }) => signOf(p.a, p.c),
-      },
-    ],
+    traps: signTraps<Abc>([
+      ["first-addend", "procedural", (p) => signOf(p.a, p.c)],
+      [
+        "difference-instead",
+        "procedural",
+        (p) => signOf(Math.abs(p.a - p.b), p.c),
+      ],
+      ["larger-addend", "procedural", (p) => signOf(Math.max(p.a, p.b), p.c)],
+      ["swapped-sign", "fact", (p) => turned(signOf(p.a + p.b, p.c))],
+    ]),
     vars: (p: { a: number; b: number; c: number }) => ({
       a: String(p.a),
       b: String(p.b),
@@ -266,14 +357,15 @@ const compare: readonly Spec<never>[] = [
       signOf(p.a + p.b, p.c + p.d),
     reference: (p: { a: number; b: number; c: number; d: number }) =>
       bySubtraction(p.a + p.b - p.c, p.d),
-    traps: [
-      {
-        id: "first-addends",
-        kind: "procedural" as const,
-        wrong: (p: { a: number; b: number; c: number; d: number }) =>
-          signOf(p.a, p.c),
-      },
-    ],
+    traps: signTraps<Abcd>([
+      ["first-addends", "procedural", (p) => signOf(p.a, p.c)],
+      [
+        "larger-addends",
+        "procedural",
+        (p) => signOf(Math.max(p.a, p.b), Math.max(p.c, p.d)),
+      ],
+      ["swapped-sign", "fact", (p) => turned(signOf(p.a + p.b, p.c + p.d))],
+    ]),
     vars: (p: { a: number; b: number; c: number; d: number }) => ({
       a: String(p.a),
       b: String(p.b),
@@ -300,13 +392,11 @@ const compare: readonly Spec<never>[] = [
     solve: (p: { a: number; b: number; c: number }) => signOf(p.a - p.b, p.c),
     reference: (p: { a: number; b: number; c: number }) =>
       bySubtraction(p.a, p.b + p.c),
-    traps: [
-      {
-        id: "bigger-number",
-        kind: "procedural" as const,
-        wrong: (p: { a: number; b: number; c: number }) => signOf(p.a, p.c),
-      },
-    ],
+    traps: signTraps<Abc>([
+      ["bigger-number", "procedural", (p) => signOf(p.a, p.c)],
+      ["added-instead", "procedural", (p) => signOf(p.a + p.b, p.c)],
+      ["swapped-sign", "fact", (p) => turned(signOf(p.a - p.b, p.c))],
+    ]),
     vars: (p: { a: number; b: number; c: number }) => ({
       a: String(p.a),
       b: String(p.b),
@@ -327,13 +417,10 @@ const compare: readonly Spec<never>[] = [
     valid: (p: Pair) => p.a !== p.b,
     solve: (p: Pair) => signOf(p.a, p.b),
     reference: (p: Pair) => bySubtraction(p.a * 10, p.b * 10),
-    traps: [
-      {
-        id: "stars-equal",
-        kind: "conceptual" as const,
-        wrong: () => "=",
-      },
-    ],
+    traps: signTraps<Pair>([
+      ["stars-equal", "conceptual", () => "="],
+      ["swapped-sign", "fact", swapped],
+    ]),
     vars: (p: Pair) => ({
       a: String(p.a),
       b: String(p.b),
@@ -361,18 +448,11 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 1, 19) }),
     solve: (p: One) => qi(p.a + 1),
     reference: (p: One) => qi([...Array(p.a + 2).keys()][p.a + 1] ?? -1),
-    traps: [
-      {
-        id: "same-number",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a),
-      },
-      {
-        id: "before-instead",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a - 1),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["same-number", "conceptual", (p) => p.a],
+      ["before-instead", "conceptual", (p) => p.a - 1],
+      ["skip-one", "procedural", (p) => p.a + 2],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), r: r1(p.a + 1), p: r1(p.a - 1) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -386,13 +466,11 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 2, 20) }),
     solve: (p: One) => qi(p.a - 1),
     reference: (p: One) => qi([...Array(p.a).keys()][p.a - 1] ?? -1),
-    traps: [
-      {
-        id: "after-instead",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a + 1),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["after-instead", "conceptual", (p) => p.a + 1],
+      ["same-number", "conceptual", (p) => p.a],
+      ["two-back", "procedural", (p) => p.a - 2],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), r: r1(p.a - 1), n: r1(p.a + 1) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -407,13 +485,11 @@ const beforeAfter: readonly Spec<never>[] = [
     valid: (p: One) => p.a % 10 !== 9,
     solve: (p: One) => qi(p.a + 1),
     reference: (p: One) => qi(Number(`${tens(p.a)}${(p.a % 10) + 1}`)),
-    traps: [
-      {
-        id: "before-instead",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a - 1),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["before-instead", "conceptual", (p) => p.a - 1],
+      ["plus-ten", "procedural", (p) => p.a + 10],
+      ["same-number", "conceptual", (p) => p.a],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), r: r1(p.a + 1), p: r1(p.a - 1) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -428,13 +504,11 @@ const beforeAfter: readonly Spec<never>[] = [
     valid: (p: One) => p.a % 10 !== 0,
     solve: (p: One) => qi(p.a - 1),
     reference: (p: One) => qi(Number(`${tens(p.a)}${(p.a % 10) - 1}`)),
-    traps: [
-      {
-        id: "after-instead",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a + 1),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["after-instead", "conceptual", (p) => p.a + 1],
+      ["minus-ten", "procedural", (p) => p.a - 10],
+      ["same-number", "conceptual", (p) => p.a],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), r: r1(p.a - 1), n: r1(p.a + 1) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -448,18 +522,12 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: 10 * between(r, 1, 9) + 9 }),
     solve: (p: One) => qi(p.a + 1),
     reference: (p: One) => qi(10 * (tens(p.a) + 1)),
-    traps: [
-      {
-        id: "keep-tens",
-        kind: "procedural" as const,
-        wrong: (p: One) => qi(10 * tens(p.a)),
-      },
-      {
-        id: "append-one",
-        kind: "procedural" as const,
-        wrong: (p: One) => qi(Number(`${tens(p.a)}10`)),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["keep-tens", "procedural", (p) => 10 * tens(p.a)],
+      ["append-one", "procedural", (p) => Number(`${tens(p.a)}10`)],
+      ["plus-ten", "procedural", (p) => p.a + 10],
+      ["before-instead", "conceptual", (p) => p.a - 1],
+    ]),
     vars: (p: One) => ({
       a: r1(p.a),
       r: r1(p.a + 1),
@@ -478,18 +546,11 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: 10 * between(r, 2, 10) }),
     solve: (p: One) => qi(p.a - 1),
     reference: (p: One) => qi(10 * (tens(p.a) - 1) + 9),
-    traps: [
-      {
-        id: "tens-minus-one",
-        kind: "procedural" as const,
-        wrong: (p: One) => qi(p.a - 10),
-      },
-      {
-        id: "ones-wrap",
-        kind: "procedural" as const,
-        wrong: (p: One) => qi(p.a + 9),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["tens-minus-one", "procedural", (p) => p.a - 10],
+      ["ones-wrap", "procedural", (p) => p.a + 9],
+      ["after-instead", "conceptual", (p) => p.a + 1],
+    ]),
     vars: (p: One) => ({
       a: r1(p.a),
       r: r1(p.a - 1),
@@ -508,13 +569,10 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 1, 98) }),
     solve: (p: One) => qi(p.a + 1),
     reference: (p: One) => qi(p.a - -1),
-    traps: [
-      {
-        id: "before-instead",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a - 1),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["before-instead", "conceptual", (p) => p.a - 1],
+      ["same-side-house", "conceptual", (p) => p.a + 2],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), r: r1(p.a + 1), p: r1(p.a - 1) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -528,18 +586,11 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 1, 98) }),
     solve: (p: One) => qi(p.a + 1),
     reference: (p: One) => qi((p.a + (p.a + 2)) / 2),
-    traps: [
-      {
-        id: "left-end",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a),
-      },
-      {
-        id: "right-end",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a + 2),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["left-end", "conceptual", (p) => p.a],
+      ["right-end", "conceptual", (p) => p.a + 2],
+      ["distance", "conceptual", () => 2],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), c: r1(p.a + 2), r: r1(p.a + 1) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -553,18 +604,10 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 1, 96) }),
     solve: (p: One) => qi(p.a + 3),
     reference: (p: One) => qi([p.a, p.a + 1, p.a + 2, p.a + 3].at(-1) ?? -1),
-    traps: [
-      {
-        id: "repeat-last",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a + 2),
-      },
-      {
-        id: "skip",
-        kind: "procedural" as const,
-        wrong: (p: One) => qi(p.a + 4),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["repeat-last", "conceptual", (p) => p.a + 2],
+      ["skip", "procedural", (p) => p.a + 4],
+    ]),
     vars: (p: One) => ({
       a: r1(p.a),
       b: r1(p.a + 1),
@@ -583,9 +626,11 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 2, 98) }),
     solve: (p: One) => qi(p.a - 1),
     reference: (p: One) => qi([p.a + 2, p.a + 1, p.a, p.a - 1].at(-1) ?? -1),
-    traps: [
-      { id: "up", kind: "conceptual" as const, wrong: (p: One) => qi(p.a + 3) },
-    ],
+    traps: numberTraps<One>([
+      ["up", "conceptual", (p) => p.a + 3],
+      ["repeat-last", "conceptual", (p) => p.a],
+      ["skip-one", "procedural", (p) => p.a - 2],
+    ]),
     vars: (p: One) => ({
       a: r1(p.a),
       b: r1(p.a + 1),
@@ -604,13 +649,10 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 10, 98) }),
     solve: (p: One) => qi(p.a + 1),
     reference: (p: One) => qi(p.a + 11 - 10),
-    traps: [
-      {
-        id: "plus-ten",
-        kind: "procedural" as const,
-        wrong: (p: One) => qi(p.a + 10),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["plus-ten", "procedural", (p) => p.a + 10],
+      ["less-instead", "conceptual", (p) => p.a - 1],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), r: r1(p.a + 1), w: r1(p.a + 10) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -624,13 +666,10 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 11, 99) }),
     solve: (p: One) => qi(p.a - 1),
     reference: (p: One) => qi(p.a - 11 + 10),
-    traps: [
-      {
-        id: "minus-ten",
-        kind: "procedural" as const,
-        wrong: (p: One) => qi(p.a - 10),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["minus-ten", "procedural", (p) => p.a - 10],
+      ["more-instead", "conceptual", (p) => p.a + 1],
+    ]),
     vars: (p: One) => ({ a: r1(p.a), r: r1(p.a - 1), w: r1(p.a - 10) }),
     constants: CONSTANTS,
   } satisfies Spec<One>,
@@ -648,18 +687,11 @@ const beforeAfter: readonly Spec<never>[] = [
     solve: (p: { a: number; b: number }) => qi(p.b - p.a - 1),
     reference: (p: { a: number; b: number }) =>
       qi(Array.from({ length: p.b - p.a - 1 }, (_, i) => p.a + 1 + i).length),
-    traps: [
-      {
-        id: "difference",
-        kind: "procedural" as const,
-        wrong: (p: { a: number; b: number }) => qi(p.b - p.a),
-      },
-      {
-        id: "include-ends",
-        kind: "conceptual" as const,
-        wrong: (p: { a: number; b: number }) => qi(p.b - p.a + 1),
-      },
-    ],
+    traps: numberTraps<{ a: number; b: number }>([
+      ["difference", "procedural", (p) => p.b - p.a],
+      ["include-ends", "conceptual", (p) => p.b - p.a + 1],
+      ["ends-removed-twice", "procedural", (p) => p.b - p.a - 2],
+    ]),
     vars: (p: { a: number; b: number }) => ({
       a: r1(p.a),
       b: r1(p.b),
@@ -683,13 +715,10 @@ const beforeAfter: readonly Spec<never>[] = [
     solve: (p: { a: number; b: number }) => qi(p.b - p.a + 1),
     reference: (p: { a: number; b: number }) =>
       qi(Array.from({ length: p.b - p.a + 1 }, (_, i) => p.a + i).length),
-    traps: [
-      {
-        id: "difference",
-        kind: "procedural" as const,
-        wrong: (p: { a: number; b: number }) => qi(p.b - p.a),
-      },
-    ],
+    traps: numberTraps<{ a: number; b: number }>([
+      ["difference", "procedural", (p) => p.b - p.a],
+      ["ends-removed", "conceptual", (p) => p.b - p.a - 1],
+    ]),
     vars: (p: { a: number; b: number }) => ({
       a: r1(p.a),
       a1: r1(p.a + 1),
@@ -709,13 +738,23 @@ const beforeAfter: readonly Spec<never>[] = [
     draw: (r): One => ({ a: between(r, 20, 98) }),
     solve: (p: One) => qi(p.a + 1),
     reference: (p: One) => qi(Number(`${tens(p.a)}${p.a % 10}`) + 1),
-    traps: [
-      {
-        id: "before-instead",
-        kind: "conceptual" as const,
-        wrong: (p: One) => qi(p.a - 1),
-      },
-    ],
+    traps: numberTraps<One>([
+      ["before-instead", "conceptual", (p) => p.a - 1],
+      ["tens-word-only", "procedural", (p) => 10 * tens(p.a) + 1],
+      [
+        "reversed-digits",
+        "conceptual",
+        (p) => (p.a % 10 === 0 ? null : rev2(p.a) + 1),
+      ],
+      [
+        "written-in-full",
+        "conceptual",
+        (p) => {
+          const full = inFull(p.a);
+          return full === null ? null : full + 1;
+        },
+      ],
+    ]),
     vars: (p: One) => ({
       a: r1(p.a),
       words: numberWords(p.a),
@@ -726,7 +765,10 @@ const beforeAfter: readonly Spec<never>[] = [
   } satisfies Spec<One>,
 ] as unknown as readonly Spec<never>[];
 
-export const n1Specs: readonly Spec<never>[] = [...compare, ...beforeAfter];
+export const n1Specs: readonly Spec<never>[] = withWrongAnswers([
+  ...compare,
+  ...beforeAfter,
+]);
 
 // `Q` is re-exported for the answer types the specs return.
 export type { Q };

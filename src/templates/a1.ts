@@ -10,6 +10,9 @@ const sum = (n: number, x: number): number =>
 const ones = (n: number): number => n % 10;
 const tens = (n: number): number => Math.floor(n / 10);
 
+const keep = (x: number, ...not: number[]): number | null =>
+  Number.isInteger(x) && x >= 0 && !not.includes(x) ? x : null;
+
 const a1 = forSubtype("A1", "add-sub-20");
 const add20 = [
   a1({
@@ -20,7 +23,11 @@ const add20 = [
     valid: ([a = 0, b = 0]) => a + b <= 9 && a !== b,
     solve: ([a = 0, b = 0]) => a + b,
     ref: ([a = 0, b = 0]) => sum(b, 1) + a,
-    traps: [["subtracted", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)]],
+    traps: [
+      ["subtracted", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)],
+      ["counted-one-more", "procedural", ([a = 0, b = 0]) => a + b + 1],
+      ["counted-one-less", "procedural", ([a = 0, b = 0]) => a + b - 1],
+    ],
   }),
   a1({
     id: "A1.add-sub-20.02",
@@ -33,6 +40,7 @@ const add20 = [
     traps: [
       ["tens-forgotten", "procedural", ([a = 0, b = 0]) => a + b - 10],
       ["off-by-one", "procedural", ([a = 0, b = 0]) => a + b + 1],
+      ["counted-one-less", "procedural", ([a = 0, b = 0]) => a + b - 1],
     ],
     consts: [10],
   }),
@@ -45,7 +53,11 @@ const add20 = [
     solve: ([a = 0, b = 0]) => a - b,
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: a }, (_, i) => i + 1).filter((i) => i > b).length,
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["counted-one-more", "procedural", ([a = 0, b = 0]) => a - b + 1],
+      ["counted-one-less", "procedural", ([a = 0, b = 0]) => a - b - 1],
+    ],
   }),
   a1({
     id: "A1.add-sub-20.04",
@@ -55,7 +67,12 @@ const add20 = [
     valid: ([a = 0, b = 0]) => ones(a) < b,
     solve: ([a = 0, b = 0]) => a - b,
     ref: ([a = 0, b = 0]) => 10 - (b - ones(a)),
-    traps: [["ones-swapped", "procedural", ([a = 0, b = 0]) => b - ones(a)]],
+    traps: [
+      ["ones-swapped", "procedural", ([a = 0, b = 0]) => b - ones(a)],
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["counted-one-more", "procedural", ([a = 0, b = 0]) => a - b + 1],
+      ["counted-one-less", "procedural", ([a = 0, b = 0]) => a - b - 1],
+    ],
     consts: [10],
   }),
   a1({
@@ -69,7 +86,19 @@ const add20 = [
       0
         ? b - a
         : -1,
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "counted-one-more",
+        "procedural",
+        ([a = 0, b = 0]) => keep(b - a + 1, a + b),
+      ],
+      [
+        "counted-one-less",
+        "procedural",
+        ([a = 0, b = 0]) => keep(b - a - 1, a + b) || null,
+      ],
+    ],
   }),
   a1({
     id: "A1.add-sub-20.06",
@@ -83,7 +112,11 @@ const add20 = [
       undefined
         ? a - b
         : -1,
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["counted-one-more", "procedural", ([a = 0, b = 0]) => a - b + 1],
+      ["counted-one-less", "procedural", ([a = 0, b = 0]) => a - b - 1],
+    ],
   }),
   a1({
     id: "A1.add-sub-20.07",
@@ -92,7 +125,10 @@ const add20 = [
     draw: (r) => [between(r, 4, 9)],
     solve: ([a = 0]) => 2 * a + 1,
     ref: ([a = 0]) => a + (a + 1),
-    traps: [["double-only", "conceptual", ([a = 0]) => 2 * a]],
+    traps: [
+      ["double-only", "conceptual", ([a = 0]) => 2 * a],
+      ["doubled-bigger", "conceptual", ([a = 0]) => 2 * a + 2],
+    ],
     extra: ([a = 0]) => ({ n: String(a + 1) }),
   }),
   a1({
@@ -103,7 +139,11 @@ const add20 = [
     valid: ([a = 0, b = 0]) => a + b <= 20,
     solve: ([a = 0, b = 0]) => a + b,
     ref: ([a = 0, b = 0]) => sum(b, 1) + a,
-    traps: [["difference", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)]],
+    traps: [
+      ["difference", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)],
+      ["counted-one-more", "procedural", ([a = 0, b = 0]) => a + b + 1],
+      ["counted-one-less", "procedural", ([a = 0, b = 0]) => a + b - 1],
+    ],
   }),
   a1({
     id: "A1.add-sub-20.09",
@@ -112,7 +152,11 @@ const add20 = [
     draw: (r) => [between(r, 11, 20), between(r, 3, 9)],
     solve: ([a = 0, b = 0]) => a - b,
     ref: ([a = 0, b = 0]) => -(b - a),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["counted-one-more", "procedural", ([a = 0, b = 0]) => a - b + 1],
+      ["counted-one-less", "procedural", ([a = 0, b = 0]) => a - b - 1],
+    ],
   }),
   a1({
     id: "A1.add-sub-20.10",
@@ -125,6 +169,12 @@ const add20 = [
     ref: ([a = 0, b = 0, c = 0]) => a - c + b,
     traps: [
       ["last-sign-lost", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
+      ["stopped-after-sum", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "all-subtracted",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => keep(a - b - c, a + b),
+      ],
     ],
     extra: ([a = 0, b = 0]) => ({ s: String(a + b) }),
   }),
@@ -143,6 +193,12 @@ const add20 = [
       -1,
     traps: [
       ["subtracted-again", "procedural", ([a = 0, b = 0]) => Math.abs(b - a)],
+      [
+        "result-named",
+        "procedural",
+        ([a = 0, b = 0]) => keep(b, Math.abs(b - a)),
+      ],
+      ["counted-one-more", "procedural", ([a = 0, b = 0]) => a + b + 1],
     ],
   }),
   a1({
@@ -152,7 +208,15 @@ const add20 = [
     draw: (r) => [between(r, 11, 19)],
     solve: ([a = 0]) => 20 - a,
     ref: ([a = 0]) => 10 - ones(a),
-    traps: [["ones-only", "conceptual", ([a = 0]) => ones(a)]],
+    traps: [
+      ["ones-only", "conceptual", ([a = 0]) => ones(a)],
+      ["counted-one-more", "procedural", ([a = 0]) => 20 - a + 1],
+      [
+        "counted-one-less",
+        "procedural",
+        ([a = 0]) => keep(20 - a - 1, ones(a)),
+      ],
+    ],
     valid: ([a = 0]) => ones(a) !== 10 - ones(a),
     consts: [20],
   }),
@@ -167,7 +231,19 @@ const mental = [
     draw: (r) => [10 * between(r, 1, 6), 10 * between(r, 1, 4)],
     solve: ([a = 0, b = 0]) => a + b,
     ref: ([a = 0, b = 0]) => 10 * (tens(a) + tens(b)),
-    traps: [["no-zero", "procedural", ([a = 0, b = 0]) => tens(a) + tens(b)]],
+    traps: [
+      ["no-zero", "procedural", ([a = 0, b = 0]) => tens(a) + tens(b)],
+      [
+        "extra-zero",
+        "procedural",
+        ([a = 0, b = 0]) => 100 * (tens(a) + tens(b)),
+      ],
+      [
+        "subtracted",
+        "procedural",
+        ([a = 0, b = 0]) => keep(Math.abs(a - b), tens(a) + tens(b)),
+      ],
+    ],
   }),
   a2({
     id: "A2.mental-100.02",
@@ -177,7 +253,11 @@ const mental = [
     valid: ([a = 0, b = 0]) => ones(a) + b <= 9 && ones(a) > 0,
     solve: ([a = 0, b = 0]) => a + b,
     ref: ([a = 0, b = 0]) => 10 * tens(a) + ones(a) + b,
-    traps: [["tens-added", "conceptual", ([a = 0, b = 0]) => a + 10 * b]],
+    traps: [
+      ["tens-added", "conceptual", ([a = 0, b = 0]) => a + 10 * b],
+      ["subtracted", "procedural", ([a = 0, b = 0]) => a - b],
+      ["ones-replaced", "procedural", ([a = 0, b = 0]) => 10 * tens(a) + b],
+    ],
   }),
   a2({
     id: "A2.mental-100.03",
@@ -192,6 +272,13 @@ const mental = [
         "carry-forgotten",
         "procedural",
         ([a = 0, b = 0]) => 10 * tens(a) + ((ones(a) + b) % 10),
+      ],
+      ["subtracted", "procedural", ([a = 0, b = 0]) => a - b],
+      [
+        "tens-added",
+        "conceptual",
+        ([a = 0, b = 0]) =>
+          keep(a + 10 * b, 10 * tens(a) + ((ones(a) + b) % 10)),
       ],
     ],
   }),
@@ -211,6 +298,25 @@ const mental = [
         ([a = 0, b = 0]) =>
           10 * (tens(a) + tens(b)) + ((ones(a) + ones(b)) % 10),
       ],
+      [
+        "subtracted",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          keep(
+            Math.abs(a - b),
+            10 * (tens(a) + tens(b)) + ((ones(a) + ones(b)) % 10),
+          ),
+      ],
+      [
+        "second-tens-lost",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          keep(
+            a + ones(b),
+            Math.abs(a - b),
+            10 * (tens(a) + tens(b)) + ((ones(a) + ones(b)) % 10),
+          ),
+      ],
     ],
   }),
   a2({
@@ -220,7 +326,15 @@ const mental = [
     draw: (r) => [10 * between(r, 4, 10), 10 * between(r, 1, 3)],
     solve: ([a = 0, b = 0]) => a - b,
     ref: ([a = 0, b = 0]) => 10 * (tens(a) - tens(b)),
-    traps: [["no-zero", "procedural", ([a = 0, b = 0]) => tens(a) - tens(b)]],
+    traps: [
+      ["no-zero", "procedural", ([a = 0, b = 0]) => tens(a) - tens(b)],
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "extra-zero",
+        "procedural",
+        ([a = 0, b = 0]) => 100 * (tens(a) - tens(b)),
+      ],
+    ],
   }),
   a2({
     id: "A2.mental-100.06",
@@ -236,6 +350,13 @@ const mental = [
         "procedural",
         ([a = 0, b = 0]) => 10 * tens(a) + (b - ones(a)),
       ],
+      [
+        "ten-not-reduced",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          keep(10 * tens(a) + (10 + ones(a) - b), 10 * tens(a) + (b - ones(a))),
+      ],
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
     ],
   }),
   a2({
@@ -254,6 +375,16 @@ const mental = [
         ([a = 0, b = 0]) =>
           10 * (tens(a) - tens(b)) + Math.abs(ones(a) - ones(b)),
       ],
+      [
+        "ten-not-reduced",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          keep(
+            10 * (tens(a) - tens(b)) + (10 + ones(a) - ones(b)),
+            10 * (tens(a) - tens(b)) + Math.abs(ones(a) - ones(b)),
+          ),
+      ],
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
     ],
   }),
   a2({
@@ -270,6 +401,12 @@ const mental = [
         "procedural",
         ([a = 0]) => 10 * (10 - tens(a)) + (10 - ones(a)),
       ],
+      [
+        "both-to-nine",
+        "procedural",
+        ([a = 0]) => 10 * (9 - tens(a)) + (9 - ones(a)),
+      ],
+      ["to-next-ten-only", "procedural", ([a = 0]) => 10 - ones(a)],
     ],
     consts: [100],
   }),
@@ -283,7 +420,15 @@ const mental = [
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: 101 }, (_, x) => x).filter((x) => a + x === b)[0] ??
       -1,
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "ones-copied",
+        "procedural",
+        ([a = 0, b = 0]) => 10 * (tens(b) - tens(a)) + ones(a),
+      ],
+      ["to-next-ten-only", "procedural", ([a = 0]) => 10 - ones(a)],
+    ],
   }),
   a2({
     id: "A2.mental-100.10",
@@ -294,6 +439,16 @@ const mental = [
     ref: ([a = 0, b = 0, c = 0]) => a + c + sum(b, 10),
     traps: [
       ["counts-only", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
+      [
+        "sizes-swapped",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => keep(a + 10 * c + b, a + b + c),
+      ],
+      [
+        "one-jump-of-ten",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => keep(a + 10 + c, a + b + c, a + 10 * c + b),
+      ],
     ],
   }),
   a2({
@@ -304,7 +459,25 @@ const mental = [
     valid: ([a = 0, b = 0]) => a + b <= 100 && a !== b,
     solve: ([a = 0, b = 0]) => a + b,
     ref: ([a = 0, b = 0]) => b + a,
-    traps: [["difference", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)]],
+    traps: [
+      ["difference", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)],
+      [
+        "carry-forgotten",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          10 * (tens(a) + tens(b)) + ((ones(a) + ones(b)) % 10),
+      ],
+      [
+        "second-tens-lost",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          keep(
+            a + ones(b),
+            Math.abs(a - b),
+            10 * (tens(a) + tens(b)) + ((ones(a) + ones(b)) % 10),
+          ),
+      ],
+    ],
   }),
   a2({
     id: "A2.mental-100.12",
@@ -314,7 +487,24 @@ const mental = [
     valid: ([a = 0, b = 0]) => ones(b) > ones(a),
     solve: ([a = 0, b = 0]) => a - b,
     ref: ([a = 0, b = 0]) => -(b - a),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "smaller-from-larger",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          10 * (tens(a) - tens(b)) + Math.abs(ones(a) - ones(b)),
+      ],
+      [
+        "ten-not-reduced",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          keep(
+            10 * (tens(a) - tens(b)) + (10 + ones(a) - ones(b)),
+            10 * (tens(a) - tens(b)) + Math.abs(ones(a) - ones(b)),
+          ),
+      ],
+    ],
   }),
 ];
 
@@ -328,7 +518,11 @@ const table = [
     valid: ([a = 0, b = 0]) => a !== b && a + b !== a * b,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => sum(b, a),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["neighbour-above", "fact", ([a = 0, b = 0]) => keep(a * (b + 1), a + b)],
+      ["neighbour-below", "fact", ([a = 0, b = 0]) => keep(a * (b - 1), a + b)],
+    ],
   }),
   a3({
     id: "A3.table.02",
@@ -338,7 +532,11 @@ const table = [
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => sum(a, b),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["neighbour-above", "fact", ([a = 0, b = 0]) => keep(a * (b + 1), a + b)],
+      ["neighbour-below", "fact", ([a = 0, b = 0]) => keep(a * (b - 1), a + b)],
+    ],
   }),
   a3({
     id: "A3.table.03",
@@ -348,7 +546,11 @@ const table = [
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => a * 5 + a * (b - 5),
-    traps: [["neighbour-fact", "fact", ([a = 0, b = 0]) => a * (b + 1)]],
+    traps: [
+      ["neighbour-fact", "fact", ([a = 0, b = 0]) => a * (b + 1)],
+      ["neighbour-below", "fact", ([a = 0, b = 0]) => a * (b - 1)],
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+    ],
   }),
   a3({
     id: "A3.table.04",
@@ -362,6 +564,12 @@ const table = [
       -1,
     traps: [
       ["product-minus-factor", "procedural", ([a = 0, b = 0]) => a * b - a],
+      ["neighbour-above", "fact", ([a = 0, b = 0]) => keep(b + 1, a * b - a)],
+      [
+        "neighbour-below",
+        "fact",
+        ([a = 0, b = 0]) => keep(b - 1, a * b - a, b + 1),
+      ],
     ],
     extra: ([a = 0, b = 0]) => ({ p: String(a * b) }),
   }),
@@ -374,7 +582,19 @@ const table = [
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: b }).reduce<number>((acc) => acc + a, 0),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "one-repeat-short",
+        "fact",
+        ([a = 0, b = 0]) => keep(a * (b - 1), a + b),
+      ],
+      [
+        "one-repeat-extra",
+        "fact",
+        ([a = 0, b = 0]) => keep(a * (b + 1), a + b),
+      ],
+    ],
   }),
   a3({
     id: "A3.table.06",
@@ -384,7 +604,11 @@ const table = [
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => sum(a, b),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      ["one-box-more", "fact", ([a = 0, b = 0]) => keep((a + 1) * b, a + b)],
+      ["one-box-less", "fact", ([a = 0, b = 0]) => keep((a - 1) * b, a + b)],
+    ],
   }),
   a3({
     id: "A3.table.07",
@@ -393,7 +617,11 @@ const table = [
     draw: (r) => [between(r, 3, 9)],
     solve: ([a = 0]) => 6 * a,
     ref: ([a = 0]) => 5 * a + a,
-    traps: [["plus-one", "procedural", ([a = 0]) => 5 * a + 1]],
+    traps: [
+      ["plus-one", "procedural", ([a = 0]) => 5 * a + 1],
+      ["known-fact-reused", "procedural", ([a = 0]) => 5 * a],
+      ["added-six", "procedural", ([a = 0]) => 5 * a + 6],
+    ],
     extra: ([a = 0]) => ({ k: String(5 * a) }),
     valid: ([a = 0]) => 5 * a + 1 !== 6 * a,
     consts: [5, 6],
@@ -405,7 +633,11 @@ const table = [
     draw: (r) => [between(r, 2, 9), between(r, 0, 1)],
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => (b === 0 ? 0 : a),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => (b === 0 ? null : a + b)],
+      ["zero-ignored", "procedural", ([a = 0, b = 0]) => (b === 0 ? a : null)],
+      ["one-gives-zero", "procedural", ([, b = 0]) => (b === 1 ? 0 : null)],
+    ],
     consts: [0, 1],
   }),
   a3({
@@ -415,7 +647,15 @@ const table = [
     draw: (r) => [between(r, 3, 10)],
     solve: ([a = 0]) => a * a,
     ref: ([a = 0]) => sum(a, a),
-    traps: [["doubled", "conceptual", ([a = 0]) => a + a]],
+    traps: [
+      ["doubled", "conceptual", ([a = 0]) => a + a],
+      ["neighbour-above", "fact", ([a = 0]) => keep(a * (a + 1), a + a)],
+      [
+        "neighbour-below",
+        "fact",
+        ([a = 0]) => keep(a * (a - 1), a + a, a * (a + 1)),
+      ],
+    ],
   }),
   a3({
     id: "A3.table.10",
@@ -427,7 +667,15 @@ const table = [
     draw: (r) => [between(r, 5, 10), between(r, 3, 9)],
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => sum(a, b),
-    traps: [["longer-by", "conceptual", ([a = 0, b = 0]) => a + b]],
+    traps: [
+      ["longer-by", "conceptual", ([a = 0, b = 0]) => a + b],
+      ["original-added", "fact", ([a = 0, b = 0]) => keep((a + 1) * b, a + b)],
+      [
+        "original-taken-away",
+        "fact",
+        ([a = 0, b = 0]) => keep((a - 1) * b, a + b),
+      ],
+    ],
   }),
   a3({
     id: "A3.table.11",
@@ -437,7 +685,15 @@ const table = [
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => a * b,
     ref: ([a = 0, b = 0]) => sum(b, a),
-    traps: [["perimeter", "conceptual", ([a = 0, b = 0]) => 2 * (a + b)]],
+    traps: [
+      ["perimeter", "conceptual", ([a = 0, b = 0]) => 2 * (a + b)],
+      ["added", "procedural", ([a = 0, b = 0]) => a + b],
+      [
+        "one-row-more",
+        "fact",
+        ([a = 0, b = 0]) => keep((a + 1) * b, 2 * (a + b), a + b),
+      ],
+    ],
   }),
 ];
 export const aSpecs1: readonly Spec<never>[] = [...add20, ...mental, ...table];

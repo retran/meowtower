@@ -14,7 +14,11 @@ const G5_solids_nets_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 7)],
     f: (a) => q(12 * a),
-    t: { "faces-instead": (a) => q(6 * a), "cubes-only": (a) => q(a) },
+    t: {
+      "faces-instead": (a) => q(6 * a),
+      "cubes-only": (a) => q(a),
+      "visible-edges": (a) => q(9 * a),
+    },
     c: [6, 12],
   }),
   G5_solids_nets({
@@ -24,7 +28,11 @@ const G5_solids_nets_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(6 * a),
-    t: { "edges-instead": (a) => q(12 * a), "boxes-only": (a) => q(a) },
+    t: {
+      "edges-instead": (a) => q(12 * a),
+      "boxes-only": (a) => q(a),
+      "visible-faces": (a) => q(3 * a),
+    },
     c: [6, 12],
     origin: {
       extension:
@@ -204,7 +212,11 @@ const G6_views_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(2, 6)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { "sides-added": (a, b) => q(a + b) },
+    t: {
+      "sides-added": (a, b) => q(a + b),
+      perimeter: (a, b) => q(2 * (a + b)),
+      "front-row": (a) => q(a),
+    },
   }),
   G6_views({
     id: "G6.views.04",
@@ -425,6 +437,7 @@ const G6_blocks_specs: readonly Spec<never>[] = [
     t: {
       "bottom-layer": (a) => q(a * a),
       "sides-added": (a) => q((a * (a + 1)) / 2),
+      "one-layer-short": (a) => q(((a - 1) * a * (2 * a - 1)) / 6),
     },
     c: [1, 2, 4, 9],
   }),

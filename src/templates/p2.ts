@@ -10,6 +10,9 @@ const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
 const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
 /** The number when it is a whole number, or null. */
 const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
+/** The quotient `n / d` when it is a whole number, or null. */
+const exact = (n: number, d: number): Q | null =>
+  n % d === 0 ? q(n / d) : null;
 
 const p3 = forFraction("P3", "share-of");
 const shareOf = [
@@ -22,7 +25,21 @@ const shareOf = [
     valid: ([a = 0, b = 0]) => a < b && (100 * a) % b === 0 && 2 * a !== b,
     solve: ([a = 0, b = 0]) => q((100 * a) / b),
     ref: ([a = 0, b = 0]) => q(a).div(q(b)).mul(q(100)),
-    traps: [["count-itself", "conceptual", ([a = 0]) => q(a)]],
+    traps: [
+      ["count-itself", "conceptual", ([a = 0]) => q(a)],
+      [
+        "flipped",
+        "conceptual",
+        ([a = 0, b = 0]) => (b === a * a ? null : exact(100 * b, a)),
+      ],
+      ["forgot-the-division", "procedural", ([a = 0]) => q(100 * a)],
+      [
+        "one-part-only",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          100 % b !== 0 || a * b === 100 ? null : q(100 / b),
+      ],
+    ],
     consts: [100],
   }),
   p3({
@@ -39,6 +56,13 @@ const shareOf = [
         "new-as-a-share-of-old",
         "conceptual",
         ([o = 0, g = 0]) => q((100 * (o + g)) / o),
+      ],
+      ["growth-itself", "conceptual", ([, g = 0]) => q(g)],
+      ["flipped", "conceptual", ([o = 0, g = 0]) => exact(100 * o, g)],
+      [
+        "relative-to-the-new",
+        "conceptual",
+        ([o = 0, g = 0]) => (o + g === 100 ? null : exact(100 * g, o + g)),
       ],
     ],
     extra: ([o = 0, g = 0]) => ({ n: String(o + g) }),
@@ -59,6 +83,13 @@ const shareOf = [
         "conceptual",
         ([o = 0, g = 0]) => q((100 * (o - g)) / o),
       ],
+      ["drop-itself", "conceptual", ([, g = 0]) => q(g)],
+      ["flipped", "conceptual", ([o = 0, g = 0]) => exact(100 * o, g)],
+      [
+        "relative-to-the-new",
+        "conceptual",
+        ([o = 0, g = 0]) => exact(100 * g, o - g),
+      ],
     ],
     extra: ([o = 0, g = 0]) => ({ n: String(o - g) }),
     consts: [100],
@@ -78,6 +109,11 @@ const shareOf = [
         "procedural",
         ([p = 0, n = 0]) => q(n + p),
       ],
+      [
+        "subtracted",
+        "procedural",
+        ([p = 0, n = 0]) => (p === 50 ? null : q((n * (100 - p)) / 100)),
+      ],
     ],
     consts: [100],
   }),
@@ -91,6 +127,12 @@ const shareOf = [
     ref: ([p = 0, n = 0]) => q(n).sub(q(n).mul(qd(p, 2))),
     traps: [
       ["the-decrease-only", "conceptual", ([p = 0, n = 0]) => q((n * p) / 100)],
+      [
+        "percentage-subtracted-as-a-number",
+        "procedural",
+        ([p = 0, n = 0]) => (n > p ? q(n - p) : null),
+      ],
+      ["increased", "procedural", ([p = 0, n = 0]) => q((n * (100 + p)) / 100)],
     ],
     consts: [100],
   }),
@@ -103,7 +145,15 @@ const shareOf = [
     valid: ([a = 0, t = 0]) => a < t && (100 * a) % t === 0 && 2 * a !== t,
     solve: ([a = 0, t = 0]) => q((100 * a) / t),
     ref: ([a = 0, t = 0]) => q(a, t).mul(q(100)),
-    traps: [["count-itself", "conceptual", ([a = 0]) => q(a)]],
+    traps: [
+      ["count-itself", "conceptual", ([a = 0]) => q(a)],
+      ["forgot-the-division", "procedural", ([a = 0]) => q(100 * a)],
+      [
+        "flipped",
+        "conceptual",
+        ([a = 0, t = 0]) => (t === a * a ? null : exact(100 * t, a)),
+      ],
+    ],
     consts: [100],
   }),
   p3({
@@ -114,7 +164,15 @@ const shareOf = [
     draw: (r) => [between(r, 20, 45), between(r, 46, 80)],
     solve: ([a = 0, b = 0]) => q(b - a),
     ref: ([a = 0, b = 0]) => q(b).sub(q(a)),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => q(a + b)]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => q(a + b)],
+      [
+        "relative-growth",
+        "conceptual",
+        ([a = 0, b = 0]) => exact(100 * (b - a), a),
+      ],
+      ["end-value-itself", "conceptual", ([, b = 0]) => q(b)],
+    ],
   }),
   p3({
     id: "P3.share-of.08",
@@ -133,6 +191,17 @@ const shareOf = [
         "conceptual",
         ([p = 0, o = 0]) => whole(q(o * (100 + p) * (100 - p), 10000)),
       ],
+      [
+        "percentage-subtracted-as-a-number",
+        "procedural",
+        ([p = 0, o = 0]) =>
+          o * (100 + p) === 10000 ? null : q((o * (100 + p)) / 100 - p),
+      ],
+      [
+        "the-new-price",
+        "conceptual",
+        ([p = 0, o = 0]) => q((o * (100 + p)) / 100),
+      ],
     ],
     extra: ([p = 0, o = 0]) => ({ m: String((o * (100 + p)) / 100) }),
     consts: [1, 100],
@@ -150,6 +219,17 @@ const shareOf = [
         "increase-by-the-same-percentage",
         "conceptual",
         ([p = 0, o = 0]) => whole(q(o * (100 - p) * (100 + p), 10000)),
+      ],
+      [
+        "percentage-added-as-a-number",
+        "procedural",
+        ([p = 0, o = 0]) =>
+          (o * (100 - p)) / 100 === 100 ? null : q((o * (100 - p)) / 100 + p),
+      ],
+      [
+        "the-new-price",
+        "conceptual",
+        ([p = 0, o = 0]) => q((o * (100 - p)) / 100),
       ],
     ],
     extra: ([p = 0, o = 0]) => ({ m: String((o * (100 - p)) / 100) }),
@@ -173,6 +253,12 @@ const shareOf = [
         "procedural",
         ([a = 0, b = 0]) => q(Math.floor((100 * a) / b)),
       ],
+      ["count-itself", "conceptual", ([a = 0]) => q(a)],
+      [
+        "flipped",
+        "conceptual",
+        ([a = 0, b = 0]) => q(Math.round((100 * b) / a)),
+      ],
     ],
     consts: [100],
   }),
@@ -191,6 +277,12 @@ const shareOf = [
         "conceptual",
         ([a = 0, b = 0]) => whole(q(100 * a, b)),
       ],
+      [
+        "the-other-metal",
+        "conceptual",
+        ([a = 0, b = 0]) => exact(100 * b, a + b),
+      ],
+      ["count-itself", "conceptual", ([a = 0]) => q(a)],
     ],
     extra: ([a = 0, b = 0]) => ({ t: String(a + b) }),
     consts: [100],
@@ -203,7 +295,11 @@ const shareOf = [
     draw: (r) => [pick(r, [10, 20, 25, 50, 75])],
     solve: ([p = 0]) => qd(100 + p, 2),
     ref: ([p = 0]) => q(1).add(q(p, 100)),
-    traps: [["the-percentage-itself", "conceptual", ([p = 0]) => qd(p, 2)]],
+    traps: [
+      ["the-percentage-itself", "conceptual", ([p = 0]) => qd(p, 2)],
+      ["comma-one-place", "procedural", ([p = 0]) => qd(100 + p, 1)],
+      ["one-plus-the-percentage", "procedural", ([p = 0]) => q(1 + p)],
+    ],
     consts: [1],
   }),
 ];
@@ -218,7 +314,11 @@ const vat = [
     draw: (r) => [between(r, 2, 9)],
     solve: ([k = 0]) => q(121 * k),
     ref: ([k = 0]) => q(100 * k).mul(qd(121, 2)),
-    traps: [["tax-as-a-number", "procedural", ([k = 0]) => q(100 * k + 21)]],
+    traps: [
+      ["tax-as-a-number", "procedural", ([k = 0]) => q(100 * k + 21)],
+      ["the-tax-only", "conceptual", ([k = 0]) => q(21 * k)],
+      ["tax-taken-off", "conceptual", ([k = 0]) => q(79 * k)],
+    ],
     extra: ([k = 0]) => ({ x: String(100 * k) }),
     consts: [21],
   }),
@@ -236,6 +336,8 @@ const vat = [
         "conceptual",
         ([k = 0]) => qd(79 * 121 * k, 2),
       ],
+      ["tax-as-a-number", "procedural", ([k = 0]) => q(121 * k - 21)],
+      ["tax-added-again", "conceptual", ([k = 0]) => qd(121 * 121 * k, 2)],
     ],
     extra: ([k = 0]) => ({ x: String(121 * k) }),
     consts: [1, 21, 100, 121],
@@ -248,7 +350,11 @@ const vat = [
     draw: (r) => [between(r, 2, 9)],
     solve: ([k = 0]) => q(21 * k),
     ref: ([k = 0]) => q(100 * k).mul(qd(21, 2)),
-    traps: [["percentage-as-the-amount", "conceptual", () => q(21)]],
+    traps: [
+      ["percentage-as-the-amount", "conceptual", () => q(21)],
+      ["price-with-tax", "conceptual", ([k = 0]) => q(121 * k)],
+      ["comma-one-place", "procedural", ([k = 0]) => q(210 * k)],
+    ],
     extra: ([k = 0]) => ({ x: String(100 * k) }),
     consts: [21, 100],
   }),
@@ -260,7 +366,11 @@ const vat = [
     draw: (r) => [between(r, 2, 9)],
     solve: ([k = 0]) => q(109 * k),
     ref: ([k = 0]) => q(100 * k).add(q(9 * k)),
-    traps: [["tax-as-a-number", "procedural", ([k = 0]) => q(100 * k + 9)]],
+    traps: [
+      ["tax-as-a-number", "procedural", ([k = 0]) => q(100 * k + 9)],
+      ["the-tax-only", "conceptual", ([k = 0]) => q(9 * k)],
+      ["tax-taken-off", "conceptual", ([k = 0]) => q(91 * k)],
+    ],
     extra: ([k = 0]) => ({ x: String(100 * k) }),
     consts: [9],
   }),
@@ -274,6 +384,12 @@ const vat = [
     ref: ([b = 0, p = 0]) => q(b).add(q(b).mul(qd(p, 2))),
     traps: [
       ["the-profit-only", "conceptual", ([b = 0, p = 0]) => q((b * p) / 100)],
+      [
+        "percentage-added-as-a-number",
+        "procedural",
+        ([b = 0, p = 0]) => q(b + p),
+      ],
+      ["percentage-as-a-factor", "procedural", ([b = 0, p = 0]) => q(b * p)],
     ],
     consts: [100],
   }),
@@ -287,6 +403,12 @@ const vat = [
     ref: ([b = 0, p = 0]) => q(b).sub(q(b).mul(qd(p, 2))),
     traps: [
       ["the-loss-only", "conceptual", ([b = 0, p = 0]) => q((b * p) / 100)],
+      ["increased", "procedural", ([b = 0, p = 0]) => q((b * (100 + p)) / 100)],
+      [
+        "percentage-subtracted-as-a-number",
+        "procedural",
+        ([b = 0, p = 0]) => q(b - p),
+      ],
     ],
     consts: [100],
   }),
@@ -298,7 +420,16 @@ const vat = [
     draw: (r) => [pick(r, [2, 4, 5, 10]), 100 * between(r, 2, 20)],
     solve: ([p = 0, b = 0]) => q((p * b) / 100),
     ref: ([p = 0, b = 0]) => q(b).mul(qd(p, 2)),
-    traps: [["percentage-as-the-amount", "conceptual", ([p = 0]) => q(p)]],
+    traps: [
+      ["percentage-as-the-amount", "conceptual", ([p = 0]) => q(p)],
+      ["balance", "conceptual", ([p = 0, b = 0]) => q(b + (p * b) / 100)],
+      [
+        "divided-by-the-percentage",
+        "procedural",
+        ([p = 0, b = 0]) => exact(b, p),
+      ],
+      ["percentage-as-a-factor", "procedural", ([p = 0, b = 0]) => q(p * b)],
+    ],
     consts: [100],
   }),
   p3v({
@@ -311,6 +442,12 @@ const vat = [
     ref: ([p = 0, b = 0]) => q(b).mul(qd(100 + p, 2)),
     traps: [
       ["the-interest-only", "conceptual", ([p = 0, b = 0]) => q((p * b) / 100)],
+      [
+        "percentage-added-as-a-number",
+        "procedural",
+        ([p = 0, b = 0]) => q(b + p),
+      ],
+      ["subtracted", "procedural", ([p = 0, b = 0]) => q(b - (p * b) / 100)],
     ],
     consts: [100],
   }),
@@ -331,6 +468,12 @@ const vat = [
         "procedural",
         ([b = 0, p = 0]) => q(b).mul(q(100 + 21 - p, 100)),
       ],
+      [
+        "tax-forgotten",
+        "conceptual",
+        ([b = 0, p = 0]) => q(b).mul(q(100 - p, 100)),
+      ],
+      ["discount-forgotten", "conceptual", ([b = 0]) => q(b).mul(qd(121, 2))],
     ],
     consts: [21],
   }),
@@ -344,6 +487,12 @@ const vat = [
     ref: ([p = 0, n = 0]) => q(n).mul(q(100 - p, 100)),
     traps: [
       ["the-discount-only", "conceptual", ([p = 0, n = 0]) => q((n * p) / 100)],
+      ["increased", "procedural", ([p = 0, n = 0]) => q((n * (100 + p)) / 100)],
+      [
+        "percentage-subtracted-as-a-number",
+        "procedural",
+        ([p = 0, n = 0]) => (n > p ? q(n - p) : null),
+      ],
     ],
     consts: [100],
   }),
@@ -355,7 +504,15 @@ const vat = [
     draw: (r) => [pick(r, [2, 3, 4, 5]), 500 * between(r, 1, 8)],
     solve: ([p = 0, n = 0]) => q((p * n) / 100),
     ref: ([p = 0, n = 0]) => q(n).mul(qd(p, 2)),
-    traps: [["percentage-as-the-amount", "conceptual", ([p = 0]) => q(p)]],
+    traps: [
+      ["percentage-as-the-amount", "conceptual", ([p = 0]) => q(p)],
+      ["percentage-as-a-factor", "procedural", ([p = 0, n = 0]) => q(p * n)],
+      [
+        "divided-by-the-percentage",
+        "procedural",
+        ([p = 0, n = 0]) => exact(n, p),
+      ],
+    ],
     consts: [100],
   }),
   p3v({
@@ -366,7 +523,11 @@ const vat = [
     draw: (r) => [between(r, 2, 6)],
     solve: ([n = 0]) => qd(6050 * n, 2),
     ref: ([n = 0]) => q(50 * n).mul(qd(121, 2)),
-    traps: [["tax-as-a-number", "procedural", ([n = 0]) => q(50 * n + 21)]],
+    traps: [
+      ["tax-as-a-number", "procedural", ([n = 0]) => q(50 * n + 21)],
+      ["the-tax-only", "conceptual", ([n = 0]) => qd(1050 * n, 2)],
+      ["tax-taken-off", "conceptual", ([n = 0]) => qd(3950 * n, 2)],
+    ],
     extra: ([n = 0]) => ({ x: String(50 * n) }),
     consts: [21, 50],
   }),
@@ -389,6 +550,12 @@ const ratio = [
         "conceptual",
         ([a = 0, b = 0, k = 0]) => q(b + (a * k - a)),
       ],
+      ["the-factor-only", "procedural", ([, , k = 0]) => q(k)],
+      [
+        "swapped-terms",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) => exact(a * a * k, b),
+      ],
     ],
     extra: ([a = 0, , k = 0]) => ({ s: String(a * k) }),
   }),
@@ -402,7 +569,15 @@ const ratio = [
     valid: ([a = 0, b = 0]) => a < b && gcd(a, b) === 1,
     solve: ([a = 0, b = 0]) => q(a, b),
     ref: ([a = 0, b = 0]) => q(2 * a, 2 * b),
-    traps: [["upside-down", "conceptual", ([a = 0, b = 0]) => q(b, a)]],
+    traps: [
+      ["upside-down", "conceptual", ([a = 0, b = 0]) => q(b, a)],
+      ["part-of-the-whole", "conceptual", ([a = 0, b = 0]) => q(a, a + b)],
+      [
+        "second-part-of-the-whole",
+        "conceptual",
+        ([a = 0, b = 0]) => q(b, a + b),
+      ],
+    ],
   }),
   p4({
     id: "P4.ratio.03",
@@ -415,6 +590,12 @@ const ratio = [
     ref: ([a = 0, b = 0, k = 0]) => q((a + b) * k).mul(q(a, a + b)),
     traps: [
       ["the-parts-swapped", "conceptual", ([, b = 0, k = 0]) => q(b * k)],
+      ["one-part-only", "procedural", ([, , k = 0]) => q(k)],
+      [
+        "split-equally",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) => exact((a + b) * k, 2),
+      ],
     ],
     extra: ([a = 0, b = 0, k = 0]) => ({ t: String((a + b) * k) }),
   }),
@@ -429,6 +610,12 @@ const ratio = [
     ref: ([a = 0, b = 0, c = 0]) => q(c).add(q(b)).add(q(a)),
     traps: [
       ["multiplied", "procedural", ([a = 0, b = 0, c = 0]) => q(a * b * c)],
+      ["forgot-the-last-part", "procedural", ([a = 0, b = 0]) => q(a + b)],
+      [
+        "terms-counted",
+        "conceptual",
+        ([a = 0, b = 0]) => (a + b === 3 ? null : q(3)),
+      ],
     ],
   }),
   p4({
@@ -440,7 +627,11 @@ const ratio = [
     solve: ([a = 0, k = 0]) => q(a * k),
     ref: ([a = 0, k = 0]) =>
       Array.from({ length: k }, () => q(a)).reduce((x, y) => x.add(y), q(0)),
-    traps: [["more-by", "conceptual", ([a = 0, k = 0]) => q(a + k)]],
+    traps: [
+      ["more-by", "conceptual", ([a = 0, k = 0]) => q(a + k)],
+      ["extra-copies", "conceptual", ([a = 0, k = 0]) => q(a * (k + 1))],
+      ["divided", "procedural", ([a = 0, k = 0]) => exact(a, k)],
+    ],
   }),
   p4({
     id: "P4.ratio.06",
@@ -450,7 +641,11 @@ const ratio = [
     draw: (r) => [between(r, 3, 6), between(r, 3, 9)],
     solve: ([, m = 0]) => q(m),
     ref: ([a = 0, m = 0]) => q(a * m).div(q(a)),
-    traps: [["the-gap", "conceptual", ([a = 0]) => q(a)]],
+    traps: [
+      ["the-gap", "conceptual", ([a = 0]) => q(a)],
+      ["the-others", "conceptual", ([a = 0, m = 0]) => q(a * m - m)],
+      ["the-total", "conceptual", ([a = 0, m = 0]) => q(a * m)],
+    ],
     extra: ([a = 0, m = 0]) => ({ t: String(a * m) }),
   }),
   p4({
@@ -471,6 +666,12 @@ const ratio = [
         "conceptual",
         ([a = 0, b = 0, k = 0]) => q(b + (a * k - a)),
       ],
+      ["the-factor-only", "procedural", ([, , k = 0]) => q(k)],
+      [
+        "swapped-terms",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) => (a * a === b ? null : exact(a * a * k, b)),
+      ],
     ],
     extra: ([a = 0, , k = 0]) => ({ s: String(a * k) }),
   }),
@@ -489,6 +690,12 @@ const ratio = [
         "procedural",
         ([a = 0, b = 0, k = 0]) => [q(a), q(b * k)],
       ],
+      [
+        "only-the-second-term",
+        "procedural",
+        ([a = 0, b = 0, k = 0]) => [q(a * k), q(b)],
+      ],
+      ["swapped-terms", "conceptual", ([a = 0, b = 0]) => [q(b), q(a)]],
     ],
     extra: ([a = 0, b = 0, k = 0]) => ({ p: String(a * k), s: String(b * k) }),
   }),
@@ -500,7 +707,19 @@ const ratio = [
     draw: (r) => [between(r, 2, 5), between(r, 2, 8)],
     solve: ([a = 0, k = 0]) => q(a * k),
     ref: ([a = 0, k = 0]) => q((a + 1) * k).mul(q(a, a + 1)),
-    traps: [["the-other-part", "conceptual", ([, k = 0]) => q(k)]],
+    traps: [
+      ["the-other-part", "conceptual", ([, k = 0]) => q(k)],
+      [
+        "split-equally",
+        "conceptual",
+        ([a = 0, k = 0]) => exact((a + 1) * k, 2),
+      ],
+      [
+        "total-over-the-first-term",
+        "procedural",
+        ([a = 0, k = 0]) => (a === 2 ? null : exact((a + 1) * k, a)),
+      ],
+    ],
     extra: ([a = 0, k = 0]) => ({ t: String((a + 1) * k) }),
     consts: [1],
   }),
@@ -529,6 +748,20 @@ const ratio = [
         "conceptual",
         ([a = 0, , c = 0]) => sign(q(a), q(c)),
       ],
+      [
+        "second-terms-only",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) =>
+          sign(q(b), q(d)) === sign(q(a), q(c)) ? null : sign(q(b), q(d)),
+      ],
+      [
+        "differences-compared",
+        "conceptual",
+        ([a = 0, b = 0, c = 0, d = 0]) => {
+          const s = sign(q(b - a), q(d - c));
+          return s === sign(q(a), q(c)) || s === sign(q(b), q(d)) ? null : s;
+        },
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0, d = 0]) => ({
       f: fr(a, b),
@@ -551,6 +784,16 @@ const ratio = [
         "procedural",
         ([a = 0, b = 0, k = 0]) => q(a * k + b),
       ],
+      [
+        "the-other-part",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) => (a * k + b === b * k ? null : q(b * k)),
+      ],
+      [
+        "ratio-sum",
+        "conceptual",
+        ([a = 0, b = 0, k = 0]) => (a + b === b * k ? null : q(a + b)),
+      ],
     ],
     extra: ([a = 0, , k = 0]) => ({ p: String(a * k) }),
   }),
@@ -567,7 +810,16 @@ const ratio = [
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => q(a * b),
     ref: ([a = 0, b = 0]) => q(a).mul(q(b)),
-    traps: [["added", "procedural", ([a = 0, b = 0]) => q(a + b)]],
+    traps: [
+      ["added", "procedural", ([a = 0, b = 0]) => q(a + b)],
+      [
+        "divided",
+        "procedural",
+        ([a = 0, b = 0]) =>
+          a % b === 0 && a / b !== Math.abs(a - b) ? q(a / b) : null,
+      ],
+      ["subtracted", "procedural", ([a = 0, b = 0]) => q(Math.abs(a - b))],
+    ],
   }),
 ];
 
@@ -582,7 +834,11 @@ const perOne = [
     valid: ([, u = 0]) => u % 10 !== 0,
     solve: ([, u = 0]) => qd(u, 2),
     ref: ([k = 0, u = 0]) => qd(k * u, 2).div(q(k)),
-    traps: [["total-itself", "conceptual", ([k = 0, u = 0]) => qd(k * u, 2)]],
+    traps: [
+      ["total-itself", "conceptual", ([k = 0, u = 0]) => qd(k * u, 2)],
+      ["multiplied", "procedural", ([k = 0, u = 0]) => qd(k * k * u, 2)],
+      ["comma-one-place", "procedural", ([, u = 0]) => qd(u, 1)],
+    ],
     extra: ([k = 0, u = 0]) => ({ t: dec(k * u, 2) }),
   }),
   p4p({
@@ -594,7 +850,11 @@ const perOne = [
     valid: ([, u = 0]) => u % 10 !== 0,
     solve: ([, u = 0]) => qd(u, 2),
     ref: ([k = 0, u = 0]) => qd(k * u, 2).div(q(k)),
-    traps: [["multiplied", "procedural", ([k = 0, u = 0]) => qd(k * u, 2)]],
+    traps: [
+      ["multiplied", "procedural", ([k = 0, u = 0]) => qd(k * u, 2)],
+      ["comma-one-place", "procedural", ([, u = 0]) => qd(u, 1)],
+      ["comma-too-far", "procedural", ([, u = 0]) => qd(u, 3)],
+    ],
     extra: ([k = 0, u = 0]) => ({ t: dec(k * u, 2) }),
   }),
   p4p({
@@ -610,7 +870,11 @@ const perOne = [
         (a, b) => a.add(b),
         q(0),
       ),
-    traps: [["added", "procedural", ([u = 0, n = 0]) => qd(u + n, 2)]],
+    traps: [
+      ["added", "procedural", ([u = 0, n = 0]) => qd(u + 100 * n, 2)],
+      ["comma-one-place", "procedural", ([u = 0, n = 0]) => qd(u * n, 1)],
+      ["comma-lost", "procedural", ([u = 0, n = 0]) => q(u * n)],
+    ],
     extra: ([u = 0]) => ({ x: dec(u, 2) }),
   }),
   p4p({
@@ -622,7 +886,11 @@ const perOne = [
     valid: ([s = 0, t = 0]) => s !== t,
     solve: ([s = 0]) => q(s),
     ref: ([s = 0, t = 0]) => q(s * t).div(q(t)),
-    traps: [["difference", "procedural", ([s = 0, t = 0]) => q(s * t - t)]],
+    traps: [
+      ["difference", "procedural", ([s = 0, t = 0]) => q(s * t - t)],
+      ["distance-itself", "conceptual", ([s = 0, t = 0]) => q(s * t)],
+      ["time-itself", "conceptual", ([, t = 0]) => q(t)],
+    ],
     extra: ([s = 0, t = 0]) => ({ d: String(s * t) }),
   }),
   p4p({
@@ -664,7 +932,16 @@ const perOne = [
     solve: ([s = 0, t = 0]) => q(s * t),
     ref: ([s = 0, t = 0]) =>
       Array.from({ length: t }, () => q(s)).reduce((a, b) => a.add(b), q(0)),
-    traps: [["added", "procedural", ([s = 0, t = 0]) => q(s + t)]],
+    traps: [
+      ["added", "procedural", ([s = 0, t = 0]) => q(s + t)],
+      ["speed-itself", "conceptual", ([s = 0]) => q(s)],
+      ["time-itself", "conceptual", ([, t = 0]) => q(t)],
+      [
+        "divided",
+        "procedural",
+        ([s = 0, t = 0]) => (s === t * t ? null : exact(s, t)),
+      ],
+    ],
   }),
   p4p({
     id: "P4.per-one.07",
@@ -675,7 +952,10 @@ const perOne = [
     valid: ([s = 0, t = 0]) => s !== t,
     solve: ([, t = 0]) => q(t),
     ref: ([s = 0, t = 0]) => q(s * t).div(q(s)),
-    traps: [["multiplied", "procedural", ([s = 0, t = 0]) => q(s * t)]],
+    traps: [
+      ["multiplied", "procedural", ([s = 0, t = 0]) => q(s * t)],
+      ["speed-itself", "conceptual", ([s = 0]) => q(s)],
+    ],
     extra: ([s = 0, t = 0]) => ({ d: String(s * t) }),
   }),
   p4p({
@@ -689,6 +969,12 @@ const perOne = [
     ref: ([k = 0, u = 0]) => qd((k * u) / 10, 2).div(qd(k, 1)),
     traps: [
       ["total-itself", "conceptual", ([k = 0, u = 0]) => qd((k * u) / 10, 2)],
+      [
+        "multiplied",
+        "procedural",
+        ([k = 0, u = 0]) => qd((k * u) / 10, 2).mul(qd(k, 1)),
+      ],
+      ["comma-one-place", "procedural", ([, u = 0]) => qd(u, 1)],
     ],
     extra: ([k = 0, u = 0]) => ({ l: dec(k, 1), t: dec((k * u) / 10, 2) }),
   }),
@@ -703,6 +989,11 @@ const perOne = [
     ref: ([b = 0, u = 0]) => q((b - (b % u)) / u),
     traps: [
       ["rounded-up", "procedural", ([b = 0, u = 0]) => q(Math.ceil(b / u))],
+      [
+        "the-money-left",
+        "conceptual",
+        ([b = 0, u = 0]) => (b % u === Math.floor(b / u) + 1 ? null : q(b % u)),
+      ],
     ],
   }),
   p4p({
@@ -723,6 +1014,12 @@ const perOne = [
         "conceptual",
         ([k = 0, u = 0, n = 0]) => qd(u * k + (n - k) * 100, 2),
       ],
+      ["one-piece-only", "procedural", ([, u = 0]) => qd(u, 2)],
+      [
+        "total-times-the-count",
+        "procedural",
+        ([k = 0, u = 0, n = 0]) => qd(u * k * n, 2),
+      ],
     ],
     extra: ([k = 0, u = 0]) => ({ t: dec(u * k, 2) }),
   }),
@@ -735,7 +1032,11 @@ const perOne = [
     valid: ([, u = 0]) => u % 10 !== 0,
     solve: ([, u = 0]) => qd(u, 1),
     ref: ([d = 0, u = 0]) => qd(d * u, 1).div(q(d)),
-    traps: [["total-itself", "conceptual", ([d = 0, u = 0]) => qd(d * u, 1)]],
+    traps: [
+      ["total-itself", "conceptual", ([d = 0, u = 0]) => qd(d * u, 1)],
+      ["multiplied", "procedural", ([d = 0, u = 0]) => qd(d * d * u, 1)],
+      ["comma-one-place", "procedural", ([, u = 0]) => qd(u, 2)],
+    ],
     extra: ([d = 0, u = 0]) => ({ t: dec(d * u, 1) }),
   }),
 ];

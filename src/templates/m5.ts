@@ -14,7 +14,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 19)],
     f: (a) => q(2 * a),
-    t: { "radius-itself": (a) => q(a) },
+    t: {
+      "radius-itself": (a) => q(a),
+      halved: (a) => (a % 2 === 0 ? q(a / 2) : null),
+      "added-two": (a) => q(a + 2),
+    },
     c: [2],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -25,7 +29,7 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 19)],
     f: (a) => q(a),
-    t: { "diameter-itself": (a) => q(2 * a) },
+    t: { "diameter-itself": (a) => q(2 * a), doubled: (a) => q(4 * a) },
     x: (a) => ({ x: String(2 * a) }),
     c: [2],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
@@ -37,7 +41,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(3 * a),
-    t: { added: (a) => q(a + 3) },
+    t: {
+      added: (a) => q(a + 3),
+      "area-formula": (a) => (a === 2 ? null : q(3 * a * a)),
+      "radius-formula": (a) => q(6 * a),
+    },
     c: [3],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -48,7 +56,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(6 * a),
-    t: { "diameter-times-one": (a) => q(2 * a) },
+    t: {
+      "diameter-times-one": (a) => q(2 * a),
+      "pi-times-radius": (a) => q(3 * a),
+      "area-formula": (a) => (a === 2 ? null : q(3 * a * a)),
+    },
     c: [2, 3, 6],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -59,7 +71,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(3 * a * a),
-    t: { "diameter-squared": (a) => q(3 * 4 * a * a) },
+    t: {
+      "diameter-squared": (a) => q(12 * a * a),
+      "circumference-formula": (a) => q(6 * a),
+      "pi-forgotten": (a) => (a === 6 ? null : q(a * a)),
+    },
     c: [3, 4],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -70,7 +86,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(3 * a * a),
-    t: { "diameter-used": (a) => q(3 * 4 * a * a) },
+    t: {
+      "diameter-used": (a) => q(12 * a * a),
+      "circumference-formula": (a) => q(6 * a),
+      "radius-not-squared": (a) => q(3 * a),
+    },
     x: (a) => ({ x: String(2 * a) }),
     c: [2, 3, 4],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
@@ -82,7 +102,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(a),
-    t: { diameter: (a) => q(2 * a) },
+    t: {
+      diameter: (a) => q(2 * a),
+      "circumference-itself": (a) => q(6 * a),
+      "halved-circumference": (a) => q(3 * a),
+    },
     x: (a) => ({ x: String(6 * a) }),
     c: [2, 3, 6],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
@@ -94,7 +118,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(a),
-    t: { "circumference-itself": (a) => q(3 * a) },
+    t: {
+      "circumference-itself": (a) => q(3 * a),
+      "pi-multiplied": (a) => q(9 * a),
+      "divided-by-two": (a) => (a % 2 === 0 ? q((3 * a) / 2) : null),
+    },
     x: (a) => ({ x: String(3 * a) }),
     c: [3],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
@@ -106,7 +134,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(3 * a),
-    t: { "whole-circle": (a) => q(6 * a) },
+    t: {
+      "whole-circle": (a) => q(6 * a),
+      "with-diameter": (a) => q(5 * a),
+      "radius-as-diameter": (a) => (a % 2 === 0 ? q((3 * a) / 2) : null),
+    },
     c: [2, 3, 6],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -118,7 +150,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(2, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(3 * a * b),
-    t: { "one-turn": (a) => q(3 * a) },
+    t: {
+      "one-turn": (a) => q(3 * a),
+      "radius-formula": (a, b) => q(6 * a * b),
+      "pi-forgotten": (a, b) => (b === 3 ? null : q(a * b)),
+    },
     c: [1, 3],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -130,7 +166,11 @@ const M11_circle_specs: readonly Spec<never>[] = [
     p: [of(10, 20, 30, 40, 50)],
     ok: () => true,
     f: (a) => qd(314 * a, 2),
-    t: { "pi-as-three": (a) => q(3 * a) },
+    t: {
+      "pi-as-three": (a) => q(3 * a),
+      "radius-formula": (a) => qd(628 * a, 2),
+      "area-formula": (a) => qd(314 * a * a, 2),
+    },
     c: [3, 3.14],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -142,7 +182,12 @@ const M11_circle_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(1, 2)],
     ok: (a, b) => a > b,
     f: (a, b) => q(3 * (a * a - b * b)),
-    t: { "radii-subtracted": (a, b) => q(3 * (a - b) * (a - b)) },
+    t: {
+      "radii-subtracted": (a, b) =>
+        a === 2 * b ? null : q(3 * (a - b) * (a - b)),
+      "outer-circle-only": (a) => q(3 * a * a),
+      "pi-forgotten": (a, b) => q(a * a - b * b),
+    },
     c: [3],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -501,6 +546,16 @@ const M12_benchmark_1S_specs: readonly Spec<never>[] = [
   }),
 ];
 
+/** The wrong difference of a child who takes the smaller digit from the larger in every place, never borrowing. */
+const noBorrow = (a: number, b: number): number => {
+  let out = 0;
+  for (let place = 1; a >= place || b >= place; place *= 10)
+    out +=
+      Math.abs((Math.floor(b / place) % 10) - (Math.floor(a / place) % 10)) *
+      place;
+  return out;
+};
+
 const M13_instruments = calc("M13", "instruments");
 const M13_instruments_specs: readonly Spec<never>[] = [
   M13_instruments({
@@ -510,7 +565,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 4), rg(7, 12)],
     f: (a, b) => q(b - a),
-    t: { "end-mark": (a, b) => q(b) },
+    t: {
+      "end-mark": (a, b) => q(b),
+      "counted-marks": (a, b) => q(b - a + 1),
+      added: (a, b) => q(a + b),
+    },
   }),
   M13_instruments({
     id: "M13.instruments.02",
@@ -519,7 +578,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9), rg(1, 9)],
     f: (a, b) => q(10 * a + b),
-    t: { "counts-added": (a, b) => q(a + b) },
+    t: {
+      "counts-added": (a, b) => q(a + b),
+      "hundred-per-cm": (a, b) => q(100 * a + b),
+      "mm-dropped": (a) => q(10 * a),
+    },
     c: [10],
   }),
   M13_instruments({
@@ -529,7 +592,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 6)],
     f: (a) => q(50 * a),
-    t: { "mark-number": (a) => q(a) },
+    t: {
+      "mark-number": (a) => q(a),
+      added: (a) => q(a + 50),
+      "zero-counted": (a) => q(50 * (a + 1)),
+    },
     c: [50],
   }),
   M13_instruments({
@@ -539,7 +606,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 9)],
     f: (a) => q(100 * a + 50),
-    t: { "lower-mark": (a) => q(100 * a) },
+    t: {
+      "lower-mark": (a) => q(100 * a),
+      "upper-mark": (a) => q(100 * a + 100),
+      "half-of-upper": (a) => (a === 1 ? null : q(50 * a + 50)),
+    },
     x: (a) => ({ x: String(100 * a), y: String(100 * a + 100) }),
     c: [50, 100],
   }),
@@ -550,7 +621,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 12)],
     f: (a) => q(2 * a),
-    t: { "mark-number": (a) => q(a) },
+    t: {
+      "mark-number": (a) => q(a),
+      added: (a) => (a === 2 ? null : q(a + 2)),
+      "zero-counted": (a) => q(2 * (a + 1)),
+    },
     c: [2],
   }),
   M13_instruments({
@@ -560,7 +635,7 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 15)],
     f: (a) => q(-a),
-    t: { "no-sign": (a) => q(a) },
+    t: { "no-sign": (a) => q(a), "zero-counted": (a) => q(-(a + 1)) },
     c: [1],
   }),
   M13_instruments({
@@ -571,7 +646,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     p: [rg(1, 9)],
     ok: () => true,
     f: (a) => qd(360 + a, 1),
-    t: { "tenths-as-wholes": (a) => q(36 + a) },
+    t: {
+      "tenths-as-wholes": (a) => q(36 + a),
+      hundredths: (a) => qd(3600 + a, 2),
+      "scale-only": (a) => qd(a, 1),
+    },
     c: [0.1, 36],
   }),
   M13_instruments({
@@ -581,7 +660,13 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(11, 49), rg(52, 99)],
     f: (a, b) => q(b - a),
-    t: { added: (a, b) => q(a + b) },
+    t: {
+      added: (a, b) => q(a + b),
+      "no-borrow": (a, b) => {
+        const w = noBorrow(a, b);
+        return w === b - a ? null : q(w);
+      },
+    },
   }),
   M13_instruments({
     id: "M13.instruments.09",
@@ -590,7 +675,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(10 * a),
-    t: { "mark-number": (a) => q(a) },
+    t: {
+      "mark-number": (a) => q(a),
+      added: (a) => q(a + 10),
+      "zero-counted": (a) => q(10 * (a + 1)),
+    },
     c: [10],
   }),
   M13_instruments({
@@ -600,7 +689,14 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(200, 480), rg(520, 900)],
     f: (a, b) => q(b - a),
-    t: { added: (a, b) => q(a + b) },
+    t: {
+      added: (a, b) => q(a + b),
+      "full-weight": (a, b) => q(b),
+      "no-borrow": (a, b) => {
+        const w = noBorrow(a, b);
+        return w === b - a ? null : q(w);
+      },
+    },
   }),
   M13_instruments({
     id: "M13.instruments.11",
@@ -609,7 +705,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(2 * a),
-    t: { "mark-number": (a) => q(a) },
+    t: {
+      "mark-number": (a) => q(a),
+      added: (a) => (a === 2 ? null : q(a + 2)),
+      "zero-counted": (a) => q(2 * (a + 1)),
+    },
     c: [2],
   }),
 ];
@@ -624,7 +724,10 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [of(40, 60, 80, 100), of(20, 40, 60, 80)],
     ok: (a, b) => a !== b && (a + b) % 2 === 0 && (2 * a * b) % (a + b) === 0,
     f: (a, b) => q((a + b) / 2),
-    t: { harmonic: (a, b) => q((2 * a * b) / (a + b)) },
+    t: {
+      harmonic: (a, b) => q((2 * a * b) / (a + b)),
+      "sum-of-speeds": (a, b) => q(a + b),
+    },
     c: [2],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -640,7 +743,12 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
       (a + b) % 2 === 0 &&
       (a + b) / 2 !== (2 * a * b) / (a + b),
     f: (a, b) => q((2 * a * b) / (a + b)),
-    t: { "arithmetic-mean": (a, b) => q((a + b) / 2) },
+    t: {
+      "arithmetic-mean": (a, b) => q((a + b) / 2),
+      "sum-of-speeds": (a, b) => q(a + b),
+      "product-over-sum": (a, b) =>
+        (a * b) % (a + b) === 0 ? q((a * b) / (a + b)) : null,
+    },
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
   M14_average_speed({
@@ -654,7 +762,12 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
       (a * b + c * d) % (b + d) === 0 &&
       (a + c) / 2 !== (a * b + c * d) / (b + d),
     f: (a, b, c, d) => q((a * b + c * d) / (b + d)),
-    t: { "speeds-averaged": (a, b, c) => q((a + c) / 2) },
+    t: {
+      "speeds-averaged": (a, b, c) => q((a + c) / 2),
+      "distance-only": (a, b, c, d) => q(a * b + c * d),
+      "legs-averaged": (a, b, c, d) =>
+        (a * b + c * d) % 2 === 0 ? q((a * b + c * d) / 2) : null,
+    },
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
   M14_average_speed({
@@ -665,7 +778,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [of(60, 80, 90), rg(2, 4), rg(1, 2)],
     ok: (a, b, c) => (a * b) % (b + c) === 0 && b !== c,
     f: (a, b, c) => q((a * b) / (b + c)),
-    t: { "stop-ignored": (a) => q(a) },
+    t: {
+      "stop-ignored": (a) => q(a),
+      "distance-only": (a, b) => q(a * b),
+      "speed-and-zero": (a) => q(a / 2),
+    },
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
   M14_average_speed({
@@ -676,7 +793,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [of(3, 4, 6, 10, 12), of(6, 12, 15, 24)],
     ok: (a, b) => a < b && (a * b) % (a + b) === 0,
     f: (a, b) => q((a * b) / (a + b)),
-    t: { "sum-of-times": (a, b) => q(a + b) },
+    t: {
+      "sum-of-times": (a, b) => q(a + b),
+      "average-of-times": (a, b) => ((a + b) % 2 === 0 ? q((a + b) / 2) : null),
+      "faster-alone": (a) => q(a),
+    },
     c: [1],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -688,7 +809,17 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [of(40, 50, 60), of(30, 40, 60), rg(2, 6)],
     ok: (a, b, c) => a !== b && (c * (a + b)) % a === 0,
     f: (a, b, c) => q(c),
-    t: { "one-speed": (a, b, c) => q((c * (a + b)) / a) },
+    t: {
+      "one-speed": (a, b, c) => q((c * (a + b)) / a),
+      "other-train": (a, b, c) =>
+        (c * (a + b)) % b === 0 ? q((c * (a + b)) / b) : null,
+      "speeds-subtracted": (a, b, c) => {
+        const d = Math.abs(a - b);
+        return (c * (a + b)) % d === 0 && d !== a && d !== b
+          ? q((c * (a + b)) / d)
+          : null;
+      },
+    },
     x: (a, b, c) => ({ x: String(c * (a + b)) }),
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -700,7 +831,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [rg(8, 20), rg(2, 5)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a + b),
-    t: { "against-the-current": (a, b) => q(a - b) },
+    t: {
+      "against-the-current": (a, b) => q(a - b),
+      "boat-itself": (a) => q(a),
+      product: (a, b) => q(a * b),
+    },
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
   M14_average_speed({
@@ -711,7 +846,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [rg(8, 20), rg(2, 5)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a - b),
-    t: { "with-the-current": (a, b) => q(a + b) },
+    t: {
+      "with-the-current": (a, b) => q(a + b),
+      "boat-itself": (a) => q(a),
+      product: (a, b) => q(a * b),
+    },
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
   M14_average_speed({
@@ -722,7 +861,12 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [of(60, 80, 100), of(90, 120, 150), of(120, 150, 180)],
     ok: (a, b, c) => (a + b + c) % 3 === 0 && a !== b && b !== c,
     f: (a, b, c) => q((a + b + c) / 3),
-    t: { total: (a, b, c) => q(a + b + c) },
+    t: {
+      total: (a, b, c) => q(a + b + c),
+      "divided-by-two": (a, b, c) =>
+        (a + b + c) % 2 === 0 ? q((a + b + c) / 2) : null,
+      "middle-day": (a, b) => q(b),
+    },
     c: [3],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
@@ -734,7 +878,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [rg(40, 80), rg(2, 6)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
-    t: { added: (a, b) => q(a + b) },
+    t: {
+      added: (a, b) => q(a + b),
+      divided: (a, b) => (a % b === 0 ? q(a / b) : null),
+      subtracted: (a, b) => q(a - b),
+    },
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
   M14_average_speed({
@@ -744,7 +892,7 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(30, 40, 60, 90)],
     f: (a) => q(a),
-    t: { doubled: (a) => q(2 * a) },
+    t: { doubled: (a) => q(2 * a), halved: (a) => q(a / 2) },
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
   }),
 ];

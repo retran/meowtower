@@ -20,6 +20,13 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "two-kinds": (a, b, c, d) => q(a * b + c * d),
       "count-of-groups": (a, b, c, d, e) => q(a + c + e),
+      "first-kind": (a, b) => q(a * b),
+      "add-all": (a, b, c, d, e, f) => {
+        const w = a + b + c + d + e + f;
+        return w === a * b + c * d + a + c + e || w === a + c + e || w === a * b
+          ? null
+          : q(w);
+      },
     },
     roles: {
       a: "first groups",
@@ -41,6 +48,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "first-purchase": (a, b, c) => q(a - b * c),
       costs: (a, b, c, d, e) => q(b * c + d * e),
+      "add-all": (a, b, c, d, e) => {
+        const w = a + b + c + d + e;
+        return w === b * c + d * e || w === a - b * c ? null : q(w);
+      },
     },
     roles: {
       a: "paid",
@@ -61,6 +72,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "one-part": (a, b, c) => q((a + b) / c),
       "no-share": (a, b, c, d) => q((a + b) * d),
+      "add-all": (a, b, c, d) => {
+        const w = a + b + c + d;
+        return w === (a + b) * d || w === (a + b) / c ? null : q(w);
+      },
     },
     roles: { a: "start", b: "added", c: "parts", d: "parts taken" },
   }),
@@ -75,6 +90,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "two-numbers": (a, b) => q(2 * a + b),
       "three-firsts": (a) => q(3 * a),
+      "add-all": (a, b, c) => q(a + b + c),
     },
     roles: { a: "first", b: "extra of the second", c: "extra of the third" },
   }),
@@ -89,6 +105,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "no-subtraction": (a, b) => q(a + 2 * a * b),
       "first-only": (a, b, c) => q(a - c),
+      "add-all": (a, b, c) => {
+        const w = a + b + c;
+        return w === a + 2 * a * b || w === a - c ? null : q(w);
+      },
     },
     c: [2],
     roles: { a: "first", b: "factor", c: "removed" },
@@ -104,6 +124,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "with-remainder": (a, b, c) => q((Math.floor(a / b) + 1) * c),
       "groups-only": (a, b) => q(Math.floor(a / b)),
+      "per-item": (a, b, c) => q(a * c),
     },
     roles: { a: "total", b: "in each group", c: "payment per group" },
   }),
@@ -118,6 +139,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       remainder: (a, b) => q(a - b),
       "before-add": (a, b, c) => q((a - b) / c),
+      "add-all": (a, b, c, d) => {
+        const w = a + b + c + d;
+        return w === a - b ? null : q(w);
+      },
     },
     roles: { a: "start", b: "removed", c: "parts", d: "added" },
   }),
@@ -132,6 +157,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "two-ages": (a, b) => q(a + (a - b)),
       "first-times-three": (a) => q(3 * a),
+      "add-all": (a, b, c) => q(a + b + c),
     },
     roles: { a: "first", b: "younger by", c: "times younger" },
   }),
@@ -146,6 +172,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "first-leg": (a, b, c) => q(a - b * c),
       travelled: (a, b, c, d, e) => q(b * c + d * e),
+      "add-all": (a, b, c, d, e) => {
+        const w = a + b + c + d + e;
+        return w === b * c + d * e || w === a - b * c ? null : q(w);
+      },
     },
     roles: {
       a: "distance",
@@ -166,6 +196,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     t: {
       "total-after-discount": (a, b, c) => q(a * b - c),
       "no-discount": (a, b) => q((a * b) / 2),
+      "add-all": (a, b, c) => q(a + b + c),
     },
     c: [2],
     roles: { a: "price", b: "count", c: "discount" },
@@ -189,6 +220,10 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "before-share": (a, b, c) => q(a + (a * b) / 100 - c),
       "no-percent": (a, b, c, d) => q((a - c) / d),
+      "percent-as-number": (a, b, c, d) => {
+        const w = (a + b - c) / d;
+        return Number.isInteger(w) && w !== (a - c) / d ? q(w) : null;
+      },
     },
     c: [100],
     roles: { a: "start", b: "percent", c: "removed", d: "parts" },
@@ -204,6 +239,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "closing-distance": (a, b, c, d) => q((b + c) * d),
       "one-train": (a, b, c, d) => q(a - b * d),
+      "no-time": (a, b, c) => q(a - b - c),
     },
     roles: { a: "distance", b: "first speed", c: "second speed", d: "time" },
   }),
@@ -222,6 +258,17 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       result: (a, b, c, d, e) => q((a * b + c) / d - e),
       "forward-order": (a, b, c) => q(a * b + c),
+      "not-inverted": (a, b, c, d, e) => {
+        const x = (a * b + c) / d - e;
+        const w = ((x - e) * d - c) / b;
+        return Number.isInteger(w) &&
+          w > 0 &&
+          w !== a &&
+          w !== x &&
+          w !== a * b + c
+          ? q(w)
+          : null;
+      },
     },
     x: (a, b, c, d, e) => ({ x: String((a * b + c) / d - e) }),
     roles: {
@@ -248,6 +295,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "after-first": (a, b) => q((a * (100 - b)) / 100),
       "of-the-whole": (a, b, c) => q(a - (a * b) / 100 - (a * c) / 100),
+      "first-part": (a, b) => q((a * b) / 100),
     },
     c: [100],
     roles: { a: "distance", b: "first percent", c: "second percent" },
@@ -263,6 +311,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "sum-of-times": (a, b, c) => q(c * (a + b)),
       "one-pool": (a, b) => q((a * b) / (a + b)),
+      "add-all": (a, b, c) => q(a + b + c),
     },
     c: [1],
     roles: { a: "first time", b: "second time", c: "count" },
@@ -282,6 +331,11 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "full-price": (a, b, c, d) => q(d - c * a),
       "discounted-cost": (a, b, c) => q(c * (a - (a * b) / 100)),
+      "percent-as-euros": (a, b, c, d) =>
+        d - c * (a - b) === d - c * (a - (a * b) / 100) ||
+        d - c * (a - b) === d - c * a
+          ? null
+          : q(d - c * (a - b)),
     },
     c: [100],
     roles: { a: "price", b: "discount percent", c: "count", d: "paid" },
@@ -297,6 +351,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       now: (a, b, c) => q(a - b - c),
       "no-wait": (a, b, c, d) => q(b + c + d),
+      "add-all": (a, b, c, d) => q(a + b + c + d),
     },
     roles: {
       a: "sum of ages",
@@ -316,6 +371,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "adult-only": (a, b, c, d, e) => q(e - a * b),
       cost: (a, b, c, d) => q(a * b + c * d),
+      "child-only": (a, b, c, d, e) => q(e - c * d),
     },
     roles: {
       a: "adult count",
@@ -342,6 +398,14 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "there-only": (a, b) => q(a / b),
       "distance-over-mean": (a, b, c) => q((2 * a) / ((b + c) / 2)),
+      "back-only": (a, b, c) => {
+        const w = a / c;
+        return w === (2 * a) / ((b + c) / 2) ? null : q(w);
+      },
+      "add-all": (a, b, c) => {
+        const w = a + b + c;
+        return w === (2 * a) / ((b + c) / 2) ? null : q(w);
+      },
     },
     roles: { a: "distance", b: "speed there", c: "speed back" },
   }),
@@ -357,6 +421,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "first-share": (a, b) => q(a / b),
       difference: (a, b, c) => q(a / b - a / c),
+      "second-share": (a, b, c) => q(a / c),
     },
     roles: { a: "sum", b: "first parts", c: "second parts", d: "extra" },
   }),

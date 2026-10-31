@@ -18,7 +18,11 @@ const S4_pie_specs: readonly Spec<never>[] = [
     p: [of(100, 200, 50, 20), of(10, 20, 25, 50)],
     ok: (a, b) => (a * b) % 100 === 0 && (a * b) / 100 !== b,
     f: (a, b) => q((a * b) / 100),
-    t: { "percent-itself": (a, b) => q(b), all: (a) => q(a) },
+    t: {
+      "percent-itself": (a, b) => q(b),
+      all: (a) => q(a),
+      "not-divided": (a, b) => q(a * b),
+    },
     c: [100],
   }),
   S4_pie({
@@ -29,7 +33,11 @@ const S4_pie_specs: readonly Spec<never>[] = [
     p: [of(2, 4, 5, 10, 20, 25, 50)],
     ok: (a) => 100 / a !== a,
     f: (a) => q(100 / a),
-    t: { sectors: (a) => q(a), all: () => q(100) },
+    t: {
+      sectors: (a) => q(a),
+      all: () => q(100),
+      degrees: (a) => (360 % a === 0 ? q(360 / a) : null),
+    },
     c: [100],
   }),
   S4_pie({
@@ -43,6 +51,7 @@ const S4_pie_specs: readonly Spec<never>[] = [
     t: {
       "three-sectors": (a, b, c) => q(a + b + c),
       "one-removed": (a) => q(100 - a),
+      "from-360": (a, b, c) => q(360 - a - b - c),
     },
     c: [100],
   }),
@@ -57,6 +66,7 @@ const S4_pie_specs: readonly Spec<never>[] = [
     t: {
       "percent-itself": (a) => q(a),
       "fraction-of-hundred": (a) => q(100 - a),
+      "not-divided": (a) => q(360 * a),
     },
     c: [3, 3.6, 6, 100, 360],
   }),
@@ -199,7 +209,11 @@ const S5_global_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(10, 14, 16, 20), of(20, 24, 26, 30)],
     f: (a, b) => q((a + b) / 2),
-    t: { "first-reading": (a) => q(a), "second-reading": (a, b) => q(b) },
+    t: {
+      "first-reading": (a) => q(a),
+      "second-reading": (a, b) => q(b),
+      "sum-not-halved": (a, b) => q(a + b),
+    },
     c: [2, 10, 11, 12],
   }),
   S5_global({
@@ -210,7 +224,11 @@ const S5_global_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(5, 20), rg(2, 6)],
     ok: (a, b, c) => a !== c && c > 1,
     f: (a, b, c) => q(b + a * c),
-    t: { "rise-only": (a, b, c) => q(a * c), "one-hour": (a, b) => q(b + a) },
+    t: {
+      "rise-only": (a, b, c) => q(a * c),
+      "one-hour": (a, b) => q(b + a),
+      "all-multiplied": (a, b, c) => q((a + b) * c),
+    },
   }),
   S5_global({
     id: "S5.global.06",
@@ -220,7 +238,12 @@ const S5_global_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(5, 20), rg(2, 6)],
     ok: (a, b, c) => a !== c && c > 1,
     f: (a, b, c) => q(c),
-    t: { rise: (a, b, c) => q(a * c), level: (a, b, c) => q(b + a * c) },
+    t: {
+      rise: (a, b, c) => q(a * c),
+      level: (a, b, c) => q(b + a * c),
+      "level-not-reduced": (a, b, c) =>
+        (b + a * c) % a === 0 ? q((b + a * c) / a) : null,
+    },
     x: (a, b, c) => ({ x: String(b + a * c) }),
   }),
   S5_global({
@@ -332,7 +355,11 @@ const S5_global_1S_specs: readonly Spec<never>[] = [
     p: [rg(10, 40), rg(2, 9), rg(3, 8)],
     ok: (a, b, c) => b !== c,
     f: (a, b, c) => q(a + b * c),
-    t: { "rise-only": (a, b, c) => q(b * c), "one-year": (a, b) => q(a + b) },
+    t: {
+      "rise-only": (a, b, c) => q(b * c),
+      "one-year": (a, b) => q(a + b),
+      "all-multiplied": (a, b, c) => q((a + b) * c),
+    },
   }),
   S5_global_1S({
     id: "S5.global-1S.03",
@@ -342,7 +369,12 @@ const S5_global_1S_specs: readonly Spec<never>[] = [
     p: [rg(10, 40), rg(2, 9), rg(3, 8)],
     ok: (a, b, c) => b !== c,
     f: (a, b, c) => q(c),
-    t: { rise: (a, b, c) => q(b * c), target: (a, b, c) => q(a + b * c) },
+    t: {
+      rise: (a, b, c) => q(b * c),
+      target: (a, b, c) => q(a + b * c),
+      "level-not-reduced": (a, b, c) =>
+        (a + b * c) % b === 0 ? q((a + b * c) / b) : null,
+    },
     x: (a, b, c) => ({ x: String(a + b * c) }),
   }),
   S5_global_1S({
@@ -425,6 +457,8 @@ const S5_global_1S_specs: readonly Spec<never>[] = [
     t: {
       increase: (a, b) => q((a * b) / 100),
       "new-value": (a, b) => q(a + b),
+      "of-new-value": (a, b) =>
+        (100 * b) % (100 + b) === 0 ? q((100 * b) / (100 + b)) : null,
     },
     x: (a, b) => ({ x: String(a + (a * b) / 100) }),
     c: [100],
@@ -436,7 +470,11 @@ const S5_global_1S_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(10, 40), rg(2, 9)],
     f: (a, b) => q(a + b),
-    t: { first: (a) => q(a), third: (a, b) => q(a + 2 * b) },
+    t: {
+      first: (a) => q(a),
+      third: (a, b) => q(a + 2 * b),
+      "step-only": (a, b) => q(b),
+    },
     x: (a, b) => ({ x: String(a + 2 * b) }),
     c: [2],
   }),
@@ -451,7 +489,11 @@ const S6_patterns_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 20), rg(2, 9)],
     f: (a, b) => q(a + 4 * b),
-    t: { last: (a, b) => q(a + 3 * b), "double-step": (a, b) => q(a + 5 * b) },
+    t: {
+      last: (a, b) => q(a + 3 * b),
+      "double-step": (a, b) => q(a + 5 * b),
+      "n-times-step": (a, b) => (a === 2 * b ? null : q(5 * b)),
+    },
     x: (a, b) => ({ row: [a, a + b, a + 2 * b, a + 3 * b].join(", ") + ", …" }),
   }),
   S6_patterns({
@@ -474,6 +516,7 @@ const S6_patterns_specs: readonly Spec<never>[] = [
     t: {
       "ten-steps": (a, b) => q(a + 10 * b),
       "eight-steps": (a, b) => q(a + 8 * b),
+      "step-times-ten": (a, b) => (a === 2 * b ? null : q(10 * b)),
     },
     c: [8, 9, 10],
   }),
@@ -484,7 +527,11 @@ const S6_patterns_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 6)],
     f: (a) => q(16 * a),
-    t: { added: (a) => q(8 * a + 2 * a), last: (a) => q(8 * a) },
+    t: {
+      added: (a) => q(8 * a + 2 * a),
+      last: (a) => q(8 * a),
+      "same-difference": (a) => q(12 * a),
+    },
     x: (a) => ({ row: [a, 2 * a, 4 * a, 8 * a].join(", ") + ", …" }),
     c: [2, 8, 16],
   }),
@@ -516,7 +563,11 @@ const S6_patterns_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 8)],
     f: (a) => q((a + 1) * (a + 1)),
-    t: { last: (a) => q(a * a), doubled: (a) => q(2 * a * a) },
+    t: {
+      last: (a) => q(a * a),
+      doubled: (a) => q(2 * a * a),
+      "twice-the-base": (a) => q(2 * (a + 1)),
+    },
     c: [1, 2, 3, 4, 9],
   }),
   S6_patterns({
@@ -536,7 +587,11 @@ const S6_patterns_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(4, 14)],
     f: (a) => q((a * (a + 1)) / 2),
-    t: { last: (a) => q(a), square: (a) => q(a * a) },
+    t: {
+      last: (a) => q(a),
+      square: (a) => q(a * a),
+      "not-halved": (a) => q(a * (a + 1)),
+    },
     c: [1, 2],
   }),
   S6_patterns({
@@ -739,7 +794,16 @@ const S7_median_mode_specs: readonly Spec<never>[] = [
       sortedAt([a, b, c, d, e], 2) !== a &&
       sortedAt([a, b, c, d, e], 2) !== c,
     f: (a, b, c, d, e) => q(sortedAt([a, b, c, d, e], 2)),
-    t: { "first-number": (a) => q(a), "middle-written": (a, b, c) => q(c) },
+    t: {
+      "first-number": (a) => q(a),
+      "middle-written": (a, b, c) => q(c),
+      mean: (a, b, c, d, e) =>
+        (a + b + c + d + e) % 5 === 0 &&
+        (a + b + c + d + e) / 5 !== a &&
+        (a + b + c + d + e) / 5 !== c
+          ? q((a + b + c + d + e) / 5)
+          : null,
+    },
     origin: {
       extension: "the median and the mode, Russian grade 7 (RES-4288)",
     },
@@ -777,6 +841,14 @@ const S7_median_mode_specs: readonly Spec<never>[] = [
     t: {
       "second-number": (a, b, c, d) => q(sortedAt([a, b, c, d], 1)),
       mean: (a, b, c, d) => q((a + b + c + d) / 4),
+      "unordered-middle": (a, b, c, d) => {
+        const w = (b + c) / 2;
+        return Number.isInteger(w) &&
+          w !== sortedAt([a, b, c, d], 1) &&
+          w !== (a + b + c + d) / 4
+          ? q(w)
+          : null;
+      },
     },
     origin: {
       extension: "the median and the mode, Russian grade 7 (RES-4288)",
@@ -840,8 +912,16 @@ const S7_median_mode_specs: readonly Spec<never>[] = [
       sortedAt([a, b, c], 1) !== (a + b + c) / 3,
     f: (a, b, c) => sign(q(sortedAt([a, b, c], 1)), q((a + b + c) / 3)),
     t: {
-      reversed: (a, b, c) =>
-        sign(q((a + b + c) / 3), q(sortedAt([a, b, c], 1))),
+      reversed: (a, b, c) => {
+        const m = (a + b + c) / 3;
+        const w = sign(q(m), q(sortedAt([a, b, c], 1)));
+        return w === sign(q(b), q(m)) ? null : w;
+      },
+      "unordered-middle": (a, b, c) => {
+        const m = (a + b + c) / 3;
+        const w = sign(q(b), q(m));
+        return w === sign(q(sortedAt([a, b, c], 1)), q(m)) ? null : w;
+      },
     },
     c: [3],
     origin: {
@@ -923,7 +1003,16 @@ const S7_median_mode_specs: readonly Spec<never>[] = [
       sortedAt([a, b, c, d, e, f, g], 3) !== a &&
       sortedAt([a, b, c, d, e, f, g], 3) !== d,
     f: (a, b, c, d, e, f, g) => q(sortedAt([a, b, c, d, e, f, g], 3)),
-    t: { "first-number": (a) => q(a), "middle-written": (a, b, c, d) => q(d) },
+    t: {
+      "first-number": (a) => q(a),
+      "middle-written": (a, b, c, d) => q(d),
+      mean: (a, b, c, d, e, f, g) =>
+        (a + b + c + d + e + f + g) % 7 === 0 &&
+        (a + b + c + d + e + f + g) / 7 !== a &&
+        (a + b + c + d + e + f + g) / 7 !== d
+          ? q((a + b + c + d + e + f + g) / 7)
+          : null,
+    },
     c: [4],
     origin: {
       extension: "the median and the mode, Russian grade 7 (RES-4288)",

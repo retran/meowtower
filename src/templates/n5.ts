@@ -4,13 +4,57 @@
 // blanks in `content/tasks-n.ru.json`, keyed by the template id.
 import { Q } from "../math/q.js";
 import { between, digits, pick, qi } from "./draw.js";
-import { defineSpec, type Spec } from "./spec.js";
+import { defineSpec as define, type Spec } from "./spec.js";
+import { formatQ } from "../math/format.js";
 
 const s = String;
 const dec = (x: Q): string => {
   const whole = x.n / x.d;
   const frac = ((x.n % x.d) * 10n) / x.d;
   return `${whole.toString()},${frac.toString()}`;
+};
+
+/**
+ * A spec whose traps are named in the strings by `{w_<trap id>}`. A trap that repeats an
+ * earlier trap of the same task gives null, so two traps never share an entry.
+ */
+const defineSpec = <P>(spec: Spec<P>) => {
+  const traps = spec.traps ?? [];
+  const wrongOf = (i: number, p: P) => {
+    const w = traps[i]?.wrong(p) ?? null;
+    if (w === null) return null;
+    for (let j = 0; j < i; j += 1) {
+      const e = traps[j]?.wrong(p);
+      if (e instanceof Q && w instanceof Q && e.eq(w)) return null;
+    }
+    return w;
+  };
+  return define<P>({
+    ...spec,
+    traps: traps.map((t, i) => ({ ...t, wrong: (p: P) => wrongOf(i, p) })),
+    vars: (p) => ({
+      ...spec.vars(p),
+      ...Object.fromEntries(
+        traps.flatMap((t, i) => {
+          const w = wrongOf(i, p);
+          return w instanceof Q
+            ? [
+                [
+                  `w_${t.id.replace(/-/g, "_")}`,
+                  formatQ(w, {
+                    decimal: ",",
+                    group: "\u00A0",
+                    mul: "",
+                    div: "",
+                    minus: "−",
+                  }),
+                ],
+              ]
+            : [];
+        }),
+      ),
+    }),
+  });
 };
 
 interface K {
@@ -39,6 +83,11 @@ const pointSpecs = [
         kind: "conceptual",
         wrong: (p) => qi(10 * (p.k - 1)),
       },
+      {
+        id: "extra-mark",
+        kind: "conceptual",
+        wrong: (p) => qi(10 * (p.k + 1)),
+      },
     ],
     vars: (p) => ({ k: s(p.k), r: s(10 * p.k), z: s(10 * (p.k - 1)) }),
     constants: [0, 10, 100],
@@ -59,6 +108,12 @@ const pointSpecs = [
         id: "zero-counted",
         kind: "conceptual",
         wrong: (p) => qi(100 * (p.k - 1)),
+      },
+      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
+      {
+        id: "extra-mark",
+        kind: "conceptual",
+        wrong: (p) => qi(100 * (p.k + 1)),
       },
     ],
     vars: (p) => ({
@@ -85,6 +140,11 @@ const pointSpecs = [
     traps: [
       { id: "from-zero", kind: "conceptual", wrong: (p) => qi(10 * p.k) },
       { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.b + p.k) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.b + 10 * (p.k - 1)),
+      },
     ],
     vars: (p) => ({
       b: s(p.b),
@@ -109,6 +169,8 @@ const pointSpecs = [
     traps: [
       { id: "half-the-gap", kind: "conceptual", wrong: (p) => qi(p.d) },
       { id: "right-mark", kind: "conceptual", wrong: (p) => qi(p.a + 2 * p.d) },
+      { id: "left-mark", kind: "conceptual", wrong: (p) => qi(p.a) },
+      { id: "whole-gap", kind: "conceptual", wrong: (p) => qi(2 * p.d) },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -138,6 +200,17 @@ const pointSpecs = [
     reference: (p) => qi((p.t * p.k) / p.parts),
     traps: [
       { id: "one-part", kind: "conceptual", wrong: (p) => qi(p.t / p.parts) },
+      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi((p.t / p.parts) * (p.k - 1)),
+      },
+      {
+        id: "divided-by-mark",
+        kind: "conceptual",
+        wrong: (p) => (p.t % p.k === 0 ? qi(p.t / p.k) : null),
+      },
     ],
     vars: (p) => ({
       t: digits(p.t),
@@ -168,6 +241,13 @@ const pointSpecs = [
         kind: "conceptual",
         wrong: (p) => qi(p.a + 100 * (4 - p.q)),
       },
+      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.a + p.q) },
+      { id: "from-zero", kind: "conceptual", wrong: (p) => qi(100 * p.q) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.a + 100 * (p.q - 1)),
+      },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -194,6 +274,16 @@ const pointSpecs = [
         id: "upper-mark",
         kind: "conceptual",
         wrong: (p) => qi((Math.floor(p.n / 1000) + 1) * 1000),
+      },
+      {
+        id: "left-hundred",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.floor(p.n / 100) * 100),
+      },
+      {
+        id: "forgot-zeros",
+        kind: "conceptual",
+        wrong: (p) => qi(Math.floor(p.n / 1000)),
       },
     ],
     vars: (p) => ({
@@ -222,7 +312,11 @@ const pointSpecs = [
           0,
         ),
       ),
-    traps: [{ id: "sum", kind: "procedural", wrong: (p) => qi(p.a + p.b) }],
+    traps: [
+      { id: "sum", kind: "procedural", wrong: (p) => qi(p.a + p.b) },
+      { id: "right-mark", kind: "conceptual", wrong: (p) => qi(p.b) },
+      { id: "left-mark", kind: "conceptual", wrong: (p) => qi(p.a) },
+    ],
     vars: (p) => ({ a: s(p.a), b: s(p.b), r: s(p.b - p.a), sum: s(p.a + p.b) }),
   }),
   defineSpec<K>({
@@ -241,6 +335,16 @@ const pointSpecs = [
         id: "hundredths",
         kind: "conceptual",
         wrong: (p) => Q.of(BigInt(p.k), 100n),
+      },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => (p.k === 1 ? null : Q.of(BigInt(p.k - 1), 10n)),
+      },
+      {
+        id: "above-one",
+        kind: "conceptual",
+        wrong: (p) => Q.of(BigInt(10 + p.k), 10n),
       },
     ],
     vars: (p) => ({
@@ -267,6 +371,12 @@ const pointSpecs = [
         kind: "procedural",
         wrong: (p) => qi(p.step + p.k),
       },
+      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.step * (p.k - 1)),
+      },
     ],
     vars: (p) => ({
       step: s(p.step),
@@ -291,6 +401,17 @@ const pointSpecs = [
     reference: (p) => qi((p.a + p.n * p.step - p.a) / p.step),
     traps: [
       { id: "marks-counted", kind: "conceptual", wrong: (p) => qi(p.n + 1) },
+      { id: "inner-marks", kind: "conceptual", wrong: (p) => qi(p.n - 1) },
+      {
+        id: "whole-distance",
+        kind: "procedural",
+        wrong: (p) => qi(p.n * p.step),
+      },
+      {
+        id: "forgot-first-mark",
+        kind: "procedural",
+        wrong: (p) => qi((p.a + p.n * p.step) / p.step),
+      },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -316,6 +437,13 @@ const scaleSpecs = [
     reference: (p) => qi(p.c * 10 + p.m),
     traps: [
       { id: "added-units", kind: "procedural", wrong: (p) => qi(p.c + p.m) },
+      {
+        id: "factor-hundred",
+        kind: "conceptual",
+        wrong: (p) => qi(100 * p.c + p.m),
+      },
+      { id: "mm-dropped", kind: "procedural", wrong: (p) => qi(10 * p.c) },
+      { id: "multiplied", kind: "procedural", wrong: (p) => qi(p.c * p.m) },
     ],
     vars: (p) => ({
       c: s(p.c),
@@ -349,6 +477,13 @@ const scaleSpecs = [
         kind: "conceptual",
         wrong: (p) => qi(p.base + p.k),
       },
+      { id: "forgot-base", kind: "procedural", wrong: (p) => qi(p.step * p.k) },
+      { id: "one-step", kind: "conceptual", wrong: (p) => qi(p.base + p.step) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.base + p.step * (p.k - 1)),
+      },
     ],
     vars: (p) => ({
       base: s(p.base),
@@ -371,6 +506,12 @@ const scaleSpecs = [
     traps: [
       { id: "next-label", kind: "conceptual", wrong: (p) => qi(p.lo + 100) },
       { id: "lower-label", kind: "conceptual", wrong: (p) => qi(p.lo) },
+      { id: "half-the-gap", kind: "conceptual", wrong: () => qi(50) },
+      {
+        id: "half-of-upper",
+        kind: "conceptual",
+        wrong: (p) => qi((p.lo + 100) / 2),
+      },
     ],
     vars: (p) => ({ lo: s(p.lo), hi: s(p.lo + 100), r: s(p.lo + 50) }),
     constants: [50, 100],
@@ -391,6 +532,12 @@ const scaleSpecs = [
         id: "step-plus-count",
         kind: "procedural",
         wrong: (p) => qi(p.step + p.k),
+      },
+      { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.step * (p.k - 1)),
       },
     ],
     vars: (p) => ({
@@ -418,7 +565,16 @@ const scaleSpecs = [
     },
     solve: (p) => qi(p.g / p.p),
     reference: (p) => qi((p.a + p.g - p.a) / p.p),
-    traps: [{ id: "whole-gap", kind: "conceptual", wrong: (p) => qi(p.g) }],
+    traps: [
+      { id: "whole-gap", kind: "conceptual", wrong: (p) => qi(p.g) },
+      { id: "multiplied", kind: "procedural", wrong: (p) => qi(p.g * p.p) },
+      { id: "division-count", kind: "conceptual", wrong: (p) => qi(p.p) },
+      {
+        id: "marks-counted",
+        kind: "conceptual",
+        wrong: (p) => (p.g % (p.p + 1) === 0 ? qi(p.g / (p.p + 1)) : null),
+      },
+    ],
     vars: (p) => ({
       a: s(p.a),
       b: s(p.a + p.g),
@@ -448,6 +604,21 @@ const scaleSpecs = [
     reference: (p) => qi(p.a + (p.g * p.k) / p.p),
     traps: [
       { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.a + p.k) },
+      {
+        id: "forgot-base",
+        kind: "procedural",
+        wrong: (p) => qi((p.g / p.p) * p.k),
+      },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.a + (p.g / p.p) * (p.k - 1)),
+      },
+      {
+        id: "one-part",
+        kind: "conceptual",
+        wrong: (p) => qi(p.a + p.g / p.p),
+      },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -475,6 +646,21 @@ const scaleSpecs = [
         kind: "conceptual",
         wrong: (p) => qi(p.w + p.k),
       },
+      {
+        id: "forgot-comma",
+        kind: "conceptual",
+        wrong: (p) => qi(10 * p.w + p.k),
+      },
+      {
+        id: "tenths-as-hundredths",
+        kind: "conceptual",
+        wrong: (p) => Q.of(BigInt(100 * p.w + p.k), 100n),
+      },
+      {
+        id: "reversed",
+        kind: "conceptual",
+        wrong: (p) => Q.of(BigInt(10 * p.k + p.w), 10n),
+      },
     ],
     vars: (p) => ({
       w: s(p.w),
@@ -501,6 +687,12 @@ const scaleSpecs = [
         kind: "conceptual",
         wrong: (p) => qi(p.b + p.k),
       },
+      { id: "forgot-start", kind: "procedural", wrong: (p) => qi(2 * p.k) },
+      {
+        id: "zero-counted",
+        kind: "conceptual",
+        wrong: (p) => qi(p.b + 2 * (p.k - 1)),
+      },
     ],
     vars: (p) => ({
       b: s(p.b),
@@ -521,7 +713,24 @@ const scaleSpecs = [
     solve: (p) => qi(p.u * p.k),
     reference: (p) =>
       qi(Array.from({ length: p.k }, () => p.u).reduce((a, b) => a + b, 0)),
-    traps: [{ id: "cells-only", kind: "conceptual", wrong: (p) => qi(p.k) }],
+    traps: [
+      { id: "cells-only", kind: "conceptual", wrong: (p) => qi(p.k) },
+      {
+        id: "unit-plus-cells",
+        kind: "procedural",
+        wrong: (p) => qi(p.u + p.k),
+      },
+      {
+        id: "extra-cell",
+        kind: "conceptual",
+        wrong: (p) => qi(p.u * (p.k + 1)),
+      },
+      {
+        id: "missing-cell",
+        kind: "conceptual",
+        wrong: (p) => qi(p.u * (p.k - 1)),
+      },
+    ],
     vars: (p) => ({ u: s(p.u), k: s(p.k), r: s(p.u * p.k) }),
   }),
   defineSpec<{ a: number; b: number }>({
@@ -537,7 +746,11 @@ const scaleSpecs = [
     },
     solve: (p) => qi(p.b - p.a),
     reference: (p) => qi(p.b + -p.a),
-    traps: [{ id: "sum", kind: "procedural", wrong: (p) => qi(p.a + p.b) }],
+    traps: [
+      { id: "sum", kind: "procedural", wrong: (p) => qi(p.a + p.b) },
+      { id: "later-reading", kind: "conceptual", wrong: (p) => qi(p.b) },
+      { id: "first-reading", kind: "conceptual", wrong: (p) => qi(p.a) },
+    ],
     vars: (p) => ({ a: s(p.a), b: s(p.b), r: s(p.b - p.a), sum: s(p.a + p.b) }),
   }),
   defineSpec<{ m: number; c: number }>({
@@ -552,7 +765,16 @@ const scaleSpecs = [
     solve: (p) => qi(p.m * p.c),
     reference: (p) =>
       qi(Array.from({ length: p.c }, () => p.m).reduce((a, b) => a + b, 0)),
-    traps: [{ id: "added", kind: "procedural", wrong: (p) => qi(p.m + p.c) }],
+    traps: [
+      { id: "added", kind: "procedural", wrong: (p) => qi(p.m + p.c) },
+      { id: "length-only", kind: "conceptual", wrong: (p) => qi(p.c) },
+      { id: "scale-only", kind: "conceptual", wrong: (p) => qi(p.m) },
+      {
+        id: "divided",
+        kind: "procedural",
+        wrong: (p) => (p.m % p.c === 0 ? qi(p.m / p.c) : null),
+      },
+    ],
     vars: (p) => ({
       m: s(p.m),
       c: s(p.c),

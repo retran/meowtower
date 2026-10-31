@@ -190,6 +190,10 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     t: {
       "first-kind": (a, b) => q(a * b),
       "all-times": (a, b, c, d) => q(a * b * c * d),
+      "add-all": (a, b, c, d) =>
+        a + b + c + d === a * b || a + b + c + d === a * b * c * d
+          ? null
+          : q(a + b + c + d),
     },
     roles: {
       a: "first groups",
@@ -206,7 +210,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     p: [rg(40, 90), rg(2, 6), rg(3, 8)],
     ok: (a, b, c) => a - b * c > 0 && b !== c,
     f: (a, b, c) => q(a - b * c),
-    t: { taken: (a, b, c) => q(b * c), "one-group": (a, b, c) => q(a - c) },
+    t: {
+      taken: (a, b, c) => q(b * c),
+      "one-group": (a, b, c) => q(a - c),
+      "add-all": (a, b, c) => q(a + b + c),
+    },
     roles: { a: "total", b: "groups taken", c: "in each group" },
   }),
   T2_two_step({
@@ -216,7 +224,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(10, 40), rg(3, 20)],
     f: (a, b) => q(2 * a + b),
-    t: { "second-only": (a, b) => q(a + b), "twice-first": (a) => q(2 * a) },
+    t: {
+      "second-only": (a, b) => q(a + b),
+      "twice-first": (a) => q(2 * a),
+      "extra-only": (a, b) => (b === 2 * a ? null : q(b)),
+    },
     roles: { a: "first", b: "extra of the second" },
   }),
   T2_two_step({
@@ -227,7 +239,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     p: [rg(3, 12), rg(2, 6)],
     ok: (a, b) => a * (b - 1) !== a,
     f: (a, b) => q(a * (b - 1)),
-    t: { second: (a, b) => q(a * b), first: (a) => q(a) },
+    t: {
+      second: (a, b) => q(a * b),
+      first: (a) => q(a),
+      added: (a, b) => q(a + b),
+    },
     roles: { a: "first", b: "factor" },
   }),
   T2_two_step({
@@ -238,7 +254,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     p: [rg(40, 90), rg(2, 6), rg(3, 9)],
     ok: (a, b, c) => a - b * c > 0 && b !== c,
     f: (a, b, c) => q(a - b * c),
-    t: { cost: (a, b, c) => q(b * c), "one-item": (a, b, c) => q(a - c) },
+    t: {
+      cost: (a, b, c) => q(b * c),
+      "one-item": (a, b, c) => q(a - c),
+      "add-all": (a, b, c) => q(a + b + c),
+    },
     roles: { a: "paid", b: "count", c: "price" },
   }),
   T2_two_step({
@@ -249,7 +269,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(3, 9), rg(2, 15)],
     ok: (a, b) => a !== b,
     f: (a, b, c) => q(b + c),
-    t: { share: (a, b) => q(b), "total-plus": (a, b, c) => q(a * b + c) },
+    t: {
+      share: (a, b) => q(b),
+      "total-plus": (a, b, c) => q(a * b + c),
+      "all-numbers": (a, b, c) => q(a * b + a + c),
+    },
     x: (a, b) => ({ x: String(a * b) }),
     roles: { a: "parts", b: "in each part", c: "added" },
   }),
@@ -261,7 +285,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     p: [rg(10, 30), rg(10, 30), rg(2, 6)],
     ok: (a, b, c) => (a + b) % c === 0 && (a + b) % 2 === 0 && c !== 2,
     f: (a, b, c) => q((a + b) / c),
-    t: { total: (a, b) => q(a + b), halved: (a, b) => q((a + b) / 2) },
+    t: {
+      total: (a, b) => q(a + b),
+      halved: (a, b) => q((a + b) / 2),
+      "add-all": (a, b, c) => q(a + b + c),
+    },
     c: [2],
     roles: { a: "start", b: "added", c: "parts" },
   }),
@@ -276,6 +304,8 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     t: {
       remainder: (a, b) => q(a - b),
       "multiply-first": (a, b, c) => q(a * c - b),
+      "add-all": (a, b, c) => q(a + b + c),
+      "plus-instead": (a, b, c) => q((a + b) * c),
     },
     roles: { a: "start", b: "removed", c: "times" },
   }),
@@ -287,7 +317,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     p: [rg(40, 90), rg(10, 25), rg(10, 25)],
     ok: (a, b, c) => a - b - c > 0 && b !== c,
     f: (a, b, c) => q(a - b - c),
-    t: { "one-removed": (a, b) => q(a - b), known: (a, b, c) => q(b + c) },
+    t: {
+      "one-removed": (a, b) => q(a - b),
+      known: (a, b, c) => q(b + c),
+      "add-all": (a, b, c) => q(a + b + c),
+    },
     roles: { a: "whole", b: "first part", c: "second part" },
   }),
   T2_two_step({
@@ -301,6 +335,7 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     t: {
       remainder: (a, b) => q(a - b),
       "group-size": (a, b, c) => q((a - b) / c),
+      "add-all": (a, b, c) => q(a + b + c),
     },
     x: (a, b, c) => ({ x: String((a - b) / c) }),
     roles: { a: "start", b: "removed", c: "group size" },
@@ -313,7 +348,11 @@ const T2_two_step_specs: readonly Spec<never>[] = [
     p: [of(20, 30, 40, 50, 60), rg(3, 15)],
     ok: (a, b) => a / 2 !== b,
     f: (a, b) => q(a / 2 + b),
-    t: { second: (a) => q(a / 2), "first-plus": (a, b) => q(a + b) },
+    t: {
+      second: (a) => q(a / 2),
+      "first-plus": (a, b) => q(a + b),
+      doubled: (a, b) => q(2 * a + b),
+    },
     c: [2],
     roles: { a: "first", b: "extra of the third" },
   }),
