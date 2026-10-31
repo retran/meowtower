@@ -33,8 +33,30 @@ import { n5Specs } from "./n5.js";
 import { n6Specs } from "./n6.js";
 import { n7Specs } from "./n7.js";
 import { n8Specs } from "./n8.js";
+import { PICTURES_A } from "./pictures-a.js";
+import { PICTURES_D } from "./pictures-d.js";
+import { PICTURES_F } from "./pictures-f.js";
+import { PICTURES_G } from "./pictures-g.js";
+import { PICTURES_M } from "./pictures-m.js";
+import { PICTURES_N } from "./pictures-n.js";
+import { PICTURES_P } from "./pictures-p.js";
+import { PICTURES_S } from "./pictures-s.js";
+import { PICTURES_T } from "./pictures-t.js";
 import { PICTURES } from "./pictures.js";
 import { compile, type Compiled, type Spec, taskStrings } from "./spec.js";
+
+const ALL_PICTURES = {
+  ...PICTURES,
+  ...PICTURES_A,
+  ...PICTURES_D,
+  ...PICTURES_F,
+  ...PICTURES_G,
+  ...PICTURES_M,
+  ...PICTURES_N,
+  ...PICTURES_P,
+  ...PICTURES_S,
+  ...PICTURES_T,
+};
 
 const compileAll = (
   domain: string,
@@ -42,7 +64,7 @@ const compileAll = (
 ): Compiled[] => {
   const strings = taskStrings(domain);
   return specs.map((spec) => {
-    const picture = PICTURES[spec.id];
+    const picture = ALL_PICTURES[spec.id as keyof typeof ALL_PICTURES];
     return compile(
       picture ? ({ ...spec, picture } as unknown as Spec<never>) : spec,
       strings,

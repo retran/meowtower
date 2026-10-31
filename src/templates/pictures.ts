@@ -56,7 +56,7 @@ import {
   triangle,
 } from "./svg.js";
 
-type Draw = (v: number[], labels: PictureLabels) => string;
+export type Draw = (v: number[], labels: PictureLabels) => string;
 const n = (v: number[], i: number): number => v[i] ?? 0;
 const box4 = (
   x: number,
