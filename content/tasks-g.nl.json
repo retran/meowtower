@@ -1,0 +1,2691 @@
+{
+  "G1.shapes.01": {
+    "text": "{a|veelhoek|veelhoeken|veelhoeken} liggen los van elkaar en elke veelhoek heeft {b|zijde|zijden|zijden}. Hoeveel zijden hebben ze samen?",
+    "solution": [
+      "De veelhoeken liggen los van elkaar, dus elke veelhoek houdt al zijn eigen zijden.",
+      "Elke veelhoek heeft {b|zijde|zijden|zijden} en er zijn er {a}: {a} × {b} = {=a*b}.",
+      "Samen hebben ze dus {r|zijde|zijden|zijden}."
+    ],
+    "hints": [
+      "De veelhoeken liggen los van elkaar, dus geen enkele zijde hoort bij twee veelhoeken.",
+      "Eén veelhoek heeft {b|zijde|zijden|zijden}. Neem {b} voor elke veelhoek, dus {a} keer.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "figures-added": "{w_figures_added} krijg je door {a} en {b} op te tellen: het aantal veelhoeken plus het aantal zijden van één veelhoek. Neem {b|zijde|zijden|zijden} voor elke veelhoek: {a} × {b} = {r}.",
+      "one-polygon": "{w_one_polygon} is het aantal zijden van maar één veelhoek, terwijl er {a} zijn: {a} × {b} = {r}."
+    }
+  },
+  "G1.shapes.02": {
+    "text": "Op tafel liggen {a|vierkant|vierkanten|vierkanten} en {b|cirkel|cirkels|cirkels}. Hoeveel hoeken hebben al deze vormen samen?",
+    "solution": [
+      "Een vierkant heeft 4 hoeken en een cirkel heeft er geen, dus de cirkels tellen niet mee.",
+      "Alleen de vierkanten hebben hoeken: 4 × {a} = {=4*a}.",
+      "Alle vormen samen hebben dus {r|hoek|hoeken|hoeken}."
+    ],
+    "hints": [
+      "Kijk bij elke soort vorm: zijn er plaatsen waar twee zijden samenkomen?",
+      "Tel 4 hoeken voor elk van de {a|vierkant|vierkanten|vierkanten} en laat de cirkels weg.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "circles-counted": "{w_circles_counted} telt ook hoeken voor de {b|cirkel|cirkels|cirkels}, maar een cirkel heeft geen zijden en dus ook geen hoeken. Alleen de vierkanten tellen: 4 × {a} = {r}.",
+      "figures-added": "{w_figures_added} is {a} + {b}, het aantal vormen, maar elk vierkant heeft 4 hoeken: 4 × {a} = {r}.",
+      "all-as-squares": "{w_all_as_squares} behandelt elke vorm als een vierkant met 4 hoeken. Een cirkel heeft geen hoeken, dus alleen de vierkanten tellen: 4 × {a} = {r}."
+    }
+  },
+  "G1.shapes.03": {
+    "text": "Uit papier zijn {a|driehoek|driehoeken|driehoeken} en {b|vierhoek|vierhoeken|vierhoeken} geknipt. Hoeveel zijden hebben de geknipte vormen samen?",
+    "solution": [
+      "Een driehoek heeft 3 zijden en een vierhoek heeft er 4.",
+      "De driehoeken hebben 3 × {a} = {=3*a} zijden en de vierhoeken hebben 4 × {b} = {=4*b} zijden.",
+      "Tel de zijden van alle vormen op: {=3*a} + {=4*b} = {=3*a+4*b}.",
+      "De vormen hebben dus samen {r|zijde|zijden|zijden}."
+    ],
+    "hints": [
+      "Een driehoek en een vierhoek hebben niet evenveel zijden, dus tel in twee groepen.",
+      "Elk van de {a|driehoek|driehoeken|driehoeken} heeft 3 zijden en elk van de {b|vierhoek|vierhoeken|vierhoeken} heeft er 4. Reken beide totalen uit en tel ze op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "figures-counted": "{w_figures_counted} is {a} + {b}, het aantal vormen, maar de vraag gaat over zijden: een driehoek heeft er 3 en een vierhoek 4. {=3*a} + {=4*b} = {r}.",
+      "all-as-triangles": "{w_all_as_triangles} geeft elke vorm 3 zijden, maar een vierhoek heeft er 4: {=3*a} + {=4*b} = {r}."
+    }
+  },
+  "G1.shapes.04": {
+    "text": "Twee vierkanten met zijden van {a} cm liggen met een hele zijde tegen elkaar. Zo ontstaat een rechthoek. Hoe lang is de lange zijde in centimeters?",
+    "solution": [
+      "De vierkanten liggen met hele zijden tegen elkaar, dus de lange zijde van de rechthoek loopt langs een zijde van elk vierkant.",
+      "Ze bestaat uit de zijden van beide vierkanten: {a} + {a} = {=2*a}.",
+      "De lange zijde is dus {r} cm."
+    ],
+    "hints": [
+      "Teken de twee vierkanten naast elkaar. De lange zijde van de rechthoek loopt langs allebei.",
+      "Langs de lange zijde liggen twee vierkantszijden van {a} cm. Zet ze achter elkaar.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-side": "{w_one_side} is de zijde van één vierkant, maar de lange zijde bestaat uit twee van die zijden: {a} + {a} = {r}.",
+      "area": "{w_area} is de oppervlakte van de twee vierkanten, maar de vraag gaat over een lengte. De lange zijde is {a} + {a} = {r}.",
+      "perimeter": "{w_perimeter} is de omtrek: de afstand helemaal rond de rechthoek. De vraag gaat alleen over de lange zijde: {a} + {a} = {r}."
+    }
+  },
+  "G1.shapes.05": {
+    "text": "Een vierkant met zijden van {a} cm is in vier gelijke vierkanten verdeeld. Hoe lang is de zijde van één klein vierkant in centimeters?",
+    "solution": [
+      "Het grote vierkant is in vier gelijke vierkanten verdeeld, twee in elke rij.",
+      "Een zijde van het grote vierkant bestaat dus uit twee zijden van kleine vierkanten.",
+      "Eén zijde van een klein vierkant is {a} : 2 = {=a/2}.",
+      "De zijde van een klein vierkant is dus {r} cm."
+    ],
+    "hints": [
+      "Stel je het grote vierkant voor, verdeeld in vier gelijke vierkanten. Hoeveel kleine vierkanten liggen langs één zijde?",
+      "Twee zijden van kleine vierkanten zijn samen {a} cm. Verdeel {a} over die 2 vierkanten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "quarter": "{w_quarter} komt uit {a} : 4. Maar 4 is het aantal van alle kleine vierkanten en er liggen er maar 2 langs één zijde: {a} : 2 = {r}.",
+      "whole-side": "{w_whole_side} is de zijde van het grote vierkant. Die bestaat uit twee zijden van kleine vierkanten: {a} : 2 = {r}."
+    }
+  },
+  "G1.shapes.06": {
+    "text": "Er zijn {c|gelijke rechthoek|gelijke rechthoeken|gelijke rechthoeken} getekend met zijden van {a} cm en {b} cm. Hoeveel zijden van {a} cm zijn er samen?",
+    "solution": [
+      "Een rechthoek heeft twee even lange overstaande zijden, dus hij heeft twee zijden van {a} cm.",
+      "Er zijn {c} rechthoeken en elke rechthoek heeft twee van zulke zijden: {c} × 2 = {=2*c}.",
+      "Er zijn dus {r} zijden van {a} cm."
+    ],
+    "hints": [
+      "In een rechthoek zijn de zijden die tegenover elkaar liggen even lang. Welke zijden van één rechthoek zijn {a} cm?",
+      "Eén rechthoek heeft 2 zijden van {a} cm en er zijn {c} rechthoeken. Combineer dat.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-sides": "{w_all_sides} telt alle 4 zijden van elke rechthoek mee. Alleen 2 zijden zijn {a} cm, de andere 2 zijn {b} cm: {c} × 2 = {r}.",
+      "one-side": "{w_one_side} vergeet de zijde tegenover, die ook {a} cm lang is. Elke rechthoek heeft er 2: {c} × 2 = {r}."
+    }
+  },
+  "G1.shapes.07": {
+    "text": "Vanuit één hoekpunt van een bolle veelhoek met {a} zijden zijn alle diagonalen getekend. In hoeveel driehoeken verdelen ze de veelhoek?",
+    "solution": [
+      "Vanuit één hoekpunt kun je geen diagonaal trekken naar het hoekpunt zelf en naar de twee buurpunten.",
+      "Er blijven {a} − 3 = {=a-3} hoekpunten over, dus er zijn {=a-3} diagonalen.",
+      "Er is één driehoek meer dan er diagonalen zijn: {=a-3} + {=1} = {=a-3+1}.",
+      "De veelhoek is dus verdeeld in {r|driehoek|driehoeken|driehoeken}."
+    ],
+    "hints": [
+      "Teken de veelhoek en kies één hoekpunt. De diagonalen vanuit dat punt verdelen de veelhoek in driehoeken.",
+      "Vanuit dat punt zijn er {a} − 3 diagonalen, want het punt zelf en de twee buurpunten tellen niet mee. Er is één driehoek meer dan er diagonalen zijn.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sides": "{w_sides} is het aantal zijden. De twee zijden die in het gekozen hoekpunt samenkomen, maken geen driehoek, dus het zijn er 2 minder: {a} − 2 = {r}.",
+      "one-less": "{w_one_less} haalt er maar één af. Het moeten er 2 minder zijn dan het aantal zijden: {a} − 2 = {r}.",
+      "diagonals": "{w_diagonals} is het aantal diagonalen vanuit het hoekpunt, {a} − 3. Er is één driehoek meer dan er diagonalen zijn: {w_diagonals} + {=1} = {r}."
+    }
+  },
+  "G1.shapes.08": {
+    "text": "Een vierkant is verdeeld in {a} × {a} gelijke hokjes. Hoeveel vierkanten van elke grootte kun je daarin vinden, het grote vierkant meegeteld?",
+    "solution": [
+      "Tel de vierkanten per grootte: met een zijde van {=1} hokje, van {=2} hokjes, enzovoort tot het hele vierkant.",
+      "Met een zijde van {=1} hokje zijn er {a} × {a} = {=a*a} vierkanten. Hoe groter de zijde, hoe minder vierkanten: met een zijde van {=2} hokjes zijn het er ({a} − 1) × ({a} − 1) = {=(a-1)*(a-1)}.",
+      "Het grootste vierkant is er maar één. Tel alles op: {sizes} = {r}.",
+      "Er zijn dus {r} vierkanten."
+    ],
+    "hints": [
+      "Vierkanten hebben verschillende groottes: eerst die met een zijde van {=1} hokje, dan van {=2} hokjes, enzovoort.",
+      "Met een zijde van {=1} hokje zijn er {a} × {a} = {=a*a}, met een zijde van {=2} hokjes zijn er ({a} − 1) × ({a} − 1) = {=(a-1)*(a-1)}. Ga zo door tot het grootste vierkant en tel alles op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "unit-squares-only": "{w_unit_squares_only} telt alleen de vierkanten van {=1} hokje. Er zijn ook grotere vierkanten: {sizes} = {r}.",
+      "without-the-big-one": "{w_without_the_big_one} laat het grote vierkant zelf weg. Dat telt ook mee: {sizes} = {r}.",
+      "two-sizes-only": "{w_two_sizes_only} telt vierkanten van maar twee groottes, {=1} hokje en {=2} hokjes. De grotere tellen ook mee: {sizes} = {r}.",
+      "cells-and-the-whole": "{w_cells_and_the_whole} is {=a*a} hokjes plus het ene grote vierkant. De vierkanten van de groottes ertussen ontbreken: {sizes} = {r}."
+    }
+  },
+  "G1.shapes.09": {
+    "text": "Een veelhoek heeft {a|zijde|zijden|zijden}. Eén hoek wordt afgesneden met een rechte lijn die niet door een hoekpunt gaat. Hoeveel zijden heeft de nieuwe vorm?",
+    "solution": [
+      "De lijn snijdt twee zijden die naast elkaar liggen en snijdt de hoek ertussen af.",
+      "Beide zijden worden korter, maar blijven bestaan, en langs de snede komt er één nieuwe zijde bij.",
+      "Er waren {a|zijde|zijden|zijden} en er komt er één bij: {a} + 1 = {=a+1}.",
+      "De nieuwe vorm heeft dus {r|zijde|zijden|zijden}."
+    ],
+    "hints": [
+      "Stel je voor dat je met een schaar de hoek van een papieren veelhoek afknipt. Wat gebeurt er met de twee zijden bij die hoek?",
+      "Beide zijden blijven bestaan, alleen korter, en de snede zelf is een nieuwe zijde. Tel die erbij op bij de {a|zijde|zijden|zijden}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same": "{w_same} vergeet de nieuwe zijde. De snede zelf is er ook een: {a} + 1 = {r}.",
+      "one-less": "{w_one_less} haalt er één af, alsof de hoek een zijde meeneemt. Beide zijden bij de hoek blijven en de snede voegt er één toe: {a} + 1 = {r}.",
+      "two-new": "{w_two_new} telt twee nieuwe zijden. De snede is maar één nieuwe zijde en de twee oude zijden worden alleen korter: {a} + 1 = {r}."
+    }
+  },
+  "G1.shapes.10": {
+    "text": "Hoe heet de vorm met vier even lange zijden en vier rechte hoeken? 1) vierkant; 2) driehoek; 3) cirkel; 4) vijfhoek. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Een driehoek heeft drie zijden, een cirkel heeft geen zijden en een vijfhoek heeft vijf zijden.",
+      "Alleen het vierkant heeft vier even lange zijden en vier rechte hoeken.",
+      "Het antwoord is dus keuze {r}, het vierkant."
+    ],
+    "hints": [
+      "De vorm moet allebei hebben: vier even lange zijden en vier rechte hoeken. Kijk hoeveel zijden elke keuze heeft.",
+      "Ga de keuzes één voor één langs: hoeveel zijden heeft een driehoek? Een cirkel? Een vijfhoek? Past er een bij?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "triangle": "Keuze {w_triangle} is een driehoek. Die heeft drie zijden en geen vier.",
+      "circle": "Keuze {w_circle} is een cirkel. Die heeft geen zijden en geen hoeken.",
+      "pentagon": "Keuze {w_pentagon} is een vijfhoek. Die heeft vijf zijden en geen vier."
+    }
+  },
+  "G1.shapes.11": {
+    "text": "Welke van deze vormen heeft geen hoeken? 1) vierkant; 2) cirkel; 3) driehoek; 4) rechthoek. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Een hoek ontstaat waar twee zijden samenkomen.",
+      "Een vierkant, een driehoek en een rechthoek hebben zijden die in hoeken samenkomen.",
+      "Een cirkel heeft geen zijden en dus ook geen hoeken.",
+      "Het antwoord is dus keuze {r}, de cirkel."
+    ],
+    "hints": [
+      "Bedenk waar een vorm hoeken heeft: waar zijn zijden samenkomen.",
+      "Bekijk de keuzes om de beurt. Bij welke vorm komen nergens zijden samen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "square": "Keuze {w_square} is een vierkant. Dat heeft vier hoeken.",
+      "triangle": "Keuze {w_triangle} is een driehoek. Die heeft drie hoeken.",
+      "rectangle": "Keuze {w_rectangle} is een rechthoek. Die heeft vier hoeken."
+    }
+  },
+  "G1.shapes.12": {
+    "text": "Welke van deze vormen zijn vierhoeken? 1) vierkant; 2) driehoek; 3) rechthoek; 4) cirkel. Antwoord met de nummers van alle keuzes die passen, gescheiden door komma's.",
+    "solution": [
+      "Een vierhoek is een vorm met vier zijden.",
+      "Een vierkant en een rechthoek hebben allebei vier zijden, een driehoek heeft er drie en een cirkel heeft er geen.",
+      "Het antwoord is dus keuze {r}: het vierkant en de rechthoek."
+    ],
+    "hints": [
+      "Een vierhoek is een vorm met vier zijden. Bekijk elke keuze.",
+      "Tel de zijden van het vierkant, de driehoek, de rechthoek en de cirkel. Kies alle vormen met vier zijden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-the-square": "{w_only_the_square} is niet compleet: een rechthoek is ook een vierhoek, want die heeft vier zijden.",
+      "with-the-triangle": "{w_with_the_triangle} heeft een keuze te veel: een driehoek heeft drie zijden en geen vier."
+    }
+  },
+  "G2.angles.01": {
+    "text": "Twee hoeken van een driehoek zijn {a|graad|graden|graden} en {b|graad|graden|graden}. Hoe groot is de derde hoek in graden?",
+    "solution": [
+      "De drie hoeken van een driehoek zijn samen 180 graden.",
+      "De twee bekende hoeken zijn samen {a} + {b} = {=a+b}.",
+      "De derde hoek is wat er tot 180 ontbreekt: 180 − {=a+b} = {=180-a-b}.",
+      "De derde hoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "De drie hoeken van een driehoek zijn samen 180 graden.",
+      "Tel de twee bekende hoeken op, {a} en {b}, en kijk hoeveel er tot 180 ontbreekt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum-of-two": "{w_sum_of_two} is de som van de twee bekende hoeken, {a} + {b}. De derde hoek is wat er tot 180 ontbreekt: 180 − {w_sum_of_two} = {r}.",
+      "from-360": "{w_from_360} komt doordat je de som van 360 hebt afgehaald, maar de hoeken van een driehoek zijn samen 180: 180 − {=a+b} = {r}.",
+      "one-angle": "{w_one_angle} haalt maar één hoek van 180 af. Je moet beide bekende hoeken eraf halen: 180 − {a} − {b} = {r}."
+    }
+  },
+  "G2.angles.02": {
+    "text": "Twee hoeken liggen naast elkaar op een rechte lijn. Een van de hoeken is {a|graad|graden|graden}. Hoe groot is de andere hoek in graden?",
+    "solution": [
+      "Twee hoeken naast elkaar op een rechte lijn vormen samen een gestrekte hoek van 180 graden.",
+      "Eén hoek is bekend, de andere is wat er overblijft: 180 − {a} = {=180-a}.",
+      "De andere hoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Twee hoeken naast elkaar op een rechte lijn zijn samen een gestrekte hoek van 180 graden.",
+      "Haal de bekende hoek, {a}, van 180 af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same-angle": "{w_same_angle} is de hoek die we al kennen. De andere hoek is wat er van 180 overblijft: 180 − {a} = {r}.",
+      "from-90": "{w_from_90} komt doordat je {a} van {=90} hebt afgehaald, zoals bij een rechte hoek. Twee hoeken op een rechte lijn zijn samen {=180}: {=180} − {a} = {r}.",
+      "from-360": "{w_from_360} komt doordat je {a} van {=360} hebt afgehaald, een hele draai. Twee hoeken op een rechte lijn zijn samen {=180}: {=180} − {a} = {r}."
+    }
+  },
+  "G2.angles.03": {
+    "text": "Een rechte hoek wordt in twee delen verdeeld. Het ene deel is {a|graad|graden|graden}. Hoe groot is het andere deel in graden?",
+    "solution": [
+      "De twee delen samen zijn de hele rechte hoek, 90 graden.",
+      "Het ene deel is {a} graden, dus het andere is wat er overblijft: 90 − {a} = {=90-a}.",
+      "Het andere deel is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "De twee delen samen vormen een rechte hoek. Bedenk hoeveel graden dat is.",
+      "Haal het bekende deel, {a}, van 90 af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "from-180": "{w_from_180} komt uit 180, maar een rechte hoek is 90 graden: 90 − {a} = {r}.",
+      "sum": "{w_sum} is {a} + 90. Wat er van een rechte hoek overblijft, vind je door af te trekken: 90 − {a} = {r}."
+    }
+  },
+  "G2.angles.04": {
+    "text": "In een gelijkbenige driehoek is de hoek tussen de twee even lange zijden {a|graad|graden|graden}. Hoe groot is een basishoek in graden?",
+    "solution": [
+      "De drie hoeken van een driehoek zijn samen 180 graden en een daarvan is {a|graad|graden|graden}.",
+      "Voor de twee basishoeken blijft 180 − {a} = {=180-a} over.",
+      "De twee basishoeken zijn even groot, dus we delen door 2: {=180-a} : 2 = {=(180-a)/2}.",
+      "Een basishoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "De hoeken van een driehoek zijn samen 180 graden en één hoek, {a}, is bekend.",
+      "Haal {a} van 180 af. Wat overblijft, wordt verdeeld over de twee basishoeken, die even groot zijn.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "not-halved": "{w_not_halved} is 180 − {a}: de twee basishoeken samen. Er zijn twee even grote hoeken, dus deel door 2: {w_not_halved} : 2 = {r}.",
+      "half-of-the-top": "{w_half_of_the_top} is de helft van de tophoek. Je moet halveren wat van 180 overblijft: (180 − {a}) : 2 = {r}.",
+      "equal-to-the-top": "{w_equal_to_the_top} is de tophoek zelf. De twee basishoeken zijn even groot als elkaar, niet als de tophoek: (180 − {a}) : 2 = {r}."
+    }
+  },
+  "G2.angles.05": {
+    "text": "De klok wijst precies {a} uur aan. Hoe groot is de kleinste hoek tussen de kleine wijzer en de grote wijzer in graden?",
+    "solution": [
+      "De hele wijzerplaat is 360 graden en heeft 12 uren, dus één uur is 360 : 12 = {=360/12} graden.",
+      "De grote wijzer wijst naar de 12. Via de korte weg liggen er {=min(a,12-a)|uur|uur|uur} tussen de wijzers.",
+      "De kleinste hoek is {=min(a,12-a)} × 30 = {r}.",
+      "De kleinste hoek tussen de wijzers is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "De grote wijzer wijst naar de 12. Tel de uren tussen de wijzers via de korte weg.",
+      "Tussen de 12 en de {a} liggen via de korte weg {=min(a,12-a)|uur|uur|uur}, en elk uur is 30 graden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "five-per-hour": "{w_five_per_hour} komt uit {a} × 5, zoals bij de minuutstreepjes. Tussen twee uren is het 30 graden: {=min(a,12-a)} × 30 = {r}.",
+      "other-way": "{w_other_way} is de grootste hoek, de lange weg om. De vraag is naar de kleinste: {=min(a,12-a)} × 30 = {r}."
+    }
+  },
+  "G2.angles.06": {
+    "text": "Hoeveel graden draait de grote wijzer in {a|minuut|minuten|minuten}?",
+    "solution": [
+      "In 60 minuten maakt de grote wijzer een hele draai van 360 graden.",
+      "In één minuut draait hij 360 : 60 = {=360/60} graden.",
+      "In {a|minuut|minuten|minuten} draait hij {a} × 6 = {=6*a}.",
+      "De grote wijzer draait dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "In 60 minuten maakt de grote wijzer één hele draai.",
+      "Reken uit hoeveel graden hij in één minuut draait: 360 : 60. Vermenigvuldig dat met {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-per-minute": "{w_one_per_minute} rekent één graad per minuut, maar in één minuut draait de wijzer 360 : 60 = 6 graden: 6 × {a} = {r}.",
+      "hour-hand": "{w_hour_hand} is de helft van het aantal minuten. Zo beweegt de kleine wijzer, niet de grote. De grote wijzer draait 6 × {a} = {r}.",
+      "hour-step": "{w_hour_step} rekent 30 graden per minuut. Maar 30 graden zijn 5 minuten op de wijzerplaat en één minuut is 6 graden: 6 × {a} = {r}."
+    }
+  },
+  "G2.angles.07": {
+    "text": "Hoe groot is elke hoek van een regelmatige veelhoek met {a} zijden, in graden?",
+    "solution": [
+      "Diagonalen vanuit één hoekpunt verdelen de veelhoek in {a} − 2 = {=a-2} driehoeken.",
+      "Elke driehoek heeft 180 graden, dus alle hoeken samen zijn 180 × {=a-2} = {=180*(a-2)}.",
+      "In een regelmatige veelhoek zijn alle {a} hoeken even groot, dus we delen door {a}: {=180*(a-2)} : {a} = {=180*(a-2)/a}.",
+      "Elke hoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Zoek eerst de som van alle hoeken van de veelhoek. In hoeveel driehoeken verdelen de diagonalen vanuit één hoekpunt hem?",
+      "De som van de hoeken is 180 × ({a} − 2). Alle {a} hoeken zijn even groot, dus deel deze som door {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum-of-angles": "{w_sum_of_angles} is de som van alle {a} hoeken samen, maar de vraag gaat over één hoek: {w_sum_of_angles} : {a} = {r}.",
+      "central-angle": "{w_central_angle} is 360 : {a}, de hoek tussen twee lijnen vanuit het midden naar buurpunten. De vraag gaat over de hoek van de veelhoek bij een hoekpunt: {=180*(a-2)} : {a} = {r}."
+    }
+  },
+  "G2.angles.08": {
+    "text": "Hoe groot is de som van de hoeken van een bolle veelhoek met {a} zijden, in graden?",
+    "solution": [
+      "Diagonalen vanuit één hoekpunt verdelen de veelhoek in {a} − 2 = {=a-2} driehoeken.",
+      "Elke driehoek heeft 180 graden en de hoeken van alle driehoeken samen vormen de hoeken van de veelhoek.",
+      "Tel op: {=a-2} × 180 = {=180*(a-2)}.",
+      "De som van de hoeken van de veelhoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Teken de diagonalen vanuit één hoekpunt: de veelhoek wordt in driehoeken verdeeld.",
+      "Er zijn {a} − 2 driehoeken en de hoeken van elke driehoek zijn samen 180 graden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "times-sides": "{w_times_sides} is 180 keer het aantal zijden, maar er zijn 2 driehoeken minder dan zijden: 180 × {=a-2} = {r}.",
+      "minus-one": "{w_minus_one} is 180 × ({a} − {=1}): er is maar één afgetrokken. Het moeten er 2 zijn: 180 × {=a-2} = {r}.",
+      "always-360": "{w_always_360} is de som van de hoeken van een vierhoek. Een veelhoek met {a} zijden heeft een andere som: 180 × {=a-2} = {r}."
+    }
+  },
+  "G2.angles.09": {
+    "text": "Een wandelaar draait {a|keer|keer|keer} achter elkaar 90 graden in dezelfde richting. Hoeveel graden is de wandelaar in totaal gedraaid?",
+    "solution": [
+      "De wandelaar draait steeds dezelfde kant op, dus de draaiingen tellen op.",
+      "Elke draai is 90 graden en er zijn {a} draaien: 90 × {a} = {=90*a}.",
+      "De totale draai is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Alle draaien gaan dezelfde kant op, dus de hoeken tellen op.",
+      "Eén draai is 90 graden en er zijn er {a}: tel 90 zo vaak bij elkaar op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-turn": "{w_one_turn} is maar één draai, terwijl de wandelaar {a|keer|keer|keer} draaide: 90 × {a} = {r}.",
+      "full-turns": "{w_full_turns} rekent elke draai als een hele cirkel van 360 graden. Eén draai is 90 graden: 90 × {a} = {r}."
+    }
+  },
+  "G2.angles.10": {
+    "text": "Een pad gaat als een trap omhoog en heeft {a|trede|treden|treden}. Elke trede gaat omhoog en dan naar rechts. Hoeveel bochten onder een rechte hoek zijn er op het hele pad?",
+    "solution": [
+      "Elke trede bestaat uit een stuk omhoog en een stuk naar rechts, dus er zijn {a} × 2 = {=2*a} stukken.",
+      "Ze volgen elkaar op en er is een bocht waar het ene stuk overgaat in het volgende.",
+      "Er is één bocht minder dan er stukken zijn: {=2*a} − 1 = {=2*a-1}.",
+      "Er zijn dus {r|bocht|bochten|bochten} op het pad."
+    ],
+    "hints": [
+      "Teken de trap en markeer de punten waar het pad van richting verandert.",
+      "Het pad heeft {a} × 2 stukken. Een bocht zit waar twee stukken aan elkaar vastzitten, dus er is één bocht minder dan er stukken zijn.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "twice": "{w_twice} is het aantal stukken, maar er is één bocht minder, want een bocht zit tussen twee stukken: {=2*a} − 1 = {r}.",
+      "steps": "{w_steps} is het aantal treden. Elke trede heeft twee stukken en een bocht zit tussen elke twee stukken: {=2*a} − 1 = {r}.",
+      "between-steps": "{w_between_steps} telt alleen de bochten tussen de ene trede en de volgende. In elke trede zit ook een bocht: {=2*a} − 1 = {r}."
+    }
+  },
+  "G2.angles.11": {
+    "text": "Er zijn {a|rechthoek|rechthoeken|rechthoeken} getekend, elk apart van de andere. Hoeveel rechte hoeken zijn dat samen?",
+    "solution": [
+      "De rechthoeken staan los van elkaar, dus hun hoeken vallen niet samen.",
+      "Elke rechthoek heeft 4 rechte hoeken en er zijn {a} rechthoeken: {a} × 4 = {=4*a}.",
+      "Er zijn dus {r} rechte hoeken."
+    ],
+    "hints": [
+      "De rechthoeken staan los van elkaar, dus geen enkele hoek is gedeeld. Hoeveel rechte hoeken heeft één rechthoek?",
+      "Eén rechthoek heeft 4 rechte hoeken en er zijn er {a}: tel 4 zo vaak bij elkaar op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rectangles-only": "{w_rectangles_only} is het aantal rechthoeken, maar elke rechthoek heeft 4 rechte hoeken: 4 × {a} = {r}.",
+      "two-per-rectangle": "{w_two_per_rectangle} telt maar 2 hoeken van elke rechthoek, maar alle 4 zijn recht: 4 × {a} = {r}."
+    }
+  },
+  "G2.angles.12": {
+    "text": "Een hoek van {a|graad|graden|graden} wordt precies in tweeën gevouwen. Hoe groot is elke helft in graden?",
+    "solution": [
+      "De vouw verdeelt de hoek in twee gelijke delen.",
+      "We delen de hoek dus door 2: {a} : 2 = {=a/2}.",
+      "Elke helft is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "De vouw verdeelt de hoek in twee gelijke delen. Hoe vind je de helft van een getal?",
+      "Deel {a} door 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "doubled": "{w_doubled} komt uit vermenigvuldigen met 2, maar de helft vind je door te delen door 2: {a} : 2 = {r}.",
+      "whole": "{w_whole} is de hele hoek, maar de vraag is naar de helft: {a} : 2 = {r}.",
+      "minus-two": "{w_minus_two} komt doordat je 2 hebt afgehaald. De helft vind je door te delen door 2: {a} : 2 = {r}."
+    }
+  },
+  "G2.angles.13": {
+    "text": "De twee benen van een hoek gaan door de getallen {a} en {b} op de schaal van een gradenboog. Hoe groot is de hoek tussen de benen in graden?",
+    "solution": [
+      "De hoek tussen de benen is de afstand op de schaal van het ene getal tot het andere.",
+      "De benen wijzen naar {a} en {b}, dus we halen het kleinste getal van het grootste af: {b} − {a} = {=b-a}.",
+      "De hoek tussen de benen is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Beide benen beginnen in het midden van de schaal en wijzen naar getallen op dezelfde schaal. De hoek is het verschil tussen die getallen.",
+      "Haal het kleinste getal, {a}, van het grootste getal, {b}, af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "far-mark": "{w_far_mark} is het verste getal, maar de hoek meet je vanaf het dichtstbijzijnde been, niet vanaf nul: {b} − {a} = {r}.",
+      "marks-added": "{w_marks_added} is de som van de twee getallen. Het verschil tussen twee getallen vind je door af te trekken: {b} − {a} = {r}.",
+      "wrong-scale": "{w_wrong_scale} ontstaat als je het ene been op de ene schaal van de gradenboog afleest en het andere been op de andere schaal. Lees beide getallen, {a} en {b}, op dezelfde schaal af: {b} − {a} = {r}."
+    }
+  },
+  "G3.symmetry.01": {
+    "text": "Hoeveel symmetrieassen heeft een regelmatige veelhoek met {a} zijden?",
+    "solution": [
+      "Bij een regelmatige veelhoek zijn alle zijden en alle hoeken even groot, dus je kunt hem op meer manieren dubbelvouwen.",
+      "Is het aantal zijden oneven, dan gaat elke symmetrieas van een hoekpunt naar het midden van de overstaande zijde. Is het even, dan gaat de helft van de assen door twee overstaande hoekpunten en de andere helft door de middens van twee overstaande zijden.",
+      "In beide gevallen zijn er evenveel assen als zijden: {a}.",
+      "Hij heeft dus {r|symmetrieas|symmetrieassen|symmetrieassen}."
+    ],
+    "hints": [
+      "Een symmetrieas gaat door een hoekpunt of door het midden van een zijde. Bedenk hoe je de vorm dubbel zou kunnen vouwen.",
+      "Tel de assen door hoekpunten en de assen door de middens van zijden: hoeveel van elk heeft een veelhoek met {a} zijden?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-axis": "{w_one_axis} is maar één as, maar een regelmatige veelhoek met {a} zijden heeft evenveel symmetrieassen als zijden: {r}.",
+      "doubled": "{w_doubled} is twee keer te veel: elke as is twee keer geteld en het aantal assen is {r}.",
+      "half-of-sides": "{w_half_of_sides} telt alleen de assen door hoekpunten. Er zijn ook assen door de middens van zijden en een veelhoek met {a} zijden heeft er samen {r}."
+    }
+  },
+  "G3.symmetry.02": {
+    "text": "Het getal {a} staat op een getallenlijn. In {b} staat een spiegel. Welk getal is het spiegelbeeld van {a}?",
+    "solution": [
+      "De afstand van {a} tot de spiegel is {b} − {a} = {=b-a}.",
+      "Het spiegelbeeld ligt achter de spiegel op dezelfde afstand, dus vanaf {b} gaan we nog {=b-a} verder.",
+      "{b} + {=b-a} = {=2*b-a}.",
+      "Het spiegelbeeld van {a} is dus het getal {r}."
+    ],
+    "hints": [
+      "De spiegel staat tussen het getal en zijn spiegelbeeld, dus het spiegelbeeld ligt aan de andere kant van {b}.",
+      "Zoek de afstand van {a} tot {b} en ga vanaf {b} nog even ver door.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "distance-only": "{w_distance_only} is de afstand van {a} tot de spiegel. Het spiegelbeeld ligt nog eens even ver achter de spiegel: {b} + {w_distance_only} = {r}.",
+      "mirror-itself": "{w_mirror_itself} is de plek waar de spiegel staat en niet het spiegelbeeld van {a}: {b} + {=b-a} = {r}.",
+      "wrong-side": "{w_wrong_side} komt doordat je vanaf {a} van de spiegel af bent gegaan. Het spiegelbeeld ligt achter de spiegel: {b} + {=b-a} = {r}."
+    }
+  },
+  "G3.symmetry.03": {
+    "text": "Een punt staat op het rooster op positie ({a}; {b}). De verticale roosterlijn met nummer {c} is een symmetrieas. Op welke positie staat het gespiegelde punt? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "De symmetrieas is verticaal, dus het punt wordt naar links en rechts gespiegeld en zijn hoogte verandert niet: de tweede coördinaat blijft {b}.",
+      "Van het punt tot de as is het {c} − {a} = {=c-a|hokje|hokjes|hokjes} en even ver aan de andere kant van de as.",
+      "De eerste coördinaat van het spiegelbeeld is {c} + {=c-a} = {=2*c-a}.",
+      "Het gespiegelde punt staat dus op positie {r}."
+    ],
+    "hints": [
+      "De as is verticaal, dus de hoogte van het punt blijft hetzelfde.",
+      "Het punt ligt {=c-a|hokje|hokjes|hokjes} van de as. Ga even ver aan de andere kant van de as.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same-point": "Positie {w_same_point} is het punt zelf, maar we zoeken het gespiegelde punt.",
+      "swapped": "Bij positie {w_swapped} staan de coördinaten in de omgekeerde volgorde, maar de eerste coördinaat komt altijd eerst.",
+      "on-the-axis": "Positie {w_on_the_axis} ligt precies op de as, maar het gespiegelde punt ligt aan de andere kant van de as, even ver weg: {=c-a} hokjes erachter.",
+      "horizontal-mirror": "Positie {w_horizontal_mirror} komt van spiegelen in een horizontale lijn, maar deze as is verticaal. De hoogte blijft {b} en de eerste coördinaat verandert: {r}."
+    }
+  },
+  "G3.symmetry.04": {
+    "text": "Punt A staat op positie ({a}; {b}) en punt O staat op positie ({c}; {d}) en is het middelpunt van de symmetrie. Op welke positie staat het spiegelbeeld van A ten opzichte van O? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "Het middelpunt ligt precies in het midden tussen een punt en zijn spiegelbeeld, dus we werken met elke coördinaat apart.",
+      "Eerste: van {a} naar {c} is {c} − {a} = {=c-a} en nog eens evenveel: {c} + {=c-a} = {=2*c-a}.",
+      "Tweede: van {b} naar {d} is {d} − {b} = {=d-b} en nog eens evenveel: {d} + {=d-b} = {=2*d-b}.",
+      "Het gespiegelde punt staat dus op positie {r}."
+    ],
+    "hints": [
+      "Spiegel in het middelpunt, één coördinaat tegelijk.",
+      "O ligt precies halverwege A en zijn spiegelbeeld. Ga bij de eerste coördinaat van {a} naar {c} en bij de tweede van {b} naar {d}, en ga dan nog eens even ver door.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "centre": "Positie {w_centre} is het middelpunt zelf, maar we zoeken het gespiegelde punt.",
+      "line-mirror": "Positie {w_line_mirror} verandert alleen de eerste coördinaat, maar spiegelen in een middelpunt verandert allebei.",
+      "horizontal-mirror": "Positie {w_horizontal_mirror} verandert alleen de tweede coördinaat, maar spiegelen in een middelpunt verandert allebei."
+    }
+  },
+  "G3.symmetry.05": {
+    "text": "Welke van deze letters hebben een verticale symmetrieas? 1) A; 2) R; 3) T; 4) B. Antwoord met de nummers van alle keuzes die passen, gescheiden door komma's.",
+    "solution": [
+      "Een verticale symmetrieas verdeelt een letter in een linkerhelft en een rechterhelft die op elkaar moeten passen als een spiegelbeeld.",
+      "Bij de A en de T zijn de linkerhelft en de rechterhelft gelijk.",
+      "Bij de R en de B zijn de helften verschillend: de R heeft een bol en een been alleen rechts en de B heeft zijn bollen alleen rechts.",
+      "Het antwoord is dus keuze {r}: de A en de T."
+    ],
+    "hints": [
+      "Een verticale symmetrieas verdeelt een letter in een linkerhelft en een rechterhelft. Stel je voor dat je elke letter langs die lijn vouwt.",
+      "Controleer de A, de R, de T en de B een voor een: passen de linkerhelft en de rechterhelft op elkaar?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-the-first": "{w_only_the_first} is niet compleet: bij de T passen de linkerhelft en de rechterhelft ook op elkaar.",
+      "only-the-third": "{w_only_the_third} is niet compleet: bij de A passen de linkerhelft en de rechterhelft ook op elkaar.",
+      "with-the-fourth": "{w_with_the_fourth} heeft een keuze te veel: de B heeft geen verticale symmetrieas, want zijn bollen zitten alleen rechts."
+    }
+  },
+  "G3.symmetry.06": {
+    "text": "Welke van deze letters hebben een horizontale symmetrieas? 1) E; 2) L; 3) B; 4) F. Antwoord met de nummers van alle keuzes die passen, gescheiden door komma's.",
+    "solution": [
+      "Een horizontale symmetrieas verdeelt een letter in een bovenhelft en een onderhelft die op elkaar moeten passen als een spiegelbeeld.",
+      "Bij de E en de B zijn boven en onder gelijk.",
+      "Bij de L en de F zijn boven en onder verschillend: de L heeft zijn voet alleen onderaan en de F heeft zijn bovenste en middelste streep alleen in de bovenhelft.",
+      "Het antwoord is dus keuze {r}: de E en de B."
+    ],
+    "hints": [
+      "Een horizontale symmetrieas verdeelt een letter in een bovenhelft en een onderhelft. Stel je voor dat je elke letter langs die lijn vouwt.",
+      "Controleer de E, de L, de B en de F een voor een: passen boven en onder op elkaar?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-the-first": "{w_only_the_first} is niet compleet: bij de B passen boven en onder ook op elkaar.",
+      "only-the-third": "{w_only_the_third} is niet compleet: bij de E passen boven en onder ook op elkaar.",
+      "with-the-second": "{w_with_the_second} heeft een keuze te veel: bij de L zijn boven en onder verschillend, want de voet zit alleen onderaan."
+    }
+  },
+  "G3.symmetry.07": {
+    "text": "Welke van deze letters heeft twee symmetrieassen? 1) T; 2) E; 3) H; 4) R. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Twee symmetrieassen betekent een verticale en een horizontale as samen.",
+      "De T heeft alleen een verticale as, de E heeft alleen een horizontale as en de R heeft er geen.",
+      "De H heeft allebei: je kunt hem dubbelvouwen van boven naar onder en van links naar rechts.",
+      "Het antwoord is dus keuze {r}, de letter H."
+    ],
+    "hints": [
+      "Twee symmetrieassen betekent dat je de letter op twee manieren dubbel kunt vouwen: een verticale en een horizontale.",
+      "Vraag bij elke letter: werkt een verticale vouw? Werkt een horizontale vouw? Welke letter doorstaat allebei?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-vertical-axis": "Keuze {w_one_vertical_axis} is de T. Die kun je alleen langs een verticale lijn vouwen, dus hij heeft één symmetrieas en niet twee.",
+      "one-horizontal-axis": "Keuze {w_one_horizontal_axis} is de E. Die kun je alleen langs een horizontale lijn vouwen, dus hij heeft één symmetrieas en niet twee.",
+      "no-axis": "Keuze {w_no_axis} is de R. Die kun je niet dubbelvouwen zodat de helften passen, dus hij heeft geen symmetrieas."
+    }
+  },
+  "G3.symmetry.08": {
+    "text": "Er zijn {c|gelijke rechthoek|gelijke rechthoeken|gelijke rechthoeken} uitgeknipt met zijden van {a} cm en {b} cm. Hoeveel symmetrieassen hebben al deze rechthoeken samen?",
+    "solution": [
+      "Een rechthoek kun je op twee manieren dubbelvouwen: in de lengte en in de breedte, door de middens van overstaande zijden.",
+      "Langs een diagonaal kun je hem niet vouwen: de zijden van {a} cm en {b} cm zijn verschillend en de hoeken passen dan niet op elkaar.",
+      "Eén rechthoek heeft twee assen en er zijn {c} rechthoeken: 2 × {c} = {=2*c}.",
+      "Samen zijn er dus {r} symmetrieassen."
+    ],
+    "hints": [
+      "Een rechthoek kun je dubbelvouwen langs een lijn door de middens van overstaande zijden. Een diagonaal is geen symmetrieas.",
+      "Eén rechthoek heeft twee van zulke lijnen en er zijn {c} rechthoeken. Combineer dat.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "as-a-square": "{w_as_a_square} komt doordat je de twee diagonalen van elke rechthoek ook als symmetrieas hebt geteld. Een diagonaal is hier geen symmetrieas, want de zijden van {a} cm en {b} cm zijn verschillend.",
+      "one": "{w_one} komt doordat je bij elke rechthoek maar één as hebt gezien. Er is nog een as door de middens van de andere twee zijden: {c} × 2 = {r}."
+    }
+  },
+  "G3.symmetry.09": {
+    "text": "Er zijn driehoeken uitgeknipt: {a|gelijkbenige driehoek|gelijkbenige driehoeken|gelijkbenige driehoeken} met maar twee even lange zijden, {b|gelijkzijdige driehoek|gelijkzijdige driehoeken|gelijkzijdige driehoeken} en {c|ongelijkzijdige driehoek|ongelijkzijdige driehoeken|ongelijkzijdige driehoeken} met zijden die allemaal verschillen. Hoeveel symmetrieassen hebben al deze driehoeken samen?",
+    "solution": [
+      "Een gelijkbenige driehoek heeft één symmetrieas: van de tophoek naar het midden van de derde zijde.",
+      "Een gelijkzijdige driehoek heeft er drie, een vanuit elk hoekpunt. Een ongelijkzijdige driehoek heeft er geen: langs geen enkele lijn passen de helften op elkaar.",
+      "Samen: {a} × 1 + {b} × 3 + {c} × 0 = {=a+3*b}.",
+      "Alle driehoeken samen hebben dus {r|symmetrieas|symmetrieassen|symmetrieassen}."
+    ],
+    "hints": [
+      "Hoeveel symmetrieassen heeft elke soort driehoek?",
+      "Vermenigvuldig het aantal assen met het aantal driehoeken van elke soort: {a} gelijkbenige, {b} gelijkzijdige, {c} ongelijkzijdige. Tel dan op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "scalene-with-an-axis": "{w_scalene_with_an_axis} komt doordat je bij elke ongelijkzijdige driehoek één as hebt geteld. Al zijn zijden verschillen, dus hij heeft geen symmetrieas.",
+      "equilateral-with-one-axis": "{w_equilateral_with_one_axis} komt doordat je bij elke gelijkzijdige driehoek maar één as hebt geteld. Hij heeft er drie, een door elk hoekpunt.",
+      "one-axis-each": "{w_one_axis_each} geeft elke driehoek één as. Maar een gelijkzijdige driehoek heeft er drie en een ongelijkzijdige geen."
+    }
+  },
+  "G3.symmetry.10": {
+    "text": "Een vel papier wordt {a|keer|keer|keer} dubbelgevouwen, steeds langs een nieuwe vouwlijn. Daarna wordt er één gat dwars doorheen geprikt, niet op een vouw, en het vel wordt opengevouwen. Hoeveel gaten zijn er?",
+    "solution": [
+      "Elke vouw verdubbelt het aantal lagen: we vermenigvuldigen met 2 voor elke vouw.",
+      "Er zijn {a} vouwen. Voor de laatste vouw waren er {=pow(2,a-1)|laag|lagen|lagen} en erna {=pow(2,a-1)} × 2 = {r}.",
+      "Het gat gaat door alle lagen heen, dus elke laag krijgt een gat.",
+      "Het opengevouwen vel heeft dus {r|gat|gaten|gaten}."
+    ],
+    "hints": [
+      "Elke vouw maakt van het vel meer lagen. Hoeveel lagen zijn er na alle vouwen?",
+      "Na elke vouw zijn er twee keer zoveel lagen: begin met één laag en verdubbel die {a|keer|keer|keer}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-hole": "{w_one_hole} is maar één gat, maar de prik ging door alle lagen.",
+      "per-fold": "{w_per_fold} is het aantal vouwen, maar het aantal lagen wordt na elke vouw verdubbeld.",
+      "one-fold-less": "{w_one_fold_less} is het aantal lagen voor de laatste vouw. De laatste vouw verdubbelt dat nog een keer: {=pow(2,a-1)} × 2 = {r}."
+    }
+  },
+  "G3.symmetry.11": {
+    "text": "Een kaart met een plaatje wordt {a|keer|keer|keer} achter elkaar omgedraaid, steeds langs dezelfde lijn. Hoe ligt de kaart nu? 1) als in een spiegel; 2) hetzelfde als aan het begin; 3) ondersteboven; 4) een kwartslag gedraaid. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Eén keer omdraaien langs een lijn geeft een spiegelbeeld van de kaart en een tweede keer langs dezelfde lijn legt hem weer terug.",
+      "Er zijn {a} keer omgedraaid: paren omdraaiingen {=floor(a/2)}, overgebleven omdraaiingen {=mod(a,2)}.",
+      "Paren veranderen de kaart niet. Is er niets over, dan ligt de kaart als aan het begin, en is er één over, dan ligt hij als in een spiegel: keuze {r} past."
+    ],
+    "hints": [
+      "Wat doet één keer omdraaien langs de lijn? En twee keer achter elkaar?",
+      "Er zijn {a} keer omgedraaid. Maak er paren van: hoeveel paren zijn er en blijft er een over?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "upside-down": "Keuze {w_upside_down} past niet: een kaart ligt ondersteboven na omdraaien langs twee verschillende lijnen, maar hier is de lijn steeds dezelfde.",
+      "quarter-turn": "Keuze {w_quarter_turn} past niet: omdraaien langs een lijn draait de kaart nooit een kwartslag.",
+      "the-other-parity": "Keuze {w_the_other_parity} hoort bij het andere aantal overgebleven omdraaiingen: er zijn {a} omdraaiingen, {=floor(a/2)} paren en {=mod(a,2)} over."
+    }
+  },
+  "G3.symmetry.12": {
+    "text": "Er zijn {a|vierkant|vierkanten|vierkanten} en {b|rechthoek|rechthoeken|rechthoeken} met zijden van verschillende lengte uitgeknipt. Hoeveel symmetrieassen hebben al deze vormen samen?",
+    "solution": [
+      "Een vierkant heeft vier symmetrieassen: twee door de middens van de zijden en twee diagonalen.",
+      "Een rechthoek met verschillende zijden heeft maar twee assen; de diagonalen werken niet.",
+      "Samen: {a} × 4 + {b} × 2 = {=4*a+2*b}.",
+      "Alle vormen samen hebben dus {r|symmetrieas|symmetrieassen|symmetrieassen}."
+    ],
+    "hints": [
+      "Hoeveel symmetrieassen heeft een vierkant en hoeveel een rechthoek met verschillende zijden?",
+      "Vermenigvuldig: {a} vierkanten met elk 4 assen en {b} rechthoeken met elk 2 assen. Tel dan op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "as-a-rectangle": "{w_as_a_rectangle} komt doordat je bij elk vierkant alleen de assen door de middens van de zijden hebt geteld. Een vierkant heeft ook twee diagonalen als as.",
+      "diagonals-of-rectangles": "{w_diagonals_of_rectangles} komt doordat je ook de diagonalen van de rechthoeken hebt geteld. De diagonaal van een rechthoek met verschillende zijden is geen symmetrieas."
+    }
+  },
+  "G4.coordinates.01": {
+    "text": "De punten A({a}; {c}) en B({b}; {c}) liggen in dezelfde rij van het rooster. Hoeveel hokjes moet je langs de roosterlijn van A naar B lopen?",
+    "solution": [
+      "A en B hebben dezelfde tweede coördinaat {c}, dus ze liggen in dezelfde rij.",
+      "Ze verschillen dus alleen in de eerste coördinaat: {b} − {a} = {=b-a}.",
+      "Van A naar B loop je dus {r|hokje|hokjes|hokjes}."
+    ],
+    "hints": [
+      "Beide punten hebben dezelfde tweede coördinaat, {c}: alleen de eerste coördinaat verandert.",
+      "Haal de kleinste eerste coördinaat, {a}, van de grootste, {b}, af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "far-coordinate": "{w_far_coordinate} is de coördinaat van punt B, maar de afstand meet je vanaf punt A: {b} − {a} = {r}.",
+      "coordinates-added": "{w_coordinates_added} is de som van de twee coördinaten, maar een afstand vind je door af te trekken: {b} − {a} = {r}.",
+      "counted-points": "{w_counted_points} komt doordat je de punten A en B zelf meetelt. We tellen de stukjes ertussen: {b} − {a} = {r}."
+    }
+  },
+  "G4.coordinates.02": {
+    "text": "De punten A({a}; {b}) en B({a}; {c}) liggen in dezelfde kolom van het rooster. Hoeveel hokjes moet je langs de roosterlijn van A naar B lopen?",
+    "solution": [
+      "A en B hebben dezelfde eerste coördinaat {a}, dus ze liggen in dezelfde kolom.",
+      "Ze verschillen dus alleen in de tweede coördinaat: {c} − {b} = {=c-b}.",
+      "Van A naar B loop je dus {r|hokje|hokjes|hokjes}."
+    ],
+    "hints": [
+      "Beide punten hebben dezelfde eerste coördinaat, {a}: alleen de tweede coördinaat verandert.",
+      "Haal de kleinste tweede coördinaat, {b}, van de grootste, {c}, af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "far-coordinate": "{w_far_coordinate} is de tweede coördinaat van punt B, maar de afstand meet je vanaf punt A: {c} − {b} = {r}.",
+      "coordinates-added": "{w_coordinates_added} is de som van de twee coördinaten, maar een afstand vind je door af te trekken: {c} − {b} = {r}.",
+      "counted-points": "{w_counted_points} komt doordat je de punten A en B zelf meetelt. We tellen de stukjes ertussen: {c} − {b} = {r}."
+    }
+  },
+  "G4.coordinates.03": {
+    "text": "Drie hoekpunten van een rechthoek met zijden langs de roosterlijnen staan op de posities ({a}; {b}), ({c}; {b}) en ({c}; {d}). Op welke positie staat het vierde hoekpunt? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "De zijden van de rechthoek lopen langs het rooster, dus twee hoekpunten liggen altijd in dezelfde rij en twee andere in dezelfde kolom.",
+      "Het eerste en het tweede hoekpunt liggen in rij {b}, het tweede en het derde in kolom {c}.",
+      "Het vierde hoekpunt ligt in dezelfde kolom als het eerste, dus de eerste coördinaat is {a}, en in dezelfde rij als het derde, dus de tweede coördinaat is {d}.",
+      "Het vierde hoekpunt staat dus op positie {r}."
+    ],
+    "hints": [
+      "Maak een schets van de drie gegeven hoekpunten: het eerste en het tweede liggen in rij {b}, het tweede en het derde in kolom {c}.",
+      "Het vierde hoekpunt ligt in dezelfde kolom als het eerste, kolom {a}. In welke rij ligt het, als het in dezelfde rij ligt als het derde?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-vertex": "Positie {w_first_vertex} is het eerste hoekpunt, dat is al gegeven. Het vierde ligt in dezelfde kolom als het eerste en in dezelfde rij als het derde: {r}.",
+      "third-vertex": "Positie {w_third_vertex} is het derde hoekpunt, dat is al gegeven. Het vierde ligt in dezelfde kolom als het eerste en in dezelfde rij als het derde: {r}.",
+      "swapped": "Bij positie {w_swapped} staan de coördinaten in omgekeerde volgorde. Eerst komt de eerste coördinaat, de kolom {a}, en dan de tweede, de rij {d}: {r}."
+    }
+  },
+  "G4.coordinates.04": {
+    "text": "Een speelstuk staat op positie ({a}; {b}). Het wordt {c|hokje|hokjes|hokjes} naar rechts en {d|hokje|hokjes|hokjes} omhoog geschoven. Op welke positie staat het nu? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "Naar rechts schuiven verandert de eerste coördinaat: {a} + {c} = {=a+c}.",
+      "Omhoog schuiven verandert de tweede coördinaat: {b} + {d} = {=b+d}.",
+      "Het speelstuk staat nu dus op positie {r}."
+    ],
+    "hints": [
+      "Naar rechts schuiven verandert de eerste coördinaat en omhoog schuiven de tweede.",
+      "Tel {c} op bij de eerste coördinaat, {a}, en {d} bij de tweede coördinaat, {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "swapped-shifts": "Positie {w_swapped_shifts} zet de verschuivingen bij de andere coördinaten: naar rechts verandert de eerste coördinaat en omhoog de tweede.",
+      "shifts-only": "Positie {w_shifts_only} laat de beginpositie weg: de verschuivingen moeten bij ({a}; {b}) worden opgeteld.",
+      "swapped": "Positie {w_swapped} heeft de coördinaten in omgekeerde volgorde. De verschuiving naar rechts, {=a+c}, komt eerst en die omhoog, {=b+d}, daarna: {r}."
+    }
+  },
+  "G4.coordinates.05": {
+    "text": "De uiteinden van een lijnstuk staan op de posities ({a}; {c}) en ({b}; {c}). Op welke positie staat het midden van het lijnstuk? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "Beide uiteinden van het lijnstuk liggen in rij {c}, dus het midden heeft ook tweede coördinaat {c}.",
+      "De eerste coördinaat van het midden ligt halverwege {a} en {b}: ({a} + {b}) : 2 = {=(a+b)/2}.",
+      "Het midden van het lijnstuk staat dus op positie {r}."
+    ],
+    "hints": [
+      "Beide uiteinden liggen in rij {c}, dus de tweede coördinaat van het midden is {c}.",
+      "De eerste coördinaat van het midden is het gemiddelde van {a} en {b}: tel ze op en deel door 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-end": "Positie {w_left_end} is het linkeruiteinde van het lijnstuk en niet het midden.",
+      "half-the-sum": "Positie {w_half_the_sum} zet de eerste coördinaat op de plaats van de tweede, maar de tweede coördinaat blijft {c}.",
+      "swapped": "Positie {w_swapped} heeft de coördinaten in omgekeerde volgorde. De eerste coördinaat van het midden is {=(a+b)/2} en de tweede is {c}: {r}.",
+      "not-halved": "Bij positie {w_not_halved} is de eerste coördinaat de som van {a} en {b}, maar die moet worden gehalveerd: ({a} + {b}) : 2 = {=(a+b)/2}."
+    }
+  },
+  "G4.coordinates.06": {
+    "text": "Twee overstaande hoekpunten van een rechthoek met zijden langs de roosterlijnen staan op de posities ({a}; {b}) en ({c}; {d}). Hoe groot is de oppervlakte in hokjes?",
+    "solution": [
+      "De zijden lopen langs het rooster, dus hun lengtes zijn verschillen van coördinaten.",
+      "Horizontaal {c} − {a} = {=c-a}, verticaal {d} − {b} = {=d-b}.",
+      "De oppervlakte van een rechthoek is het product van zijn zijden: {=c-a} × {=d-b} = {=(c-a)*(d-b)}.",
+      "De oppervlakte van de rechthoek is dus {r|hokje|hokjes|hokjes}."
+    ],
+    "hints": [
+      "De zijden lopen langs het rooster, dus de lengte van elke zijde is het verschil van twee coördinaten.",
+      "Reken horizontaal {c} − {a} uit en verticaal {d} − {b}. Vermenigvuldig ze daarna.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "perimeter": "{w_perimeter} is de omtrek, maar de vraag gaat over de oppervlakte.",
+      "sides-added": "{w_sides_added} komt doordat je de lengtes van de zijden hebt opgeteld, maar de oppervlakte vind je door te vermenigvuldigen.",
+      "far-vertex-product": "{w_far_vertex_product} is het product van de coördinaten van het verste hoekpunt. De zijden van de rechthoek zijn verschillen van coördinaten: {=c-a} × {=d-b} = {r}."
+    }
+  },
+  "G4.coordinates.07": {
+    "text": "Een wandelaar loopt langs de roosterlijnen, alleen naar rechts en omhoog, van positie ({a}; {b}) naar positie ({c}; {d}). Hoeveel hokjes loopt hij op de kortste weg?",
+    "solution": [
+      "De wandelaar gaat alleen naar rechts en omhoog, zonder omwegen, dus de weg is de som van de verplaatsingen.",
+      "Naar rechts: {c} − {a} = {=c-a}, omhoog: {d} − {b} = {=d-b}.",
+      "Tel op: {=c-a} + {=d-b} = {=c-a+d-b}.",
+      "De kortste weg is dus {r|hokje|hokjes|hokjes}."
+    ],
+    "hints": [
+      "De wandelaar kan alleen naar rechts en omhoog, dus tel deze stappen apart.",
+      "Naar rechts van {a} naar {c} en omhoog van {b} naar {d}. Tel de twee aantallen stappen op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "longer-side": "{w_longer_side} is alleen de langste van de twee verplaatsingen, maar de wandelaar moet zowel naar rechts als omhoog.",
+      "end-coordinates": "{w_end_coordinates} is de som van de coördinaten van het doel, maar de weg begint niet in de hoek van het rooster.",
+      "area": "{w_area} komt doordat je de twee verplaatsingen hebt vermenigvuldigd, maar de weg bestaat uit die twee na elkaar: {=c-a} + {=d-b} = {r}."
+    }
+  },
+  "G4.coordinates.08": {
+    "text": "Hoeveel punten met gehele coördinaten ({x}; {y}) die niet negatief zijn, hebben beide coördinaten niet groter dan {a}? Tel de nullen ook mee.",
+    "solution": [
+      "Elk van de twee coördinaten kan elk geheel getal van 0 tot en met {a} zijn, en nul telt ook mee.",
+      "Het aantal waarden van één coördinaat: {a} + 1 = {=a+1}.",
+      "Bij elke waarde van {x} hoort elke waarde van {y}, dus we vermenigvuldigen: {=a+1} × {=a+1} = {=(a+1)*(a+1)}.",
+      "Er zijn dus {r} van zulke punten."
+    ],
+    "hints": [
+      "Nullen tellen ook mee: elke coördinaat kan van 0 tot en met {a} zijn.",
+      "Elke coördinaat heeft {a} + 1 = {=a+1} waarden. Bij elke waarde van de een hoort elke waarde van de ander: vermenigvuldig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "without-zero": "{w_without_zero} komt doordat je de nullen hebt weggelaten: elke coördinaat zou {a} waarden hebben. Nul is ook een waarde, dus het zijn er {=a+1} en de punten zijn {=a+1} × {=a+1} = {r}.",
+      "one-axis": "{w_one_axis} is het aantal waarden van één coördinaat, maar de punten zijn paren van waarden.",
+      "counts-added": "{w_counts_added} komt doordat je het aantal waarden van de twee coördinaten hebt opgeteld. Bij elke waarde van de ene hoort elke waarde van de andere, dus vermenigvuldigen we: {=a+1} × {=a+1} = {r}."
+    }
+  },
+  "G4.coordinates.09": {
+    "text": "Een punt staat op positie ({a}; {b}) op het rooster. De horizontale as loopt langs rij nul. Hoeveel hokjes is het punt van de horizontale as verwijderd?",
+    "solution": [
+      "De afstand tot de horizontale as is de hoogte van het punt, dat is zijn tweede coördinaat.",
+      "Het punt ({a}; {b}) heeft tweede coördinaat {b}.",
+      "Het punt ligt dus {r|hokje|hokjes|hokjes} van de as."
+    ],
+    "hints": [
+      "De horizontale as loopt langs de eerste coördinaat en de afstand ertoe meet je omhoog en omlaag.",
+      "Kijk naar de tweede coördinaat van het punt ({a}; {b}): hoeveel hokjes omhoog is dat vanaf rij nul?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-coordinate": "{w_first_coordinate} is de afstand tot de verticale as en niet tot de horizontale.",
+      "coordinates-added": "{w_coordinates_added} is de som van de twee coördinaten, maar we zoeken de afstand tot één as.",
+      "counted-rows": "{w_counted_rows} komt doordat je rij nul ook meetelt. We tellen de stappen van de as naar het punt: {b}."
+    }
+  },
+  "G4.coordinates.10": {
+    "text": "Een wandelaar vertrekt uit de oorsprong van het rooster, positie (0; 0), loopt {a|hokje|hokjes|hokjes} naar rechts en {b|hokje|hokjes|hokjes} omhoog en daarna {c|hokje|hokjes|hokjes} naar links en {d|hokje|hokjes|hokjes} omlaag. Op welke positie komt hij uit? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "Naar rechts en naar links veranderen de eerste coördinaat en naar links is terug: {a} − {c} = {=a-c}.",
+      "Omhoog en omlaag veranderen de tweede coördinaat en omlaag is terug: {b} − {d} = {=b-d}.",
+      "De wandelaar komt dus uit op positie {r}."
+    ],
+    "hints": [
+      "Naar rechts en links veranderen de eerste coördinaat, omhoog en omlaag de tweede. Behandel elk paar samen.",
+      "Eerste coördinaat: {a} naar rechts en {c} naar links. Tweede: {b} omhoog en {d} omlaag. Teruglopen haalt er iets af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-added": "Positie {w_all_added} telt de stappen naar links en omlaag erbij, maar die gaan terug en worden afgetrokken.",
+      "first-part": "Positie {w_first_part} laat het terugwandelen weg.",
+      "swapped": "Positie {w_swapped} heeft de coördinaten in omgekeerde volgorde. De eerste coördinaat (rechts en links), {=a-c}, komt eerst en de tweede (omhoog en omlaag), {=b-d}, daarna: {r}."
+    }
+  },
+  "G4.coordinates.11": {
+    "text": "Punt A ligt {a|hokje|hokjes|hokjes} boven de horizontale as en punt B ligt {b|hokje|hokjes|hokjes} boven de horizontale as. Vergelijk de hoogtes: zet een teken tussen de hoogte van punt A en de hoogte van punt B.",
+    "solution": [
+      "Hoogte is het aantal hokjes boven de as, dus we vergelijken de getallen {a} en {b}.",
+      "Het teken opent zich naar het grootste getal.",
+      "We krijgen {a} {r} {b}: het teken tussen de hoogte van A en de hoogte van B is {r}."
+    ],
+    "hints": [
+      "Het hoogste punt is het punt met de meeste hokjes boven de as. Vergelijk {a} en {b}.",
+      "Het teken opent zich naar het grootste getal. Welk getal is groter, {a} of {b}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reversed": "Het teken {w_reversed} opent zich naar het kleinste getal, maar het moet zich naar het grootste openen. Vergelijk {a} en {b}: het teken dat nodig is, is {r}."
+    }
+  },
+  "G5.solids-nets.01": {
+    "text": "Er staan {a|kubus|kubussen|kubussen} los van elkaar. Hoeveel ribben hebben ze samen?",
+    "solution": [
+      "Eén kubus heeft 12 ribben: 4 boven, 4 onder en 4 rechtop.",
+      "De kubussen staan los, dus elke kubus heeft eigen ribben: {a} × 12 = {=12*a}.",
+      "Samen hebben de kubussen dus {r|ribbe|ribben|ribben}."
+    ],
+    "hints": [
+      "De kubussen zitten niet aan elkaar, dus elke kubus heeft zijn eigen ribben. Hoeveel ribben heeft één kubus? Tel boven, onder en ertussen.",
+      "Eén kubus heeft 12 ribben. Neem die 12 ribben {a} keer: 12 × {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "faces-instead": "{w_faces_instead} is {a} × 6: dat is het aantal vlakken. De vraag gaat over ribben, en elke kubus heeft er 12: {a} × 12 = {r}.",
+      "cubes-only": "{w_cubes_only} is alleen het aantal kubussen. Elke kubus heeft 12 ribben, dus {a} × 12 = {r}.",
+      "visible-edges": "{w_visible_edges} telt alleen de ribben die je ziet: {=9} van de 12 bij één kubus. De andere {=3} zie je niet, maar ze zijn er wel: {a} × 12 = {r}."
+    }
+  },
+  "G5.solids-nets.02": {
+    "text": "Er staan {a|balkvormige doos|balkvormige dozen|balkvormige dozen} los van elkaar. Hoeveel vlakken hebben ze samen?",
+    "solution": [
+      "Een balk heeft 6 vlakken: boven, onder en vier zijkanten.",
+      "De dozen staan los, dus elke doos heeft eigen vlakken: {a} × 6 = {=6*a}.",
+      "Samen hebben de dozen dus {r|vlak|vlakken|vlakken}."
+    ],
+    "hints": [
+      "De dozen raken elkaar niet, dus tel de vlakken van elke doos apart. Hoeveel vlakken heeft één doos? Tel boven, onder en de zijkanten.",
+      "Eén doos heeft 6 vlakken. Neem 6 vlakken {a} keer: 6 × {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "edges-instead": "{w_edges_instead} is {a} × 12: dat is het aantal ribben. De vraag gaat over vlakken, en elke doos heeft er 6: {a} × 6 = {r}.",
+      "boxes-only": "{w_boxes_only} is alleen het aantal dozen. Elke doos heeft 6 vlakken, dus {a} × 6 = {r}.",
+      "visible-faces": "{w_visible_faces} telt de vlakken die je ziet: {=3} van de 6 bij één doos. De andere drie zie je niet, maar ze zijn er wel: {a} × 6 = {r}."
+    }
+  },
+  "G5.solids-nets.03": {
+    "text": "Het grondvlak van een piramide is een veelhoek met {a|zijde|zijden|zijden}. Hoeveel vlakken heeft de piramide, het grondvlak meegerekend?",
+    "solution": [
+      "Op elke zijde van het grondvlak staat één driehoekig zijvlak, dus er zijn {a} zijvlakken.",
+      "Het grondvlak is ook een vlak: {a} + 1 = {=a+1}.",
+      "De piramide heeft dus {r|vlak|vlakken|vlakken}."
+    ],
+    "hints": [
+      "Een piramide heeft twee soorten vlakken: de driehoekige zijvlakken en het grondvlak. Hoeveel zijden heeft het grondvlak? Zoveel zijvlakken zijn er.",
+      "Het grondvlak heeft {a|zijde|zijden|zijden}, dus er zijn {a} zijvlakken. Tel nu het grondvlak erbij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "base-forgotten": "{w_base_forgotten} telt alleen de zijvlakken. Het grondvlak is ook een vlak: {a} + 1 = {r}.",
+      "edges": "{w_edges} is {a} × 2: het aantal ribben. De vraag gaat over vlakken: {a} zijvlakken en het grondvlak, samen {r}.",
+      "two-bases": "{w_two_bases} telt twee grondvlakken, zoals bij een prisma. Een piramide heeft één grondvlak en een punt erboven: {a} + 1 = {r}."
+    }
+  },
+  "G5.solids-nets.04": {
+    "text": "Het grondvlak van een piramide is een veelhoek met {a|zijde|zijden|zijden}. Hoeveel ribben heeft de piramide?",
+    "solution": [
+      "De ribben van het grondvlak lopen langs de zijden, dus dat zijn er {a}.",
+      "Uit elke hoek van het grondvlak loopt een ribbe omhoog naar de top, dus er zijn ook {a} schuine ribben.",
+      "Samen: {a} + {a} = {=2*a}.",
+      "De piramide heeft dus {r|ribbe|ribben|ribben}."
+    ],
+    "hints": [
+      "Een piramide heeft twee soorten ribben: de ribben van het grondvlak en de ribben die omhoog lopen naar de top. Tel eerst de ribben op het grondvlak.",
+      "Het grondvlak heeft {a|zijde|zijden|zijden}, dus {a} ribben liggen onderaan. Uit elke hoek van het grondvlak loopt nog een ribbe omhoog: hoeveel zijn dat er?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "base-only": "{w_base_only} telt alleen de ribben van het grondvlak. Er lopen nog {a} ribben omhoog: {a} + {a} = {r}.",
+      "faces": "{w_faces} is het aantal vlakken: {a} zijvlakken en het grondvlak. De vraag gaat over ribben: {a} onderaan en {a} omhoog, samen {r}.",
+      "triangle-sides": "{w_triangle_sides} is {a} × {=3}: elk zijvlak is een driehoek met drie zijden. Maar buurvlakken delen hun schuine ribbe, dus die ribben zijn dubbel geteld. De piramide heeft {a} + {a} = {r} ribben."
+    }
+  },
+  "G5.solids-nets.05": {
+    "text": "Het grondvlak van een prisma is een veelhoek met {a|zijde|zijden|zijden}. Hoeveel hoekpunten heeft het prisma?",
+    "solution": [
+      "Een prisma heeft twee gelijke grondvlakken, een onderste en een bovenste, en alle hoekpunten liggen daarin.",
+      "Elk grondvlak heeft {a|hoekpunt|hoekpunten|hoekpunten}.",
+      "Samen: {a} + {a} = {=2*a}.",
+      "Het prisma heeft dus {r|hoekpunt|hoekpunten|hoekpunten}."
+    ],
+    "hints": [
+      "Hoekpunten zijn de hoeken van het prisma. Ze liggen alleen in de grondvlakken: het onderste en het bovenste.",
+      "Het grondvlak heeft {a|zijde|zijden|zijden}, dus {a} hoeken. Het bovenste grondvlak is dezelfde veelhoek: hoeveel hoeken hebben de twee grondvlakken samen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-base": "{w_one_base} telt de hoekpunten van één grondvlak. Het bovenste grondvlak heeft er nog {a}: {a} + {a} = {r}.",
+      "edges": "{w_edges} is {a} × 3: het aantal ribben. De vraag gaat over hoekpunten: {a} + {a} = {r} in de twee grondvlakken.",
+      "faces": "{w_faces} is het aantal vlakken: {a} zijvlakken en twee grondvlakken. De vraag gaat over hoekpunten: {a} onderaan en {a} bovenaan, samen {r}."
+    }
+  },
+  "G5.solids-nets.06": {
+    "text": "Het grondvlak van een prisma is een veelhoek met {a|zijde|zijden|zijden}. Hoeveel zijvlakken heeft het prisma, dus vlakken die geen grondvlak zijn?",
+    "solution": [
+      "Elk zijvlak is een rechthoek die op één zijde van het grondvlak staat.",
+      "Het grondvlak heeft {a|zijde|zijden|zijden}, dus er zijn ook {a} zijvlakken.",
+      "De twee grondvlakken, onder en boven, tellen niet mee als zijvlak.",
+      "Het prisma heeft dus {r} zijvlakken."
+    ],
+    "hints": [
+      "De zijvlakken zijn de wanden van het prisma, niet de onderkant en de bovenkant. Elke wand staat op één zijde van het grondvlak.",
+      "Het grondvlak heeft {a|zijde|zijden|zijden}. Hoeveel wanden passen eromheen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-faces": "{w_all_faces} is {a} + 2: de twee grondvlakken zijn erbij geteld. In de vraag tellen ze niet mee, het prisma heeft {r} zijvlakken.",
+      "edges": "{w_edges} is {a} × 3: het aantal ribben. De vraag gaat over zijvlakken: één per zijde van het grondvlak, dus {r}.",
+      "vertices": "{w_vertices} is {a} × 2: het aantal hoekpunten. Er is één zijvlak per zijde van het grondvlak: {r}."
+    }
+  },
+  "G5.solids-nets.07": {
+    "text": "Op een dobbelsteen zijn de ogen op tegenover elkaar liggende vlakken samen 7. Op één vlak zitten {a|oog|ogen|ogen}. Hoeveel ogen zitten er op het vlak er tegenover?",
+    "solution": [
+      "Op een dobbelsteen zijn twee tegenoverliggende vlakken samen altijd 7 ogen.",
+      "Op één vlak zitten {a|oog|ogen|ogen}, dus op het tegenoverliggende vlak 7 − {a} = {=7-a}.",
+      "Op het tegenoverliggende vlak zitten dus {r|oog|ogen|ogen}."
+    ],
+    "hints": [
+      "Tegenoverliggende vlakken raken elkaar niet: het ene ligt boven, het andere onder. Samen zijn het altijd 7 ogen.",
+      "Hoeveel ogen moet je bij {a} optellen om 7 te krijgen? Of haal {a} van 7 af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same-face": "{w_same_face} is het vlak dat je al kent. De vraag gaat over het tegenoverliggende vlak: 7 − {a} = {r}.",
+      "from-six": "{w_from_six} komt van {a} aftrekken van 6. Tegenoverliggende vlakken van een dobbelsteen zijn samen 7: 7 − {a} = {r}.",
+      "next-number": "{w_next_number} is het volgende getal na {a}. Maar het tegenoverliggende vlak is niet het volgende getal: samen moeten ze 7 zijn, dus 7 − {a} = {r}."
+    }
+  },
+  "G5.solids-nets.08": {
+    "text": "Op een dobbelsteen zitten op alle zes de vlakken samen 21 ogen. Je ziet drie vlakken, met {a}, {b} en {c|oog|ogen|ogen}. Hoeveel ogen zitten er samen op de drie vlakken die je niet ziet?",
+    "solution": [
+      "Eerst zoek je hoeveel ogen je ziet: {a} + {b} + {c} = {=a+b+c}.",
+      "De hele dobbelsteen heeft 21 ogen, de rest zit op de vlakken die je niet ziet: 21 − {=a+b+c} = {=21-a-b-c}.",
+      "Op de drie vlakken die je niet ziet zitten samen dus {r|oog|ogen|ogen}."
+    ],
+    "hints": [
+      "De hele dobbelsteen heeft 21 ogen. Zoek eerst hoeveel ogen er op de drie zichtbare vlakken zitten.",
+      "De zichtbare vlakken hebben {a}, {b} en {c} ogen. Tel ze op en trek de som af van 21.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "visible-sum": "{w_visible_sum} is het aantal ogen dat je ziet, maar de vraag gaat over de vlakken die je niet ziet. Dat zijn de ogen die overblijven van 21: 21 − {w_visible_sum} = {r}.",
+      "from-seven": "{w_from_seven} komt van de ogen aftrekken van {=18}, alsof tegenoverliggende vlakken samen {=6} zijn. Een dobbelsteen heeft in totaal 21 ogen (drie paren van 7): 21 − {=a+b+c} = {r}."
+    }
+  },
+  "G5.solids-nets.09": {
+    "text": "Een kubus van {a} × {a} × {a}, gemaakt van gelijke kleine kubussen, is aan de buitenkant geverfd. Hoeveel kleine kubussen hebben precies één geverfd vlak?",
+    "solution": [
+      "Een kleine kubus heeft precies één geverfd vlak als hij in het midden van een zijvlak van de grote kubus zit, niet op een ribbe.",
+      "In een rij van {a} kubussen zitten de twee aan de uiteinden op een ribbe, dus in het midden blijven er {a} − 2 = {=a-2} over.",
+      "Kubussen in het midden van één zijvlak: {=a-2} × {=a-2} = {=(a-2)*(a-2)}. De grote kubus heeft 6 zijvlakken: 6 × {=(a-2)*(a-2)} = {=6*(a-2)*(a-2)}.",
+      "Precies één geverfd vlak hebben dus {r|kubus|kubussen|kubussen}."
+    ],
+    "hints": [
+      "Een kleine kubus heeft precies één geverfd vlak als hij in het midden van een zijvlak zit, niet op een ribbe of in een hoek. Begin met één zijvlak.",
+      "Op één zijvlak heeft een rij {a} kubussen, en de twee aan de uiteinden zitten op een ribbe. Hoeveel kubussen zitten er in het midden van een rij, en hoeveel op het hele zijvlak?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-surface-cubes": "{w_all_surface_cubes} is 6 × {a} × {a}, alle vierkantjes op de zijvlakken. Maar de kubussen langs de randen hebben twee of drie geverfde vlakken en moeten dus weg: precies één geverfd vlak hebben er {r}.",
+      "one-face-only": "{w_one_face_only} is het aantal van zulke kubussen op één zijvlak, en een kubus heeft 6 zijvlakken: 6 × {w_one_face_only} = {r}.",
+      "edge-cubes": "{w_edge_cubes} telt de kubussen op de ribben (zonder de hoeken); die hebben twee geverfde vlakken. We zoeken kubussen met één geverfd vlak, in het midden van de zijvlakken: 6 × {=(a-2)*(a-2)} = {r}."
+    }
+  },
+  "G5.solids-nets.10": {
+    "text": "Alle ribben van een kubus met ribbe {a} cm zijn van draad gemaakt. Hoeveel centimeter draad is er nodig?",
+    "solution": [
+      "Een kubus heeft 12 ribben, allemaal even lang.",
+      "Elke ribbe heeft {a} cm draad nodig: 12 × {a} = {=12*a}.",
+      "Er is dus {r} cm draad nodig."
+    ],
+    "hints": [
+      "De draad is voor alle ribben, niet voor de vlakken. De ribben van een kubus zijn de stokjes: boven, onder en ertussen.",
+      "Een kubus heeft 12 ribben, elk {a} cm lang. Vermenigvuldig 12 met {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "face-edges": "{w_face_edges} is de draad voor de ribben van één vlak (4 ribben). Een kubus heeft er 12: 12 × {a} = {r}.",
+      "faces": "{w_faces} is 6 × {a}: een kubus heeft 6 vlakken maar 12 ribben. De draad is voor de ribben: 12 × {a} = {r}.",
+      "vertices": "{w_vertices} is {=8} × {a}: een kubus heeft 8 hoekpunten, niet 8 ribben. Hij heeft 12 ribben, dus 12 × {a} = {r}."
+    }
+  },
+  "G5.solids-nets.11": {
+    "text": "De uitslag van een kubus met ribbe {a} cm is uit papier geknipt. Hoe groot is de oppervlakte van de uitslag in vierkante centimeters?",
+    "solution": [
+      "De uitslag van een kubus bestaat uit 6 gelijke vierkanten, één voor elk vlak.",
+      "De oppervlakte van één vierkant is {a} × {a} = {=a*a} cm².",
+      "Vermenigvuldig met het aantal vierkanten: 6 × {=a*a} = {=6*a*a}.",
+      "De uitslag heeft dus een oppervlakte van {r} cm²."
+    ],
+    "hints": [
+      "De uitslag is alle zes vlakken van de kubus plat op papier. De oppervlakte van de uitslag is de oppervlakte van de zes vlakken samen.",
+      "Eén vlak is een vierkant met zijde {a} cm. Zoek de oppervlakte ervan ({a} × {a}) en neem zes van zulke vierkanten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-face": "{w_one_face} is de oppervlakte van één vlak. De uitslag heeft er zes: 6 × {w_one_face} = {r}.",
+      "edge-times-six": "{w_edge_times_six} is 6 × {a}: de ribbe is alleen met 6 vermenigvuldigd. De oppervlakte van een vierkant is ribbe keer ribbe: {a} × {a} = {=a*a}, en er zijn zes van zulke vierkanten: {r}."
+    }
+  },
+  "G5.solids-nets.12": {
+    "text": "Kubussen staan op een tafel in één rij, met hun hele vlakken tegen elkaar. Er zijn {a|kubus|kubussen|kubussen}. Hoeveel vlakken zijn niet tegen een andere kubus aan gedrukt? Tel de vlakken waarmee de kubussen op de tafel staan ook mee.",
+    "solution": [
+      "Elke kubus heeft 4 vlakken die geen buurkubus raken: boven, onder, voor en achter.",
+      "{a} × 4 = {=4*a}. Aan elk uiteinde van de rij is nog een vlak vrij: {=4*a} + 2 = {=4*a+2}.",
+      "Het aantal vrije vlakken is dus {r}."
+    ],
+    "hints": [
+      "Een vlak telt niet mee als er een andere kubus tegenaan zit. Kijk naar een kubus in het midden van de rij: hoeveel vrije vlakken heeft hij? Denk daarna aan de twee kubussen aan de uiteinden.",
+      "Elke kubus heeft 4 vrije vlakken: boven, onder, voor en achter. Neem ze voor {a} kubussen en vergeet de twee uiteinden van de rij niet.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-faces": "{w_all_faces} is {a} × 6, alle vlakken van alle kubussen. Maar waar kubussen elkaar raken, zijn de vlakken bedekt: {a} × 4 + 2 = {r}.",
+      "four-per-cube": "{w_four_per_cube} is {a} × 4, maar de twee uiteinden van de rij zijn ook vrij: {=4*a} + 2 = {r}.",
+      "no-table": "{w_no_table} laat de onderkanten weg, de vlakken waarmee de kubussen op de tafel staan. In de vraag tellen die mee: {a} × 4 + 2 = {r}."
+    }
+  },
+  "G5.solids-nets.13": {
+    "text": "Welk van deze dingen heeft de vorm van een bol? 1) een voetbal; 2) een kubusje; 3) een doos; 4) een potlood. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Een bol is aan alle kanten rond. Hij heeft geen platte vlakken en geen ribben.",
+      "Een kubus en een doos hebben platte vlakken, en een potlood is lang en dun.",
+      "Dus keuze {r}, de voetbal, hoort erbij."
+    ],
+    "hints": [
+      "Denk na over welk ding aan alle kanten rond is, zonder platte vlakken en zonder hoeken.",
+      "Het kubusje, de doos en het potlood hebben platte vlakken of ribben. Welk ding niet?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cube": "Keuze {w_cube} is een kubusje. Dat heeft platte vlakken en scherpe ribben, maar een bol is aan alle kanten rond.",
+      "box": "Keuze {w_box} is een doos. Die heeft platte vlakken en hoeken; een bol heeft ze niet.",
+      "pencil": "Keuze {w_pencil} is een potlood. Dat is lang en dun, maar een bol ziet er van alle kanten hetzelfde uit."
+    }
+  },
+  "G6.views.01": {
+    "text": "Drie stapels blokjes staan naast elkaar in een rij, {a}, {b} en {c|blokje|blokjes|blokjes} hoog. Hoeveel vierkantjes zie je als je van voren naar de rij kijkt?",
+    "solution": [
+      "Van voren zie je alle drie de stapels in de rij, elk over zijn hele hoogte.",
+      "De hoogtes zijn {a}, {b} en {c}, dus je telt ze op: {a} + {b} + {c} = {=a+b+c}.",
+      "Van voren zie je dus {r|vierkantje|vierkantjes|vierkantjes}."
+    ],
+    "hints": [
+      "Van voren zie je alle drie de stapels, ze staan in een rij naar je toe. Elk blokje van een stapel laat één vierkantje zien.",
+      "De stapels zijn {a}, {b} en {c} blokjes hoog. Hoeveel vierkantjes geven de drie stapels samen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "highest-only": "{w_highest_only} is alleen de hoogte van de hoogste stapel, maar je ziet elke stapel helemaal: {a} + {b} + {c} = {r}.",
+      "columns": "{w_columns} is het aantal stapels, maar de vraag gaat over vierkantjes, één per blokje: {a} + {b} + {c} = {r}.",
+      "highest-times-three": "{w_highest_times_three} is 3 × {=max(a,b,c)}, alsof elke stapel even hoog is als de hoogste. Maar de hoogtes zijn verschillend: {a} + {b} + {c} = {r}."
+    }
+  },
+  "G6.views.02": {
+    "text": "Drie stapels blokjes staan naast elkaar in een rij, {a}, {b} en {c|blokje|blokjes|blokjes} hoog. Hoeveel vierkantjes telt de hoogste stapel die je ziet als je van opzij naar de rij kijkt?",
+    "solution": [
+      "Van opzij staan de stapels achter elkaar, en de lage stapels zie je niet, want de hoge staan ervoor.",
+      "Je ziet net zoveel vierkantjes als de hoogste stapel heeft: van {a}, {b} en {c} is {r} het grootst.",
+      "De hoogste stapel die je ziet telt dus {r|vierkantje|vierkantjes|vierkantjes}."
+    ],
+    "hints": [
+      "Van opzij staan de stapels achter elkaar, en de lage stapels zie je niet, want de hoge staan ervoor. Wat zie je dan nog bovenaan?",
+      "Zoek de grootste van de hoogtes {a}, {b} en {c}: zoveel vierkantjes telt de hoogste stapel.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} zijn alle blokjes van alle stapels samen. Van opzij verbergen de stapels elkaar, en je ziet alleen de hoogte van de hoogste.",
+      "lowest": "{w_lowest} is de laagste stapel, die achter hogere stapels verborgen is. Van opzij zie je de hoogste.",
+      "first-column": "{w_first_column} is de hoogte van de eerste stapel. Maar van opzij zie je de hoogste van de drie, en dat is niet de eerste."
+    }
+  },
+  "G6.views.03": {
+    "text": "Een gebouw van blokjes beslaat op de tafel een rechthoek: {a|hokje|hokjes|hokjes} lang en {b|hokje|hokjes|hokjes} breed. Hoeveel vierkantjes zie je als je van boven naar het gebouw kijkt?",
+    "solution": [
+      "Van boven zie je één vierkantje voor elk hokje van de tafel dat het gebouw bedekt.",
+      "De rechthoek is {a} hokjes lang en {b} hokjes breed: {a} × {b} = {=a*b}.",
+      "Van boven zie je dus {r|vierkantje|vierkantjes|vierkantjes}."
+    ],
+    "hints": [
+      "Van boven zie je één vierkantje voor elk hokje van de tafel dat het gebouw bedekt. De hoogte maakt niet uit.",
+      "De rechthoek is {a} hokjes lang en {b} hokjes breed. Hoeveel hokjes zijn dat samen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sides-added": "{w_sides_added} is {a} + {b}. Je ziet alle hokjes van de rechthoek, en die vind je door te vermenigvuldigen: {a} × {b} = {r}.",
+      "perimeter": "{w_perimeter} telt de hokjes langs de rand van de rechthoek, maar van boven zie je alle hokjes: {a} × {b} = {r}.",
+      "front-row": "{w_front_row} is maar één zijde van het gebouw, zoals je die van voren ziet. Van boven zie je alle hokjes, niet alleen de lengte: {a} × {b} = {r}."
+    }
+  },
+  "G6.views.04": {
+    "text": "Van blokjes is een balk van {a} × {b} × {c} gebouwd. Je ziet hem van drie kanten: voor, rechts en boven. Hoeveel blokjes zie je van geen van die kanten?",
+    "solution": [
+      "Je ziet de blokjes op het voorvlak, het rechtervlak en het bovenvlak van de balk. Haal je die drie lagen weg, dan blijft een balk van verborgen blokjes over.",
+      "Elke maat wordt één blokje korter: {a} − 1 = {=a-1}, {b} − 1 = {=b-1}, {c} − 1 = {=c-1}.",
+      "Verborgen blokjes: {=a-1} × {=b-1} × {=c-1} = {r}.",
+      "Je ziet dus {r|blokje|blokjes|blokjes} niet."
+    ],
+    "hints": [
+      "Je ziet drie kanten van de balk: voor, rechts en boven. De verborgen blokjes zitten daarachter, binnenin.",
+      "Haal in gedachten de lagen weg die je ziet: elke maat {a}, {b} en {c} wordt 1 kleiner. Welke balk blijft er over?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "visible-cubes": "{w_visible_cubes} is het aantal blokjes dat je wel ziet, maar de vraag gaat over de verborgen blokjes: {=a-1} × {=b-1} × {=c-1} = {r}.",
+      "all-cubes": "{w_all_cubes} zijn alle blokjes van de balk, maar een deel ervan zie je van de drie kanten."
+    }
+  },
+  "G6.views.05": {
+    "text": "Een gebouw van {a} blokjes ziet er van boven uit als {b|vierkantje|vierkantjes|vierkantjes}. Hoeveel blokjes liggen er op andere blokjes?",
+    "solution": [
+      "Van boven zie je één vierkantje voor elke stapel, dus er zijn {b} stapels.",
+      "In elke stapel staat het onderste blokje op de tafel en ligt het niet op een ander blokje, dus dat zijn er {b}.",
+      "Alle andere liggen op andere blokjes: {a} − {b} = {=a-b}.",
+      "Dus {r|blokje ligt|blokjes liggen|blokjes liggen} op andere blokjes."
+    ],
+    "hints": [
+      "Van boven zie je alleen het bovenste blokje van elke stapel: één vierkantje per stapel. Hoeveel stapels zijn er?",
+      "In elke stapel staat het onderste blokje op de tafel. Daarvan zijn er net zoveel als stapels: {b}. De rest van de {a} blokjes ligt op andere blokjes.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "visible": "{w_visible} is het aantal stapels, dus de blokjes die op de tafel staan. De andere liggen erop: {a} − {b} = {r}.",
+      "all": "{w_all} zijn alle blokjes van het gebouw, maar {b} ervan staan op de tafel. Op andere blokjes liggen {a} − {b} = {r}."
+    }
+  },
+  "G6.views.06": {
+    "text": "Drie stapels staan in een rij, {a}, {b} en {c|blokje|blokjes|blokjes} hoog. Hoeveel van die stapels zijn minstens {d|blokje|blokjes|blokjes} hoog?",
+    "solution": [
+      "Een stapel telt mee als zijn hoogte minstens {d} is.",
+      "Van de hoogtes {a}, {b} en {c} kiezen we de hoogtes die {d} of meer zijn.",
+      "Het aantal van zulke stapels is dus {r}."
+    ],
+    "hints": [
+      "Bekijk de stapels één voor één en vergelijk elke hoogte met {d}. ‘Minstens’ betekent even hoog of hoger.",
+      "De hoogtes zijn {a}, {b} en {c}. Vraag bij elke: is ze {d} of meer? Tel hoe vaak het antwoord ja is.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} zijn alle stapels, maar niet elke stapel komt tot {d}. Alleen de stapels die niet lager zijn dan {d} tellen mee.",
+      "exact": "{w_exact} telt de stapels die precies {d} hoog zijn. Maar ‘minstens’ betekent dat hogere stapels ook meetellen: {r}.",
+      "taller-only": "{w_taller_only} telt de stapels die hoger zijn dan {d}. ‘Minstens’ omvat ook de stapels die precies {d} hoog zijn: {r}."
+    }
+  },
+  "G6.views.07": {
+    "text": "Je staat met je gezicht naar het noorden. In welke richting wijst je rechterhand? 1) naar het westen; 2) naar het oosten; 3) naar het zuiden; 4) naar het noorden. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Als je naar het noorden kijkt, is het westen links van je, het oosten rechts en het zuiden achter je.",
+      "Je rechterhand wijst dus naar het oosten, keuze {r}."
+    ],
+    "hints": [
+      "Op een kaart staat het noorden boven en het oosten rechts. Kijk naar het noorden en let op waar je rechterhand wijst.",
+      "Het noorden is voor je. Steek je rechterhand zijwaarts uit: wijst die naar waar de zon opkomt of naar waar ze ondergaat?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "west": "Keuze {w_west} is het westen. Dat is links van je als je naar het noorden kijkt. Je rechterhand wijst naar het oosten.",
+      "south": "Keuze {w_south} is het zuiden. Dat is achter je, en je rechterhand wijst opzij.",
+      "north": "Keuze {w_north} is het noorden. Dat is voor je, en je rechterhand wijst opzij."
+    }
+  },
+  "G6.views.08": {
+    "text": "Hoe ziet een bol eruit als je er van boven, van voren en van opzij naar kijkt? 1) van boven een cirkel en van opzij een vierkant; 2) van alle kanten een vierkant; 3) van alle kanten een cirkel; 4) van boven een vierkant en van voren een cirkel. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Een bol is aan alle kanten rond, dus hij ziet er van elke kant hetzelfde uit.",
+      "Van boven, van voren en van opzij zie je een cirkel.",
+      "Keuze {r} past dus: van alle kanten een cirkel."
+    ],
+    "hints": [
+      "Een bol is aan alle kanten rond. Welke vorm zie je als je van boven kijkt? En van voren?",
+      "Loop om de bol heen: verandert de vorm die je ziet, of blijft die hetzelfde?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "circle-and-square": "Keuze {w_circle_and_square}: van boven is een bol een cirkel, maar van opzij ook, geen vierkant.",
+      "square-everywhere": "Keuze {w_square_everywhere}: een kubus kan er als een vierkant uitzien, maar een bol is rond, dus van elke kant zie je een cirkel.",
+      "square-and-circle": "Keuze {w_square_and_circle}: van boven is een bol geen vierkant maar een cirkel. Hij ziet er van alle kanten hetzelfde uit."
+    }
+  },
+  "G6.views.09": {
+    "text": "Hoe ziet een balkvormige doos er van boven uit als hij op de tafel ligt op zijn grootste vlak? 1) als een cirkel; 2) als een driehoek; 3) als een vijfhoek; 4) als een rechthoek. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "De doos ligt op zijn grootste vlak, dus van boven zie je het bovenvlak, dat even groot is.",
+      "Een vlak van een balk is een rechthoek.",
+      "Van boven ziet de doos er dus uit als een rechthoek, keuze {r}."
+    ],
+    "hints": [
+      "De doos ligt op zijn grootste vlak. Welk vlak zie je van boven?",
+      "Welke platte vormen hebben de vlakken van een balk? Vergelijk met de keuzes.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "circle": "Keuze {w_circle}: de doos heeft geen ronde vlakken; van boven zie je een rechthoek.",
+      "triangle": "Keuze {w_triangle}: een balk heeft geen driehoekige vlakken, alle vlakken zijn rechthoeken.",
+      "pentagon": "Keuze {w_pentagon}: een balk heeft geen vijfhoekige vlakken; van boven zie je een rechthoek."
+    }
+  },
+  "G6.views.10": {
+    "text": "Van blokjes is een balk van {a} × {b} × {c} gebouwd en daarna haalt iemand er {d|blokje|blokjes|blokjes} weg. Hoeveel blokjes blijven er over?",
+    "solution": [
+      "De hele balk heeft {a} × {b} × {c} = {=a*b*c} blokjes.",
+      "Weggehaald: {d|blokje|blokjes|blokjes}. Dus je trekt af: {=a*b*c} − {d} = {=a*b*c-d}.",
+      "Er blijven dus {r|blokje|blokjes|blokjes} over."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel blokjes de hele balk heeft: hij bestaat uit gelijke lagen.",
+      "De balk heeft {a} × {b} × {c} blokjes. Trek de {d|blokje|blokjes|blokjes} af die zijn weggehaald.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "removed": "{w_removed} is het aantal blokjes dat is weggehaald, maar de vraag gaat over de blokjes die overblijven: {=a*b*c} − {d} = {r}.",
+      "sum": "{w_sum} is {a} + {b} + {c} − {d}. Het aantal blokjes van een balk vind je door te vermenigvuldigen: {a} × {b} × {c} = {=a*b*c}, en daarna trek je de weggehaalde blokjes af: {r}.",
+      "one-layer": "{w_one_layer} is {a} × {b} − {d}: er is maar één laag gebruikt in plaats van alle {c} lagen. De hele balk heeft {=a*b*c} blokjes, en na het weghalen van {d} blijven er {r} over."
+    }
+  },
+  "G6.blocks.01": {
+    "text": "Op de plattegrond van een gebouw van blokjes staan in de hokjes de hoogtes van de stapels: in de eerste rij {a} en {b}, in de tweede rij {c} en {d}. Hoeveel blokjes heeft het gebouw?",
+    "solution": [
+      "Het getal in een hokje van de plattegrond is de hoogte van de stapel, dus hoeveel blokjes erin zitten.",
+      "Tel alle vier de getallen op: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "Het gebouw heeft dus {r|blokje|blokjes|blokjes}."
+    ],
+    "hints": [
+      "Het getal in elk hokje van de plattegrond zegt hoeveel blokjes er in die stapel zitten. Je zoekt de blokjes van alle vier de stapels samen.",
+      "Tel de vier getallen op: {a}, {b}, {c} en {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cells": "{w_cells} is het aantal hokjes op de plattegrond, maar in elk hokje staat een stapel van meerdere blokjes. Het aantal blokjes is {a} + {b} + {c} + {d} = {r}.",
+      "highest-times-four": "{w_highest_times_four} krijg je als alle vier de stapels even hoog zijn als de hoogste. Maar de hoogtes zijn verschillend: {a} + {b} + {c} + {d} = {r}.",
+      "first-row": "{w_first_row} is alleen de eerste rij van de plattegrond. De tweede rij heeft ook stapels: {a} + {b} + {c} + {d} = {r}."
+    }
+  },
+  "G6.blocks.02": {
+    "text": "Op de plattegrond van een gebouw van blokjes staan in de hokjes de hoogtes van de stapels: in de eerste rij {a} en {b}, in de tweede rij {c} en {d}. Hoeveel blokjes zitten er in de hoogste stapel?",
+    "solution": [
+      "Het getal in een hokje van de plattegrond is de hoogte van de stapel, dus de hoogste stapel staat waar het getal het grootst is.",
+      "Van de getallen {a}, {b}, {c} en {d} is {r} het grootst.",
+      "In de hoogste stapel zitten dus {r|blokje|blokjes|blokjes}."
+    ],
+    "hints": [
+      "Het getal in een hokje van de plattegrond is de hoogte van de stapel. De hoogste stapel staat waar het getal het grootst is.",
+      "Vergelijk de getallen {a}, {b}, {c} en {d}: welk is het grootst?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} zijn alle blokjes van het gebouw samen, maar de vraag gaat over de ene hoogste stapel.",
+      "lowest": "{w_lowest} is de laagste stapel, maar we zoeken de hoogste.",
+      "first-cell": "{w_first_cell} is de hoogte van de stapel in het eerste hokje van de plattegrond, maar die is niet de hoogste."
+    }
+  },
+  "G6.blocks.03": {
+    "text": "Drie stapels staan in een rij, {a}, {b} en {c|blokje|blokjes|blokjes} hoog. Hoeveel blokjes moeten erbij, zodat alle stapels {d|blokje|blokjes|blokjes} hoog zijn?",
+    "solution": [
+      "Als alle drie de stapels tot hoogte {d} worden opgebouwd, heb je 3 × {d} = {=3*d} blokjes nodig.",
+      "Nu staan er {a} + {b} + {c} = {=a+b+c}.",
+      "Je moet het verschil erbij doen: {=3*d} − {=a+b+c} = {=3*d-a-b-c}.",
+      "Er moeten dus {r|blokje|blokjes|blokjes} bij."
+    ],
+    "hints": [
+      "Elke stapel mist nog blokjes tot hoogte {d}. Zoek hoeveel de eerste stapel mist: {d} − {a}.",
+      "Zoek hoeveel elk van de drie stapels ({a}, {b} en {c}) mist en tel op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-column": "{w_one_column} is wat alleen de eerste stapel mist, maar er moeten blokjes bij alle drie de stapels: {r}.",
+      "built": "{w_built} is het aantal blokjes dat er al staat. Je moet er zoveel bij doen dat elke stapel {d} hoog is: 3 × {d} − {=a+b+c} = {r}.",
+      "target-only": "{w_target_only} is het aantal blokjes dat de drie stapels na het bouwen hebben. De blokjes die er al staan hoef je er niet bij te doen: {=3*d} − {=a+b+c} = {r}."
+    }
+  },
+  "G6.blocks.04": {
+    "text": "Een stapel van {a|blokje|blokjes|blokjes} met ribbe 1 cm staat op een tafel. Hoeveel vierkante centimeter van de buitenkant zie je, zonder het vlak dat op de tafel staat?",
+    "solution": [
+      "Eén zijkant van de stapel is {a|vierkantje|vierkantjes|vierkantjes} boven elkaar, één voor elk blokje.",
+      "Er zijn vier zijkanten: 4 × {a} = {=4*a}.",
+      "De bovenkant geeft nog één vierkantje: {=4*a} + 1 = {=4*a+1}.",
+      "De oppervlakte is dus {r} cm²."
+    ],
+    "hints": [
+      "Een stapel heeft vier zijkanten en een bovenkant. De onderkant staat op de tafel, die tellen we niet.",
+      "Eén zijkant is {a|vierkantje|vierkantjes|vierkantjes} boven elkaar. Er zijn vier zijkanten, en ook nog de bovenkant.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "with-bottom": "{w_with_bottom} telt ook de onderkant mee, die op de tafel staat. Die tel je niet: 4 × {a} + 1 = {r}.",
+      "sides-only": "{w_sides_only} zijn alleen de zijkanten. De bovenkant zie je ook: 4 × {a} + 1 = {r}.",
+      "five-per-cube": "{w_five_per_cube} is {=5} × {a}: bij elk blokje zijn vijf vlakken geteld. Maar van elk blokje zie je alleen de vier zijkanten, en de bovenkant alleen bij het bovenste blokje: 4 × {a} + 1 = {r}."
+    }
+  },
+  "G6.blocks.05": {
+    "text": "Een trap is gemaakt van stapels met hoogte 1, 2, 3 enzovoort tot {a|blokje|blokjes|blokjes}. Hoeveel blokjes zitten er in drie van zulke trappen?",
+    "solution": [
+      "Twee gelijke trappen die je tegen elkaar zet, maken een rechthoek van {a} × ({a} + 1) = {=a*(a+1)} blokjes.",
+      "Eén trap is de helft daarvan: {=a*(a+1)} : 2 = {=a*(a+1)/2}.",
+      "Er zijn drie trappen: 3 × {=a*(a+1)/2} = {r}.",
+      "In drie trappen zitten dus {r|blokje|blokjes|blokjes}."
+    ],
+    "hints": [
+      "Eén trap is stapels met hoogte 1, 2, 3 enzovoort tot {a}. Tel eerst de blokjes in één trap.",
+      "Twee van zulke trappen tegen elkaar maken een rechthoek van {a} × {=a+1}. Eén trap is de helft. Vermenigvuldig daarna met 3.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-staircase": "{w_one_staircase} is het aantal blokjes in één trap, maar er zijn drie trappen: 3 × {w_one_staircase} = {r}.",
+      "by-the-top": "{w_by_the_top} is 3 × {a}: alleen de hoogte van de bovenste stapel is gebruikt. De trap heeft stapels van 1, 2, 3 enzovoort tot {a}, en al hun blokjes moeten bij elkaar.",
+      "not-halved": "{w_not_halved} zijn drie rechthoeken van {a} × {=a+1}, en in elke zitten twee trappen. Een trap is de helft van een rechthoek, dus 3 × {=a*(a+1)} : 2 = {r}."
+    }
+  },
+  "G6.blocks.06": {
+    "text": "Van een kubus van {a} × {a} × {a}, gemaakt van blokjes met ribbe 1 cm, is één hoekblokje weggehaald. Hoe groot is de hele oppervlakte van het lichaam nu, in vierkante centimeters?",
+    "solution": [
+      "De hele kubus heeft een oppervlakte van 6 × {a} × {a} = {=6*a*a} cm².",
+      "Het hoekblokje had drie vlakken aan de buitenkant, en die verdwenen toen het werd weggehaald.",
+      "Maar drie buurblokjes laten nu elk een vlak zien dat eerst binnenin verborgen zat.",
+      "We verloren drie vlakken en kregen er drie bij, dus de oppervlakte is hetzelfde: {r} cm²."
+    ],
+    "hints": [
+      "Zoek eerst de oppervlakte van de hele kubus: zes vlakken van {a} × {a}.",
+      "Als het hoekblokje weggaat, verdwijnen drie van zijn vlakken en komen er drie nieuwe bij de buren. Vergelijk hoeveel je verloor en hoeveel erbij kwam.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "minus-three": "{w_minus_three} is {=6*a*a} − 3: alleen de drie verloren vlakken zijn geteld. Maar bij de buren kwamen drie vlakken vrij, dus de oppervlakte is niet veranderd: {r}.",
+      "plus-three": "{w_plus_three} is {=6*a*a} + 3: alleen de vrijgekomen vlakken zijn geteld. Maar de drie vlakken van het weggehaalde blokje zijn weg, dus de oppervlakte is niet veranderd: {r}.",
+      "volume-less-one": "{w_volume_less_one} is {a} × {a} × {a} − 1, het aantal blokjes dat overblijft, maar de vraag gaat over de oppervlakte in vierkante centimeters: 6 × {a} × {a} = {r}."
+    }
+  },
+  "G6.blocks.07": {
+    "text": "Er werden {a|stapel|stapels|stapels} van {b|blokje|blokjes|blokjes} gebouwd. Daarna werd van {c|stapel|stapels|stapels} het bovenste blokje weggehaald. Hoeveel blokjes blijven er over?",
+    "solution": [
+      "Eerst waren er {a} × {b} = {=a*b} blokjes.",
+      "Van {c|stapel|stapels|stapels} werd één blokje weggehaald, dus er zijn er in totaal {c} weg.",
+      "Over: {=a*b} − {c} = {r}.",
+      "Er blijven dus {r|blokje|blokjes|blokjes} over."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel blokjes er waren voordat er iets werd weggehaald.",
+      "Er waren {a} stapels met {b} blokjes in elke. Van {c|stapel|stapels|stapels} werd één blokje weggehaald: trek af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "removed-all-tops": "{w_removed_all_tops} krijg je als het bovenste blokje van alle {a} stapels wordt weggehaald. Maar het is maar van {c|stapel|stapels|stapels} weggehaald: {=a*b} − {c} = {r}.",
+      "sum": "{w_sum} is gevonden door op te tellen. De blokjes in {a} stapels van {b} vind je door te vermenigvuldigen: {a} × {b} = {=a*b}, en dan trek je {c} af: {r}.",
+      "whole-columns": "{w_whole_columns} krijg je als {c|hele stapel|hele stapels|hele stapels} worden weggehaald. Maar van die stapels is alleen het bovenste blokje weggehaald: {=a*b} − {c} = {r}."
+    }
+  },
+  "G6.blocks.08": {
+    "text": "Er is een rechthoek van blokjes van {a} × {b} gebouwd, {c|laag|lagen|lagen} hoog. Hoeveel blokjes liggen er boven de eerste laag?",
+    "solution": [
+      "Eén laag heeft {a} × {b} = {=a*b} blokjes.",
+      "De eerste laag telt niet mee, dus het aantal lagen dat overblijft is {c} − 1 = {=c-1}.",
+      "Boven de eerste laag: {=a*b} × {=c-1} = {r}.",
+      "Boven de eerste laag liggen dus {r|blokje|blokjes|blokjes}."
+    ],
+    "hints": [
+      "Elke laag heeft evenveel blokjes. De eerste laag telt in de vraag niet mee.",
+      "Eén laag heeft {a} × {b} blokjes. Het aantal lagen boven de eerste is één minder dan alle lagen: {c} − 1.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-layer": "{w_one_layer} zijn de blokjes van één laag, maar boven de eerste liggen {=c-1} van zulke lagen: {=a*b} × {=c-1} = {r}.",
+      "all-layers": "{w_all_layers} zijn de blokjes van alle {c} lagen, de eerste laag meegerekend. De eerste laag telt niet mee: {=a*b} × {=c-1} = {r}."
+    }
+  },
+  "G6.blocks.09": {
+    "text": "Op de plattegrond staan {a|rij|rijen|rijen} en {b|kolom|kolommen|kolommen}, en in elk hokje staat een stapel die {c|blokje|blokjes|blokjes} hoog is. Hoeveel blokjes heeft het gebouw?",
+    "solution": [
+      "De plattegrond heeft {a} × {b} = {=a*b} hokjes, en in elk hokje staat één stapel.",
+      "Elke stapel heeft {c|blokje|blokjes|blokjes}.",
+      "Samen: {=a*b} × {c} = {r}.",
+      "Het gebouw heeft dus {r|blokje|blokjes|blokjes}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel hokjes de plattegrond heeft. In elk hokje staat een stapel van dezelfde hoogte.",
+      "Er zijn {a} × {b} hokjes. Elk geeft {c|blokje|blokjes|blokjes}: vermenigvuldig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cells": "{w_cells} is het aantal hokjes, dus het aantal stapels. Elke stapel heeft {c|blokje|blokjes|blokjes}, dus {=a*b} × {c} = {r}.",
+      "sum": "{w_sum} is gevonden door {a} + {b} + {c} op te tellen. Blokjes tel je door te vermenigvuldigen: {a} × {b} × {c} = {r}.",
+      "rows-plus-columns": "{w_rows_plus_columns} is ({a} + {b}) × {c}: de rijen en kolommen zijn opgeteld. Het aantal hokjes is niet {a} + {b} maar {a} × {b} = {=a*b}, dus het aantal blokjes is {=a*b} × {c} = {r}."
+    }
+  },
+  "G6.blocks.10": {
+    "text": "Een piramide van blokjes is in lagen gebouwd: de onderste laag is {a} × {a}, de laag erboven is aan elke kant één blokje korter, enzovoort tot één blokje. Hoeveel blokjes heeft de piramide in totaal?",
+    "solution": [
+      "De lagen zijn vierkanten met zijden 1, 2, 3 enzovoort tot {a}. Hun blokjes op volgorde: 1, 4, 9, {=16}, {=25}, {=36}, {=49}, {=64}. We hebben de eerste {a} nodig.",
+      "Tel je ze achter elkaar op, dan krijg je de sommen 1, {=5}, {=14}, {=30}, {=55}, {=91}, {=140}, {=204}.",
+      "De piramide heeft {a|laag|lagen|lagen}, dus neem som nummer {a} uit het rijtje: {r|blokje|blokjes|blokjes}."
+    ],
+    "hints": [
+      "De lagen zijn vierkanten: bovenaan 1 × 1, dan 2 × 2, enzovoort tot {a} × {a}. Hoeveel blokjes zitten er in elke laag?",
+      "Tel de blokjes van de lagen na elkaar: 1, 4, 9, … Tel ze op volgorde op tot je bij laag nummer {a} bent.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "bottom-layer": "{w_bottom_layer} is alleen de onderste laag {a} × {a}. Erboven liggen nog meer lagen, dus in totaal zijn het er {r}.",
+      "sides-added": "{w_sides_added} is 1 + 2 + … + {a}: de zijden van de lagen zijn opgeteld. Maar elke laag heeft zoveel blokjes als een vierkant: zijde keer zijde.",
+      "one-layer-short": "{w_one_layer_short} is de som voor één laag minder. De onderste laag {a} × {a} telt ook mee: neem som nummer {a}, dat geeft {r}."
+    }
+  },
+  "G7.plan.01": {
+    "text": "Je loopt naar het noorden en draait {a|kwartslag|kwartslagen|kwartslagen} naar rechts. In welke richting loop je nu? 1) naar het oosten; 2) naar het westen; 3) naar het zuiden; 4) naar het noorden. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Op een kaart staat het noorden boven, het oosten rechts, het zuiden onder en het westen links. Een draai naar rechts gaat met de klok mee: noord, oost, zuid, west en weer noord.",
+      "Elke kwartslag is één stap rond deze cirkel. Vier stappen zijn een hele draai en brengen je terug op dezelfde plek, dus hele draaien laten we weg. Over: {=mod(a,4)|stap|stappen|stappen}.",
+      "Na {=mod(a,4)|stap|stappen|stappen} vanaf het noorden kom je bij keuze {r}."
+    ],
+    "hints": [
+      "Een draai naar rechts gaat met de klok mee. Het noorden staat boven, het oosten rechts, het zuiden onder en het westen links.",
+      "Eén kwartslag is één stap rond de cirkel noord, oost, zuid, west. Tel {a|stap|stappen|stappen} vanaf het noorden; hele draaien van 4 stappen tel je niet mee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-other-way": "Keuze {w_the_other_way} komt van linksom draaien, maar je draait rechtsom.",
+      "one-quarter-fewer": "Keuze {w_one_quarter_fewer} is één kwartslag te weinig. Tel precies {a|kwartslag|kwartslagen|kwartslagen}.",
+      "one-quarter-more": "Keuze {w_one_quarter_more} is één kwartslag te veel. Tel precies {a|kwartslag|kwartslagen|kwartslagen}."
+    }
+  },
+  "G7.plan.02": {
+    "text": "Je loopt naar het noorden en draait {a|kwartslag|kwartslagen|kwartslagen} naar links. In welke richting loop je nu? 1) naar het oosten; 2) naar het westen; 3) naar het zuiden; 4) naar het noorden. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Op een kaart staat het noorden boven, het westen links, het zuiden onder en het oosten rechts. Een draai naar links gaat tegen de klok in: noord, west, zuid, oost en weer noord.",
+      "Elke kwartslag is één stap rond deze cirkel. Vier stappen zijn een hele draai en brengen je terug op dezelfde plek, dus hele draaien laten we weg. Over: {=mod(a,4)|stap|stappen|stappen}.",
+      "Na {=mod(a,4)|stap|stappen|stappen} vanaf het noorden kom je bij keuze {r}."
+    ],
+    "hints": [
+      "Een draai naar links gaat tegen de klok in. Het noorden staat boven, het westen links, het zuiden onder en het oosten rechts.",
+      "Eén kwartslag is één stap rond de cirkel noord, west, zuid, oost. Tel {a|stap|stappen|stappen} vanaf het noorden; hele draaien van 4 stappen tel je niet mee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-other-way": "Keuze {w_the_other_way} komt van rechtsom draaien, maar je draait linksom.",
+      "one-quarter-fewer": "Keuze {w_one_quarter_fewer} is één kwartslag te weinig. Tel precies {a|kwartslag|kwartslagen|kwartslagen}.",
+      "one-quarter-more": "Keuze {w_one_quarter_more} is één kwartslag te veel. Tel precies {a|kwartslag|kwartslagen|kwartslagen}."
+    }
+  },
+  "G7.plan.03": {
+    "text": "Welke richting ligt tegenover het oosten? 1) noord; 2) zuid; 3) west; 4) noordwest. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Het oosten staat op een kaart rechts, en tegenover het oosten, links, staat het westen.",
+      "Noord en zuid liggen ook tegenover elkaar, dus die passen niet bij het oosten.",
+      "Tegenover het oosten ligt het westen, keuze {r}."
+    ],
+    "hints": [
+      "Tegengestelde richtingen liggen op het kompas tegenover elkaar, aan weerszijden van het midden.",
+      "Het oosten staat rechts op de kaart. Wat staat er aan de overkant, links?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "north": "Keuze {w_north} is noord. Dat ligt tegenover zuid, niet tegenover oost.",
+      "south": "Keuze {w_south} is zuid. Dat ligt tegenover noord, niet tegenover oost.",
+      "north-west": "Keuze {w_north_west} is noordwest. Dat ligt tussen noord en west en tegenover zuidoost."
+    }
+  },
+  "G7.plan.04": {
+    "text": "Hoe heet de richting tussen noord en oost? 1) zuidwest; 2) zuidoost; 3) noordwest; 4) noordoost. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Het noorden staat op een kaart boven en het oosten rechts, en de richting ertussen ligt in de hoek.",
+      "De naam is gemaakt van de twee buren: eerst noord, dan oost.",
+      "Dat is noordoost, keuze {r}."
+    ],
+    "hints": [
+      "Het noorden staat boven, het oosten rechts. Welke richting ligt ertussen, in de rechterbovenhoek van het kompas?",
+      "De naam van een tussenrichting maak je van de twee buren: noord of zuid komt eerst.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "south-west": "Keuze {w_south_west} is zuidwest. Dat ligt linksonder, niet tussen noord en oost.",
+      "south-east": "Keuze {w_south_east} is zuidoost. Dat ligt rechtsonder, niet tussen noord en oost.",
+      "north-west": "Keuze {w_north_west} is noordwest. Dat ligt linksboven, niet tussen noord en oost."
+    }
+  },
+  "G7.plan.05": {
+    "text": "Stad B ligt ten zuidoosten van stad A. In welke richting ligt stad A vanuit stad B? 1) ten noordwesten; 2) ten zuidoosten; 3) ten noordoosten; 4) ten zuidwesten. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Stad B ligt ten zuidoosten van stad A: vanuit A ga je naar beneden en naar rechts.",
+      "Van B terug naar A ga je andersom: omhoog en naar links.",
+      "Omhoog en naar links is noordwest, keuze {r}."
+    ],
+    "hints": [
+      "Stel je een kaart voor: van A naar B ga je naar beneden en naar rechts. Ga nu in B staan en kijk naar A.",
+      "Van B naar A loop je langs hetzelfde pad, maar de andere kant op: omhoog en naar links. Hoe heet die richting?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same-direction": "Keuze {w_same_direction} is dezelfde richting als van A naar B. Van B naar A is de richting tegengesteld.",
+      "north-east": "Keuze {w_north_east} is omhoog en naar rechts, maar van B naar A ga je omhoog en naar links.",
+      "south-west": "Keuze {w_south_west} is naar beneden en naar links, maar van B naar A ga je omhoog en naar links."
+    }
+  },
+  "G7.plan.06": {
+    "text": "Je staat met je gezicht naar het noorden en draait met de klok mee {a|kwartslag|kwartslagen|kwartslagen}, en daarna nog {b|kwartslag|kwartslagen|kwartslagen}. Naar welke kant kijk je nu? 1) noord; 2) oost; 3) zuid; 4) west. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Samen draaide je {a} + {b} = {=a+b|kwartslag|kwartslagen|kwartslagen}.",
+      "Elke kwartslag is één stap rond de cirkel: noord, oost, zuid, west en weer noord.",
+      "Vier kwartslagen zijn een hele draai en brengen je terug op dezelfde plek, dus die laten we weg. Over: {=mod(a+b,4)|kwartslag|kwartslagen|kwartslagen}.",
+      "Tel ze vanaf het noorden en je komt bij keuze {r}."
+    ],
+    "hints": [
+      "Noord is keuze 1; met de klok mee volgen oost, zuid, west. Elke kwartslag is één stap.",
+      "Tel de kwartslagen van de twee draaien op: {a} + {b}. Laat hele draaien van 4 kwartslagen weg.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-turn": "Keuze {w_no_turn} is noord, alsof de draaien je terugbrachten. Maar van {=a+b|kwartslag|kwartslagen|kwartslagen} blijft na het weglaten van hele draaien {=mod(a+b,4)|kwartslag|kwartslagen|kwartslagen} over.",
+      "first-turn-only": "Keuze {w_first_turn_only} telt alleen de eerste draai van {a|kwartslag|kwartslagen|kwartslagen}, maar er was nog een tweede.",
+      "turned-back": "Keuze {w_turned_back} komt doordat de tweede draai de andere kant op is gedaan. Beide draaien gaan met de klok mee, dus je telt ze op: {a} + {b}."
+    }
+  },
+  "G7.plan.07": {
+    "text": "Een wandelaar liep {a|hokje|hokjes|hokjes} naar het noorden en {b|hokje|hokjes|hokjes} naar het oosten, en liep daarna langs dezelfde weg terug naar het begin. Hoeveel hokjes heeft de wandelaar in totaal gelopen?",
+    "solution": [
+      "Heen liep de wandelaar {a} + {b} = {=a+b} hokjes.",
+      "Terug was de weg hetzelfde, dus nog eens dezelfde afstand.",
+      "Samen, heen en terug: 2 × {=a+b} = {r} hokjes."
+    ],
+    "hints": [
+      "De wandelaar gaat heen en komt langs dezelfde weg terug. Hoeveel hokjes is het één kant op?",
+      "Eén kant op is {a} naar het noorden en {b} naar het oosten. De weg terug is even lang, dus verdubbel het resultaat.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-way": "{w_one_way} is alleen de weg heen. De wandelaar liep ook terug: 2 × {w_one_way} = {r}.",
+      "straight-line": "{w_straight_line} is de lengte van het langste van de twee stukken. De wandelaar liep beide en kwam terug: 2 × ({a} + {b}) = {r}.",
+      "one-leg-doubled": "{w_one_leg_doubled} is 2 × {a} + {b}: één stuk is verdubbeld en het andere niet. Terug liep de wandelaar beide: 2 × ({a} + {b}) = {r}."
+    }
+  },
+  "G7.plan.08": {
+    "text": "Een wandelaar liep {a|hokje|hokjes|hokjes} naar het noorden en daarna {b|hokje|hokjes|hokjes} naar het zuiden. Hoeveel hokjes ten noorden van het begin staat de wandelaar nu?",
+    "solution": [
+      "Noord en zuid zijn tegengestelde richtingen, dus de stappen naar het zuiden brengen de wandelaar terug.",
+      "Trek de stappen naar het zuiden af van de stappen naar het noorden: {a} − {b} = {=a-b}.",
+      "De wandelaar staat dus {r|hokje|hokjes|hokjes} ten noorden van het begin."
+    ],
+    "hints": [
+      "Noord en zuid zijn tegengestelde richtingen: stappen naar het zuiden brengen je terug.",
+      "Van de {a} hokjes naar het noorden zijn er {b} teruggelopen. Hoeveel hokjes blijven er over?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total-path": "{w_total_path} is de hele afgelegde weg, {a} + {b}. Maar de stappen naar het zuiden gingen terug, dus de wandelaar staat {a} − {b} = {r} van het begin.",
+      "south-only": "{w_south_only} is alleen de weg naar het zuiden. De wandelaar ging eerst naar het noorden, dus staat {a} − {b} = {r} ten noorden van het begin.",
+      "north-only": "{w_north_only} is de weg naar het noorden zonder terugweg. Maar een deel van de weg ging terug naar het zuiden: {a} − {b} = {r}."
+    }
+  },
+  "G7.plan.09": {
+    "text": "Een wandelaar liep {a|hokje|hokjes|hokjes} naar het oosten, daarna {b|hokje|hokjes|hokjes} naar het noorden en daarna {a|hokje|hokjes|hokjes} naar het westen. Hoeveel hokjes heeft de wandelaar in totaal gelopen?",
+    "solution": [
+      "De wandelaar liep drie stukken: {a} naar het oosten, {b} naar het noorden en {a} naar het westen.",
+      "Voor de lengte van een weg maakt de richting niet uit, dus je telt de lengtes van de stukken op.",
+      "Samen: {a} + {b} + {a} = {r}.",
+      "De wandelaar liep dus {r|hokje|hokjes|hokjes}."
+    ],
+    "hints": [
+      "De vraag gaat over de lengte van de afgelegde weg, niet over de afstand tot het begin. De richtingen maken voor de lengte niet uit.",
+      "Tel alle drie de stukken op: {a}, {b} en {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-legs": "{w_two_legs} is {a} + {b}, maar twee stukken. Het derde, {a} naar het westen, is ook gelopen: {a} + {b} + {a} = {r}.",
+      "straight-line": "{w_straight_line} is de afstand in een rechte lijn van het begin naar het eind, naar het noorden. De vraag is hoe ver de wandelaar liep: {a} + {b} + {a} = {r}.",
+      "there-and-back": "{w_there_and_back} is 2 × ({a} + {b}), alsof de wandelaar langs dezelfde weg terugliep. Maar naar het noorden ging hij maar één keer: {a} + {b} + {a} = {r}."
+    }
+  },
+  "G7.plan.10": {
+    "text": "Een huis staat {a|hokje|hokjes|hokjes} ten zuiden en {b|hokje|hokjes|hokjes} ten westen van het park. Hoeveel hokjes moet je langs de roosterlijnen lopen om van het park naar het huis te komen?",
+    "solution": [
+      "Vanaf het park moet je {a} hokjes naar het zuiden en {b} hokjes naar het westen.",
+      "Je mag alleen langs de roosterlijnen lopen, niet recht erdoorheen, dus tel je de twee stukken op.",
+      "Samen: {a} + {b} = {r} hokjes."
+    ],
+    "hints": [
+      "Je mag alleen langs de roosterlijnen lopen, zoals over straten: eerst de ene kant op, dan de andere.",
+      "Je moet {a} hokjes naar het zuiden en {b} naar het westen lopen. Hoeveel is dat samen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "longer-side": "{w_longer_side} is alleen het langste stuk. Maar je moet ook het andere stuk lopen: {a} + {b} = {r}.",
+      "product": "{w_product} is {a} × {b}, zoals bij een oppervlakte. Een weg langs roosterlijnen tel je door op te tellen: {a} + {b} = {r}.",
+      "difference": "{w_difference} is het verschil tussen de stukken. Je moet beide stukken lopen, dus je telt ze op: {a} + {b} = {r}."
+    }
+  },
+  "G7.plan-1S.01": {
+    "text": "Op een kaart komt 1 cm overeen met {a} km. De afstand tussen twee steden op de kaart is {b} cm. Hoe groot is de afstand tussen de steden in kilometers?",
+    "solution": [
+      "Eén centimeter op de kaart is {a} km in het echt.",
+      "We hebben {b} centimeter, dus we nemen {a} km {b} keer.",
+      "De afstand tussen de steden: {a} × {b} = {=a*b} km."
+    ],
+    "hints": [
+      "Eén centimeter op de kaart is {a} km in het echt. Zoek hoeveel kilometer er in {b} centimeter zit.",
+      "Neem {a} km zo vaak als er centimeters op de kaart zijn: {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} komt van optellen: {a} + {b}. De kilometers van elke centimeter komen steeds terug, dus je vermenigvuldigt: {a} × {b} = {r}.",
+      "map-distance": "{w_map_distance} is de afstand op de kaart in centimeters, maar de vraag gaat over kilometers in het echt: {a} × {b} = {r}.",
+      "divided": "{w_divided} komt van delen. Maar de afstand in het echt is groter dan op de kaart, dus de kilometers vind je door te vermenigvuldigen: {a} × {b} = {r}."
+    }
+  },
+  "G7.plan-1S.02": {
+    "text": "Op een kaart komt 1 cm overeen met {a} km. De afstand tussen twee steden is {x} km. Hoeveel centimeter zitten ze op de kaart uit elkaar?",
+    "solution": [
+      "Eén centimeter op de kaart is {a} km in het echt.",
+      "We moeten zoeken hoe vaak {a} km in {x} km past.",
+      "Deel: {x} : {a} = {r} cm op de kaart."
+    ],
+    "hints": [
+      "Eén centimeter op de kaart is {a} km in het echt. Hoeveel stukjes van {a} km passen er in {x} km?",
+      "Deel {x} km door {a} km: je krijgt het aantal centimeters op de kaart.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "product": "{w_product} is {a} × {x}: er is vermenigvuldigd in plaats van gedeeld. De afstand op de kaart is kleiner dan in het echt, dus je deelt: {x} : {a} = {r}.",
+      "distance-itself": "{w_distance_itself} is de afstand in het echt in kilometers, maar de vraag gaat over centimeters op de kaart: {x} : {a} = {r}.",
+      "scale-number": "{w_scale_number} is hoeveel kilometer bij één centimeter hoort. Maar we zoeken het aantal centimeters: {x} : {a} = {r}."
+    }
+  },
+  "G7.plan-1S.03": {
+    "text": "Op een plattegrond komt 1 cm overeen met {a} m. Een stuk grond is op de plattegrond een rechthoek van {b} cm bij {c} cm. Hoe groot is de omtrek van het stuk grond in het echt, in meters?",
+    "solution": [
+      "Eerst de omtrek op de plattegrond: 2 × ({b} + {c}) = {=2*(b+c)} cm.",
+      "Elke centimeter op de plattegrond is {a} m in het echt.",
+      "De omtrek van het stuk grond: {=2*(b+c)} × {a} = {r} m."
+    ],
+    "hints": [
+      "De omtrek is de som van de lengtes van alle zijden. Je kunt eerst de omtrek op de plattegrond zoeken en die dan omrekenen naar meters.",
+      "De omtrek op de plattegrond is 2 × ({b} + {c}). Elke centimeter op de plattegrond is {a} m in het echt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "on-the-plan": "{w_on_the_plan} is de omtrek op de plattegrond in centimeters, maar de vraag gaat over meters in het echt: {w_on_the_plan} × {a} = {r}.",
+      "area-style": "{w_area_style} is {b} × {c} × {a}, alsof de oppervlakte werd gevraagd. De omtrek is de som van de zijden: 2 × ({b} + {c}) × {a} = {r}.",
+      "half-perimeter": "{w_half_perimeter} telt maar twee zijden, de lengte en de breedte. De omtrek heeft alle vier de zijden: 2 × ({b} + {c}) × {a} = {r}."
+    }
+  },
+  "G7.plan-1S.04": {
+    "text": "In de legenda van een kaart staat één symbool voor {a|huis|huizen|huizen}. Op de kaart staan {b|symbool|symbolen|symbolen}. Hoeveel huizen zijn er aangegeven?",
+    "solution": [
+      "Eén symbool staat voor {a|huis|huizen|huizen}.",
+      "Er staan {b} symbolen, en elk symbool telt er evenveel bij.",
+      "Het aantal huizen: {a} × {b} = {=a*b}."
+    ],
+    "hints": [
+      "Eén symbool staat voor meerdere huizen. Voor hoeveel huizen staan alle symbolen samen?",
+      "Vermenigvuldig het aantal huizen in één symbool ({a}) met het aantal symbolen ({b}).",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "icons-only": "{w_icons_only} is het aantal symbolen, maar elk symbool staat voor {a|huis|huizen|huizen}: {a} × {b} = {r}.",
+      "sum": "{w_sum} komt van optellen: {a} + {b}. Elk symbool staat voor {a|huis|huizen|huizen}, dus je vermenigvuldigt: {a} × {b} = {r}.",
+      "divided": "{w_divided} komt van {b} delen door {a}. Maar er zijn meer huizen dan symbolen, dus je vermenigvuldigt: {a} × {b} = {r}."
+    }
+  },
+  "G7.plan-1S.05": {
+    "text": "Een route op een plattegrond bestaat uit drie stukken: {a}, {b} en {c|hokje|hokjes|hokjes}. De zijde van een hokje van de plattegrond is {d} m in het echt. Hoeveel meter lang is de route?",
+    "solution": [
+      "De lengte van de route in hokjes: {a} + {b} + {c} = {=a+b+c}.",
+      "Eén hokje van de plattegrond is {d} m in het echt.",
+      "De lengte van de route: {=a+b+c} × {d} = {r} m."
+    ],
+    "hints": [
+      "De route is gemeten in hokjes van de plattegrond, en één hokje is een aantal meters in het echt.",
+      "Zoek de lengte van de route in hokjes ({a} + {b} + {c}) en vermenigvuldig die met {d} m.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cells-only": "{w_cells_only} is de lengte van de route in hokjes, maar de vraag gaat over meters: {w_cells_only} × {d} = {r}.",
+      "last-leg": "{w_last_leg} is alleen het laatste stuk in meters. De route heeft drie stukken: ({a} + {b} + {c}) × {d} = {r}.",
+      "all-added": "{w_all_added} komt van het optellen van alle vier de getallen, maar {d} is geen stuk van de route, het zijn de meters in één hokje. De lengte in hokjes vermenigvuldig je met {d}: {=a+b+c} × {d} = {r}."
+    }
+  },
+  "G7.plan-1S.06": {
+    "text": "Op een kaart komt 1 cm overeen met {a} km. Twee steden liggen op de kaart {b} cm van elkaar. Een bus rijdt met een snelheid van {c} km/u. Hoeveel uur doet de bus over deze afstand?",
+    "solution": [
+      "Eerst de afstand tussen de steden: {a} × {b} = {=a*b} km.",
+      "Om de tijd te vinden, deel je de afstand door de snelheid van de bus.",
+      "De bus rijdt {=a*b} : {c} = {r|uur|uur|uur}."
+    ],
+    "hints": [
+      "Tijd is de afstand gedeeld door de snelheid. Eerst heb je de afstand in kilometers nodig.",
+      "De afstand van de kaart: {b} cm met {a} km in elke. Deel die daarna door de snelheid van {c} km/u.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "distance": "{w_distance} is de afstand in kilometers, maar de vraag gaat over de tijd. Tijd is afstand gedeeld door snelheid: {=a*b} : {c} = {r}.",
+      "map-distance": "{w_map_distance} is de afstand op de kaart in centimeters. Eerst reken je die om naar kilometers ({a} km in elke centimeter), daarna deel je door de snelheid: {=a*b} : {c} = {r}.",
+      "distance-times-speed": "{w_distance_times_speed} komt van de afstand met de snelheid vermenigvuldigen. De tijd vind je door te delen: {=a*b} : {c} = {r}."
+    }
+  },
+  "G7.plan-1S.07": {
+    "text": "Op een plattegrond is een stuk grond een rechthoek van {b} cm bij {c} cm, en 1 cm op de plattegrond is {a} m in het echt. Hoe groot is de oppervlakte van het stuk grond in het echt, in vierkante meters?",
+    "solution": [
+      "De zijden van het stuk grond in het echt: {b} × {a} = {=a*b} m en {c} × {a} = {=a*c} m.",
+      "De schaal werkt op beide zijden, dus elke zijde vermenigvuldig je met {a}.",
+      "De oppervlakte van een rechthoek is lengte keer breedte: {=a*b} × {=a*c} = {r} m²."
+    ],
+    "hints": [
+      "De schaal verandert beide zijden van het stuk grond. Zoek eerst de zijden in het echt, dan de oppervlakte.",
+      "De zijden in het echt: {b} × {a} en {c} × {a}. De oppervlakte van een rechthoek is lengte keer breedte.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "on-the-plan": "{w_on_the_plan} is de oppervlakte op de plattegrond in vierkante centimeters, maar de vraag gaat over vierkante meters in het echt. De zijden vermenigvuldig je met {a}, en de oppervlakte wordt {r}.",
+      "area-times-scale": "{w_area_times_scale} is {b} × {c} × {a}: alleen de oppervlakte is met de schaal vermenigvuldigd. Maar de schaal werkt op elke zijde, dus de oppervlakte is {a} × {a} keer zo groot: {=b*c} × {=a*a} = {r}.",
+      "ground-perimeter": "{w_ground_perimeter} is de omtrek van het stuk grond in het echt, maar de vraag gaat over de oppervlakte: {=a*b} × {=a*c} = {r}."
+    }
+  },
+  "G7.plan-1S.08": {
+    "text": "Eén hokje van de plattegrond staat voor {a|vierkante meter|vierkante meter|vierkante meter}. Een figuur op de plattegrond beslaat {b|hokje|hokjes|hokjes}. Hoe groot is de oppervlakte ervan in het echt, in vierkante meters?",
+    "solution": [
+      "Eén hokje van de plattegrond is {a|vierkante meter|vierkante meter|vierkante meter} in het echt.",
+      "De figuur beslaat {b|hokje|hokjes|hokjes}, dus de oppervlakte van één hokje neem je {b} keer.",
+      "De oppervlakte: {a} × {b} = {r} m²."
+    ],
+    "hints": [
+      "Eén hokje van de plattegrond is een aantal vierkante meters. De figuur beslaat meerdere hokjes.",
+      "Vermenigvuldig de oppervlakte van één hokje ({a}) met het aantal hokjes ({b}).",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cells-only": "{w_cells_only} is het aantal hokjes, maar elk hokje staat voor {a|vierkante meter|vierkante meter|vierkante meter}: {a} × {b} = {r}.",
+      "sum": "{w_sum} komt van optellen: {a} + {b}. De oppervlakte van een hokje tel je zo vaak op als er hokjes zijn, dus je vermenigvuldigt: {a} × {b} = {r}.",
+      "divided": "{w_divided} komt van delen. De oppervlakte in het echt is groter dan het aantal hokjes, dus je vermenigvuldigt: {a} × {b} = {r}."
+    }
+  },
+  "G7.plan-1S.09": {
+    "text": "De zijde van een hokje van het raster op de kaart is 1 km. Een huis staat op positie ({a}; {b}), een winkel op positie ({c}; {d}). Hoeveel kilometer is het langs de roosterlijnen van het huis naar de winkel?",
+    "solution": [
+      "Horizontaal ga je van {a} naar {c}: {c} − {a} = {=c-a}.",
+      "Verticaal ga je van {b} naar {d}: {d} − {b} = {=d-b}.",
+      "Je mag alleen langs de roosterlijnen lopen, dus tel je beide stukken op: {=c-a} + {=d-b} = {r}.",
+      "Eén hokje is 1 km, dus het is {r} km van het huis naar de winkel."
+    ],
+    "hints": [
+      "Je mag alleen langs de roosterlijnen lopen: eerst horizontaal, dan verticaal. Zoek beide stukken.",
+      "Het horizontale stuk loopt van {a} naar {c}, het verticale van {b} naar {d}. Hoeveel hokjes is elk?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "end-coordinates": "{w_end_coordinates} is de som van de coördinaten van de winkel, {c} + {d}. Maar het huis staat niet in de oorsprong, dus je neemt verschillen: ({c} − {a}) + ({d} − {b}) = {r}.",
+      "longer-side": "{w_longer_side} is alleen het langste stuk. Je moet beide stukken lopen: {r}.",
+      "horizontal-only": "{w_horizontal_only} is alleen het horizontale stuk. Je moet ook het verticale stuk lopen: {r}."
+    }
+  },
+  "G7.plan-1S.10": {
+    "text": "Een stuk van {x} km lang in het echt is op een kaart getekend als een lijnstuk van {b} cm. Hoeveel kilometer in het echt hoort bij één centimeter op de kaart?",
+    "solution": [
+      "Een lijnstuk van {b} cm op de kaart is {x} km in het echt.",
+      "Eén centimeter is {b} keer korter, dus daar hoort {x} : {b} = {r} km bij.",
+      "Eén centimeter op de kaart komt dus overeen met {r} km."
+    ],
+    "hints": [
+      "Het hele lijnstuk is {b} cm op de kaart en {x} km in het echt. Je zoekt hoeveel kilometer er bij één centimeter hoort.",
+      "Deel {x} km door {b} cm.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "multiplied": "{w_multiplied} komt van vermenigvuldigen. Maar één centimeter is maar een deel van het lijnstuk, daar hoort minder bij, dus je deelt: {x} : {b} = {r}.",
+      "distance-itself": "{w_distance_itself} is de lengte van het hele lijnstuk in het echt, maar de vraag gaat over één centimeter: {x} : {b} = {r}.",
+      "map-length": "{w_map_length} is de lengte van het lijnstuk op de kaart in centimeters. Maar we zoeken het aantal kilometer bij één centimeter: {x} : {b} = {r}."
+    }
+  },
+  "G1.shapes.13": {
+    "text": "Een vierkant is gedraaid en staat nu op een hoekpunt. Welke vorm is het nu? 1) nog steeds hetzelfde vierkant; 2) geen vierkant meer, maar een andere vorm; 3) een driehoek. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Draaien verandert de zijden en de hoeken niet: alle vier de zijden zijn nog even lang en alle vier de hoeken zijn nog recht.",
+      "Het is dus nog steeds hetzelfde vierkant, keuze {r}."
+    ],
+    "hints": [
+      "Kijk naar de zijden en de hoeken van de vorm, niet naar hoe hij staat.",
+      "Wat is er veranderd door het draaien: de lengtes van de zijden en de hoeken, of alleen de plaats van de vorm?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rotated-square-is-not-a-square": "Keuze {w_rotated_square_is_not_a_square} zegt dat de vorm een andere is geworden, maar door te draaien veranderen de zijden en de hoeken niet. Het is nog steeds een vierkant.",
+      "a-triangle-on-top": "Keuze {w_a_triangle_on_top} past niet: de vorm heeft nog steeds vier zijden en een driehoek heeft er drie."
+    }
+  },
+  "G2.angles.14": {
+    "text": "Hoek A is {a|graad|graden|graden} en de benen zijn kort getekend. Hoek B is {b|graad|graden|graden} en de benen zijn {c|keer|keer|keer} zo lang getekend. Kies het teken tussen hoek A en hoek B.",
+    "solution": [
+      "De grootte van een hoek hangt af van hoe ver de benen uit elkaar staan en niet van hoe lang ze zijn.",
+      "We vergelijken dus alleen de graden: {a} en {b}.",
+      "Hoek A {r} hoek B."
+    ],
+    "hints": [
+      "De lengte van de benen verandert de grootte van de hoek niet: je kunt de benen zo lang maken als je wilt.",
+      "Vergelijk alleen de aantallen graden, {a} en {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "longer-arms-bigger": "{w_longer_arms_bigger} behandelt langere benen als een grotere hoek. Je kunt de benen zo lang maken als je wilt en de hoek blijft gelijk, dus vergelijk {a} en {b} graden."
+    }
+  },
+  "G1.shapes.14": {
+    "text": "In een driehoek zijn {a|lijnstuk|lijnstukken|lijnstukken} getekend van één hoekpunt naar de overstaande zijde. Hoeveel driehoeken staan er in de tekening, de grote driehoek meegeteld?",
+    "solution": [
+      "Samen met de twee uiteinden van de zijde waar de lijnstukken heen gaan, zijn daarop {=a+2|punt|punten|punten} aangegeven.",
+      "Elke driehoek bestaat uit het bovenste hoekpunt en twee van die punten, dus we tellen paren punten.",
+      "Het eerste punt kun je op {=a+2} manieren kiezen en het tweede op {=a+1} manieren, maar elk paar is dan twee keer geteld: {=a+2} × {=a+1} : 2 = {r}.",
+      "Er staan dus {r|driehoek|driehoeken|driehoeken} in de tekening."
+    ],
+    "hints": [
+      "Elke driehoek heeft het bovenste hoekpunt en twee aangegeven punten op de onderste zijde.",
+      "Op de onderste zijde staan {=a+2|punt|punten|punten}, de uiteinden meegeteld. Maak paren: elk paar geeft één driehoek.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "small-only": "{w_small_only} telt alleen de smalle driehoeken tussen twee buurlijnstukken. Er zijn ook driehoeken die uit meer delen bestaan.",
+      "segments-only": "{w_segments_only} is alleen het aantal lijnstukken dat is getekend. Er zijn meer driehoeken: elk paar punten op de onderste zijde geeft een eigen driehoek.",
+      "without-the-big-one": "{w_without_the_big_one} laat de grote driehoek weg. Die telt ook mee, dus het totaal is {r}."
+    }
+  },
+  "G1.shapes.15": {
+    "text": "Een geruit bord is {a} × {b} hokjes. Hoeveel rechthoeken kun je langs de lijnen van het rooster tekenen? Vierkanten en het hele bord tellen ook mee.",
+    "solution": [
+      "Een rechthoek wordt bepaald door twee verticale en twee horizontale roosterlijnen.",
+      "Er zijn {=b+1} verticale lijnen en een paar daarvan kun je op {=b+1} × {b} : 2 = {=(b+1)*b/2} manieren kiezen.",
+      "Er zijn {=a+1} horizontale lijnen en een paar daarvan kun je op {=a+1} × {a} : 2 = {=(a+1)*a/2} manieren kiezen.",
+      "Elk paar verticale lijnen past bij elk paar horizontale lijnen: {=(b+1)*b/2} × {=(a+1)*a/2} = {r}."
+    ],
+    "hints": [
+      "Een rechthoek wordt bepaald door vier roosterlijnen: twee verticale en twee horizontale.",
+      "Er zijn {=b+1} verticale en {=a+1} horizontale lijnen. Bereken eerst op hoeveel manieren je een paar verticale lijnen kunt kiezen en dan een paar horizontale lijnen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cells-only": "{w_cells_only} is alleen het aantal losse hokjes. Er zijn meer rechthoeken, van twee, drie of meer hokjes.",
+      "cells-and-the-whole": "{w_cells_and_the_whole} is {=a*b} hokjes plus het hele bord. Er zijn ook rechthoeken van twee hokjes, drie hokjes enzovoort.",
+      "pairs-added": "{w_pairs_added} telt de twee aantallen manieren op. Je moet ze vermenigvuldigen, want elk paar verticale lijnen past bij elk paar horizontale lijnen."
+    }
+  },
+  "G1.shapes.16": {
+    "text": "Een bolle veelhoek heeft {a|hoekpunt|hoekpunten|hoekpunten}. Hoeveel diagonalen heeft hij in totaal? Een diagonaal verbindt twee hoekpunten die niet naast elkaar liggen.",
+    "solution": [
+      "Vanuit elk hoekpunt gaan diagonalen naar alle hoekpunten behalve het punt zelf en de twee buurpunten: {a} − 3 = {=a-3}.",
+      "Vanuit alle {a} hoekpunten zijn dat {a} × {=a-3} = {=a*(a-3)} diagonalen, maar elke diagonaal heeft twee uiteinden en is dus twee keer geteld.",
+      "Deel door 2: {=a*(a-3)} : 2 = {r}.",
+      "De veelhoek heeft dus {r|diagonaal|diagonalen|diagonalen}."
+    ],
+    "hints": [
+      "Hoeveel diagonalen gaan er vanuit één hoekpunt? Tel het punt zelf en de twee buurpunten niet mee.",
+      "Vanuit één hoekpunt zijn er {a} − 3 diagonalen. Vermenigvuldig met de {a} hoekpunten, maar bedenk dat elke diagonaal twee uiteinden heeft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "from-one-vertex": "{w_from_one_vertex} is het aantal diagonalen vanuit maar één hoekpunt, terwijl de veelhoek er {a} heeft.",
+      "counted-twice": "{w_counted_twice} telt elke diagonaal twee keer: ze heeft twee uiteinden en is vanuit allebei geteld.",
+      "all-segments": "{w_all_segments} telt alle lijnstukken tussen hoekpunten, ook de zijden. Diagonalen zijn alleen de lijnstukken die geen zijde zijn."
+    }
+  },
+  "G1.shapes.17": {
+    "text": "Een vierkant met zijden van {a} cm wordt met één rechte snede, evenwijdig aan een zijde, in twee rechthoeken verdeeld. Hoeveel centimeter is de som van de omtrekken van deze twee rechthoeken?",
+    "solution": [
+      "De omtrek van het hele vierkant is 4 × {a} = {=4*a} cm.",
+      "De snede van {a} cm is een zijde van allebei de rechthoeken en telt dus twee keer mee in de som van de omtrekken.",
+      "Er komt 2 × {a} = {=2*a} cm bij de omtrek van het vierkant: {=4*a} + {=2*a} = {r}.",
+      "De som van de omtrekken is dus {r} cm."
+    ],
+    "hints": [
+      "De omtrek is de som van de lengtes van alle zijden van een vorm. Welke nieuwe zijden ontstaan door de snede?",
+      "De snede van {a} cm is een zijde van de ene rechthoek en ook van de andere. Wat komt er daardoor bij de omtrek van het vierkant?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-square-perimeter": "{w_the_square_perimeter} is de omtrek van het vierkant zelf, maar door de snede krijgen beide rechthoeken nieuwe zijden.",
+      "cut-counted-once": "{w_cut_counted_once} telt de snede maar één keer, terwijl beide rechthoeken hem hebben: er komt {a} + {a} = {=2*a} bij.",
+      "perimeter-doubled": "{w_perimeter_doubled} is twee keer de omtrek van het vierkant. De buitenste zijden blijven gelijk en alleen de snede komt erbij, twee keer: {=4*a} + {=2*a} = {r}."
+    }
+  },
+  "G1.shapes.18": {
+    "text": "In de tekening staan {a|vierkant|vierkanten|vierkanten}, {b|rechthoek|rechthoeken|rechthoeken}, {c|driehoek|driehoeken|driehoeken} en {d|cirkel|cirkels|cirkels}. Hoeveel van deze vormen hebben hoeken?",
+    "solution": [
+      "Vierkanten, rechthoeken en driehoeken hebben hoeken. Een cirkel heeft geen zijden en dus ook geen hoeken.",
+      "Tel deze vormen op: {a} + {b} + {c} = {=a+b+c}.",
+      "Er zijn dus {r|vorm|vormen|vormen} met hoeken."
+    ],
+    "hints": [
+      "Bedenk welke van deze vormen hoeken hebben.",
+      "Tel de vierkanten ({a}), de rechthoeken ({b}) en de driehoeken ({c}) bij elkaar op. De cirkels laat je weg.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-figures": "{w_all_figures} is het aantal van alle vormen samen, maar een cirkel heeft geen hoeken.",
+      "quadrilaterals-only": "{w_quadrilaterals_only} zijn alleen de vierkanten en rechthoeken, maar een driehoek heeft ook hoeken.",
+      "circles-only": "{w_circles_only} is het aantal cirkels. De vraag gaat over de vormen met hoeken: {a} + {b} + {c} = {r}."
+    }
+  },
+  "G1.shapes.19": {
+    "text": "Hoe heet een veelhoek met {a} zijden? 1) driehoek; 2) vierhoek; 3) vijfhoek; 4) zeshoek; 5) zevenhoek; 6) achthoek. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "De naam van een veelhoek zegt hoeveel zijden hij heeft: een driehoek heeft er drie, een vierhoek vier, een vijfhoek vijf, een zeshoek zes, een zevenhoek zeven en een achthoek acht.",
+      "Een veelhoek met {a} zijden staat bij keuze {r}."
+    ],
+    "hints": [
+      "In de naam van een veelhoek zit een getal verstopt: het aantal zijden.",
+      "Zoek in de lijst de vorm met {a} zijden. Het nummer van de keuze is niet hetzelfde als het aantal zijden, dus zoek eerst de naam.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-fewer-sides": "Keuze {w_the_fewer_sides} is een veelhoek met {=a-1} zijden, maar deze vorm heeft er {a}.",
+      "the-more-sides": "Keuze {w_the_more_sides} is een veelhoek met {=a+1} zijden, maar deze vorm heeft er {a}.",
+      "number-as-sides": "Keuze {w_number_as_sides} komt doordat {a}, het aantal zijden, als nummer van de keuze is gebruikt. Zoek de naam van de vorm met {a} zijden: dat is keuze {r}."
+    }
+  },
+  "G2.angles.15": {
+    "text": "Een hoek is {a|graad|graden|graden}. Wat voor hoek is dit? 1) scherpe hoek; 2) rechte hoek; 3) stompe hoek; 4) gestrekte hoek. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Een scherpe hoek is kleiner dan een rechte hoek en een stompe hoek is groter dan een rechte hoek, maar kleiner dan een gestrekte hoek. Een rechte hoek is 90 graden en een gestrekte hoek is 180 graden.",
+      "Vergelijk {a} met 90 en met 180: keuze {r} past."
+    ],
+    "hints": [
+      "Je herkent de soorten hoeken aan hun graden. Een rechte hoek is 90 graden en een gestrekte hoek is 180 graden.",
+      "Vergelijk {a} met 90 en met 180: is het kleiner dan 90, precies 90, tussen 90 en 180, of precies 180?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-opposite-kind": "Keuze {w_the_opposite_kind} past niet. Vergelijk {a} met 90 en met 180: kleiner dan 90 is scherp, precies 90 is recht, tussen 90 en 180 is stomp, precies 180 is gestrekt. Het antwoord is keuze {r}.",
+      "the-neighbour-kind": "Keuze {w_the_neighbour_kind} zit in de buurt, maar klopt niet: je kiest de soort hoek door {a} te vergelijken met 90 en met 180, en dat geeft keuze {r}."
+    }
+  },
+  "G2.angles.16": {
+    "text": "Eén been van een hoek ligt op het nulstreepje van de schaal van een gradenboog en het andere been staat in de tekening. Hoe groot is de hoek in graden?",
+    "solution": [
+      "De getallen staan 30 graden uit elkaar en daartussen zijn drie streepjes: elk streepje is 10 graden.",
+      "Het been is voorbij het getal {=floor(a/30)*30} en nog {=(a-floor(a/30)*30)/10|streepje|streepjes|streepjes} verder.",
+      "De hoek is {=floor(a/30)*30} + {=(a-floor(a/30)*30)/10} × 10 = {r}.",
+      "De hoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Lees het getal af op de schaal waar de nul bij het eerste been van de hoek staat.",
+      "Zoek het laatste getal dat het been al voorbij is (de getallen staan 30 uit elkaar) en tel daarna de streepjes, elk van 10 graden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "other-scale": "{w_other_scale} is afgelezen op de andere schaal, waar de nul bij het tweede been staat. Je hebt de schaal nodig met de nul bij het eerste been.",
+      "nearest-label": "{w_nearest_label} is het dichtstbijzijnde getal, maar het been ligt tussen twee getallen: tel ook de streepjes van 10 graden.",
+      "divisions-as-ones": "{w_divisions_as_ones} telt elk streepje als één graad. Een streepje is 10 graden: {=floor(a/30)*30} + {=(a-floor(a/30)*30)/10} × 10 = {r}."
+    }
+  },
+  "G2.angles.17": {
+    "text": "De klok wijst {a} uur en 30 minuten aan. Hoe groot is de kleinste hoek tussen de kleine wijzer en de grote wijzer in graden?",
+    "solution": [
+      "De wijzerplaat heeft 12 uren en 360 graden, dus één uur is 360 : 12 = 30 graden.",
+      "Bij 30 minuten wijst de grote wijzer naar de 6, dat is 6 × 30 = 180 graden vanaf de bovenkant.",
+      "De kleine wijzer is {a|uur|uur|uur} van de bovenkant en nog een half uur verder, dat is 15 graden: {a} × 30 + 15 = {=30*a+15}.",
+      "Tussen de wijzers zit {=max(180,30*a+15)} − {=min(180,30*a+15)} = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Bij 30 minuten wijst de grote wijzer naar de 6. De kleine wijzer staat precies tussen de {a} en het volgende getal.",
+      "De kleine wijzer staat {a} × 30 + 15 = {=30*a+15} graden van de bovenkant en de grote wijzer 180 graden. Zoek het verschil tussen die twee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "hour-hand-not-moved": "{w_hour_hand_not_moved} komt doordat je de kleine wijzer precies op de {a} zet. In een half uur is hij nog 15 graden verder gegaan.",
+      "bigger-angle": "{w_bigger_angle} is de grootste hoek tussen de wijzers. De vraag is naar de kleinste.",
+      "minute-hand-on-twelve": "{w_minute_hand_on_twelve} komt doordat je de grote wijzer op de 12 zet. Bij 30 minuten wijst hij naar de 6, dat is 180 graden vanaf de bovenkant: {=max(180,30*a+15)} − {=min(180,30*a+15)} = {r}."
+    }
+  },
+  "G2.angles.18": {
+    "text": "De hoeken van een driehoek zijn in de verhouding {u}:{v}:{t}. Hoe groot is de grootste hoek in graden?",
+    "solution": [
+      "Samen zijn het {u} + {v} + {t} = {=u+v+t} delen.",
+      "De hoeken van een driehoek zijn samen 180 graden, dus één deel is 180 : {=u+v+t} = {=180/(u+v+t)}.",
+      "De grootste hoek is {m|deel|delen|delen}: {m} × {=180/(u+v+t)} = {r}.",
+      "De grootste hoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Hoeveel gelijke delen zijn er in de drie hoeken samen?",
+      "Er zijn {=u+v+t} delen om 180 graden over te verdelen. Zoek één deel en neem zoveel delen als de grootste hoek heeft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-part": "{w_one_part} is één deel, maar de grootste hoek bestaat uit {m|deel|delen|delen}: {m} × {w_one_part} = {r}.",
+      "from-360": "{w_from_360} komt doordat je 360 graden hebt gebruikt, maar de hoeken van een driehoek zijn samen 180: {m} × {=180/(u+v+t)} = {r}."
+    }
+  },
+  "G2.angles.19": {
+    "text": "Twee rechte lijnen snijden elkaar en maken vier hoeken. Twee overstaande hoeken zijn samen {a|graad|graden|graden}. Hoe groot is elk van de andere twee hoeken in graden?",
+    "solution": [
+      "Overstaande hoeken zijn even groot, dus elk van die twee is {a} : 2 = {=a/2}.",
+      "De hoek ernaast vormt samen met hem een gestrekte hoek van 180 graden.",
+      "De andere hoek is 180 − {=a/2} = {r}.",
+      "Elk van de andere twee hoeken is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Overstaande hoeken zijn even groot. Hoeveel graden is één van die twee?",
+      "Eén van die twee is {a} : 2. De hoek ernaast is samen met hem 180 graden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-vertical-angle": "{w_the_vertical_angle} is {a} : 2, een van de eerste twee hoeken, maar de vraag gaat over de andere twee: 180 − {w_the_vertical_angle} = {r}.",
+      "from-180-the-sum": "{w_from_180_the_sum} komt doordat je de som {a} van 180 hebt afgehaald, maar je moet maar één van de twee even grote hoeken eraf halen: 180 − {=a/2} = {r}.",
+      "both-others": "{w_both_others} zijn de andere twee hoeken samen, 360 − {a}. De vraag gaat over één van die twee: {w_both_others} : 2 = {r}."
+    }
+  },
+  "G2.angles.20": {
+    "text": "Een gestrekte hoek wordt door een lijn in twee hoeken verdeeld. De ene hoek is {a|graad|graden|graden} groter dan de andere. Hoe groot is de grootste hoek in graden?",
+    "solution": [
+      "Als we de extra {a} graden van de grootste hoek afhalen, zijn de hoeken even groot en samen zijn ze 180 − {a} = {=180-a}.",
+      "De kleinste hoek is {=180-a} : 2 = {=(180-a)/2}.",
+      "De grootste hoek is {=(180-a)/2} + {a} = {r}.",
+      "De grootste hoek is dus {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Een gestrekte hoek is 180 graden. Hij bestaat uit twee hoeken en de ene is {a} groter dan de andere.",
+      "Haal het verschil, {a}, van de grootste hoek af: dan blijven er twee even grote hoeken over, samen 180 − {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-smaller-angle": "{w_the_smaller_angle} is de kleinste hoek, maar de vraag gaat over de grootste.",
+      "half-plus-difference": "{w_half_plus_difference} komt doordat je {a} bij de helft van 180 hebt opgeteld. Haal eerst het verschil eraf, deel dan door 2 en tel het verschil pas daarna weer op: {=(180-a)/2} + {a} = {r}.",
+      "just-the-rest": "{w_just_the_rest} komt doordat je het verschil van 180 hebt afgehaald, maar dat zijn twee even grote hoeken samen. Elke hoek is de helft en het verschil gaat terug naar de grootste: {=(180-a)/2} + {a} = {r}."
+    }
+  },
+  "G2.angles.21": {
+    "text": "Een wijzer draait {a|graad|graden|graden} met de klok mee, daarna {b|graad|graden|graden} tegen de klok in en daarna nog {c|graad|graden|graden} met de klok mee. Hoeveel graden is hij gedraaid ten opzichte van waar hij begon?",
+    "solution": [
+      "Draaien met de klok mee brengen de wijzer vooruit en een draai tegen de klok in brengt hem terug, dus de eerste soort tellen we op en de tweede trekken we af.",
+      "Totaal: {a} − {b} + {c} = {=a-b+c}.",
+      "De wijzer is dus {r|graad|graden|graden} gedraaid ten opzichte van het begin."
+    ],
+    "hints": [
+      "Draaien dezelfde kant op tellen op en een draai de andere kant op haalt een stuk van de draai weer weg.",
+      "Eerst {a} vooruit, dan {b} terug en dan weer {c} vooruit. Reken ze op volgorde uit.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-added": "{w_all_added} komt doordat je alle draaien hebt opgeteld, maar de draai tegen de klok in haalt er juist iets af: {a} − {b} + {c} = {r}.",
+      "wrong-sign": "{w_wrong_sign} komt doordat je de draai tegen de klok in hebt opgeteld en de laatste draai met de klok mee hebt afgetrokken. De tekens zijn omgedraaid: {a} − {b} + {c} = {r}.",
+      "all-subtracted": "{w_all_subtracted} komt doordat je ook de laatste draai hebt afgetrokken. Die gaat met de klok mee, net als de eerste, en wordt dus opgeteld: {a} − {b} + {c} = {r}."
+    }
+  },
+  "G3.symmetry.13": {
+    "text": "Een klok in de spiegel wijst {t} aan. Hoe laat is het echt?",
+    "solution": [
+      "Een spiegel verwisselt de kanten, dus de tijd in de spiegel en de echte tijd samen zijn precies 12:00. De echte tijd is 12:00 − {t}.",
+      "Minuten: 60 − {b} = {=60-b}.",
+      "Uren: 11 − {a} = {=11-a}, want één uur is voor de minuten gebruikt.",
+      "De echte tijd is dus {r}."
+    ],
+    "hints": [
+      "De tijd in de spiegel en de echte tijd zijn samen 12 uur.",
+      "Haal de spiegeltijd van 12:00 af: eerst de minuten (60 − {b}) en dan de uren (11 − {a}, omdat één uur naar de minuten is gegaan).",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-shown-time": "{w_the_shown_time} is de tijd in de spiegel zelf, maar de echte tijd is er samen mee 12:00.",
+      "same-minutes": "{w_same_minutes}: de uren kloppen, maar de minuten zijn gelijk gebleven. De echte minuten zijn 60 − {b} = {=60-b}.",
+      "forgot-the-hour": "{w_forgot_the_hour}: de minuten kloppen, maar de uren zijn van 12 afgehaald zonder het uur dat naar de minuten is gegaan. De uren zijn 11 − {a} = {=11-a}."
+    }
+  },
+  "G3.symmetry.14": {
+    "text": "Een rechthoek met zijden van {a} cm en {b} cm wordt gespiegeld in een lijn waarop zijn zijde van {b} cm ligt. De rechthoek en zijn spiegelbeeld vormen samen één figuur. Hoe groot is de omtrek van deze figuur in centimeters?",
+    "solution": [
+      "De rechthoek en zijn spiegelbeeld liggen tegen elkaar langs de zijde van {b} cm en vormen samen één grote rechthoek.",
+      "Een zijde ervan is {b} cm en de andere is twee keer de zijde van {a} cm: 2 × {a} = {=2*a}.",
+      "Omtrek: 2 × ({=2*a} + {b}) = {r}.",
+      "De omtrek van de figuur is dus {r} cm."
+    ],
+    "hints": [
+      "Welke vorm krijg je als je de rechthoek naast zijn spiegelbeeld legt?",
+      "Je krijgt één grote rechthoek met zijden van {b} cm en twee keer {a} cm. De gemeenschappelijke zijde zit binnen in de figuur en hoort niet bij de omtrek.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "both-perimeters": "{w_both_perimeters} is de som van de omtrekken van de twee rechthoeken. De gemeenschappelijke zijde van {b} cm zit binnen in de figuur en telt niet mee voor de omtrek.",
+      "one-perimeter": "{w_one_perimeter} is de omtrek van één rechthoek, maar de figuur is twee keer zo breed: met het spiegelbeeld erbij is zijn zijde {=2*a} cm.",
+      "area": "{w_area} is de oppervlakte van de figuur, maar de vraag gaat over de omtrek, de som van alle zijden: 2 × ({=2*a} + {b}) = {r}."
+    }
+  },
+  "G3.symmetry.15": {
+    "text": "Een strook bestaat uit {a|hokje|hokjes|hokjes}. Elk hokje wordt blauw of wit gekleurd. Hoeveel manieren van kleuren hebben een verticale symmetrieas, dus de linkerhelft is het spiegelbeeld van de rechterhelft?",
+    "solution": [
+      "De symmetrieas verdeelt de strook in tweeën en de kleuren van de rechterhelft herhalen die van de linkerhelft in omgekeerde volgorde, dus de rechterhelft hoef je niet te kiezen. Bij een oneven aantal hokjes ligt het middelste hokje op de as en kies je dat vrij.",
+      "Vrije hokjes: {=floor((a+1)/2)}, elk met twee kleuren.",
+      "Elk vrij hokje verdubbelt het aantal manieren: voor het laatste waren het er {=pow(2,floor((a+1)/2)-1)} en met dat hokje {=pow(2,floor((a+1)/2)-1)} × 2 = {r}.",
+      "Er zijn dus {r} symmetrische kleuringen."
+    ],
+    "hints": [
+      "De rechterhelft van de strook herhaalt de linkerhelft.",
+      "{=floor((a+1)/2)|hokje|hokjes|hokjes} kun je vrij kleuren en elk heeft twee kleuren. Elk vrij hokje verdubbelt het aantal manieren.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-colourings": "{w_all_colourings} zijn alle kleuringen samen, maar we zoeken alleen de symmetrische: de rechterhelft van de strook herhaalt de linkerhelft.",
+      "middle-cell-forgotten": "{w_middle_cell_forgotten} is gevonden zonder het middelste hokje. Dat ligt op de as en de kleur ervan kies je ook: er zijn {=floor((a+1)/2)} vrije hokjes.",
+      "free-cells": "{w_free_cells} is het aantal vrije hokjes, maar er zijn meer kleuringen: elk vrij hokje geeft twee kleuren."
+    }
+  },
+  "G3.symmetry.16": {
+    "text": "Een getal van {a} cijfers leest hetzelfde van links naar rechts en van rechts naar links, zoals 121 of 1331. Hoeveel van zulke getallen zijn er? Het eerste cijfer mag geen nul zijn.",
+    "solution": [
+      "De rechterhelft van het getal herhaalt de linkerhelft in omgekeerde volgorde, dus we kiezen alleen de eerste {=floor((a+1)/2)|cijfer|cijfers|cijfers} vrij.",
+      "Het eerste cijfer mag alles zijn behalve nul: 9 mogelijkheden. Elk van de andere vrije cijfers heeft tien mogelijkheden en daarvan zijn er {=floor((a+1)/2)-1}.",
+      "In totaal: 9 × {=pow(10,floor((a+1)/2)-1)} = {r}."
+    ],
+    "hints": [
+      "Hoeveel cijfers kun je vrij kiezen?",
+      "Het eerste cijfer is geen nul en de andere vrije cijfers mogen alles zijn. De eerste {=floor((a+1)/2)|cijfer|cijfers|cijfers} bepalen het hele getal.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-numbers": "{w_all_numbers} zijn alle getallen van {a} cijfers, maar we zoeken alleen de getallen die van beide kanten hetzelfde gelezen worden.",
+      "zero-first": "{w_zero_first} staat ook nul als eerste cijfer toe. Het eerste cijfer mag alles zijn behalve nul: 9 mogelijkheden."
+    }
+  },
+  "G3.symmetry.17": {
+    "text": "Punt A staat op positie ({a}; {b}) en punt B staat op positie ({c}; {d}). Ze zijn elkaars spiegelbeeld ten opzichte van punt O. Op welke positie staat punt O? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "Het middelpunt van de symmetrie ligt precies in het midden tussen een punt en zijn spiegelbeeld, dus O is het midden van lijnstuk AB.",
+      "Eerste coördinaat: ({a} + {c}) : 2 = {=(a+c)/2}.",
+      "Tweede coördinaat: ({b} + {d}) : 2 = {=(b+d)/2}.",
+      "Punt O staat dus op positie {r}."
+    ],
+    "hints": [
+      "Het middelpunt van de symmetrie is het midden van het lijnstuk tussen een punt en zijn spiegelbeeld.",
+      "Zoek het midden van elke coördinaat apart: {a} en {c}, daarna {b} en {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum-not-halved": "Positie {w_sum_not_halved} bestaat uit sommen, maar het midden ligt halverwege: elke som moet worden gehalveerd.",
+      "swapped": "Positie {w_swapped} heeft de coördinaten in omgekeerde volgorde. De eerste coördinaat, {=(a+c)/2}, komt eerst en de tweede, {=(b+d)/2}, erna.",
+      "first-point": "Positie {w_first_point} is punt A, maar het middelpunt ligt tussen A en B."
+    }
+  },
+  "G3.symmetry.18": {
+    "text": "Een punt staat op het rooster op positie ({a}; {b}). De horizontale roosterlijn met nummer {c} is een symmetrieas. Op welke positie staat het gespiegelde punt? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "De as is horizontaal, dus het punt wordt omhoog en omlaag gespiegeld en zijn plek van links naar rechts verandert niet: de eerste coördinaat blijft {a}.",
+      "Van het punt tot de as is het {c} − {b} = {=c-b|hokje|hokjes|hokjes} en even ver aan de andere kant van de as.",
+      "De tweede coördinaat van het spiegelbeeld is {c} + {=c-b} = {=2*c-b}.",
+      "Het gespiegelde punt staat dus op positie {r}."
+    ],
+    "hints": [
+      "De as is horizontaal, dus de eerste coördinaat van het punt blijft hetzelfde.",
+      "Het punt ligt {=c-b|hokje|hokjes|hokjes} onder de as. Ga even ver boven de as.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same-point": "Positie {w_same_point} is het punt zelf, maar we zoeken het gespiegelde punt.",
+      "swapped": "Positie {w_swapped} heeft de coördinaten in omgekeerde volgorde. De eerste coördinaat, {a}, komt eerst en de tweede, {=2*c-b}, erna.",
+      "vertical-mirror": "Positie {w_vertical_mirror} komt van spiegelen in een verticale lijn, maar deze as is horizontaal. De eerste coördinaat blijft {a}.",
+      "on-the-axis": "Positie {w_on_the_axis} ligt precies op de as, maar het gespiegelde punt ligt aan de andere kant van de as, even ver weg."
+    }
+  },
+  "G4.coordinates.12": {
+    "text": "Op een rooster is een punt P getekend. Wat zijn de coördinaten van het punt? Schrijf eerst de eerste coördinaat, dan de tweede, gescheiden door een puntkomma.",
+    "solution": [
+      "De eerste coördinaat is het aantal hokjes naar rechts vanaf de oorsprong en de tweede is het aantal hokjes omhoog.",
+      "Van de oorsprong tot het punt is het {a|hokje|hokjes|hokjes} naar rechts en {b|hokje|hokjes|hokjes} omhoog.",
+      "Eerst schrijf je het aantal naar rechts, dan het aantal omhoog. De coördinaten van het punt zijn dus {r}."
+    ],
+    "hints": [
+      "De oorsprong van het rooster is de plek waar beide coördinaten nul zijn.",
+      "Tel eerst de hokjes naar rechts en dan omhoog. Begin niet met tellen bij één.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "swapped": "Positie {w_swapped} heeft de coördinaten in omgekeerde volgorde. De hokjes naar rechts, {a}, komen eerst en de hokjes omhoog, {b}, daarna.",
+      "counted-from-one": "Positie {w_counted_from_one} komt doordat je bent begonnen met tellen bij één. De oorsprong is nul en vanaf daar tel je de hokjes."
+    }
+  },
+  "G4.coordinates.13": {
+    "text": "De hoekpunten van een rechthoek met zijden langs de roosterlijnen staan op de posities ({a}; {b}) en ({c}; {d}); dit zijn twee overstaande hoekpunten. Hoeveel roosterpunten liggen echt binnen de rechthoek, niet op de zijden?",
+    "solution": [
+      "Binnen liggen alleen de punten die niet op de zijden liggen: in elke richting stap je één naar binnen vanaf de randen.",
+      "Horizontaal liggen er {=c-a|stap|stappen|stappen} tussen de zijden en echt binnen een rij is het aantal punten één minder: {=c-a} − 1 = {=c-a-1|punt|punten|punten}.",
+      "Verticaal liggen er {=d-b|stap|stappen|stappen} tussen de zijden en echt binnen een kolom is het aantal punten één minder: {=d-b} − 1 = {=d-b-1|punt|punten|punten}.",
+      "Punten binnen in totaal: {=c-a-1} × {=d-b-1} = {r}."
+    ],
+    "hints": [
+      "Punten op de zijden tellen niet mee.",
+      "Echt binnen een rij liggen {=c-a} − 1 punten en er zijn {=d-b} − 1 zulke rijen. Vermenigvuldig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-points": "{w_all_points} telt alle roosterpunten, ook die op de zijden. Binnen liggen er maar {=c-a-1} × {=d-b-1} = {r}.",
+      "area": "{w_area} is de oppervlakte van de rechthoek in hokjes, maar we zoeken de roosterpunten binnen: dat zijn er minder, want we tellen de punten en niet de hokjes ertussen.",
+      "one-direction-only": "{w_one_direction_only} haalt er maar in één richting één af. Je moet er één afhalen horizontaal én verticaal: {=c-a-1} × {=d-b-1} = {r}."
+    }
+  },
+  "G4.coordinates.14": {
+    "text": "Een speelstuk staat in de oorsprong van het rooster, positie (0; 0), en gaat naar positie ({u}; {v}). Bij elke zet gaat het één hokje naar rechts of één hokje omhoog. Hoeveel verschillende kortste wegen kan het nemen?",
+    "solution": [
+      "Je kunt elk punt van het rooster alleen van links of van onderen bereiken, dus het aantal wegen naar een punt is de som van het aantal wegen naar het punt links ervan en het punt eronder.",
+      "Punten op de linker- en onderrand hebben één weg en daarna tellen we de aantallen hokje voor hokje op tot we bij het doel zijn.",
+      "Naar het punt links van het doel leidt {p1|weg|wegen|wegen} en naar het punt eronder {p2|weg|wegen|wegen}.",
+      "Naar het doel: {p1} + {p2} = {r}."
+    ],
+    "hints": [
+      "Elk punt van het rooster bereik je van links of van onderen. Hoe hangen de aantallen wegen naar buurpunten samen?",
+      "Schrijf bij elk punt van het rooster het aantal wegen op, te beginnen bij de oorsprong: punten op de onderrand en de linkerrand hebben één weg, daarna tel je de aantallen van links en van onderen op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "steps-count": "{w_steps_count} is het aantal stappen van een weg en niet het aantal verschillende wegen: de volgorde van de stappen naar rechts en omhoog kun je veranderen.",
+      "two-corner-routes": "{w_two_corner_routes} telt alleen de twee wegen langs de randen, eerst naar rechts en dan omhoog, en andersom. Veel meer wegen gaan door het midden van het rooster.",
+      "points-count": "{w_points_count} is het aantal roosterpunten en niet het aantal wegen: elk punt heeft een ander aantal wegen."
+    }
+  },
+  "G4.coordinates.15": {
+    "text": "Een speelstuk staat in de oorsprong van het rooster, positie (0; 0). Bij elke zet gaat het naar een aangrenzend hokje: rechts, links, omhoog of omlaag. Het speelstuk heeft precies {n} zetten gedaan en heeft nooit stilgestaan. Op welke van deze posities kan het staan? 1) ({x1}; {y1}); 2) ({x2}; {y2}); 3) ({x3}; {y3}); 4) ({x4}; {y4}). Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Bij elke zet verandert één coördinaat met één, dus na elke zet wisselt de som van de coördinaten tussen even en oneven.",
+      "Na {n} zetten is de som van de afstanden langs de assen even of oneven op dezelfde manier als {n} en niet groter dan {n}, want bij één zet komt het speelstuk hoogstens één hokje verder van de oorsprong.",
+      "De sommen van de afstanden bij de keuzes zijn {s1}, {s2}, {s3}, {s4}.",
+      "Keuze {r} past: de som is niet groter dan {n} en even of oneven op dezelfde manier als {n}."
+    ],
+    "hints": [
+      "Wordt de som van de coördinaten bij één zet even of oneven? Wat gebeurt er bij de volgende zet?",
+      "Reken bij elke keuze de som van de afstanden langs de assen uit. Is die niet groter dan {n} en even of oneven op dezelfde manier als {n}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "wrong-parity": "Keuze {w_wrong_parity} past niet: de som van de afstanden langs de assen is niet op dezelfde manier even of oneven als het aantal zetten, {n}.",
+      "too-far": "Keuze {w_too_far} past niet: deze positie ligt meer dan {n} zetten van de oorsprong."
+    }
+  },
+  "G4.coordinates.16": {
+    "text": "De hoekpunten van een driehoek staan op de posities ({a}; {b}), ({c}; {b}) en ({c}; {d}). Hoe groot is de oppervlakte van deze driehoek in hokjes?",
+    "solution": [
+      "Het eerste en het tweede hoekpunt liggen in dezelfde rij en het tweede en het derde in dezelfde kolom, dus de hoek bij het tweede hoekpunt is recht en de rechthoekszijden lopen langs de roosterlijnen.",
+      "De rechthoekszijden: {c} − {a} = {=c-a} en {d} − {b} = {=d-b}.",
+      "De oppervlakte van een rechthoekige driehoek is de helft van het product van de rechthoekszijden: {=c-a} × {=d-b} : 2 = {r}.",
+      "De oppervlakte van de driehoek is dus {r|hokje|hokjes|hokjes}."
+    ],
+    "hints": [
+      "Zoek de lengtes van de zijden die langs de roosterlijnen lopen: {c} − {a} en {d} − {b}.",
+      "De driehoek is de helft van de rechthoek met dezelfde zijden: vermenigvuldig ze en deel door 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rectangle-area": "{w_rectangle_area} is de oppervlakte van de rechthoek met deze zijden, en de driehoek is de helft daarvan.",
+      "legs-added": "{w_legs_added} is de som van de rechthoekszijden, maar de oppervlakte vind je door te vermenigvuldigen en dan de helft te nemen."
+    }
+  },
+  "G4.coordinates.17": {
+    "text": "Hoeveel punten met gehele, positieve coördinaten ({x}; {y}) liggen op de lijn waar de som van de coördinaten {x} + {y} gelijk is aan {a}?",
+    "solution": [
+      "Positieve gehele coördinaten beginnen bij één en de tweede coördinaat is {a} min de eerste.",
+      "De eerste coördinaat kan elk getal van 1 tot en met {=a-1} zijn: bij een groter getal wordt de tweede nul.",
+      "Er zijn precies {=a-1} getallen van 1 tot en met {=a-1}, één minder dan {a}: {a} − 1 = {r}.",
+      "Er zijn dus {r} van zulke punten."
+    ],
+    "hints": [
+      "Wat kunnen de eerste en de tweede coördinaat zijn als hun som {a} is?",
+      "De coördinaten mogen geen nul zijn. Bij welke waarden van de eerste coördinaat blijft de tweede positief?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "with-zeros": "{w_with_zeros} komt doordat je ook de punten met een coördinaat nul hebt geteld. Positieve coördinaten beginnen bij één.",
+      "fence-post": "{w_fence_post} komt doordat je er te veel hebt weggegooid: elke waarde van de eerste coördinaat van 1 tot en met {=a-1} mag, en dat zijn er {r}."
+    }
+  },
+  "G5.solids-nets.14": {
+    "text": "In de afbeelding zie je vier uitslagen van zes vierkanten. Welke uitslag kun je tot een kubus vouwen, zonder gaten en zonder dat vlakken op elkaar komen? 1) de eerste; 2) de tweede; 3) de derde; 4) de vierde. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Een uitslag wordt een kubus als de zes vierkanten zes verschillende vlakken worden: er mogen geen twee vierkanten op dezelfde plek terechtkomen.",
+      "Neem één vierkant als bodem en vouw de buren omhoog. Komt er een vierkant te liggen waar al een ander ligt, dan werkt de uitslag niet.",
+      "Zo controleer je alle vier de uitslagen: alleen uitslag {r} kun je zonder overlap tot een kubus vouwen."
+    ],
+    "hints": [
+      "Een uitslag van een kubus bestaat uit zes vierkanten waarmee je een kubus kunt vouwen. Vouw elke uitslag in gedachten en let op twee vierkanten die op dezelfde plek zouden komen.",
+      "Neem één vierkant als bodem en vouw vier vierkanten er omheen omhoog. Waar komen de laatste twee vierkanten: één op het deksel en één op de lege wand, of allebei op dezelfde plek?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-first-wrong-net": "Uitslag {w_the_first_wrong_net} wordt geen kubus: twee vierkanten komen op hetzelfde vlak terecht en een ander vlak blijft leeg.",
+      "the-second-wrong-net": "Uitslag {w_the_second_wrong_net} wordt geen kubus: twee vierkanten komen op hetzelfde vlak terecht en een ander vlak blijft leeg.",
+      "the-third-wrong-net": "Uitslag {w_the_third_wrong_net} wordt geen kubus: twee vierkanten komen op hetzelfde vlak terecht en een ander vlak blijft leeg."
+    }
+  },
+  "G5.solids-nets.15": {
+    "text": "Op de vierkanten van een uitslag van een kubus staan stippen: op elk vierkant een ander aantal, van 1 tot 6. Hoeveel stippen zitten er op het vlak tegenover het vlak met {k|stip|stippen|stippen}, als de uitslag tot een kubus is gevouwen? Kies het aantal stippen.",
+    "solution": [
+      "Tegenoverliggende vlakken van een kubus raken elkaar niet, ook niet met een hoek: tussen hen liggen vier andere vlakken.",
+      "Leg het vlak met {k|stip|stippen|stippen} als bodem en vouw de uitslag op: het vlak dat het deksel wordt, is het tegenoverliggende vlak.",
+      "Het deksel is het vlak met {r|stip|stippen|stippen}."
+    ],
+    "hints": [
+      "Tegenoverliggende vlakken van een kubus raken elkaar nooit; er liggen vier andere vlakken tussen. Zoek op de uitslag het vierkant met {k|stip|stippen|stippen}.",
+      "Neem het vierkant met {k|stip|stippen|stippen} als bodem en vouw de buren omhoog. Welk vierkant wordt het deksel?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "a-neighbour-face": "{w_a_neighbour_face} is een vierkant dat op de uitslag naast het gezochte staat. Na het vouwen raakt het dat vlak nog steeds, dus het is een buur en niet het tegenoverliggende vlak.",
+      "seven-minus": "{w_seven_minus} komt van de regel van een echte dobbelsteen, waar tegenoverliggende vlakken samen 7 zijn. Hier staan de stippen anders, dus je vindt het tegenoverliggende vlak door de uitslag te vouwen."
+    }
+  },
+  "G5.solids-nets.16": {
+    "text": "Een kubus van {a} × {a} × {a}, gemaakt van gelijke kleine kubussen, is aan de buitenkant geverfd. Hoeveel kleine kubussen hebben precies twee geverfde vlakken?",
+    "solution": [
+      "Precies twee geverfde vlakken hebben de kleine kubussen op de ribben van de grote kubus, maar niet in een hoek: in een hoek zijn drie vlakken geverfd.",
+      "Op één ribbe zitten {a|kubus|kubussen|kubussen}, en de twee aan de uiteinden zijn hoekkubussen, dus er blijven {a} − 2 = {=a-2} over.",
+      "Een kubus heeft 12 ribben: 12 × {=a-2} = {r}.",
+      "Precies twee geverfde vlakken hebben dus {r|kubus|kubussen|kubussen}."
+    ],
+    "hints": [
+      "Je zoekt de kleine kubussen op de ribben van de grote kubus, maar niet in de hoeken: een hoekkubus heeft drie geverfde vlakken. Begin met één ribbe.",
+      "Op één ribbe zitten {a|kubus|kubussen|kubussen}, en de twee aan de uiteinden zitten in een hoek. Hoeveel kubussen zitten er tussen de hoeken, en hoeveel ribben heeft een kubus?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-edge-cubes": "{w_all_edge_cubes} is 12 × {a}: de hoekkubussen zijn ook geteld, en die hebben drie geverfde vlakken. Tussen de hoeken van één ribbe zitten er {=a-2}: 12 × {=a-2} = {r}.",
+      "one-edge": "{w_one_edge} is het aantal kubussen op één ribbe tussen de hoeken, maar een kubus heeft 12 ribben: 12 × {w_one_edge} = {r}.",
+      "one-face-answer": "{w_one_face_answer} telt de kubussen in het midden van de zijvlakken; die hebben één geverfd vlak. We zoeken die op de ribben: 12 × {=a-2} = {r}."
+    }
+  },
+  "G5.solids-nets.17": {
+    "text": "Een kubus van {a} × {a} × {a}, gemaakt van gelijke kleine kubussen, is aan de buitenkant geverfd. Hoeveel kleine kubussen zijn helemaal niet geverfd?",
+    "solution": [
+      "Niet geverfd zijn de kubussen binnenin: geen van hun vlakken zit aan de buitenkant.",
+      "Haal van elk van de zes zijden van de grote kubus één laag af: dan blijft een kubus met zijde {a} − 2 = {=a-2} over.",
+      "Kubussen daarin: {=a-2} × {=a-2} × {=a-2} = {r}.",
+      "Helemaal niet geverfd zijn dus {r|kubus|kubussen|kubussen}."
+    ],
+    "hints": [
+      "Zoek de kubussen waarvan geen enkel vlak aan de buitenkant zit; ze zitten verstopt in de grote kubus.",
+      "Haal een laag van elk van de zes zijden af. Hoeveel kubussen blijven er in één rij over als je aan elk uiteinde één weghaalt?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-cubes": "{w_all_cubes} zijn alle kubussen van de grote kubus, maar de kubussen aan de buitenkant zijn wel geverfd.",
+      "one-layer": "{w_one_layer} is het aantal kubussen in één laag binnenin, maar de binnenste kubus is {=a-2} van zulke lagen dik: {=a-2} × {=a-2} × {=a-2} = {r}.",
+      "layer-off": "{w_layer_off} is een kubus met zijde {=a-1}: er is maar aan één kant een laag afgehaald. De laag gaat aan beide kanten weg, dus de binnenste kubus heeft zijde {a} − 2 = {=a-2} en het aantal kubussen daarin is {r}."
+    }
+  },
+  "G5.solids-nets.18": {
+    "text": "Elke ribbe van een veelvlak ligt op precies twee van zijn vlakken. Het veelvlak heeft {t|driehoekig vlak|driehoekige vlakken|driehoekige vlakken}, {s|vierhoekig vlak|vierhoekige vlakken|vierhoekige vlakken} en {f|vijfhoekig vlak|vijfhoekige vlakken|vijfhoekige vlakken}, en geen andere vlakken. Hoeveel ribben heeft het?",
+    "solution": [
+      "Tel de zijden van alle vlakken: driehoeken {t} × 3 = {=3*t}, vierhoeken {s} × 4 = {=4*s}, vijfhoeken {f} × 5 = {=5*f}.",
+      "Samen zijn dat {=3*t} + {=4*s} + {=5*f} = {=3*t+4*s+5*f} zijden.",
+      "Elke ribbe is twee keer geteld, één keer in elk van zijn twee vlakken, dus er zijn half zoveel ribben: {=3*t+4*s+5*f} : 2 = {r}.",
+      "Het veelvlak heeft dus {r|ribbe|ribben|ribben}."
+    ],
+    "hints": [
+      "Elke ribbe is een zijde die twee vlakken delen. Hoeveel zijden hebben alle vlakken samen, als je ze vlak voor vlak telt?",
+      "De vlakken hebben driehoeken {t} × 3, vierhoeken {s} × 4 en vijfhoeken {f} × 5 zijden. Tel ze op en bedenk dat je elke ribbe twee keer hebt geteld.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sides-counted-once": "{w_sides_counted_once} is het aantal zijden van alle vlakken samen. Elke ribbe zit er twee keer in, één keer voor elk van zijn twee vlakken, dus er zijn half zoveel ribben: {w_sides_counted_once} : 2 = {r}.",
+      "faces-count": "{w_faces_count} is het aantal vlakken, maar de vraag gaat over ribben. Tel de zijden van alle vlakken en deel door 2: {=3*t+4*s+5*f} : 2 = {r}."
+    }
+  },
+  "G5.solids-nets.19": {
+    "text": "Een kubus wordt met rechte zaagsneden in stukken gezaagd: {a|zaagsnede|zaagsneden|zaagsneden} evenwijdig aan het bovenvlak, {b|zaagsnede|zaagsneden|zaagsneden} evenwijdig aan het voorvlak en {c|zaagsnede|zaagsneden|zaagsneden} evenwijdig aan het zijvlak. In hoeveel stukken valt de kubus uiteen?",
+    "solution": [
+      "Zaagsneden in één richting verdelen de kubus in lagen, en er is één laag meer dan er zaagsneden zijn: {a} + 1 = {=a+1}.",
+      "In de twee andere richtingen zijn er {=b+1} en {=c+1} lagen.",
+      "Zaagsneden in drie richtingen zitten elkaar niet in de weg, dus je vermenigvuldigt de aantallen lagen: {=a+1} × {=b+1} × {=c+1} = {r}.",
+      "De kubus valt dus in {r|stuk|stukken|stukken}."
+    ],
+    "hints": [
+      "Hoeveel lagen maken de zaagsneden in één richting? Denk aan: één zaagsnede verdeelt een kubus in twee lagen.",
+      "Zoek het aantal lagen in elke richting: {a} + 1, {b} + 1 en {c} + 1. Lagen van verschillende richtingen kruisen elkaar.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum-plus-one": "{w_sum_plus_one} is {a} + {b} + {c} + 1, alsof alle zaagsneden na elkaar in één richting gaan. Maar zaagsneden in drie richtingen kruisen elkaar en de aantallen lagen worden vermenigvuldigd.",
+      "product-of-cuts": "{w_product_of_cuts} is het product van de aantallen zaagsneden, maar er is één laag meer dan er zaagsneden zijn: {=a+1} × {=b+1} × {=c+1} = {r}.",
+      "layers-added": "{w_layers_added} is de som van de aantallen lagen {=a+1} + {=b+1} + {=c+1}. Lagen van verschillende richtingen tel je niet op, ze kruisen elkaar, dus je vermenigvuldigt de aantallen lagen: {r}."
+    }
+  },
+  "G6.views.11": {
+    "text": "Van links naar rechts staan drie stapels blokjes, {a}, {b} en {c|blokje|blokjes|blokjes} hoog. Je loopt om de rij heen en kijkt van de andere kant. Welke stapel staat nu links? 1) de stapel met hoogte {o1}; 2) de stapel met hoogte {o2}; 3) de stapel met hoogte {o3}. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Als je om de rij heen loopt en van de andere kant kijkt, staat de volgorde van de stapels andersom: de stapel die rechts stond, staat nu links.",
+      "Van links naar rechts was het {a}, {b}, {c}, en nu is het {c}, {b}, {a}.",
+      "Links staat nu de stapel met hoogte {c}: dat is keuze {r}."
+    ],
+    "hints": [
+      "Je bent om de rij heen gelopen en staat nu aan de andere kant. Wat staat er nu links?",
+      "Van links naar rechts waren de stapels {a}, {b}, {c}. Welke stond rechts? Van de andere kant staat die links.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-old-left": "Keuze {w_the_old_left} is de stapel die eerst links stond. Van de andere kant staat die rechts.",
+      "the-middle": "Keuze {w_the_middle} is de middelste stapel: die blijft ook van de andere kant in het midden staan."
+    }
+  },
+  "G6.views.12": {
+    "text": "Op een plattegrond van een gebouw van blokjes staan de hoogtes van de stapels: in de eerste rij {a} en {b}, in de tweede rij {c} en {d}. De eerste rij is het dichtst bij jou, de tweede rij staat verder weg. Hoeveel vierkantjes zie je als je van voren naar het gebouw kijkt? Stapels die achter elkaar staan, verbergen elkaar.",
+    "solution": [
+      "Van voren staan de twee stapels van één kolom van de plattegrond achter elkaar, en je ziet net zoveel vierkantjes als de hoogste van de twee heeft.",
+      "In de eerste kolom is van {a} en {c} de hoogste {=max(a,c)}. In de tweede kolom is van {b} en {d} de hoogste {=max(b,d)}.",
+      "Samen: {=max(a,c)} + {=max(b,d)} = {r}.",
+      "Van voren zie je dus {r|vierkantje|vierkantjes|vierkantjes}."
+    ],
+    "hints": [
+      "Van voren staan de stapels van één kolom van de plattegrond achter elkaar. Wat zie je van zo'n paar?",
+      "In de eerste kolom staan {a} en {c}, in de tweede {b} en {d}. In elke kolom zie je net zoveel vierkantjes als de hoogste stapel heeft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-cubes": "{w_all_cubes} zijn alle blokjes van het gebouw. Van voren worden lage stapels door hoge bedekt, dus je ziet er minder.",
+      "near-row": "{w_near_row} is alleen de voorste rij. Maar een stapel achter staat boven de voorste uit als hij hoger is.",
+      "far-row": "{w_far_row} is alleen de achterste rij. Maar als de voorste stapel hoger is, bedekt die de achterste en zie je de voorste."
+    }
+  },
+  "G6.views.13": {
+    "text": "Een gebouw staat op een vierkant van 3 × 3 hokjes. Van voren zie je stapels met hoogte {a}, {b} en {c}, en van opzij {d}, {e} en {f}. Wat is het grootste aantal blokjes dat het gebouw kan hebben?",
+    "solution": [
+      "In elk hokje mag de stapel niet hoger zijn dan beide aanzichten toestaan, dus nemen we de kleinste van de twee hoogtes. In de eerste rij is de hoogte van opzij {d}: {=min(a,d)} + {=min(b,d)} + {=min(c,d)} = {=min(a,d)+min(b,d)+min(c,d)}.",
+      "In de tweede rij is de hoogte van opzij {e}: {=min(a,e)} + {=min(b,e)} + {=min(c,e)} = {=min(a,e)+min(b,e)+min(c,e)}.",
+      "In de derde rij is de hoogte van opzij {f}: {=min(a,f)} + {=min(b,f)} + {=min(c,f)} = {=min(a,f)+min(b,f)+min(c,f)}.",
+      "Samen: {=min(a,d)+min(b,d)+min(c,d)} + {=min(a,e)+min(b,e)+min(c,e)} + {=min(a,f)+min(b,f)+min(c,f)} = {r}."
+    ],
+    "hints": [
+      "Kijk bij elk hokje van de grondplaat naar beide aanzichten: hoeveel blokjes staat het aanzicht van voren toe en hoeveel dat van opzij? Meer dan het kleinste van de twee getallen kan niet.",
+      "Er zijn negen hokjes. Van voren zijn de hoogtes {a}, {b}, {c}, van opzij {d}, {e}, {f}: neem in elk hokje de kleinste van de twee hoogtes en tel alle negen op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "front-times-three": "{w_front_times_three} krijg je als de drie rijen gelijk zijn en het aanzicht van voren herhalen. Maar de hoogte van een rij wordt ook beperkt door het aanzicht van opzij: in elk hokje neem je de kleinste van de twee hoogtes.",
+      "views-added": "{w_views_added} zijn alle vierkantjes van de twee aanzichten samen. Het gebouw heeft meer blokjes: elk van de negen hokjes heeft zijn eigen stapel.",
+      "all-tallest": "{w_all_tallest} is {=9} × {=max(a,b,c)}: alle negen stapels even hoog als de hoogste. Maar de aanzichten staan dat niet toe: in elk hokje neem je de kleinste van de twee hoogtes, dat geeft {r}."
+    }
+  },
+  "G6.blocks.11": {
+    "text": "Op de plattegrond van een gebouw van blokjes met ribbe 1 cm staan de hoogtes van de stapels: in de eerste rij {a} en {b}, in de tweede rij {c} en {d}. Hoe groot is de oppervlakte van het gebouw in vierkante centimeters, zonder het vlak dat op de tafel staat?",
+    "solution": [
+      "Van boven zie je één vierkantje voor elk van de 4 stapels: 4 cm².",
+      "Elke stapel heeft twee zijkanten die naar buiten wijzen: 2 × ({a} + {b} + {c} + {d}) = {=2*(a+b+c+d)} cm².",
+      "Tussen buurstapels zie je treden ter hoogte van het verschil van hun hoogtes: {=max(a,b)-min(a,b)} + {=max(c,d)-min(c,d)} + {=max(a,c)-min(a,c)} + {=max(b,d)-min(b,d)} = {s} cm².",
+      "De hele oppervlakte: 4 + {=2*(a+b+c+d)} + {s} = {r} cm²."
+    ],
+    "hints": [
+      "De oppervlakte heeft drie delen: de bovenkant, de buitenwanden en de treden tussen stapels van verschillende hoogte.",
+      "De bovenkant geeft 4 cm². Elk van de stapels {a}, {b}, {c}, {d} heeft twee buitenwanden. Een trede tussen buren is het verschil van hun hoogtes; er zijn vier paren buren.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-inner-steps": "{w_no_inner_steps} laat de treden tussen stapels van verschillende hoogte weg. Die horen ook bij de oppervlakte, samen {s} cm², dus het totaal is {r}.",
+      "with-the-bottom": "{w_with_the_bottom} telt ook de onderkant mee, maar die staat op de tafel: 4 cm² te veel. De oppervlakte is {r}.",
+      "hidden-walls-counted": "{w_hidden_walls_counted} is 4 + 4 × {=a+b+c+d}: van elke stapel zijn alle vier de wanden geteld. Maar waar stapels naast elkaar staan, zijn de wanden bedekt. We tellen de buitenwanden en de treden: {r}."
+    }
+  },
+  "G6.blocks.12": {
+    "text": "Een trap heeft {a|stapel|stapels|stapels}: de eerste is 1 blokje hoog en elke volgende is {b|blokje|blokjes|blokjes} hoger dan de vorige. Hoeveel blokjes heeft de trap in totaal?",
+    "solution": [
+      "De hoogte van de laatste stapel: 1 + ({a} − 1) × {b} = {=1+(a-1)*b}.",
+      "De eerste en de laatste stapel samen hebben 1 + {=1+(a-1)*b} = {=2+(a-1)*b}, en de tweede en de voorlaatste hebben er net zoveel, enzovoort.",
+      "Tel je alle stapels twee keer op, op volgorde en omgekeerd, dan krijg je {=2+(a-1)*b} × {a} = {=(2+(a-1)*b)*a}; één keer is de helft daarvan: {=(2+(a-1)*b)*a} : 2 = {r}.",
+      "De trap heeft dus {r|blokje|blokjes|blokjes}."
+    ],
+    "hints": [
+      "Zoek de hoogte van de laatste stapel: die groeit met {b|blokje|blokjes|blokjes} bij elke stapel.",
+      "De eerste en de laatste stapel samen hebben evenveel als de tweede en de voorlaatste. Hoeveel van zulke paren krijg je als je alles twee keer optelt, en hoeveel is de som van een paar?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-times-count": "{w_last_times_count} is het aantal stapels keer de hoogte van de laatste. Maar de andere zijn lager, en gemiddeld hebben ze minder blokjes.",
+      "pairs-not-halved": "{w_pairs_not_halved} is de som van een paar keer het aantal stapels. Zo is elke stapel twee keer geteld, dus het resultaat moet gehalveerd worden.",
+      "last-tower": "{w_last_tower} is alleen de hoogte van de laatste stapel, maar we zoeken de blokjes van de hele trap."
+    }
+  },
+  "G6.blocks.13": {
+    "text": "Van blokjes is een kubus van {a} × {a} × {a} gebouwd, en daarna zijn alle blokjes weggehaald die met geen enkel vlak aan de buitenkant zitten. Hoeveel blokjes blijven er over?",
+    "solution": [
+      "De blokjes zonder vlak aan de buitenkant zitten binnenin. Haal van elk van de zes zijden één laag af en er blijft een binnenkubus met zijde {a} − 2 = {=a-2} over.",
+      "De hele kubus: {a} × {a} × {a} = {=a*a*a}, de binnenste: {=a-2} × {=a-2} × {=a-2} = {=(a-2)*(a-2)*(a-2)}.",
+      "Wat overblijft is de buitenkant: {=a*a*a} − {=(a-2)*(a-2)*(a-2)} = {r}.",
+      "Er blijven dus {r|blokje|blokjes|blokjes} over."
+    ],
+    "hints": [
+      "De blokjes binnenin zijn weggehaald, die aan de buitenkant blijven over. Zoek eerst hoeveel blokjes er binnenin zitten.",
+      "De binnenkubus is aan elke kant 2 korter: {a} − 2. Haal hem van de hele kubus af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "faces-times-six": "{w_faces_times_six} zijn zes vlakken van {a} × {a}, maar de blokjes op de ribben en in de hoeken zijn twee en drie keer geteld.",
+      "one-layer-removed": "{w_one_layer_removed} is {a} × {a} × {a} − {=a-1} × {=a-1} × {=a-1}: de binnenkubus is opgevat als een kubus met zijde {=a-1}. De binnenkubus is aan elke kant twee blokjes korter: {=a-2}.",
+      "inner-cube": "{w_inner_cube} zijn de blokjes binnenin, en die zijn juist weggehaald. Wat overblijft is de schil: {=a*a*a} − {w_inner_cube} = {r}."
+    }
+  },
+  "G7.plan.11": {
+    "text": "Je staat met je gezicht naar het noorden. Eerst draai je {a|kwartslag|kwartslagen|kwartslagen} naar rechts en daarna {b|kwartslag|kwartslagen|kwartslagen} naar links. Naar welke kant kijk je nu? 1) noord; 2) oost; 3) zuid; 4) west. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Een draai naar rechts gaat rond de cirkel noord, oost, zuid, west, en een draai naar links gaat de andere kant op.",
+      "Links maakt evenveel rechts ongedaan, dus je neemt het verschil: {a} − {b} = {=a-b}.",
+      "Een hele draai is 4 kwartslagen en verandert niets, dus er blijft {=mod(a-b+8,4)|stap|stappen|stappen} rechtsom vanaf het noorden over: dat is keuze {r}."
+    ],
+    "hints": [
+      "Een draai naar links maakt een draai naar rechts ongedaan. Bedenk eerst hoeveel kwartslagen je uiteindelijk naar rechts gedraaid bent.",
+      "Zoek het verschil {a} − {b}: is het negatief, dan ben je uiteindelijk naar links gedraaid. Laat hele draaien van 4 kwartslagen weg.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-as-right": "Keuze {w_left_as_right} komt van optellen: {a} + {b}, alsof beide draaien naar rechts gingen. Links is de andere kant op, dus je trekt af.",
+      "only-the-first": "Keuze {w_only_the_first} telt alleen de draai naar rechts, maar er was ook een draai naar links.",
+      "sides-swapped": "Keuze {w_sides_swapped} komt doordat je {b|kwartslag|kwartslagen|kwartslagen} naar rechts en {a|kwartslag|kwartslagen|kwartslagen} naar links draait. De kanten zijn verwisseld."
+    }
+  },
+  "G7.plan.12": {
+    "text": "Je staat met je gezicht naar het noorden en draait met de klok mee {a} graden. In welke richting kijk je nu? 1) noordoost; 2) zuidoost; 3) zuidwest; 4) noordwest. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Met de klok mee is het noorden 0 graden, het oosten 90, het zuiden 180 en het westen 270.",
+      "Een hele draai is 360 graden en verandert niets. Over: {=mod(a,360)} graden.",
+      "Een hoek van {=mod(a,360)} graden ligt tussen {=mod(a,360)-45} en {=mod(a,360)+45} graden, precies halverwege twee hoofdrichtingen.",
+      "Dat is keuze {r}."
+    ],
+    "hints": [
+      "Noord is 0 graden, oost is 90, zuid is 180 en west is 270. Is de hoek groter dan 360 graden, laat dan de hele draai weg.",
+      "Tussen welke twee hoofdrichtingen ligt de hoek van {=mod(a,360)} graden?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "anticlockwise": "Keuze {w_anticlockwise} komt van tegen de klok in draaien, maar de draai gaat met de klok mee.",
+      "the-opposite": "Keuze {w_the_opposite} is de tegenovergestelde richting. De hoek meet je vanaf het noorden, met de klok mee, niet vanaf het zuiden."
+    }
+  },
+  "G7.plan.13": {
+    "text": "Een slak kruipt langs roosterlijnen. Eerst kruipt ze 1 hokje naar het noorden, dan draait ze naar links en kruipt 2 hokjes, draait weer naar links en kruipt 3 hokjes, enzovoort: elk volgend stuk is één hokje langer en ze draait altijd naar links. De slak heeft {n|stuk|stukken|stukken} gekropen. Hoeveel hokjes is ze nu van het begin, geteld langs de roosterlijnen?",
+    "solution": [
+      "Noteer de plaats na elk stuk, beginnend bij (0; 0): {trail}.",
+      "Vanuit het noorden is links draaien eerst west, dan zuid, dan oost en dan weer noord: de richtingen herhalen zich na vier stukken.",
+      "De slak staat op ({fx}; {fy}), en van het begin tot daar langs de roosterlijnen is het {ax} + {ay} = {r}.",
+      "De slak is dus {r|hokje|hokjes|hokjes} van het begin."
+    ],
+    "hints": [
+      "Schrijf de plaats van de slak na elk stuk op, beginnend bij (0; 0).",
+      "De richtingen gaan rond in een cirkel: noord, west, zuid, oost. De afstand langs de roosterlijnen is hoeveel hokjes de slak naar links of rechts ging plus hoeveel omhoog of omlaag.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "walked-length": "{w_walked_length} is de lengte van de hele weg van de slak, maar we zoeken de afstand tot het begin: de slak ging vaak terug.",
+      "last-leg": "{w_last_leg} is de lengte van het laatste stuk, maar we zoeken de afstand van het begin tot het eind van de weg.",
+      "horizontal-shift": "{w_horizontal_shift} is alleen de verschuiving naar links of rechts, maar de slak ging ook omhoog of omlaag: {ax} + {ay} = {r}."
+    }
+  },
+  "G7.plan-1S.11": {
+    "text": "De schaal van een plattegrond is 1 : {a}, dus 1 cm op de plattegrond is {a} cm in het echt. Een lijnstuk op de plattegrond is {b} cm. Hoe lang is dit lijnstuk in het echt, in meters?",
+    "solution": [
+      "Elke centimeter op de plattegrond is {a} cm in het echt.",
+      "Het hele lijnstuk: {b} × {a} = {=a*b} cm.",
+      "Een meter is 100 cm, dus in meters: {=a*b} : 100 = {r}.",
+      "In het echt is het lijnstuk dus {r} m lang."
+    ],
+    "hints": [
+      "Schaal 1 : {a} betekent dat één centimeter op de plattegrond {a} cm in het echt is. De meters komen aan het eind.",
+      "Vermenigvuldig {b} cm met {a} en reken de centimeters daarna om naar meters: een meter is 100 cm.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "centimetres-not-converted": "{w_centimetres_not_converted} is de lengte in centimeters, maar de vraag gaat over meters: een meter is 100 cm.",
+      "ten-instead-of-hundred": "{w_ten_instead_of_hundred} komt van delen door 10, maar een meter is 100 cm: {=a*b} : 100 = {r}."
+    }
+  },
+  "G7.plan-1S.12": {
+    "text": "Op een kaart komt 1 cm overeen met {p} km, en op een andere kaart met {a} km. Op de eerste kaart liggen twee steden {c} cm van elkaar. Hoeveel centimeter liggen deze steden op de tweede kaart van elkaar?",
+    "solution": [
+      "Op de eerste kaart is {c} cm gelijk aan {c} × {p} = {=c*a*b} km in het echt.",
+      "Op de tweede kaart is één centimeter {a} km, dus we hebben net zoveel centimeter nodig als {a} km in {=c*a*b} km past.",
+      "Deel: {=c*a*b} : {a} = {r} cm.",
+      "Op de tweede kaart liggen de steden dus {r} cm van elkaar."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel kilometer de steden in het echt van elkaar liggen: vermenigvuldig de centimeters op de eerste kaart met de kilometers bij één centimeter ervan.",
+      "Op de tweede kaart is één centimeter {a} km. Deel de afstand tussen de steden door {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same-centimetres": "{w_same_centimetres} zijn de centimeters op de eerste kaart. Maar de schaal van de tweede kaart is fijner: één centimeter is maar {a} km, dus er zijn meer centimeters: {r}.",
+      "kilometres": "{w_kilometres} is de afstand in kilometers, maar de vraag gaat over centimeters op de tweede kaart. We delen door {a} km per centimeter en krijgen {r}.",
+      "inverted": "{w_inverted} komt van delen. Maar op de tweede kaart staat één centimeter voor minder kilometer, dus de afstand in centimeters is groter, en je vermenigvuldigt: {r}."
+    }
+  },
+  "G7.plan-1S.13": {
+    "text": "Op een kaart komt 1 cm overeen met {a} km. De steden liggen op de kaart {b} cm van elkaar. Twee fietsers vertrekken tegelijk uit deze steden en fietsen naar elkaar toe, met {c} km/u en {d} km/u. Na hoeveel uur ontmoeten ze elkaar?",
+    "solution": [
+      "De afstand tussen de steden: {a} × {b} = {=a*b} km.",
+      "De fietsers rijden naar elkaar toe, dus elk uur wordt de afstand tussen hen {c} + {d} = {=c+d} km kleiner.",
+      "De tijd tot ze elkaar ontmoeten: {=a*b} : {=c+d} = {r}.",
+      "Ze ontmoeten elkaar dus na {r|uur|uur|uur}."
+    ],
+    "hints": [
+      "Zoek eerst de afstand tussen de steden in kilometers. De fietsers rijden naar elkaar toe en allebei maken ze de afstand kleiner.",
+      "Elk uur wordt de afstand kleiner met de som van de snelheden: {c} + {d}. Deel de afstand daardoor.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-speed": "{w_one_speed} komt van delen door de snelheid van één fietser. Maar ze rijden allebei, en de afstand wordt elk uur {c} + {d} km kleiner.",
+      "speeds-subtracted": "{w_speeds_subtracted} komt van delen door het verschil van de snelheden. Dat doe je als ze dezelfde kant op rijden. Naar elkaar toe tel je de snelheden op: {c} + {d}.",
+      "distance": "{w_distance} is de afstand tussen de steden in kilometers, maar de vraag gaat over de tijd: {=a*b} : {=c+d} = {r}."
+    }
+  },
+  "G4.coordinates.18": {
+    "text": "De hokjes van een kaart hebben een naam met kolom en rij: de kolommen van links naar rechts zijn A, B, C, D, E en de rijen van onder naar boven zijn 1, 2, 3, 4, 5. Een huis staat in hokje {l}{b}. De hoeveelste kolom van links is dat en welke rij? Schrijf eerst het nummer van de kolom, dan het nummer van de rij, gescheiden door een puntkomma.",
+    "solution": [
+      "De letter geeft de kolom: A is de eerste, B de tweede, C de derde, D de vierde, E de vijfde.",
+      "Hokje {l}{b}: kolom {l} is kolom nummer {a} en de rij is nummer {b}.",
+      "Eerst schrijven we het nummer van de kolom, dan dat van de rij. Het huis staat dus op positie {r}."
+    ],
+    "hints": [
+      "Op welke plaats in de rij A, B, C, D, E staat de letter {l}?",
+      "Schrijf eerst het nummer van de kolom en dan het nummer van de rij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "swapped": "Positie {w_swapped} heeft de nummers in omgekeerde volgorde. Eerst komt de kolom, {a}, en dan de rij, {b}.",
+      "counted-from-zero": "Positie {w_counted_from_zero} komt doordat je de kolommen vanaf nul hebt geteld. De eerste kolom is A en het nummer is 1."
+    }
+  }
+}

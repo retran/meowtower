@@ -6,6 +6,7 @@
 import type { Context, Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
+import { type Lang, setLang, SHIPPED } from "../shared/i18n.js";
 import { appendEvents } from "../engine/events/append.js";
 import type { Db } from "./database.js";
 import {
@@ -35,27 +36,36 @@ export const THREE_DAY_DEFAULT = 3;
 
 const SettingsIn = z
   .object({
-    threeDayLimit: z.union([z.number().int().min(1).max(7), z.null()]),
+    threeDayLimit: z
+      .union([z.number().int().min(1).max(7), z.null()])
+      .optional(),
+    language: z.enum(SHIPPED).optional(),
   })
   .strict();
 
 /** The parent settings as they stand: each setting's latest value, or its default. */
-export function parentSettings(db: Db): { threeDayLimit: number | null } {
-  const row = db
-    .prepare(
-      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parent_settings'",
-    )
-    .get()
-    ? (db
-        .prepare(
-          "SELECT value FROM parent_settings WHERE key = 'threeDayLimit'",
-        )
-        .get() as { value: string } | undefined)
-    : undefined;
+export function parentSettings(db: Db): {
+  threeDayLimit: number | null;
+  language: Lang;
+} {
+  const stored = (key: string): { value: string } | undefined =>
+    db
+      .prepare(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parent_settings'",
+      )
+      .get()
+      ? (db
+          .prepare("SELECT value FROM parent_settings WHERE key = ?")
+          .get(key) as { value: string } | undefined)
+      : undefined;
+  const limit = stored("threeDayLimit");
+  const language = stored("language");
   return {
-    threeDayLimit: row
-      ? (JSON.parse(row.value) as number | null)
+    threeDayLimit: limit
+      ? (JSON.parse(limit.value) as number | null)
       : THREE_DAY_DEFAULT,
+    // Russian until the parent chooses another language.
+    language: language ? (JSON.parse(language.value) as Lang) : "ru",
   };
 }
 
@@ -65,6 +75,8 @@ export function mountParentRoom(
   now: () => number,
   sessions = new ParentSessions(),
 ): void {
+  // A closed database still has to answer the health page, so the language stays as it was.
+  if (db.open) setLang(parentSettings(db).language);
   const deviceOf = (c: Context): string | null => {
     const found = deviceForToken(db, getCookie(c, DEVICE_COOKIE));
     return found.ok ? found.deviceId : null;
@@ -143,15 +155,19 @@ export function mountParentRoom(
     if (deviceId instanceof Response) return deviceId;
     const body = SettingsIn.safeParse(await c.req.json().catch(() => null));
     if (!body.success) return c.json({ error: "settings_invalid" }, 400);
-    appendEvents(db, [
-      {
+    const origin = { deviceId, clientMs: now() };
+    appendEvents(
+      db,
+      Object.entries(body.data).map(([key, value]) => ({
         type: "settings_changed",
         v: 1,
-        payload: { key: "threeDayLimit", value: body.data.threeDayLimit },
-        origin: { deviceId, clientMs: now() },
-      },
-    ]);
-    return c.json(parentSettings(db));
+        payload: { key, value },
+        origin,
+      })),
+    );
+    const settings = parentSettings(db);
+    setLang(settings.language);
+    return c.json(settings);
   });
 
   // the finish-today action: the rest of the game day plays no further task

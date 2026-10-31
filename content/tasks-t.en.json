@@ -1,0 +1,1511 @@
+{
+  "T1.one-step.01": {
+    "text": "The first part is {a} and the second part is {b}. Find the total.",
+    "solution": [
+      "We want everything together, so we add the two parts.",
+      "{a} + {b} = {r}.",
+      "So the total is {r}."
+    ],
+    "hints": [
+      "The first part is {a} and the second is {b}. You want everything together, so the parts must be joined.",
+      "Add {b} to {a} in steps: tens first, then units.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} comes from taking one part away from the other. But we want everything together: {a} + {b} = {r}.",
+      "first-part": "{w_first_part} is only the first part. We need both parts together: {a} + {b} = {r}."
+    }
+  },
+  "T1.one-step.02": {
+    "text": "There were {a}. {b} were taken away. Find how many are left.",
+    "solution": [
+      "Some were taken away, so we subtract what was taken from what there was.",
+      "{a} − {b} = {r}.",
+      "So {r} are left."
+    ],
+    "hints": [
+      "There were {a} and {b} were taken away. Fewer are left than there were, so we take away.",
+      "Take {b} away from {a} in steps: tens first, then units.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is {a} + {b}. But {b} were taken away, not added: {a} − {b} = {r}.",
+      "removed": "{w_removed} is how many were taken away. The question is how many are left: {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} comes from taking the smaller units from the bigger ones: {=mod(b,10)} − {=mod(a,10)}. But {a} has only {=mod(a,10)} units, fewer than {=mod(b,10)}, so we first borrow a ten. Then {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.03": {
+    "text": "The first amount is {a}. The second is {b} more. Find the second amount.",
+    "solution": [
+      "“{b} more” means we add {b} to the first amount.",
+      "{a} + {b} = {r}.",
+      "So the second amount is {r}."
+    ],
+    "hints": [
+      "The second amount is more than the first, so it is made from {a} by adding.",
+      "Add exactly {b} to {a}: that is how much more the second amount is.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} comes from {a} − {b}. But the second amount is more than the first, so we add {b}: {a} + {b} = {r}.",
+      "times": "{w_times} comes from {a} × {b}. “{b} more” is not the same as “{b} times as many”: we add, {a} + {b} = {r}."
+    }
+  },
+  "T1.one-step.04": {
+    "text": "The first amount is {a}. The second is {b} less. Find the second amount.",
+    "solution": [
+      "“{b} less” means we take {b} away from the first amount.",
+      "{a} − {b} = {r}.",
+      "So the second amount is {r}."
+    ],
+    "hints": [
+      "The second amount is less than the first, so it is made from {a} by taking away.",
+      "Take {b} away from {a}: that is how much less the second amount is.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from {a} + {b}. But the second amount is less than the first, so we take {b} away: {a} − {b} = {r}.",
+      "times": "{w_times} comes from {a} : {b}. “{b} less” is not the same as “{b} times smaller”: we subtract, {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} comes from taking the smaller units from the bigger ones: {=mod(b,10)} − {=mod(a,10)}. But {a} has only {=mod(a,10)} units, fewer than {=mod(b,10)}, so we first borrow a ten. Then {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.05": {
+    "text": "The first amount is {a} and the second is {b}. How much more is the first than the second?",
+    "solution": [
+      "To find how much more one number is than another, we take the smaller from the larger.",
+      "{a} − {b} = {r}.",
+      "So the first amount is {r} more than the second."
+    ],
+    "hints": [
+      "“How much more” asks about the difference between {a} and {b}.",
+      "Take the smaller number {b} away from the larger number {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from {a} + {b}. “How much more” asks about the difference: {a} − {b} = {r}.",
+      "times": "{w_times} comes from {a} : {b}. That tells how many times as big, but the question is how much more: {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} comes from taking the smaller units from the bigger ones: {=mod(b,10)} − {=mod(a,10)}. But {a} has only {=mod(a,10)} units, fewer than {=mod(b,10)}, so we first borrow a ten. Then {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.06": {
+    "text": "There are {a} groups with {b} in each. Find the total.",
+    "solution": [
+      "Each group has {b} and there are {a} such groups, so we multiply.",
+      "{a} × {b} = {r}.",
+      "So there are {r} in all."
+    ],
+    "hints": [
+      "There are {a} groups, and each has the same number: {b}. Equal groups are put together by multiplying.",
+      "Work out {a} × {b}. If you have forgotten it, add {b} again and again, {a|time|times|times} in all.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from {a} + {b}. There are {a} groups with {b} in each, so we multiply: {a} × {b} = {r}.",
+      "difference": "{w_difference} is the difference between {a} and {b}. We need the total: {a} groups of {b} is {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.07": {
+    "text": "There are {x} in all. They are shared equally between {a|part|parts|parts}. How many are in each part?",
+    "solution": [
+      "Sharing equally means dividing the whole amount by the number of parts.",
+      "{x} : {a} = {r}.",
+      "So each part has {r}."
+    ],
+    "hints": [
+      "There are {x} in all, shared equally between {a|part|parts|parts}. Sharing equally means dividing.",
+      "Divide {x} by {a}. Think: which number times {a} makes {x}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the whole amount, not yet shared. We must divide {x} by {a}: {x} : {a} = {r}.",
+      "parts": "{w_parts} is the number of parts, but the question is how many are in one part: {x} : {a} = {r}."
+    }
+  },
+  "T1.one-step.08": {
+    "text": "There are {x} in all. Each group has {b}. How many groups are there?",
+    "solution": [
+      "We want to know how many times {b} fits into {x}, so we divide.",
+      "{x} : {b} = {r}.",
+      "So there are {r|group|groups|groups}."
+    ],
+    "hints": [
+      "You need to find how many groups of {b} can be made from {x}.",
+      "Divide {x} by {b}: how many times does {b} fit into {x}? Check by multiplying.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the whole amount. The number of groups of {b} is {x} : {b} = {r}.",
+      "in-a-group": "{w_in_a_group} is how many are in one group, but the question is how many groups there are: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.09": {
+    "text": "The first amount is {a}. The second is {b} times as big. Find the second amount.",
+    "solution": [
+      "“{b} times as big” means we multiply the first amount by {b}.",
+      "{a} × {b} = {r}.",
+      "So the second amount is {r}."
+    ],
+    "hints": [
+      "“Times as big” is not the same as “more”: the first amount is taken several times.",
+      "Take the number {a} exactly {b|time|times|times} and add them up, or multiply {a} by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from {a} + {b}. But “{b} times as big” means multiplying: {a} × {b} = {r}.",
+      "division": "{w_division} comes from {a} : {b}. The second amount is bigger than the first, so we multiply: {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.10": {
+    "text": "The first amount is {a} and the second is {x}. How many times as big is the second as the first?",
+    "solution": [
+      "To find how many times as big one amount is as another, we divide the larger by the smaller.",
+      "{x} : {a} = {r}.",
+      "So the second amount is {r|time|times|times} as big as the first."
+    ],
+    "hints": [
+      "“How many times as big” asks how many times {a} fits into {x}.",
+      "Divide {x} by {a}: which number times {a} makes {x}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} is how much more {x} is than {a}. But the question is how many times as big, and that is a division: {x} : {a} = {r}.",
+      "second": "{w_second} is already given. To find how many times as big it is as {a}, we divide: {x} : {a} = {r}."
+    }
+  },
+  "T1.one-step.11": {
+    "text": "One item costs {a|euro|euros|euros}. {b|item is|items are|items are} bought. How many euros does the purchase cost?",
+    "solution": [
+      "One item costs {a|euro|euros|euros} and there are {b} items, so we multiply the price by the number of items.",
+      "{a} × {b} = {r}.",
+      "So the purchase costs {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "All the items are the same and each costs {a|euro|euros|euros}. You need the price of {b} of them together.",
+      "Repeat the price {a|euro|euros|euros} exactly {b|time|times|times}: that is {a} × {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from {a} + {b}. But there are {b} items and each costs {a|euro|euros|euros}, so we multiply: {a} × {b} = {r}.",
+      "price": "{w_price} is the price of only one item. {b|item is|items are|items are} bought: {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.12": {
+    "text": "Someone paid {a|euro|euros|euros} for a purchase that costs {b|euro|euros|euros}. How many euros is the change?",
+    "solution": [
+      "Change is the money left after paying, so we take the cost away from the amount paid.",
+      "{a} − {b} = {r}.",
+      "So the change is {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "{a|euro|euros|euros} was paid and the purchase costs {b|euro|euros|euros}. The change is what is left of the money paid.",
+      "Take {b} away from {a}: tens first, then units.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from {a} + {b}. But the change is what is left of the {a|euro|euros|euros} after the purchase: {a} − {b} = {r}.",
+      "cost": "{w_cost} is the cost of the purchase. The change is what is left of the money paid: {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} comes from taking the smaller units from the bigger ones: {=mod(b,10)} − {=mod(a,10)}. But {a} has only {=mod(a,10)} units, fewer than {=mod(b,10)}, so we first borrow a ten. Then {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.13": {
+    "text": "There were {a}. Now there are {b}. How many were added?",
+    "solution": [
+      "There are more than before, so something was added. We find it by subtracting: the new amount minus the old one.",
+      "{b} − {a} = {r}.",
+      "So {r} were added."
+    ],
+    "hints": [
+      "There were {a} and now there are {b}. There are more, so something was added. You need to find how much.",
+      "Find how much is missing from {a} up to {b}: take {a} away from {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from {a} + {b}. But {b} is what there is now. What was added is the gap: {b} − {a} = {r}.",
+      "start": "{w_start} is how many there were at the start. The question is how many were added: {b} − {a} = {r}.",
+      "swapped-units": "{w_swapped_units} comes from taking the smaller units from the bigger ones: {=mod(a,10)} − {=mod(b,10)}. But {b} has only {=mod(b,10)} units, fewer than {=mod(a,10)}, so we first borrow a ten. Then {b} − {a} = {r}."
+    }
+  },
+  "T1.one-step.14": {
+    "text": "{a} were taken away and {b} are left. How many were there at the start?",
+    "solution": [
+      "At the start there was more: what is left and what was taken away. So we put back what was taken.",
+      "{b} + {a} = {r}.",
+      "So there were {r} at the start."
+    ],
+    "hints": [
+      "{a} were taken away and {b} are left. At the start there was more than now: the part taken away must be put back.",
+      "Put back what was taken: add {a} to {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} comes from taking one number away from the other. But what was taken away must be put back: {b} + {a} = {r}.",
+      "removed": "{w_removed} is how many were taken away. The question is how many there were at the start, that is what is left and what was taken together: {b} + {a} = {r}.",
+      "left": "{w_left} is how many are left. But at the start there was more: {b} + {a} = {r}."
+    }
+  },
+  "T2.two-step.01": {
+    "text": "There were {a}. Then {b} were added and after that {c} were taken away. How many are there now?",
+    "solution": [
+      "First we add: {a} + {b} = {=a+b}.",
+      "Then some are taken away, so we subtract: {=a+b} − {c} = {r}.",
+      "So there are {r} now."
+    ],
+    "hints": [
+      "There were {a}. {b} were added, then {c} were taken away. The steps go in order.",
+      "First add {b} to {a}. Then take {c} away from what you get.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "add-all": "{w_add_all} comes from adding all three numbers. But {c} were taken away, and that is a subtraction: {=a+b} − {c} = {r}.",
+      "one-step-less": "{w_one_step_less} is how many there were after {b} were added. But then {c} were taken away as well: {=a+b} − {c} = {r}.",
+      "no-addition": "{w_no_addition} is found without the {b} that were added: {a} − {c}. What was added counts too: {=a+b} − {c} = {r}."
+    }
+  },
+  "T2.two-step.02": {
+    "text": "There are {a} groups of the first kind with {b} in each. There are {c} groups of the second kind with {d} in each. Find the total.",
+    "solution": [
+      "The groups are equal, so we count each kind by multiplying: {a} × {b} = {=a*b}.",
+      "Second kind: {c} × {d} = {=c*d}.",
+      "Now we add both kinds: {=a*b} + {=c*d} = {r}."
+    ],
+    "hints": [
+      "There are two kinds of groups. First find how many each kind gives.",
+      "First kind: {a} × {b}, second kind: {c} × {d}. Then add the two results.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-kind": "{w_first_kind} is only the first kind: {a} × {b}. The second kind must be counted too: {=a*b} + {=c*d} = {r}.",
+      "all-times": "{w_all_times} comes from multiplying all four numbers. The kinds are not multiplied by each other, they are added: {=a*b} + {=c*d} = {r}.",
+      "add-all": "{w_add_all} is the sum of all four numbers. The groups are equal, so we count each kind by multiplying and then add: {=a*b} + {=c*d} = {r}."
+    }
+  },
+  "T2.two-step.03": {
+    "text": "There were {x}. {b} was taken away several times, and {c} were left. How many times was it taken?",
+    "solution": [
+      "In all {x} − {c} = {=x-c} were taken.",
+      "Each time {b} was taken, so we divide to find the number of times: {=x-c} : {b} = {r}.",
+      "So it was taken {r|time|times|times}."
+    ],
+    "hints": [
+      "There were {x} and {c} were left. First find how many were taken in all.",
+      "In all {x} − {c} were taken. Now find how many times {b} fits into that.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "taken": "{w_taken} is how many were taken in all, but the question is how many times: {=x-c} : {b} = {r}.",
+      "total-over-size": "{w_total_over_size} comes from dividing {x} by {b}. But {c} were left, and those were not taken. First {x} − {c} = {=x-c}, then {=x-c} : {b} = {r}.",
+      "each-time": "{w_each_time} is how many were taken each time, but the question is how many times: {=x-c} : {b} = {r}."
+    }
+  },
+  "T2.two-step.04": {
+    "text": "The first amount is {a}. The second is {b} more than the first. Find the sum of both amounts.",
+    "solution": [
+      "The second amount is {b} more than the first: {a} + {b} = {=a+b}.",
+      "Now we add both amounts: {a} + {=a+b} = {r}.",
+      "So the sum is {r}."
+    ],
+    "hints": [
+      "You must add two amounts, but the second one is not known yet.",
+      "Find the second: add {b} to {a}. Then add it to {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second-only": "{w_second_only} is only the second amount: {a} + {b}. We need the sum of both: {a} + {=a+b} = {r}.",
+      "twice-first": "{w_twice_first} is {a} + {a}. But the second amount is {b} more than the first: {a} + {=a+b} = {r}.",
+      "extra-only": "{w_extra_only} is only how much more the second is than the first. First the second amount: {a} + {b} = {=a+b}, then the sum of both: {a} + {=a+b} = {r}."
+    }
+  },
+  "T2.two-step.05": {
+    "text": "The first amount is {a}. The second is {b} times as big. How much more is the second than the first?",
+    "solution": [
+      "The second amount is {b} times as big as the first: {a} × {b} = {=a*b}.",
+      "To find how much more it is, we take the first amount away: {=a*b} − {a} = {r}.",
+      "So the second is {r} more than the first."
+    ],
+    "hints": [
+      "The question has two steps: first find the second amount, then compare it with the first.",
+      "The second amount: {a} × {b}. Then find how much more it is than {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second": "{w_second} is the second amount itself, but the question is how much more it is than the first: {=a*b} − {a} = {r}.",
+      "first": "{w_first} is the first amount, but we need the difference between the second and the first: {=a*b} − {a} = {r}.",
+      "added": "{w_added} comes from adding, but “{b} times as big” means multiplying. The second amount is {a} × {b} = {=a*b}, and the difference is {=a*b} − {a} = {r}."
+    }
+  },
+  "T2.two-step.06": {
+    "text": "{a|euro|euros|euros} was paid. {b|item|items|items} were bought at {c|euro|euros|euros} each. How many euros is the change?",
+    "solution": [
+      "First we find the cost of the purchase: {b} × {c} = {=b*c} euros.",
+      "The change is the money paid without the cost: {a} − {=b*c} = {r} euros.",
+      "So the change is {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "First find how much the whole purchase costs, then how much of the money paid is left.",
+      "The purchase costs {b} × {c}. Take that cost away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cost": "{w_cost} is the cost of the purchase: {b} × {c}. The change is what is left of the {a|euro|euros|euros}: {a} − {=b*c} = {r}.",
+      "one-item": "{w_one_item} comes from taking away the price of only one item. There are several items, so first we find the whole purchase: {b} × {c} = {=b*c}, and {a} − {=b*c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers, but the change is a difference. First the cost of the purchase: {b} × {c} = {=b*c}, then {a} − {=b*c} = {r}."
+    }
+  },
+  "T2.two-step.07": {
+    "text": "There are {x} in all. They are shared equally between {a|part|parts|parts}, and {c} is added to one part. How many are in that part now?",
+    "solution": [
+      "We share equally: {x} : {a} = {b}.",
+      "{c} is added to one part, so we add: {b} + {c} = {r}.",
+      "So that part now has {r}."
+    ],
+    "hints": [
+      "First find how many were in one part, then add to it.",
+      "Divide {x} by {a}. Add {c} to what you get.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "share": "{w_share} is how many were in one part before the addition. {c} was added to it: {x} : {a} = {b}, and {b} + {c} = {r}.",
+      "total-plus": "{w_total_plus} is the whole amount with the addition, but we need one part: {x} : {a} = {b}, and {b} + {c} = {r}.",
+      "all-numbers": "{w_all_numbers} is the sum of the whole amount {x}, the number of parts {a} and the addition {c}. First we share equally: {x} : {a} = {b}, then {b} + {c} = {r}."
+    }
+  },
+  "T2.two-step.08": {
+    "text": "{b} was added to {a}, and everything was shared equally between {c|part|parts|parts}. How many are in each part?",
+    "solution": [
+      "First we find how many there are in all: {a} + {b} = {=a+b}.",
+      "Then we share equally: {=a+b} : {c} = {r}.",
+      "So each part has {r}."
+    ],
+    "hints": [
+      "Everything that there is after the addition is shared out. First find that amount.",
+      "Add {a} and {b}, then divide the sum by {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the whole amount, not yet shared: {=a+b} : {c} = {r}.",
+      "halved": "{w_halved} comes from dividing into two, but there are {c} parts: {=a+b} : {c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers, but the number of parts is for dividing. First {a} + {b} = {=a+b}, then {=a+b} : {c} = {r}."
+    }
+  },
+  "T2.two-step.09": {
+    "text": "There were {a}. {b} were taken away. What was left was taken {c} times over. How many is that in all?",
+    "solution": [
+      "First some were taken away: {a} − {b} = {=a-b}.",
+      "What was left was taken {c} times, so we multiply: {=a-b} × {c} = {r}.",
+      "So there are {r} in all."
+    ],
+    "hints": [
+      "First find how many are left after some were taken away. Only that amount is taken several times.",
+      "Take {b} away from {a}. Multiply what is left by {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "remainder": "{w_remainder} is what is left, but it is taken {c} times: {=a-b} × {c} = {r}.",
+      "multiply-first": "{w_multiply_first} comes from multiplying {a} by {c} before taking away. First we take away: {a} − {b} = {=a-b}, then we multiply: {=a-b} × {c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers. First we take away: {a} − {b} = {=a-b}, then we take it {c} times: {=a-b} × {c} = {r}.",
+      "plus-instead": "{w_plus_instead} comes from adding {a} and {b}, but some were taken away. We subtract: {a} − {b} = {=a-b}, then multiply by {c}: {r}."
+    }
+  },
+  "T2.two-step.10": {
+    "text": "The whole is {a}. The first part is {b} and the second part is {c}. Find the third part.",
+    "solution": [
+      "The three parts together make {a}, so we take the known parts away from the whole.",
+      "The two known parts together: {b} + {c} = {=b+c}.",
+      "The third part: {a} − {=b+c} = {r}."
+    ],
+    "hints": [
+      "The three parts together make {a}. Two parts are already known.",
+      "First find both known parts together: {b} + {c}. Then take that away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-removed": "{w_one_removed} comes from taking away only one part. Both must be taken away: {a} − {=b+c} = {r}.",
+      "known": "{w_known} is both known parts together. The third part is what is left of {a}: {a} − {=b+c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers, but the third part is smaller than the whole. We take away both known parts: {a} − {=b+c} = {r}."
+    }
+  },
+  "T2.two-step.11": {
+    "text": "There were {a}. {b} were taken away. What was left was put into groups of {x}. How many groups are there?",
+    "solution": [
+      "First we find what is left: {a} − {b} = {=a-b}.",
+      "What was left is put into groups of {x}, so we divide: {=a-b} : {x} = {r}.",
+      "So there are {r|group|groups|groups}."
+    ],
+    "hints": [
+      "First find how many are left, then how many groups can be made from what is left.",
+      "Take {b} away from {a}. Divide what is left by {x}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "remainder": "{w_remainder} is what is left, but we need the number of groups: {=a-b} : {x} = {r}.",
+      "group-size": "{w_group_size} is the size of a group, but we need the number of groups: {=a-b} : {x} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers. First we take away: {a} − {b} = {=a-b}, then we divide what is left into groups of {x}: {=a-b} : {x} = {r}."
+    }
+  },
+  "T2.two-step.12": {
+    "text": "The first amount is {a}. The second is half of the first. The third is {b} more than the second. Find the third amount.",
+    "solution": [
+      "“Half of” means we divide the first amount by 2: {a} : 2 = {=a/2}.",
+      "The third is {b} more than the second: {=a/2} + {b} = {r}.",
+      "So the third amount is {r}."
+    ],
+    "hints": [
+      "The third amount depends on the second, and the second depends on the first. Start with the first.",
+      "Halve {a}, then add {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second": "{w_second} is the second amount, but we need the third, which is {b} more: {=a/2} + {b} = {r}.",
+      "first-plus": "{w_first_plus} is found without halving: {a} + {b}. The second amount is half of the first: {a} : 2 = {=a/2}, and {=a/2} + {b} = {r}.",
+      "doubled": "{w_doubled} comes from doubling the first amount. “Half of” means dividing by 2: {a} : 2 = {=a/2}, and {=a/2} + {b} = {r}.",
+      "less-instead": "{w_less_instead} comes from taking {b} away. The third is {b} more than the second, so we add: {=a/2} + {b} = {r}."
+    }
+  },
+  "T3.three-step.01": {
+    "text": "The first kind has {a|group|groups|groups} of {b}, the second has {c|group|groups|groups} of {d}, the third has {e|group|groups|groups} of {f}. Find the total.",
+    "solution": [
+      "The groups are equal, so we count each kind by multiplying.",
+      "First kind: {a} × {b} = {=a*b}, second: {c} × {d} = {=c*d}, third: {e} × {f} = {=e*f}.",
+      "We add the three kinds: {=a*b} + {=c*d} + {=e*f} = {r}."
+    ],
+    "hints": [
+      "There are three kinds of groups. First find how many each kind gives.",
+      "First kind: {a} × {b}, second: {c} × {d}, third: {e} × {f}. Then add the three results.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-kinds": "{w_two_kinds} leaves out the third kind: {e} × {f} = {=e*f}. We add all three kinds: {=a*b} + {=c*d} + {=e*f} = {r}.",
+      "count-of-groups": "{w_count_of_groups} is the number of all the groups: {a} + {c} + {e}. We need the total: {=a*b} + {=c*d} + {=e*f} = {r}.",
+      "first-kind": "{w_first_kind} is only the first kind, and there are two more. We count all three kinds and add: {=a*b} + {=c*d} + {=e*f} = {r}.",
+      "add-all": "{w_add_all} is the sum of all six numbers. The groups are equal, so we count each kind by multiplying and then add: {=a*b} + {=c*d} + {=e*f} = {r}."
+    }
+  },
+  "T3.three-step.02": {
+    "text": "{a|euro|euros|euros} was paid. {b|item|items|items} were bought at {c|euro|euros|euros} each and {d|item|items|items} at {e|euro|euros|euros} each. How many euros is the change?",
+    "solution": [
+      "First purchase: {b} × {c} = {=b*c} euros, second: {d} × {e} = {=d*e} euros.",
+      "Both together: {=b*c} + {=d*e} = {=b*c+d*e} euros.",
+      "The change is what was paid without the cost of the purchases: {a} − {=b*c+d*e} = {r} euros."
+    ],
+    "hints": [
+      "Find the cost of each of the two purchases, then how much money is left.",
+      "The first purchase costs {b} × {c}, the second {d} × {e}. Add them and take the sum away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "prices-once": "{w_prices_once} comes from taking away the prices {c} and {e} only once. There are several items of each: {b} × {c} and {d} × {e}, and {a} − {=b*c+d*e} = {r}.",
+      "first-purchase": "{w_first_purchase} leaves out the second purchase: {d} × {e} = {=d*e}. We take away both: {a} − {=b*c+d*e} = {r}.",
+      "costs": "{w_costs} is the cost of both purchases. The change is what is left of the {a|euro|euros|euros}: {a} − {=b*c+d*e} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers, but the change is a difference. First both purchases: {=b*c} + {=d*e} = {=b*c+d*e}, then {a} − {=b*c+d*e} = {r}."
+    }
+  },
+  "T3.three-step.03": {
+    "text": "{b} was added to {a} and the result was shared equally between {c|part|parts|parts}. Then {d|such part|such parts|such parts} were taken. How many is that?",
+    "solution": [
+      "First we put everything together: {a} + {b} = {=a+b}.",
+      "We share equally between {c|part|parts|parts}: {=a+b} : {c} = {=(a+b)/c}.",
+      "We take {d|part|parts|parts}, so we multiply: {=(a+b)/c} × {d} = {r}."
+    ],
+    "hints": [
+      "There are three steps: add, share into parts, and take several parts.",
+      "Add {a} and {b}, then divide the sum by {c}. Then take {d|part|parts|parts}: multiply.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-part": "{w_one_part} is one part, but {d|part was|parts were|parts were} taken: {=(a+b)/c} × {d} = {r}.",
+      "no-share": "{w_no_share} is found without sharing into parts: {=a+b} × {d}. First we divide {=a+b} by {c}, and only then take {d|part|parts|parts}: {=(a+b)/c} × {d} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers. We divide the sum {=a+b} into {c|part|parts|parts} and take {d|part|parts|parts}: {=(a+b)/c} × {d} = {r}."
+    }
+  },
+  "T3.three-step.04": {
+    "text": "The first amount is {a}. The second is {b} more than the first, and the third is {c} more than the second. Find the sum of the three amounts.",
+    "solution": [
+      "The second amount: {a} + {b} = {=a+b}.",
+      "The third is {c} more than the second: {=a+b} + {c} = {=a+b+c}.",
+      "The sum of all three: {a} + {=a+b} + {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "To add the three amounts, first find the second and the third.",
+      "The second: {a} + {b}. The third: add {c} to the second. Then add all three.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-numbers": "{w_two_numbers} is the sum of only two amounts, and there is a third: {a} + {=a+b} + {=a+b+c} = {r}.",
+      "three-firsts": "{w_three_firsts} does not allow for the second and third being bigger than the first: {a} + {=a+b} + {=a+b+c} = {r}.",
+      "third-forgets-the-second": "{w_third_forgets_the_second} treats the third amount as {c} more than the first. But it is {c} more than the second, that is {=a+b+c}: {a} + {=a+b} + {=a+b+c} = {r}.",
+      "add-all": "{w_add_all} is the sum of the three numbers in the text, but the amounts are {a}, {=a+b} and {=a+b+c}. We add those: {a} + {=a+b} + {=a+b+c} = {r}."
+    }
+  },
+  "T3.three-step.05": {
+    "text": "The first amount is {a}. The second is {b} times as big as the first, and the third is equal to the second. {c} is taken away from the sum of all three. What is the result?",
+    "solution": [
+      "The second amount: {a} × {b} = {=a*b}, and the third is the same, {=a*b}.",
+      "The sum of all three: {a} + {=a*b} + {=a*b} = {=a+2*a*b}.",
+      "We take away {c}: {=a+2*a*b} − {c} = {r}."
+    ],
+    "hints": [
+      "First find the second and third amounts, then the sum of all three, and subtract at the end.",
+      "The second is {a} × {b}, the third is the same. Add the three amounts and take away {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-subtraction": "{w_no_subtraction} is the sum of the three amounts, but {c} was taken away from it too: {=a+2*a*b} − {c} = {r}.",
+      "first-only": "{w_first_only} uses only the first amount. The second and third are {=a*b} each: {a} + {=a*b} + {=a*b} − {c} = {r}.",
+      "without-the-third": "{w_without_the_third} leaves out the third amount, which is equal to the second, {=a*b}: {a} + {=a*b} + {=a*b} − {c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text. The second and third amounts are {=a*b} each: {a} + {=a*b} + {=a*b} − {c} = {r}."
+    }
+  },
+  "T3.three-step.06": {
+    "text": "There are {a} things. They are put into groups of {b}, and a group that is not full is not counted. {c|euro|euros|euros} is paid for each full group. How many euros will be paid?",
+    "solution": [
+      "Only a full group of {b} counts. A remainder with fewer than {b} things does not count.",
+      "There are {=r/c} full groups: {=r/c} × {b} = {=r/c*b}, and {a} − {=r/c*b} = {=a-r/c*b} is left, which is fewer than {b}.",
+      "Each full group is paid {c|euro|euros|euros}: {=r/c} × {c} = {r} euros."
+    ],
+    "hints": [
+      "Payment is only for full groups. First find how many there are.",
+      "Divide {a} by {b} with a remainder: the remainder is not paid for. Then multiply the number of full groups by {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "with-remainder": "{w_with_remainder} counts the group that is not full as well. The remainder is fewer than {b} and is not paid for: {=floor(a/b)} × {c} = {r}.",
+      "groups-only": "{w_groups_only} is the number of full groups, but we need the payment: {=floor(a/b)} × {c} = {r}.",
+      "per-item": "{w_per_item} is the payment for every single thing, but the payment is for a full group. There are {=floor(a/b)} full groups: {=floor(a/b)} × {c} = {r} euros."
+    }
+  },
+  "T3.three-step.07": {
+    "text": "{b} was taken away from {a}, what was left was shared equally between {c|part|parts|parts}, and {d} was added to one part. What is the result?",
+    "solution": [
+      "First we take away: {a} − {b} = {=a-b}.",
+      "We share what is left equally: {=a-b} : {c} = {=(a-b)/c}.",
+      "We add {d} to one part: {=(a-b)/c} + {d} = {r}."
+    ],
+    "hints": [
+      "The steps go in order: take away, share, add to one part.",
+      "First find what is left: {a} − {b}. Divide it by {c}, and add {d} to one part.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "remainder": "{w_remainder} is what is left, but it is shared between {c|part|parts|parts} and {d} is added to one part: {=a-b} : {c} = {=(a-b)/c}, and {=(a-b)/c} + {d} = {r}.",
+      "before-add": "{w_before_add} is the size of one part. {d} was added to it too: {=(a-b)/c} + {d} = {r}.",
+      "added-before-sharing": "{w_added_before_sharing} comes from adding {d} to what was left, {=a-b}. But {d} was added only to one part, after the sharing: {=(a-b)/c} + {d} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text. We share the {=a-b} that is left by {c} and add {d}: {=(a-b)/c} + {d} = {r}."
+    }
+  },
+  "T3.three-step.08": {
+    "text": "The first is {a|year|years|years} old. The second is {b|year|years|years} younger than the first. The second’s age is {c} times the third’s age. Find the sum of the ages of all three.",
+    "solution": [
+      "The second is {b|year|years|years} younger, so we subtract: {a} − {b} = {=a-b}.",
+      "The second’s age is {c} times the third’s, so we divide: {=a-b} : {c} = {=(a-b)/c}.",
+      "We add the ages of all three: {a} + {=a-b} + {=(a-b)/c} = {r}."
+    ],
+    "hints": [
+      "To add the three ages, find the age of the second, then of the third.",
+      "The second: {a} − {b}. The second’s age is {c} times the third’s: divide the second’s age by {c}. Then add the three ages.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-ages": "{w_two_ages} leaves out the third: {a} + {=a-b} + {=(a-b)/c} = {r}.",
+      "first-times-three": "{w_first_times_three} treats all three as the same age as the first. The ages are different: {a}, {=a-b} and {=(a-b)/c}, and their sum is {r}.",
+      "years-not-times": "{w_years_not_times} comes from taking {c} away from the second’s age. But “{c} times” means dividing: {=a-b} : {c} = {=(a-b)/c}, and the sum is {a} + {=a-b} + {=(a-b)/c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text, and those are not the ages. The ages are {a}, {=a-b} and {=(a-b)/c}, and their sum is {r}."
+    }
+  },
+  "T3.three-step.09": {
+    "text": "The distance is {a} km. First a car went for {c|hour|hours|hours} at {b} km/h, then for {e|hour|hours|hours} at {d} km/h. How many kilometres are left?",
+    "solution": [
+      "A distance is speed times time: {b} × {c} = {=b*c} km and {d} × {e} = {=d*e} km.",
+      "In all {=b*c} + {=d*e} = {=b*c+d*e} km were covered.",
+      "Left: {a} − {=b*c+d*e} = {r} km."
+    ],
+    "hints": [
+      "Speed and time give the distance. Find the distance of each part, then take both away from the whole distance.",
+      "First part: {b} × {c}, second: {d} × {e}. Add them and take the sum away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "speeds-as-distances": "{w_speeds_as_distances} comes from taking away the speeds {b} and {d}. But a speed is the distance in one hour. Distance is speed times time: {=b*c} + {=d*e} = {=b*c+d*e}, and {a} − {=b*c+d*e} = {r}.",
+      "first-leg": "{w_first_leg} leaves out the second part: {d} × {e} = {=d*e}. We take away both: {a} − {=b*c+d*e} = {r}.",
+      "travelled": "{w_travelled} is the distance already covered, but we need what is left: {a} − {=b*c+d*e} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text. Distance is speed times time: {=b*c} + {=d*e} = {=b*c+d*e}, and we take that away from {a}: {r}."
+    }
+  },
+  "T3.three-step.10": {
+    "text": "{b|item|items|items} were bought at {a|euro|euros|euros} each, all the same. A discount of {c|euro|euros|euros} was given on the whole purchase. The amount left to pay was shared equally between two people. How many euros does each person pay?",
+    "solution": [
+      "Without the discount the purchase costs {a} × {b} = {=a*b} euros.",
+      "With the discount: {=a*b} − {c} = {=a*b-c} euros.",
+      "Shared between two: {=a*b-c} : 2 = {r} euros."
+    ],
+    "hints": [
+      "First find the cost of the whole purchase, then allow for the discount and share between two.",
+      "The purchase costs {a} × {b}. Take away the discount {c}, and then halve it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total-after-discount": "{w_total_after_discount} is the whole amount after the discount, but it has to be shared between two: {=a*b-c} : 2 = {r}.",
+      "no-discount": "{w_no_discount} comes from sharing the price without the discount. The discount {c} must be taken off the sum {=a*b} before sharing: ({=a*b} − {c}) : 2 = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text. First the purchase {a} × {b} = {=a*b}, then the discount and sharing between two: ({=a*b} − {c}) : 2 = {r}."
+    }
+  },
+  "T4.four-step.01": {
+    "text": "There were {a}. The amount was increased by {b} percent, then {c} was taken away and what was left was shared equally between {d|part|parts|parts}. How many are in one part?",
+    "solution": [
+      "An increase of {b} percent: {a} × {b} : {=100} = {=a*b/100}.",
+      "Now there are {a} + {=a*b/100} = {=a+a*b/100}.",
+      "{c} is taken away: {=a+a*b/100} − {c} = {=a+a*b/100-c}.",
+      "Shared equally between {d|part|parts|parts}: {=a+a*b/100-c} : {d} = {r}."
+    ],
+    "hints": [
+      "The steps go in order: percent, taking away, sharing. Start with the percent.",
+      "Find {b} percent of {a} and add it to {a}. Then take away {c} and share what is left between {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "before-share": "{w_before_share} is what is left before sharing. It still has to be shared between {d}: {=a+a*b/100-c} : {d} = {r}.",
+      "no-percent": "{w_no_percent} leaves out the increase of {b} percent: {a} × {b} : 100 = {=a*b/100}. First {a} + {=a*b/100} = {=a+a*b/100}, then we take away {c} and share: {r}.",
+      "percent-as-number": "{w_percent_as_number} comes from adding {b} percent as the number {b}. An increase of {b} percent is {a} × {b} : 100 = {=a*b/100}, so {=a+a*b/100-c} : {d} = {r}.",
+      "percent-of-the-rest": "{w_percent_of_the_rest} comes from taking away {c} first and increasing what is left. The steps go in order: the increase first, then the taking away: ({a} + {=a*b/100} − {c}) : {d} = {r}."
+    }
+  },
+  "T4.four-step.02": {
+    "text": "Two trains set off towards each other from places {a} km apart. The speeds of the trains are {b} km/h and {c} km/h. How many kilometres are between them after {d|hour|hours|hours}?",
+    "solution": [
+      "The trains move towards each other, so every hour they get closer by {b} + {c} = {=b+c} km.",
+      "In {d|hour|hours|hours} they get closer by {=b+c} × {d} = {=(b+c)*d} km.",
+      "What is left: {a} − {=(b+c)*d} = {r} km."
+    ],
+    "hints": [
+      "The trains move towards each other, so both of them shorten the distance between them. By how much does it shrink in one hour?",
+      "In one hour the trains get closer by {b} + {c}. Multiply that by {d|hour|hours|hours} and take it away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "closing-distance": "{w_closing_distance} is how much closer the trains got: {=b+c} × {d}. The question is how far apart they are now: {a} − {=(b+c)*d} = {r}.",
+      "one-train": "{w_one_train} leaves out the second train: it comes closer too. Together in {d|hour|hours|hours} they cover {=(b+c)*d} km: {a} − {=(b+c)*d} = {r}.",
+      "no-time": "{w_no_time} comes from taking the speeds away from the distance instead of the distances travelled. In {d|hour|hours|hours} the trains get closer by {=b+c} × {d} = {=(b+c)*d} km: {a} − {=(b+c)*d} = {r}."
+    }
+  },
+  "T4.four-step.03": {
+    "text": "A number was multiplied by {b}, {c} was added, the result was divided by {d} and {e} was taken away. The result was {x}. Find the original number.",
+    "solution": [
+      "We go from the end and undo each step: taking away is undone by adding, and dividing by multiplying.",
+      "{x} + {e} = {=x+e}, then {=x+e} × {d} = {=(x+e)*d}.",
+      "Next {=(x+e)*d} − {c} = {=(x+e)*d-c}.",
+      "And the last: {=(x+e)*d-c} : {b} = {r}. That is the original number."
+    ],
+    "hints": [
+      "Start from the result {x} and go backwards: the opposite steps are done in the opposite order.",
+      "The last step took away {e}, so the first step back is to add {e} to {x}. Think about what comes next.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "result": "{w_result} is what came out at the end, but we need the number we started with: (({x} + {e}) × {d} − {c}) : {b} = {r}.",
+      "forward-order": "{w_forward_order} is the number after multiplying and adding, but it is not the original. Those two steps must be undone too: (({x} + {e}) × {d} − {c}) : {b} = {r}.",
+      "not-inverted": "{w_not_inverted} comes from not replacing the steps by their opposites: taking away was replaced by taking away. From the end: {x} + {e} = {=x+e}, then {=x+e} × {d} = {=(x+e)*d}, then {=(x+e)*d} − {c} and dividing by {b}: {r}."
+    }
+  },
+  "T4.four-step.04": {
+    "text": "A route is {a} km long. First {b} percent of the route was covered, then {c} percent of what was left. How many kilometres are left?",
+    "solution": [
+      "First part: {a} × {b} : {=100} = {=a*b/100} km, so {a} − {=a*b/100} = {=a*(100-b)/100} km are left.",
+      "The second part is {c} percent of what was left: {=a*(100-b)/100} × {c} : {=100} = {=a*(100-b)*c/10000} km.",
+      "What is left: {=a*(100-b)/100} − {=a*(100-b)*c/10000} = {r} km."
+    ],
+    "hints": [
+      "First find how many kilometres are left after the first part.",
+      "Work out the second percent from what is left, {=a*(100-b)/100} km, not from the whole route. Then take that part away from what is left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "after-first": "{w_after_first} is what is left after the first part, but then {c} percent of it was covered too: {=a*(100-b)/100} − {=a*(100-b)*c/10000} = {r}.",
+      "of-the-whole": "{w_of_the_whole} takes the second percent of the whole route ({a} km), not of what was left ({=a*(100-b)/100} km). Of what was left: {=a*(100-b)/100} − {=a*(100-b)*c/10000} = {r}.",
+      "first-part": "{w_first_part} is the first part, but we need what is left after both. After the first, {=a*(100-b)/100} km were left, and {c} percent of that is covered too: {r}."
+    }
+  },
+  "T4.four-step.05": {
+    "text": "One pump fills a pool in {a|minute|minutes|minutes}, another in {b|minute|minutes|minutes}. In how many minutes will they fill {c} such pools together?",
+    "solution": [
+      "In {=a*b} minutes the first pump fills {b|pool|pools|pools} and the second {a|pool|pools|pools}.",
+      "Together that is {a} + {b} = {=a+b}, so they fill one pool in {=a*b} : {=a+b} = {=a*b/(a+b)} minutes.",
+      "To fill {c|pool|pools|pools}: {=a*b/(a+b)} × {c} = {r|minute|minutes|minutes}."
+    ],
+    "hints": [
+      "Think how many pools each pump fills in the same time, for example in {=a*b} minutes.",
+      "In {=a*b} minutes the first pump fills {b|pool|pools|pools} and the second {a|pool|pools|pools}. Find how long they take together for one pool, and multiply by {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum-of-times": "{w_sum_of_times} is the sum of the times {a} + {b}, multiplied by {c}. But working together is faster than either alone: one pool in {=a*b} : {=a+b} = {=a*b/(a+b)} min, and {=a*b/(a+b)} × {c} = {r}.",
+      "one-pool": "{w_one_pool} is the time for one pool, but there are {c}: {=a*b/(a+b)} × {c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text. Together the pumps fill one pool in {=a*b} : {=a+b} = {=a*b/(a+b)} minutes, and there are {c} pools: {r}."
+    }
+  },
+  "T4.four-step.06": {
+    "text": "An item costs {a|euro|euros|euros} and has a discount of {b} percent. {c|such item was|such items were|such items were} bought and {d|euro|euros|euros} was paid. How many euros is the change?",
+    "solution": [
+      "Discount: {a} × {b} : {=100} = {=a*b/100} euros, price after the discount {a} − {=a*b/100} = {=a-a*b/100} euros.",
+      "The purchase of {c|item|items|items}: {c} × {=a-a*b/100} = {=c*(a-a*b/100)} euros.",
+      "Change: {d} − {=c*(a-a*b/100)} = {r} euros."
+    ],
+    "hints": [
+      "First find the price of one item after the discount.",
+      "The discount is {b} percent of {a}. Multiply the price after the discount by {c} and take it away from {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "full-price": "{w_full_price} comes from not taking off the discount. The price after the discount is {=a-a*b/100} euros, the purchase costs {=c*(a-a*b/100)} euros: {d} − {=c*(a-a*b/100)} = {r}.",
+      "discounted-cost": "{w_discounted_cost} is the cost of the purchase, but we need the change: {d} − {=c*(a-a*b/100)} = {r}.",
+      "percent-as-euros": "{w_percent_as_euros} comes from taking a discount of {b} percent off as {b} euros. The discount is {a} × {b} : 100 = {=a*b/100} euros, and the price after the discount is {=a-a*b/100} euros: {d} − {=c*(a-a*b/100)} = {r}."
+    }
+  },
+  "T4.four-step.07": {
+    "text": "The sum of the ages of three people is {a}. The first is {b}, the second is {c}. How old will the third be in {d|year|years|years}?",
+    "solution": [
+      "The sum of the ages is {a}, two are known, so the third is now {a} − {b} − {c} = {=a-b-c}.",
+      "In {d|year|years|years} the third will be {d} older: {=a-b-c} + {d} = {r}.",
+      "So the third will be {r}."
+    ],
+    "hints": [
+      "First find how old the third is now: take the two known ages away from the sum.",
+      "The third is now {a} − {b} − {c}. Think how much older the third will be in {d|year|years|years}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "now": "{w_now} is the age now, but we need the age in {d|year|years|years}: {=a-b-c} + {d} = {r}.",
+      "no-wait": "{w_no_wait} comes from adding the other ages and {d}. The third is now {a} − {b} − {c} = {=a-b-c}, and in {d|year|years|years} will be {r}.",
+      "all-three-grow": "{w_all_three_grow} comes from adding the growth of all three to the sum, that is {d} three times. But we need only the third, who will be {d} older: {=a-b-c} + {d} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text. The third is now {a} − {b} − {c} = {=a-b-c}, and in {d|year|years|years} will be {d} more: {r}."
+    }
+  },
+  "T4.four-step.08": {
+    "text": "{a} adult tickets were bought at {b|euro|euros|euros} each, and {c} child tickets, each {d|euro|euros|euros} cheaper than an adult ticket. {e|euro|euros|euros} was paid. How many euros is the change?",
+    "solution": [
+      "A child ticket costs {b} − {d} = {=b-d} euros.",
+      "The purchase: {a} × {b} + {c} × {=b-d} = {=a*b+c*(b-d)} euros.",
+      "Change: {e} − {=a*b+c*(b-d)} = {r} euros."
+    ],
+    "hints": [
+      "First find the price of a child ticket.",
+      "A child ticket costs {b} − {d}. Find the cost of all the tickets and take it away from {e}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-discount": "{w_no_discount} is worked out as if all the tickets cost {b} euros each. A child ticket is {d} cheaper: {a} × {b} + {c} × {=b-d} = {=a*b+c*(b-d)}, and {e} − {=a*b+c*(b-d)} = {r}.",
+      "discount-as-price": "{w_discount_as_price} is worked out as if a child ticket cost {d}. But {d} is how much cheaper it is, and the price is {=b-d}: {e} − {=a*b+c*(b-d)} = {r}.",
+      "cost": "{w_cost} is the cost of the tickets, but we need the change: {e} − {=a*b+c*(b-d)} = {r}."
+    }
+  },
+  "T4.four-step.09": {
+    "text": "The distance one way is {a} km. The way there was at {b} km/h and the way back at {c} km/h. How many hours did the whole trip take?",
+    "solution": [
+      "Time is the distance divided by the speed.",
+      "There: {a} : {b} = {=a/b} h, back: {a} : {c} = {=a/c} h.",
+      "The whole trip: {=a/b} + {=a/c} = {r|hour|hours|hours}."
+    ],
+    "hints": [
+      "Time is the distance divided by the speed. The speeds there and back are different.",
+      "Find the time there, {a} : {b}, and the time back, {a} : {c}. Then add them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "there-only": "{w_there_only} is the time for only the way there: {a} : {b} = {=a/b}. The way back takes time too: {=a/b} + {=a/c} = {r}.",
+      "distance-over-mean": "{w_distance_over_mean} comes from dividing the whole distance, {=2*a} km, by half the sum of the speeds. But the speeds were different on different parts, so the times are found separately: {=a/b} + {=a/c} = {r}.",
+      "back-only": "{w_back_only} is the time for only the way back: {a} : {c} = {=a/c}. The way there takes time too: {=a/b} + {=a/c} = {r}.",
+      "add-all": "{w_add_all} is the sum of all the numbers in the text, but time is found by dividing the distance by the speed. There {=a/b} h, back {=a/c} h: {r}."
+    }
+  },
+  "T4.four-step.10": {
+    "text": "The sum {a} was shared equally between {b|part|parts|parts}, and the same sum was shared equally between {c|part|parts|parts}. Find the difference between these two parts and add {d} to it.",
+    "solution": [
+      "A part of the first sharing: {a} : {b} = {=a/b}, of the second: {a} : {c} = {=a/c}.",
+      "The first part is bigger by {=a/b} − {=a/c} = {=a/b-a/c}.",
+      "We add {d}: {=a/b-a/c} + {d} = {r}."
+    ],
+    "hints": [
+      "Find what one part is in the first sharing and in the second.",
+      "The first part is {a} : {b}, the second is {a} : {c}. Take the smaller from the larger and add {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-share": "{w_first_share} is a part of the first sharing, but we need the difference of the parts and the addition: {=a/b} − {=a/c} = {=a/b-a/c}, and {=a/b-a/c} + {d} = {r}.",
+      "difference": "{w_difference} is only the difference of the parts {=a/b} and {=a/c}, and {d} must be added too: {=a/b-a/c} + {d} = {r}.",
+      "second-share": "{w_second_share} is a part of the second sharing, but we need the difference of the parts and the addition. The difference {=a/b} − {=a/c} = {=a/b-a/c}, and {=a/b-a/c} + {d} = {r}.",
+      "shares-added": "{w_shares_added} is the sum of the parts {=a/b} and {=a/c}. The question asks for the difference: {=a/b} − {=a/c} = {=a/b-a/c}, and {=a/b-a/c} + {d} = {r}."
+    }
+  },
+  "T1.one-step.15": {
+    "text": "One item costs {a|euro|euros|euros} and there are {b} items. The purse held {c|euro|euros|euros}. How many euros does the purchase cost?",
+    "solution": [
+      "The question is only about the cost of the purchase, so the money in the purse is not needed.",
+      "The cost is the price times the number of items: {a} × {b} = {r}.",
+      "So the purchase costs {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "The text has three numbers, but the question is only about the cost of the purchase. Which number is not needed for it?",
+      "The number {c} is not needed here. Multiply the price {a} by the number of items {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "money-in-purse": "{w_money_in_purse} is the money in the purse, but the question is the cost of the purchase: {a} × {b} = {r}.",
+      "extra-number-used": "{w_extra_number_used} is what would be left in the purse after the purchase, but the question is the cost: {a} × {b} = {r}.",
+      "all-numbers-added": "{w_all_numbers_added} comes from adding all three numbers. The money in the purse is not needed, and the cost is found by multiplying: {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.16": {
+    "text": "The first amount is {x}. That is {b} times as much as the second amount. Find the second amount.",
+    "solution": [
+      "The first amount is {b} times as much as the second, so we divide the first amount by {b}.",
+      "{x} : {b} = {r}.",
+      "So the second amount is {r}."
+    ],
+    "hints": [
+      "The first amount is {x}, and it is several times bigger than the second. So the second comes from dividing.",
+      "Divide {x} by {b}: which number times {b} makes {x}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} comes from {x} − {b}. “{b} times as much” means dividing: {x} : {b} = {r}.",
+      "product": "{w_product} comes from {x} × {b}. The second amount is smaller than the first, so we divide: {x} : {b} = {r}.",
+      "the-factor": "{w_the_factor} tells how many times, but we need the second amount itself: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.17": {
+    "text": "There are {a} in all. They are put into groups of {b} for as long as there are enough. How many are left over?",
+    "solution": [
+      "There are {=floor(a/b)} full groups, because {=floor(a/b)} × {b} = {=floor(a/b)*b}.",
+      "{=floor(a/b)*b} were put out, so {a} − {=floor(a/b)*b} = {r} are left.",
+      "So {r} are left over, and that is fewer than {b}."
+    ],
+    "hints": [
+      "{a} are put into groups of {b}. How many full groups can be made? What is left over is the answer.",
+      "Use the multiplication table to find the number in the {b} times table that is not more than {a}, and take it away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "full-groups": "{w_full_groups} is how many full groups there are, but the question is how many are left over. The groups use {=floor(a/b)*b}, so {a} − {=floor(a/b)*b} = {r} are left.",
+      "minus-one-group": "{w_minus_one_group} comes from taking away only one group: {a} − {b}. We must take away all the full groups: {a} − {=floor(a/b)*b} = {r}.",
+      "short-of-a-group": "{w_short_of_a_group} is how many are missing for one more full group. The question is how many are left over: {a} − {=floor(a/b)*b} = {r}."
+    }
+  },
+  "T1.one-step.18": {
+    "text": "{a|thing|things|things} must be packed. One box holds {b}. How many boxes are needed to pack everything?",
+    "solution": [
+      "There are {=floor(a/b)} full boxes, because {=floor(a/b)} × {b} = {=floor(a/b)*b}.",
+      "{=mod(a,b)} are left, and they need one more box.",
+      "{=floor(a/b)} + {=1} = {r}. So we need {r|box|boxes|boxes}."
+    ],
+    "hints": [
+      "The things are packed in boxes of {b}, and none may be left without a box.",
+      "How many full boxes of {b} can be made from {a}? What should be done with the things that are left?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "quotient-only": "{w_quotient_only} is only the full boxes. The {=mod(a,b)} that are left have nowhere to go, so one more box is needed: {=floor(a/b)} + {=1} = {r}.",
+      "remainder-added": "{w_remainder_added} comes from adding the full boxes and the leftover: {=floor(a/b)} + {=mod(a,b)}. The leftover are things, not boxes, and they need just one box: {=floor(a/b)} + {=1} = {r}."
+    }
+  },
+  "T1.one-step.19": {
+    "text": "One item costs {a|euro|euros|euros}. There are {b|euro|euros|euros} to spend. How many items can be bought?",
+    "solution": [
+      "We want to know how many times {a} fits into {b}.",
+      "We cannot buy a part of an item: {b} − {=mod(b,a)} = {=b-mod(b,a)}, and {=b-mod(b,a)} : {a} = {r}.",
+      "So {r|item|items|items} can be bought, with {=mod(b,a)} left over."
+    ],
+    "hints": [
+      "One item costs {a|euro|euros|euros} and there are {b|euro|euros|euros}. You need to find how many times {a} fits into {b}.",
+      "Divide {b} by {a}. Part of an item cannot be bought, so do not count the money left over.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rounded-up": "{w_rounded_up} comes from rounding up. But there is not enough money for the last item: only {=mod(b,a)} is left, and an item costs {a}. We can buy {r|item|items|items}.",
+      "left-over-money": "{w_left_over_money} is how much money is left, but the question is how many items can be bought: {=b-mod(b,a)} : {a} = {r}."
+    }
+  },
+  "T1.one-step.20": {
+    "text": "{x|euro|euros|euros} was paid for {b|item|items|items}. All the items are the same. How many euros does one item cost?",
+    "solution": [
+      "The items are the same, so we divide the total by the number of items.",
+      "{x} : {b} = {r}.",
+      "So one item costs {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "The items are the same, so the {x|euro|euros|euros} can be shared equally between them.",
+      "Divide {x} by {b}: which number times {b} makes {x}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the whole amount paid, but we need the price of one item: {x} : {b} = {r}.",
+      "count": "{w_count} is the number of items, but the question is the price of one: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.21": {
+    "text": "There are {x} in all. {=1}⁄{b} of the whole amount was taken. How much was taken?",
+    "solution": [
+      "Taking {=1}⁄{b} means dividing the whole into {b} equal parts and taking one of them.",
+      "{x} : {b} = {r}.",
+      "So {r} were taken."
+    ],
+    "hints": [
+      "The fraction {=1}⁄{b} shows one part out of {b} equal parts.",
+      "Divide {x} into {b} equal parts and take one of them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-rest": "{w_the_rest} is what is left after the part was taken. The question is how much was taken: {x} : {b} = {r}.",
+      "times-the-denominator": "{w_times_the_denominator} comes from {x} × {b}. A part of a whole is smaller than the whole, so we divide: {x} : {b} = {r}.",
+      "the-denominator": "{w_the_denominator} is the number of equal parts the whole is cut into. We need one such part: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.22": {
+    "text": "{a|post stands|posts stand|posts stand} in a row. How many gaps are there between neighbouring posts?",
+    "solution": [
+      "Every post has a gap after it, except the last one.",
+      "{a} − {=1} = {r}.",
+      "So there are {r|gap|gaps|gaps}."
+    ],
+    "hints": [
+      "Draw the posts as little lines in a row and mark the gaps between neighbours.",
+      "Each of the {a} posts except the last has a gap on its right. How many posts is that?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same-count": "{w_same_count} is the number of posts. There is one gap fewer, because there is no gap after the last post: {a} − {=1} = {r}.",
+      "one-more": "{w_one_more} is more than the number of posts. There are not more gaps but one fewer: {a} − {=1} = {r}."
+    }
+  },
+  "T1.one-step.23": {
+    "text": "A pupil is number {a} counting from the front of a row and number {b} counting from the back. How many pupils are in the row?",
+    "solution": [
+      "In front of the pupil stand {=a-1}, behind the pupil stand {=b-1}, and there is the pupil too.",
+      "{=a-1} + {=b-1} + {=1} = {r}.",
+      "So there are {r|pupil|pupils|pupils} in the row."
+    ],
+    "hints": [
+      "The pupil is counted from the front and from the back. How many pupils stand in front? How many behind?",
+      "In front stand {=a-1}, behind stand {=b-1}. Do not forget the pupil.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "counted-twice": "{w_counted_twice} comes from adding {a} + {b}. But the pupil is counted twice, from the front and from the back. Once must be taken off: {a} + {b} − {=1} = {r}.",
+      "both-others-only": "{w_both_others_only} is found without the pupil: {=a-1} + {=b-1}. The pupil must be counted too: {=a-1} + {=b-1} + {=1} = {r}."
+    }
+  },
+  "T1.one-step.24": {
+    "text": "The first person is {a|year|years|years} old and the second is {b|year|years|years} old. In {c|year|years|years}, how many years older will the first be than the second?",
+    "solution": [
+      "Both get older by the same number of years, so the difference stays the same.",
+      "Now it is {a} − {b} = {r}.",
+      "So in {c|year|years|years} the first will be {r} years older."
+    ],
+    "hints": [
+      "Think about how much older each of the two gets in {c|year|years|years}. Does the difference between their ages change?",
+      "Both get {c} years older. Find the difference now: {a} − {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "grows": "{w_grows} comes from adding {c} to the difference. But the second person also gets {c} years older, so the difference does not grow: {a} − {b} = {r}.",
+      "shrinks": "{w_shrinks} comes from taking {c} away from the difference. Both grow by the same amount, so the difference stays the same: {a} − {b} = {r}.",
+      "first-later": "{w_first_later} is how old the first will be in {c|year|years|years}. The question is the difference between the ages: {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.25": {
+    "text": "There are {a} groups with {b} in each. Which calculation shows the total? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Answer with the number of the option.",
+    "solution": [
+      "There are {a} equal groups with {b} in each, so we multiply.",
+      "{a} × {b} = {=a*b}.",
+      "That is option {r}."
+    ],
+    "hints": [
+      "There are {a} groups with {b} in each, and the groups are equal. Which operation puts equal groups together?",
+      "Look among the options for the one where {a} and {b} are joined by the multiplication sign.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "add": "Option {w_add} is the sum {=a+b}. It adds the number of groups and the size of a group, but we must take {b} as many times as there are groups: {a} × {b} = {=a*b}.",
+      "subtract": "Option {w_subtract} is a subtraction, {=a-b}. The total is not found by subtracting: we take {b} exactly {a|time|times|times}, that is {a} × {b} = {=a*b}.",
+      "divide": "Option {w_divide} is a division. We divide when the total is already known, but here we are looking for it: {a} × {b} = {=a*b}."
+    }
+  },
+  "T2.two-step.13": {
+    "text": "{a} was added to a number, then {b} was taken away. The result is {c}. Find the number.",
+    "solution": [
+      "We go from the end to the start and undo each step.",
+      "{b} was taken away, so before that it was {c} + {b} = {=c+b}.",
+      "{a} was added, so the number was {=c+b} − {a} = {r}."
+    ],
+    "hints": [
+      "Start from the result {c} and go backwards, one step at a time.",
+      "The last step took away {b}: put it back. Then undo the adding of {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "not-inverted": "{w_not_inverted} comes from doing the same steps again to the result: {c} + {a} − {b}. Going backwards, each step must be undone: {c} + {b} − {a} = {r}.",
+      "only-one": "{w_only_one} comes from taking away only {a}. The step with {b} must be undone too: {c} + {b} − {a} = {r}.",
+      "both-subtracted": "{w_both_subtracted} comes from taking away both {a} and {b}. {b} was taken away, so going back we add it: {c} + {b} − {a} = {r}."
+    }
+  },
+  "T2.two-step.14": {
+    "text": "The sum of two numbers is {x}. One of them is {y} more than the other. Find the larger number.",
+    "solution": [
+      "If we take {y} off the larger number, the numbers become equal and the sum is {x} − {y} = {=x-y}.",
+      "The smaller number: {=x-y} : {=2} = {a}.",
+      "The larger number: {a} + {y} = {r}."
+    ],
+    "hints": [
+      "How can the two numbers be made equal? Think about what must be taken out of the sum.",
+      "Take {y} out of {x}: what is left is the sum of two equal numbers. Halve it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "smaller": "{w_smaller} is the smaller number, but we need the larger one: {a} + {y} = {r}.",
+      "half-the-sum": "{w_half_the_sum} is half of the sum. The numbers are different, so neither of them is half of the sum. First {x} − {y} = {=x-y}, the smaller number is {a}, the larger is {a} + {y} = {r}.",
+      "sum-minus-difference": "{w_sum_minus_difference} comes from {x} − {y}: that is the sum of two smaller numbers. It must be halved, which gives the smaller number {a}, and then we add {y}: {a} + {y} = {r}."
+    }
+  },
+  "T2.two-step.15": {
+    "text": "{c|pen|pens|pens} and {d|notebook|notebooks|notebooks} cost {x|euro|euros|euros}, and {c|pen|pens|pens} and {e|notebook|notebooks|notebooks} cost {y|euro|euros|euros}. How many euros does one notebook cost?",
+    "solution": [
+      "Both purchases have the same number of pens, so the difference in price comes only from the notebooks: there are {=d-e} more.",
+      "The difference in price: {x} − {y} = {=x-y} euros.",
+      "{=x-y} : {=d-e} = {r}. So one notebook costs {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "How do the two purchases differ? Think about what is the same in them.",
+      "Both have the same number of pens, and there are {=d-e} more notebooks in one. Find how much the prices differ: {x} − {y}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-difference": "{w_the_difference} is the difference in price between the two purchases. It was paid for all the extra notebooks, not for one ({=d-e} more): {=x-y} : {=d-e} = {r}.",
+      "the-pen-price": "{w_the_pen_price} is the price of a pen, but the question is the price of a notebook: {=x-y} : {=d-e} = {r}.",
+      "extra-notebooks": "{w_extra_notebooks} is how many more notebooks one purchase has than the other, but the question is the price: {=x-y} : {=d-e} = {r}."
+    }
+  },
+  "T2.two-step.16": {
+    "text": "{a|post|posts|posts} are set in a row along a path. The distance between neighbouring posts is {b} m. How many metres is it from the first post to the last?",
+    "solution": [
+      "There is one gap fewer than posts: {a} − {=1} = {=a-1}.",
+      "{=a-1} × {b} = {r}.",
+      "So it is {r} m from the first post to the last."
+    ],
+    "hints": [
+      "The distance is counted by the gaps between the posts, not by the posts. How many gaps are there?",
+      "There are {a} posts and one gap fewer. Multiply the number of gaps by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "posts-times-gap": "{w_posts_times_gap} comes from multiplying the number of posts {a} by the distance {b}. There is one gap fewer than posts: {=a-1} × {b} = {r}.",
+      "one-gap-too-many": "{w_one_gap_too_many} comes from {=a+1} gaps. There are really {=a-1}: {=a-1} × {b} = {r}.",
+      "gaps-plus-distance": "{w_gaps_plus_distance} comes from adding {=a-1} and {b}. The distance is {b} m taken as many times as there are gaps: {=a-1} × {b} = {r}."
+    }
+  },
+  "T2.two-step.17": {
+    "text": "There are {a|shirt|shirts|shirts} and {b|skirt|skirts|skirts}. Any shirt can be worn with any skirt. {c} pairs do not go together by colour. How many different outfits can be made?",
+    "solution": [
+      "Every shirt can be worn with every skirt: {a} × {b} = {=a*b}.",
+      "{c} pairs do not match, so we take them away.",
+      "{=a*b} − {c} = {r}."
+    ],
+    "hints": [
+      "First work out how many pairs there would be with no limits.",
+      "Each of the {a} shirts goes with each of the {b} skirts: {a} × {b}. Then take away the {c} pairs that do not match.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-restriction": "{w_no_restriction} does not allow for the pairs that do not match. There are {c} of them, and they must be taken away: {=a*b} − {c} = {r}.",
+      "added": "{w_added} comes from adding. Each shirt goes with each skirt, so pairs are counted by multiplying: {a} × {b} = {=a*b}, and {=a*b} − {c} = {r}.",
+      "restriction-added": "{w_restriction_added} comes from adding {c} to {=a*b}. The pairs that do not match are not added, they are taken away: {=a*b} − {c} = {r}."
+    }
+  },
+  "T2.two-step.18": {
+    "text": "The activity began at {t1} and ended at {t2}. How many minutes did it last?",
+    "solution": [
+      "From {t1} to the next whole hour is {=60-b} min. Then come whole hours: {=h-a-1} h, that is {=(h-a-1)*60} min. Then {m} min more.",
+      "{=60-b} + {=(h-a-1)*60} + {m} = {r}.",
+      "So it lasted {r} minutes."
+    ],
+    "hints": [
+      "Split the time into parts: up to a whole hour, whole hours, and the rest.",
+      "From {t1} to the next whole hour is {=60-b} min. From that hour to {t2}, count the hours and the minutes separately.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "whole-hours-only": "{w_whole_hours_only} is counted by hours only: from {a} to {h}. The minutes at the start and at the end count too: {=60-b} + {=(h-a-1)*60} + {m} = {r}.",
+      "minutes-swapped": "{w_minutes_swapped} comes from taking the smaller minutes from the larger: {b} − {m}. But at the end there are fewer minutes than at the start, so the last hour is not yet complete: {=60-b} + {=(h-a-1)*60} + {m} = {r}.",
+      "hour-is-a-hundred": "{w_hour_is_a_hundred} comes from counting {=100} minutes in an hour. An hour has {=60} minutes: {=60-b} + {=(h-a-1)*60} + {m} = {r}."
+    }
+  },
+  "T2.two-step.19": {
+    "text": "{a|crate|crates|crates} must be moved. One car holds {b}, and one trip of a car costs {c|euro|euros|euros}. How many euros does it cost to move all the crates?",
+    "solution": [
+      "There are {=floor(a/b)} full cars, {=mod(a,b)} crates are left, and they need one more car: {=floor(a/b)} + {=1} = {=floor(a/b)+1}.",
+      "The cost: {=floor(a/b)+1} × {c} = {r} euros.",
+      "So moving them costs {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "First find how many cars are needed to take all the crates. Then find what that costs.",
+      "Divide {a} by {b} with a remainder. Think about what to do with the remainder.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cars-only": "{w_cars_only} is the number of cars, but the question is the cost. Each trip costs {c|euro|euros|euros}: {=floor(a/b)+1} × {c} = {r}.",
+      "rounded-down": "{w_rounded_down} is worked out for {=floor(a/b)} full cars. The crates that are left must be taken too, so there is one more trip: {=floor(a/b)+1} × {c} = {r}.",
+      "remainder-as-cars": "{w_remainder_as_cars} comes from treating the leftover as cars: {=floor(a/b)} + {=mod(a,b)}. The leftover are crates, and they need just one car: {=floor(a/b)+1} × {c} = {r}."
+    }
+  },
+  "T2.two-step.20": {
+    "text": "One box has {x}, another has {a}. How many must be moved from one box to the other to make them equal?",
+    "solution": [
+      "The difference: {x} − {a} = {=x-a}.",
+      "Each thing moved takes one from one box and puts one in the other, so the difference goes down by {=2}. So we move half of the difference.",
+      "{=x-a} : {=2} = {r}."
+    ],
+    "hints": [
+      "Find how much more one box has than the other.",
+      "A thing moved to the other box changes the difference by two at once. What should be done with the difference {=x-a}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-whole-difference": "{w_the_whole_difference} is the whole difference. If all of it were moved, the first box would have less than the second. We move half: {=x-a} : {=2} = {r}.",
+      "the-equal-amount": "{w_the_equal_amount} is how many each box has after the move, but the question is how many to move: {=x-a} : {=2} = {r}."
+    }
+  },
+  "T2.two-step.21": {
+    "text": "The water level in centimetres (graph) was measured every {a} minutes, and the first measurement was made at the very start. After how many minutes from the start was the level {x}?",
+    "solution": [
+      "On the graph the level {x} is at measurement number {=g+1}, and the first measurement is at the start.",
+      "Before it there are {g|gap|gaps|gaps} of {a} minutes.",
+      "{g} × {a} = {r}."
+    ],
+    "hints": [
+      "Find the point on the graph where the level is {x}.",
+      "How many gaps between measurements are there before that point? Each lasts {a} minutes.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-interval-too-many": "{w_one_interval_too_many} is worked out as if the first measurement was not at the start but after {a} minutes. It should be {g} × {a} = {r}.",
+      "the-interval": "{w_the_interval} is the time between two neighbouring measurements. Before the point there are {g} such gaps: {g} × {a} = {r}.",
+      "the-point-number": "{w_the_point_number} is the number of the point in order, but the question is minutes: {g} × {a} = {r}.",
+      "the-level": "{w_the_level} is the water level in centimetres, but the question is the time: {g} × {a} = {r}."
+    }
+  },
+  "T3.three-step.11": {
+    "text": "{b} was added to a number I thought of, the sum was multiplied by {c}, and {d} was taken away. The result was {x}. Find the number.",
+    "solution": [
+      "We go from the end to the start. {d} was taken away, so before that it was {x} + {d} = {=x+d}.",
+      "It was multiplied by {c}, so we divide: {=x+d} : {c} = {=(x+d)/c}.",
+      "{b} was added, so we subtract: {=(x+d)/c} − {b} = {r}."
+    ],
+    "hints": [
+      "Start from the result {x} and replace each step by its opposite.",
+      "The first step back: add {d} to {x}. Think about which step came before that.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "forgot-the-multiplier": "{w_forgot_the_multiplier} comes from not dividing by {c}. The multiplying must be undone too: ({x} + {d}) : {c} − {b} = {r}.",
+      "undone-in-order": "{w_undone_in_order} comes from undoing the steps in the same order as they were done. They must be undone from the last to the first: ({x} + {d}) : {c} − {b} = {r}.",
+      "multiplied-again": "{w_multiplied_again} comes from multiplying by {c} again. The step “multiplied” is undone by dividing: ({x} + {d}) : {c} − {b} = {r}."
+    }
+  },
+  "T3.three-step.12": {
+    "text": "How many two-digit numbers have a digit sum of {a}?",
+    "solution": [
+      "The first digit goes from {=max(1,a-9)} to {=min(9,a)}: it cannot be zero, and the second digit ({a} minus the first) must be from {=0} to {=9}.",
+      "{=min(9,a)} − {=max(1,a-9)} + {=1} = {r}.",
+      "So there are {r} such numbers."
+    ],
+    "hints": [
+      "Write such numbers out in order, starting with the smallest first digit.",
+      "The first digit cannot be zero, but the second can, and it cannot be more than nine. Which first digits fit the sum {a}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-zero-ending": "{w_no_zero_ending} is found without the number whose second digit is zero. The number with a zero at the end fits too: its digits are {a} and {=0}, and the sum is {a}.",
+      "nine-numbers": "{w_nine_numbers} counts all first digits from {=1} to {=9}. But the second digit ({a} minus the first) cannot be more than {=9}. The first digits that fit are from {=max(1,a-9)} to {=min(9,a)}, {r} in all.",
+      "unordered-pairs": "{w_unordered_pairs} is the number of pairs of digits without order. But numbers with the digits in a different order are different numbers, and each is counted: the first digit goes from {=max(1,a-9)} to {=min(9,a)}, {r} in all."
+    }
+  },
+  "T3.three-step.13": {
+    "text": "There are {a} friends. Each shook hands with each of the others exactly once. How many handshakes were there in all?",
+    "solution": [
+      "Each shook hands with {=a-1} others: {a} × {=a-1} = {=a*(a-1)}.",
+      "That way every handshake is counted twice, once for each of the two people.",
+      "{=a*(a-1)} : {=2} = {r}."
+    ],
+    "hints": [
+      "How many handshakes does one of the {a} friends have?",
+      "If you multiply by the number of friends, every handshake is counted for two people. What should be done to count it once?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "counted-twice": "{w_counted_twice} is twice too many: every handshake is counted for two people. We halve it: {=a*(a-1)} : {=2} = {r}.",
+      "everyone-with-everyone": "{w_everyone_with_everyone} comes from {a} × {a}: that would have everyone shaking their own hand too. Each person shakes hands with {=a-1} others: {=a*(a-1)} : {=2} = {r}.",
+      "one-person": "{w_one_person} is the handshakes of only one person, but everyone shook hands: {=a*(a-1)} : {=2} = {r}."
+    }
+  },
+  "T3.three-step.14": {
+    "text": "An apple and a pear cost {u|euro|euros|euros} together, a pear and a plum cost {v|euro|euros|euros}, an apple and a plum cost {t|euro|euros|euros}. How many euros do all three fruits cost together?",
+    "solution": [
+      "Add the three sums: {u} + {v} + {t} = {=u+v+t}.",
+      "In this sum every fruit is counted twice.",
+      "{=u+v+t} : {=2} = {r}."
+    ],
+    "hints": [
+      "Add the prices of the three pairs: which fruits are in them?",
+      "Each fruit is in exactly two pairs. How many times is it counted in the sum {u} + {v} + {t}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "not-halved": "{w_not_halved} is the sum of three pairs: {u} + {v} + {t}. Every fruit is counted twice in it, so we halve it: {=u+v+t} : {=2} = {r}.",
+      "two-pairs": "{w_two_pairs} is the sum of only two pairs. One fruit is counted twice in it, and it is not all three fruits. We add all three pairs and halve: {=u+v+t} : {=2} = {r}."
+    }
+  },
+  "T3.three-step.15": {
+    "text": "Small pack: {a} pieces, price {b|euro|euros|euros}. Large pack: {c} pieces, price {d|euro|euros|euros}. Money: {e|euro|euros|euros}. What is the greatest number of pieces that can be bought if only whole packs are taken?",
+    "solution": [
+      "We try how many large packs to take: from zero to {=floor(e/d)}. With the money that is left we take small packs.",
+      "The best is {ib} large packs and {jb} small ones: they cost {ib} × {d} + {jb} × {b} = {=ib*d+jb*b}, which is not more than {e}.",
+      "Pieces: {ib} × {c} + {jb} × {a} = {r}."
+    ],
+    "hints": [
+      "Try different numbers of large packs, starting with zero.",
+      "You can take at most {=floor(e/d)} large packs. For each case work out how many small packs the rest of the money buys.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-large": "{w_only_large} is the pieces from large packs only. The money that is left can be spent on small packs: the best is {ib} large and {jb} small, {r} in all.",
+      "large-first": "{w_large_first} comes from taking as many large packs as possible first. Sometimes it is better to take one large pack fewer and buy more small ones: the best is {ib} large and {jb} small, {r} in all.",
+      "only-small": "{w_only_small} is the pieces from small packs only. A large pack is better value per piece, so part of the money is better spent on it: {ib} large and {jb} small, {r} in all."
+    }
+  },
+  "T3.three-step.16": {
+    "text": "A log {x} m long was cut into pieces of {b} m. One cut takes {c|minute|minutes|minutes}. How many minutes did the work take?",
+    "solution": [
+      "There are {x} : {b} = {a} pieces, and one cut fewer: {a} − {=1} = {=a-1} cuts.",
+      "{=a-1} × {c} = {r}.",
+      "So the work took {r} minutes."
+    ],
+    "hints": [
+      "How many pieces are there? And how many cuts are needed to get them?",
+      "There are {x} : {b} pieces. Think: are as many cuts enough, or is it one fewer?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "pieces-as-cuts": "{w_pieces_as_cuts} comes from taking as many cuts as pieces. There is one cut fewer: {=a-1} × {c} = {r}.",
+      "cuts-only": "{w_cuts_only} is the number of cuts, but we need the time of the work: {=a-1} × {c} = {r}.",
+      "length-not-time": "{w_length_not_time} comes from multiplying the number of cuts by the length of a piece, {b}. Each cut takes {c|minute|minutes|minutes}: {=a-1} × {c} = {r}."
+    }
+  },
+  "T3.three-step.17": {
+    "text": "They set off at {t0}. The trip is {x} km and the speed is {c} km/h. There was a stop of {e|minute|minutes|minutes} on the way. At what time did they arrive?",
+    "solution": [
+      "Time on the road: {x} km at {c} km/h is {=x*60/c} min.",
+      "On the road and at the stop: {=x*60/c} + {e} = {=x*60/c+e} min.",
+      "They set off at {t0}, so they arrived at {r}."
+    ],
+    "hints": [
+      "First find how many minutes they were on the road. The stop takes time too.",
+      "The time on the road comes from the distance {x} km at the speed {c} km/h. Add the {e|minute|minutes|minutes} of the stop and count on from {t0}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-stop": "{w_no_stop} is found without the stop. The stop lasted {e|minute|minutes|minutes} too: {=x*60/c} + {e} = {=x*60/c+e} min from {t0}, so they arrived at {r}.",
+      "only-the-stop": "{w_only_the_stop} comes from adding only the stop to {t0}. The time on the road ({=x*60/c} min) must be added too: they arrived at {r}.",
+      "distance-as-minutes": "{w_distance_as_minutes} comes from counting {x} km as {x} minutes. The time on the road is the distance divided by the speed: {x} km at {c} km/h is {=x*60/c} min. They arrived at {r}."
+    }
+  },
+  "T3.three-step.18": {
+    "text": "There are {x} in all. {=1}⁄{a} of the whole was taken, then half of what was left. How many are left?",
+    "solution": [
+      "{x} : {a} = {=x/a} were taken, so {x} − {=x/a} = {=x-x/a} were left.",
+      "Half of what was left was taken, and the other half stayed.",
+      "{=x-x/a} : {=2} = {r}."
+    ],
+    "hints": [
+      "First find how many are left after the first taking.",
+      "{x} : {a} were taken. Find what is left and halve it: the other half was not taken.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "half-of-all": "{w_half_of_all} is half of the whole. First {=1}⁄{a} was taken, and the half is taken from what is left, {=x-x/a}: {=x-x/a} : {=2} = {r}.",
+      "one-step-only": "{w_one_step_only} is what was left after the first taking. Then half of that was taken too: {=x-x/a} : {=2} = {r}.",
+      "taken-instead": "{w_taken_instead} shows how many were taken in all, but the question is how many are left: {=x-x/a} : {=2} = {r}."
+    }
+  },
+  "T4.four-step.11": {
+    "text": "Three hits in the first zone and two in the second gave {x|point|points|points}. Two hits in the first zone and three in the second gave {y|point|points|points}. How many points does one hit in the first zone give?",
+    "solution": [
+      "Add both results: {x} + {y} = {=x+y}. There are five hits of each zone in all, so one hit in the first zone and one in the second give {=x+y} : {=5} = {=a+b}.",
+      "Subtract: {x} − {y} = {=x-y}, which is how many points a hit in the first zone is better than one in the second.",
+      "From the sum {=a+b} and the difference {=x-y}: {=a+b} + {=x-y} = {=a+b+x-y}, and {=a+b+x-y} : {=2} = {r}."
+    ],
+    "hints": [
+      "Add both results: how many hits of each zone are there in all?",
+      "The two results {x} and {y} together hold five hits of each zone. Divide their sum by five, and then take {y} away from {x}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-of-each": "{w_one_of_each} is the points for one hit in each zone together. The first zone is better than the second by {=x-y}: ({=a+b} + {=x-y}) : {=2} = {r}.",
+      "the-difference": "{w_the_difference} is how many points the first zone is better than the second, but we need its value: ({=a+b} + {=x-y}) : {=2} = {r}.",
+      "the-other-zone": "{w_the_other_zone} is the points for a hit in the second zone, but the question is about the first: ({=a+b} + {=x-y}) : {=2} = {r}."
+    }
+  },
+  "T4.four-step.12": {
+    "text": "Half of the sweets and {a} more were given away. From what was left, half and {b} more were given away. {c} were left. How many sweets were there at the start?",
+    "solution": [
+      "We go from the end. To {c} we add {b}: {c} + {b} = {=c+b}, and double: {=c+b} × {=2} = {=2*(c+b)}. That is how many there were before the second giving.",
+      "To {=2*(c+b)} we add {a}: {=2*(c+b)} + {a} = {=2*(c+b)+a}, and double: {=2*(c+b)+a} × {=2} = {r}.",
+      "So there were {r} at the start."
+    ],
+    "hints": [
+      "Start from what was left ({c}) and go backwards.",
+      "Half and {b} more were given away: first put back the “more” (add {b} to {c}), then double. Then do the same with {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "ignored-extras": "{w_ignored_extras} comes from doubling twice without the “{a} more” and “{b} more”. They must be put back too: (({c} + {b}) × {=2} + {a}) × {=2} = {r}.",
+      "extras-subtracted": "{w_extras_subtracted} comes from taking the “more” away. Those sweets were given away, so going back we add them: (({c} + {b}) × {=2} + {a}) × {=2} = {r}.",
+      "one-step-back": "{w_one_step_back} comes from going back only one step. There were two givings: (({c} + {b}) × {=2} + {a}) × {=2} = {r}."
+    }
+  },
+  "T4.four-step.13": {
+    "text": "Three piles hold {a}, {b} and {c} books. In one move one book can be moved from one pile to another. What is the fewest number of moves to make the piles equal?",
+    "solution": [
+      "There are {=a+b+c} books in all, so each pile will hold {=a+b+c} : {=3} = {m}.",
+      "The extra books are in the piles above the average. They must be moved: {=max(0,a-m)} + {=max(0,b-m)} + {=max(0,c-m)} = {r}.",
+      "One move carries one book, so {r|move is|moves are|moves are} needed."
+    ],
+    "hints": [
+      "How many books should each pile hold at the end?",
+      "Books only need to be moved from the piles that have more than {m}. Add up how much more they have.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-differences": "{w_all_differences} comes from adding all the differences from {m}. Every book is then counted twice: when it is taken away and when it is added. There are half as many moves: {w_all_differences} : {=2} = {r}.",
+      "largest-excess": "{w_largest_excess} is the extra in only the biggest pile. Other piles are above {m} too: {=max(0,a-m)} + {=max(0,b-m)} + {=max(0,c-m)} = {r}.",
+      "the-average": "{w_the_average} is how many books each pile will hold at the end, but the question is the number of moves: {=max(0,a-m)} + {=max(0,b-m)} + {=max(0,c-m)} = {r}."
+    }
+  },
+  "T4.four-step.14": {
+    "text": "Find the largest four-digit number in which all the digits are different and the digits add up to {a}.",
+    "solution": [
+      "To make the number as large as possible, we take the first digit as big as we can, then the second, and so on. The digits do not repeat, and the sum must be {a}.",
+      "The digits are {u}, {v}, {t}, {y}: their sum is {u} + {v} + {t} + {y} = {a}.",
+      "The number: {u} × {=1000} + {v} × {=100} + {t} × {=10} + {y} = {r}."
+    ],
+    "hints": [
+      "Start with the first digit: what is the biggest one that fits?",
+      "The digits do not repeat, and all four must add up to {a}. Which second digit can we take after the biggest first one?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-repeat": "{w_digits_repeat} has repeating digits, but all the digits must be different. The number with the digits {u}, {v}, {t}, {y} fits: {r}.",
+      "the-smallest": "{w_the_smallest} is the smallest such number, but we need the largest. The big digits go at the front: {u}, {v}, {t}, {y} make {r}."
+    }
+  },
+  "T4.four-step.15": {
+    "text": "How many numbers from {=1} to {c} are divisible by {a} or by {b}? A number that is divisible by both is counted once.",
+    "solution": [
+      "Divisible by {a}: {=floor(c/a)}, divisible by {b}: {=floor(c/b)}.",
+      "Numbers divisible by both are counted twice. They are divisible by {=a*b/gcd(a,b)}, and there are {=floor(c/(a*b/gcd(a,b)))} of them.",
+      "{=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}."
+    ],
+    "hints": [
+      "How many numbers up to {c} are divisible by {a}, and how many by {b}?",
+      "The numbers that are divisible by {=a*b/gcd(a,b)} are divisible by both and are counted twice. What should be done with them?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "counted-twice": "{w_counted_twice} is the sum of two counts. The numbers divisible by both are counted twice in it, and there are {=floor(c/(a*b/gcd(a,b)))} of them: {=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}.",
+      "only-the-first": "{w_only_the_first} counts only the numbers divisible by {a}. The numbers divisible by {b} are needed too: {=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}.",
+      "only-both": "{w_only_both} counts only the numbers divisible by both. But we need those divisible by at least one of the two: {=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}."
+    }
+  },
+  "T4.four-step.16": {
+    "text": "The numbers from {=1} to {a} are written on a board. In one move two numbers are wiped off and their sum is written. This goes on until one number is left. What will it be? 1) even; 2) odd; 3) it depends on the order of the moves. Answer with the number of the option.",
+    "solution": [
+      "The sum of all the numbers on the board does not change: two numbers are wiped off and their sum is written.",
+      "At the end one number is left, equal to the sum of the numbers from {=1} to {a}: {a} × {=a+1} : {=2} = {=a*(a+1)/2}.",
+      "Whether this sum is even or odd gives the answer, it is option {r}."
+    ],
+    "hints": [
+      "What does not change after every move?",
+      "Find the sum of all the numbers from {=1} to {a}: {a} × {=a+1} : {=2}. Is it even or odd?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "other-parity": "Option {w_other_parity} does not fit: the sum {=a*(a+1)/2} has the other parity. Option {r} fits.",
+      "depends": "Option {w_depends} does not fit: the sum on the board does not change with the order of the moves, so the last number does not either, it is {=a*(a+1)/2}. Option {r} fits."
+    }
+  },
+  "T4.four-step.17": {
+    "text": "{c|euro|euros|euros} must be paid with coins of {a} and {b} euros. There are enough coins of each kind. In how many ways can this be done?",
+    "solution": [
+      "We try how many {b}-euro coins to take: from {=0} to {=floor(c/b)}. What is left must be divisible by {a}.",
+      "These values fit: {js}.",
+      "Each way is counted once: {ones} = {r}."
+    ],
+    "hints": [
+      "Try how many {b}-euro coins can be taken: from zero to {=floor(c/b)}.",
+      "For each case check whether what is left of {c} is divisible by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "both-kinds-used": "{w_both_kinds_used} comes from always using both kinds of coin. It is possible to pay with one kind only, and that is a way too: there are {r} ways in all.",
+      "every-value": "{w_every_value} is the number of values for the {b}-euro coins without checking what is left. Not every remainder is divisible by {a}; only the values {js} fit: {r} ways."
+    }
+  },
+  "T4.four-step.18": {
+    "text": "The way there was at {x} km/h and the way back along the same road at {y} km/h. What is the average speed for the whole trip, in km/h?",
+    "solution": [
+      "Say the one-way distance is {z} km; the answer does not depend on it.",
+      "There {z} : {x} = {=z/x} h, back {z} : {y} = {=z/y} h, in all {=z/x} + {=z/y} = {=z/x+z/y} h.",
+      "The whole distance is {=2*z} km, the average speed is {=2*z} : {=z/x+z/y} = {r} km/h."
+    ],
+    "hints": [
+      "The average speed is the whole distance divided by the whole time. Take any one-way distance, for example {z} km.",
+      "Find the time there, {z} : {x}, and the time back, {z} : {y}. Then divide the whole distance {=2*z} km by the whole time.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-mean-of-speeds": "{w_the_mean_of_speeds} is the mean of the two speeds. But the times there and back were different, and more time was spent on the slow part. The whole distance {=2*z} km took {=z/x+z/y} h: {r}.",
+      "half-the-answer": "{w_half_the_answer} comes from not doubling the distance: there and back the distance is twice as long, {=2*z} km, not {z} km: {=2*z} : {=z/x+z/y} = {r}."
+    }
+  },
+  "T4.four-step.19": {
+    "text": "An item costs {x|euro|euros|euros}. The price was raised by {a} percent, and then the new price was lowered by the same percent. What did the price become, in euros?",
+    "solution": [
+      "After the rise: {x} + {=x*a/100} = {=x*(100+a)/100}.",
+      "The fall is taken from the new price: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}.",
+      "So the price became {r} euros, not {x}: the percents were taken from different prices."
+    ],
+    "hints": [
+      "Find the price after the rise.",
+      "The fall of {a} percent is taken from the new price {=x*(100+a)/100}, not from the old one, {x}. Find it and take it away.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "back-to-the-start": "{w_back_to_the_start} is the old price. But the fall is worked out from the new, bigger price, so the price did not come back to the old one: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}.",
+      "only-the-rise": "{w_only_the_rise} is the price after the rise, but then it was lowered too: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}.",
+      "only-the-fall": "{w_only_the_fall} is the price after one fall from the old price. But the price was raised first, and the fall was taken from the new price: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}."
+    }
+  },
+  "T4.four-step.20": {
+    "text": "{a|vote|votes|votes} were cast. {b} percent were for the first candidate, {c} percent for the second, and all the other votes for the third (pie chart). How many votes are for the third?",
+    "solution": [
+      "The first two got {b} + {c} = {=b+c} percent, so the third has {=100} − {=b+c} = {=100-b-c} percent.",
+      "One percent is {a} : {=100} = {=a/100}.",
+      "{=a/100} × {=100-b-c} = {r}. So the third has {r|vote|votes|votes}."
+    ],
+    "hints": [
+      "What percent of the votes is left for the third?",
+      "One percent is {a} : {=100}. Multiply it by the percent that is left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "percent-only": "{w_percent_only} is the percent, but we need the number of votes. One percent is {=a/100}, and the third has {=100-b-c} percent: {=a/100} × {=100-b-c} = {r}.",
+      "percent-as-votes": "{w_percent_as_votes} comes from taking the percents away from the number of votes. Percents must first be turned into votes: {=a/100} × {=100-b-c} = {r}.",
+      "the-second-candidate": "{w_the_second_candidate} is the votes for the second candidate, but the question is about the third: {=a/100} × {=100-b-c} = {r}."
+    }
+  }
+}

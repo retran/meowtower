@@ -119,10 +119,10 @@ describe("REQ-3810: a language is shipped only when its keys and placeholders ma
     expect(checkParity(reference, reference, "ru")).toEqual([]);
   });
 
-  it("ships Russian only", () => {
-    expect(SHIPPED).toEqual(["ru"]);
+  it("ships Russian, English and Dutch", () => {
+    expect(SHIPPED).toEqual(["ru", "en", "nl"]);
     expect(isShipped("ru")).toBe(true);
-    expect(isShipped("nl")).toBe(false);
+    expect(isShipped("de")).toBe(false);
   });
 });
 
@@ -139,10 +139,10 @@ describe("REQ-3810: a request for a language outside the shipped set gets Russia
   const app = createApp({ db });
   afterAll(() => db.close());
 
-  it("answers 400 with the Russian strings for nl and 200 for ru", async () => {
-    const nl = await app.request("/i18n/nl.json");
-    expect(nl.status).toBe(400);
-    expect(((await nl.json()) as Record<string, string>)["ui.home.play"]).toBe(
+  it("answers 400 with the Russian strings for de and 200 for ru", async () => {
+    const de = await app.request("/i18n/de.json");
+    expect(de.status).toBe(400);
+    expect(((await de.json()) as Record<string, string>)["ui.home.play"]).toBe(
       t("ui.home.play"),
     );
     expect((await app.request("/i18n/ru.json")).status).toBe(200);

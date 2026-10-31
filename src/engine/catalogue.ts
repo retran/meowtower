@@ -67,6 +67,26 @@ export function notGeneratable(
     .filter((key) => !covered.has(key));
 }
 
+/** The fewest templates a subtype needs (ADR-0490). */
+export const MIN_TEMPLATES = 10;
+
+/** Every subtype with templates, but fewer than `min`: it is generatable and thin (ADR-0490). */
+export function thinSubtypes(
+  graph: Graph,
+  templates: readonly TemplateRef[],
+  min: number = MIN_TEMPLATES,
+): string[] {
+  const count = new Map<string, number>();
+  for (const t of templates) {
+    const key = `${t.node}.${t.subtype}`;
+    count.set(key, (count.get(key) ?? 0) + 1);
+  }
+  return graph
+    .nodes()
+    .flatMap((n) => graph.subtypes(n.id).map((s) => `${n.id}.${s.id}`))
+    .filter((key) => count.has(key) && (count.get(key) ?? 0) < min);
+}
+
 /**
  * The strict schema of a template's declaration: it names a node and a subtype, and
  * nothing else. A `level` or a `weight` is refused, because the graph holds them

@@ -6,9 +6,14 @@ import type { Key, LinesKey, PluralKey, StringParams } from "./i18n-keys.js";
 // value fails `tsc` at the call (REQ-3810).
 
 /** The languages the server ships; a language is added only when its keys match Russian. */
-export const SHIPPED = ["ru"] as const;
+export const SHIPPED = ["ru", "en", "nl"] as const;
 export type Lang = (typeof SHIPPED)[number];
-export const lang: Lang = "ru";
+export let lang: Lang = "ru";
+
+/** Chooses the language of the server's strings, as the parent set it. */
+export const setLang = (chosen: Lang): void => {
+  lang = chosen;
+};
 
 export const isShipped = (candidate: string): candidate is Lang =>
   (SHIPPED as readonly string[]).includes(candidate);
@@ -25,7 +30,11 @@ const read = (code: string): Record<string, Value> =>
     ),
   ) as Record<string, Value>;
 
-const files: Record<Lang, Record<string, Value>> = { ru: read("ru") };
+const files: Record<Lang, Record<string, Value>> = {
+  ru: read("ru"),
+  en: read("en"),
+  nl: read("nl"),
+};
 
 type ParamArgs<K extends Key> = keyof StringParams[K] extends never
   ? [params?: StringParams[K]]
@@ -128,7 +137,7 @@ export type { Key, PluralKey, LinesKey };
  *  also holds task texts and short solutions no client may read early. */
 export function uiStrings(): Record<string, string> {
   return Object.fromEntries(
-    Object.entries(files[lang]).filter(
+    Object.entries({ ...files.ru, ...files[lang] }).filter(
       (entry): entry is [string, string] =>
         entry[0].startsWith("ui.") && typeof entry[1] === "string",
     ),

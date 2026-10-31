@@ -31,6 +31,8 @@ export default defineConfig({
     env: {
       PORT: String(PORT),
       PARENT_PORT: "3925",
+      // The browser tests answer the fixed stand-in tasks.
+      MEOWTOWER_TASKS: "standin",
       MEOWTOWER_DB: "/tmp/meowtower-e2e.sqlite",
       // The storage notice counts the snapshots folder's parent, so it gets
       // a folder of its own rather than all of /tmp.

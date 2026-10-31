@@ -1,0 +1,2770 @@
+{
+  "D1.place-value.01": {
+    "text": "Hoeveel cent is {m} euro?",
+    "solution": [
+      "In één euro zitten {=100} cent.",
+      "{m} euro is {a} euro en {b|cent|cent|cent}. {a} euro is {a} × {=100} = {=a*100} cent.",
+      "Tel nu de centen erbij op: {=a*100} + {b} = {r}.",
+      "Dus {m} euro is samen {r|cent|cent|cent}."
+    ],
+    "hints": [
+      "Reken de euro's en de centen apart uit. Eén euro is {=100} cent.",
+      "{a} euro is {=a*100} cent. Tel daar nog {b|cent|cent|cent} bij op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cents-part-only": "Je schreef {w_cents_part_only}. Dat zijn alleen de centen. De {a} euro moet je ook in centen omzetten: {a} × {=100} = {=a*100}. Tel daarna de {b|cent|cent|cent} erbij op.",
+      "cents-forgotten": "Je schreef {w_cents_forgotten}. Dat zijn alleen de euro's in centen. De {b|cent|cent|cent} moet je er nog bij optellen: {=a*100} + {b} = {r}.",
+      "euros-added-to-cents": "Je schreef {w_euros_added_to_cents}. Dat is {a} + {b}, euro's en centen bij elkaar. Eén euro is {=100} cent. Doe eerst de euro's maal {=100} en tel dan de centen erbij: {r}."
+    }
+  },
+  "D1.place-value.02": {
+    "text": "Welk cijfer staat op de plaats van de tienden in {n}?",
+    "solution": [
+      "In {n} staat het cijfer {a} vóór de komma. Dat zijn de hele getallen.",
+      "Het eerste cijfer achter de komma zijn de tienden: {b}. Het tweede cijfer zijn de honderdsten: {c}.",
+      "Dus op de plaats van de tienden staat {r}."
+    ],
+    "hints": [
+      "De tienden staan op de eerste plaats direct achter de komma.",
+      "Lees {n} van links naar rechts: {a} staat vóór de komma, daarna komen {b} en {c}. Welk cijfer staat op de eerste plaats achter de komma?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "hundredths-digit": "Je schreef {w_hundredths_digit}. Dat cijfer staat op de tweede plaats achter de komma, dus het zijn honderdsten. De tienden staan op de eerste plaats achter de komma: {r}.",
+      "whole-digit": "Je schreef {w_whole_digit}. Dat cijfer staat vóór de komma, dus het zijn hele getallen. De tienden staan op de eerste plaats achter de komma: {r}."
+    }
+  },
+  "D1.place-value.03": {
+    "text": "Welk cijfer staat op de plaats van de honderdsten in {n}?",
+    "solution": [
+      "In {n} staat het cijfer {a} vóór de komma. Dat zijn de hele getallen.",
+      "Het eerste cijfer achter de komma zijn de tienden: {b}. Het tweede cijfer zijn de honderdsten: {c}.",
+      "Dus op de plaats van de honderdsten staat {r}."
+    ],
+    "hints": [
+      "De honderdsten staan op de tweede plaats achter de komma.",
+      "Tel in {n} twee plaatsen achter de komma: de eerste zijn de tienden, de tweede de honderdsten. Welk cijfer staat op de tweede plaats?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths-digit": "Je schreef {w_tenths_digit}. Dat cijfer staat op de eerste plaats achter de komma, dus het zijn tienden. De honderdsten staan op de tweede plaats achter de komma: {r}.",
+      "whole-digit": "Je schreef {w_whole_digit}. Dat cijfer staat vóór de komma, dus het zijn hele getallen. De honderdsten staan op de tweede plaats achter de komma: {r}."
+    }
+  },
+  "D1.place-value.04": {
+    "text": "Hoeveel tienden zijn er in {n}?",
+    "solution": [
+      "Eén heel is {=10} tienden.",
+      "De {a} hele getallen zijn {a} × {=10} = {=a*10} tienden.",
+      "Tel de andere {b} tienden erbij op: {=a*10} + {b} = {r}.",
+      "Dus in {n} zitten {r} tienden."
+    ],
+    "hints": [
+      "Eén heel is {=10} tienden. Zet eerst de hele getallen van {n} om in tienden.",
+      "De hele getallen van {n} zijn {a} × {=10} = {=a*10} tienden. Wat moet je daarna nog doen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "wholes-only": "Je schreef {w_wholes_only}. Dat is alleen het aantal hele getallen. In elk heel zitten {=10} tienden, dus reken die ook mee: {a} × {=10} = {=a*10}. Tel daar {b} bij op.",
+      "tenths-digit-only": "Je schreef {w_tenths_digit_only}. Dat zijn alleen de tienden achter de komma. In de {a} hele zitten ook tienden: in elk heel zitten er {=10}. Tel ze op: {=a*10} + {b} = {r}.",
+      "hundredths-counted": "Je schreef {w_hundredths_counted}. Dat zijn honderdsten. Er zijn {=10} keer minder tienden, want één tiende is {=10} honderdsten. Het antwoord is {r}."
+    }
+  },
+  "D1.place-value.05": {
+    "text": "Hoeveel honderdsten zijn er in {n}?",
+    "solution": [
+      "Eén heel is {=100} honderdsten en één tiende is {=10} honderdsten.",
+      "De {a} hele getallen zijn {a} × {=100} = {=a*100} honderdsten. De {b} tienden zijn {b} × {=10} = {=b*10} honderdsten.",
+      "Er zijn ook nog {c} honderdsten. Tel op: {=a*100} + {=b*10} + {c} = {r}.",
+      "Dus in {n} zitten {r} honderdsten."
+    ],
+    "hints": [
+      "Eén heel is {=100} honderdsten en één tiende is {=10} honderdsten.",
+      "In {n}: {a} × {=100} = {=a*100} honderdsten en {b} × {=10} = {=b*10} honderdsten. Wat moet je nog optellen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "decimal-part-only": "Je schreef {w_decimal_part_only}. Dat zijn alleen de honderdsten achter de komma. In de {a} hele zitten ook honderdsten: in elk heel zitten er {=100}.",
+      "tenths-counted": "Je schreef {w_tenths_counted}. Dat zijn tienden. Er zijn {=10} keer zoveel honderdsten, want één tiende is {=10} honderdsten. Het antwoord is {r}.",
+      "hundredths-digit-only": "Je schreef {w_hundredths_digit_only}. Dat is alleen het cijfer op de plaats van de honderdsten. De hele getallen en de tienden van {n} kun je ook in honderdsten tellen, dus het zijn er veel meer: {r}."
+    }
+  },
+  "D1.place-value.06": {
+    "text": "Schrijf dit getal met een komma: {a} hele, {b} tienden en {c} honderdsten.",
+    "solution": [
+      "De hele getallen schrijf je vóór de komma: {a}.",
+      "De tienden zijn het eerste cijfer achter de komma: {b}. De honderdsten zijn het tweede: {c}.",
+      "{a} + {=b/10} + {=c/100} = {r}."
+    ],
+    "hints": [
+      "De hele getallen staan vóór de komma. Achter de komma komen eerst de tienden en dan de honderdsten.",
+      "Schrijf plaats voor plaats: {a} vóór de komma, {b} tienden op de eerste plaats erachter. Waar komen de {c} honderdsten?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths-and-hundredths-swapped": "Je schreef {w_tenths_and_hundredths_swapped}. Daar staan de tienden en de honderdsten op elkaars plaats. De tienden, {b}, komen als eerste achter de komma, daarna de honderdsten, {c}.",
+      "hundredths-forgotten": "Je schreef {w_hundredths_forgotten}. De honderdsten ontbreken. Na de tienden moet je nog het cijfer van de honderdsten schrijven, {c}.",
+      "tenths-skipped": "Je schreef {w_tenths_skipped}. De tienden ontbreken. Direct achter de komma staan de tienden, {b}, en daarna de honderdsten, {c}."
+    }
+  },
+  "D1.place-value.07": {
+    "text": "Schrijf met een komma: {a} euro en {b|cent|cent|cent}.",
+    "solution": [
+      "Eén cent is een honderdste van een euro, dus {b|cent|cent|cent} is {b} honderdsten.",
+      "De honderdsten staan op de tweede plaats achter de komma. Er zijn geen tienden, dus op de eerste plaats komt een nul.",
+      "{a} + {=b/100} = {r}.",
+      "Dus {a} euro en {b|cent|cent|cent} is {r} euro."
+    ],
+    "hints": [
+      "Centen zijn honderdsten van een euro, dus je hebt twee cijfers achter de komma nodig.",
+      "Je hebt {b|cent|cent|cent}, dat is één cijfer. Wat zet je op de eerste plaats achter de komma, zodat {b} op de tweede plaats komt?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cents-as-tenths": "Je schreef {w_cents_as_tenths}. Dat lees je als {a} euro en {=10*b} cent. Centen zijn honderdsten van een euro, dus vóór de {b} moet een nul staan.",
+      "places-swapped": "Je schreef {w_places_swapped}. Daar staan de plaatsen verwisseld. De euro's, {a}, staan vóór de komma en de centen, {b}, erachter."
+    }
+  },
+  "D1.place-value.08": {
+    "text": "Vergelijk {f} en {g}. Welk teken hoort ertussen?",
+    "solution": [
+      "De hele getallen zijn gelijk, allebei {a}. Vergelijk dus wat achter de komma staat.",
+      "Zet een nul achter het korte getal, de waarde blijft gelijk: {sh} = {sh0}. Nu hebben beide getallen twee cijfers achter de komma.",
+      "Vergelijk de honderdsten: links {p}, rechts {q}, en {p} {r} {q}.",
+      "Dus tussen {f} en {g} komt het teken {r}."
+    ],
+    "hints": [
+      "Vergelijk eerst de hele getallen en dan wat achter de komma staat. Daarvoor moeten beide getallen evenveel cijfers achter de komma hebben.",
+      "Zet een nul erachter: {sh} = {sh0}. Vergelijk nu {p} en {q} honderdsten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "longer-is-bigger": "Je koos {w_longer_is_bigger}, alsof het getal met meer cijfers het grootste is. De lengte maakt niet uit. Zet een nul achter het korte getal en vergelijk {p} en {q} honderdsten.",
+      "wholes-only-compared": "Je koos {w_wholes_only_compared}. Dan heb je alleen de hele getallen vergeleken, en die zijn allebei {a}. Vergelijk daarna wat achter de komma staat: {p} en {q} honderdsten."
+    }
+  },
+  "D1.place-value.09": {
+    "text": "Zet deze getallen op volgorde, het kleinste eerst: {list}.",
+    "solution": [
+      "Zet nullen achteraan, zodat elk getal twee cijfers achter de komma heeft: {list0}. Dat zijn {a}, {b} en {c} honderdsten.",
+      "Hoe meer honderdsten, hoe groter het getal. Zet de getallen van klein naar groot.",
+      "Van klein naar groot: {sorted}.",
+      "Dus de getallen staan, op hun plaats in de rij, in de volgorde {r}."
+    ],
+    "hints": [
+      "Zet nullen achteraan, zodat elk getal twee cijfers achter de komma heeft.",
+      "Nu zijn {list0} gelijk aan {a}, {b} en {c} honderdsten. Welk getal is het kleinst?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "largest-first": "Je schreef {w_largest_first}. Dat gaat van het grootste getal naar het kleinste, maar de volgorde moet met het kleinste beginnen.",
+      "hundredths-digit-first": "Je schreef {w_hundredths_digit_first}. Die volgorde komt van het vergelijken van de laatste cijfers. Vergelijk eerst de tienden en pas bij gelijke tienden de honderdsten.",
+      "digits-as-whole-numbers": "Je schreef {w_digits_as_whole_numbers}. Daar heb je de cijfers achter de komma gelezen als een gewoon getal, waardoor een getal met één cijfer achter de komma kleiner leek dan het is. Een nul aan het eind verandert niets: {list0} zijn {a}, {b} en {c} honderdsten."
+    }
+  },
+  "D1.place-value.10": {
+    "text": "Schrijf als getal: {a|honderdste|honderdsten|honderdsten}.",
+    "solution": [
+      "Eén honderdste is {=1/100}: honderdsten staan op de tweede plaats achter de komma.",
+      "Neem er {a}: {a} × {=1/100} = {=a/100}.",
+      "Dus {a|honderdste|honderdsten|honderdsten} schrijf je als {r}."
+    ],
+    "hints": [
+      "Honderdsten krijgen twee plaatsen achter de komma: de eerste voor de tienden, de tweede voor de honderdsten.",
+      "In {a|honderdste|honderdsten|honderdsten} zitten {=floor(a/10)|tiende|tienden|tienden} en nog {=mod(a,10)|honderdste|honderdsten|honderdsten}. Zet die cijfers op hun plaats achter de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths": "Je schreef {w_tenths}. Dat zijn tienden, met één cijfer achter de komma. Honderdsten hebben twee cijfers achter de komma: {r}.",
+      "whole-number": "Je schreef {w_whole_number}. Daar staat geen komma in. {a|honderdste|honderdsten|honderdsten} is minder dan één heel, dus het antwoord is {r}.",
+      "thousandths": "Je schreef {w_thousandths}. Daar staat één nul te veel, dus dat zijn duizendsten. Honderdsten hebben twee cijfers achter de komma: {r}."
+    }
+  },
+  "D1.place-value.11": {
+    "text": "Wat is de waarde van het cijfer {b} in {n}?",
+    "solution": [
+      "In {n} staat het cijfer {b} op de eerste plaats achter de komma, dus het zijn tienden.",
+      "Eén tiende is {=1/10} en je hebt er {b}.",
+      "{b} × {=1/10} = {=b/10}. De waarde van het cijfer {b} is dus {r}."
+    ],
+    "hints": [
+      "De waarde van een cijfer hangt af van de plaats waar het staat.",
+      "In {n} staat het cijfer {b} op de eerste plaats achter de komma, waar je tienden telt. Hoeveel is {b|tiende|tienden|tienden} als getal?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "face-value": "Je schreef {w_face_value}. Dat is het cijfer zelf. Het staat op de plaats van de tienden, dus de waarde is {r}.",
+      "hundredths-value": "Je schreef {w_hundredths_value}. Dat zou de waarde zijn van een cijfer op de tweede plaats achter de komma. Het cijfer {b} staat op de eerste plaats, dus het zijn tienden: {r}."
+    }
+  },
+  "D1.place-value.12": {
+    "text": "Rond {m} euro af op hele euro's.",
+    "solution": [
+      "{m} euro is {a} euro en {b|cent|cent|cent}. Een halve euro is {=50} cent.",
+      "Bij meer dan {=50} cent ga je omhoog naar {=a+1}. Bij minder blijft het {a}.",
+      "Hier zijn het {b|cent|cent|cent}, dus het bedrag wordt afgerond op {r} euro."
+    ],
+    "hints": [
+      "Kijk naar de centen: een halve euro is {=50} cent.",
+      "Je hebt {b|cent|cent|cent}. Is dat meer of minder dan {=50}? Daaraan zie je of het {a} blijft of {=a+1} wordt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cut-off": "Je schreef {w_cut_off}. Dan laat je de centen gewoon weg. Het zijn {b|cent|cent|cent}, meer dan {=50}, dus je rondt omhoog af: {r}.",
+      "always-up": "Je schreef {w_always_up}. Dan rond je omhoog af. Het zijn {b|cent|cent|cent}, minder dan {=50}, dus de euro's blijven gelijk: {r}."
+    }
+  },
+  "D1.place-value.13": {
+    "text": "Welk getal ligt precies in het midden tussen {f} en {g}?",
+    "solution": [
+      "{f} en {g} liggen één tiende uit elkaar, dat zijn {=10} honderdsten.",
+      "Het midden is de helft van die afstand: {=10} : {=2} = {=5} honderdsten, dus {=5/100}.",
+      "Tel vanaf het linkergetal verder: {f} + {=5/100} = {r}.",
+      "Dus het getal precies tussen {f} en {g} is {r}."
+    ],
+    "hints": [
+      "Tussen {f} en {g} zit één tiende en dat zijn {=10} honderdsten. Het midden ligt op de helft.",
+      "De helft van {=10} honderdsten is {=5} honderdsten. Tel die bij {f} op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "right-tenth": "Je schreef {w_right_tenth}. Dat is het rechtereinde, niet het midden. Het midden ligt vijf honderdsten na het linkergetal {f}: {r}.",
+      "left-tenth": "Je schreef {w_left_tenth}. Dat is het linkereinde, {f}. Het midden ligt nog vijf honderdsten verder: {r}.",
+      "half-added": "Je schreef {w_half_added}. Dan tel je vijf tienden op. Tussen {f} en {g} is de stap één tiende, dus een halve stap is vijf honderdsten: {r}."
+    }
+  },
+  "D1.place-value.14": {
+    "text": "Op de getallenlijn staan de getallen {a} en {n}, met {=10} gelijke stukjes ertussen. Welk getal wijst de stip aan?",
+    "solution": [
+      "Tussen {a} en {n} zitten tien gelijke stukjes, dus één stukje is één tiende, dat is {=1/10}.",
+      "De stip staat {b|stukje|stukjes|stukjes} verder dan {a}.",
+      "{a} + {b} × {=1/10} = {r}."
+    ],
+    "hints": [
+      "Eén stukje is één tiende, want van {a} tot {n} zijn er tien gelijke stukjes.",
+      "Tel {b|stukje|stukjes|stukjes} naar rechts vanaf {a}. Elk stukje telt {=1/10} erbij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "hundredths-instead-of-tenths": "Je schreef {w_hundredths_instead_of_tenths}. Daar zijn de stukjes als honderdsten gerekend. Tussen {a} en {n} zitten tien stukjes, dus elk stukje is een tiende en geen honderdste.",
+      "digits-swapped": "Je schreef {w_digits_swapped}. Daar zijn de cijfers verwisseld. Het hele getal is {a} en het aantal stukjes, {b}, komt achter de komma.",
+      "counted-from-the-right": "Je schreef {w_counted_from_the_right}. Dat telt de stukjes vanaf het rechtereinde. Tel vanaf het linkergetal {a}."
+    }
+  },
+  "D1.place-value.15": {
+    "text": "Op de getallenlijn staan de getallen {f} en {g}, met {=10} gelijke stukjes ertussen. Welk getal wijst de stip aan?",
+    "solution": [
+      "Tussen {f} en {g} zitten tien gelijke stukjes. De afstand ertussen is één tiende, dus één stukje is één honderdste, dat is {=1/100}.",
+      "De stip staat {c|stukje|stukjes|stukjes} verder dan {f}.",
+      "{f} + {c} × {=1/100} = {r}."
+    ],
+    "hints": [
+      "Tussen {f} en {g} zit één tiende, verdeeld in {=10} gelijke stukjes.",
+      "Elk stukje is één honderdste. De stip staat {c|stukje|stukjes|stukjes} na {f}: wat moet je bij {f} optellen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "counted-from-the-right": "Je schreef {w_counted_from_the_right}. Dat telt de stukjes vanaf het rechtereinde. Tel vanaf het linkergetal {f}.",
+      "steps-as-tenths": "Je schreef {w_steps_as_tenths}. Daar zijn de stukjes als tienden gerekend. Tussen {f} en {g} zit maar één tiende, dus elk stukje is een honderdste."
+    }
+  },
+  "D1.place-value.16": {
+    "text": "Welk van deze getallen is het grootst? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "De hele getallen zijn bij alle getallen gelijk: {a}. Vergelijk dus wat achter de komma staat.",
+      "Zet nullen achteraan, zodat elk getal twee cijfers achter de komma heeft: {list0}.",
+      "Het grootste aantal honderdsten is {mx}. Dat is {big}, keuze {r}."
+    ],
+    "hints": [
+      "De hele getallen zijn bij alle getallen gelijk ({a}), dus kijk naar wat achter de komma staat.",
+      "Zet nullen achteraan, zodat elk getal twee cijfers achter de komma heeft: {list0}. Welk getal heeft de meeste honderdsten?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-as-whole-numbers": "Je koos keuze {w_digits_as_whole_numbers}. Daar heb je de cijfers achter de komma gelezen als een gewoon getal. Een nul aan het eind verandert niets, dus vergelijk na het aanvullen met nullen: {list0}.",
+      "shortest-wins": "Je koos keuze {w_shortest_wins}, omdat daar een groot cijfer bij de tienden staat en het getal kort is. Vergelijk alle getallen nadat je nullen achteraan hebt gezet: {list0}.",
+      "tenths-tie": "Je koos keuze {w_tenths_tie}. Dat getal heeft het grootste cijfer bij de tienden, maar een ander getal heeft evenveel tienden. Dan moet je ook de honderdsten vergelijken: {list0}."
+    }
+  },
+  "D1.place-value.17": {
+    "text": "Welke van deze getallen zijn kleiner dan {bound}? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Antwoord met de nummers van de juiste keuzes, gescheiden door komma's.",
+    "solution": [
+      "Zet nullen achteraan, zodat elk getal twee cijfers achter de komma heeft: {bound0}; {list0}.",
+      "Vergelijk eerst de hele getallen, dan de tienden en dan de honderdsten.",
+      "De getallen die kleiner zijn dan {bound} zijn keuze {r}."
+    ],
+    "hints": [
+      "Vergelijk elk getal met {bound}: eerst de hele getallen, dan de tienden.",
+      "Zet een nul erachter: {bound} = {bound0}. Vergelijk nu elk getal van {list0} met {bound0}, eerst de tienden en dan de honderdsten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-as-whole-numbers": "Je koos {w_digits_as_whole_numbers}. Dat komt doordat je de cijfers achter de komma las als een gewoon getal, zonder nullen aan te vullen. Een nul aan het eind verandert niets: {bound} is {bound0}.",
+      "the-greater-ones": "Je koos {w_the_greater_ones}. Dat zijn de getallen die groter zijn dan {bound}, maar de vraag is naar de kleinere."
+    }
+  },
+  "D1.place-value.18": {
+    "text": "Rond {n} af op tienden.",
+    "solution": [
+      "Kijk naar het cijfer van de honderdsten: dat is {c}. Is het {=5} of meer, dan gaan de tienden {=1/10} omhoog. Anders blijven ze gelijk.",
+      "Het getal met alleen de tienden: {t}.",
+      "{t} + {up} = {r}."
+    ],
+    "hints": [
+      "Afronden op tienden betekent dat er één cijfer achter de komma blijft. Kijk naar het cijfer direct rechts daarvan.",
+      "In {n} is het cijfer van de honderdsten {c}. Is dat {=5} of meer?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cut-off": "Je schreef {w_cut_off}. Dan laat je de honderdsten gewoon weg. Het cijfer van de honderdsten is {c}, dat is {=5} of meer, dus de tienden gaan omhoog: {r}.",
+      "always-up": "Je schreef {w_always_up}. Dan rond je omhoog af. Het cijfer van de honderdsten is {c}, dat is minder dan {=5}, dus de tienden blijven gelijk: {r}.",
+      "rounded-to-whole": "Je schreef {w_rounded_to_whole}. Dat is afgerond op hele getallen. De vraag is naar tienden, dus er moet één cijfer achter de komma blijven.",
+      "carry-lost": "Je schreef {w_carry_lost}. Het lijkt alsof de tienden tien werden en er een één achter de komma kwam te staan. Maar tien tienden is één heel en dat gaat naar de hele getallen: {t} + {up} = {r}."
+    }
+  },
+  "D1.place-value.19": {
+    "text": "Hoeveel getallen met twee cijfers achter de komma liggen er echt tussen {f} en {g}? Een nul aan het eind telt ook mee.",
+    "solution": [
+      "{f} is {lo} honderdsten en {g} is {hi} honderdsten.",
+      "Ertussen liggen de getallen van {=lo+1} tot en met {=hi-1} honderdsten.",
+      "{=hi-1} − {=lo+1} + 1 = {r}."
+    ],
+    "hints": [
+      "Zet beide getallen om in honderdsten. Dan kun je de getallen ertussen makkelijk tellen.",
+      "{f} is {lo} honderdsten en {g} is {hi}. Hoeveel getallen zijn er van {=lo+1} tot en met {=hi-1}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "count-of-steps": "Je schreef {w_count_of_steps}. Dat is het aantal stappen van één honderdste van {f} naar {g}. Maar {f} en {g} zelf tellen niet mee, dus er zijn er één minder tussen: {r}.",
+      "ends-included": "Je schreef {w_ends_included}. Daar zijn de twee uiteinden, {f} en {g}, ook meegeteld. Ze liggen er niet echt tussen, dus laat ze weg.",
+      "tenths-only": "Je schreef {w_tenths_only}. Dat is het aantal tienden ertussen. De vraag gaat over getallen met twee cijfers achter de komma, en dat zijn er veel meer."
+    }
+  },
+  "D1.place-value.20": {
+    "text": "Getallen van de vorm _,__ maak je met de cijfers {a}, {b} en {c}, elk cijfer één keer. Hoeveel groter is het grootste getal dan het kleinste?",
+    "solution": [
+      "Grootste getal: het grootste cijfer vóór de komma, daarna de andere cijfers van groot naar klein: {hi}. Kleinste getal: het kleinste cijfer vóór de komma, daarna de andere cijfers van klein naar groot: {lo}.",
+      "{hi} − {lo} = {r}.",
+      "Het cijfer {b} staat in beide getallen op dezelfde plaats, dus het maakt voor het antwoord niets uit."
+    ],
+    "hints": [
+      "Het grootste getal begint met het grootste cijfer, het kleinste getal met het kleinste cijfer.",
+      "Van {a}, {b} en {c} begint het grootste getal met {c} en het kleinste met {a}. Zet de andere twee cijfers bij elk getal op volgorde.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tails-both-descending": "Je schreef {w_tails_both_descending}. Daar zijn bij het kleinste getal de cijfers achter de komma ook van groot naar klein gezet. Bij het kleinste getal gaan ze van klein naar groot: {lo}.",
+      "wholes-only": "Je schreef {w_wholes_only}. Dat is alleen het verschil van de hele getallen. De cijfers achter de komma verschillen ook: het grootste getal {hi} min het kleinste {lo} is {r}.",
+      "smaller-from-larger-column": "Je schreef {w_smaller_from_larger_column}. Daar trek je in elke kolom het kleinste cijfer van het grootste af. Maar bij {hi} − {lo} moet je lenen: bij de honderdsten is het bovenste cijfer kleiner dan het onderste. Het antwoord is {r}."
+    }
+  },
+  "D2.add-sub.01": {
+    "text": "Bereken de som {x} + {y} euro.",
+    "solution": [
+      "Het is makkelijkst om met centen te rekenen: {x} euro is {a|cent|cent|cent} en {y} euro is {b|cent|cent|cent}.",
+      "Tel op: {a} + {b} = {=a+b|cent|cent|cent}.",
+      "{=100} cent is één euro, dus {=a+b|cent|cent|cent} is {r} euro.",
+      "Dus {x} + {y} = {r}."
+    ],
+    "hints": [
+      "Reken de bedragen om in centen, dan kun je ze optellen als hele getallen.",
+      "{x} euro is {a|cent|cent|cent} en {y} euro is {b|cent|cent|cent}. Tel deze twee getallen op en reken het totaal terug naar euro's.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-ignored": "Je schreef {w_comma_ignored}. De getallen zijn als hele getallen opgeteld, dus de komma is verdwenen. De komma scheidt de euro's van de centen: {r}.",
+      "carry-forgotten": "Je schreef {w_carry_forgotten}. Je bent iets vergeten mee te nemen. Is een plaats samen tien of meer, dan onthoud je de één voor de plaats links ervan.",
+      "cents-written-whole": "Je schreef {w_cents_written_whole}. Het lijkt of je de centen apart hebt opgeteld en de hele som achter de komma hebt gezet. Maar {=100} cent is een extra euro en die hoort vóór de komma: {r}."
+    }
+  },
+  "D2.add-sub.02": {
+    "text": "Bereken het verschil {x} − {y} euro.",
+    "solution": [
+      "Het is makkelijkst om met centen te rekenen: {x} euro is {a|cent|cent|cent} en {y} euro is {b|cent|cent|cent}.",
+      "Trek af: {a} − {b} = {=a-b|cent|cent|cent}.",
+      "{=100} cent is één euro, dus {=a-b|cent|cent|cent} is {r} euro.",
+      "Dus {x} − {y} = {r}."
+    ],
+    "hints": [
+      "Reken de bedragen om in centen, dan kun je ze aftrekken als hele getallen.",
+      "{x} euro is {a|cent|cent|cent} en {y} euro is {b|cent|cent|cent}. Trek {b} af van {a} en reken het verschil terug naar euro's.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "added": "Je schreef {w_added}. Dat is de som van de twee bedragen, maar de vraag is naar het verschil, dus trek af: {x} − {y}.",
+      "column-smaller-from-larger": "Je schreef {w_column_smaller_from_larger}. In elke kolom is het kleinste cijfer van het grootste afgetrokken. Is het bovenste cijfer te klein, dan leen je één van de plaats links ervan.",
+      "comma-ignored": "Je schreef {w_comma_ignored}. De aftrekking is zonder de komma gedaan. De komma blijft tussen de euro's en de centen staan: {r}."
+    }
+  },
+  "D2.add-sub.03": {
+    "text": "Bereken de som van de drie bonnetjes: {x}, {y} en {z} euro.",
+    "solution": [
+      "Het is makkelijkst om met centen te rekenen: {x} euro is {a|cent|cent|cent}, {y} euro is {b} en {z} euro is {c}.",
+      "Tel op: {a} + {b} + {c} = {=a+b+c|cent|cent|cent}.",
+      "{=100} cent is één euro, dus deel door {=100}: {=a+b+c} : {=100} = {r}.",
+      "Dus de drie bonnetjes samen zijn {r} euro."
+    ],
+    "hints": [
+      "Zet elk bedrag om in centen, dan tel je hele getallen op.",
+      "In centen is het {a} + {b} + {c}. Tel alle drie de getallen op en reken het totaal terug naar euro's.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-amounts-only": "Je schreef {w_two_amounts_only}. Dat is de som van maar twee bedragen, maar je moet er drie optellen.",
+      "comma-ignored": "Je schreef {w_comma_ignored}. De getallen zijn zonder komma's opgeteld. De komma scheidt de euro's van de centen, dus houd hem erbij: {r}.",
+      "carry-forgotten": "Je schreef {w_carry_forgotten}. Je bent iets vergeten mee te nemen. Is een plaats samen tien of meer, dan onthoud je de één voor de plaats links ervan."
+    }
+  },
+  "D2.add-sub.04": {
+    "text": "Met een biljet van {a} euro wordt iets betaald dat {x} euro kost. Hoeveel euro wisselgeld krijg je terug?",
+    "solution": [
+      "Reken in centen: {a} euro is {=a*100} cent en de aankoop van {x} euro is {b|cent|cent|cent}.",
+      "Het wisselgeld is het verschil: {=a*100} − {b} = {=a*100-b|cent|cent|cent}.",
+      "{=100} cent is één euro, dus deel door {=100}: {=a*100-b} : {=100} = {r}.",
+      "Dus het wisselgeld is {r} euro."
+    ],
+    "hints": [
+      "Wisselgeld is wat er van het biljet overblijft na het betalen: het biljet min de prijs.",
+      "In centen is het {=a*100} − {b}. Trek af en reken het wisselgeld terug naar euro's.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-price-itself": "Je schreef {w_the_price_itself}. Dat is de prijs van de aankoop. Het wisselgeld vind je door de prijs van de {a} euro af te trekken.",
+      "no-borrowing": "Je schreef {w_no_borrowing}. De euro's zijn apart afgetrokken en de centen zijn gewoon overgenomen. Maar {a} euro heeft geen centen, dus je moet eerst één euro omwisselen voor {=100} cent.",
+      "added": "Je schreef {w_added}. Dat telt de prijs bij de {a} euro op. Het wisselgeld is wat overblijft, dus trek af: {a} − {x}."
+    }
+  },
+  "D2.add-sub.05": {
+    "text": "Bereken de som {a} + {y}.",
+    "solution": [
+      "Je telt het makkelijkst gelijke delen op, dus reken in honderdsten: {a} is {=a*100} honderdsten en {y} is {b} honderdsten.",
+      "Tel op: {=a*100} + {b} = {=a*100+b} honderdsten.",
+      "Dus {a} + {y} = {r}."
+    ],
+    "hints": [
+      "Je kunt alleen gelijke delen optellen, dus zet beide getallen om in honderdsten.",
+      "{a} is {=a*100} honderdsten en {y} is {b} honderdsten. Tel deze twee getallen op en schrijf de uitkomst met een komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "wholes-added-to-hundredths": "Je schreef {w_wholes_added_to_hundredths}. Het hele getal {a} is bij de honderdsten opgeteld. Het hoort bij het hele deel van {y}.",
+      "wholes-added-to-tenths": "Je schreef {w_wholes_added_to_tenths}. Hier is {a} bij de tienden opgeteld. Een heel getal tel je op bij het hele deel van {y}.",
+      "whole-forgotten": "Je schreef {w_whole_forgotten}. Het hele getal {a} ontbreekt. Het moet bij het hele deel van {y} worden opgeteld."
+    }
+  },
+  "D2.add-sub.06": {
+    "text": "Bereken het verschil {a} − {y}.",
+    "solution": [
+      "Je trekt het makkelijkst gelijke delen af, dus reken in honderdsten: {a} is {=a*100} honderdsten en {y} is {b} honderdsten.",
+      "Trek af: {=a*100} − {b} = {=a*100-b} honderdsten.",
+      "Dus {a} − {y} = {r}."
+    ],
+    "hints": [
+      "Je kunt alleen gelijke delen aftrekken, dus zet beide getallen om in honderdsten.",
+      "{a} is {=a*100} honderdsten en {y} is {b} honderdsten. Trek {b} af van {=a*100} en schrijf de uitkomst met een komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-borrowing": "Je schreef {w_no_borrowing}. De hele getallen zijn apart afgetrokken en de honderdsten zijn gewoon overgenomen. Maar {a} heeft geen honderdsten, dus je moet eerst één heel omwisselen voor honderdsten.",
+      "borrow-not-taken-off": "Je schreef {w_borrow_not_taken_off}. Er is een heel geleend, maar de hele getallen zijn niet met één verminderd. Na het lenen heb je één heel minder.",
+      "added": "Je schreef {w_added}. Dat telt {a} en {y} op. Het teken is min: {y} gaat van {a} af."
+    }
+  },
+  "D2.add-sub.07": {
+    "text": "Bereken de som {w} + {x} + {y} + {z} euro.",
+    "solution": [
+      "Tel in paren op. Bij {w} en {x} zijn de centen samen {c} + {=100-c} = {=100}, dat is precies één euro.",
+      "De hele getallen: {a} + {b} = {=a+b}, en nog één euro van de centen, dus {=a+b+1}.",
+      "Net zo bij {y} en {z}: {f} + {=100-f} = {=100}, hele getallen {d} + {e} = {=d+e}, en nog één euro, dus {=d+e+1}.",
+      "Tel op: {=a+b+1} + {=d+e+1} = {r}. De som is dus {r} euro."
+    ],
+    "hints": [
+      "Zoek paren bedragen waarvan de centen samen een heel aantal euro's zijn.",
+      "Bij {w} en {x} zijn de centen {c} en {=100-c}. Samen zijn dat {=100} cent, één euro. Maak op dezelfde manier een paar van {y} en {z} en tel dan de paren op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cents-dropped": "Je schreef {w_cents_dropped}. Dat zijn alleen de euro's bij elkaar. De centen van elk paar zijn samen precies één euro, dus er moeten nog {=2} euro bij.",
+      "one-carry-forgotten": "Je schreef {w_one_carry_forgotten}. Hier gaf maar één paar een extra euro van de centen. Elk paar doet dat.",
+      "comma-ignored": "Je schreef {w_comma_ignored}. De getallen zijn zonder komma's opgeteld, dus dat zijn centen en geen euro's. Houd de komma erbij; het antwoord is in euro's: {r}."
+    }
+  },
+  "D2.add-sub.08": {
+    "text": "Bereken de som {x} + {y}.",
+    "solution": [
+      "Tel de tienden op: {a} + {b} = {=a+b} tienden.",
+      "{=10} tienden is één heel, dus {=a+b} tienden is één heel en {=a+b-10} tienden.",
+      "Dus {x} + {y} = {r}."
+    ],
+    "hints": [
+      "Tel eerst de tienden op, net als gewone getallen.",
+      "{a} + {b} = {=a+b} tienden. Tien tienden is één heel: hoeveel hele en hoeveel tienden zijn {=a+b} tienden?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "Je schreef {w_digits_side_by_side}. Daar zijn de cijfers gewoon naast elkaar achter de komma gezet. Tienden tel je op: {a} + {b} = {=a+b} tienden.",
+      "carry-lost": "Je schreef {w_carry_lost}. Het onthouden ontbreekt. {a} + {b} = {=a+b} tienden en {=10} tienden is één heel, dat hoort vóór de komma.",
+      "sum-as-hundredths": "Je schreef {w_sum_as_hundredths}. Dat zijn {=a+b} honderdsten, maar je moest tienden optellen. {a} tienden en {b} tienden zijn {=a+b} tienden."
+    }
+  },
+  "D2.add-sub.09": {
+    "text": "Bereken de som {x} + {y}.",
+    "solution": [
+      "Zet een nul achter {x}, zodat beide getallen evenveel cijfers achter de komma hebben: {x}{=0}.",
+      "Nu zijn beide in honderdsten: {x}{=0} is {=a*10} honderdsten en {y} is {b} honderdsten.",
+      "Tel op: {=a*10} + {b} = {=a*10+b} honderdsten.",
+      "Dus {x} + {y} = {r}."
+    ],
+    "hints": [
+      "Zet een nul achter het getal met één cijfer achter de komma, zodat beide getallen evenveel cijfers hebben.",
+      "{x}{=0} is {=a*10} honderdsten en {y} is {b} honderdsten. Tel deze twee getallen op en schrijf de uitkomst met een komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "places-not-aligned": "Je schreef {w_places_not_aligned}. Dat is {a} + {b} als hele getallen. Honderdsten tel je bij honderdsten op en tienden bij tienden: zet een nul achter {x}.",
+      "zero-inserted": "Je schreef {w_zero_inserted}. Daar is de nul vóór het laatste cijfer van {x} gezet. Een nul zet je achteraan, dan verandert het getal niet.",
+      "hundredths-ignored": "Je schreef {w_hundredths_ignored}. De honderdsten van {y} ontbreken. Die moeten er ook bij."
+    }
+  },
+  "D2.add-sub.10": {
+    "text": "{x} + ? = {s}. Vind het ontbrekende getal.",
+    "solution": [
+      "Het ontbrekende getal is de som min het bekende getal: {s} − {x}.",
+      "Reken in honderdsten: {s} is {=a+b} honderdsten en {x} is {a} honderdsten.",
+      "Trek af: {=a+b} − {a} = {b} honderdsten, dus {s} − {x} = {r}."
+    ],
+    "hints": [
+      "Het ontbrekende getal is wat van de som overblijft als je het bekende getal weghaalt.",
+      "Reken in honderdsten: {s} is {=a+b} en {x} is {a}. Trek {a} af van {=a+b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "added": "Je schreef {w_added}. Dat is de som en die staat al in de opgave. Het ontbrekende getal vind je door af te trekken: {s} − {x}.",
+      "both-numbers-added": "Je schreef {w_both_numbers_added}. Dat telt {x} en {s} op. Het ontbrekende getal vind je door af te trekken: {s} − {x}.",
+      "column-smaller-from-larger": "Je schreef {w_column_smaller_from_larger}. In elke kolom is het kleinste cijfer van het grootste afgetrokken. Is het bovenste cijfer te klein, dan leen je één van de plaats links ervan."
+    }
+  },
+  "D2.add-sub.11": {
+    "text": "Drie dingen kosten {x}, {y} en {z} euro. Hoeveel euro duurder is het duurste dan het goedkoopste?",
+    "solution": [
+      "De grootste prijs is {big} euro en de kleinste is {small} euro.",
+      "In centen: {bc} − {sc} = {=bc-sc|cent|cent|cent}.",
+      "{=100} cent is één euro, dus deel door {=100}: {=bc-sc} : {=100} = {r}.",
+      "Dus het duurste kost {r} euro meer dan het goedkoopste."
+    ],
+    "hints": [
+      "Zoek eerst de grootste en de kleinste van de drie prijzen.",
+      "De grootste prijs is {big} en de kleinste is {small}. Om te weten hoeveel meer het ene getal is dan het andere, trek je af: in centen {bc} − {sc}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-first-two-only": "Je schreef {w_the_first_two_only}. Dat is het verschil tussen de eerste twee prijzen. Je hebt de grootste en de kleinste van de drie nodig: {big} en {small}.",
+      "dearest-plus-cheapest": "Je schreef {w_dearest_plus_cheapest}. Dat telt de twee prijzen op. De vraag is hoeveel meer de ene kost dan de andere, dus trek {small} af van {big}.",
+      "the-middle-price-used": "Je schreef {w_the_middle_price_used}. Dat is de grootste prijs min de middelste. Je moet de kleinste prijs aftrekken: {small}."
+    }
+  },
+  "D2.add-sub.12": {
+    "text": "Drie pakketjes wegen {x} kg, {y} kg en {z} kg. Hoeveel kilogram wegen ze samen?",
+    "solution": [
+      "Schrijf alle gewichten met twee cijfers achter de komma: {x0}, {y}, {z0}.",
+      "In honderdsten is dat {=a*100}, {b} en {=c*10}. Tel op: {=a*100} + {b} + {=c*10} = {=a*100+b+c*10} honderdsten.",
+      "{=100} honderdsten is één kilogram, dus deel door {=100}: {=a*100+b+c*10} : {=100} = {r}.",
+      "Dus het totale gewicht is {r} kg."
+    ],
+    "hints": [
+      "Schrijf alle gewichten met evenveel cijfers achter de komma, zodat je honderdsten bij honderdsten optelt.",
+      "In honderdsten zijn de gewichten {=a*100}, {b} en {=c*10}. Tel deze drie getallen op en schrijf de uitkomst met een komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-parcels-only": "Je schreef {w_two_parcels_only}. Dat is het gewicht van twee pakketjes, maar je moet er drie optellen.",
+      "tenths-as-hundredths": "Je schreef {w_tenths_as_hundredths}. De tienden van {z} zijn als honderdsten opgeteld. Het cijfer achter de komma in {z} staat op de plaats van de tienden: {z} is {z0}.",
+      "comma-ignored": "Je schreef {w_comma_ignored}. De gewichten zijn zonder komma's opgeteld. Houd de komma erbij: {y} kg is niet {b} kg. Het antwoord is {r}."
+    }
+  },
+  "D2.add-sub.13": {
+    "text": "Prijzen: {x}, {y} en {z} euro. Rond elke prijs af op hele euro's en tel de afgeronde getallen op.",
+    "solution": [
+      "Rond elke prijs af: bij meer dan {=50} cent neem je de volgende hele euro, anders blijven het de hele euro's.",
+      "{x} ≈ {x1}, {y} ≈ {y1}, {z} ≈ {z1}.",
+      "{x1} + {y1} + {z1} = {r}."
+    ],
+    "hints": [
+      "Kijk naar de centen van elke prijs: zijn het er meer of minder dan een halve euro?",
+      "De centen zijn {b}, {d} en {f}. Meer dan {=50} betekent omhoog afronden, minder betekent omlaag. Welke prijzen ronden omhoog af? Tel daarna de afgeronde getallen op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cut-each": "Je schreef {w_cut_each}. Dan laat je van elke prijs de centen weg. Bij meer dan {=50} cent rond je omhoog af naar de volgende euro.",
+      "rounded-up-each": "Je schreef {w_rounded_up_each}. Dan rond je elke prijs omhoog af. Een prijs rond je alleen omhoog af bij meer dan {=50} cent.",
+      "rounded-the-total": "Je schreef {w_rounded_the_total}. Dan heb je de precieze som afgerond. De opdracht was eerst elke prijs af te ronden en dan op te tellen: {r}."
+    }
+  },
+  "D2.add-sub.14": {
+    "text": "Op de rekening staat {a} euro. Eerst wordt {x} euro uitgegeven en daarna nog {y} euro. Hoeveel euro blijft er over?",
+    "solution": [
+      "Zoek eerst op hoeveel er in totaal is uitgegeven: {x} + {y} = {s}.",
+      "Trek het uitgegeven bedrag af van het geld op de rekening: {a} − {s} = {r}.",
+      "Er blijft dus {r} euro over."
+    ],
+    "hints": [
+      "Zoek eerst op hoeveel geld er met beide aankopen samen is uitgegeven.",
+      "Er is {x} + {y} = {s} uitgegeven. Trek nu {s} af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second-purchase-forgotten": "Je schreef {w_second_purchase_forgotten}. Dan trek je maar één aankoop af. Er is twee keer geld uitgegeven: {x} euro en {y} euro.",
+      "spent-only": "Je schreef {w_spent_only}. Dat is wat er in totaal is uitgegeven, maar de vraag is wat er overblijft. Trek de {s} die is uitgegeven af van {a}.",
+      "added": "Je schreef {w_added}. Dat telt de aankopen bij het geld op de rekening op. Aankopen halen geld weg, dus trek je ze af.",
+      "no-borrowing": "Je schreef {w_no_borrowing}. De euro's zijn apart afgetrokken en de centen zijn gewoon overgenomen. Maar {a} euro heeft geen centen, dus je moet eerst één euro omwisselen voor {=100} cent: {a} − {s} = {r}."
+    }
+  },
+  "D2.add-sub.15": {
+    "text": "{x} + {y} = {s}. Welk cijfer zit er achter het vraagteken?",
+    "solution": [
+      "Het eerste getal is de som min het tweede getal: {s} − {y} = {full}.",
+      "In {full} staat op de plaats van het vraagteken het cijfer {r}.",
+      "Controle: {full} + {y} = {s}."
+    ],
+    "hints": [
+      "Het eerste getal is de som zonder het tweede getal: haal {y} van {s} af.",
+      "Trek onder elkaar af: {s} − {y}. Kijk dan welk cijfer op de plaats van het vraagteken komt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths-of-the-sum": "Je schreef {w_tenths_of_the_sum}. Dat is het cijfer van de tienden van de som {s}. Maar het getal {full} is kleiner dan de som, dus de tienden zijn anders.",
+      "borrow-forgotten": "Je schreef {w_borrow_forgotten}. Het lenen ontbreekt: {s} heeft minder honderdsten dan {y}, dus je moet een tiende lenen van de plaats links ervan.",
+      "tenths-of-the-other-addend": "Je schreef {w_tenths_of_the_other_addend}. Dat is het cijfer van de tienden van het tweede getal {y}. Het verborgen cijfer zijn de tienden van het eerste getal."
+    }
+  },
+  "D2.add-sub.16": {
+    "text": "Bereken de som {f1} + {f2} + {f3} + … + {last}. Elk volgend getal is {f1} groter dan het vorige.",
+    "solution": [
+      "Tel het eerste getal bij het laatste op: {f1} + {last} = {pair}. Het tweede met het één-na-laatste geeft hetzelfde, enzovoort.",
+      "Er zijn {k} getallen. Tel je ze twee keer op, één keer vooruit en één keer terug, dan krijg je {k} paren van {pair}.",
+      "Elk getal is dan twee keer geteld, dus deel door {=2}: {k} × {pair} : {=2} = {r}."
+    ],
+    "hints": [
+      "Tel het eerste getal bij het laatste op en daarna het tweede bij het één-na-laatste.",
+      "{f1} + {last} = {pair} en het volgende paar geeft hetzelfde. Er zijn {k} getallen. Wat krijg je uit {k} keer {pair} en wat moet je daarna doen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "forgot-to-halve": "Je schreef {w_forgot_to_halve}. Dat is niet gehalveerd. Bij {k} paren is elk getal twee keer geteld, dus deel door {=2}.",
+      "count-times-last": "Je schreef {w_count_times_last}. Dat is {k} × {last}, de som als alle getallen zo groot waren als het laatste. De eerste getallen zijn kleiner, dus neem de helft: {=pair/2}."
+    }
+  },
+  "D2.add-sub.17": {
+    "text": "Welke twee prijzen zijn samen {s} euro? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Antwoord met de nummers van de twee prijzen, gescheiden door een komma.",
+    "solution": [
+      "Tel de prijzen steeds twee aan twee op en vergelijk de som met {s} euro. Het helpt om bij de centen te beginnen.",
+      "De prijzen {fi} en {fj} kloppen: {fi} + {fj} = {s}.",
+      "Dat zijn de prijzen met nummer {r}."
+    ],
+    "hints": [
+      "Tel eerst de centen van twee prijzen op: komt het juiste aantal centen eruit?",
+      "Probeer de paren om de beurt. Bijvoorbeeld de eerste en de tweede prijs: {a} + {b} = {=a+b} cent. Is dat {s} euro?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-two-largest": "Je koos {w_the_two_largest}. Dat zijn de twee grootste prijzen, maar samen zijn ze niet {s} euro.",
+      "euros-only-match": "Je koos {w_euros_only_match}. Die kloppen bij de euro's, maar de centen geven een andere som. Tel de euro's en de centen op."
+    }
+  },
+  "D3.shift-10.01": {
+    "text": "Bereken {x} × {=10}.",
+    "solution": [
+      "{x} is {a|tiende|tienden|tienden}.",
+      "Maal {=10}: elke tiende wordt een heel. Het waren {a|tiende|tienden|tienden}, nu zijn het {a} hele.",
+      "De komma schuift één plaats naar rechts, want {=10} heeft één nul: {x} × {=10} = {r}."
+    ],
+    "hints": [
+      "Maal {=10} maakt het getal tien keer zo groot: elk cijfer schuift één plaats op.",
+      "Schuif de komma in {x} één plaats naar rechts. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het oude getal. Maal {=10} schuift de komma één plaats naar rechts: {r}.",
+      "moved-the-wrong-way": "Je schreef {w_moved_the_wrong_way}. De komma is naar links geschoven, maar bij vermenigvuldigen schuift hij naar rechts: {r}.",
+      "moved-two-places": "Je schreef {w_moved_two_places}. De komma is twee plaatsen geschoven. {=10} heeft één nul, dus de komma schuift één plaats.",
+      "ten-added": "Je schreef {w_ten_added}. Dat telt {=10} erbij op. Het teken is een keerteken: de komma schuift één plaats naar rechts en het antwoord is {r}."
+    }
+  },
+  "D3.shift-10.02": {
+    "text": "Bereken {x} × {=100}.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}.",
+      "Maal {=100}: elke honderdste wordt een heel. Het waren {a|honderdste|honderdsten|honderdsten}, nu zijn het {a} hele.",
+      "De komma schuift twee plaatsen naar rechts, want {=100} heeft twee nullen: {x} × {=100} = {r}."
+    ],
+    "hints": [
+      "Maal {=100} maakt het getal honderd keer zo groot: elk cijfer schuift twee plaatsen op.",
+      "Schuif de komma in {x} twee plaatsen naar rechts. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-one-place": "Je schreef {w_moved_one_place}. De komma is één plaats geschoven. {=100} heeft twee nullen, dus de komma schuift twee plaatsen: {r}.",
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het oude getal. Maal {=100} schuift de komma twee plaatsen naar rechts: {r}.",
+      "moved-three-places": "Je schreef {w_moved_three_places}. De komma is drie plaatsen geschoven. {=100} heeft twee nullen, dus de komma schuift twee plaatsen."
+    }
+  },
+  "D3.shift-10.03": {
+    "text": "Bereken {x} × {=1000}.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}.",
+      "Maal {=100}: dan heb je {a} hele. Maal ook nog {=10}: {a} × {=10} = {=a*10}.",
+      "De komma schuift drie plaatsen naar rechts, want {=1000} heeft drie nullen: {x} × {=1000} = {r}."
+    ],
+    "hints": [
+      "Maal {=1000} maakt het getal duizend keer zo groot: elk cijfer schuift drie plaatsen op.",
+      "Schuif de komma in {x} drie plaatsen naar rechts. Zijn er te weinig cijfers, schrijf dan een nul achteraan. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-two-places": "Je schreef {w_moved_two_places}. De komma is twee plaatsen geschoven, zoals bij {=100}. {=1000} heeft drie nullen: de komma schuift drie plaatsen en je schrijft een nul erbij, {r}.",
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het oude getal. Maal {=1000} schuift de komma drie plaatsen naar rechts: {r}.",
+      "moved-one-place": "Je schreef {w_moved_one_place}. De komma is één plaats geschoven. {=1000} heeft drie nullen, dus de komma schuift drie plaatsen."
+    }
+  },
+  "D3.shift-10.04": {
+    "text": "Bereken {a} : {=10}.",
+    "solution": [
+      "Delen door {=10} maakt het getal tien keer zo klein: elk cijfer schuift één plaats naar rechts.",
+      "Tientallen worden eenheden en eenheden worden tienden.",
+      "De komma schuift één plaats naar links: {a} : {=10} = {r}."
+    ],
+    "hints": [
+      "Delen door {=10} maakt het getal tien keer zo klein: elk cijfer schuift één plaats terug.",
+      "Zet in {a} de komma zo dat het laatste cijfer de tienden wordt. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-the-wrong-way": "Je schreef {w_moved_the_wrong_way}. De komma is naar rechts geschoven, maar bij delen schuift hij naar links: {r}.",
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het oude getal {a}. Delen door {=10} schuift de komma één plaats naar links: {r}.",
+      "moved-two-places": "Je schreef {w_moved_two_places}. De komma is twee plaatsen geschoven. {=10} heeft één nul, dus de komma schuift één plaats."
+    }
+  },
+  "D3.shift-10.05": {
+    "text": "Bereken {a} : {=100}.",
+    "solution": [
+      "Delen door {=100} maakt het getal honderd keer zo klein: elk cijfer schuift twee plaatsen naar rechts.",
+      "Honderdtallen worden eenheden, tientallen worden tienden en eenheden worden honderdsten.",
+      "De komma schuift twee plaatsen naar links, want {=100} heeft twee nullen: {a} : {=100} = {r}."
+    ],
+    "hints": [
+      "Delen door {=100} maakt het getal honderd keer zo klein: elk cijfer schuift twee plaatsen terug.",
+      "Zet in {a} de komma zo dat de laatste twee cijfers erachter staan. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-one-place": "Je schreef {w_moved_one_place}. De komma is maar één plaats geschoven. {=100} heeft twee nullen, dus de komma schuift twee plaatsen naar links: {r}.",
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het oude getal {a}. Delen door {=100} schuift de komma twee plaatsen naar links: {r}.",
+      "moved-three-places": "Je schreef {w_moved_three_places}. De komma is drie plaatsen geschoven. {=100} heeft twee nullen, dus de komma schuift twee plaatsen."
+    }
+  },
+  "D3.shift-10.06": {
+    "text": "Bereken {x} × {=10}.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}.",
+      "Maal {=10}: elke honderdste wordt een tiende. Het waren {a|honderdste|honderdsten|honderdsten}, nu zijn het {a|tiende|tienden|tienden}.",
+      "De komma schuift één plaats naar rechts: {x} × {=10} = {r}."
+    ],
+    "hints": [
+      "Maal {=10} maakt het getal tien keer zo groot: elk cijfer schuift één plaats op.",
+      "Schuif de komma in {x} één plaats naar rechts. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-two-places": "Je schreef {w_moved_two_places}. De komma is twee plaatsen geschoven, maar hij moet één plaats schuiven.",
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het oude getal. Maal {=10} schuift de komma één plaats naar rechts: {r}.",
+      "moved-the-wrong-way": "Je schreef {w_moved_the_wrong_way}. De komma is naar links geschoven. Bij vermenigvuldigen schuift de komma naar rechts: {r}."
+    }
+  },
+  "D3.shift-10.07": {
+    "text": "Een lengte is {a} cm. Hoeveel meter is dat?",
+    "solution": [
+      "Een meter is {=100} cm, dus je rekent centimeters om naar meters door te delen door {=100}.",
+      "Delen door {=100} betekent de komma twee plaatsen naar links schuiven: {a} : {=100} = {r}.",
+      "Dus {a} cm = {r} m."
+    ],
+    "hints": [
+      "Een meter is {=100} centimeter, dus je hebt minder meters dan centimeters.",
+      "Deel {a} door {=100}: schuif de komma in {a} twee plaatsen naar links. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-one-place": "Je schreef {w_moved_one_place}. De komma is maar één plaats geschoven. Een meter is honderd centimeter, dus de komma schuift twee plaatsen naar links: {r}.",
+      "moved-three-places": "Je schreef {w_moved_three_places}. De komma is drie plaatsen geschoven. Een meter is honderd centimeter, geen duizend, dus de komma schuift twee plaatsen.",
+      "multiplied": "Je schreef {w_multiplied}. Dat is maal {=100}. Een meter is groter dan een centimeter, dus je hebt minder meters: deel door {=100} en je krijgt {r}."
+    }
+  },
+  "D3.shift-10.08": {
+    "text": "Een afstand is {x} km. Hoeveel meter is dat?",
+    "solution": [
+      "Een kilometer is {=1000} meter, dus je rekent kilometers om naar meters door te vermenigvuldigen met {=1000}.",
+      "{x} km is {a|honderdste|honderdsten|honderdsten} kilometer. Maal {=100}: dan heb je {a}. Maal ook nog {=10}: {a} × {=10} = {=a*10}.",
+      "Dus {x} km = {r} m."
+    ],
+    "hints": [
+      "Een kilometer is {=1000} meter, dus je hebt meer meters dan kilometers.",
+      "Vermenigvuldig {x} met {=1000}: schuif de komma drie plaatsen naar rechts en schrijf een nul achteraan als er te weinig cijfers zijn. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-two-places": "Je schreef {w_moved_two_places}. De komma is twee plaatsen geschoven. Een kilometer is duizend meter, dus de komma schuift drie plaatsen naar rechts: {r}.",
+      "comma-ignored": "Je schreef {w_comma_ignored}. Daar is de komma van {x} weggelaten en is het getal met {=1000} vermenigvuldigd. De komma telt ook mee: hij schuift drie plaatsen naar rechts.",
+      "moved-four-places": "Je schreef {w_moved_four_places}. De komma is vier plaatsen geschoven. Een kilometer is duizend meter en dat heeft drie nullen, dus de komma schuift drie plaatsen."
+    }
+  },
+  "D3.shift-10.09": {
+    "text": "Bereken {x} : {=10}.",
+    "solution": [
+      "{x} is {a|tiende|tienden|tienden}.",
+      "Deel door {=10}: elke tiende wordt een honderdste. Het waren {a|tiende|tienden|tienden}, nu zijn het {a|honderdste|honderdsten|honderdsten}.",
+      "De komma schuift één plaats naar links: {x} : {=10} = {r}."
+    ],
+    "hints": [
+      "Delen door {=10} maakt het getal tien keer zo klein: elk cijfer schuift één plaats terug.",
+      "Schuif de komma in {x} één plaats naar links. Blijft er vóór de komma geen cijfer over, schrijf dan een nul. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het oude getal. Delen door {=10} schuift de komma één plaats naar links: {r}.",
+      "moved-the-wrong-way": "Je schreef {w_moved_the_wrong_way}. De komma is naar rechts geschoven. Bij delen schuift de komma naar links: {r}.",
+      "moved-two-places": "Je schreef {w_moved_two_places}. De komma is twee plaatsen geschoven. {=10} heeft één nul, dus de komma schuift één plaats."
+    }
+  },
+  "D3.shift-10.10": {
+    "text": "Het getal {x} is vermenigvuldigd met {=10}, {=100} of {=1000} en de uitkomst is {y}. Hoeveel keer zo groot is het getal geworden?",
+    "solution": [
+      "Om te weten hoeveel keer zo groot het getal is geworden, deel je het nieuwe getal door het oude.",
+      "{y} : {x} = {=y/x}.",
+      "Het getal is dus {r} keer zo groot geworden."
+    ],
+    "hints": [
+      "Vergelijk hoe {x} en {y} geschreven zijn: hoeveel plaatsen is de komma opgeschoven?",
+      "Eén plaats betekent maal {=10}, twee plaatsen maal {=100}, drie plaatsen maal {=1000}. Tel de plaatsen tussen de komma in {x} en de komma in {y}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-zero-too-few": "Je schreef {w_one_zero_too_few}. Dat telt één plaats minder dan de komma echt is geschoven.",
+      "one-zero-too-many": "Je schreef {w_one_zero_too_many}. Dat telt één nul te veel. De komma is {b|plaats|plaatsen|plaatsen} geschoven: dat is {r}.",
+      "number-of-places": "Je schreef {w_number_of_places}. Dat is het aantal plaatsen dat de komma is geschoven. De vraag is hoeveel keer zo groot het getal is geworden: één plaats is tien keer, twee plaatsen honderd keer, drie plaatsen duizend keer."
+    }
+  },
+  "D3.shift-10.11": {
+    "text": "{x} × ? = {y}. Vind de ontbrekende factor.",
+    "solution": [
+      "Om van {x} naar {y} te komen, moet de komma {c|plaats|plaatsen|plaatsen} naar rechts schuiven.",
+      "De komma {c|plaats|plaatsen|plaatsen} naar rechts schuiven is vermenigvuldigen met {r}, want {r} heeft zoveel nullen.",
+      "Controle met delen: {y} : {x} = {r}."
+    ],
+    "hints": [
+      "Kijk hoeveel plaatsen de komma is opgeschoven van {x} naar {y}.",
+      "Eén plaats is maal {=10}, twee plaatsen maal {=100}, drie plaatsen maal {=1000}. Hoeveel plaatsen zitten er tussen de komma in {x} en de komma in {y}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-zero-too-few": "Je schreef {w_one_zero_too_few}. Daarmee schuift de komma minder plaatsen dan nodig. Van {x} naar {y} schuift de komma {c|plaats|plaatsen|plaatsen}, dus de factor heeft zoveel nullen.",
+      "one-zero-too-many": "Je schreef {w_one_zero_too_many}. Daarmee schuift de komma meer plaatsen dan nodig. Van {x} naar {y} schuift de komma {c|plaats|plaatsen|plaatsen}.",
+      "number-of-places": "Je schreef {w_number_of_places}. Dat is het aantal plaatsen dat de komma is geschoven. De factor is {=10}, {=100} of {=1000}: één plaats is {=10}, twee plaatsen {=100}, drie plaatsen {=1000}. Hier is de factor {r}."
+    }
+  },
+  "D3.shift-10.12": {
+    "text": "Vermenigvuldig {x} met {=10} en deel de uitkomst door {=100}.",
+    "solution": [
+      "Maal {=10}: de komma schuift één plaats naar rechts, {x} × {=10} = {a}.",
+      "Delen door {=100}: de komma schuift twee plaatsen naar links, {a} : {=100} = {r}.",
+      "In totaal ging de komma één plaats naar rechts en twee plaatsen naar links, dus één plaats naar links. De uitkomst is dus {r}."
+    ],
+    "hints": [
+      "Ga op volgorde: eerst maal {=10}, dan delen door {=100}.",
+      "{x} × {=10} = {a}. Deel nu {a} door {=100}: schuif de komma twee plaatsen naar links.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-the-last-step": "Je schreef {w_only_the_last_step}. Daar is de komma alleen voor het delen geschoven. Ook maal {=10} schuift hem.",
+      "only-the-first-step": "Je schreef {w_only_the_first_step}. Dat is alleen maal {=10}. De uitkomst moet daarna nog door {=100} gedeeld worden.",
+      "shifted-the-same-way": "Je schreef {w_shifted_the_same_way}. Daar is de komma beide keren naar rechts geschoven. Delen door {=100} schuift hem twee plaatsen naar links."
+    }
+  },
+  "D3.shift-10.13": {
+    "text": "De komma in een getal is {b|plaats|plaatsen|plaatsen} naar rechts geschoven en de uitkomst is {y}. Wat was het getal aan het begin?",
+    "solution": [
+      "De komma is {b|plaats|plaatsen|plaatsen} naar rechts geschoven, dus het getal is {=pow(10,b)} keer zo groot gemaakt.",
+      "Om het getal terug te krijgen, schuif je de komma {b|plaats|plaatsen|plaatsen} naar links, dus je deelt door {=pow(10,b)}.",
+      "{y} : {=pow(10,b)} = {r}."
+    ],
+    "hints": [
+      "De komma is naar rechts geschoven, dus om het getal terug te krijgen moet hij de andere kant op.",
+      "Schuif de komma in {y} {b|plaats|plaatsen|plaatsen} naar links. Hoe ziet het getal er nu uit?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is het getal na het schuiven. Om het begingetal te vinden, schuif je de komma terug.",
+      "moved-the-wrong-way": "Je schreef {w_moved_the_wrong_way}. Daar is de komma nog een keer naar rechts geschoven. Je krijgt het getal terug door de komma naar links te schuiven.",
+      "one-place-too-many": "Je schreef {w_one_place_too_many}. De komma is één plaats te ver naar links geschoven. Hij moet precies {b|plaats|plaatsen|plaatsen} schuiven.",
+      "one-place-too-few": "Je schreef {w_one_place_too_few}. De komma is te weinig plaatsen naar links geschoven. Hij moet {b|plaats|plaatsen|plaatsen} schuiven."
+    }
+  },
+  "D3.shift-10.14": {
+    "text": "Vergelijk {f} en {g}. Welk teken hoort ertussen?",
+    "solution": [
+      "Schuif de komma naar rechts: {f} = {u}.",
+      "{g} = {w}.",
+      "Vergelijk {u} en {w}: tussen {f} en {g} komt het teken {r}."
+    ],
+    "hints": [
+      "Zoek de waarde van elk product.",
+      "Schuif de komma naar rechts zoveel plaatsen als er nullen in de tweede factor staan: bij het eerste product {c|plaats|plaatsen|plaatsen}, bij het tweede {e|plaats|plaatsen|plaatsen}. Vergelijk daarna de twee getallen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "multipliers-only": "Je koos {w_multipliers_only}. Dat vergelijkt alleen de getallen {=10}, {=100} of {=1000}. Maar bij de eerste factoren staat de komma op een andere plaats, en dat verandert de waarde.",
+      "numbers-only": "Je koos {w_numbers_only}. Dat vergelijkt alleen de eerste factoren. Maar de getallen {=10}, {=100} of {=1000} verschillen ook, en ook zij veranderen de uitkomst."
+    }
+  },
+  "D3.shift-10.15": {
+    "text": "{=100} g van een product kost {x} euro. Hoeveel euro kost {=1} kg?",
+    "solution": [
+      "{=1} kg is {=1000} g en dat is {=10} keer zoveel als {=100} g.",
+      "Dus de prijs moet maal {=10}: de komma schuift één plaats naar rechts.",
+      "{x} × {=10} = {r}."
+    ],
+    "hints": [
+      "Hoe vaak past {=100} g in één kilogram?",
+      "In één kilogram zitten {=10} porties van {=100} g. Vermenigvuldig {x} met {=10}: schuif de komma één plaats naar rechts.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "moved-the-wrong-way": "Je schreef {w_moved_the_wrong_way}. De komma is naar links geschoven. Een kilogram is meer gram dan {=100} g, dus het kost meer.",
+      "moved-two-places": "Je schreef {w_moved_two_places}. De komma is twee plaatsen geschoven. In een kilogram zit {=10} keer {=100} g, niet {=100} keer.",
+      "comma-not-moved": "Je schreef {w_comma_not_moved}. Dat is de prijs van {=100} g. Een kilogram is {=10} keer {=100} g, dus de prijs moet maal {=10}."
+    }
+  },
+  "D3.shift-10.16": {
+    "text": "Als je de komma in een getal één plaats naar rechts schuift, wordt het getal {y} groter. Vind het getal.",
+    "solution": [
+      "Schuif je de komma één plaats naar rechts, dan wordt het getal {=10} keer zo groot: eerst was er één getal, nu zijn het er {=10}.",
+      "Het getal is dus {=10} − {=1} = {=9} van die getallen groter geworden en dat is {y}.",
+      "{y} : {=9} = {r}."
+    ],
+    "hints": [
+      "Hoeveel keer zo groot wordt het getal als je de komma één plaats naar rechts schuift?",
+      "Het getal is {=10} keer zo groot geworden, dus er zijn {=9} van die getallen bij gekomen, en dat is {y}. Hoe vind je één zo'n getal?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "divided-by-ten": "Je schreef {w_divided_by_ten}. Dat is delen door {=10}. Het nieuwe getal is {=10} keer het oude, maar er zijn er maar {=9} bij gekomen, dus deel door {=9}.",
+      "the-increase-itself": "Je schreef {w_the_increase_itself}. Dat is hoeveel het getal groter is geworden. Het getal zelf is {=9} keer zo klein."
+    }
+  },
+  "D3.shift-10.17": {
+    "text": "De komma in een getal is één plaats naar links geschoven. De som van het oude en het nieuwe getal is {y}. Vind het oude getal.",
+    "solution": [
+      "Het nieuwe getal is {=10} keer zo klein als het oude: het oude getal is {=10} delen, het nieuwe is {=1} deel.",
+      "Samen zijn dat {=11} delen en dat is {y}. Eén deel: {y} : {=11} = {u}.",
+      "Het oude getal is {=10} delen: {u} × {=10} = {r}."
+    ],
+    "hints": [
+      "Hoeveel keer zo klein is het nieuwe getal als het oude?",
+      "De som {y} bestaat uit {=11} gelijke delen: het nieuwe getal is één deel, het oude getal is {=10} delen. Deel {y} door {=11}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "half-of-the-sum": "Je schreef {w_half_of_the_sum}. Dat is de helft van de som. Het oude en het nieuwe getal zijn niet gelijk: het oude is {=10} keer zo groot.",
+      "the-new-number": "Je schreef {w_the_new_number}. Dat is het nieuwe getal, dat {=10} keer zo klein is als het oude. Het oude getal is {=10} keer zo groot: {r}."
+    }
+  },
+  "D4.multiply.01": {
+    "text": "Bereken het product {x} × {b}.",
+    "solution": [
+      "{x} is {a} tienden.",
+      "Vermenigvuldig als hele getallen: {a} × {b} = {=a*b} tienden.",
+      "Tienden hebben één cijfer achter de komma, dus {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} tienden. Je kunt de komma even weglaten en later terugzetten.",
+      "Reken {a} × {b} uit als hele getallen. {x} heeft één cijfer achter de komma, dus het antwoord krijgt er ook één.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je twee cijfers achter de komma zet. {x} heeft één cijfer achter de komma, dus het product ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. {x} heeft één cijfer achter de komma, dus het antwoord ook: {r}.",
+      "added": "{w_added} krijg je als je {x} en {b} optelt. Hier moet je vermenigvuldigen: {x} × {b} = {r}.",
+      "parts-multiplied-separately": "{w_parts_multiplied_separately} krijg je als je de hele getallen en de tienden apart vermenigvuldigt en naast elkaar zet. Hele getallen: {=floor(a/10)} × {b} = {=floor(a/10)*b}. Tienden: {=mod(a,10)} × {b} = {=mod(a,10)*b} tienden, en dat is meer dan een heel, dus dat hoort bij de hele getallen. Zo hoort het: {r}."
+    }
+  },
+  "D4.multiply.02": {
+    "text": "Bereken het product {a} × {x}.",
+    "solution": [
+      "{x} is {b} honderdsten.",
+      "Vermenigvuldig als hele getallen: {a} × {b} = {=a*b} honderdsten.",
+      "Honderdsten hebben twee cijfers achter de komma, dus {a} × {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {b} honderdsten. Je kunt de komma even weglaten en later terugzetten.",
+      "Reken {a} × {b} uit als hele getallen en haal rechts twee cijfers af voor de komma: {x} heeft twee cijfers achter de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet. {x} heeft twee cijfers achter de komma, dus het product ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. {x} heeft twee cijfers achter de komma, dus het antwoord ook.",
+      "added": "{w_added} krijg je als je {a} en {x} optelt. Hier moet je vermenigvuldigen: {a} × {x} = {r}."
+    }
+  },
+  "D4.multiply.03": {
+    "text": "Bereken het product {a} × {p}.",
+    "solution": [
+      "{p} is één honderdste minder dan {n}.",
+      "Met de prijs {n} zou het {a} × {b} = {=a*b} zijn.",
+      "Maar elke prijs is één honderdste minder, en dat zijn er {a}, dus we trekken er {a|honderdste|honderdsten|honderdsten} af: {=a*b} − {=a/100} = {r}."
+    ],
+    "hints": [
+      "{p} is {n} min één honderdste. Met een rond getal rekent het makkelijker.",
+      "Reken {a} × {n} uit en trek er dan {a|honderdste|honderdsten|honderdsten} van af: bij elk van de {a} prijzen ontbreekt één honderdste.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rounded-price": "{w_rounded_price} krijg je als je {a} met {n} vermenigvuldigt in plaats van met {p}. De prijs {p} is een honderdste minder, dus het product ook: {r}.",
+      "cent-subtracted-once": "{w_cent_subtracted_once} krijg je als je maar één honderdste van {=a*b} aftrekt. Bij elk van de {a} prijzen ontbreekt één honderdste, dus je trekt er {a|honderdste|honderdsten|honderdsten} af: {r}.",
+      "added": "{w_added} krijg je als je {a} en {p} optelt. Hier moet je vermenigvuldigen: {a} × {p} = {r}."
+    }
+  },
+  "D4.multiply.04": {
+    "text": "Eén product kost {x} euro. Hoeveel euro kosten {b|zo'n product|zulke producten|zulke producten}?",
+    "solution": [
+      "{x} euro is {a|honderdste|honderdsten|honderdsten}.",
+      "Vermenigvuldig met het aantal producten: {a} × {b} = {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Schrijf het met een komma: {x} × {b} = {r}, dus {b|product|producten|producten} kosten {r} euro."
+    ],
+    "hints": [
+      "De prijs van meer gelijke producten is de prijs van één product maal het aantal.",
+      "De prijs {x} euro is {a} honderdsten. Reken {a} × {b} uit en haal rechts twee cijfers af voor de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet. De prijs {x} heeft twee cijfers achter de komma, dus het antwoord ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. De prijs {x} heeft twee cijfers achter de komma, dus het antwoord ook.",
+      "added": "{w_added} krijg je als je de prijs {x} en het aantal {b} optelt. De prijs vermenigvuldig je met het aantal: {r}."
+    }
+  },
+  "D4.multiply.05": {
+    "text": "Bereken het product {x} × {a}.",
+    "solution": [
+      "Vermenigvuldigen met {x} is hetzelfde als de helft nemen.",
+      "De helft nemen is delen door {=2}: {a} : {=2} = {r}.",
+      "Dus {x} × {a} = {r}."
+    ],
+    "hints": [
+      "Vermenigvuldigen met {x} is hetzelfde als de helft nemen.",
+      "Zoek de helft van {a}: deel het getal door {=2}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} krijg je als je de komma vergeet. {x} heeft één cijfer achter de komma, dus het antwoord ook: {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je twee cijfers achter de komma zet. {x} heeft één cijfer achter de komma, dus het antwoord ook: {r}.",
+      "added": "{w_added} krijg je als je {x} en {a} optelt. Vermenigvuldigen met {x} is de helft nemen van {a}: {r}."
+    }
+  },
+  "D4.multiply.06": {
+    "text": "Bereken het product {x} × {b}.",
+    "solution": [
+      "Vermenigvuldig zonder naar de komma te kijken: {a} × {b} = {=a*b}.",
+      "{x} heeft één cijfer achter de komma, dus {=a*b} zijn tienden.",
+      "Dus {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{x} is meer dan één, dus het antwoord is groter dan {b}.",
+      "Reken {a} × {b} uit zonder komma en zet de komma terug zodat er één cijfer achter staat, net als bij {x}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. {x} heeft één cijfer achter de komma, dus het antwoord ook.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je twee cijfers achter de komma zet. {x} heeft één cijfer achter de komma, dus het product ook: {r}.",
+      "added": "{w_added} krijg je als je {x} en {b} optelt. Hier moet je vermenigvuldigen: {x} × {b} = {r}.",
+      "parts-multiplied-separately": "{w_parts_multiplied_separately} krijg je als je de hele getallen en de tienden apart vermenigvuldigt en naast elkaar zet. Hele getallen: {=floor(a/10)} × {b} = {=floor(a/10)*b}. Tienden: {=mod(a,10)} × {b} = {=mod(a,10)*b} tienden, en dat is meer dan een heel, dus dat hoort bij de hele getallen. Zo hoort het: {r}."
+    }
+  },
+  "D4.multiply.07": {
+    "text": "Bereken het product {x} × {b}.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}.",
+      "Vermenigvuldig: {a} × {b} = {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Schrijf {=a*b|honderdste|honderdsten|honderdsten} met een komma: {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} honderdsten. Je kunt de komma even weglaten en later terugzetten.",
+      "Reken {a} × {b} uit als hele getallen en haal rechts twee cijfers af voor de komma: {x} heeft twee cijfers achter de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet. {x} heeft twee cijfers achter de komma, dus het product ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. {x} heeft twee cijfers achter de komma, dus het antwoord ook.",
+      "added": "{w_added} krijg je als je {x} en {b} optelt. Hier moet je vermenigvuldigen: {x} × {b} = {r}."
+    }
+  },
+  "D4.multiply.08": {
+    "text": "Bereken het product {x} × {b}.",
+    "solution": [
+      "Haal de komma weg: {x} is {=x*10|tiende|tienden|tienden}.",
+      "Vermenigvuldig: {=x*10} × {b} = {=x*10*b|tiende|tienden|tienden}.",
+      "Schrijf het met een komma: {x} × {b} = {r}."
+    ],
+    "hints": [
+      "Je kunt {x} schrijven als {=x*10} tienden, zonder komma.",
+      "Reken {=x*10} × {b} uit en zet de komma terug zodat er één cijfer achter staat.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je twee cijfers achter de komma zet. {x} heeft één cijfer achter de komma, dus het product ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {=x*10} × {b} als hele getallen uitrekent en de komma vergeet. {x} heeft één cijfer achter de komma, dus het antwoord ook.",
+      "parts-multiplied-separately": "{w_parts_multiplied_separately} krijg je als je de hele getallen en de tienden apart vermenigvuldigt en naast elkaar zet. Na het vermenigvuldigen zijn er meer dan tien tienden, en die horen bij de hele getallen: {r}."
+    }
+  },
+  "D4.multiply.09": {
+    "text": "Een kilo appels kost {x} euro. Hoeveel euro kosten {b} kg?",
+    "solution": [
+      "Eén kg kost {x} euro en we kopen {b} kg, dus we vermenigvuldigen de prijs met {b}.",
+      "{x} euro is {a|honderdste|honderdsten|honderdsten}, en {a} × {b} = {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Schrijf het met een komma: {x} × {b} = {r}, dus {b} kg kost {r} euro."
+    ],
+    "hints": [
+      "De kosten van meer kilo's zijn de prijs van één kilo, zo vaak genomen als er kilo's zijn.",
+      "De prijs {x} euro is {a} honderdsten. Reken {a} × {b} uit en haal rechts twee cijfers af voor de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "added": "{w_added} krijg je als je {x} en {b} optelt. De kosten van {b} kg vind je door te vermenigvuldigen: {x} × {b} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet. De prijs {x} heeft twee cijfers achter de komma, dus het antwoord ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. De prijs {x} heeft twee cijfers achter de komma, dus het antwoord ook."
+    }
+  },
+  "D4.multiply.10": {
+    "text": "Bereken het product {a} × {x}.",
+    "solution": [
+      "{x} is {b|tiende|tienden|tienden}.",
+      "Vermenigvuldig: {a} × {b} = {=a*b|tiende|tienden|tienden}.",
+      "Schrijf {=a*b|tiende|tienden|tienden} met een komma: {a} × {x} = {r}."
+    ],
+    "hints": [
+      "Vermenigvuldigen met {x} is {b|tiende|tienden|tienden} nemen, en dat {a} keer.",
+      "Reken {a} × {b} uit: dat is een aantal tienden. Achter de komma komt één cijfer.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je twee cijfers achter de komma zet. {x} heeft één cijfer achter de komma, dus het product ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. {x} heeft één cijfer achter de komma, dus het antwoord ook.",
+      "added": "{w_added} krijg je als je {a} en {x} optelt. Hier moet je vermenigvuldigen: {a} × {x} = {r}."
+    }
+  },
+  "D4.multiply.11": {
+    "text": "Verdubbel {x}.",
+    "solution": [
+      "Verdubbelen is vermenigvuldigen met {=2}.",
+      "{x} is {a|honderdste|honderdsten|honderdsten}, en {a} × {=2} = {=a*2|honderdste|honderdsten|honderdsten}.",
+      "Schrijf het met een komma: {x} × {=2} = {r}."
+    ],
+    "hints": [
+      "Verdubbelen is vermenigvuldigen met {=2}, of het getal bij zichzelf optellen.",
+      "{x} is {a} honderdsten. Verdubbel {a} en zet de komma terug zodat er twee cijfers achter staan.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet. {x} heeft twee cijfers achter de komma, dus het antwoord ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je de komma vergeet. {x} heeft twee cijfers achter de komma, en het verdubbelde getal ook: {r}.",
+      "decimal-part-not-doubled": "{w_decimal_part_not_doubled} krijg je als je alleen het hele deel van {x} verdubbelt. Je moet de hele getallen en de honderdsten allebei verdubbelen: {r}."
+    }
+  },
+  "D4.multiply.12": {
+    "text": "Eén kaartje kost {x} euro. Hoeveel euro kosten {b|kaartje|kaartjes|kaartjes}?",
+    "solution": [
+      "{x} euro is {a|honderdste|honderdsten|honderdsten}.",
+      "Vermenigvuldig met het aantal kaartjes: {a} × {b} = {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Schrijf het met een komma: {x} × {b} = {r}, dus {b|kaartje|kaartjes|kaartjes} kosten {r} euro."
+    ],
+    "hints": [
+      "De prijs van meer gelijke kaartjes is de prijs van één kaartje maal het aantal.",
+      "De prijs {x} euro is {a} honderdsten. Reken {a} × {b} uit en haal rechts twee cijfers af voor de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} krijg je als je de komma vergeet. De prijs {x} heeft twee cijfers achter de komma, dus het antwoord ook. Zo hoort het: {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet. De prijs {x} heeft twee cijfers achter de komma, dus het antwoord ook: {r}.",
+      "added": "{w_added} krijg je als je de prijs {x} en het aantal kaartjes {b} optelt. De prijs vermenigvuldig je met het aantal kaartjes: {r}."
+    }
+  },
+  "D4.multiply.13": {
+    "text": "Je weet dat {a} × {b} = {m}. Bereken {x} × {b}.",
+    "solution": [
+      "{x} krijg je uit {a} door de komma {c|plaats|plaatsen|plaatsen} naar links te schuiven: {a} : {=pow(10,c)} = {x}.",
+      "Als één factor {=pow(10,c)} keer zo klein wordt, wordt het product ook {=pow(10,c)} keer zo klein.",
+      "{m} : {=pow(10,c)} = {r}."
+    ],
+    "hints": [
+      "Hoeveel keer zo klein is {x} als {a}?",
+      "{a} werd {x}: de komma is {c|plaats|plaatsen|plaatsen} opgeschoven. Wat gebeurt er dan met het product {m}, als de andere factor {b} hetzelfde blijft?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is het product dat je al kent, {m}. De factor {x} is kleiner dan {a}, dus het product ook.",
+      "one-place-too-many": "{w_one_place_too_many} krijg je als je de komma een plaats te ver schuift. De factor werd {=pow(10,c)} keer zo klein, dus het product wordt ook {=pow(10,c)} keer zo klein, niet meer.",
+      "one-place-too-few": "{w_one_place_too_few} krijg je als je de komma minder plaatsen schuift dan nodig is. De factor werd {=pow(10,c)} keer zo klein, dus het product ook."
+    }
+  },
+  "D4.multiply.14": {
+    "text": "Schat het product {x} × {b}: rond {x} af op een geheel getal en vermenigvuldig.",
+    "solution": [
+      "Rond {x} af op een geheel getal: als wat achter de komma staat meer dan een half is, neem je het volgende hele getal, anders blijft het hele getal staan. Dus {x} ≈ {x1}.",
+      "{x1} × {b} = {r}.",
+      "Dus {x} × {b} is ongeveer {r}."
+    ],
+    "hints": [
+      "Kijk naar wat er achter de komma staat bij {x}: is het meer of minder dan een half?",
+      "Rond {x} af op {x1} en vermenigvuldig {x1} met {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cut-off": "{w_cut_off} krijg je als je het deel achter de komma van {x} gewoon weglaat. Is dat deel meer dan een half, dan rond je naar boven af.",
+      "rounded-up": "{w_rounded_up} krijg je als je {x} naar boven afrondt. Je rondt alleen naar boven af als het deel achter de komma meer dan een half is.",
+      "exact-product-rounded": "{w_exact_product_rounded} is het exacte product, afgerond. De opdracht is eerst {x} af te ronden en dan met {b} te vermenigvuldigen: {r}."
+    }
+  },
+  "D4.multiply.15": {
+    "text": "Vergelijk {f} en {g}. Welk teken staat ertussen?",
+    "solution": [
+      "Het eerste product: {f} = {u}.",
+      "Het tweede product: {g} = {w}.",
+      "Vergelijk {u} en {w}: tussen {f} en {g} staat het teken {r}."
+    ],
+    "hints": [
+      "In beide producten zijn de factoren anders, dus vergelijk de hele uitkomsten, niet losse factoren.",
+      "Reken {f} en {g} apart uit, haal in elk rechts twee cijfers af voor de komma en vergelijk dan de uitkomsten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "prices-only": "Het teken {w_prices_only} krijg je als je alleen de tweede factoren vergelijkt. Maar de eerste factoren zijn ook anders, en die veranderen de producten.",
+      "counts-only": "Het teken {w_counts_only} krijg je als je alleen de eerste factoren vergelijkt. Maar de tweede factoren zijn ook anders, en die veranderen de producten."
+    }
+  },
+  "D4.multiply.16": {
+    "text": "Er zijn {a|schrift|schriften|schriften} van {x} euro per stuk en {c|pen|pennen|pennen} van {y} euro per stuk gekocht. Hoeveel euro kost alles samen?",
+    "solution": [
+      "De schriften kosten {a} × {x} = {s1} euro.",
+      "De pennen kosten {c} × {y} = {s2} euro.",
+      "Alles samen: {s1} + {s2} = {r} euro."
+    ],
+    "hints": [
+      "Zoek eerst wat de {a|schrift|schriften|schriften} kosten, en dan wat de {c|pen|pennen|pennen} kosten.",
+      "Reken {a} × {x} en {c} × {y} apart uit en tel de twee bedragen op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second-kind-forgotten": "{w_second_kind_forgotten} zijn alleen de schriften. De pennen zijn ook gekocht, dus hun bedrag {s2} moet erbij.",
+      "all-at-the-first-price": "{w_all_at_the_first_price} krijg je als je alles voor de prijs van een schrift, {x}, rekent. De pennen kosten {y}, dus die reken je apart.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je bij het bedrag een ander aantal cijfers achter de komma zet. De prijzen hebben twee cijfers achter de komma, dus het antwoord ook: {r}."
+    }
+  },
+  "D4.multiply.17": {
+    "text": "Als je een getal met {a} vermenigvuldigt, krijg je {y} meer dan als je het met {b} vermenigvuldigt. Welk getal is het?",
+    "solution": [
+      "De vermenigvuldigers verschillen {a} − {b} = {c}. Dus het getal, {c} keer genomen, is {y}.",
+      "Om het getal te vinden, deel je {y} door {c}.",
+      "{y} : {c} = {r}."
+    ],
+    "hints": [
+      "In het eerste geval is het getal {a} keer genomen, in het tweede {b} keer. Hoeveel keer meer is dat in het eerste geval?",
+      "Die extra keren samen zijn {y}. Deel {y} door het aantal keren.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-difference-itself": "{w_the_difference_itself} is het verschil van de producten, niet het getal zelf. Dat is het getal {c} keer genomen, dus het getal zelf is {c} keer zo klein.",
+      "multiplied-by-the-gap": "{w_multiplied_by_the_gap} krijg je als je met {c} vermenigvuldigt. Het verschil van de producten moet je door {c} delen: het getal is {c} keer genomen en dat is {y}."
+    }
+  },
+  "D4.multiply-1S.01": {
+    "text": "Bereken het product {x} × {y}.",
+    "solution": [
+      "Vermenigvuldig zonder komma's: {a} × {b} = {=a*b}.",
+      "Tienden maal tienden geven honderdsten, dus dit zijn {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Dus {x} × {y} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} tienden en {y} is {b} tienden. Vermenigvuldig eerst de getallen zonder komma's.",
+      "Reken {a} × {b} uit. {x} heeft één cijfer achter de komma en {y} ook: hoeveel cijfers krijgt het antwoord?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Elke factor heeft één cijfer achter de komma, dus het product heeft er twee: {r}.",
+      "whole-product": "{w_whole_product} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. Het product heeft zoveel cijfers achter de komma als beide factoren samen, dus twee.",
+      "added": "{w_added} krijg je als je {x} en {y} optelt. Hier moet je vermenigvuldigen: {a} × {b} = {=a*b|honderdste|honderdsten|honderdsten}, dus {r}."
+    }
+  },
+  "D4.multiply-1S.02": {
+    "text": "Bereken het product {x} × {y}.",
+    "solution": [
+      "Haal de komma's weg: {x} is {a|tiende|tienden|tienden}, {y} is {b|tiende|tienden|tienden}, en {a} × {b} = {=a*b}.",
+      "Tienden maal tienden geven honderdsten, dus dit zijn {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Schrijf het met een komma: {x} × {y} = {r}."
+    ],
+    "hints": [
+      "Schrijf {x} en {y} zonder komma: dat zijn {a|tiende|tienden|tienden} en {b|tiende|tienden|tienden}.",
+      "Reken {a} × {b} uit. Tel de cijfers achter de komma bij {x} en {y} bij elkaar op en haal rechts zoveel cijfers af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Elke factor heeft één cijfer achter de komma, dus het product heeft er twee: {r}.",
+      "added": "{w_added} krijg je als je {x} en {y} optelt. Hier moet je vermenigvuldigen: {x} × {y} = {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. De komma moet terug: het product heeft er twee cijfers achter."
+    }
+  },
+  "D4.multiply-1S.03": {
+    "text": "Bereken het product {x} × {y}.",
+    "solution": [
+      "Vermenigvuldig zonder komma's: {a} × {b} = {=a*b}.",
+      "Honderdsten maal tienden geven duizendsten, dus dit zijn {=a*b|duizendste|duizendsten|duizendsten}.",
+      "Dus {x} × {y} = {r}."
+    ],
+    "hints": [
+      "{x} heeft twee cijfers achter de komma en {y} heeft er één. Vermenigvuldig eerst {a} × {b} zonder komma's.",
+      "Tel de cijfers achter de komma bij {x} en {y} bij elkaar op: zoveel cijfers moeten rechts in het antwoord staan. Zijn het er te weinig, zet dan nullen links.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-places": "{w_two_places} heeft twee cijfers achter de komma. {x} heeft er twee en {y} heeft er één, samen drie: {r}.",
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Het antwoord krijgt zoveel cijfers als beide factoren samen: twee en één, dus drie: {r}.",
+      "added": "{w_added} krijg je als je {x} en {y} optelt. Hier moet je vermenigvuldigen: {x} × {y} = {r}."
+    }
+  },
+  "D4.multiply-1S.04": {
+    "text": "De zijden van een rechthoek zijn {x} m en {y} m. Bereken de oppervlakte.",
+    "solution": [
+      "De oppervlakte van een rechthoek is lengte maal breedte.",
+      "Zonder komma's is {a} × {b} = {=a*b}, en tienden maal tienden geven honderdsten: {=a*b|honderdste|honderdsten|honderdsten}.",
+      "{x} × {y} = {r}, dus de oppervlakte is {r} vierkante meter."
+    ],
+    "hints": [
+      "De oppervlakte van een rechthoek is de lengte maal de breedte.",
+      "Reken {a} × {b} uit zonder komma's, tel dan de cijfers achter de komma bij {x} en {y} bij elkaar op en haal rechts zoveel cijfers af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Elke zijde heeft één cijfer achter de komma, dus de oppervlakte heeft er twee: {x} × {y} = {r}.",
+      "perimeter": "{w_perimeter} is de omtrek, de som van alle zijden. De oppervlakte is lengte maal breedte: {x} × {y} = {r}.",
+      "sides-added": "{w_sides_added} krijg je als je de lengte {x} en de breedte {y} optelt. De oppervlakte vind je door te vermenigvuldigen: {r}."
+    }
+  },
+  "D4.multiply-1S.05": {
+    "text": "Bereken het product {x} × {x}.",
+    "solution": [
+      "Vermenigvuldig het getal met zichzelf: {a} × {a} = {=a*a} zonder komma's.",
+      "Tienden maal tienden geven honderdsten, dus dit zijn {=a*a|honderdste|honderdsten|honderdsten}.",
+      "Dus {x} × {x} = {r}."
+    ],
+    "hints": [
+      "Het getal {x} moet je met zichzelf vermenigvuldigen. Zonder komma is het {a|tiende|tienden|tienden}.",
+      "Reken {a} × {a} uit. Tel de cijfers achter de komma van beide factoren op: zoveel cijfers moeten rechts staan.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Het getal vermenigvuldig je met zichzelf, dus er zijn twee cijfers: {x} × {x} = {r}.",
+      "doubled": "{w_doubled} krijg je als je {x} verdubbelt. Een getal met zichzelf vermenigvuldigen is iets anders: {a} × {a} = {=a*a|honderdste|honderdsten|honderdsten}, dus {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {a} als hele getallen uitrekent en de komma vergeet. Het antwoord heeft twee cijfers achter de komma."
+    }
+  },
+  "D4.multiply-1S.06": {
+    "text": "Bereken het product {x} × {x}.",
+    "solution": [
+      "{x} is {a|tiende|tienden|tienden}, en we nemen het getal twee keer: {a} × {a} = {=a*a}.",
+      "Tienden maal tienden geven honderdsten, dus dit zijn {=a*a|honderdste|honderdsten|honderdsten}.",
+      "Schrijf het met een komma: {x} × {x} = {r}."
+    ],
+    "hints": [
+      "Het getal {x} moet je met zichzelf vermenigvuldigen. Het is groter dan één, dus het antwoord is groter dan {x}.",
+      "Reken {a} × {a} uit zonder komma's. Tel de cijfers achter de komma van beide factoren op: zoveel cijfers moeten rechts staan.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Het getal vermenigvuldig je met zichzelf, dus er zijn twee cijfers: {x} × {x} = {r}.",
+      "doubled": "{w_doubled} krijg je als je {x} verdubbelt. Een getal met zichzelf vermenigvuldigen is iets anders: {a} × {a} = {=a*a|honderdste|honderdsten|honderdsten}, dus {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {a} als hele getallen uitrekent en de komma vergeet. Het antwoord heeft twee cijfers achter de komma."
+    }
+  },
+  "D4.multiply-1S.07": {
+    "text": "Een kilo kost {y} euro. Hoeveel euro kosten {x} kg?",
+    "solution": [
+      "De kosten zijn de prijs van één kilo maal het aantal kilo's: {y} × {x}.",
+      "Zonder komma's is {a} × {b} = {=a*b}, en tienden maal tienden geven honderdsten: {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Dus {x} × {y} = {r}: {x} kg kost {r} euro."
+    ],
+    "hints": [
+      "De kosten zijn de prijs van één kilo maal het aantal kilo's.",
+      "Reken {a} × {b} uit zonder komma's en haal rechts zoveel cijfers af als {x} en {y} samen achter de komma hebben.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "added": "{w_added} krijg je als je {x} en {y} optelt. De kosten vind je door te vermenigvuldigen: {x} × {y} = {r}.",
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Elke factor heeft één cijfer achter de komma, dus de kosten hebben er twee: {x} × {y} = {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. Het antwoord heeft twee cijfers achter de komma."
+    }
+  },
+  "D4.multiply-1S.08": {
+    "text": "Bereken {x} van {y}.",
+    "solution": [
+      "Een deel van een getal nemen is vermenigvuldigen: {x} × {y}.",
+      "Zonder komma's is {a} × {b} = {=a*b}, en tienden maal tienden geven honderdsten: {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Dus {x} × {y} = {r}, oftewel {x} van {y} is {r}."
+    ],
+    "hints": [
+      "Een deel van een getal vind je met vermenigvuldigen: {x} van {y} is {x} × {y}.",
+      "Reken {a} × {b} uit zonder komma's en haal rechts zoveel cijfers af als {x} en {y} samen achter de komma hebben.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Elke factor heeft één cijfer achter de komma, dus het antwoord heeft er twee: {x} × {y} = {r}.",
+      "added": "{w_added} krijg je als je {x} en {y} optelt. Een deel van een getal nemen is vermenigvuldigen: {x} × {y} = {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. Het antwoord heeft twee cijfers achter de komma."
+    }
+  },
+  "D4.multiply-1S.09": {
+    "text": "Bereken het product {x} × {a}.",
+    "solution": [
+      "{x} is {=5|honderdste|honderdsten|honderdsten}.",
+      "Vermenigvuldig: {=5} × {a} = {=5*a|honderdste|honderdsten|honderdsten}.",
+      "Schrijf {=5*a|honderdste|honderdsten|honderdsten} met een komma: {x} × {a} = {r}."
+    ],
+    "hints": [
+      "{x} is {=5|honderdste|honderdsten|honderdsten}: je kunt de komma en de nul even weglaten.",
+      "Reken {=5} × {a} uit en zet de komma terug zodat er rechts twee cijfers staan: de nul in {x} telt mee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. De nul in {x} is kwijtgeraakt, en er moeten twee cijfers staan: {r}.",
+      "added": "{w_added} krijg je als je {x} en {a} optelt. Hier moet je vermenigvuldigen: {x} × {a} = {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je de komma vergeet. {x} heeft twee cijfers achter de komma, dus het antwoord ook: {r}."
+    }
+  },
+  "D4.multiply-1S.10": {
+    "text": "Bereken het product {x} × {b}.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}.",
+      "Vermenigvuldig: {a} × {b} = {=a*b|honderdste|honderdsten|honderdsten}.",
+      "Honderd honderdsten is één heel, dus {=a*b|honderdste|honderdsten|honderdsten} is {=a*b/100}.",
+      "Dus {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{b} is {=b/10|tiental|tientallen|tientallen}. Je kunt met {=b/10} vermenigvuldigen en daarna met tien.",
+      "Reken {a} × {=b/10} uit in honderdsten en schuif de komma dan één plaats naar rechts.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "zero-dropped": "{w_zero_dropped} krijg je als je met {=b/10} rekent in plaats van met {b}: de nul van het ronde getal is kwijtgeraakt. Zo hoort het: {x} × {b} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet. {x} heeft twee cijfers achter de komma, en de nul in {b} haalt er geen weg: {r}.",
+      "added": "{w_added} krijg je als je {x} en {b} optelt. Hier moet je vermenigvuldigen: {x} × {b} = {r}."
+    }
+  },
+  "D4.multiply-1S.11": {
+    "text": "Bereken het product {x} × {y}.",
+    "solution": [
+      "{x} is {a|tiende|tienden|tienden}, en {y} is één tiende.",
+      "Een tiende deel van {a|tiende|tienden|tienden} is {a|honderdste|honderdsten|honderdsten}.",
+      "Dus {x} × {y} = {r}."
+    ],
+    "hints": [
+      "Vermenigvuldigen met {y} is een tiende deel van het getal nemen.",
+      "Zoek een tiende deel van {x}: de komma schuift één plaats naar links en voorin heb je een nul nodig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Vermenigvuldigen met {y} voegt ook een cijfer toe, dus het antwoord heeft er twee: {r}.",
+      "times-ten": "{w_times_ten} krijg je als je {x} met tien vermenigvuldigt. Vermenigvuldigen met {y} is een tiende deel van het getal nemen, en dan wordt het getal kleiner: {r}.",
+      "added": "{w_added} krijg je als je {y} bij {x} optelt. Hier moet je vermenigvuldigen: {x} × {y} = {r}."
+    }
+  },
+  "D4.multiply-1S.12": {
+    "text": "Bereken het product {x} × {y}.",
+    "solution": [
+      "Vermenigvuldig zonder komma's: {a} × {b} = {=a*b}.",
+      "Tienden maal tienden geven honderdsten: {=a*b|honderdste|honderdsten|honderdsten} is hetzelfde als {=a*b/10|tiende|tienden|tienden}.",
+      "Dus {x} × {y} = {r}."
+    ],
+    "hints": [
+      "Schrijf {x} en {y} zonder komma: dat zijn {a} en {b} tienden. Vermenigvuldig die getallen.",
+      "Het product {a} × {b} eindigt op een nul. Haal rechts twee cijfers af en laat daarna de overbodige nul aan het eind van het antwoord weg.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} krijg je als je maar één cijfer achter de komma zet. Elke factor heeft één cijfer achter de komma, dus het product heeft er twee: {a} × {b} = {=a*b|honderdste|honderdsten|honderdsten}, dus {r}.",
+      "added": "{w_added} krijg je als je {x} en {y} optelt. Hier moet je vermenigvuldigen: {x} × {y} = {r}.",
+      "whole-product": "{w_whole_product} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. Het antwoord heeft twee cijfers achter de komma."
+    }
+  },
+  "D4.multiply-1S.13": {
+    "text": "Je weet dat {a} × {b} = {m}. Bereken {x} × {y}.",
+    "solution": [
+      "{x} is {=pow(10,c)} keer zo klein als {a}, en {y} is {=pow(10,d)} keer zo klein als {b}.",
+      "Dus het product wordt {=pow(10,c)} × {=pow(10,d)} = {=pow(10,c+d)} keer zo klein.",
+      "{m} : {=pow(10,c+d)} = {r}."
+    ],
+    "hints": [
+      "Hoeveel keer zo klein is {x} als {a}, en hoeveel keer zo klein is {y} als {b}?",
+      "{x} heeft {c|cijfer|cijfers|cijfers} achter de komma, {y} heeft er {d|cijfer|cijfers|cijfers}, samen {=c+d|cijfer|cijfers|cijfers}. Schuif de komma in het product {m} zoveel plaatsen op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is het product dat je al kent, {m}. De factoren {x} en {y} zijn kleiner dan {a} en {b}, dus het product ook.",
+      "one-factor-places-only": "{w_one_factor_places_only} krijg je als je de komma alleen schuift volgens de cijfers van één factor. Het product heeft zoveel cijfers achter de komma als beide factoren samen: {=c+d|cijfer|cijfers|cijfers}.",
+      "one-place-too-few": "{w_one_place_too_few} krijg je als je de komma minder plaatsen schuift dan nodig is. Het antwoord moet {=c+d|cijfer|cijfers|cijfers} achter de komma hebben, zoveel als beide factoren samen.",
+      "one-place-too-many": "{w_one_place_too_many} krijg je als je de komma een plaats te ver schuift. Het antwoord moet {=c+d|cijfer|cijfers|cijfers} achter de komma hebben, zoveel als beide factoren samen. Zo hoort het: {r}."
+    }
+  },
+  "D4.multiply-1S.14": {
+    "text": "Welke producten zijn kleiner dan {a}? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Antwoord met de nummers van de juiste keuzes, gescheiden door komma's.",
+    "solution": [
+      "Het getal {a} maal een ander getal geeft minder dan {a} als de andere factor kleiner is dan {=1}.",
+      "De factoren kleiner dan {=1} zijn: {less}.",
+      "Dus de keuzes zijn {r}."
+    ],
+    "hints": [
+      "Wat gebeurt er met het getal {a} als je het met een getal kleiner dan één vermenigvuldigt?",
+      "Vergelijk de tweede factor van elke keuze met één: {f1}; {f2}; {f3}; {f4}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-larger-multipliers": "De keuzes {w_the_larger_multipliers} zijn de producten die groter zijn dan {a}. Vermenigvuldigen met een getal groter dan {=1} maakt de uitkomst groter, maar er werd naar kleinere producten gevraagd.",
+      "only-the-smallest": "Alleen keuze {w_only_the_smallest} is gekozen, die met de kleinste factor. Je zoekt elk product waarvan de tweede factor kleiner is dan {=1}."
+    }
+  },
+  "D4.multiply-1S.15": {
+    "text": "Het getal {x} wordt met zichzelf vermenigvuldigd: {x} × {x} × … × {x}, in totaal {b|factor|factoren|factoren}. Hoeveel nullen staan er tussen de komma en het eerste cijfer van de uitkomst dat geen nul is?",
+    "solution": [
+      "Vermenigvuldig zonder komma's: {a}, {b} keer genomen, geeft {=pow(a,b)}.",
+      "Elke factor heeft één cijfer achter de komma, dus de uitkomst heeft er {b|cijfer|cijfers|cijfers} achter de komma.",
+      "Het getal {=pow(a,b)} neemt {m|plaats|plaatsen|plaatsen} in, dus er staan {b} − {m} = {r} nullen voor."
+    ],
+    "hints": [
+      "Elk van de {b|factor|factoren|factoren} heeft één cijfer achter de komma. Hoeveel cijfers staan er in totaal achter de komma in de uitkomst?",
+      "Zonder komma is de uitkomst {=pow(a,b)}, dat zijn {m|cijfer|cijfers|cijfers}. Hoeveel van de plaatsen achter de komma blijven over voor nullen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "places-counted": "{w_places_counted} is het aantal cijfers achter de komma, niet het aantal nullen. Een deel van die plaatsen wordt ingenomen door de cijfers die geen nul zijn: {=pow(a,b)}.",
+      "one-less-than-places": "{w_one_less_than_places} past alleen als het getal zonder komma één cijfer heeft. Hier heeft het {m|cijfer|cijfers|cijfers}, dus er staan {b} − {m} = {r} nullen voor."
+    }
+  },
+  "D4.multiply-1S.16": {
+    "text": "Bereken het product {x} × {y}.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}, {y} is {b|tiende|tienden|tienden}.",
+      "Vermenigvuldig zonder komma's: {a} × {b} = {=a*b}. Honderdsten maal tienden geven duizendsten, dus er staan drie cijfers achter de komma.",
+      "Heeft {=a*b} minder dan drie cijfers, dan zet je links nullen: {x} × {y} = {r}."
+    ],
+    "hints": [
+      "{x} heeft twee cijfers achter de komma en {y} heeft er één. Hoeveel cijfers staan er achter de komma in het antwoord?",
+      "Reken {a} × {b} = {=a*b} uit. Schrijf het zo dat er achter de komma zoveel cijfers staan als je geteld hebt; zijn het er te weinig, zet dan nullen links.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-zero-lost": "{w_one_zero_lost} krijg je als je één nul achter de komma te weinig schrijft. Honderdsten en tienden samen hebben drie cijfers achter de komma.",
+      "comma-lost": "{w_comma_lost} krijg je als je {a} × {b} als hele getallen uitrekent en de komma vergeet. Het antwoord heeft drie cijfers achter de komma.",
+      "added": "{w_added} krijg je door op te tellen. Hier moet je vermenigvuldigen: {x} × {y} = {r}."
+    }
+  },
+  "D4.multiply-1S.17": {
+    "text": "Bereken het product {u} × {m} × {v}.",
+    "solution": [
+      "Twee van de factoren geven samen een rond getal: {u} × {v} = {pr}.",
+      "Vermenigvuldig die twee eerst: {u} × {v} = {pr}, en daarna de uitkomst met {m}.",
+      "{pr} × {m} = {r}."
+    ],
+    "hints": [
+      "Zoek bij de getallen {u}, {m} en {v} twee getallen die samen een rond getal geven.",
+      "Vermenigvuldig dat paar eerst en daarna pas met het getal dat overblijft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-factor-forgotten": "{w_last_factor_forgotten} krijg je als je de laatste factor {v} vergeet. Je moet alle drie de getallen vermenigvuldigen.",
+      "comma-lost": "{w_comma_lost} krijg je als je de komma vergeet. {u} heeft cijfers achter de komma en die moeten in het antwoord terugkomen: eerst {u} × {v} = {pr}."
+    }
+  },
+  "D5.divide.01": {
+    "text": "Bereken {n} : {x}.",
+    "solution": [
+      "Vermenigvuldig het deeltal en de deler met {=10}, zodat de deler een geheel getal wordt: {n} → {=n*10}, {x} → {=x*10}.",
+      "De uitkomst verandert daardoor niet.",
+      "Nu is {=n*10} : {=x*10} = {r}, dus {n} : {x} = {r}."
+    ],
+    "hints": [
+      "De deler {x} is geen geheel getal. Wat kun je doen om er een geheel getal van te maken?",
+      "Vermenigvuldig beide getallen met {=10}: dan krijg je {=n*10} : {=x*10}. Reken die deling uit.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-ignored": "{w_comma_ignored} krijg je als je {n} door {a} deelt, alsof {x} geen komma heeft. Schuif de komma bij beide getallen op: {=n*10} : {a} = {r}.",
+      "multiplied": "{w_multiplied} krijg je als je {n} met {x} vermenigvuldigt. Hier moet je delen: {n} : {x} = {r}.",
+      "dividend-only-multiplied": "{w_dividend_only_multiplied} krijg je als je alleen het deeltal met {=10} vermenigvuldigt. Je moet beide getallen vermenigvuldigen, anders wordt de uitkomst tien keer te groot: {=n*10} : {=x*10} = {r}."
+    }
+  },
+  "D5.divide.02": {
+    "text": "Bereken {x} : {a}.",
+    "solution": [
+      "{x} is {=x*10|tiende|tienden|tienden}.",
+      "Deel de tienden: {=x*10} : {a} = {b}, dat is {b|tiende|tienden|tienden}.",
+      "{b|tiende|tienden|tienden} is {r}, dus {x} : {a} = {r}."
+    ],
+    "hints": [
+      "{x} is {=x*10|tiende|tienden|tienden}. Deel die tienden door {a}.",
+      "Reken {=x*10} : {a} uit: de uitkomst is een aantal tienden, dus er blijft één cijfer achter de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-moved": "{w_comma_moved} krijg je als je twee cijfers achter de komma zet in de uitkomst. {x} heeft één cijfer achter de komma, dus de uitkomst ook: {x} : {a} = {r}.",
+      "whole-answer": "{w_whole_answer} krijg je als je de komma vergeet: {=x*10} : {a} = {b}. {x} heeft één cijfer achter de komma, dus de uitkomst ook: {r}.",
+      "multiplied": "{w_multiplied} krijg je als je {x} met {a} vermenigvuldigt. Hier moet je delen: {x} : {a} = {r}."
+    }
+  },
+  "D5.divide.03": {
+    "text": "Bereken {a} : {x}.",
+    "solution": [
+      "Delen door {x} betekent uitzoeken hoeveel halven er in {a} passen.",
+      "In elk heel passen twee halven, dus we rekenen {a} × {=2} = {r}.",
+      "Dus {a} : {x} = {r}."
+    ],
+    "hints": [
+      "Hoe vaak past {x} in één heel? En hoe vaak dan in {a}?",
+      "In elk van de {a} hele getallen passen evenveel halven: vermenigvuldig {a} met dat aantal.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "halved": "{w_halved} krijg je als je {a} in tweeën deelt. In elk heel passen twee halven, dus delen door {x} is vermenigvuldigen met twee: {a} × {=2} = {r}.",
+      "times-five": "{w_times_five} krijg je als je {a} met vijf vermenigvuldigt. Maar {x} is een half, geen vijf: in een heel passen er twee, dus {a} × {=2} = {r}.",
+      "comma-ignored": "{w_comma_ignored} krijg je als je door vijf deelt, alsof {x} geen komma heeft. {x} is een half, en in een heel passen er twee: {a} × {=2} = {r}."
+    }
+  },
+  "D5.divide.04": {
+    "text": "Bereken {a} : {x}.",
+    "solution": [
+      "Delen door {x} betekent uitzoeken hoeveel kwarten er in {a} passen.",
+      "In elk heel passen vier kwarten, dus we rekenen {a} × {=4} = {r}.",
+      "Dus {a} : {x} = {r}."
+    ],
+    "hints": [
+      "Hoe vaak past {x} in één heel?",
+      "In elk van de {a} hele getallen passen evenveel kwarten: vermenigvuldig {a} met dat aantal.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "quartered": "{w_quartered} krijg je als je {a} in vier delen deelt. In elk heel passen vier kwarten, dus delen door {x} is vermenigvuldigen met vier: {a} × {=4} = {r}.",
+      "doubled": "{w_doubled} krijg je met de regel voor een half: {a} keer twee. In een heel passen vier kwarten, dus {a} × {=4} = {r}."
+    }
+  },
+  "D5.divide.05": {
+    "text": "Bereken {x} : {a}.",
+    "solution": [
+      "Deel zonder naar de komma te kijken: {=x*100} : {a} = {b}.",
+      "{x} heeft twee cijfers achter de komma, dus de uitkomst heeft er ook twee nodig.",
+      "Dus {x} : {a} = {r}."
+    ],
+    "hints": [
+      "{x} is {=x*100|honderdste|honderdsten|honderdsten}. Deel die honderdsten door {a}.",
+      "Reken {=x*100} : {a} uit: de uitkomst is een aantal honderdsten, dus er blijven twee cijfers achter de komma.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "whole-answer": "{w_whole_answer} krijg je als je de komma vergeet: {=x*100} : {a} = {b}. {x} heeft twee cijfers achter de komma, dus de uitkomst ook: {r}.",
+      "comma-moved": "{w_comma_moved} krijg je als je drie cijfers achter de komma zet in de uitkomst. {x} heeft twee cijfers achter de komma, dus de uitkomst ook: {x} : {a} = {r}.",
+      "multiplied": "{w_multiplied} krijg je als je {x} met {a} vermenigvuldigt. Hier moet je delen: {x} : {a} = {r}."
+    }
+  },
+  "D5.divide.06": {
+    "text": "Hoeveel glazen van {x} liter kun je vullen met {a} liter?",
+    "solution": [
+      "Om te weten hoe vaak {x} liter in {a} liter past, delen we {a} : {x}.",
+      "Vermenigvuldig beide getallen met {=10}, zodat de deler een geheel getal wordt: {=a*10} : {b} = {r}.",
+      "Je kunt dus {r|glas|glazen|glazen} vullen."
+    ],
+    "hints": [
+      "Hoeveel glazen van {x} liter kun je vullen met één liter?",
+      "Uit elk van de {a} liters kun je evenveel glazen vullen: vermenigvuldig dat aantal met {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "multiplied": "{w_multiplied} krijg je als je {a} met {b} vermenigvuldigt. Hoeveel glazen er passen, vind je door te delen: {a} : {x} = {r}.",
+      "comma-ignored": "{w_comma_ignored} krijg je als je {a} door {b} deelt, alsof {x} geen komma heeft. Liters moet je omzetten in tienden: {a} liter is {=a*10|tiende|tienden|tienden}.",
+      "comma-moved-twice": "{w_comma_moved_twice} is tien keer te groot: de komma is twee plaatsen geschoven, maar {x} heeft één cijfer achter de komma. Zo hoort het: {=a*10} : {b} = {r}."
+    }
+  },
+  "D5.divide.07": {
+    "text": "Bereken 1 : {x}.",
+    "solution": [
+      "Één is {=100|honderdste|honderdsten|honderdsten}, en {x} is {=x*100|honderdste|honderdsten|honderdsten}.",
+      "We zoeken hoe vaak {=x*100|honderdste|honderdsten|honderdsten} in {=100|honderdste|honderdsten|honderdsten} past: {=100} : {=x*100} = {r}.",
+      "Dus {=1} : {x} = {r}."
+    ],
+    "hints": [
+      "Hoe vaak past {x} in één?",
+      "Één is {=100} honderdsten, en {x} is {=x*100|honderdste|honderdsten|honderdsten}. Hoe vaak past het kleinere getal in het grotere?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-moved": "{w_comma_moved} krijg je als je de komma maar één plaats schuift. {x} heeft twee cijfers achter de komma, dus je moet twee plaatsen schuiven: {=100} : {=x*100} = {r}.",
+      "comma-ignored": "{w_comma_ignored} krijg je als je één door {nn} deelt, alsof {x} geen komma heeft. Eén is {=100|honderdste|honderdsten|honderdsten}, en {x} is {=x*100|honderdste|honderdsten|honderdsten}: {r}.",
+      "multiplied": "{w_multiplied} krijg je door te vermenigvuldigen: één keer {x} is {x}. Hier moet je delen: hoe vaak {x} in één past, is {r}."
+    }
+  },
+  "D5.divide.08": {
+    "text": "Bereken {a} : {b} en rond de uitkomst af op honderdsten.",
+    "solution": [
+      "Deel {a} door {b} met een staartdeling tot op de duizendsten en kijk naar het derde cijfer achter de komma.",
+      "Is het derde cijfer {=5} of meer, dan maken we de honderdsten één groter; anders laten we ze zoals ze zijn.",
+      "Controle: {r} × {b} = {=r*b}, en dat is bijna {a}.",
+      "Dus {a} : {b} ≈ {r}."
+    ],
+    "hints": [
+      "Deel {a} door {b} en reken een paar cijfers extra door: tot op de duizendsten.",
+      "Kijk naar het derde cijfer achter de komma: is het {=5} of meer, maak de honderdsten dan één groter.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cut-off": "{w_cut_off} krijg je als je de extra cijfers gewoon weglaat. Het cijfer na de honderdsten is vijf of meer, dus de honderdsten worden één groter: {r}.",
+      "tenths": "{w_tenths} is afgerond op tienden. Er wordt gevraagd om honderdsten, dus er staan twee cijfers achter de komma: {r}.",
+      "swapped": "{w_swapped} krijg je als je {b} door {a} deelt. Het deeltal is {a} en de deler is {b}: {a} : {b}, afgerond op honderdsten, is {r}."
+    }
+  },
+  "D5.divide.09": {
+    "text": "Er zijn {b} gelijke producten gekocht en er is {x} euro betaald. Hoeveel euro kost één product?",
+    "solution": [
+      "De prijs van één product vinden we met delen: {x} euro gedeeld door {b}.",
+      "{x} euro is {a|honderdste|honderdsten|honderdsten}, en {a} : {b} = {=a/b|honderdste|honderdsten|honderdsten}.",
+      "{=a/b|honderdste|honderdsten|honderdsten} is {r}, dus {x} : {b} = {r}: één product kost {r} euro."
+    ],
+    "hints": [
+      "De prijs van één product is het totaal gedeeld door het aantal.",
+      "{x} euro is {a} honderdsten. Deel {a} door {b} en zet de komma: de prijs heeft er twee cijfers achter.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "multiplied": "{w_multiplied} krijg je als je {x} met {b} vermenigvuldigt. De prijs van één product vind je door te delen: {x} : {b} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je maar één cijfer achter de komma zet in de uitkomst. {x} heeft twee cijfers achter de komma, dus de prijs ook: {r}.",
+      "comma-lost": "{w_comma_lost} krijg je als je de komma vergeet: {a} : {b} = {=a/b}. {x} heeft twee cijfers achter de komma, dus de prijs van een product ook: {r}."
+    }
+  },
+  "D5.divide.10": {
+    "text": "Er is {n} liter sap. Hoeveel porties van {x} liter kun je maken?",
+    "solution": [
+      "Reken om naar honderdsten: {n} liter is {=n*100|honderdste|honderdsten|honderdsten}, en een portie van {x} liter is {=x*100|honderdste|honderdsten|honderdsten}.",
+      "Zoek hoe vaak een portie in het geheel past: {=n*100} : {=x*100} = {r}.",
+      "Je krijgt dus {r|portie|porties|porties}."
+    ],
+    "hints": [
+      "Een portie van {x} liter is drie kwart liter. Hoeveel kwarten zitten er in {n} liter?",
+      "In een liter zitten vier kwarten. Zoek het aantal kwarten in {n} liter en maak groepjes van drie.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "divided-by-three": "{w_divided_by_three} krijg je als je {n} door {=3} deelt: dan is de portie drie liter. Een portie van {x} liter is eigenlijk drie kwart, en een liter heeft vier kwarten: {r}.",
+      "quarters-not-grouped": "{w_quarters_not_grouped} is het aantal kwarten in {n} liter. Een portie is drie kwarten, dus je moet de kwarten per drie tellen: {r}.",
+      "multiplied": "{w_multiplied} krijg je als je {n} met {x} vermenigvuldigt. Het aantal porties vind je door te delen: {n} : {x} = {r}."
+    }
+  },
+  "D5.divide.11": {
+    "text": "Bereken {x} : {y}.",
+    "solution": [
+      "Schuif de komma bij beide getallen één plaats naar rechts, zodat de deler een geheel getal wordt.",
+      "{x} wordt {=x*10}, en {y} wordt {=y*10}.",
+      "Nu is {=x*10} : {=y*10} = {r}, dus {x} : {y} = {r}."
+    ],
+    "hints": [
+      "De deler {y} is geen geheel getal. Schuif de komma zo dat het er een wordt.",
+      "Schuif de komma bij beide getallen één plaats naar rechts: dan krijg je {=x*10} : {=y*10}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-ignored": "{w_comma_ignored} krijg je als je {x} door {a} deelt, alsof {y} geen komma heeft. Schuif de komma bij beide getallen één plaats op: {=x*10} : {=y*10} = {r}.",
+      "multiplied": "{w_multiplied} krijg je als je {x} met {y} vermenigvuldigt. Hier moet je delen: {x} : {y} = {r}.",
+      "dividend-only-moved": "{w_dividend_only_moved} krijg je als je de komma alleen bij het deeltal schuift. Je moet hem bij beide getallen schuiven, anders wordt de uitkomst tien keer te groot: {=x*10} : {=y*10} = {r}."
+    }
+  },
+  "D5.divide.12": {
+    "text": "Je weet dat {a} : {b} = {c}. Bereken {x} : {b}.",
+    "solution": [
+      "{x} krijg je uit {a} door de komma {d|plaats|plaatsen|plaatsen} naar links te schuiven: {a} : {=pow(10,d)} = {x}.",
+      "Het deeltal werd {=pow(10,d)} keer zo klein, dus de uitkomst wordt ook {=pow(10,d)} keer zo klein.",
+      "{c} : {=pow(10,d)} = {r}."
+    ],
+    "hints": [
+      "Hoeveel keer zo klein is {x} als {a}?",
+      "{a} werd {x}: de komma is {d|plaats|plaatsen|plaatsen} opgeschoven. Wat gebeurt er dan met de uitkomst {c}, als de deler {b} hetzelfde blijft?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is de uitkomst die je al kent, {c}. Het deeltal {x} is kleiner dan {a}, dus de uitkomst ook.",
+      "one-place-too-many": "{w_one_place_too_many} krijg je als je de komma een plaats te ver schuift. Het deeltal werd {=pow(10,d)} keer zo klein, dus de uitkomst wordt ook {=pow(10,d)} keer zo klein, niet meer.",
+      "one-place-too-few": "{w_one_place_too_few} krijg je als je de komma minder plaatsen schuift dan nodig is. Het deeltal werd {=pow(10,d)} keer zo klein, dus de uitkomst ook."
+    }
+  },
+  "D5.divide.13": {
+    "text": "Je weet dat {a} : {b} = {c}. Bereken {a} : {y}.",
+    "solution": [
+      "{y} is {=pow(10,d)} keer zo klein als {b}: {b} : {=pow(10,d)} = {y}.",
+      "De deler werd {=pow(10,d)} keer zo klein, dus de uitkomst wordt {=pow(10,d)} keer zo groot.",
+      "{c} × {=pow(10,d)} = {r}."
+    ],
+    "hints": [
+      "Hoeveel keer zo klein is {y} als {b}?",
+      "{b} werd {y}: de deler werd kleiner. Wordt de uitkomst {c} dan groter of kleiner, en hoeveel keer?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "{w_comma_not_moved} is de uitkomst die je al kent, {c}. De deler {y} is kleiner dan {b}, dus de uitkomst moet groter worden.",
+      "moved-the-wrong-way": "{w_moved_the_wrong_way} krijg je als je de komma naar links schuift, maar bij een kleinere deler wordt de uitkomst juist groter: {c} × {=pow(10,d)} = {r}.",
+      "one-place-too-few": "{w_one_place_too_few} krijg je als je de komma minder plaatsen schuift dan nodig is. De deler werd {=pow(10,d)} keer zo klein, dus de uitkomst wordt {=pow(10,d)} keer zo groot."
+    }
+  },
+  "D5.divide.14": {
+    "text": "Welke deling heeft de grootste uitkomst? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Alle delingen hebben hetzelfde deeltal, {a}. Hoe kleiner de deler, hoe groter de uitkomst.",
+      "De kleinste deler van {list} is {mn}, dus de grootste uitkomst hoort bij keuze {r}.",
+      "Controle: {a} : {mn} = {big}."
+    ],
+    "hints": [
+      "Alle delingen hebben hetzelfde deeltal: {a}. Wat gebeurt er met de uitkomst als de deler kleiner wordt?",
+      "Vergelijk de delers {list} en zoek de kleinste.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-largest-divisor": "Keuze {w_the_largest_divisor} is gekozen vanwege de grootste deler. Maar hoe groter de deler, hoe kleiner de uitkomst: de grootste uitkomst krijg je bij de kleinste deler.",
+      "the-divisor-nearest-to-one": "Keuze {w_the_divisor_nearest_to_one} is gekozen omdat de deler het dichtst bij één ligt. Delen door een getal kleiner dan één maakt het getal groter, en hoe kleiner dat getal is, hoe groter de uitkomst."
+    }
+  },
+  "D5.divide.15": {
+    "text": "Een lint van {x} m is in stukken van {y} m geknipt. Hoeveel hele stukken zijn dat?",
+    "solution": [
+      "Deel de lengte van het lint door de lengte van een stuk: {x} : {y}. Vermenigvuldig beide getallen met {=10}: {X} : {Y}.",
+      "{r} × {Y} = {=r*Y}, en nog een stuk zou {=r*Y+Y} nodig hebben, en dat is meer dan {X}.",
+      "Wat van het lint over is, is minder dan één stuk, dus daar kun je geen heel stuk meer van knippen. Het zijn dus {r} hele stukken."
+    ],
+    "hints": [
+      "Hoe vaak past {y} in {x}? Schuif de komma bij beide getallen op.",
+      "Deel {X} door {Y} met rest. De rest van het lint telt niet als stuk.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rounded-up": "{w_rounded_up} krijg je als je naar boven afrondt. Wat van het lint over is, is minder dan één stuk, dus daar kun je geen heel stuk van knippen.",
+      "remainder-counted": "{w_remainder_counted} is de rest in tienden van een meter, niet het aantal stukken. Het aantal stukken is {r}."
+    }
+  },
+  "D5.divide.16": {
+    "text": "Er moet {x} kg snoep in dozen worden gedaan, en in elke doos past {y} kg. Hoeveel dozen heb je nodig om al het snoep in te pakken?",
+    "solution": [
+      "Deel het gewicht van het snoep door het gewicht in één doos: {x} : {y}. Vermenigvuldig beide getallen met {=10}: {X} : {Y}.",
+      "{n} × {Y} = {=n*Y}, en dat is minder dan {X}, dus met {n|doos|dozen|dozen} lukt het niet: er blijft snoep over.",
+      "Er is nog één doos nodig, dus in totaal {r}."
+    ],
+    "hints": [
+      "Hoeveel dozen kun je helemaal vullen?",
+      "Deel {X} door {Y} met rest. Het snoep dat overblijft moet ook ergens in.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rounded-down": "{w_rounded_down} krijg je als je de rest weglaat. Het snoep dat overblijft heeft nog een doos nodig, dus het aantal dozen is {r}.",
+      "remainder-counted": "{w_remainder_counted} is de rest in tienden van een kilo, niet het aantal dozen. Je hebt {r} dozen nodig."
+    }
+  },
+  "D5.divide.17": {
+    "text": "Zoek het kleinste natuurlijke getal n waarvoor 1 : n kleiner is dan {t}.",
+    "solution": [
+      "{t} is {a|honderdste|honderdsten|honderdsten}, en één is {=100|honderdste|honderdsten|honderdsten}. De breuk 1 : n is kleiner dan {t} als n groter is dan {=100} : {a}.",
+      "{a} × {fl} = {=a*fl}: dat is niet meer dan {=100}, dus bij dit n is de breuk niet kleiner dan {t}.",
+      "{a} × {=fl+1} = {=a*(fl+1)}: dat is meer dan {=100}. Het kleinste n dat werkt is dus {r}."
+    ],
+    "hints": [
+      "Wanneer wordt 1 : n kleiner dan {t}: bij grote n of bij kleine n?",
+      "Controleer het getal {fl}: is 1 : {fl} kleiner dan {t}? En bij het volgende getal?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "boundary-itself": "{w_boundary_itself} geeft 1 : n gelijk aan {t}, maar we zoeken kleiner. Neem het volgende getal: {r}.",
+      "cut-off": "{w_cut_off} krijg je als je de rest van {=100} : {a} weglaat. Bij n = {w_cut_off} is de breuk 1 : n nog niet kleiner dan {t}; we hebben een groter getal nodig: {r}.",
+      "rounded": "{w_rounded} krijg je als je afrondt op het dichtstbijzijnde getal. We zoeken een n waarbij 1 : n al kleiner is dan {t}, dus n is groter dan {=100} : {a}."
+    }
+  },
+  "D5.divide.18": {
+    "text": "Welk getal moet je door {x} delen om {a} te krijgen?",
+    "solution": [
+      "Het deeltal is de uitkomst maal de deler: {a} × {x} = {r}.",
+      "Controle: {r} : {x} = {a}.",
+      "Dus je moet het getal {r} delen."
+    ],
+    "hints": [
+      "Welke bewerking hoort bij delen als tegenovergestelde? Wat moet je doen met de uitkomst {a} en de deler {x}?",
+      "Vermenigvuldig {a} met {x}. Hoeveel cijfers staan er achter de komma in het product?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "divided-instead": "{w_divided_instead} krijg je als je {a} door {x} deelt. Het deeltal vind je door de uitkomst met de deler te vermenigvuldigen: {a} × {x} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} krijg je als je wel vermenigvuldigt, maar de komma op een andere plek zet. {x} heeft {c|cijfer|cijfers|cijfers} achter de komma, en het hele getal {a} heeft er geen, dus het antwoord heeft er evenveel: {r}."
+    }
+  },
+  "D6.convert.01": {
+    "text": "Schrijf de breuk {f} als kommagetal.",
+    "solution": [
+      "Vermenigvuldig de teller en de noemer met {=100/b}, zodat de noemer {=100} wordt.",
+      "{f} = {=a*100/b}⁄{=100}.",
+      "Schrijf {=a*100/b|honderdste|honderdsten|honderdsten} met een komma. Controle met delen: {a} : {b} = {r}."
+    ],
+    "hints": [
+      "Een breukstreep betekent delen: {f} is {a} : {b}.",
+      "Maak de noemer {=100}: met welk getal moet je {b} vermenigvuldigen? Vermenigvuldig de teller met hetzelfde getal.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {a} en de noemer {b} naast elkaar achter de komma zet. Een breuk is een deling {a} : {b}: {f} = {r}.",
+      "numerator-tenths": "{w_numerator_tenths} krijg je als je de teller {a} als tienden schrijft. De noemer van de breuk is {b}, niet tien: {f} = {r}.",
+      "denominator-as-decimal": "{w_denominator_as_decimal} komt uit de noemer {b}, en de teller {a} is kwijt. Beide getallen tellen mee: {f} = {r}."
+    }
+  },
+  "D6.convert.02": {
+    "text": "Schrijf de breuk {f} als kommagetal.",
+    "solution": [
+      "De noemer {=100} betekent dat het {a|honderdste|honderdsten|honderdsten} zijn.",
+      "Honderdsten zijn het tweede cijfer achter de komma, dus op de plaats van de tienden staat een nul.",
+      "Controle met delen: {a} : {=100} = {r}."
+    ],
+    "hints": [
+      "De noemer {=100} betekent {a|honderdste|honderdsten|honderdsten}: twee cijfers achter de komma.",
+      "Er zijn geen tienden, dus op die plaats staat een nul. Waar komt {a} te staan?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} is in tienden geschreven, maar je hebt honderdsten nodig. De noemer {=100} vraagt om twee cijfers: {f} = {r}.",
+      "whole": "{w_whole} krijg je als je de teller {a} neemt en de noemer {=100} vergeet. De breuk is kleiner dan één: {f} = {r}.",
+      "thousandths": "{w_thousandths} is in duizendsten geschreven, maar je hebt honderdsten nodig. De noemer {=100} geeft twee cijfers: {f} = {r}."
+    }
+  },
+  "D6.convert.03": {
+    "text": "Schrijf {x} als breuk.",
+    "solution": [
+      "{x} heeft één cijfer achter de komma, dus de noemer is {=10}.",
+      "{x} is {a|tiende|tienden|tienden}, dat is {a}⁄{=10}.",
+      "Kan de breuk worden vereenvoudigd, dan krijgt hetzelfde getal een simpeler vorm. Dus {x} = {r}."
+    ],
+    "hints": [
+      "{x} heeft één cijfer achter de komma. Welke noemer hebben tienden?",
+      "De teller is het getal achter de komma: {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} krijg je als je het cijfer {a} in de noemer zet. {x} is {a|tiende|tienden|tienden}, dat is {a}⁄{=10}.",
+      "hundredths-denominator": "{w_hundredths_denominator} heeft de noemer {=100}. {x} heeft één cijfer achter de komma, dus de noemer is {=10}: {r}.",
+      "inverted": "{w_inverted} krijg je als je de teller en de noemer omdraait. {x} is {a}⁄{=10}, niet {=10}⁄{a}."
+    }
+  },
+  "D6.convert.04": {
+    "text": "Schrijf {x} als breuk in de eenvoudigste vorm.",
+    "solution": [
+      "{x} is {a} honderdsten, dat is {a}⁄{=100}.",
+      "Het grootste getal waar zowel {a} als {=100} door te delen zijn, is {=gcd(a,100)}: {a} : {=gcd(a,100)} = {=a/gcd(a,100)}, {=100} : {=gcd(a,100)} = {=100/gcd(a,100)}.",
+      "Dus {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} honderdsten. Schrijf het als breuk met noemer {=100}.",
+      "Vereenvoudig nu de breuk {a}⁄{=100}: zoek het grootste getal waar zowel {a} als {=100} door te delen zijn.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} krijg je als je het getal {a} in de noemer zet. {x} is {a|honderdste|honderdsten|honderdsten}, dat is {a}⁄{=100}, en vereenvoudigd {r}.",
+      "tenths-denominator": "{w_tenths_denominator} heeft de noemer {=10}. {x} heeft twee cijfers achter de komma, dus de noemer is {=100}: {a}⁄{=100} = {r}.",
+      "inverted": "{w_inverted} krijg je als je de teller en de noemer omdraait. Honderdsten zijn {a}⁄{=100}, niet {=100}⁄{a}; vereenvoudigd {r}."
+    }
+  },
+  "D6.convert.05": {
+    "text": "Schrijf {x} als gemengd getal.",
+    "solution": [
+      "Het hele deel {a} blijft zoals het is.",
+      "{b|tiende|tienden|tienden} achter de komma is de breuk {b}⁄{=10}.",
+      "{x} = {a} + {b}⁄{=10} = {r}."
+    ],
+    "hints": [
+      "Het hele deel van {x} is {a}. Dat blijft heel.",
+      "Achter de komma heb je {b|tiende|tienden|tienden}: schrijf dat als breuk met noemer {=10}, naast het hele deel.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum-over-ten": "{w_sum_over_ten} krijg je als je het hele deel {a} bij de teller {b} optelt. Het hele deel blijft heel, en {b}⁄{=10} staat ernaast: {r}.",
+      "digit-as-denominator": "{w_digit_as_denominator} krijg je als je het cijfer {b} in de noemer zet. In {x} staat het cijfer {b} op de plaats van de tienden, dus het is {b}⁄{=10}: {r}.",
+      "wrong-denominator": "{w_wrong_denominator} heeft de noemer {=100}. {x} heeft één cijfer achter de komma, dus de noemer is {=10}: {r}."
+    }
+  },
+  "D6.convert.06": {
+    "text": "Hoeveel cent is {f} van een euro?",
+    "solution": [
+      "Een euro heeft {=100} cent.",
+      "De noemer {b} zegt: deel {=100} in {b|gelijk deel|gelijke delen|gelijke delen}: {=100} : {b} = {=100/b}.",
+      "De teller {a} zegt hoeveel delen we nemen: {=100/b} × {a} = {r}.",
+      "Dus {f} van een euro is {r} cent."
+    ],
+    "hints": [
+      "Een euro heeft {=100} cent. Zoek {f} van dat getal.",
+      "Deel {=100} in {b|gelijk deel|gelijke delen|gelijke delen} en neem er dan {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "numerator-itself": "{w_numerator_itself} is alleen de teller {a}. Een euro is {=100} cent; we nemen {f} daarvan, en dat geeft {r}.",
+      "denominator-itself": "{w_denominator_itself} is alleen de noemer {b}. Cent vind je zo: {=100} : {b} = {=100/b}, en we nemen er {a} van: {r}.",
+      "one-part": "{w_one_part} is één deel van de {b}. {f} bestaat uit {a} van die delen, dus we vermenigvuldigen {=100/b} met {a}: {r}."
+    }
+  },
+  "D6.convert.07": {
+    "text": "Schrijf {x} als breuk in de eenvoudigste vorm.",
+    "solution": [
+      "{x} is {a} tienden, dat is {a}⁄{=10}.",
+      "Het grootste getal waar zowel {a} als {=10} door te delen zijn, is {=gcd(a,10)}: {a} : {=gcd(a,10)} = {=a/gcd(a,10)}, {=10} : {=gcd(a,10)} = {=10/gcd(a,10)}.",
+      "Dus {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|tiende|tienden|tienden}. Schrijf het als breuk met noemer {=10}.",
+      "Vereenvoudig de breuk {a}⁄{=10}: zoek het grootste getal waar zowel {a} als {=10} door te delen zijn. Is dat alleen één, dan kan de breuk niet worden vereenvoudigd.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} krijg je als je het cijfer {a} in de noemer zet. {x} is {a|tiende|tienden|tienden}, dat is {a}⁄{=10}, en vereenvoudigd {r}.",
+      "hundredths-denominator": "{w_hundredths_denominator} heeft de noemer {=100}. {x} heeft één cijfer achter de komma, dus de noemer is {=10}: {a}⁄{=10} = {r}.",
+      "inverted": "{w_inverted} krijg je als je de teller en de noemer omdraait. Tienden zijn {a}⁄{=10}, en vereenvoudigd {r}."
+    }
+  },
+  "D6.convert.08": {
+    "text": "Schrijf de breuk {f} als kommagetal.",
+    "solution": [
+      "De noemer is {=100}, dus het zijn {a|honderdste|honderdsten|honderdsten}.",
+      "Honderdsten zijn het tweede cijfer achter de komma, dus de cijfers van de teller komen achter de komma.",
+      "Controle met delen: {a} : {=100} = {r}."
+    ],
+    "hints": [
+      "De noemer is {=100}: dat zijn {a|honderdste|honderdsten|honderdsten}, twee cijfers achter de komma.",
+      "De cijfers van de teller {a} komen achter de komma, op de plaats van de tienden en de honderdsten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} is in tienden geschreven, maar je hebt honderdsten nodig. De noemer {=100} vraagt om twee cijfers: {f} = {r}.",
+      "whole": "{w_whole} krijg je als je de teller {a} neemt en de noemer {=100} vergeet. De breuk is kleiner dan één: {f} = {r}.",
+      "thousandths": "{w_thousandths} is in duizendsten geschreven, maar je hebt honderdsten nodig. De noemer {=100} geeft twee cijfers: {f} = {r}."
+    }
+  },
+  "D6.convert.09": {
+    "text": "Vergelijk {f} en {x}. Welk teken staat ertussen?",
+    "solution": [
+      "Maak van de breuk een kommagetal: {a} : {b} = {=a/b}.",
+      "Vergelijk in honderdsten: {=a/b} is {=a/b*100|honderdste|honderdsten|honderdsten}, en {x} is {=x*100|honderdste|honderdsten|honderdsten}.",
+      "Dus het teken tussen {f} en {x} is {r}."
+    ],
+    "hints": [
+      "Schrijf de breuk {f} als kommagetal: {a} : {b}.",
+      "Vergelijk het getal dat je krijgt met {x}, plaats voor plaats, te beginnen bij de tienden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "flipped": "Het teken {w_flipped} is precies andersom. Maak van {f} een kommagetal, {=a/b}, en vergelijk dat plaats voor plaats met {x}: het antwoord is {r}.",
+      "digits-side-by-side": "Het teken {w_digits_side_by_side} krijg je als je de teller en de noemer van {f} naast elkaar achter de komma zet. Maar {f} is {=a/b}, en dat vergelijk je met {x}: het antwoord is {r}."
+    }
+  },
+  "D6.convert.10": {
+    "text": "Schrijf het gemengde getal {m} als kommagetal.",
+    "solution": [
+      "Maak van het breukdeel een kommagetal: {b} : {c} = {=b/c}.",
+      "Tel het hele deel en het kommadeel op: {a} + {=b/c} = {r}.",
+      "Dus {m} = {r}."
+    ],
+    "hints": [
+      "Deel de teller van het breukdeel door de noemer: {b} : {c}.",
+      "Tel het kommagetal dat je krijgt op bij het hele deel {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {b} en de noemer {c} naast elkaar achter de komma zet. Maak van het breukdeel een kommagetal: {b}⁄{c} = {=b/c}, dus het hele getal is {r}.",
+      "numerator-only": "{w_numerator_only} krijg je als je de teller {b} achter de komma zet en de noemer vergeet. {b}⁄{c} is {=b/c}, dus het hele getal is {r}.",
+      "denominator-only": "{w_denominator_only} krijg je als je de noemer {c} achter de komma zet en de teller vergeet. {b}⁄{c} is {=b/c}, dus het hele getal is {r}."
+    }
+  },
+  "D6.convert.11": {
+    "text": "Schrijf {x} als breuk met noemer {=100}.",
+    "solution": [
+      "{x} heeft twee cijfers achter de komma, dus de noemer is {=100}.",
+      "{x} is {a|honderdste|honderdsten|honderdsten}, dat is {a}⁄{=100}.",
+      "{x} = {r}."
+    ],
+    "hints": [
+      "{x} heeft twee cijfers achter de komma. Welke noemer hebben honderdsten?",
+      "De teller is het getal achter de komma: {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} heeft de noemer {=10}. {x} heeft twee cijfers achter de komma, dus de noemer is {=100}: {r}.",
+      "reciprocal": "{w_reciprocal} krijg je als je het getal {a} in de noemer zet. {x} is {a|honderdste|honderdsten|honderdsten}, dat is {a}⁄{=100}.",
+      "thousandths": "{w_thousandths} heeft de noemer {=1000}. {x} heeft twee cijfers achter de komma, dus de noemer is {=100}: {r}."
+    }
+  },
+  "D6.convert.12": {
+    "text": "Welk getal is gelijk aan {f}? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {a} : {b} = {x}.",
+      "Bij de keuzes staat het getal {x}: dat is keuze {r}.",
+      "De andere getallen krijg je door de teller en de noemer naast elkaar te zetten, of door één cijfer als tienden te schrijven."
+    ],
+    "hints": [
+      "Een breukstreep betekent delen: {f} is {a} : {b}.",
+      "Deel {a} door {b} en zoek de uitkomst bij de keuzes.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "Keuze {w_digits_side_by_side} krijg je als je de teller en de noemer naast elkaar achter de komma zet. De breuk {f} is de deling {a} : {b} = {x}.",
+      "numerator-as-tenths": "Keuze {w_numerator_as_tenths} krijg je als je alleen de teller als tienden schrijft. De noemer {b} telt ook mee: {f} = {x}.",
+      "denominator-as-tenths": "Keuze {w_denominator_as_tenths} komt uit de noemer, en de teller is kwijt. Je moet {a} door {b} delen: {x}.",
+      "comma-instead-of-the-slash": "Keuze {w_comma_instead_of_the_slash} krijg je als je de breukstreep door een komma vervangt. De breuk {f} is kleiner dan één, en is gelijk aan {x}."
+    }
+  },
+  "D6.convert.13": {
+    "text": "Welke breuken zijn gelijk aan {x}? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Antwoord met de nummers van de juiste keuzes, gescheiden door komma's.",
+    "solution": [
+      "{x} is {h|honderdste|honderdsten|honderdsten}, dat is {h}⁄{=100}. Vereenvoudigd is deze breuk {red}.",
+      "De breuken {red} en {h}⁄{=100} zijn gelijk aan {x}: bij de andere zijn de teller en de noemer verwisseld, of is de noemer {=10}.",
+      "Dat zijn de keuzes {r}."
+    ],
+    "hints": [
+      "Schrijf {x} als breuk met noemer {=100}: {h}⁄{=100}.",
+      "Vereenvoudig die breuk en zoek alle gelijke breuken. Een breuk met teller en noemer verwisseld is groter dan één, maar {x} is kleiner dan één.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-the-reduced-one": "Er is maar één breuk gekozen, {red}. De breuk met noemer {=100}, dus {h}⁄{=100}, is ook gelijk aan {x}.",
+      "also-the-inverse": "In de keuze {w_also_the_inverse} zit een breuk met teller en noemer verwisseld. Die is groter dan één, maar {x} is kleiner dan één."
+    }
+  },
+  "D6.convert.14": {
+    "text": "Het lijnstuk van 0 tot 1 is verdeeld in {b|gelijk deel|gelijke delen|gelijke delen}. Welk kommagetal is met het puntje aangegeven?",
+    "solution": [
+      "Eén deel is {=1}⁄{b} van het lijnstuk. Van nul tot het puntje tellen we {a|deel|delen|delen}, dus het puntje zit bij {a}⁄{b} van het lijnstuk.",
+      "Maak van de breuk een kommagetal: {a} : {b} = {r}.",
+      "Het puntje geeft dus het getal {r} aan."
+    ],
+    "hints": [
+      "Het lijnstuk is verdeeld in {b|gelijk deel|gelijke delen|gelijke delen}: één stukje is {=1}⁄{b} ervan.",
+      "Tel op de tekening de stukjes van nul tot het puntje: dat zijn er {a}. Deel {a} door {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {a} en de noemer {b} naast elkaar achter de komma zet. Het puntje zit bij {a}⁄{b} van het lijnstuk, dus {a} : {b} = {r}.",
+      "numerator-tenths": "{w_numerator_tenths} krijg je als je het aantal delen {a} als tienden schrijft. Er zijn {b} delen in totaal, dus één deel is geen tiende: {a} : {b} = {r}.",
+      "counted-from-the-right": "{w_counted_from_the_right} krijg je als je de delen vanaf het rechtereinde telt. Van nul tot het puntje tellen we {a|deel|delen|delen}: {a} : {b} = {r}."
+    }
+  },
+  "D6.convert.15": {
+    "text": "De som van de teller en de noemer van een breuk is {s}, en de breuk zelf is gelijk aan {x}. Wat is de teller?",
+    "solution": [
+      "{x} = {n}⁄{m}: de teller en de noemer verhouden zich als {n} tot {m}.",
+      "Samen zijn het {=n+m|deel|delen|delen}, en de som is {s}: {s} : {=n+m} = {c}, dat is de grootte van één deel.",
+      "De teller is {n|deel|delen|delen}: {n} × {c} = {r}."
+    ],
+    "hints": [
+      "Schrijf {x} als breuk: {n}⁄{m}.",
+      "De teller en de noemer verhouden zich als {n} tot {m}, samen zijn het {=n+m|deel|delen|delen}. Deel {s} door dat aantal.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reduced-numerator": "{w_reduced_numerator} is de teller van de vereenvoudigde breuk {n}⁄{m}. De teller en de noemer van de breuk die we zoeken zijn {c} keer zo groot.",
+      "the-denominator": "{w_the_denominator} is de noemer. Er werd naar de teller gevraagd: {n|deel|delen|delen} van {c} is {r}."
+    }
+  },
+  "D6.convert-1S.01": {
+    "text": "Schrijf de breuk {f} als kommagetal.",
+    "solution": [
+      "Maak de noemer {=1000}: {=1000} : {=8} = {=125}, dus we vermenigvuldigen de teller en de noemer met {=125}.",
+      "{f} = {=a*125}⁄{=1000}, en {=a*125|duizendste|duizendsten|duizendsten} schrijf je met een komma.",
+      "Controle met delen: {a} : {=8} = {r}."
+    ],
+    "hints": [
+      "Een breukstreep betekent delen: {f} is {a} : {=8}.",
+      "Delen door {=8} is lastig, dus maak de noemer {=1000}: vermenigvuldig {=8} met {=125}, en de teller ook met {=125}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {a} en de noemer {=8} naast elkaar achter de komma zet. Een breuk is een deling; we maken de noemer {=1000}: {f} = {r}.",
+      "numerator-tenths": "{w_numerator_tenths} krijg je als je de teller {a} als tienden schrijft. De noemer is {=8}, niet tien, dus we maken hem {=1000}: {f} = {r}.",
+      "denominator-as-decimal": "{w_denominator_as_decimal} komt uit de noemer {=8}, en de teller {a} is kwijt. Beide getallen tellen mee: {f} = {r}."
+    }
+  },
+  "D6.convert-1S.02": {
+    "text": "Schrijf {x} als breuk in de eenvoudigste vorm.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}, dat is {a}⁄{=100}.",
+      "De teller en de noemer zijn even: deel ze allebei door {=2} en je krijgt {=a/2}⁄{=50}.",
+      "Verder vereenvoudigen kan niet, dus {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}, dat is de breuk {a}⁄{=100}.",
+      "Zowel {a} als {=100} is even. Deel allebei door hetzelfde getal en stop als de breuk niet verder te vereenvoudigen is.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} krijg je als je het getal {a} in de noemer zet. {x} is {a|honderdste|honderdsten|honderdsten}, dat is {a}⁄{=100}, en vereenvoudigd {r}.",
+      "denominator-halved": "{w_denominator_halved} krijg je als je de noemer {=100} door {=2} deelt, maar de teller {a} laat staan. Je moet allebei de getallen delen: {r}.",
+      "numerator-halved-only": "{w_numerator_halved_only} krijg je als je alleen de teller door {=2} deelt. Je moet zowel de teller als de noemer delen: {r}."
+    }
+  },
+  "D6.convert-1S.03": {
+    "text": "Schrijf de breuk {f} als kommagetal, afgerond op honderdsten.",
+    "solution": [
+      "Deel {a} door {b} met een staartdeling tot op de duizendsten en kijk naar het derde cijfer achter de komma.",
+      "Is het derde cijfer {=5} of meer, dan maken we de honderdsten één groter; anders laten we ze zoals ze zijn.",
+      "Controle: {r} × {b} = {=r*b}, en dat is bijna {a}.",
+      "Dus {f} ≈ {r}."
+    ],
+    "hints": [
+      "Deel {a} door {b} en reken nog een paar cijfers achter de komma door.",
+      "Het derde cijfer achter de komma bepaalt of de honderdsten één groter worden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cut-off": "{w_cut_off} krijg je als je de extra cijfers gewoon weglaat. Het cijfer na de honderdsten is vijf of meer, dus de honderdsten worden één groter: {r}.",
+      "tenths": "{w_tenths} is afgerond op tienden. Er wordt gevraagd om honderdsten, dus er staan twee cijfers achter de komma: {r}.",
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {a} en de noemer {b} naast elkaar achter de komma zet. Een breuk is een deling {a} : {b}: {r}."
+    }
+  },
+  "D6.convert-1S.04": {
+    "text": "Zet de getallen op volgorde, van klein naar groot: {list}.",
+    "solution": [
+      "De breuk {a}⁄{b} is als kommagetal {=a/b}.",
+      "Vergelijk in honderdsten: {=a/b*100}, {=c*10} en {=d*10}.",
+      "Van klein naar groot: {sorted}, dus de nummers {r}."
+    ],
+    "hints": [
+      "Schrijf de breuk {a}⁄{b} als kommagetal: {a} : {b}.",
+      "Nu heb je drie kommagetallen. Vergelijk ze plaats voor plaats en zet ze van klein naar groot.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "largest-first": "De volgorde {w_largest_first} gaat van groot naar klein, maar we willen van klein naar groot.",
+      "fraction-last": "De volgorde {w_fraction_last} krijg je als je de teller en de noemer van de breuk {a}⁄{b} met een komma naast elkaar zet: zo'n getal lijkt groter dan alle kommagetallen. Maar {a}⁄{b} is gelijk aan {=a/b}."
+    }
+  },
+  "D6.convert-1S.05": {
+    "text": "Vergelijk {f} en {x}. Welk teken staat ertussen?",
+    "solution": [
+      "Maak van {f} een kommagetal: {a} : {=8} = {=a/8}.",
+      "Vergelijk in duizendsten: {=a/8*1000} en {=x*1000}.",
+      "Dus het teken tussen {f} en {x} is {r}."
+    ],
+    "hints": [
+      "Schrijf {f} als kommagetal: {a} : {=8}.",
+      "Vergelijk het getal dat je krijgt met {x}, plaats voor plaats, te beginnen bij de tienden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "flipped": "Het teken {w_flipped} is precies andersom. Maak van {f} een kommagetal, {=a/8}, en vergelijk dat plaats voor plaats met {x}: het antwoord is {r}.",
+      "digits-side-by-side": "Het teken {w_digits_side_by_side} krijg je als je de teller en de noemer van {f} naast elkaar achter de komma zet. Maar {f} is {=a/8}, kleiner dan één, en dat vergelijk je met {x}: het antwoord is {r}."
+    }
+  },
+  "D6.convert-1S.06": {
+    "text": "Bereken de som {f} + {x}. Schrijf de uitkomst als kommagetal.",
+    "solution": [
+      "{f} is {a} × {=25} = {=a*25|honderdste|honderdsten|honderdsten}.",
+      "Tel op in honderdsten: {=a*25} + {=x*100} = {=a*25+x*100}.",
+      "Dus {f} + {x} = {r}."
+    ],
+    "hints": [
+      "Schrijf eerst {f} als kommagetal: {f} is {a} : {=4}.",
+      "Tel daarna de twee kommagetallen plaats voor plaats op: {x} is {=x*100|honderdste|honderdsten|honderdsten}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {a} en de tienden {b} naast elkaar achter de komma zet. Reken eerst de breuk om: {f} = {=a/4}, en tel dan op: {r}.",
+      "numerator-tenths": "{w_numerator_tenths} krijg je als je {f} neemt voor {a|tiende|tienden|tienden}. Maar dit zijn kwarten: {f} = {=a/4}, en het antwoord is {r}.",
+      "denominator-tenths": "{w_denominator_tenths} krijg je als je in plaats van {f} de noemer {=4} als tienden neemt. De breuk {f} is gelijk aan {=a/4}, en het antwoord is {r}."
+    }
+  },
+  "D6.convert-1S.07": {
+    "text": "Schrijf het gemengde getal {m} als kommagetal.",
+    "solution": [
+      "Maak de noemer van het breukdeel {=1000}: vermenigvuldig de teller en de noemer met {=125}.",
+      "{b}⁄{=8} = {=b*125}⁄{=1000} = {=b/8}.",
+      "Tel het hele deel erbij: {a} + {=b/8} = {r}."
+    ],
+    "hints": [
+      "Deel de teller van het breukdeel door de noemer: {b} : {=8}.",
+      "Tel het kommagetal dat je krijgt op bij het hele deel {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {b} en de noemer {=8} naast elkaar achter de komma zet. Maak de noemer van het breukdeel {=1000}: {b}⁄{=8} = {=b/8}, dus het hele getal is {r}.",
+      "numerator-only": "{w_numerator_only} krijg je als je de teller {b} achter de komma zet en de noemer vergeet. {b}⁄{=8} is {=b/8}, dus het hele getal is {r}.",
+      "denominator-only": "{w_denominator_only} krijg je als je de noemer {=8} achter de komma zet en de teller vergeet. {b}⁄{=8} is {=b/8}, dus het hele getal is {r}."
+    }
+  },
+  "D6.convert-1S.08": {
+    "text": "Schrijf {x} als breuk in de eenvoudigste vorm.",
+    "solution": [
+      "{x} is {a|duizendste|duizendsten|duizendsten}, dat is {a}⁄{=1000}.",
+      "Het grootste getal waar zowel {a} als {=1000} door te delen zijn, is {=gcd(a,1000)}: {a} : {=gcd(a,1000)} = {=a/gcd(a,1000)}, {=1000} : {=gcd(a,1000)} = {=1000/gcd(a,1000)}.",
+      "Dus {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|duizendste|duizendsten|duizendsten}. Schrijf het als breuk met noemer {=1000}.",
+      "Vereenvoudig de breuk {a}⁄{=1000}: zoek het grootste getal waar zowel {a} als {=1000} door te delen zijn.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} krijg je als je het getal {a} in de noemer zet. {x} is {a|duizendste|duizendsten|duizendsten}, dat is {a}⁄{=1000}, en vereenvoudigd {r}.",
+      "hundredths-denominator": "{w_hundredths_denominator} heeft de noemer {=100}. {x} heeft drie cijfers achter de komma, dus de noemer is {=1000}; vereenvoudigd {r}.",
+      "inverted": "{w_inverted} krijg je als je de teller en de noemer omdraait. Duizendsten zijn {a}⁄{=1000}, en vereenvoudigd {r}."
+    }
+  },
+  "D6.convert-1S.09": {
+    "text": "Schrijf {x} als breuk in de eenvoudigste vorm.",
+    "solution": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}, dat is {a}⁄{=100}.",
+      "De teller en de noemer zijn allebei door {=4} te delen: {a} : {=4} = {=a/4}, {=100} : {=4} = {=25}.",
+      "Dus {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|honderdste|honderdsten|honderdsten}. Schrijf de breuk {a}⁄{=100}.",
+      "Zowel {a} als {=100} is door {=4} te delen. Deel allebei en controleer of de breuk nog verder te vereenvoudigen is.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} heeft de noemer {=10}. {x} heeft twee cijfers achter de komma, dus de noemer is {=100}: {a}⁄{=100} = {r}.",
+      "reciprocal": "{w_reciprocal} krijg je als je het getal {a} in de noemer zet. {x} is {a|honderdste|honderdsten|honderdsten}, dat is {a}⁄{=100}, en vereenvoudigd {r}.",
+      "inverted": "{w_inverted} krijg je als je de teller en de noemer omdraait. Honderdsten zijn {a}⁄{=100}, en vereenvoudigd {r}."
+    }
+  },
+  "D6.convert-1S.10": {
+    "text": "Vergelijk {f} en {x}. Welk teken staat ertussen?",
+    "solution": [
+      "Maak de noemer van {f} gelijk aan {=100}: vermenigvuldig de teller en de noemer met {=5}.",
+      "{f} = {=a*5}⁄{=100}, dat is {=a*5|honderdste|honderdsten|honderdsten}, en {x} is {b|honderdste|honderdsten|honderdsten}.",
+      "Vergelijk {=a*5} en {b}: het teken tussen {f} en {x} is {r}."
+    ],
+    "hints": [
+      "Maak de noemer van {f} gelijk aan {=100}: met welk getal moet je {=20} vermenigvuldigen? Vermenigvuldig de teller met hetzelfde getal.",
+      "Vergelijk nu de honderdsten: {x} is {b|honderdste|honderdsten|honderdsten}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "flipped": "Het teken {w_flipped} is precies andersom. Maak de noemer van {f} gelijk aan {=100}: dat is {=a*5|honderdste|honderdsten|honderdsten}. Vergelijk met {x}: het antwoord is {r}.",
+      "digits-side-by-side": "Het teken {w_digits_side_by_side} krijg je als je de teller en de noemer van {f} naast elkaar achter de komma zet. Maar {f} is {=a*5|honderdste|honderdsten|honderdsten}, kleiner dan één, en dat vergelijk je met {x}: het antwoord is {r}."
+    }
+  },
+  "D6.convert-1S.11": {
+    "text": "Bereken de som {f} + {x}. Schrijf de uitkomst als kommagetal.",
+    "solution": [
+      "{f} is {a} × {=20} = {=a*20|honderdste|honderdsten|honderdsten}.",
+      "Tel op in honderdsten: {=a*20} + {b} = {=a*20+b}.",
+      "Dus {f} + {x} = {r}."
+    ],
+    "hints": [
+      "Schrijf {f} als kommagetal: maak de noemer {=100}, of deel {a} door {=5}.",
+      "Tel de twee kommagetallen plaats voor plaats op: {x} is {b|honderdste|honderdsten|honderdsten}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {a} bij {x} optelt als {a|honderdste|honderdsten|honderdsten}. De breuk {f} is {=a*20|honderdste|honderdsten|honderdsten}, en het antwoord is {r}.",
+      "numerator-tenths": "{w_numerator_tenths} krijg je als je {f} neemt voor {a|tiende|tienden|tienden}. Maar de noemer is {=5}: {f} = {=a/5}, en het antwoord is {r}.",
+      "denominator-tenths": "{w_denominator_tenths} krijg je als je in plaats van {f} de noemer {=5} als tienden neemt. De breuk {f} is gelijk aan {=a/5}, en het antwoord is {r}."
+    }
+  },
+  "D6.convert-1S.12": {
+    "text": "Hoeveel cent is {f} van een euro?",
+    "solution": [
+      "Een euro heeft {=100} cent.",
+      "Een achtste is {=100} : {=8} = {=100/8} cent.",
+      "De teller {a} laat zien hoeveel van zulke delen we nemen: {=100/8} × {a} = {r}.",
+      "Dus {f} van een euro is {r} cent."
+    ],
+    "hints": [
+      "Een euro is {=100} cent. Zoek {f} van dat getal.",
+      "Een achtste van {=100} is {=100/8}. Neem er {a} van.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "numerator-itself": "{w_numerator_itself} is alleen de teller {a}. Een achtste euro is {=100/8} cent, en we nemen er {a} van: {r}.",
+      "denominator-itself": "{w_denominator_itself} is alleen de noemer {=8}. Cent vind je zo: {=100} : {=8} = {=100/8}, en we nemen er {a} van: {r}.",
+      "one-part": "{w_one_part} is één achtste euro. {f} bestaat uit {a} van die delen, dus we vermenigvuldigen {=100/8} met {a}: {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} is tien keer te groot: de komma staat op een andere plek. {=100} : {=8} = {=100/8}, en we nemen er {a} van: {r}."
+    }
+  },
+  "D6.convert-1S.13": {
+    "text": "Welke van deze breuken kun je schrijven als eindig kommagetal? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Antwoord met de nummers van de juiste keuzes, gescheiden door komma's.",
+    "solution": [
+      "Een breuk kun je als eindig kommagetal schrijven als de noemer van de vereenvoudigde breuk geen priemfactoren heeft behalve {=2} en {=5}.",
+      "Deze kunnen: {ok}. Deze kunnen niet: {bad}.",
+      "Dus de keuzes zijn {r}."
+    ],
+    "hints": [
+      "Splits de noemer van elke vereenvoudigde breuk in priemfactoren.",
+      "Zit er een priemfactor bij die niet {=2} of {=5} is, dan eindigt het kommagetal nooit. Controleer {o1}; {o2}; {o3}; {o4}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "even-denominators": "De keuze {w_even_denominators} bestaat uit breuken met een even noemer. Maar een breuk met noemer {=6} heeft ook de factor {=3}, en een breuk met noemer {=5} heeft een oneven noemer en toch eindigt het kommagetal.",
+      "only-two-five-ten": "De keuze {w_only_two_five_ten} is alleen gekozen op de noemers {=2}, {=5} en {=10}. De noemers {=4}, {=8}, {=20} en {=25} werken ook: ze hebben alleen de factoren {=2} en {=5}."
+    }
+  },
+  "D6.convert-1S.14": {
+    "text": "De breuk {f} is als kommagetal geschreven: {s}… Welk cijfer staat op de {b}e plaats achter de komma?",
+    "solution": [
+      "De cijfers herhalen zich: achter de komma komt de periode {period}, die {p|cijfer|cijfers|cijfers} heeft.",
+      "{b} = {q} × {p} + {rem}.",
+      "Dus op de {b}e plaats staat hetzelfde cijfer als op de {pos}e plaats van de periode: dat is {r}."
+    ],
+    "hints": [
+      "Zoek de groep cijfers die zich herhaalt: {period}.",
+      "Deel het plaatsnummer {b} door de lengte van de groep, {p}, en kijk naar de rest.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "next-place": "Het cijfer {w_next_place} staat op de volgende plaats. We zoeken de {b}e plaats: de rest bij het delen door de lengte van de periode laat zien welk cijfer van de periode het is.",
+      "previous-place": "Het cijfer {w_previous_place} staat op de vorige plaats. De plaats die we zoeken is de {b}e, en dat is cijfer {pos} van de periode.",
+      "first-digit": "Het cijfer {w_first_digit} is het eerste achter de komma. Op de {b}e plaats staat cijfer {pos} van de periode."
+    }
+  },
+  "D6.convert-1S.15": {
+    "text": "Hoeveel van de breuken {f1}, {f2}, {f3}, …, {last} kun je schrijven als eindig kommagetal?",
+    "solution": [
+      "De breuk {f1} is een eindig kommagetal als de noemer alleen de factoren {=2} en {=5} heeft.",
+      "De noemers van {=2} tot en met {a} die zo zijn: {list}.",
+      "In totaal zijn er {r} van zulke noemers."
+    ],
+    "hints": [
+      "Welke priemfactoren mag de noemer hebben, zodat het kommagetal eindigt?",
+      "Schrijf de getallen van {=2} tot en met {a} op die geen andere priemfactoren hebben dan {=2} en {=5}, en tel ze.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "even-denominators": "{w_even_denominators} is het aantal even noemers. Maar de noemer {=5} is oneven en zijn kommagetal eindigt, en de noemer {=6} is even en zijn kommagetal niet.",
+      "only-two-and-five": "{w_only_two_and_five} is het aantal van de noemers {=2} en {=5}. Andere noemers met alleen de factoren {=2} en {=5} werken ook: {list}."
+    }
+  },
+  "D6.convert-1S.16": {
+    "text": "Zoek het getal precies in het midden van {f} en {x}. Schrijf de uitkomst als kommagetal.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {a} : {b} = {y}.",
+      "Het midden is de helft van de som: ({y} + {x}) : {=2}.",
+      "({y} + {x}) : {=2} = {r}."
+    ],
+    "hints": [
+      "Schrijf {f} als kommagetal: {a} : {b}.",
+      "Om het midden van {y} en {x} te vinden, tel je ze op en neem je de helft van de som.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "not-halved": "{w_not_halved} is de som van {y} en {x}. Het midden ligt halverwege, dus je moet de som delen door {=2}: {r}.",
+      "digits-side-by-side": "{w_digits_side_by_side} krijg je als je de teller {a} en de noemer {b} naast elkaar achter de komma zet. De breuk {f} is gelijk aan {y}, en het midden van {y} en {x} is {r}."
+    }
+  },
+  "D6.convert-1S.17": {
+    "text": "Welk getal is het grootst? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Maak van alle getallen kommagetallen: {list}.",
+      "Schrijf rechts nullen erbij, zodat er overal drie cijfers achter de komma staan: {list0}.",
+      "Het grootste is {big}, dat is keuze {r}."
+    ],
+    "hints": [
+      "Om breuken en kommagetallen te vergelijken, schrijf je ze allemaal als kommagetal: {o1}; {o2}; {o3}; {o4}.",
+      "Schrijf rechts nullen erbij, zodat er overal drie cijfers achter de komma staan, en vergelijk plaats voor plaats.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "fractions-as-digits": "Keuze {w_fractions_as_digits} is gekozen nadat de teller en de noemer van een breuk naast elkaar achter de komma zijn gezet. Maak van de breuken kommagetallen door te delen: {list}.",
+      "numerator-as-tenths": "Keuze {w_numerator_as_tenths} is gekozen nadat de teller van een breuk als tienden is geschreven. De noemer telt ook mee: {list}."
+    }
+  },
+  "D7.order-mixed.01": {
+    "text": "Bereken: {x} + {f} × {kk}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Vermenigvuldigen gaat voor optellen: {fd} × {kk} = {=fd*kk}.",
+      "Tel nu op: {x} + {=fd*kk} = {r}."
+    ],
+    "hints": [
+      "In de som staan optellen en vermenigvuldigen: vermenigvuldigen doe je eerst.",
+      "De breuk {f} is {fd}. Reken eerst {fd} × {kk} uit en tel daarna {x} erbij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {x} en {f} optelt en dan met {kk} vermenigvuldigt. Vermenigvuldigen gaat voor optellen: {fd} × {kk} = {=fd*kk}, daarna {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} krijg je als je de breuk {f} niet met {kk} vermenigvuldigt. Eerst {fd} × {kk} = {=fd*kk}, dan tellen we {x} erbij: {r}."
+    }
+  },
+  "D7.order-mixed.02": {
+    "text": "Bereken: {f} + {x} × {kk}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Vermenigvuldigen gaat voor optellen: {x} × {kk} = {=x*kk}.",
+      "Tel nu op: {fd} + {=x*kk} = {r}."
+    ],
+    "hints": [
+      "In de som staan optellen en vermenigvuldigen: vermenigvuldigen doe je eerst.",
+      "Reken eerst {x} × {kk} uit. De breuk {f} is {fd}: tel die bij het product op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {f} en {x} optelt en dan met {kk} vermenigvuldigt. Vermenigvuldigen gaat voor optellen: {x} × {kk} = {=x*kk}, daarna {r}.",
+      "first-term-multiplied": "{w_first_term_multiplied} krijg je als je {f} met {kk} vermenigvuldigt in plaats van {x}. Je vermenigvuldigt het getal ernaast: {x} × {kk} = {=x*kk}, daarna tel je {fd} erbij: {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} krijg je als je {x} niet met {kk} vermenigvuldigt. Eerst {x} × {kk} = {=x*kk}, dan tellen we {fd} erbij: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}."
+    }
+  },
+  "D7.order-mixed.03": {
+    "text": "Bereken: {a} − {x} × {c}.",
+    "solution": [
+      "Vermenigvuldigen gaat voor aftrekken: {x} × {c} = {=x*c}.",
+      "Trek nu af: {a} − {=x*c} = {r}."
+    ],
+    "hints": [
+      "Vermenigvuldigen doe je eerder dan aftrekken.",
+      "Reken eerst {x} × {c} uit en trek het resultaat dan af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {x} van {a} aftrekt en dan met {c} vermenigvuldigt. Vermenigvuldigen gaat voor aftrekken: {x} × {c} = {=x*c}, daarna {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} krijg je als je {x} niet met {c} vermenigvuldigt. Van {a} trek je {x} × {c} = {=x*c} af: {r}.",
+      "wrong-term-multiplied": "{w_wrong_term_multiplied} krijg je als je {a} met {c} vermenigvuldigt in plaats van {x}. Je vermenigvuldigt het getal ernaast: {x} × {c} = {=x*c}, en trekt dat af van {a}: {r}."
+    }
+  },
+  "D7.order-mixed.04": {
+    "text": "Bereken: ({x} + {f}) × {kk}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Wat tussen haakjes staat, doe je eerst: {x} + {fd} = {=x+fd}.",
+      "Vermenigvuldig nu: {=x+fd} × {kk} = {r}."
+    ],
+    "hints": [
+      "De haakjes laten zien dat je de som eerst moet uitrekenen.",
+      "De breuk {f} is {fd}. Tel {x} en {fd} op, en vermenigvuldig dan pas met {kk}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} krijg je als je de haakjes negeert: alleen {f} is met {kk} vermenigvuldigd. De haakjes zeggen dat je eerst optelt: {x} + {fd} = {=x+fd}, en die som vermenigvuldig je met {kk}: {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} is alleen de som tussen de haakjes: {x} + {fd} = {=x+fd}. Die moet je nog met {kk} vermenigvuldigen: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}."
+    }
+  },
+  "D7.order-mixed.05": {
+    "text": "Bereken: {y} − {x} : {f}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Delen gaat voor aftrekken: {x} : {fd} = {=x/fd}.",
+      "Trek nu af: {y} − {=x/fd} = {r}."
+    ],
+    "hints": [
+      "Delen doe je eerder dan aftrekken.",
+      "De breuk {f} is {fd}. Deel {x} door {fd} en trek het resultaat af van {y}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {x} van {y} aftrekt en dan door {f} deelt. Delen gaat voor aftrekken: {x} : {fd} = {=x/fd}, daarna {r}.",
+      "multiplied-by-the-fraction": "{w_multiplied_by_the_fraction} krijg je als je {x} met {f} vermenigvuldigt in plaats van te delen. Delen door {f} laat zien hoeveel van zulke delen er in {x} zitten: {x} : {fd} = {=x/fd}, daarna {r}."
+    }
+  },
+  "D7.order-mixed.06": {
+    "text": "Bereken: {x} : {f} + {kk}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Delen gaat voor optellen: {x} : {fd} = {=x/fd}.",
+      "Tel nu op: {=x/fd} + {kk} = {r}."
+    ],
+    "hints": [
+      "Delen doe je eerder dan optellen.",
+      "De breuk {f} is {fd}. Deel {x} door {fd} en tel dan {kk} erbij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} krijg je als je {x} deelt door de som van {f} en {kk}. Het delen hoort alleen bij {f}: {x} : {fd} = {=x/fd}, daarna tellen we {kk} erbij: {r}.",
+      "multiplied-by-the-fraction": "{w_multiplied_by_the_fraction} krijg je als je {x} met {f} vermenigvuldigt in plaats van te delen. Delen door {f} laat zien hoeveel van zulke delen er in {x} zitten: {x} : {fd} = {=x/fd}, daarna {r}."
+    }
+  },
+  "D7.order-mixed.07": {
+    "text": "Bereken: {kk} − {f} : {x}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Delen gaat voor aftrekken: {fd} : {x} = {=fd/x}.",
+      "Trek nu af: {kk} − {=fd/x} = {r}."
+    ],
+    "hints": [
+      "Delen doe je eerder dan aftrekken, en hier deel je een breuk door een kommagetal.",
+      "De breuk {f} is {fd}. Deel {fd} door {x} en trek het resultaat af van {kk}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {f} van {kk} aftrekt en dan door {x} deelt. Delen gaat voor aftrekken: {fd} : {x} = {=fd/x}, daarna {r}.",
+      "division-reversed": "{w_division_reversed} krijg je als je {x} door {f} deelt, terwijl je {f} door {x} moet delen: {fd} : {x} = {=fd/x}, daarna trek je het af van {kk}: {r}.",
+      "multiplied": "{w_multiplied} krijg je als je {f} met {x} vermenigvuldigt. Hier moet je delen: {fd} : {x} = {=fd/x}, daarna trek je het af van {kk}: {r}."
+    }
+  },
+  "D7.order-mixed.08": {
+    "text": "Bereken: {x} × {kk} + {f}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Vermenigvuldigen gaat voor optellen: {x} × {kk} = {=x*kk}.",
+      "Tel nu op: {=x*kk} + {fd} = {r}."
+    ],
+    "hints": [
+      "Vermenigvuldigen doe je eerder dan optellen.",
+      "Reken eerst {x} × {kk} uit en tel daarna {fd} erbij: dat is de breuk {f}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {kk} en {f} optelt en dan met {x} vermenigvuldigt. Vermenigvuldigen gaat voor optellen: {x} × {kk} = {=x*kk}, daarna tellen we {fd} erbij: {r}.",
+      "wrong-term-multiplied": "{w_wrong_term_multiplied} krijg je als je {f} met {kk} vermenigvuldigt in plaats van {x}. Je vermenigvuldigt het getal ernaast: {x} × {kk} = {=x*kk}, daarna tel je {fd} erbij: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}."
+    }
+  },
+  "D7.order-mixed.09": {
+    "text": "Bereken: (1 − {x}) × {f}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Wat tussen haakjes staat, doe je eerst: {=1} − {x} = {=1-x}.",
+      "Vermenigvuldig nu: {=1-x} × {fd} = {r}."
+    ],
+    "hints": [
+      "Wat tussen haakjes staat, reken je eerst uit: dus eerst aftrekken.",
+      "Trek {x} af van één en vermenigvuldig dan met {f}, dat is met {fd}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} krijg je als je de haakjes negeert: {x} is met {f} vermenigvuldigd en van één afgetrokken. De haakjes zeggen dat je eerst aftrekt: {=1} − {x} = {=1-x}, en dat verschil vermenigvuldig je met {f}: {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} is alleen het verschil tussen de haakjes: {=1} − {x} = {=1-x}. Dat moet je nog met {f} vermenigvuldigen: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}."
+    }
+  },
+  "D7.order-mixed.10": {
+    "text": "Bereken: {x} − {f} × {kk}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Vermenigvuldigen gaat voor aftrekken: {fd} × {kk} = {=fd*kk}.",
+      "Trek nu af: {x} − {=fd*kk} = {r}."
+    ],
+    "hints": [
+      "Vermenigvuldigen doe je eerder dan aftrekken.",
+      "De breuk {f} is {fd}. Reken {fd} × {kk} uit en trek het resultaat af van {x}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {f} van {x} aftrekt en dan met {kk} vermenigvuldigt. Vermenigvuldigen gaat voor aftrekken: {fd} × {kk} = {=fd*kk}, daarna {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} krijg je als je {f} niet met {kk} vermenigvuldigt. Van {x} trek je {fd} × {kk} = {=fd*kk} af: {r}.",
+      "wrong-term-multiplied": "{w_wrong_term_multiplied} krijg je als je {x} met {kk} vermenigvuldigt in plaats van {f}. Je vermenigvuldigt het getal ernaast: {fd} × {kk} = {=fd*kk}, en trekt dat af van {x}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}."
+    }
+  },
+  "D7.order-mixed.11": {
+    "text": "Bereken: {f} + {x} × {y}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Vermenigvuldigen gaat voor optellen: {x} × {y} = {=x*y}.",
+      "Tel nu op: {fd} + {=x*y} = {r}."
+    ],
+    "hints": [
+      "Vermenigvuldigen doe je eerder dan optellen.",
+      "Reken {x} × {y} uit: beide factoren hebben één cijfer achter de komma, dus het product heeft er twee. Tel daarna {fd} erbij: dat is de breuk {f}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} krijg je als je eerst {f} en {x} optelt en dan met {y} vermenigvuldigt. Vermenigvuldigen gaat voor optellen: {x} × {y} = {=x*y}, daarna tellen we {fd} erbij: {r}.",
+      "one-place": "{w_one_place} krijg je als je het product {x} × {y} met één cijfer achter de komma schrijft. Elke factor heeft één cijfer achter de komma, dus het product heeft er twee: {=x*y}, daarna tellen we {fd} erbij: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}."
+    }
+  },
+  "D7.order-mixed.12": {
+    "text": "Bereken: ({x} − {f}) : {kk}.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Wat tussen haakjes staat, doe je eerst: {x} − {fd} = {=x-fd}.",
+      "Deel nu: {=x-fd} : {kk} = {r}."
+    ],
+    "hints": [
+      "Wat tussen haakjes staat, reken je eerst uit: dus eerst het verschil.",
+      "De breuk {f} is {fd}. Trek {fd} af van {x} en deel het resultaat door {kk}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} krijg je als je de haakjes negeert: alleen {f} is door {kk} gedeeld. De haakjes zeggen dat je eerst aftrekt: {x} − {fd} = {=x-fd}, en dat verschil deel je door {kk}: {r}.",
+      "division-forgotten": "{w_division_forgotten} is alleen het verschil tussen de haakjes: {x} − {fd} = {=x-fd}. Dat moet je nog door {kk} delen: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} krijg je als je de breuk {f} als kommagetal schrijft met de teller en de noemer naast elkaar achter de komma. De breuk {f} is gelijk aan {fd}, en het antwoord is {r}."
+    }
+  },
+  "D7.order-mixed.13": {
+    "text": "Zet haakjes in de uitdrukking {e} zodat de waarde zo groot mogelijk is. Hoe groot is die waarde?",
+    "solution": [
+      "Zonder haakjes: {e} = {v0}.",
+      "Haakjes veranderen de volgorde van de bewerkingen. Van alle manieren geeft {best} de grootste waarde.",
+      "{best} = {r}."
+    ],
+    "hints": [
+      "Zonder haakjes is de waarde van {e} gelijk aan {v0}. Haakjes veranderen de volgorde van de bewerkingen.",
+      "Zet haakjes om een optelling of aftrekking, zodat die eerder wordt gedaan dan het vermenigvuldigen. Reken de waarden van verschillende manieren uit en kies de grootste.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-brackets": "{w_no_brackets} is de waarde van de uitdrukking zonder haakjes. Je kunt haakjes zo zetten dat de waarde groter wordt: {best} = {r}.",
+      "left-to-right": "{w_left_to_right} krijg je als je de bewerkingen van links naar rechts doet. De manier {best} geeft meer: {r}.",
+      "the-smallest": "{w_the_smallest} is de kleinste van de waarden. We zoeken de manier met de grootste waarde: {best} = {r}."
+    }
+  },
+  "D7.order-mixed.14": {
+    "text": "{x} ? {f} = {cc}. Welk bewerkingsteken staat op de plaats van het vraagteken? 1) +; 2) −; 3) ×; 4) :. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Controleer de tekens een voor een: {tests}.",
+      "Alleen {sym} geeft {cc}: {x} {sym} {fd} = {cc}. Dat is keuze {r}."
+    ],
+    "hints": [
+      "Schrijf de breuk {f} als kommagetal: {fd}.",
+      "Controleer de tekens een voor een: reken {x} + {fd}, {x} − {fd}, {x} × {fd}, {x} : {fd} uit en zoek de uitkomst {cc}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "opposite-operation": "Keuze {w_opposite_operation} is de omgekeerde bewerking, en die geeft een ander getal. Alleen keuze {r} past: {x} {sym} {fd} = {cc}.",
+      "neighbouring-operation": "Keuze {w_neighbouring_operation} geeft een ander getal. Controleer de tekens een voor een: {tests}."
+    }
+  },
+  "D7.order-mixed.15": {
+    "text": "Deel {x} door {f} en verminder de uitkomst met {y}. Wat krijg je?",
+    "solution": [
+      "Maak van de breuk een kommagetal: {f} = {fd}.",
+      "Zoek de uitkomst van de deling: {x} : {fd} = {=x/fd}.",
+      "Verminder die met {y}: {=x/fd} − {y} = {r}."
+    ],
+    "hints": [
+      "De uitkomst van {x} gedeeld door {f} is {x} : {f}.",
+      "De breuk {f} is {fd}. Deel {x} door {fd} en verminder het resultaat met {y}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "product-instead": "{w_product_instead} krijg je als je {x} met {f} vermenigvuldigt in plaats van te delen. De uitkomst van de deling is {x} : {fd} = {=x/fd}, daarna {=x/fd} − {y} = {r}.",
+      "reversed-subtraction": "{w_reversed_subtraction} krijg je als je de uitkomst van {y} aftrekt. De uitkomst moet je met {y} verminderen: {=x/fd} − {y} = {r}.",
+      "dividend-and-divisor-swapped": "{w_dividend_and_divisor_swapped} krijg je als je {f} door {x} deelt. Het deeltal is {x} en de deler is {f}: {x} : {fd} = {=x/fd}.",
+      "reduction-forgotten": "{w_reduction_forgotten} is alleen de uitkomst van de deling {x} : {fd} = {=x/fd}. Die moet je nog met {y} verminderen: {r}.",
+      "increased-instead": "{w_increased_instead} krijg je als je de uitkomst {=x/fd} met {y} vergroot. In de opdracht staat verminderen: {=x/fd} − {y} = {r}."
+    }
+  },
+  "D7.order-mixed.16": {
+    "text": "De getallen {n1}, {n2} en {n3} moet je elk één keer invullen in de uitdrukking (_ − _) × _. Wat is de grootste waarde die je kunt krijgen?",
+    "solution": [
+      "Het verschil is het grootst als je het kleinste getal {mn} aftrekt van het grootste getal {mx}: {mx} − {mn} = {df}.",
+      "Het middelste getal {md} blijft over voor de vermenigvuldiger.",
+      "De grootste waarde: {df} × {md} = {r}."
+    ],
+    "hints": [
+      "Hoe groter het verschil, hoe groter het product. Hoe krijg je met de getallen {n1}, {n2} en {n3} het grootste verschil?",
+      "Voor het grootste verschil trek je {mn} af van {mx}. Welk getal blijft er over voor de vermenigvuldiger?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "given-order": "{w_given_order} krijg je als je de getallen invult in de volgorde waarin ze in de opdracht staan. Je kunt ze anders neerzetten: trek {mn} af van {mx} en vermenigvuldig met {md}.",
+      "multiplier-is-the-largest": "{w_multiplier_is_the_largest} krijg je als je het grootste getal als vermenigvuldiger neemt. Dan is het verschil klein: ({md} − {mn}) × {mx}. De grootste waarde: {df} × {md} = {r}.",
+      "numbers-in-order": "{w_numbers_in_order} krijg je als je de getallen van groot naar klein neerzet: ({mx} − {md}) × {mn}. Het verschil is dan klein. Je moet {mn} aftrekken van {mx}: {r}."
+    }
+  }
+}

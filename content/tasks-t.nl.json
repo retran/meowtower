@@ -1,0 +1,1511 @@
+{
+  "T1.one-step.01": {
+    "text": "Het eerste deel is {a} en het tweede deel is {b}. Bereken het totaal.",
+    "solution": [
+      "We willen alles samen weten, dus tellen we de twee delen op.",
+      "{a} + {b} = {r}.",
+      "Het totaal is dus {r}."
+    ],
+    "hints": [
+      "Het eerste deel is {a} en het tweede deel is {b}. Je wilt alles samen weten, dus de delen moeten bij elkaar.",
+      "Tel {b} bij {a} op in stukjes: eerst de tientallen, dan de eenheden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} krijg je als je het ene deel van het andere aftrekt. Maar we willen alles samen: {a} + {b} = {r}.",
+      "first-part": "{w_first_part} is alleen het eerste deel. We hebben beide delen samen nodig: {a} + {b} = {r}."
+    }
+  },
+  "T1.one-step.02": {
+    "text": "Er waren er {a}. Er zijn er {b} weggehaald. Hoeveel zijn er over?",
+    "solution": [
+      "Er is een deel weggehaald, dus we trekken het weggehaalde af van wat er was.",
+      "{a} − {b} = {r}.",
+      "Er zijn er dus {r} over."
+    ],
+    "hints": [
+      "Er waren er {a} en er zijn er {b} weggehaald. Er blijven er minder over dan er waren, dus we gaan aftrekken.",
+      "Trek {b} af van {a} in stukjes: eerst de tientallen, dan de eenheden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is {a} + {b}. Maar er zijn er {b} weggehaald, niet erbij gekomen: {a} − {b} = {r}.",
+      "removed": "{w_removed} is hoeveel er zijn weggehaald. De vraag is hoeveel er over zijn: {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} krijg je als je bij de eenheden het kleinste van het grootste aftrekt: {=mod(b,10)} − {=mod(a,10)}. Maar {a} heeft maar {=mod(a,10)} eenheden, minder dan {=mod(b,10)}, dus je moet eerst een tiental lenen. Dan is {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.03": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is {b} meer. Bereken de tweede hoeveelheid.",
+    "solution": [
+      "‘{b} meer’ betekent dat we {b} bij de eerste hoeveelheid optellen.",
+      "{a} + {b} = {r}.",
+      "De tweede hoeveelheid is dus {r}."
+    ],
+    "hints": [
+      "De tweede hoeveelheid is meer dan de eerste, dus hij ontstaat uit {a} door erbij te doen.",
+      "Doe er precies {b} bij {a} bij: zoveel meer is de tweede hoeveelheid.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} krijg je met {a} − {b}. Maar de tweede hoeveelheid is meer dan de eerste, dus we tellen {b} erbij: {a} + {b} = {r}.",
+      "times": "{w_times} krijg je met {a} × {b}. ‘{b} meer’ is niet hetzelfde als ‘{b} keer zoveel’: we tellen op, {a} + {b} = {r}."
+    }
+  },
+  "T1.one-step.04": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is {b} minder. Bereken de tweede hoeveelheid.",
+    "solution": [
+      "‘{b} minder’ betekent dat we {b} van de eerste hoeveelheid aftrekken.",
+      "{a} − {b} = {r}.",
+      "De tweede hoeveelheid is dus {r}."
+    ],
+    "hints": [
+      "De tweede hoeveelheid is minder dan de eerste, dus hij ontstaat uit {a} door eraf te halen.",
+      "Haal {b} van {a} af: zoveel minder is de tweede hoeveelheid.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} krijg je met {a} + {b}. Maar de tweede hoeveelheid is minder dan de eerste, dus we trekken {b} af: {a} − {b} = {r}.",
+      "times": "{w_times} krijg je met {a} : {b}. ‘{b} minder’ is niet hetzelfde als ‘{b} keer zo klein’: we trekken af, {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} krijg je als je bij de eenheden het kleinste van het grootste aftrekt: {=mod(b,10)} − {=mod(a,10)}. Maar {a} heeft maar {=mod(a,10)} eenheden, minder dan {=mod(b,10)}, dus je moet eerst een tiental lenen. Dan is {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.05": {
+    "text": "De eerste hoeveelheid is {a} en de tweede is {b}. Hoeveel meer is de eerste dan de tweede?",
+    "solution": [
+      "Om te weten hoeveel meer het ene getal is dan het andere, trekken we het kleinste van het grootste af.",
+      "{a} − {b} = {r}.",
+      "De eerste hoeveelheid is dus {r} meer dan de tweede."
+    ],
+    "hints": [
+      "‘Hoeveel meer’ vraagt naar het verschil tussen {a} en {b}.",
+      "Trek het kleinere getal {b} af van het grotere getal {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} krijg je met {a} + {b}. ‘Hoeveel meer’ vraagt naar het verschil: {a} − {b} = {r}.",
+      "times": "{w_times} krijg je met {a} : {b}. Dat zegt hoeveel keer zo groot, maar de vraag is hoeveel meer: {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} krijg je als je bij de eenheden het kleinste van het grootste aftrekt: {=mod(b,10)} − {=mod(a,10)}. Maar {a} heeft maar {=mod(a,10)} eenheden, minder dan {=mod(b,10)}, dus je moet eerst een tiental lenen. Dan is {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.06": {
+    "text": "Er zijn {a} groepen met in elke groep {b}. Bereken het totaal.",
+    "solution": [
+      "In elke groep zitten er {b} en er zijn {a} van zulke groepen, dus we vermenigvuldigen.",
+      "{a} × {b} = {r}.",
+      "Er zijn er dus {r} in totaal."
+    ],
+    "hints": [
+      "Er zijn {a} groepen en in elke groep zit evenveel: {b}. Gelijke groepen voeg je samen door te vermenigvuldigen.",
+      "Reken {a} × {b} uit. Weet je het niet meer, tel dan steeds {b} erbij, {a|keer|keer|keer} in totaal.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} krijg je met {a} + {b}. Er zijn {a} groepen met in elke groep {b}, dus we vermenigvuldigen: {a} × {b} = {r}.",
+      "difference": "{w_difference} is het verschil tussen {a} en {b}. We willen het totaal: {a} groepen van {b} is {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.07": {
+    "text": "Er zijn er {x} in totaal. Ze worden eerlijk verdeeld over {a|deel|delen|delen}. Hoeveel zijn er in elk deel?",
+    "solution": [
+      "Eerlijk verdelen betekent: het totaal delen door het aantal delen.",
+      "{x} : {a} = {r}.",
+      "In elk deel zitten er dus {r}."
+    ],
+    "hints": [
+      "Er zijn er {x} in totaal, eerlijk verdeeld over {a|deel|delen|delen}. Eerlijk verdelen is delen.",
+      "Deel {x} door {a}. Denk: welk getal keer {a} is {x}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is het totaal, dat is nog niet verdeeld. We moeten {x} door {a} delen: {x} : {a} = {r}.",
+      "parts": "{w_parts} is het aantal delen, maar de vraag is hoeveel er in één deel zitten: {x} : {a} = {r}."
+    }
+  },
+  "T1.one-step.08": {
+    "text": "Er zijn er {x} in totaal. In elke groep zitten er {b}. Hoeveel groepen zijn er?",
+    "solution": [
+      "We willen weten hoe vaak {b} in {x} past, dus we delen.",
+      "{x} : {b} = {r}.",
+      "Er zijn dus {r|groep|groepen|groepen}."
+    ],
+    "hints": [
+      "Je moet uitzoeken hoeveel groepen van {b} je van {x} kunt maken.",
+      "Deel {x} door {b}: hoe vaak past {b} in {x}? Controleer met vermenigvuldigen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is het totaal. Het aantal groepen van {b} is {x} : {b} = {r}.",
+      "in-a-group": "{w_in_a_group} is hoeveel er in één groep zitten, maar de vraag is hoeveel groepen het zijn: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.09": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is {b} keer zo groot. Bereken de tweede hoeveelheid.",
+    "solution": [
+      "‘{b} keer zo groot’ betekent dat we de eerste hoeveelheid met {b} vermenigvuldigen.",
+      "{a} × {b} = {r}.",
+      "De tweede hoeveelheid is dus {r}."
+    ],
+    "hints": [
+      "‘Keer zo groot’ is iets anders dan ‘meer’: je neemt de eerste hoeveelheid een paar keer.",
+      "Neem het getal {a} precies {b|keer|keer|keer} en tel op, of vermenigvuldig {a} met {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} krijg je met {a} + {b}. Maar ‘{b} keer zo groot’ betekent vermenigvuldigen: {a} × {b} = {r}.",
+      "division": "{w_division} krijg je met {a} : {b}. De tweede hoeveelheid is groter dan de eerste, dus we vermenigvuldigen: {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.10": {
+    "text": "De eerste hoeveelheid is {a} en de tweede is {x}. Hoeveel keer zo groot is de tweede als de eerste?",
+    "solution": [
+      "Om te weten hoeveel keer zo groot de ene hoeveelheid is als de andere, delen we de grootste door de kleinste.",
+      "{x} : {a} = {r}.",
+      "De tweede hoeveelheid is dus {r|keer|keer|keer} zo groot als de eerste."
+    ],
+    "hints": [
+      "‘Hoeveel keer zo groot’ vraagt hoe vaak {a} in {x} past.",
+      "Deel {x} door {a}: welk getal keer {a} is {x}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} is hoeveel meer {x} is dan {a}. Maar de vraag is hoeveel keer zo groot, en dat is delen: {x} : {a} = {r}.",
+      "second": "{w_second} staat er al. Om te weten hoeveel keer zo groot het is als {a}, delen we: {x} : {a} = {r}."
+    }
+  },
+  "T1.one-step.11": {
+    "text": "Eén ding kost {a|euro|euro|euro}. Er worden er {b} gekocht. Hoeveel euro kost de aankoop?",
+    "solution": [
+      "Eén ding kost {a|euro|euro|euro} en er zijn {b} dingen, dus we vermenigvuldigen de prijs met het aantal.",
+      "{a} × {b} = {r}.",
+      "De aankoop kost dus {r|euro|euro|euro}."
+    ],
+    "hints": [
+      "Alle dingen zijn hetzelfde en elk kost {a|euro|euro|euro}. Je zoekt de prijs van {b} zulke dingen samen.",
+      "Herhaal de prijs {a|euro|euro|euro} precies {b|keer|keer|keer}: dat is {a} × {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} krijg je met {a} + {b}. Maar er zijn {b} dingen en elk kost {a|euro|euro|euro}, dus we vermenigvuldigen: {a} × {b} = {r}.",
+      "price": "{w_price} is de prijs van maar één ding. Er worden er {b} gekocht: {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.12": {
+    "text": "Er is {a|euro|euro|euro} betaald voor een aankoop van {b|euro|euro|euro}. Hoeveel euro krijg je terug?",
+    "solution": [
+      "Wisselgeld is het geld dat overblijft na het betalen, dus we trekken de prijs af van het betaalde bedrag.",
+      "{a} − {b} = {r}.",
+      "Het wisselgeld is dus {r|euro|euro|euro}."
+    ],
+    "hints": [
+      "Er is {a|euro|euro|euro} betaald en de aankoop kost {b|euro|euro|euro}. Het wisselgeld is wat overblijft van het betaalde geld.",
+      "Trek {b} af van {a}: eerst de tientallen, dan de eenheden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} krijg je met {a} + {b}. Maar het wisselgeld is wat overblijft van de {a|euro|euro|euro} na de aankoop: {a} − {b} = {r}.",
+      "cost": "{w_cost} is de prijs van de aankoop. Het wisselgeld is wat overblijft van het betaalde geld: {a} − {b} = {r}.",
+      "swapped-units": "{w_swapped_units} krijg je als je bij de eenheden het kleinste van het grootste aftrekt: {=mod(b,10)} − {=mod(a,10)}. Maar {a} heeft maar {=mod(a,10)} eenheden, minder dan {=mod(b,10)}, dus je moet eerst een tiental lenen. Dan is {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.13": {
+    "text": "Er waren er {a}. Nu zijn het er {b}. Hoeveel zijn er bijgekomen?",
+    "solution": [
+      "Er zijn er nu meer dan eerst, dus er is iets bijgekomen. Dat vinden we met aftrekken: het nieuwe aantal min het oude.",
+      "{b} − {a} = {r}.",
+      "Er zijn er dus {r} bijgekomen."
+    ],
+    "hints": [
+      "Er waren er {a} en nu zijn het er {b}. Het zijn er meer, dus er is iets bijgekomen. Zoek hoeveel.",
+      "Zoek hoeveel er van {a} tot {b} ontbreekt: trek {a} af van {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} krijg je met {a} + {b}. Maar {b} is wat er nu is. Wat erbij kwam is het verschil: {b} − {a} = {r}.",
+      "start": "{w_start} is hoeveel er eerst waren. De vraag is hoeveel er bijkwamen: {b} − {a} = {r}.",
+      "swapped-units": "{w_swapped_units} krijg je als je bij de eenheden het kleinste van het grootste aftrekt: {=mod(a,10)} − {=mod(b,10)}. Maar {b} heeft maar {=mod(b,10)} eenheden, minder dan {=mod(a,10)}, dus je moet eerst een tiental lenen. Dan is {b} − {a} = {r}."
+    }
+  },
+  "T1.one-step.14": {
+    "text": "Er zijn er {a} weggehaald en er zijn er {b} over. Hoeveel waren er eerst?",
+    "solution": [
+      "Eerst waren er meer: wat er over is en wat er is weggehaald. Dus we doen het weggehaalde er weer bij.",
+      "{b} + {a} = {r}.",
+      "Er waren er eerst dus {r}."
+    ],
+    "hints": [
+      "Er zijn er {a} weggehaald en er zijn er {b} over. Eerst waren er meer dan nu: het weggehaalde moet er weer bij.",
+      "Doe het weggehaalde er weer bij: tel {a} op bij {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} krijg je als je het ene getal van het andere aftrekt. Maar het weggehaalde moet er weer bij: {b} + {a} = {r}.",
+      "removed": "{w_removed} is hoeveel er zijn weggehaald. De vraag is hoeveel er eerst waren, dus wat over is en wat weg is samen: {b} + {a} = {r}.",
+      "left": "{w_left} is hoeveel er over zijn. Maar eerst waren er meer: {b} + {a} = {r}."
+    }
+  },
+  "T2.two-step.01": {
+    "text": "Er waren er {a}. Daarna kwamen er {b} bij en toen gingen er {c} weg. Hoeveel zijn er nu?",
+    "solution": [
+      "Eerst tellen we erbij op: {a} + {b} = {=a+b}.",
+      "Dan gaan er een paar weg, dus we trekken af: {=a+b} − {c} = {r}.",
+      "Er zijn er nu dus {r}."
+    ],
+    "hints": [
+      "Er waren er {a}. Er kwamen er {b} bij en daarna gingen er {c} weg. De stappen gaan op volgorde.",
+      "Tel eerst {b} op bij {a}. Trek daarna {c} af van wat je krijgt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "add-all": "{w_add_all} krijg je door alle drie de getallen op te tellen. Maar er gingen er {c} weg, en dat is aftrekken: {=a+b} − {c} = {r}.",
+      "one-step-less": "{w_one_step_less} is hoeveel er waren nadat er {b} bij waren gekomen. Maar daarna gingen er ook nog {c} weg: {=a+b} − {c} = {r}.",
+      "no-addition": "{w_no_addition} krijg je zonder de {b} die erbij kwamen: {a} − {c}. Wat erbij kwam telt ook mee: {=a+b} − {c} = {r}."
+    }
+  },
+  "T2.two-step.02": {
+    "text": "Er zijn {a} groepen van de eerste soort met in elke groep {b}. Er zijn {c} groepen van de tweede soort met in elke groep {d}. Bereken het totaal.",
+    "solution": [
+      "De groepen zijn gelijk, dus we rekenen elke soort uit met vermenigvuldigen: {a} × {b} = {=a*b}.",
+      "Tweede soort: {c} × {d} = {=c*d}.",
+      "Nu tellen we beide soorten op: {=a*b} + {=c*d} = {r}."
+    ],
+    "hints": [
+      "Er zijn twee soorten groepen. Zoek eerst uit hoeveel elke soort geeft.",
+      "Eerste soort: {a} × {b}, tweede soort: {c} × {d}. Tel daarna de twee uitkomsten op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-kind": "{w_first_kind} is alleen de eerste soort: {a} × {b}. De tweede soort moet ook meetellen: {=a*b} + {=c*d} = {r}.",
+      "all-times": "{w_all_times} krijg je door alle vier de getallen te vermenigvuldigen. De soorten vermenigvuldig je niet met elkaar, je telt ze op: {=a*b} + {=c*d} = {r}.",
+      "add-all": "{w_add_all} is de som van alle vier de getallen. De groepen zijn gelijk, dus we rekenen elke soort uit met vermenigvuldigen en tellen dan op: {=a*b} + {=c*d} = {r}."
+    }
+  },
+  "T2.two-step.03": {
+    "text": "Er waren er {x}. Er werd meerdere keren {b} weggehaald en er bleven er {c} over. Hoeveel keer is er weggehaald?",
+    "solution": [
+      "In totaal zijn er {x} − {c} = {=x-c} weggehaald.",
+      "Elke keer werd er {b} weggehaald, dus we delen om het aantal keer te vinden: {=x-c} : {b} = {r}.",
+      "Er is dus {r|keer|keer|keer} weggehaald."
+    ],
+    "hints": [
+      "Er waren er {x} en er bleven er {c} over. Zoek eerst hoeveel er in totaal zijn weggehaald.",
+      "In totaal zijn er {x} − {c} weggehaald. Zoek nu hoe vaak {b} daarin past.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "taken": "{w_taken} is hoeveel er in totaal zijn weggehaald, maar de vraag is hoeveel keer: {=x-c} : {b} = {r}.",
+      "total-over-size": "{w_total_over_size} krijg je door {x} door {b} te delen. Maar er bleven er {c} over, die zijn niet weggehaald. Eerst {x} − {c} = {=x-c}, dan {=x-c} : {b} = {r}.",
+      "each-time": "{w_each_time} is hoeveel er elke keer werd weggehaald, maar de vraag is hoeveel keer: {=x-c} : {b} = {r}."
+    }
+  },
+  "T2.two-step.04": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is {b} meer dan de eerste. Bereken de som van beide hoeveelheden.",
+    "solution": [
+      "De tweede hoeveelheid is {b} meer dan de eerste: {a} + {b} = {=a+b}.",
+      "Nu tellen we beide hoeveelheden op: {a} + {=a+b} = {r}.",
+      "De som is dus {r}."
+    ],
+    "hints": [
+      "Je moet twee hoeveelheden optellen, maar de tweede is nog niet bekend.",
+      "Zoek de tweede: tel {b} op bij {a}. Tel die dan op bij {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second-only": "{w_second_only} is alleen de tweede hoeveelheid: {a} + {b}. We willen de som van beide: {a} + {=a+b} = {r}.",
+      "twice-first": "{w_twice_first} is {a} + {a}. Maar de tweede hoeveelheid is {b} meer dan de eerste: {a} + {=a+b} = {r}.",
+      "extra-only": "{w_extra_only} is alleen hoeveel meer de tweede is dan de eerste. Eerst de tweede hoeveelheid: {a} + {b} = {=a+b}, dan de som van beide: {a} + {=a+b} = {r}."
+    }
+  },
+  "T2.two-step.05": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is {b} keer zo groot. Hoeveel meer is de tweede dan de eerste?",
+    "solution": [
+      "De tweede hoeveelheid is {b} keer zo groot als de eerste: {a} × {b} = {=a*b}.",
+      "Om te weten hoeveel meer het is, halen we de eerste hoeveelheid eraf: {=a*b} − {a} = {r}.",
+      "De tweede is dus {r} meer dan de eerste."
+    ],
+    "hints": [
+      "De vraag heeft twee stappen: zoek eerst de tweede hoeveelheid en vergelijk die dan met de eerste.",
+      "De tweede hoeveelheid: {a} × {b}. Zoek dan hoeveel meer die is dan {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second": "{w_second} is de tweede hoeveelheid zelf, maar de vraag is hoeveel meer die is dan de eerste: {=a*b} − {a} = {r}.",
+      "first": "{w_first} is de eerste hoeveelheid, maar we willen het verschil tussen de tweede en de eerste: {=a*b} − {a} = {r}.",
+      "added": "{w_added} krijg je met optellen, maar ‘{b} keer zo groot’ betekent vermenigvuldigen. De tweede hoeveelheid is {a} × {b} = {=a*b} en het verschil is {=a*b} − {a} = {r}."
+    }
+  },
+  "T2.two-step.06": {
+    "text": "Er is {a|euro|euro|euro} betaald. Er zijn {b|ding|dingen|dingen} gekocht van elk {c|euro|euro|euro}. Hoeveel euro krijg je terug?",
+    "solution": [
+      "Eerst zoeken we de prijs van de aankoop: {b} × {c} = {=b*c} euro.",
+      "Het wisselgeld is het betaalde geld min de prijs: {a} − {=b*c} = {r} euro.",
+      "Het wisselgeld is dus {r|euro|euro|euro}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel de hele aankoop kost, en dan hoeveel er van het betaalde geld overblijft.",
+      "De aankoop kost {b} × {c}. Trek die prijs af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cost": "{w_cost} is de prijs van de aankoop: {b} × {c}. Het wisselgeld is wat overblijft van de {a|euro|euro|euro}: {a} − {=b*c} = {r}.",
+      "one-item": "{w_one_item} krijg je als je alleen de prijs van één ding aftrekt. Er zijn meer dingen, dus eerst rekenen we de hele aankoop uit: {b} × {c} = {=b*c}, en {a} − {=b*c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen, maar het wisselgeld is een verschil. Eerst de prijs van de aankoop: {b} × {c} = {=b*c}, dan {a} − {=b*c} = {r}."
+    }
+  },
+  "T2.two-step.07": {
+    "text": "Er zijn er {x} in totaal. Ze worden eerlijk verdeeld over {a|deel|delen|delen} en bij één deel komen er {c} bij. Hoeveel zijn er nu in dat deel?",
+    "solution": [
+      "We verdelen eerlijk: {x} : {a} = {b}.",
+      "Bij één deel komen er {c} bij, dus we tellen op: {b} + {c} = {r}.",
+      "In dat deel zijn er nu dus {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel er in één deel zaten en tel er dan bij op.",
+      "Deel {x} door {a}. Tel er {c} bij op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "share": "{w_share} is hoeveel er in één deel zaten vóór het erbij doen. Daar kwamen er nog {c} bij: {x} : {a} = {b}, en {b} + {c} = {r}.",
+      "total-plus": "{w_total_plus} is het totaal met het erbij gedane, maar we zoeken één deel: {x} : {a} = {b}, en {b} + {c} = {r}.",
+      "all-numbers": "{w_all_numbers} is de som van het totaal {x}, het aantal delen {a} en wat erbij kwam, {c}. Eerst verdelen we eerlijk: {x} : {a} = {b}, dan {b} + {c} = {r}."
+    }
+  },
+  "T2.two-step.08": {
+    "text": "Bij {a} komen er {b} en alles wordt eerlijk verdeeld over {c|deel|delen|delen}. Hoeveel zijn er in elk deel?",
+    "solution": [
+      "Eerst zoeken we hoeveel er in totaal zijn: {a} + {b} = {=a+b}.",
+      "Dan verdelen we eerlijk: {=a+b} : {c} = {r}.",
+      "In elk deel zijn er dus {r}."
+    ],
+    "hints": [
+      "Alles wat er na het erbij doen is, wordt verdeeld. Zoek eerst dat aantal.",
+      "Tel {a} en {b} op en deel de som door {c}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is het totaal, dat is nog niet verdeeld: {=a+b} : {c} = {r}.",
+      "halved": "{w_halved} krijg je door in tweeën te delen, maar er zijn {c} delen: {=a+b} : {c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen, maar het aantal delen is om door te delen. Eerst {a} + {b} = {=a+b}, dan {=a+b} : {c} = {r}."
+    }
+  },
+  "T2.two-step.09": {
+    "text": "Er waren er {a}. Er zijn er {b} weggehaald. Wat overbleef, wordt {c} keer genomen. Hoeveel is dat samen?",
+    "solution": [
+      "Eerst zijn er een paar weggehaald: {a} − {b} = {=a-b}.",
+      "Wat overbleef wordt {c} keer genomen, dus we vermenigvuldigen: {=a-b} × {c} = {r}.",
+      "Dat is samen dus {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel er overblijven nadat er een paar zijn weggehaald. Alleen dat aantal wordt meerdere keren genomen.",
+      "Trek {b} af van {a}. Vermenigvuldig wat overblijft met {c}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "remainder": "{w_remainder} is wat er overblijft, maar dat wordt {c} keer genomen: {=a-b} × {c} = {r}.",
+      "multiply-first": "{w_multiply_first} krijg je door {a} met {c} te vermenigvuldigen vóór het wegnemen. Eerst halen we weg: {a} − {b} = {=a-b}, dan vermenigvuldigen we: {=a-b} × {c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen. Eerst halen we weg: {a} − {b} = {=a-b}, dan nemen we het {c} keer: {=a-b} × {c} = {r}.",
+      "plus-instead": "{w_plus_instead} krijg je door {a} en {b} op te tellen, maar er zijn er weggehaald. We trekken af: {a} − {b} = {=a-b}, dan vermenigvuldigen we met {c}: {r}."
+    }
+  },
+  "T2.two-step.10": {
+    "text": "Het geheel is {a}. Het eerste deel is {b} en het tweede deel is {c}. Bereken het derde deel.",
+    "solution": [
+      "De drie delen samen zijn {a}, dus we trekken de bekende delen af van het geheel.",
+      "De twee bekende delen samen: {b} + {c} = {=b+c}.",
+      "Het derde deel: {a} − {=b+c} = {r}."
+    ],
+    "hints": [
+      "De drie delen samen zijn {a}. Twee delen zijn al bekend.",
+      "Zoek eerst de twee bekende delen samen: {b} + {c}. Trek dat daarna af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-removed": "{w_one_removed} krijg je door maar één deel af te trekken. Je moet ze allebei aftrekken: {a} − {=b+c} = {r}.",
+      "known": "{w_known} zijn de twee bekende delen samen. Het derde deel is wat overblijft van {a}: {a} − {=b+c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen, maar het derde deel is kleiner dan het geheel. We trekken beide bekende delen af: {a} − {=b+c} = {r}."
+    }
+  },
+  "T2.two-step.11": {
+    "text": "Er waren er {a}. Er zijn er {b} weggehaald. Wat overbleef, wordt in groepjes van {x} gelegd. Hoeveel groepjes zijn dat?",
+    "solution": [
+      "Eerst zoeken we wat er overblijft: {a} − {b} = {=a-b}.",
+      "Wat overbleef wordt in groepjes van {x} gelegd, dus we delen: {=a-b} : {x} = {r}.",
+      "Dat zijn dus {r|groepje|groepjes|groepjes}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel er overblijven en dan hoeveel groepjes je van wat overblijft kunt maken.",
+      "Trek {b} af van {a}. Deel wat overblijft door {x}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "remainder": "{w_remainder} is wat er overblijft, maar we zoeken het aantal groepjes: {=a-b} : {x} = {r}.",
+      "group-size": "{w_group_size} is de grootte van een groepje, maar we zoeken het aantal groepjes: {=a-b} : {x} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen. Eerst halen we weg: {a} − {b} = {=a-b}, dan verdelen we wat overblijft in groepjes van {x}: {=a-b} : {x} = {r}."
+    }
+  },
+  "T2.two-step.12": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is de helft van de eerste. De derde is {b} meer dan de tweede. Bereken de derde hoeveelheid.",
+    "solution": [
+      "‘De helft van’ betekent dat we de eerste hoeveelheid door 2 delen: {a} : 2 = {=a/2}.",
+      "De derde is {b} meer dan de tweede: {=a/2} + {b} = {r}.",
+      "De derde hoeveelheid is dus {r}."
+    ],
+    "hints": [
+      "De derde hoeveelheid hangt af van de tweede, en de tweede van de eerste. Begin bij de eerste.",
+      "Neem de helft van {a} en tel er daarna {b} bij op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second": "{w_second} is de tweede hoeveelheid, maar we zoeken de derde, die {b} meer is: {=a/2} + {b} = {r}.",
+      "first-plus": "{w_first_plus} krijg je zonder te halveren: {a} + {b}. De tweede hoeveelheid is de helft van de eerste: {a} : 2 = {=a/2}, en {=a/2} + {b} = {r}.",
+      "doubled": "{w_doubled} krijg je door de eerste hoeveelheid te verdubbelen. ‘De helft van’ betekent delen door 2: {a} : 2 = {=a/2}, en {=a/2} + {b} = {r}.",
+      "less-instead": "{w_less_instead} krijg je door {b} af te trekken. De derde is {b} meer dan de tweede, dus we tellen op: {=a/2} + {b} = {r}."
+    }
+  },
+  "T3.three-step.01": {
+    "text": "De eerste soort heeft {a|groep|groepen|groepen} van {b}, de tweede soort {c|groep|groepen|groepen} van {d}, de derde soort {e|groep|groepen|groepen} van {f}. Bereken het totaal.",
+    "solution": [
+      "De groepen zijn gelijk, dus we rekenen elke soort uit met vermenigvuldigen.",
+      "Eerste soort: {a} × {b} = {=a*b}, tweede: {c} × {d} = {=c*d}, derde: {e} × {f} = {=e*f}.",
+      "We tellen de drie soorten op: {=a*b} + {=c*d} + {=e*f} = {r}."
+    ],
+    "hints": [
+      "Er zijn drie soorten groepen. Zoek eerst uit hoeveel elke soort geeft.",
+      "Eerste soort: {a} × {b}, tweede: {c} × {d}, derde: {e} × {f}. Tel daarna de drie uitkomsten op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-kinds": "{w_two_kinds} laat de derde soort weg: {e} × {f} = {=e*f}. We tellen alle drie de soorten op: {=a*b} + {=c*d} + {=e*f} = {r}.",
+      "count-of-groups": "{w_count_of_groups} is het aantal van alle groepen: {a} + {c} + {e}. We zoeken het totaal: {=a*b} + {=c*d} + {=e*f} = {r}.",
+      "first-kind": "{w_first_kind} is alleen de eerste soort, en er zijn er nog twee. We rekenen alle drie de soorten uit en tellen op: {=a*b} + {=c*d} + {=e*f} = {r}.",
+      "add-all": "{w_add_all} is de som van alle zes de getallen. De groepen zijn gelijk, dus we rekenen elke soort uit met vermenigvuldigen en tellen dan op: {=a*b} + {=c*d} + {=e*f} = {r}."
+    }
+  },
+  "T3.three-step.02": {
+    "text": "Er is {a|euro|euro|euro} betaald. Er zijn {b|ding|dingen|dingen} gekocht van elk {c|euro|euro|euro} en {d|ding|dingen|dingen} van elk {e|euro|euro|euro}. Hoeveel euro krijg je terug?",
+    "solution": [
+      "Eerste aankoop: {b} × {c} = {=b*c} euro, tweede: {d} × {e} = {=d*e} euro.",
+      "Samen: {=b*c} + {=d*e} = {=b*c+d*e} euro.",
+      "Het wisselgeld is het betaalde bedrag min de prijs van de aankopen: {a} − {=b*c+d*e} = {r} euro."
+    ],
+    "hints": [
+      "Zoek de prijs van elk van de twee aankopen en dan hoeveel geld er overblijft.",
+      "De eerste aankoop kost {b} × {c}, de tweede {d} × {e}. Tel ze op en trek de som af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "prices-once": "{w_prices_once} krijg je door de prijzen {c} en {e} maar één keer af te trekken. Er zijn van elk meer dingen: {b} × {c} en {d} × {e}, en {a} − {=b*c+d*e} = {r}.",
+      "first-purchase": "{w_first_purchase} laat de tweede aankoop weg: {d} × {e} = {=d*e}. We trekken ze allebei af: {a} − {=b*c+d*e} = {r}.",
+      "costs": "{w_costs} is de prijs van beide aankopen. Het wisselgeld is wat overblijft van de {a|euro|euro|euro}: {a} − {=b*c+d*e} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen, maar het wisselgeld is een verschil. Eerst beide aankopen: {=b*c} + {=d*e} = {=b*c+d*e}, dan {a} − {=b*c+d*e} = {r}."
+    }
+  },
+  "T3.three-step.03": {
+    "text": "Bij {a} komen er {b} en alles wordt eerlijk verdeeld over {c|deel|delen|delen}. Daarna worden {d|zulk deel|zulke delen|zulke delen} genomen. Hoeveel is dat?",
+    "solution": [
+      "Eerst doen we alles bij elkaar: {a} + {b} = {=a+b}.",
+      "We verdelen eerlijk over {c|deel|delen|delen}: {=a+b} : {c} = {=(a+b)/c}.",
+      "We nemen {d|deel|delen|delen}, dus we vermenigvuldigen: {=(a+b)/c} × {d} = {r}."
+    ],
+    "hints": [
+      "Er zijn drie stappen: optellen, verdelen in delen en een paar delen nemen.",
+      "Tel {a} en {b} op en deel de som door {c}. Neem daarna {d|deel|delen|delen}: vermenigvuldig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-part": "{w_one_part} is één deel, maar er worden {d|deel|delen|delen} genomen: {=(a+b)/c} × {d} = {r}.",
+      "no-share": "{w_no_share} krijg je zonder te verdelen: {=a+b} × {d}. Eerst delen we {=a+b} door {c}, en pas daarna nemen we {d|deel|delen|delen}: {=(a+b)/c} × {d} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen. We verdelen de som {=a+b} over {c|deel|delen|delen} en nemen {d|deel|delen|delen}: {=(a+b)/c} × {d} = {r}."
+    }
+  },
+  "T3.three-step.04": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is {b} meer dan de eerste en de derde is {c} meer dan de tweede. Bereken de som van de drie hoeveelheden.",
+    "solution": [
+      "De tweede hoeveelheid: {a} + {b} = {=a+b}.",
+      "De derde is {c} meer dan de tweede: {=a+b} + {c} = {=a+b+c}.",
+      "De som van alle drie: {a} + {=a+b} + {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "Om de drie hoeveelheden op te tellen, zoek je eerst de tweede en de derde.",
+      "De tweede: {a} + {b}. De derde: tel {c} op bij de tweede. Tel dan alle drie op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-numbers": "{w_two_numbers} is de som van maar twee hoeveelheden, en er is ook een derde: {a} + {=a+b} + {=a+b+c} = {r}.",
+      "three-firsts": "{w_three_firsts} houdt er geen rekening mee dat de tweede en de derde groter zijn dan de eerste: {a} + {=a+b} + {=a+b+c} = {r}.",
+      "third-forgets-the-second": "{w_third_forgets_the_second} neemt de derde hoeveelheid als {c} meer dan de eerste. Maar die is {c} meer dan de tweede, dus {=a+b+c}: {a} + {=a+b} + {=a+b+c} = {r}.",
+      "add-all": "{w_add_all} is de som van de drie getallen uit de tekst, maar de hoeveelheden zijn {a}, {=a+b} en {=a+b+c}. Die tellen we op: {a} + {=a+b} + {=a+b+c} = {r}."
+    }
+  },
+  "T3.three-step.05": {
+    "text": "De eerste hoeveelheid is {a}. De tweede is {b} keer zo groot als de eerste en de derde is gelijk aan de tweede. Van de som van alle drie wordt {c} afgehaald. Wat is de uitkomst?",
+    "solution": [
+      "De tweede hoeveelheid: {a} × {b} = {=a*b}, en de derde is hetzelfde, {=a*b}.",
+      "De som van alle drie: {a} + {=a*b} + {=a*b} = {=a+2*a*b}.",
+      "We halen {c} af: {=a+2*a*b} − {c} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst de tweede en de derde hoeveelheid, dan de som van alle drie, en trek aan het eind af.",
+      "De tweede is {a} × {b}, de derde is hetzelfde. Tel de drie hoeveelheden op en haal {c} af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-subtraction": "{w_no_subtraction} is de som van de drie hoeveelheden, maar daar werd ook nog {c} van afgehaald: {=a+2*a*b} − {c} = {r}.",
+      "first-only": "{w_first_only} gebruikt alleen de eerste hoeveelheid. De tweede en de derde zijn elk {=a*b}: {a} + {=a*b} + {=a*b} − {c} = {r}.",
+      "without-the-third": "{w_without_the_third} laat de derde hoeveelheid weg, die gelijk is aan de tweede, {=a*b}: {a} + {=a*b} + {=a*b} − {c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst. De tweede en de derde hoeveelheid zijn elk {=a*b}: {a} + {=a*b} + {=a*b} − {c} = {r}."
+    }
+  },
+  "T3.three-step.06": {
+    "text": "Er zijn {a} dingen. Ze worden in groepjes van {b} gelegd en een groepje dat niet vol is, telt niet mee. Voor elk vol groepje wordt {c|euro|euro|euro} betaald. Hoeveel euro wordt er betaald?",
+    "solution": [
+      "Alleen een vol groepje van {b} telt. Een rest van minder dan {b} dingen telt niet mee.",
+      "Er zijn {=r/c} volle groepjes: {=r/c} × {b} = {=r/c*b}, en {a} − {=r/c*b} = {=a-r/c*b} blijft over, dat is minder dan {b}.",
+      "Voor elk vol groepje wordt {c|euro|euro|euro} betaald: {=r/c} × {c} = {r} euro."
+    ],
+    "hints": [
+      "Er wordt alleen betaald voor volle groepjes. Zoek eerst hoeveel het er zijn.",
+      "Deel {a} door {b} met een rest: voor de rest wordt niet betaald. Vermenigvuldig daarna het aantal volle groepjes met {c}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "with-remainder": "{w_with_remainder} telt ook het groepje mee dat niet vol is. De rest is minder dan {b} en wordt niet betaald: {=floor(a/b)} × {c} = {r}.",
+      "groups-only": "{w_groups_only} is het aantal volle groepjes, maar we zoeken het bedrag: {=floor(a/b)} × {c} = {r}.",
+      "per-item": "{w_per_item} is het bedrag voor elk ding, maar er wordt betaald voor een vol groepje. Er zijn {=floor(a/b)} volle groepjes: {=floor(a/b)} × {c} = {r} euro."
+    }
+  },
+  "T3.three-step.07": {
+    "text": "Van {a} werd {b} afgehaald, wat overbleef werd eerlijk verdeeld over {c|deel|delen|delen} en bij één deel kwamen er {d} bij. Wat is de uitkomst?",
+    "solution": [
+      "Eerst halen we af: {a} − {b} = {=a-b}.",
+      "Wat overblijft verdelen we eerlijk: {=a-b} : {c} = {=(a-b)/c}.",
+      "Bij één deel doen we er {d} bij: {=(a-b)/c} + {d} = {r}."
+    ],
+    "hints": [
+      "De stappen gaan op volgorde: aftrekken, verdelen, bij één deel optellen.",
+      "Zoek eerst wat er overblijft: {a} − {b}. Deel dat door {c} en tel bij één deel {d} op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "remainder": "{w_remainder} is wat er overblijft, maar dat wordt nog verdeeld over {c|deel|delen|delen} en bij één deel komen er {d} bij: {=a-b} : {c} = {=(a-b)/c}, en {=(a-b)/c} + {d} = {r}.",
+      "before-add": "{w_before_add} is de grootte van één deel. Daar kwamen er nog {d} bij: {=(a-b)/c} + {d} = {r}.",
+      "added-before-sharing": "{w_added_before_sharing} krijg je door {d} bij wat overbleef, {=a-b}, op te tellen. Maar {d} kwam alleen bij één deel, na het verdelen: {=(a-b)/c} + {d} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst. Wat overblijft, {=a-b}, delen we door {c} en dan tellen we {d} erbij: {=(a-b)/c} + {d} = {r}."
+    }
+  },
+  "T3.three-step.08": {
+    "text": "De eerste is {a|jaar|jaar|jaar}. De tweede is {b|jaar|jaar|jaar} jonger dan de eerste. De leeftijd van de tweede is {c} keer zo groot als die van de derde. Bereken de som van de leeftijden van alle drie.",
+    "solution": [
+      "De tweede is {b|jaar|jaar|jaar} jonger, dus we trekken af: {a} − {b} = {=a-b}.",
+      "De leeftijd van de tweede is {c} keer die van de derde, dus we delen: {=a-b} : {c} = {=(a-b)/c}.",
+      "We tellen de leeftijden van alle drie op: {a} + {=a-b} + {=(a-b)/c} = {r}."
+    ],
+    "hints": [
+      "Om de drie leeftijden op te tellen, zoek je eerst de leeftijd van de tweede en dan van de derde.",
+      "De tweede: {a} − {b}. De leeftijd van de tweede is {c} keer die van de derde: deel de leeftijd van de tweede door {c}. Tel dan de drie leeftijden op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-ages": "{w_two_ages} laat de derde weg: {a} + {=a-b} + {=(a-b)/c} = {r}.",
+      "first-times-three": "{w_first_times_three} neemt alle drie even oud als de eerste. De leeftijden zijn verschillend: {a}, {=a-b} en {=(a-b)/c}, en de som is {r}.",
+      "years-not-times": "{w_years_not_times} krijg je door {c} van de leeftijd van de tweede af te trekken. Maar ‘{c} keer’ betekent delen: {=a-b} : {c} = {=(a-b)/c}, en de som is {a} + {=a-b} + {=(a-b)/c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst, en dat zijn niet de leeftijden. De leeftijden zijn {a}, {=a-b} en {=(a-b)/c}, en de som is {r}."
+    }
+  },
+  "T3.three-step.09": {
+    "text": "De afstand is {a} km. Eerst werd er {c|uur|uur|uur} gereden met {b} km/u, daarna {e|uur|uur|uur} met {d} km/u. Hoeveel kilometer moet er nog?",
+    "solution": [
+      "Een afstand is snelheid keer tijd: {b} × {c} = {=b*c} km en {d} × {e} = {=d*e} km.",
+      "In totaal is er {=b*c} + {=d*e} = {=b*c+d*e} km gereden.",
+      "Nog te gaan: {a} − {=b*c+d*e} = {r} km."
+    ],
+    "hints": [
+      "Snelheid en tijd geven de afstand. Zoek de afstand van elk deel en trek beide af van de hele afstand.",
+      "Eerste deel: {b} × {c}, tweede: {d} × {e}. Tel ze op en trek de som af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "speeds-as-distances": "{w_speeds_as_distances} krijg je door de snelheden {b} en {d} af te trekken. Maar een snelheid is de afstand in één uur. Afstand is snelheid keer tijd: {=b*c} + {=d*e} = {=b*c+d*e}, en {a} − {=b*c+d*e} = {r}.",
+      "first-leg": "{w_first_leg} laat het tweede deel weg: {d} × {e} = {=d*e}. We trekken ze allebei af: {a} − {=b*c+d*e} = {r}.",
+      "travelled": "{w_travelled} is de afstand die al gereden is, maar we zoeken wat er nog te gaan is: {a} − {=b*c+d*e} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst. Afstand is snelheid keer tijd: {=b*c} + {=d*e} = {=b*c+d*e}, en dat trekken we af van {a}: {r}."
+    }
+  },
+  "T3.three-step.10": {
+    "text": "Er zijn {b|ding|dingen|dingen} gekocht van elk {a|euro|euro|euro}, allemaal hetzelfde. Op de hele aankoop kwam {c|euro|euro|euro} korting. Het bedrag dat overbleef, werd eerlijk verdeeld over twee mensen. Hoeveel euro betaalt ieder?",
+    "solution": [
+      "Zonder korting kost de aankoop {a} × {b} = {=a*b} euro.",
+      "Met korting: {=a*b} − {c} = {=a*b-c} euro.",
+      "Eerlijk verdeeld over twee: {=a*b-c} : 2 = {r} euro."
+    ],
+    "hints": [
+      "Zoek eerst wat de hele aankoop kost, reken dan de korting af en verdeel het over twee.",
+      "De aankoop kost {a} × {b}. Trek de korting {c} af en neem dan de helft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total-after-discount": "{w_total_after_discount} is het hele bedrag na de korting, maar dat moet over twee worden verdeeld: {=a*b-c} : 2 = {r}.",
+      "no-discount": "{w_no_discount} krijg je als je de prijs zonder korting verdeelt. De korting {c} moet eerst van de som {=a*b} af: ({=a*b} − {c}) : 2 = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst. Eerst de aankoop {a} × {b} = {=a*b}, dan de korting en het verdelen over twee: ({=a*b} − {c}) : 2 = {r}."
+    }
+  },
+  "T4.four-step.01": {
+    "text": "Er waren er {a}. Dat aantal werd {b} procent groter, daarna werd er {c} weggehaald en wat overbleef werd eerlijk verdeeld over {d|deel|delen|delen}. Hoeveel zijn er in één deel?",
+    "solution": [
+      "Een toename van {b} procent: {a} × {b} : {=100} = {=a*b/100}.",
+      "Nu zijn er {a} + {=a*b/100} = {=a+a*b/100}.",
+      "Er wordt {c} weggehaald: {=a+a*b/100} − {c} = {=a+a*b/100-c}.",
+      "Eerlijk verdeeld over {d|deel|delen|delen}: {=a+a*b/100-c} : {d} = {r}."
+    ],
+    "hints": [
+      "De stappen gaan op volgorde: procent, weghalen, verdelen. Begin met het procent.",
+      "Zoek {b} procent van {a} en tel dat op bij {a}. Haal er daarna {c} af en verdeel wat overblijft over {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "before-share": "{w_before_share} is wat er overblijft vóór het verdelen. Dat moet nog over {d} worden verdeeld: {=a+a*b/100-c} : {d} = {r}.",
+      "no-percent": "{w_no_percent} laat de toename van {b} procent weg: {a} × {b} : 100 = {=a*b/100}. Eerst {a} + {=a*b/100} = {=a+a*b/100}, dan halen we {c} weg en verdelen we: {r}.",
+      "percent-as-number": "{w_percent_as_number} krijg je als je {b} procent als het getal {b} optelt. Een toename van {b} procent is {a} × {b} : 100 = {=a*b/100}, dus {=a+a*b/100-c} : {d} = {r}.",
+      "percent-of-the-rest": "{w_percent_of_the_rest} krijg je als je eerst {c} weghaalt en dan wat overblijft groter maakt. De stappen gaan op volgorde: eerst de toename, dan het weghalen: ({a} + {=a*b/100} − {c}) : {d} = {r}."
+    }
+  },
+  "T4.four-step.02": {
+    "text": "Twee treinen rijden naar elkaar toe vanaf plaatsen die {a} km van elkaar liggen. De snelheden zijn {b} km/u en {c} km/u. Hoeveel kilometer zit er na {d|uur|uur|uur} tussen de treinen?",
+    "solution": [
+      "De treinen rijden naar elkaar toe, dus elk uur komen ze {b} + {c} = {=b+c} km dichter bij elkaar.",
+      "In {d|uur|uur|uur} komen ze {=b+c} × {d} = {=(b+c)*d} km dichter bij elkaar.",
+      "Wat overblijft: {a} − {=(b+c)*d} = {r} km."
+    ],
+    "hints": [
+      "De treinen rijden naar elkaar toe, dus allebei maken ze de afstand kleiner. Hoeveel wordt hij in één uur kleiner?",
+      "In één uur komen de treinen {b} + {c} dichter bij elkaar. Vermenigvuldig dat met {d|uur|uur|uur} en trek het af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "closing-distance": "{w_closing_distance} is hoeveel dichter de treinen bij elkaar zijn gekomen: {=b+c} × {d}. De vraag is hoe ver ze nu van elkaar zijn: {a} − {=(b+c)*d} = {r}.",
+      "one-train": "{w_one_train} laat de tweede trein weg: die komt ook dichterbij. Samen leggen ze in {d|uur|uur|uur} {=(b+c)*d} km af: {a} − {=(b+c)*d} = {r}.",
+      "no-time": "{w_no_time} krijg je als je de snelheden van de afstand aftrekt in plaats van de afgelegde afstanden. In {d|uur|uur|uur} komen de treinen {=b+c} × {d} = {=(b+c)*d} km dichter bij elkaar: {a} − {=(b+c)*d} = {r}."
+    }
+  },
+  "T4.four-step.03": {
+    "text": "Een getal werd met {b} vermenigvuldigd, er werd {c} bij opgeteld, de uitkomst werd door {d} gedeeld en er werd {e} afgetrokken. De uitkomst was {x}. Welk getal was het begin?",
+    "solution": [
+      "We gaan van het eind terug en maken elke stap ongedaan: aftrekken maak je ongedaan met optellen en delen met vermenigvuldigen.",
+      "{x} + {e} = {=x+e}, dan {=x+e} × {d} = {=(x+e)*d}.",
+      "Dan {=(x+e)*d} − {c} = {=(x+e)*d-c}.",
+      "En de laatste: {=(x+e)*d-c} : {b} = {r}. Dat is het getal waarmee we begonnen."
+    ],
+    "hints": [
+      "Begin bij de uitkomst {x} en ga terug: de omgekeerde stappen doe je in omgekeerde volgorde.",
+      "De laatste stap trok {e} af, dus de eerste stap terug is {e} optellen bij {x}. Bedenk wat daarna komt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "result": "{w_result} is wat er aan het eind uitkwam, maar we zoeken het getal waarmee we begonnen: (({x} + {e}) × {d} − {c}) : {b} = {r}.",
+      "forward-order": "{w_forward_order} is het getal na het vermenigvuldigen en optellen, maar niet het begingetal. Die twee stappen moet je ook ongedaan maken: (({x} + {e}) × {d} − {c}) : {b} = {r}.",
+      "not-inverted": "{w_not_inverted} krijg je als je de stappen niet door hun omgekeerde vervangt: aftrekken werd vervangen door aftrekken. Vanaf het eind: {x} + {e} = {=x+e}, dan {=x+e} × {d} = {=(x+e)*d}, dan {=(x+e)*d} − {c} en delen door {b}: {r}."
+    }
+  },
+  "T4.four-step.04": {
+    "text": "Een route is {a} km lang. Eerst is {b} procent van de route afgelegd, daarna {c} procent van de rest. Hoeveel kilometer moet er nog?",
+    "solution": [
+      "Eerste deel: {a} × {b} : {=100} = {=a*b/100} km, dus {a} − {=a*b/100} = {=a*(100-b)/100} km blijft over.",
+      "Het tweede deel is {c} procent van de rest: {=a*(100-b)/100} × {c} : {=100} = {=a*(100-b)*c/10000} km.",
+      "Wat overblijft: {=a*(100-b)/100} − {=a*(100-b)*c/10000} = {r} km."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel kilometer er na het eerste deel overblijven.",
+      "Reken het tweede procent uit van de rest, {=a*(100-b)/100} km, niet van de hele route. Haal dat deel daarna van de rest af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "after-first": "{w_after_first} is wat er na het eerste deel overblijft, maar daarvan is ook nog {c} procent afgelegd: {=a*(100-b)/100} − {=a*(100-b)*c/10000} = {r}.",
+      "of-the-whole": "{w_of_the_whole} neemt het tweede procent van de hele route ({a} km), niet van de rest ({=a*(100-b)/100} km). Van de rest: {=a*(100-b)/100} − {=a*(100-b)*c/10000} = {r}.",
+      "first-part": "{w_first_part} is het eerste deel, maar we zoeken wat er na beide overblijft. Na het eerste bleven er {=a*(100-b)/100} km over, en daarvan is nog {c} procent afgelegd: {r}."
+    }
+  },
+  "T4.four-step.05": {
+    "text": "Een pomp vult een zwembad in {a|minuut|minuten|minuten}, een andere in {b|minuut|minuten|minuten}. In hoeveel minuten vullen ze samen {c} van zulke zwembaden?",
+    "solution": [
+      "In {=a*b} minuten vult de eerste pomp {b|zwembad|zwembaden|zwembaden} en de tweede {a|zwembad|zwembaden|zwembaden}.",
+      "Samen is dat {a} + {b} = {=a+b}, dus ze vullen één zwembad in {=a*b} : {=a+b} = {=a*b/(a+b)} minuten.",
+      "Om {c|zwembad|zwembaden|zwembaden} te vullen: {=a*b/(a+b)} × {c} = {r|minuut|minuten|minuten}."
+    ],
+    "hints": [
+      "Bedenk hoeveel zwembaden elke pomp in dezelfde tijd vult, bijvoorbeeld in {=a*b} minuten.",
+      "In {=a*b} minuten vult de eerste pomp {b|zwembad|zwembaden|zwembaden} en de tweede {a|zwembad|zwembaden|zwembaden}. Zoek hoe lang ze samen over één zwembad doen en vermenigvuldig met {c}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum-of-times": "{w_sum_of_times} is de som van de tijden {a} + {b}, vermenigvuldigd met {c}. Maar samen werken gaat sneller dan alleen: één zwembad in {=a*b} : {=a+b} = {=a*b/(a+b)} min, en {=a*b/(a+b)} × {c} = {r}.",
+      "one-pool": "{w_one_pool} is de tijd voor één zwembad, maar het zijn er {c}: {=a*b/(a+b)} × {c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst. Samen vullen de pompen één zwembad in {=a*b} : {=a+b} = {=a*b/(a+b)} minuten, en er zijn {c} zwembaden: {r}."
+    }
+  },
+  "T4.four-step.06": {
+    "text": "Een ding kost {a|euro|euro|euro} en heeft {b} procent korting. Er zijn er {c} gekocht en er is {d|euro|euro|euro} betaald. Hoeveel euro krijg je terug?",
+    "solution": [
+      "Korting: {a} × {b} : {=100} = {=a*b/100} euro, prijs na korting {a} − {=a*b/100} = {=a-a*b/100} euro.",
+      "De aankoop van {c|ding|dingen|dingen}: {c} × {=a-a*b/100} = {=c*(a-a*b/100)} euro.",
+      "Wisselgeld: {d} − {=c*(a-a*b/100)} = {r} euro."
+    ],
+    "hints": [
+      "Zoek eerst de prijs van één ding na de korting.",
+      "De korting is {b} procent van {a}. Vermenigvuldig de prijs na korting met {c} en trek die af van {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "full-price": "{w_full_price} krijg je als je de korting niet aftrekt. De prijs na korting is {=a-a*b/100} euro, de aankoop kost {=c*(a-a*b/100)} euro: {d} − {=c*(a-a*b/100)} = {r}.",
+      "discounted-cost": "{w_discounted_cost} is de prijs van de aankoop, maar we zoeken het wisselgeld: {d} − {=c*(a-a*b/100)} = {r}.",
+      "percent-as-euros": "{w_percent_as_euros} krijg je als je een korting van {b} procent als {b} euro aftrekt. De korting is {a} × {b} : 100 = {=a*b/100} euro, en de prijs na korting is {=a-a*b/100} euro: {d} − {=c*(a-a*b/100)} = {r}."
+    }
+  },
+  "T4.four-step.07": {
+    "text": "De som van de leeftijden van drie mensen is {a}. De eerste is {b}, de tweede is {c}. Hoe oud is de derde over {d|jaar|jaar|jaar}?",
+    "solution": [
+      "De som van de leeftijden is {a}, twee zijn bekend, dus de derde is nu {a} − {b} − {c} = {=a-b-c}.",
+      "Over {d|jaar|jaar|jaar} is de derde {d} jaar ouder: {=a-b-c} + {d} = {r}.",
+      "De derde is dan dus {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoe oud de derde nu is: trek de twee bekende leeftijden af van de som.",
+      "De derde is nu {a} − {b} − {c}. Bedenk hoeveel jaar ouder de derde over {d|jaar|jaar|jaar} is.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "now": "{w_now} is de leeftijd nu, maar we zoeken de leeftijd over {d|jaar|jaar|jaar}: {=a-b-c} + {d} = {r}.",
+      "no-wait": "{w_no_wait} krijg je door de andere leeftijden en {d} op te tellen. De derde is nu {a} − {b} − {c} = {=a-b-c}, en over {d|jaar|jaar|jaar} is hij {r}.",
+      "all-three-grow": "{w_all_three_grow} krijg je als je bij de som de groei van alle drie optelt, dus {d} drie keer. Maar we zoeken alleen de derde, die {d} jaar ouder wordt: {=a-b-c} + {d} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst. De derde is nu {a} − {b} − {c} = {=a-b-c}, en over {d|jaar|jaar|jaar} is hij {d} meer: {r}."
+    }
+  },
+  "T4.four-step.08": {
+    "text": "Er zijn {a} kaartjes voor volwassenen gekocht van elk {b|euro|euro|euro}, en {c} kinderkaartjes, elk {d|euro|euro|euro} goedkoper dan een kaartje voor volwassenen. Er is {e|euro|euro|euro} betaald. Hoeveel euro krijg je terug?",
+    "solution": [
+      "Een kinderkaartje kost {b} − {d} = {=b-d} euro.",
+      "De aankoop: {a} × {b} + {c} × {=b-d} = {=a*b+c*(b-d)} euro.",
+      "Wisselgeld: {e} − {=a*b+c*(b-d)} = {r} euro."
+    ],
+    "hints": [
+      "Zoek eerst de prijs van een kinderkaartje.",
+      "Een kinderkaartje kost {b} − {d}. Zoek de prijs van alle kaartjes en trek die af van {e}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-discount": "{w_no_discount} is uitgerekend alsof alle kaartjes {b} euro kosten. Een kinderkaartje is {d} goedkoper: {a} × {b} + {c} × {=b-d} = {=a*b+c*(b-d)}, en {e} − {=a*b+c*(b-d)} = {r}.",
+      "discount-as-price": "{w_discount_as_price} is uitgerekend alsof een kinderkaartje {d} kost. Maar {d} is hoeveel goedkoper het is, en de prijs is {=b-d}: {e} − {=a*b+c*(b-d)} = {r}.",
+      "cost": "{w_cost} is de prijs van de kaartjes, maar we zoeken het wisselgeld: {e} − {=a*b+c*(b-d)} = {r}."
+    }
+  },
+  "T4.four-step.09": {
+    "text": "De afstand heen is {a} km. Heen werd er met {b} km/u gereden en terug met {c} km/u. Hoeveel uur duurde de hele reis?",
+    "solution": [
+      "Tijd is de afstand gedeeld door de snelheid.",
+      "Heen: {a} : {b} = {=a/b} uur, terug: {a} : {c} = {=a/c} uur.",
+      "De hele reis: {=a/b} + {=a/c} = {r|uur|uur|uur}."
+    ],
+    "hints": [
+      "Tijd is de afstand gedeeld door de snelheid. Heen en terug zijn de snelheden verschillend.",
+      "Zoek de tijd heen, {a} : {b}, en de tijd terug, {a} : {c}. Tel ze daarna op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "there-only": "{w_there_only} is de tijd voor alleen de heenweg: {a} : {b} = {=a/b}. De terugweg kost ook tijd: {=a/b} + {=a/c} = {r}.",
+      "distance-over-mean": "{w_distance_over_mean} krijg je door de hele afstand, {=2*a} km, te delen door de helft van de som van de snelheden. Maar de snelheden waren op de stukken verschillend, dus de tijden reken je apart uit: {=a/b} + {=a/c} = {r}.",
+      "back-only": "{w_back_only} is de tijd voor alleen de terugweg: {a} : {c} = {=a/c}. De heenweg kost ook tijd: {=a/b} + {=a/c} = {r}.",
+      "add-all": "{w_add_all} is de som van alle getallen uit de tekst, maar tijd vind je door de afstand door de snelheid te delen. Heen {=a/b} uur, terug {=a/c} uur: {r}."
+    }
+  },
+  "T4.four-step.10": {
+    "text": "De som {a} werd eerlijk verdeeld over {b|deel|delen|delen} en dezelfde som werd eerlijk verdeeld over {c|deel|delen|delen}. Bereken het verschil tussen deze twee delen en tel er {d} bij op.",
+    "solution": [
+      "Een deel bij de eerste verdeling: {a} : {b} = {=a/b}, bij de tweede: {a} : {c} = {=a/c}.",
+      "Het eerste deel is groter met {=a/b} − {=a/c} = {=a/b-a/c}.",
+      "We tellen {d} erbij op: {=a/b-a/c} + {d} = {r}."
+    ],
+    "hints": [
+      "Zoek hoe groot één deel is bij de eerste verdeling en bij de tweede.",
+      "Het eerste deel is {a} : {b}, het tweede is {a} : {c}. Trek het kleinste van het grootste af en tel er {d} bij op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-share": "{w_first_share} is een deel van de eerste verdeling, maar we zoeken het verschil van de delen en de optelling: {=a/b} − {=a/c} = {=a/b-a/c}, en {=a/b-a/c} + {d} = {r}.",
+      "difference": "{w_difference} is alleen het verschil van de delen {=a/b} en {=a/c}, en er moet ook {d} bij: {=a/b-a/c} + {d} = {r}.",
+      "second-share": "{w_second_share} is een deel van de tweede verdeling, maar we zoeken het verschil van de delen en de optelling. Het verschil {=a/b} − {=a/c} = {=a/b-a/c}, en {=a/b-a/c} + {d} = {r}.",
+      "shares-added": "{w_shares_added} is de som van de delen {=a/b} en {=a/c}. De vraag is naar het verschil: {=a/b} − {=a/c} = {=a/b-a/c}, en {=a/b-a/c} + {d} = {r}."
+    }
+  },
+  "T1.one-step.15": {
+    "text": "Eén ding kost {a|euro|euro|euro} en er zijn {b} dingen. In de portemonnee zat {c|euro|euro|euro}. Hoeveel euro kost de aankoop?",
+    "solution": [
+      "De vraag gaat alleen over de prijs van de aankoop, dus het geld in de portemonnee hebben we niet nodig.",
+      "De prijs is de prijs per ding keer het aantal: {a} × {b} = {r}.",
+      "De aankoop kost dus {r|euro|euro|euro}."
+    ],
+    "hints": [
+      "In de tekst staan drie getallen, maar de vraag gaat alleen over de prijs van de aankoop. Welk getal heb je daarvoor niet nodig?",
+      "Het getal {c} heb je hier niet nodig. Vermenigvuldig de prijs {a} met het aantal dingen {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "money-in-purse": "{w_money_in_purse} is het geld in de portemonnee, maar de vraag gaat over de prijs van de aankoop: {a} × {b} = {r}.",
+      "extra-number-used": "{w_extra_number_used} is wat er na de aankoop in de portemonnee zou zitten, maar de vraag is wat de aankoop kost: {a} × {b} = {r}.",
+      "all-numbers-added": "{w_all_numbers_added} krijg je door alle drie de getallen op te tellen. Het geld in de portemonnee heb je niet nodig en de prijs vind je door te vermenigvuldigen: {a} × {b} = {r}."
+    }
+  },
+  "T1.one-step.16": {
+    "text": "De eerste hoeveelheid is {x}. Dat is {b} keer zoveel als de tweede hoeveelheid. Bereken de tweede hoeveelheid.",
+    "solution": [
+      "De eerste hoeveelheid is {b} keer zoveel als de tweede, dus we delen de eerste hoeveelheid door {b}.",
+      "{x} : {b} = {r}.",
+      "De tweede hoeveelheid is dus {r}."
+    ],
+    "hints": [
+      "De eerste hoeveelheid is {x} en die is een aantal keer groter dan de tweede. De tweede vind je dus door te delen.",
+      "Deel {x} door {b}: welk getal keer {b} is {x}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} krijg je met {x} − {b}. ‘{b} keer zoveel’ betekent delen: {x} : {b} = {r}.",
+      "product": "{w_product} krijg je met {x} × {b}. De tweede hoeveelheid is kleiner dan de eerste, dus we delen: {x} : {b} = {r}.",
+      "the-factor": "{w_the_factor} zegt hoeveel keer, maar we zoeken de tweede hoeveelheid zelf: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.17": {
+    "text": "Er zijn er {a} in totaal. Ze worden in groepjes van {b} gelegd, zolang het kan. Hoeveel blijven er over?",
+    "solution": [
+      "Er zijn {=floor(a/b)} volle groepjes, want {=floor(a/b)} × {b} = {=floor(a/b)*b}.",
+      "Er zijn er {=floor(a/b)*b} neergelegd, dus {a} − {=floor(a/b)*b} = {r} blijven er over.",
+      "Er blijven er dus {r} over, en dat zijn er minder dan {b}."
+    ],
+    "hints": [
+      "Er worden er {a} in groepjes van {b} gelegd. Hoeveel volle groepjes kun je maken? Wat er overblijft, is het antwoord.",
+      "Zoek in de tafel van {b} het getal dat niet groter is dan {a}, en trek het af van {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "full-groups": "{w_full_groups} is het aantal volle groepjes, maar de vraag is hoeveel er overblijven. De groepjes nemen er {=floor(a/b)*b}, dus {a} − {=floor(a/b)*b} = {r} blijven er over.",
+      "minus-one-group": "{w_minus_one_group} krijg je door maar één groepje af te trekken: {a} − {b}. We moeten alle volle groepjes aftrekken: {a} − {=floor(a/b)*b} = {r}.",
+      "short-of-a-group": "{w_short_of_a_group} is hoeveel er ontbreken voor nog een vol groepje. De vraag is hoeveel er overblijven: {a} − {=floor(a/b)*b} = {r}."
+    }
+  },
+  "T1.one-step.18": {
+    "text": "Er moeten {a|ding|dingen|dingen} worden ingepakt. In één doos passen er {b}. Hoeveel dozen heb je nodig om alles in te pakken?",
+    "solution": [
+      "Er zijn {=floor(a/b)} volle dozen, want {=floor(a/b)} × {b} = {=floor(a/b)*b}.",
+      "Er blijven er {=mod(a,b)} over, en daarvoor is nog één doos nodig.",
+      "{=floor(a/b)} + {=1} = {r}. Je hebt dus {r|doos|dozen|dozen} nodig."
+    ],
+    "hints": [
+      "De dingen gaan in dozen van {b} en er mag er geen zonder doos blijven.",
+      "Hoeveel volle dozen van {b} kun je van {a} maken? Wat doe je met de dingen die overblijven?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "quotient-only": "{w_quotient_only} zijn alleen de volle dozen. De {=mod(a,b)} die overblijven kunnen nergens heen, dus er is nog een doos nodig: {=floor(a/b)} + {=1} = {r}.",
+      "remainder-added": "{w_remainder_added} krijg je door de volle dozen en de rest op te tellen: {=floor(a/b)} + {=mod(a,b)}. De rest zijn dingen, geen dozen, en daarvoor is maar één doos nodig: {=floor(a/b)} + {=1} = {r}."
+    }
+  },
+  "T1.one-step.19": {
+    "text": "Eén ding kost {a|euro|euro|euro}. Er is {b|euro|euro|euro} om uit te geven. Hoeveel dingen kun je kopen?",
+    "solution": [
+      "We willen weten hoe vaak {a} in {b} past.",
+      "We kunnen geen half ding kopen: {b} − {=mod(b,a)} = {=b-mod(b,a)}, en {=b-mod(b,a)} : {a} = {r}.",
+      "Je kunt dus {r|ding|dingen|dingen} kopen, en er blijft {=mod(b,a)} over."
+    ],
+    "hints": [
+      "Eén ding kost {a|euro|euro|euro} en er is {b|euro|euro|euro}. Je moet uitzoeken hoe vaak {a} in {b} past.",
+      "Deel {b} door {a}. Een stuk van een ding kun je niet kopen, dus tel het overgebleven geld niet mee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rounded-up": "{w_rounded_up} krijg je door naar boven af te ronden. Maar voor het laatste ding is er te weinig geld: er blijft maar {=mod(b,a)} over en een ding kost {a}. Je kunt {r|ding|dingen|dingen} kopen.",
+      "left-over-money": "{w_left_over_money} is hoeveel geld er overblijft, maar de vraag is hoeveel dingen je kunt kopen: {=b-mod(b,a)} : {a} = {r}."
+    }
+  },
+  "T1.one-step.20": {
+    "text": "Er is {x|euro|euro|euro} betaald voor {b|ding|dingen|dingen}. Alle dingen zijn hetzelfde. Hoeveel euro kost één ding?",
+    "solution": [
+      "De dingen zijn hetzelfde, dus we delen het totaal door het aantal dingen.",
+      "{x} : {b} = {r}.",
+      "Eén ding kost dus {r|euro|euro|euro}."
+    ],
+    "hints": [
+      "De dingen zijn hetzelfde, dus de {x|euro|euro|euro} kun je eerlijk over de dingen verdelen.",
+      "Deel {x} door {b}: welk getal keer {b} is {x}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is het hele betaalde bedrag, maar we zoeken de prijs van één ding: {x} : {b} = {r}.",
+      "count": "{w_count} is het aantal dingen, maar de vraag is de prijs van één ding: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.21": {
+    "text": "Er zijn er {x} in totaal. Er is {=1}⁄{b} van het geheel genomen. Hoeveel is er genomen?",
+    "solution": [
+      "{=1}⁄{b} nemen betekent: het geheel in {b} gelijke delen verdelen en er één van nemen.",
+      "{x} : {b} = {r}.",
+      "Er zijn er dus {r} genomen."
+    ],
+    "hints": [
+      "De breuk {=1}⁄{b} laat één deel zien van {b} gelijke delen.",
+      "Verdeel {x} in {b} gelijke delen en neem er één van.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-rest": "{w_the_rest} is wat er overblijft nadat het deel is genomen. De vraag is hoeveel er is genomen: {x} : {b} = {r}.",
+      "times-the-denominator": "{w_times_the_denominator} krijg je met {x} × {b}. Een deel van een geheel is kleiner dan het geheel, dus we delen: {x} : {b} = {r}.",
+      "the-denominator": "{w_the_denominator} is in hoeveel gelijke delen het geheel wordt verdeeld. We zoeken één zo’n deel: {x} : {b} = {r}."
+    }
+  },
+  "T1.one-step.22": {
+    "text": "Er staan {a|paal|palen|palen} op een rij. Hoeveel tussenruimtes zijn er tussen de palen?",
+    "solution": [
+      "Na elke paal komt een tussenruimte, behalve na de laatste.",
+      "{a} − {=1} = {r}.",
+      "Er zijn dus {r|tussenruimte|tussenruimtes|tussenruimtes}."
+    ],
+    "hints": [
+      "Teken de palen als streepjes op een rij en zet een merkje bij elke tussenruimte.",
+      "Rechts van elk van de {a} palen, behalve de laatste, zit een tussenruimte. Hoeveel palen zijn dat?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "same-count": "{w_same_count} is het aantal palen. Er is één tussenruimte minder, want na de laatste paal komt er geen: {a} − {=1} = {r}.",
+      "one-more": "{w_one_more} is meer dan het aantal palen. Er zijn niet meer tussenruimtes, maar één minder: {a} − {=1} = {r}."
+    }
+  },
+  "T1.one-step.23": {
+    "text": "Een leerling staat in een rij als nummer {a} van voren en als nummer {b} van achteren. Hoeveel leerlingen staan er in de rij?",
+    "solution": [
+      "Voor de leerling staan er {=a-1}, achter de leerling staan er {=b-1}, en dan is er nog de leerling zelf.",
+      "{=a-1} + {=b-1} + {=1} = {r}.",
+      "Er staan dus {r|leerling|leerlingen|leerlingen} in de rij."
+    ],
+    "hints": [
+      "De leerling wordt van voren en van achteren geteld. Hoeveel leerlingen staan er voor hem? Hoeveel erachter?",
+      "Ervoor staan er {=a-1}, erachter staan er {=b-1}. Vergeet de leerling zelf niet.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "counted-twice": "{w_counted_twice} krijg je met {a} + {b}. Maar de leerling is twee keer geteld, van voren en van achteren. Eén keer moet eraf: {a} + {b} − {=1} = {r}.",
+      "both-others-only": "{w_both_others_only} krijg je zonder de leerling zelf: {=a-1} + {=b-1}. Die moet ook meetellen: {=a-1} + {=b-1} + {=1} = {r}."
+    }
+  },
+  "T1.one-step.24": {
+    "text": "De eerste is nu {a|jaar|jaar|jaar} en de tweede is {b|jaar|jaar|jaar}. Hoeveel jaar is de eerste over {c|jaar|jaar|jaar} ouder dan de tweede?",
+    "solution": [
+      "Allebei worden ze evenveel jaar ouder, dus het verschil blijft hetzelfde.",
+      "Nu is het {a} − {b} = {r}.",
+      "Over {c|jaar|jaar|jaar} is de eerste dus {r} jaar ouder."
+    ],
+    "hints": [
+      "Bedenk hoeveel jaar ouder allebei worden over {c|jaar|jaar|jaar}. Verandert het verschil tussen hun leeftijden?",
+      "Allebei worden ze {c} jaar ouder. Zoek het verschil van nu: {a} − {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "grows": "{w_grows} krijg je door {c} bij het verschil te doen. Maar de tweede wordt ook {c} jaar ouder, dus het verschil wordt niet groter: {a} − {b} = {r}.",
+      "shrinks": "{w_shrinks} krijg je door {c} van het verschil af te halen. Allebei worden ze evenveel ouder, dus het verschil blijft hetzelfde: {a} − {b} = {r}.",
+      "first-later": "{w_first_later} is hoe oud de eerste over {c|jaar|jaar|jaar} is. De vraag is het verschil tussen de leeftijden: {a} − {b} = {r}."
+    }
+  },
+  "T1.one-step.25": {
+    "text": "Er zijn {a} groepen met in elke groep {b}. Welke som geeft het totaal? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Er zijn {a} gelijke groepen met in elke groep {b}, dus we vermenigvuldigen.",
+      "{a} × {b} = {=a*b}.",
+      "Dat is keuze {r}."
+    ],
+    "hints": [
+      "Er zijn {a} groepen met in elke groep {b}, en de groepen zijn gelijk. Welke bewerking voegt gelijke groepen samen?",
+      "Zoek bij de keuzes de som waarin {a} en {b} met een keerteken verbonden zijn.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "add": "Keuze {w_add} is de optelling {=a+b}. Die telt het aantal groepen en de grootte van een groep op, maar we moeten {b} zo vaak nemen als er groepen zijn: {a} × {b} = {=a*b}.",
+      "subtract": "Keuze {w_subtract} is een aftrekking, {=a-b}. Het totaal vind je niet met aftrekken: we nemen precies {a|keer|keer|keer} {b}, dus {a} × {b} = {=a*b}.",
+      "divide": "Keuze {w_divide} is een deling. Je deelt als het totaal al bekend is, maar hier zoeken we het: {a} × {b} = {=a*b}."
+    }
+  },
+  "T2.two-step.13": {
+    "text": "Bij een getal werd {a} opgeteld en daarna werd er {b} afgetrokken. De uitkomst is {c}. Welk getal was het?",
+    "solution": [
+      "We gaan van het eind naar het begin en maken elke stap ongedaan.",
+      "Er werd {b} afgetrokken, dus daarvoor was het {c} + {b} = {=c+b}.",
+      "Er werd {a} opgeteld, dus het getal was {=c+b} − {a} = {r}."
+    ],
+    "hints": [
+      "Begin bij de uitkomst {c} en ga stap voor stap terug.",
+      "De laatste stap trok {b} af: doe dat er weer bij. Maak daarna het optellen van {a} ongedaan.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "not-inverted": "{w_not_inverted} krijg je door dezelfde stappen nog eens met de uitkomst te doen: {c} + {a} − {b}. Als je teruggaat, moet je elke stap omkeren: {c} + {b} − {a} = {r}.",
+      "only-one": "{w_only_one} krijg je door alleen {a} af te trekken. De stap met {b} moet je ook omkeren: {c} + {b} − {a} = {r}.",
+      "both-subtracted": "{w_both_subtracted} krijg je door zowel {a} als {b} af te trekken. Er werd {b} afgetrokken, dus als je teruggaat, tel je het erbij op: {c} + {b} − {a} = {r}."
+    }
+  },
+  "T2.two-step.14": {
+    "text": "De som van twee getallen is {x}. Het ene getal is {y} meer dan het andere. Bereken het grootste getal.",
+    "solution": [
+      "Als we {y} van het grootste getal afhalen, zijn de getallen gelijk en is de som {x} − {y} = {=x-y}.",
+      "Het kleinste getal: {=x-y} : {=2} = {a}.",
+      "Het grootste getal: {a} + {y} = {r}."
+    ],
+    "hints": [
+      "Hoe maak je de twee getallen gelijk? Bedenk wat je uit de som moet halen.",
+      "Haal {y} uit {x}: wat overblijft is de som van twee gelijke getallen. Neem daarvan de helft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "smaller": "{w_smaller} is het kleinste getal, maar we zoeken het grootste: {a} + {y} = {r}.",
+      "half-the-sum": "{w_half_the_sum} is de helft van de som. De getallen zijn verschillend, dus geen van beide is de helft van de som. Eerst {x} − {y} = {=x-y}, het kleinste getal is {a}, het grootste is {a} + {y} = {r}.",
+      "sum-minus-difference": "{w_sum_minus_difference} krijg je met {x} − {y}: dat is de som van twee kleinere getallen. Die moet je halveren, dat geeft het kleinste getal {a}, en dan tel je {y} erbij: {a} + {y} = {r}."
+    }
+  },
+  "T2.two-step.15": {
+    "text": "{c|pen|pennen|pennen} en {d|schrift|schriften|schriften} kosten {x|euro|euro|euro}, en {c|pen|pennen|pennen} en {e|schrift|schriften|schriften} kosten {y|euro|euro|euro}. Hoeveel euro kost één schrift?",
+    "solution": [
+      "In beide aankopen zitten evenveel pennen, dus het prijsverschil komt alleen van de schriften: er zijn er {=d-e} meer.",
+      "Het prijsverschil: {x} − {y} = {=x-y} euro.",
+      "{=x-y} : {=d-e} = {r}. Eén schrift kost dus {r|euro|euro|euro}."
+    ],
+    "hints": [
+      "Waarin verschillen de twee aankopen? Bedenk wat er in allebei hetzelfde is.",
+      "Er zijn evenveel pennen, en in de ene aankoop zitten er {=d-e} schriften meer. Zoek hoeveel de prijzen verschillen: {x} − {y}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-difference": "{w_the_difference} is het prijsverschil tussen de twee aankopen. Dat is betaald voor alle extra schriften, niet voor één (er zijn er {=d-e} meer): {=x-y} : {=d-e} = {r}.",
+      "the-pen-price": "{w_the_pen_price} is de prijs van een pen, maar de vraag is de prijs van een schrift: {=x-y} : {=d-e} = {r}.",
+      "extra-notebooks": "{w_extra_notebooks} is hoeveel schriften de ene aankoop meer heeft dan de andere, maar de vraag is de prijs: {=x-y} : {=d-e} = {r}."
+    }
+  },
+  "T2.two-step.16": {
+    "text": "Langs een pad staan {a|paal|palen|palen} op een rij. De afstand tussen twee palen naast elkaar is {b} m. Hoeveel meter is het van de eerste paal tot de laatste?",
+    "solution": [
+      "Er is één tussenruimte minder dan er palen zijn: {a} − {=1} = {=a-1}.",
+      "{=a-1} × {b} = {r}.",
+      "Van de eerste paal tot de laatste is het dus {r} m."
+    ],
+    "hints": [
+      "De afstand tel je met de tussenruimtes tussen de palen, niet met de palen zelf. Hoeveel tussenruimtes zijn er?",
+      "Er zijn {a} palen en één tussenruimte minder. Vermenigvuldig het aantal tussenruimtes met {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "posts-times-gap": "{w_posts_times_gap} krijg je door het aantal palen {a} met de afstand {b} te vermenigvuldigen. Er is één tussenruimte minder dan er palen zijn: {=a-1} × {b} = {r}.",
+      "one-gap-too-many": "{w_one_gap_too_many} krijg je met {=a+1} tussenruimtes. Het zijn er in werkelijkheid {=a-1}: {=a-1} × {b} = {r}.",
+      "gaps-plus-distance": "{w_gaps_plus_distance} krijg je door {=a-1} en {b} op te tellen. De afstand is {b} m, zo vaak genomen als er tussenruimtes zijn: {=a-1} × {b} = {r}."
+    }
+  },
+  "T2.two-step.17": {
+    "text": "Er zijn {a|shirt|shirts|shirts} en {b|rok|rokken|rokken}. Je kunt elk shirt met elke rok dragen. {c} paren passen qua kleur niet bij elkaar. Hoeveel verschillende outfits kun je maken?",
+    "solution": [
+      "Elk shirt kan met elke rok: {a} × {b} = {=a*b}.",
+      "{c} paren passen niet, dus die halen we eraf.",
+      "{=a*b} − {c} = {r}."
+    ],
+    "hints": [
+      "Reken eerst uit hoeveel paren het zouden zijn zonder beperking.",
+      "Elk van de {a} shirts kan met elk van de {b} rokken: {a} × {b}. Haal er daarna de {c} paren af die niet passen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-restriction": "{w_no_restriction} houdt geen rekening met de paren die niet passen. Het zijn er {c}, en die moeten eraf: {=a*b} − {c} = {r}.",
+      "added": "{w_added} krijg je met optellen. Elk shirt kan met elke rok, dus paren tel je met vermenigvuldigen: {a} × {b} = {=a*b}, en {=a*b} − {c} = {r}.",
+      "restriction-added": "{w_restriction_added} krijg je door {c} bij {=a*b} op te tellen. De paren die niet passen tel je er niet bij, die haal je eraf: {=a*b} − {c} = {r}."
+    }
+  },
+  "T2.two-step.18": {
+    "text": "De activiteit begon om {t1} en eindigde om {t2}. Hoeveel minuten duurde die?",
+    "solution": [
+      "Van {t1} tot het volgende hele uur is {=60-b} min. Daarna komen hele uren: {=h-a-1} uur, dat is {=(h-a-1)*60} min. Dan nog {m} min.",
+      "{=60-b} + {=(h-a-1)*60} + {m} = {r}.",
+      "Het duurde dus {r} minuten."
+    ],
+    "hints": [
+      "Verdeel de tijd in stukken: tot een heel uur, hele uren en de rest.",
+      "Van {t1} tot het volgende hele uur is {=60-b} min. Tel van dat uur tot {t2} de uren en de minuten apart.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "whole-hours-only": "{w_whole_hours_only} is alleen met uren geteld: van {a} tot {h}. De minuten bij het begin en het eind tellen ook mee: {=60-b} + {=(h-a-1)*60} + {m} = {r}.",
+      "minutes-swapped": "{w_minutes_swapped} krijg je door de kleinste minuten van de grootste af te trekken: {b} − {m}. Maar aan het eind zijn er minder minuten dan aan het begin, dus het laatste uur is nog niet vol: {=60-b} + {=(h-a-1)*60} + {m} = {r}.",
+      "hour-is-a-hundred": "{w_hour_is_a_hundred} krijg je als je {=100} minuten in een uur rekent. Een uur heeft {=60} minuten: {=60-b} + {=(h-a-1)*60} + {m} = {r}."
+    }
+  },
+  "T2.two-step.19": {
+    "text": "Er moeten {a|krat|kratten|kratten} worden vervoerd. In één auto passen er {b} en één rit van een auto kost {c|euro|euro|euro}. Hoeveel euro kost het om alle kratten te vervoeren?",
+    "solution": [
+      "Er zijn {=floor(a/b)} volle auto’s, er blijven {=mod(a,b)} kratten over, en daarvoor is nog een auto nodig: {=floor(a/b)} + {=1} = {=floor(a/b)+1}.",
+      "De kosten: {=floor(a/b)+1} × {c} = {r} euro.",
+      "Het vervoer kost dus {r|euro|euro|euro}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel auto’s je nodig hebt om alle kratten mee te nemen. Zoek dan wat dat kost.",
+      "Deel {a} door {b} met een rest. Bedenk wat je met de rest doet.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cars-only": "{w_cars_only} is het aantal auto’s, maar de vraag is de prijs. Elke rit kost {c|euro|euro|euro}: {=floor(a/b)+1} × {c} = {r}.",
+      "rounded-down": "{w_rounded_down} is uitgerekend voor {=floor(a/b)} volle auto’s. De kratten die overblijven moeten ook mee, dus er is een rit meer: {=floor(a/b)+1} × {c} = {r}.",
+      "remainder-as-cars": "{w_remainder_as_cars} krijg je als je de rest als auto’s telt: {=floor(a/b)} + {=mod(a,b)}. De rest zijn kratten, en daarvoor is maar één auto nodig: {=floor(a/b)+1} × {c} = {r}."
+    }
+  },
+  "T2.two-step.20": {
+    "text": "In de ene doos zitten er {x}, in de andere {a}. Hoeveel moeten er van de ene naar de andere worden gedaan om ze gelijk te maken?",
+    "solution": [
+      "Het verschil: {x} − {a} = {=x-a}.",
+      "Bij elk ding dat je verplaatst, gaat er één uit de ene doos en één in de andere, dus het verschil wordt telkens {=2} kleiner. We verplaatsen dus de helft van het verschil.",
+      "{=x-a} : {=2} = {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel meer de ene doos heeft dan de andere.",
+      "Een ding dat naar de andere doos gaat, verandert het verschil meteen met twee. Wat moet je met het verschil {=x-a} doen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-whole-difference": "{w_the_whole_difference} is het hele verschil. Als je dat allemaal verplaatst, heeft de eerste doos minder dan de tweede. We verplaatsen de helft: {=x-a} : {=2} = {r}.",
+      "the-equal-amount": "{w_the_equal_amount} is hoeveel er na het verplaatsen in elke doos zit, maar de vraag is hoeveel je moet verplaatsen: {=x-a} : {=2} = {r}."
+    }
+  },
+  "T2.two-step.21": {
+    "text": "Het waterniveau in centimeters (grafiek) werd elke {a} minuten gemeten; de eerste meting was helemaal aan het begin. Hoeveel minuten na het begin was het niveau {x}?",
+    "solution": [
+      "In de grafiek hoort het niveau {x} bij meting nummer {=g+1}, en de eerste meting is aan het begin.",
+      "Ervoor zijn er {g|stuk|stukken|stukken} van {a} minuten.",
+      "{g} × {a} = {r}."
+    ],
+    "hints": [
+      "Zoek in de grafiek het punt waar het niveau {x} is.",
+      "Hoeveel stukken tussen metingen zijn er vóór dat punt? Elk stuk duurt {a} minuten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-interval-too-many": "{w_one_interval_too_many} is uitgerekend alsof de eerste meting niet aan het begin was, maar na {a} minuten. Het moet zijn {g} × {a} = {r}.",
+      "the-interval": "{w_the_interval} is de tijd tussen twee metingen naast elkaar. Voor het punt zijn er {g} van zulke stukken: {g} × {a} = {r}.",
+      "the-point-number": "{w_the_point_number} is het nummer van het punt in de rij, maar de vraag gaat over minuten: {g} × {a} = {r}.",
+      "the-level": "{w_the_level} is het waterniveau in centimeters, maar de vraag gaat over de tijd: {g} × {a} = {r}."
+    }
+  },
+  "T3.three-step.11": {
+    "text": "Bij een bedacht getal werd {b} opgeteld, de som werd met {c} vermenigvuldigd en er werd {d} afgetrokken. De uitkomst was {x}. Welk getal was bedacht?",
+    "solution": [
+      "We gaan van het eind naar het begin. Er werd {d} afgetrokken, dus daarvoor was het {x} + {d} = {=x+d}.",
+      "Er werd met {c} vermenigvuldigd, dus we delen: {=x+d} : {c} = {=(x+d)/c}.",
+      "Er werd {b} opgeteld, dus we trekken af: {=(x+d)/c} − {b} = {r}."
+    ],
+    "hints": [
+      "Begin bij de uitkomst {x} en vervang elke stap door de omgekeerde.",
+      "De eerste stap terug: tel {d} op bij {x}. Bedenk welke stap daarvoor kwam.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "forgot-the-multiplier": "{w_forgot_the_multiplier} krijg je zonder te delen door {c}. Het vermenigvuldigen moet je ook omkeren: ({x} + {d}) : {c} − {b} = {r}.",
+      "undone-in-order": "{w_undone_in_order} krijg je als je de stappen in dezelfde volgorde ongedaan maakt als ze gedaan zijn. Je maakt ze ongedaan van de laatste naar de eerste: ({x} + {d}) : {c} − {b} = {r}.",
+      "multiplied-again": "{w_multiplied_again} krijg je door nog eens met {c} te vermenigvuldigen. De stap ‘vermenigvuldigd’ maak je ongedaan met delen: ({x} + {d}) : {c} − {b} = {r}."
+    }
+  },
+  "T3.three-step.12": {
+    "text": "Hoeveel getallen van twee cijfers hebben {a} als som van hun cijfers?",
+    "solution": [
+      "Het eerste cijfer loopt van {=max(1,a-9)} tot {=min(9,a)}: het mag geen nul zijn, en het tweede cijfer ({a} min het eerste) moet van {=0} tot {=9} zijn.",
+      "{=min(9,a)} − {=max(1,a-9)} + {=1} = {r}.",
+      "Er zijn dus {r} zulke getallen."
+    ],
+    "hints": [
+      "Schrijf zulke getallen op volgorde op, beginnend bij het kleinste eerste cijfer.",
+      "Het eerste cijfer mag geen nul zijn, het tweede wel, en het mag niet meer dan negen zijn. Welke eerste cijfers passen bij de som {a}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-zero-ending": "{w_no_zero_ending} krijg je zonder het getal waarvan het tweede cijfer nul is. Het getal met een nul achteraan past ook: de cijfers zijn {a} en {=0}, en de som is {a}.",
+      "nine-numbers": "{w_nine_numbers} telt alle eerste cijfers van {=1} tot {=9}. Maar het tweede cijfer ({a} min het eerste) mag niet meer dan {=9} zijn. De eerste cijfers die passen lopen van {=max(1,a-9)} tot {=min(9,a)}, samen {r}.",
+      "unordered-pairs": "{w_unordered_pairs} is het aantal paren cijfers zonder volgorde. Maar getallen met de cijfers in een andere volgorde zijn andere getallen, en die tellen apart: het eerste cijfer loopt van {=max(1,a-9)} tot {=min(9,a)}, samen {r}."
+    }
+  },
+  "T3.three-step.13": {
+    "text": "Er zijn {a} vrienden. Elk schudde precies één keer de hand van elk van de anderen. Hoeveel handdrukken waren dat in totaal?",
+    "solution": [
+      "Elk schudde de hand van {=a-1} anderen: {a} × {=a-1} = {=a*(a-1)}.",
+      "Zo is elke handdruk twee keer geteld, één keer voor elk van de twee mensen.",
+      "{=a*(a-1)} : {=2} = {r}."
+    ],
+    "hints": [
+      "Hoeveel handdrukken heeft één van de {a} vrienden?",
+      "Als je met het aantal vrienden vermenigvuldigt, wordt elke handdruk voor twee mensen geteld. Wat moet je doen om hem één keer te tellen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "counted-twice": "{w_counted_twice} is twee keer te veel: elke handdruk is voor twee mensen geteld. We nemen de helft: {=a*(a-1)} : {=2} = {r}.",
+      "everyone-with-everyone": "{w_everyone_with_everyone} krijg je met {a} × {a}: dan zou ook iedereen zichzelf een hand geven. Ieder schudt de hand van {=a-1} anderen: {=a*(a-1)} : {=2} = {r}.",
+      "one-person": "{w_one_person} zijn de handdrukken van maar één persoon, maar iedereen schudde handen: {=a*(a-1)} : {=2} = {r}."
+    }
+  },
+  "T3.three-step.14": {
+    "text": "Een appel en een peer kosten samen {u|euro|euro|euro}, een peer en een pruim {v|euro|euro|euro}, een appel en een pruim {t|euro|euro|euro}. Hoeveel euro kosten alle drie de vruchten samen?",
+    "solution": [
+      "Tel de drie sommen op: {u} + {v} + {t} = {=u+v+t}.",
+      "In deze som is elke vrucht twee keer geteld.",
+      "{=u+v+t} : {=2} = {r}."
+    ],
+    "hints": [
+      "Tel de prijzen van de drie paren op: welke vruchten zitten erin?",
+      "Elke vrucht zit in precies twee paren. Hoe vaak is hij geteld in de som {u} + {v} + {t}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "not-halved": "{w_not_halved} is de som van drie paren: {u} + {v} + {t}. Elke vrucht is er twee keer in geteld, dus we nemen de helft: {=u+v+t} : {=2} = {r}.",
+      "two-pairs": "{w_two_pairs} is de som van maar twee paren. Eén vrucht is er twee keer in geteld, en het zijn niet alle drie de vruchten. We tellen alle drie de paren op en nemen de helft: {=u+v+t} : {=2} = {r}."
+    }
+  },
+  "T3.three-step.15": {
+    "text": "Klein pak: {a} stuks, prijs {b|euro|euro|euro}. Groot pak: {c} stuks, prijs {d|euro|euro|euro}. Geld: {e|euro|euro|euro}. Wat is het grootste aantal stuks dat je kunt kopen als je alleen hele pakken neemt?",
+    "solution": [
+      "We proberen hoeveel grote pakken je neemt: van nul tot {=floor(e/d)}. Met het geld dat overblijft nemen we kleine pakken.",
+      "Het beste is {ib} grote pakken en {jb} kleine: die kosten {ib} × {d} + {jb} × {b} = {=ib*d+jb*b}, dat is niet meer dan {e}.",
+      "Stuks: {ib} × {c} + {jb} × {a} = {r}."
+    ],
+    "hints": [
+      "Probeer verschillende aantallen grote pakken, beginnend bij nul.",
+      "Je kunt hoogstens {=floor(e/d)} grote pakken nemen. Reken voor elk geval uit hoeveel kleine pakken je met de rest van het geld koopt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-large": "{w_only_large} zijn de stuks van alleen grote pakken. Het geld dat overblijft kun je aan kleine pakken uitgeven: het beste is {ib} grote en {jb} kleine, samen {r}.",
+      "large-first": "{w_large_first} krijg je als je eerst zoveel mogelijk grote pakken neemt. Soms is het beter één groot pak minder te nemen en meer kleine te kopen: het beste is {ib} grote en {jb} kleine, samen {r}.",
+      "only-small": "{w_only_small} zijn de stuks van alleen kleine pakken. Een groot pak is voordeliger per stuk, dus een deel van het geld besteed je beter daaraan: {ib} grote en {jb} kleine, samen {r}."
+    }
+  },
+  "T3.three-step.16": {
+    "text": "Een boomstam van {x} m lang werd in stukken van {b} m gezaagd. Eén keer zagen duurt {c|minuut|minuten|minuten}. Hoeveel minuten duurde het werk?",
+    "solution": [
+      "Er zijn {x} : {b} = {a} stukken, en één zaagsnede minder: {a} − {=1} = {=a-1} zaagsneden.",
+      "{=a-1} × {c} = {r}.",
+      "Het werk duurde dus {r} minuten."
+    ],
+    "hints": [
+      "Hoeveel stukken zijn het? En hoeveel zaagsneden heb je nodig om ze te krijgen?",
+      "Er zijn {x} : {b} stukken. Denk na: zijn evenveel zaagsneden genoeg, of is het er één minder?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "pieces-as-cuts": "{w_pieces_as_cuts} krijg je als je evenveel zaagsneden als stukken neemt. Er is één zaagsnede minder: {=a-1} × {c} = {r}.",
+      "cuts-only": "{w_cuts_only} is het aantal zaagsneden, maar we zoeken de tijd van het werk: {=a-1} × {c} = {r}.",
+      "length-not-time": "{w_length_not_time} krijg je door het aantal zaagsneden met de lengte van een stuk, {b}, te vermenigvuldigen. Elke zaagsnede duurt {c|minuut|minuten|minuten}: {=a-1} × {c} = {r}."
+    }
+  },
+  "T3.three-step.17": {
+    "text": "Ze vertrokken om {t0}. De reis is {x} km en de snelheid is {c} km/u. Onderweg was er een stop van {e|minuut|minuten|minuten}. Hoe laat kwamen ze aan?",
+    "solution": [
+      "Tijd onderweg: {x} km met {c} km/u is {=x*60/c} min.",
+      "Onderweg en bij de stop: {=x*60/c} + {e} = {=x*60/c+e} min.",
+      "Ze vertrokken om {t0}, dus ze kwamen aan om {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel minuten ze onderweg waren. De stop duurt ook.",
+      "De tijd onderweg volgt uit de afstand {x} km met de snelheid {c} km/u. Tel de {e|minuut|minuten|minuten} van de stop erbij en tel door vanaf {t0}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-stop": "{w_no_stop} krijg je zonder de stop. De stop duurde ook {e|minuut|minuten|minuten}: {=x*60/c} + {e} = {=x*60/c+e} min vanaf {t0}, dus ze kwamen aan om {r}.",
+      "only-the-stop": "{w_only_the_stop} krijg je als je alleen de stop bij {t0} optelt. De tijd onderweg ({=x*60/c} min) moet er ook bij: ze kwamen aan om {r}.",
+      "distance-as-minutes": "{w_distance_as_minutes} krijg je als je {x} km als {x} minuten telt. De tijd onderweg is de afstand gedeeld door de snelheid: {x} km met {c} km/u is {=x*60/c} min. Ze kwamen aan om {r}."
+    }
+  },
+  "T3.three-step.18": {
+    "text": "Er zijn er {x} in totaal. Er is {=1}⁄{a} van het geheel genomen en daarna de helft van wat overbleef. Hoeveel blijven er over?",
+    "solution": [
+      "Er zijn {x} : {a} = {=x/a} genomen, dus er bleven {x} − {=x/a} = {=x-x/a} over.",
+      "De helft van wat overbleef is genomen, de andere helft bleef.",
+      "{=x-x/a} : {=2} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel er overblijven na de eerste keer nemen.",
+      "Er zijn {x} : {a} genomen. Zoek wat overblijft en neem daarvan de helft: de andere helft is niet genomen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "half-of-all": "{w_half_of_all} is de helft van het geheel. Eerst is {=1}⁄{a} genomen, en de helft wordt genomen van wat overbleef, {=x-x/a}: {=x-x/a} : {=2} = {r}.",
+      "one-step-only": "{w_one_step_only} is wat er overbleef na de eerste keer. Daarna is ook nog de helft daarvan genomen: {=x-x/a} : {=2} = {r}.",
+      "taken-instead": "{w_taken_instead} laat zien hoeveel er in totaal zijn genomen, maar de vraag is hoeveel er overblijven: {=x-x/a} : {=2} = {r}."
+    }
+  },
+  "T4.four-step.11": {
+    "text": "Drie treffers in de eerste zone en twee in de tweede gaven {x|punt|punten|punten}. Twee treffers in de eerste zone en drie in de tweede gaven {y|punt|punten|punten}. Hoeveel punten geeft één treffer in de eerste zone?",
+    "solution": [
+      "Tel beide uitkomsten op: {x} + {y} = {=x+y}. Er zijn in totaal vijf treffers van elke zone, dus één treffer in de eerste en één in de tweede zone geven samen {=x+y} : {=5} = {=a+b}.",
+      "Trek af: {x} − {y} = {=x-y}, zoveel punten is een treffer in de eerste zone meer waard dan een in de tweede.",
+      "Uit de som {=a+b} en het verschil {=x-y}: {=a+b} + {=x-y} = {=a+b+x-y}, en {=a+b+x-y} : {=2} = {r}."
+    ],
+    "hints": [
+      "Tel beide uitkomsten op: hoeveel treffers van elke zone zijn het samen?",
+      "In de twee uitkomsten {x} en {y} samen zitten vijf treffers van elke zone. Deel hun som door vijf en trek daarna {y} af van {x}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-of-each": "{w_one_of_each} zijn de punten voor één treffer in elke zone samen. De eerste zone is {=x-y} meer waard dan de tweede: ({=a+b} + {=x-y}) : {=2} = {r}.",
+      "the-difference": "{w_the_difference} is hoeveel punten de eerste zone meer waard is dan de tweede, maar we zoeken haar waarde: ({=a+b} + {=x-y}) : {=2} = {r}.",
+      "the-other-zone": "{w_the_other_zone} zijn de punten voor een treffer in de tweede zone, maar de vraag gaat over de eerste: ({=a+b} + {=x-y}) : {=2} = {r}."
+    }
+  },
+  "T4.four-step.12": {
+    "text": "De helft van de snoepjes en nog {a} werden weggegeven. Van wat overbleef werd de helft en nog {b} weggegeven. Er bleven er {c} over. Hoeveel snoepjes waren er eerst?",
+    "solution": [
+      "We gaan van het eind terug. Bij {c} tellen we {b} op: {c} + {b} = {=c+b}, en verdubbelen: {=c+b} × {=2} = {=2*(c+b)}. Zoveel waren er vóór de tweede keer weggeven.",
+      "Bij {=2*(c+b)} tellen we {a} op: {=2*(c+b)} + {a} = {=2*(c+b)+a}, en verdubbelen: {=2*(c+b)+a} × {=2} = {r}.",
+      "Er waren er eerst dus {r}."
+    ],
+    "hints": [
+      "Begin bij wat er overbleef ({c}) en ga terug.",
+      "De helft en nog {b} werden weggegeven: doe eerst het ‘nog’ er weer bij (tel {b} op bij {c}) en verdubbel dan. Doe daarna hetzelfde met {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "ignored-extras": "{w_ignored_extras} krijg je door twee keer te verdubbelen zonder het ‘nog {a}’ en ‘nog {b}’. Die moeten er ook weer bij: (({c} + {b}) × {=2} + {a}) × {=2} = {r}.",
+      "extras-subtracted": "{w_extras_subtracted} krijg je door het ‘nog’ af te trekken. Die snoepjes werden weggegeven, dus als je teruggaat tel je ze erbij op: (({c} + {b}) × {=2} + {a}) × {=2} = {r}.",
+      "one-step-back": "{w_one_step_back} krijg je na maar één stap terug. Er waren twee keer weggegeven: (({c} + {b}) × {=2} + {a}) × {=2} = {r}."
+    }
+  },
+  "T4.four-step.13": {
+    "text": "In drie stapels zitten {a}, {b} en {c} boeken. In één zet kun je één boek van de ene stapel naar een andere verplaatsen. Wat is het kleinste aantal zetten om de stapels even groot te maken?",
+    "solution": [
+      "Er zijn {=a+b+c} boeken in totaal, dus elke stapel krijgt {=a+b+c} : {=3} = {m}.",
+      "De extra boeken zitten in de stapels boven het gemiddelde. Die moeten verplaatst worden: {=max(0,a-m)} + {=max(0,b-m)} + {=max(0,c-m)} = {r}.",
+      "Eén zet verplaatst één boek, dus er zijn {r|zet|zetten|zetten} nodig."
+    ],
+    "hints": [
+      "Hoeveel boeken moet elke stapel aan het eind hebben?",
+      "Je hoeft alleen boeken te verplaatsen uit de stapels met meer dan {m}. Tel op hoeveel meer ze hebben.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-differences": "{w_all_differences} krijg je door alle verschillen met {m} op te tellen. Elk boek is dan twee keer geteld: als het wordt weggehaald en als het erbij komt. Het aantal zetten is de helft: {w_all_differences} : {=2} = {r}.",
+      "largest-excess": "{w_largest_excess} is het teveel in alleen de grootste stapel. Er zijn nog andere stapels boven {m}: {=max(0,a-m)} + {=max(0,b-m)} + {=max(0,c-m)} = {r}.",
+      "the-average": "{w_the_average} is hoeveel boeken elke stapel aan het eind heeft, maar de vraag is het aantal zetten: {=max(0,a-m)} + {=max(0,b-m)} + {=max(0,c-m)} = {r}."
+    }
+  },
+  "T4.four-step.14": {
+    "text": "Zoek het grootste getal van vier cijfers waarvan alle cijfers verschillend zijn en de cijfers samen {a} zijn.",
+    "solution": [
+      "Om het getal zo groot mogelijk te maken, nemen we het eerste cijfer zo groot mogelijk, dan het tweede, enzovoort. De cijfers komen niet dubbel voor, en de som moet {a} zijn.",
+      "De cijfers zijn {u}, {v}, {t}, {y}: hun som is {u} + {v} + {t} + {y} = {a}.",
+      "Het getal: {u} × {=1000} + {v} × {=100} + {t} × {=10} + {y} = {r}."
+    ],
+    "hints": [
+      "Begin met het eerste cijfer: wat is het grootste dat past?",
+      "De cijfers komen niet dubbel voor, en alle vier samen moeten {a} zijn. Welk tweede cijfer kun je nemen na het grootste eerste?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "digits-repeat": "{w_digits_repeat} heeft cijfers die dubbel voorkomen, maar alle cijfers moeten verschillend zijn. Het getal met de cijfers {u}, {v}, {t}, {y} past: {r}.",
+      "the-smallest": "{w_the_smallest} is het kleinste zulke getal, maar we zoeken het grootste. De grote cijfers komen vooraan: {u}, {v}, {t}, {y} maken {r}."
+    }
+  },
+  "T4.four-step.15": {
+    "text": "Hoeveel getallen van {=1} tot en met {c} zijn deelbaar door {a} of door {b}? Een getal dat door allebei deelbaar is, telt één keer mee.",
+    "solution": [
+      "Deelbaar door {a}: {=floor(c/a)}, deelbaar door {b}: {=floor(c/b)}.",
+      "Getallen die door allebei deelbaar zijn, zijn twee keer geteld. Ze zijn deelbaar door {=a*b/gcd(a,b)}, en het zijn er {=floor(c/(a*b/gcd(a,b)))}.",
+      "{=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}."
+    ],
+    "hints": [
+      "Hoeveel getallen tot en met {c} zijn deelbaar door {a}, en hoeveel door {b}?",
+      "De getallen die deelbaar zijn door {=a*b/gcd(a,b)} zijn deelbaar door allebei en zijn twee keer geteld. Wat moet je daarmee doen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "counted-twice": "{w_counted_twice} is de som van twee tellingen. De getallen die door allebei deelbaar zijn, zijn er twee keer in geteld, en het zijn er {=floor(c/(a*b/gcd(a,b)))}: {=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}.",
+      "only-the-first": "{w_only_the_first} telt alleen de getallen die deelbaar zijn door {a}. De getallen die deelbaar zijn door {b} horen er ook bij: {=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}.",
+      "only-both": "{w_only_both} telt alleen de getallen die door allebei deelbaar zijn. Maar we zoeken de getallen die door minstens één van de twee deelbaar zijn: {=floor(c/a)} + {=floor(c/b)} − {=floor(c/(a*b/gcd(a,b)))} = {r}."
+    }
+  },
+  "T4.four-step.16": {
+    "text": "Op een bord staan de getallen van {=1} tot en met {a}. In één zet veeg je twee getallen weg en schrijf je hun som op. Dat doe je totdat er één getal over is. Wat voor getal is dat? 1) even; 2) oneven; 3) het hangt af van de volgorde van de zetten. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "De som van alle getallen op het bord verandert niet: er worden twee getallen weggeveegd en hun som wordt opgeschreven.",
+      "Aan het eind blijft één getal over, gelijk aan de som van de getallen van {=1} tot en met {a}: {a} × {=a+1} : {=2} = {=a*(a+1)/2}.",
+      "Of deze som even of oneven is, geeft het antwoord, dat is keuze {r}."
+    ],
+    "hints": [
+      "Wat verandert er niet na elke zet?",
+      "Zoek de som van alle getallen van {=1} tot en met {a}: {a} × {=a+1} : {=2}. Is die even of oneven?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "other-parity": "Keuze {w_other_parity} past niet: de som {=a*(a+1)/2} is het andere soort getal. Keuze {r} past.",
+      "depends": "Keuze {w_depends} past niet: de som op het bord verandert niet door de volgorde van de zetten, dus het laatste getal ook niet, dat is {=a*(a+1)/2}. Keuze {r} past."
+    }
+  },
+  "T4.four-step.17": {
+    "text": "Er moet {c|euro|euro|euro} worden betaald met munten van {a} en {b} euro. Er zijn genoeg munten van elke soort. Op hoeveel manieren kan dat?",
+    "solution": [
+      "We proberen hoeveel munten van {b} euro je neemt: van {=0} tot {=floor(c/b)}. Wat overblijft moet deelbaar zijn door {a}.",
+      "Deze waarden passen: {js}.",
+      "Elke manier tellen we één keer: {ones} = {r}."
+    ],
+    "hints": [
+      "Probeer hoeveel munten van {b} euro je kunt nemen: van nul tot {=floor(c/b)}.",
+      "Controleer bij elk geval of wat er van {c} overblijft deelbaar is door {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "both-kinds-used": "{w_both_kinds_used} krijg je als je altijd beide soorten munten gebruikt. Je kunt ook met één soort betalen, en dat is ook een manier: er zijn {r} manieren in totaal.",
+      "every-value": "{w_every_value} is het aantal waarden voor de munten van {b} euro zonder te controleren wat overblijft. Niet elke rest is deelbaar door {a}; alleen de waarden {js} passen: {r} manieren."
+    }
+  },
+  "T4.four-step.18": {
+    "text": "Heen werd er met {x} km/u gereden en terug over dezelfde weg met {y} km/u. Wat is de gemiddelde snelheid over de hele reis, in km/u?",
+    "solution": [
+      "Stel dat de afstand heen {z} km is; het antwoord hangt daar niet van af.",
+      "Heen {z} : {x} = {=z/x} uur, terug {z} : {y} = {=z/y} uur, samen {=z/x} + {=z/y} = {=z/x+z/y} uur.",
+      "De hele afstand is {=2*z} km, de gemiddelde snelheid is {=2*z} : {=z/x+z/y} = {r} km/u."
+    ],
+    "hints": [
+      "De gemiddelde snelheid is de hele afstand gedeeld door de hele tijd. Neem een willekeurige afstand heen, bijvoorbeeld {z} km.",
+      "Zoek de tijd heen, {z} : {x}, en de tijd terug, {z} : {y}. Deel dan de hele afstand {=2*z} km door de hele tijd.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "the-mean-of-speeds": "{w_the_mean_of_speeds} is het gemiddelde van de twee snelheden. Maar de tijden heen en terug waren verschillend, en op het langzame stuk is meer tijd besteed. De hele afstand {=2*z} km duurde {=z/x+z/y} uur: {r}.",
+      "half-the-answer": "{w_half_the_answer} krijg je zonder de afstand te verdubbelen: heen en terug is de afstand twee keer zo lang, {=2*z} km, niet {z} km: {=2*z} : {=z/x+z/y} = {r}."
+    }
+  },
+  "T4.four-step.19": {
+    "text": "Een ding kost {x|euro|euro|euro}. De prijs ging {a} procent omhoog en daarna ging de nieuwe prijs met hetzelfde percentage omlaag. Wat werd de prijs, in euro?",
+    "solution": [
+      "Na de verhoging: {x} + {=x*a/100} = {=x*(100+a)/100}.",
+      "De daling reken je van de nieuwe prijs: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}.",
+      "De prijs werd dus {r} euro, niet {x}: de procenten werden van verschillende prijzen genomen."
+    ],
+    "hints": [
+      "Zoek de prijs na de verhoging.",
+      "De daling van {a} procent reken je van de nieuwe prijs {=x*(100+a)/100}, niet van de oude, {x}. Zoek die op en trek hem af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "back-to-the-start": "{w_back_to_the_start} is de oude prijs. Maar de daling reken je van de nieuwe, hogere prijs, dus de prijs is niet terug bij de oude: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}.",
+      "only-the-rise": "{w_only_the_rise} is de prijs na de verhoging, maar daarna ging hij ook omlaag: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}.",
+      "only-the-fall": "{w_only_the_fall} is de prijs na één daling vanaf de oude prijs. Maar de prijs ging eerst omhoog en de daling is van de nieuwe prijs: {=x*(100+a)/100} − {=x*(100+a)/100*a/100} = {r}."
+    }
+  },
+  "T4.four-step.20": {
+    "text": "Er zijn {a|stem|stemmen|stemmen} uitgebracht. {b} procent was voor de eerste kandidaat, {c} procent voor de tweede en alle andere stemmen voor de derde (cirkeldiagram). Hoeveel stemmen zijn er voor de derde?",
+    "solution": [
+      "De eerste twee kregen {b} + {c} = {=b+c} procent, dus voor de derde blijft {=100} − {=b+c} = {=100-b-c} procent over.",
+      "Eén procent is {a} : {=100} = {=a/100}.",
+      "{=a/100} × {=100-b-c} = {r}. De derde heeft dus {r|stem|stemmen|stemmen}."
+    ],
+    "hints": [
+      "Hoeveel procent van de stemmen blijft er over voor de derde?",
+      "Eén procent is {a} : {=100}. Vermenigvuldig dat met de procenten die overblijven.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "percent-only": "{w_percent_only} is het percentage, maar we zoeken het aantal stemmen. Eén procent is {=a/100}, en de derde heeft {=100-b-c} procent: {=a/100} × {=100-b-c} = {r}.",
+      "percent-as-votes": "{w_percent_as_votes} krijg je door de procenten van het aantal stemmen af te trekken. Procenten moet je eerst in stemmen omrekenen: {=a/100} × {=100-b-c} = {r}.",
+      "the-second-candidate": "{w_the_second_candidate} zijn de stemmen voor de tweede kandidaat, maar de vraag gaat over de derde: {=a/100} × {=100-b-c} = {r}."
+    }
+  }
+}

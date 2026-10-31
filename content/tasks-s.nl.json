@@ -1,0 +1,2857 @@
+{
+  "S1.tables.01": {
+    "text": "In de tabel staat hoeveel bladzijden er zijn gelezen: {a} op maandag, {b} op dinsdag en {c} op woensdag. Hoeveel bladzijden zijn er op dinsdag gelezen?",
+    "solution": [
+      "In de tabel staan drie getallen: maandag {a}, dinsdag {b}, woensdag {c}.",
+      "De vraag gaat over dinsdag, dus we nemen het getal uit de rij van dinsdag: {b}.",
+      "Op dinsdag zijn er {r|bladzijde|bladzijden|bladzijden} gelezen."
+    ],
+    "hints": [
+      "Zoek in de tabel de rij van dinsdag.",
+      "Maandag is {a} en woensdag is {c}. Die rijen heb je nu niet nodig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "monday": "{w_monday} staat in de rij van maandag, maar de vraag gaat over dinsdag. Op dinsdag zijn er {b} bladzijden gelezen.",
+      "wednesday": "{w_wednesday} staat in de rij van woensdag, maar de vraag gaat over dinsdag. Op dinsdag zijn er {b} bladzijden gelezen.",
+      "all-added": "{w_all_added} is alle drie de getallen bij elkaar, maar de vraag gaat alleen over dinsdag. We nemen het getal uit de rij van dinsdag: {b}."
+    }
+  },
+  "S1.tables.02": {
+    "text": "In de tabel staat hoeveel bladzijden er zijn gelezen: {a} op maandag, {b} op dinsdag en {c} op woensdag. Hoeveel bladzijden meer zijn er op dinsdag gelezen dan op maandag?",
+    "solution": [
+      "We willen weten hoeveel meer dinsdag is dan maandag. Dat is het verschil.",
+      "Van het getal van dinsdag halen we het getal van maandag af: {b} − {a} = {r}.",
+      "Op dinsdag zijn er {r|bladzijde|bladzijden|bladzijden} meer gelezen."
+    ],
+    "hints": [
+      "Zoek de getallen van maandag en dinsdag.",
+      "Dinsdag is {b} en maandag is {a}. 'Hoeveel meer' vraagt naar het verschil tussen die twee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} komt van optellen, maar 'hoeveel meer' vraagt naar het verschil, dus we trekken af: {b} − {a} = {r}.",
+      "wednesday": "{w_wednesday} vergelijkt woensdag met maandag, maar de vraag gaat over dinsdag. Het gaat zo: {b} − {a} = {r}."
+    }
+  },
+  "S1.tables.03": {
+    "text": "In de tabel staat hoeveel bladzijden er zijn gelezen: {a} op maandag, {b} op dinsdag en {c} op woensdag. Hoeveel bladzijden zijn er in die drie dagen samen gelezen?",
+    "solution": [
+      "Voor alle drie de dagen tellen we de getallen van de drie rijen bij elkaar op.",
+      "Eerst maandag en dinsdag: {a} + {b} = {=a+b}.",
+      "Dan woensdag erbij: {=a+b} + {c} = {r}.",
+      "In de drie dagen zijn er {r|bladzijde|bladzijden|bladzijden} gelezen."
+    ],
+    "hints": [
+      "Alle drie de dagen tellen mee: maandag, dinsdag en woensdag.",
+      "Tel eerst {a} en {b} op en dan {c} erbij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is alleen het grootste van de drie getallen. Voor alle drie de dagen tellen we ze op: {a} + {b} + {c} = {r}.",
+      "two-days": "{w_two_days} zijn maar twee dagen samen. Een dag is overgeslagen: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S1.tables.04": {
+    "text": "In de tabel staat dat er in de drie dagen samen {a|bladzijde|bladzijden|bladzijden} zijn gelezen. Op maandag waren dat er {b} en op dinsdag {c}. Hoeveel bladzijden zijn er op woensdag gelezen?",
+    "solution": [
+      "In totaal zijn er {a} bladzijden gelezen en maandag en dinsdag weten we al.",
+      "Tel eerst de bekende dagen op: {b} + {c} = {=b+c}.",
+      "Wat van het totaal overblijft, is op woensdag gelezen: {a} − {=b+c} = {r}.",
+      "Op woensdag zijn er {r|bladzijde|bladzijden|bladzijden} gelezen."
+    ],
+    "hints": [
+      "Het totaal is {a}. Een deel daarvan, maandag en dinsdag, weet je al.",
+      "Tel de bekende dagen op: {b} + {c}. Hoeveel ontbreekt er nog tot {a}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-day-removed": "{w_one_day_removed} is het totaal met maar één dag eraf. Zowel maandag als dinsdag moeten eraf: {a} − {b} − {c} = {r}.",
+      "known-days": "{w_known_days} is maandag en dinsdag samen. Woensdag is wat van het totaal overblijft: {a} − {=b+c} = {r}."
+    }
+  },
+  "S1.tables.05": {
+    "text": "In een prijslijst kost een brood {a} euro en een pak melk {b} euro. Hoeveel euro kosten 2 broden en 3 pakken melk samen?",
+    "solution": [
+      "2 broden kosten 2 × {a} = {=2*a} euro.",
+      "3 pakken melk kosten 3 × {b} = {=3*b} euro.",
+      "Samen kosten ze {=2*a} + {=3*b} = {r} euro."
+    ],
+    "hints": [
+      "Reken de prijs van het brood en de prijs van de melk apart uit.",
+      "2 broden kosten 2 × {a} en 3 pakken melk kosten 3 × {b}. Tel de twee bedragen op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "swapped-counts": "In {w_swapped_counts} zijn het aantal broden en het aantal pakken melk omgewisseld. Het gaat zo: {=2} × {a} + {=3} × {b} = {r}.",
+      "one-of-each": "{w_one_of_each} is de prijs van één brood en één pak melk, maar er worden 2 broden en 3 pakken melk gekocht: {=2} × {a} + {=3} × {b} = {r}."
+    }
+  },
+  "S1.tables.06": {
+    "text": "Volgens de dienstregeling vertrekt de bus om {t1} en komt hij om {t2} aan. Hoeveel minuten is de bus onderweg?",
+    "solution": [
+      "Van {t1} tot precies {=c+1} uur is het 60 − {a} = {=60-a|minuut|minuten|minuten}.",
+      "Daarna rijdt de bus nog {b|minuut|minuten|minuten}, tot {t2}.",
+      "Reistijd: {=60-a} + {b} = {r|minuut|minuten|minuten}."
+    ],
+    "hints": [
+      "Ga eerst naar het volgende hele uur en tel dan verder.",
+      "Van {t1} tot {=c+1} uur is 60 − {a} minuten. Tel daar de {b} minuten na het hele uur bij op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "minutes-subtracted": "{w_minutes_subtracted} komt van {a} min {b}. Maar de bus komt na een heel uur aan. Tot het hele uur rijdt hij {=60-a} minuten en daarna nog {b}: {=60-a} + {b} = {r}.",
+      "hour-only": "{w_hour_only} is één heel uur, maar de reis duurt niet precies een uur: {=60-a} + {b} = {r}.",
+      "hour-added": "{w_hour_added} komt van {b} minuten bij een heel uur optellen. Tot het volgende hele uur rijdt de bus {=60-a} minuten, niet 60: {=60-a} + {b} = {r}."
+    }
+  },
+  "S1.tables.07": {
+    "text": "In een tabel staat de lengte van vier kinderen in centimeters: {a}, {b}, {c} en {d}. Hoeveel kinderen zijn langer dan {e} cm?",
+    "solution": [
+      "Zet {e} cm in een rij met de lengtes van de kinderen, van klein naar groot: {=nth(1,a,b,c,d,e)}, {=nth(2,a,b,c,d,e)}, {=nth(3,a,b,c,d,e)}, {=nth(4,a,b,c,d,e)}, {=nth(5,a,b,c,d,e)}.",
+      "Rechts van {e} staan de getallen die groter zijn dan {e}, links de kleinere.",
+      "Korter dan {e} cm: {=4-r|kind|kinderen|kinderen}, dus langer: {=4} − {=4-r} = {r}.",
+      "Dus {r|kind is|kinderen zijn|kinderen zijn} langer dan {e} cm."
+    ],
+    "hints": [
+      "Vergelijk de lengte van elk kind met {e} cm.",
+      "Kijk naar {a}, {b}, {c} en {d}: markeer de getallen die groter zijn dan {e} en tel ze.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} is alle vier de kinderen, maar niet elk kind is langer dan {e} cm. We tellen alleen de lengtes groter dan {e}: dat zijn er {r}.",
+      "not-above": "{w_not_above} telt de kinderen die korter zijn dan {e} cm, maar de vraag gaat over de langere kinderen. Dat zijn er {r}."
+    }
+  },
+  "S1.tables.08": {
+    "text": "In een rij van de tabel staan de getallen {a}, {b}, {c} en {d}. Hoeveel groter is het grootste getal dan het kleinste?",
+    "solution": [
+      "Van de getallen {a}, {b}, {c} en {d} is {=max(a,b,c,d)} het grootste en {=min(a,b,c,d)} het kleinste.",
+      "Om te weten hoeveel groter het ene getal is dan het andere, halen we het kleinste van het grootste af.",
+      "Verschil: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}."
+    ],
+    "hints": [
+      "Zoek in de rij het grootste en het kleinste getal.",
+      "Het grootste is {=max(a,b,c,d)} en het kleinste is {=min(a,b,c,d)}. Zoek nu hoeveel groter het eerste is dan het tweede.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is het grootste getal, maar de vraag is hoeveel groter dat is dan het kleinste: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "smallest": "{w_smallest} is het kleinste getal, maar de vraag is hoeveel groter het grootste daarvan is: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "first-last": "{w_first_last} is het verschil tussen het eerste en het laatste getal van de rij, en dat zijn niet het grootste en het kleinste. Het grootste is {=max(a,b,c,d)} en het kleinste is {=min(a,b,c,d)}: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}."
+    }
+  },
+  "S1.tables.09": {
+    "text": "In een tabel staan twee rijen. In de eerste rij staan {a} en {b}, in de tweede rij {c} en {d}. Wat is de som van de getallen in de tweede kolom?",
+    "solution": [
+      "De tweede kolom bestaat uit de getallen die in elke rij op de tweede plaats staan: {b} in de eerste rij en {d} in de tweede.",
+      "We tellen ze op: {b} + {d} = {r}.",
+      "De getallen van de tweede kolom zijn samen {r}."
+    ],
+    "hints": [
+      "Een kolom loopt van boven naar beneden.",
+      "In de tweede kolom staat {b} in de eerste rij en {d} in de tweede rij. Tel ze op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-column": "{w_first_column} is de som van de eerste kolom, maar we zoeken de tweede kolom: {b} + {d} = {r}.",
+      "second-row": "{w_second_row} is de som van de tweede rij, maar we zoeken de tweede kolom: {b} + {d} = {r}.",
+      "first-row": "{w_first_row} is de som van de eerste rij ({a} + {b}), maar we zoeken de tweede kolom: {b} + {d} = {r}."
+    }
+  },
+  "S1.tables.10": {
+    "text": "In de eerste rij van een tabel staan {a}, {b} en {c}. De getallen in de tweede rij zijn twee keer zo groot. Wat is de som van de getallen in de tweede rij?",
+    "solution": [
+      "Som van de eerste rij: {a} + {b} + {c} = {=a+b+c}.",
+      "Elk getal in de tweede rij is twee keer zo groot, dus de hele som is ook twee keer zo groot.",
+      "Som van de tweede rij: 2 × {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst de som van de eerste rij.",
+      "{a} + {b} + {c} is de eerste rij. De getallen in de tweede rij zijn twee keer zo groot.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-row": "{w_first_row} is de som van de eerste rij. De getallen in de tweede rij zijn twee keer zo groot, dus de som ook: {=2} × {w_first_row} = {r}.",
+      "tripled": "{w_tripled} is drie keer de som van de eerste rij, maar de getallen van de tweede rij zijn twee keer zo groot: {=2} × {=a+b+c} = {r}."
+    }
+  },
+  "S1.tables.11": {
+    "text": "In één vakje van de tabel staat {a}, in een ander vakje staat {b}. Zet het juiste teken tussen het eerste en het tweede getal.",
+    "solution": [
+      "Beide getallen hebben twee cijfers, dus vergelijken we eerst de tientallen: het getal met de meeste tientallen is groter.",
+      "Zijn de tientallen gelijk, dan vergelijken we de eenheden.",
+      "Als we {a} en {b} vergelijken, krijgen we {a} {r} {b}."
+    ],
+    "hints": [
+      "Kijk naar de tientallen: hoeveel zijn het er in {a} en hoeveel in {b}?",
+      "De tientallen zijn {=floor(a/10)} en {=floor(b/10)}. Als ze verschillen, beslissen zij; zijn ze gelijk, vergelijk dan de eenheden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reversed": "Het teken {w_reversed} staat andersom: de open kant van het teken wijst naar het grootste getal en de punt naar het kleinste.",
+      "units-first": "Het teken {w_units_first} komt van het vergelijken van alleen de eenheden. Vergelijk eerst de tientallen: {a} heeft er {=floor(a/10)} en {b} heeft er {=floor(b/10)}."
+    }
+  },
+  "S1.tables.12": {
+    "text": "In een tabel staat de prijs van één schrift: {a} euro in de eerste winkel en {b} euro in de tweede. Hoeveel euro bespaar je op {c|schrift|schriften|schriften} als je ze in de tweede winkel koopt?",
+    "solution": [
+      "In de eerste winkel kost een schrift {=a-b} euro meer: {a} − {b} = {=a-b}.",
+      "Dat bespaar je op elk schrift dat je in de tweede winkel koopt.",
+      "Met {c|schrift|schriften|schriften} bespaar je {=a-b} × {c} = {r} euro."
+    ],
+    "hints": [
+      "Zoek eerst uit hoeveel goedkoper één schrift in de tweede winkel is.",
+      "Eén schrift is {a} − {b} goedkoper. Je koopt er {c}, dus vermenigvuldig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-item": "{w_one_item} is de besparing op één schrift, maar je koopt er {c}: {=a-b} × {c} = {r}.",
+      "first-store": "{w_first_store} is wat {c|schrift|schriften|schriften} in de eerste winkel kosten, maar de vraag is de besparing: {=a-b} × {c} = {r}.",
+      "second-store": "{w_second_store} is wat {c|schrift|schriften|schriften} in de tweede winkel kosten, maar de vraag is de besparing: {=a-b} × {c} = {r}."
+    }
+  },
+  "S1.tables.13": {
+    "text": "Een tabel heeft twee rijen en drie kolommen. De getallen in de vakjes zijn niet bekend. De getallen van de eerste rij zijn samen {a} en die van de tweede rij samen {b}. De getallen van de eerste kolom zijn samen {c} en die van de tweede kolom samen {d}. Hoeveel zijn de getallen van de derde kolom samen?",
+    "solution": [
+      "Alle getallen van de tabel kun je op twee manieren optellen, per rij en per kolom, en je krijgt steeds hetzelfde totaal.",
+      "Per rij: {a} + {b} = {=a+b}. De eerste twee kolommen samen zijn {c} + {d} = {=c+d}.",
+      "Voor de derde kolom blijft dan {=a+b} − {=c+d} = {r} over."
+    ],
+    "hints": [
+      "Tel de sommen van de twee rijen op: {a} en {b}. Dat is het totaal van de hele tabel.",
+      "Dezelfde getallen vormen ook de drie kolommen samen. Twee kolommen ken je al: {c} en {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "whole-table": "{w_whole_table} is het totaal van de hele tabel, maar de derde kolom is maar een deel daarvan. Van {w_whole_table} moeten we de eerste twee kolommen nog afhalen: {w_whole_table} − {=c+d} = {r}.",
+      "two-columns": "{w_two_columns} is het totaal van de eerste twee kolommen, maar de vraag gaat over de derde. We halen de twee kolommen af van het totaal van de tabel, {=a+b}: {=a+b} − {w_two_columns} = {r}."
+    }
+  },
+  "S1.tables.14": {
+    "text": "Volgens de dienstregeling vertrekt een bus om {t1}, om {t2} en om {t3}, en zo gaat het door, steeds met hetzelfde tijdsverschil. Hoe laat vertrekt de vijfde bus?",
+    "solution": [
+      "Het tijdsverschil tussen twee vertrektijden is {c|minuut|minuten|minuten}.",
+      "Van de eerste bus tot de vijfde bus zijn er vier tijdsverschillen: {=4} × {c} = {=4*c|minuut|minuten|minuten}.",
+      "We tellen {=4*c|minuut|minuten|minuten} bij {t1} op en gaan over de hele uren heen: dat geeft {r}."
+    ],
+    "hints": [
+      "Van {t1} tot {t2} is het {c} minuten: dat is het tijdsverschil tussen twee bussen.",
+      "Van de eerste bus tot de vijfde bus zijn er vier tijdsverschillen, dus {=4} × {c} minuten. Als de minuten voorbij {=60} gaan, wordt het uur één hoger.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "fourth": "{w_fourth} is de vertrektijd van de vierde bus: van de eerste bus tot de vijfde bus zijn er vier tijdsverschillen, geen drie.",
+      "sixth": "{w_sixth} is de vertrektijd van de zesde bus: van de eerste bus tot de vijfde bus zijn er vier tijdsverschillen, geen vijf.",
+      "hour-not-changed": "In {w_hour_not_changed} is het uur hetzelfde gebleven, maar {=4*c|minuut|minuten|minuten} is een uur of meer. Als de minuten {=60} bereiken, wordt het uur één hoger."
+    }
+  },
+  "S1.tables.15": {
+    "text": "Er is één keer met twee dobbelstenen gegooid. De tabel van {=6} × {=6} laat alle paren ogen zien: de rij is de eerste dobbelsteen en de kolom is de tweede. In elk vakje staat de som van het paar. In hoeveel vakjes van de tabel staat de som {a}?",
+    "solution": [
+      "We zoeken de paren ogen die samen {a} zijn: {pairs}.",
+      "De volgorde telt: een paar waarbij de dobbelstenen zijn omgewisseld, staat in een ander vakje. De som {=7} heeft zes paren en bij elke stap weg van {=7} is er één paar minder.",
+      "Paren met de som {a}: {=6} − {=max(a-7,7-a)} = {r}."
+    ],
+    "hints": [
+      "Schrijf de paren ogen op met de som {a}. Een paar en hetzelfde paar met omgewisselde dobbelstenen zijn verschillende vakjes.",
+      "De som {=7} heeft de meeste paren, namelijk zes. De som {a} ligt {=max(a-7,7-a)} van {=7} af en heeft evenveel paren minder.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "unordered": "{w_unordered} komt van een paar en hetzelfde paar met omgewisselde dobbelstenen als één tellen. Maar de dobbelstenen zijn verschillend, dus het zijn verschillende vakjes van de tabel. Het antwoord is {r}.",
+      "a-minus-one": "{w_a_minus_one} klopt alleen voor sommen tot {=7}. Voor de som {a} zijn er minder paren: hoe verder de som van {=7} af ligt, hoe minder paren. Het gaat zo: {=6} − {=max(a-7,7-a)} = {r}.",
+      "six": "{w_six} is het aantal paren voor de som {=7}. Voor de som {a} zijn het er minder: {=6} − {=max(a-7,7-a)} = {r}."
+    }
+  },
+  "S1.tables.16": {
+    "text": "In een keertabel hebben de rijen de labels {a} en {b} en de kolommen de labels {c} en {d}. In een vakje staat het product van het getal van de rij en het getal van de kolom. Welk getal hoort er in het lege vakje, in rij {b} en kolom {d}?",
+    "solution": [
+      "In een vakje staat het product van het getal van de rij en het getal van de kolom.",
+      "Het lege vakje staat in rij {b} en kolom {d}.",
+      "Dus daar staat {b} × {d} = {r}."
+    ],
+    "hints": [
+      "Het lege vakje staat in rij {b} en kolom {d}.",
+      "In een keertabel is een vakje het product van deze twee getallen: {b} × {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van {b} en {d}, maar in een keertabel staan in de vakjes producten.",
+      "other-row": "{w_other_row} is {a} × {d}: er is rij {a} gebruikt, maar het lege vakje staat in rij {b}.",
+      "other-column": "{w_other_column} is {b} × {c}: er is kolom {c} gebruikt, maar het lege vakje staat in kolom {d}."
+    }
+  },
+  "S1.tables.17": {
+    "text": "Op de tekening staan streepjes die laten zien hoeveel mensen elk van de drie antwoorden kozen. Elke vijf streepjes zijn doorgestreept met één schuine streep. Hoeveel mensen hebben er in totaal geantwoord?",
+    "solution": [
+      "Een bundel van vijf streepjes met een schuine streep is {=5} mensen; streepjes buiten een bundel tellen we een voor een.",
+      "Eerste rij: {=floor(a/5)} × {=5} + {=mod(a,5)} = {a}, tweede rij: {=floor(b/5)} × {=5} + {=mod(b,5)} = {b}, derde rij: {=floor(c/5)} × {=5} + {=mod(c,5)} = {c}.",
+      "Samen: {a} + {b} + {c} = {r}."
+    ],
+    "hints": [
+      "Tel in elke rij hoeveel mensen het zijn: een bundel van vijf streepjes met een schuine streep is vijf mensen.",
+      "De eerste rij heeft {=floor(a/5)|bundel|bundels|bundels} van vijf en {=mod(a,5)|los streepje|losse streepjes|losse streepjes}. Tel de andere rijen op dezelfde manier en tel dan op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "bundle-as-four": "{w_bundle_as_four} komt van vier streepjes per bundel tellen. Maar de schuine streep is ook één persoon, dus een bundel heeft er vijf. Het gaat zo: {a} + {b} + {c} = {r}.",
+      "largest-row": "{w_largest_row} is alleen de langste rij, maar de vraag gaat over alle drie. We tellen ze op: {a} + {b} + {c} = {r}.",
+      "bundle-as-one": "{w_bundle_as_one} komt van elke bundel als één persoon tellen. Een bundel heeft vijf streepjes, dus vijf mensen: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S2.bar-line.01": {
+    "text": "In een pictogram staat één symbool voor {a|boek|boeken|boeken}. Er zijn {b} symbolen getekend. Hoeveel boeken laat het pictogram zien?",
+    "solution": [
+      "Eén symbool staat voor {a|boek|boeken|boeken}.",
+      "Er zijn {b} symbolen en elk symbool laat evenveel boeken zien.",
+      "Samen laat het pictogram {a} × {b} = {r|boek|boeken|boeken} zien."
+    ],
+    "hints": [
+      "Zoek uit voor hoeveel boeken één symbool staat.",
+      "Er zijn {b} symbolen en elk staat voor {a|boek|boeken|boeken}. Vermenigvuldig.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "icons-only": "{w_icons_only} is het aantal symbolen, maar elk symbool staat voor {a|boek|boeken|boeken}: {a} × {b} = {r}.",
+      "sum": "{w_sum} komt van {a} en {b} optellen. De symbolen zijn allemaal gelijk, dus we vermenigvuldigen: {a} × {b} = {r}."
+    }
+  },
+  "S2.bar-line.02": {
+    "text": "In een staafdiagram is de eerste staaf {a} hoog en de tweede staaf {b} hoog. Hoeveel hoger is de tweede staaf dan de eerste?",
+    "solution": [
+      "We zoeken het verschil in hoogte, dus we halen de kleinste hoogte van de grootste af.",
+      "De tweede staaf is {b} − {a} = {r} hoger dan de eerste.",
+      "Het verschil in hoogte is {r}."
+    ],
+    "hints": [
+      "Zoek de hoogtes van beide staven: {a} en {b}.",
+      "Haal de kleinste hoogte van de grootste af: haal {a} van {b} af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van de hoogtes, maar 'hoeveel hoger' vraagt naar het verschil: {b} − {a} = {r}.",
+      "second-only": "{w_second_only} is de hoogte van de tweede staaf, maar we moeten de hoogte van de eerste staaf eraf halen: {b} − {a} = {r}."
+    }
+  },
+  "S2.bar-line.03": {
+    "text": "De hoogtes van drie staven in een staafdiagram zijn {a}, {b} en {c}. Wat is de som van de hoogtes?",
+    "solution": [
+      "We moeten de hoogtes van alle drie de staven optellen.",
+      "Eerst twee staven: {a} + {b} = {=a+b}.",
+      "Dan de derde staaf erbij: {=a+b} + {c} = {r}.",
+      "De som van de hoogtes is {r}."
+    ],
+    "hints": [
+      "Alle drie de staven tellen mee: {a}, {b} en {c}.",
+      "Tel eerst {a} en {b} op en dan {c} erbij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "highest": "{w_highest} is de hoogste staaf, maar we zoeken de som van alle drie: {a} + {b} + {c} = {r}.",
+      "two-bars": "{w_two_bars} laat de derde staaf weg: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S2.bar-line.04": {
+    "text": "Een staaf in een staafdiagram eindigt precies halverwege tussen {a} en {y} op de schaal. Hoe hoog is de staaf?",
+    "solution": [
+      "De afstand tussen {a} en {y} is {y} − {a} = {=y-a}.",
+      "De staaf eindigt in het midden, dus op de helft van die afstand: {=y-a} : 2 = {=(y-a)/2}.",
+      "Hoogte van de staaf: {a} + {=(y-a)/2} = {r}."
+    ],
+    "hints": [
+      "Zoek de afstand tussen {a} en {y} op de schaal.",
+      "De afstand is {=y-a}. De staaf eindigt in het midden, dus op de helft van die afstand boven {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "lower-mark": "{w_lower_mark} is het onderste getal, maar de staaf is daar de helft van de afstand tussen de twee getallen boven: {a} + {=(y-a)/2} = {r}.",
+      "upper-mark": "{w_upper_mark} is het bovenste getal, maar de staaf reikt daar niet tot: {a} + {=(y-a)/2} = {r}.",
+      "half-of-upper": "{w_half_of_upper} is de helft van het bovenste getal {y}. We halveren de afstand tussen de twee getallen: {a} + {=(y-a)/2} = {r}.",
+      "half-gap": "{w_half_gap} is maar de helft van de afstand tussen {a} en {y}. Die helft moet bij het onderste getal {a} opgeteld worden: {a} + {=(y-a)/2} = {r}."
+    }
+  },
+  "S2.bar-line.05": {
+    "text": "Op een lijngrafiek is de temperatuur om {c} uur {a|graad|graden|graden} en om {=c+d} uur {b|graad|graden|graden}. Hoeveel graden is de temperatuur gestegen?",
+    "solution": [
+      "De temperatuur is gestegen, dus we halen de eerdere waarde af van de latere.",
+      "Om {=c+d} uur was het {b} en om {c} uur {a}: {b} − {a} = {r}.",
+      "Dus de temperatuur is {r|graad|graden|graden} gestegen."
+    ],
+    "hints": [
+      "Zoek op de grafiek de waarden om {c} uur en om {=c+d} uur: {a} en {b}.",
+      "De temperatuur is gestegen, dus haal de eerdere waarde {a} af van de latere waarde {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} komt van optellen, maar een stijging vind je door af te trekken: {b} − {a} = {r}.",
+      "hours": "{w_hours} is hoeveel uur er voorbij is, maar de vraag is hoeveel graden de temperatuur is gestegen: {b} − {a} = {r}."
+    }
+  },
+  "S2.bar-line.06": {
+    "text": "Volgens de grafiek steeg de temperatuur gelijkmatig van {x} naar {y} graden in {c} uur. Hoeveel graden steeg de temperatuur elk uur?",
+    "solution": [
+      "Eerst de stijging over de hele tijd: {y} − {x} = {=y-x}.",
+      "De stijging is gelijkmatig, dus we verdelen deze graden gelijk over {c} uur.",
+      "Elk uur steeg de temperatuur met {=y-x} : {c} = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Zoek eerst de stijging over de hele tijd, van {x} naar {y}.",
+      "De stijging van {=y-x} graden is gelijk verdeeld over {c} uur. Deel.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is de stijging over de hele tijd, maar we zoeken de stijging in één uur: {=y-x} : {c} = {r}.",
+      "hours": "{w_hours} is het aantal uren, niet de stijging van de temperatuur. We delen de stijging over de hele tijd, {=y-x}, door het aantal uren, {c}: {=y-x} : {c} = {r}."
+    }
+  },
+  "S2.bar-line.07": {
+    "text": "Een staafdiagram heeft vier staven en een stippellijn laat het niveau {e} zien. Hoeveel staven zijn hoger dan dit niveau?",
+    "solution": [
+      "De hoogtes van de staven op de schaal: {a}, {b}, {c} en {d}. Zet het niveau {e} in een rij met die hoogtes, van klein naar groot: {=nth(1,a,b,c,d,e)}, {=nth(2,a,b,c,d,e)}, {=nth(3,a,b,c,d,e)}, {=nth(4,a,b,c,d,e)}, {=nth(5,a,b,c,d,e)}.",
+      "Rechts van {e} staan de hoogtes die groter zijn dan {e}, links de kleinere.",
+      "Onder het niveau {e}: {=4-r|staaf|staven|staven}, dus hoger: {=4} − {=4-r} = {r}."
+    ],
+    "hints": [
+      "Zoek op de tekening de stippellijn bij niveau {e}.",
+      "De staven zijn {a}, {b}, {c} en {d} hoog. Vergelijk de bovenkant van elke staaf met {e}: boven of onder de lijn?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} is alle vier de staven, maar niet elke staaf komt boven het niveau uit. We tellen alleen de staven waarvan de bovenkant boven de stippellijn zit: dat zijn er {r}.",
+      "not-above": "{w_not_above} telt de staven onder het niveau, maar we zoeken de staven erboven. Dat zijn er {r}."
+    }
+  },
+  "S2.bar-line.08": {
+    "text": "Hoogtes van de staven per dag: maandag {a}, dinsdag {b}, woensdag {c}. Welk nummer heeft de dag met de hoogste staaf als je maandag als dag 1 telt?",
+    "solution": [
+      "Van de hoogtes {a}, {b} en {c} is {=max(a,b,c)} de grootste.",
+      "We tellen de dagen vanaf maandag: maandag is de eerste, dinsdag de tweede, woensdag de derde.",
+      "De staaf met hoogte {=max(a,b,c)} hoort bij de dag met nummer {r}."
+    ],
+    "hints": [
+      "Vergelijk de hoogtes {a}, {b} en {c}. Welke is de grootste?",
+      "Tel de dagen vanaf maandag: maandag is 1, dinsdag is 2, woensdag is 3. Welk nummer heeft de dag met de grootste hoogte?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "height": "{w_height} is de hoogte van de hoogste staaf, maar de vraag is naar het nummer van die dag. Dat nummer is {r}.",
+      "last": "{w_last} is het nummer van de laatste dag, maar de hoogste staaf staat niet bij die dag. Hij staat bij dag nummer {r}."
+    }
+  },
+  "S2.bar-line.09": {
+    "text": "'s Ochtends is het {a|graad|graden|graden}. Tegen de middag is de temperatuur met {b} gestegen en tegen de avond met {c} gedaald. Hoeveel graden is het 's avonds?",
+    "solution": [
+      "Tegen de middag is de temperatuur gestegen: {a} + {b} = {=a+b}.",
+      "Tegen de avond is hij gedaald, dus we trekken af: {=a+b} − {c} = {r}.",
+      "'s Avonds is het {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Volg de grafiek van links naar rechts: 's ochtends is het {a}.",
+      "Tel eerst de stijging van {b} erbij op en haal dan de daling van {c} eraf.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-added": "{w_all_added} komt van alle drie de getallen optellen, maar tegen de avond is de temperatuur gedaald: {a} + {b} − {c} = {r}.",
+      "rise-only": "{w_rise_only} laat de daling in de avond weg: {a} + {b} − {c} = {r}.",
+      "fall-only": "{w_fall_only} laat de stijging tegen de middag weg: {a} + {b} − {c} = {r}."
+    }
+  },
+  "S2.bar-line.10": {
+    "text": "De eerste staaf is {a} hoog. De tweede staaf is drie keer zo hoog. Hoe hoog is de tweede staaf?",
+    "solution": [
+      "Drie keer zo hoog betekent drie van deze hoogtes achter elkaar: {a} + {a} + {a}.",
+      "Steeds hetzelfde getal optellen is vermenigvuldigen: 3 × {a} = {r}.",
+      "De tweede staaf is {r} hoog."
+    ],
+    "hints": [
+      "Drie keer zo hoog is drie keer de hoogte van de eerste staaf, {a}.",
+      "Drie keer {a} is {a} + {a} + {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "three-more": "{w_three_more} is 3 erbij, maar 'drie keer zo hoog' betekent 3 keer zoveel: {=3} × {a} = {r}.",
+      "same": "{w_same} is de hoogte van de eerste staaf, maar de tweede staaf is drie keer zo hoog: {=3} × {a} = {r}.",
+      "doubled": "{w_doubled} is twee keer de hoogte van de eerste staaf, maar de tweede staaf is drie keer zo hoog: {=3} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.11": {
+    "text": "Eén hokje omhoog langs het diagram is {a|eenheid|eenheden|eenheden}. De eerste staaf beslaat {b|hokje|hokjes|hokjes} en de tweede staaf {c}. Hoeveel eenheden hoger is de tweede staaf dan de eerste?",
+    "solution": [
+      "De tweede staaf is {c} − {b} = {=c-b|hokje|hokjes|hokjes} hoger dan de eerste.",
+      "Elk hokje omhoog is {a|eenheid|eenheden|eenheden}.",
+      "Verschil in eenheden: {=c-b} × {a} = {r|eenheid|eenheden|eenheden}."
+    ],
+    "hints": [
+      "Zoek het verschil in hokjes: {c} − {b}.",
+      "Elk hokje is {a|eenheid|eenheden|eenheden}. Vermenigvuldig het aantal hokjes van het verschil met {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "cells": "{w_cells} is het verschil in hokjes, maar elk hokje is {a|eenheid|eenheden|eenheden}: {=c-b} × {a} = {r}.",
+      "unit-of-second": "{w_unit_of_second} is de hoogte van de tweede staaf in eenheden, maar we zoeken het verschil tussen de staven: {=c-b} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.12": {
+    "text": "De hoogtes van drie staven zijn samen {a}. De eerste staaf is {b} hoog en de tweede staaf is {c} hoog. Hoe hoog is de derde staaf?",
+    "solution": [
+      "Drie staven samen zijn {a} en twee ervan zijn bekend: {b} en {c}.",
+      "Samen zijn die twee staven {b} + {c} = {=b+c}.",
+      "Wat van het totaal overblijft, is de hoogte van de derde staaf: {a} − {=b+c} = {r}."
+    ],
+    "hints": [
+      "De derde staaf is wat overblijft van het totaal {a}.",
+      "Tel de twee bekende staven op, {b} + {c}, en haal de uitkomst van {a} af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-removed": "{w_one_removed} komt van maar één staaf eraf halen, maar er zijn er twee bekend: {a} − {b} − {c} = {r}.",
+      "known": "{w_known} is de twee bekende staven samen, maar we zoeken de derde staaf: {a} − {=b+c} = {r}."
+    }
+  },
+  "S2.bar-line.13": {
+    "text": "Een lijngrafiek gaat door de waarden {p}, {s}, {u} en {v}. Op welk stuk stijgt de lijn het meest: stuk 1, stuk 2 of stuk 3? Antwoord met het nummer van het stuk.",
+    "solution": [
+      "Het steilste stuk is het stuk waar de waarde het meest steeg.",
+      "Stijging per stuk: {s} − {p} = {=s-p}, {u} − {s} = {=u-s}, {v} − {u} = {=v-u}.",
+      "De grootste stijging is op stuk nummer {r}."
+    ],
+    "hints": [
+      "Kijk niet naar hoe hoog een punt ligt, maar naar de stijging tussen twee punten naast elkaar.",
+      "Reken {s} − {p}, {u} − {s} en {v} − {u} uit. Vergelijk de drie uitkomsten.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "highest-point": "{w_highest_point} is het stuk dat bij het hoogste punt eindigt, maar de lijn is het steilst waar de stijging het grootst is, en dat is een ander stuk: stuk nummer {r}.",
+      "value-of-the-rise": "{w_value_of_the_rise} is de stijging zelf op het steilste stuk, maar we zoeken het nummer van dat stuk: stuk nummer {r}."
+    }
+  },
+  "S2.bar-line.14": {
+    "text": "In het diagram heeft elke tweede lijn van het raster een getal. Hoe hoog is de hoogste staaf?",
+    "solution": [
+      "De getallen gaan om de andere lijn omhoog met {=2*a}, dus tussen twee lijnen met een getal zit nog een lijn, en één rasterlijn is {a|eenheid|eenheden|eenheden}.",
+      "De hoogste staaf eindigt op lijn nummer {b}, dus hij beslaat {b|rasterlijn|rasterlijnen|rasterlijnen}.",
+      "Zijn hoogte: {b} × {a} = {r}."
+    ],
+    "hints": [
+      "De getallen gaan om de andere lijn omhoog met {=2*a}, dus één rasterlijn is {a|eenheid|eenheden|eenheden}.",
+      "Tel de rasterlijnen vanaf nul tot de bovenkant van de hoogste staaf en vermenigvuldig hun aantal met {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "lower-label": "{w_lower_label} is het getal van de lijn onder de bovenkant, maar de staaf eindigt op een lijn zonder getal erboven. Het gaat zo: {b} × {a} = {r}.",
+      "upper-label": "{w_upper_label} is het getal van de lijn boven de bovenkant, maar de staaf reikt daar niet tot. Het gaat zo: {b} × {a} = {r}.",
+      "lines": "{w_lines} is het aantal lijnen dat de staaf beslaat, maar één lijn is {a|eenheid|eenheden|eenheden}. Het gaat zo: {b} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.15": {
+    "text": "Een lijngrafiek laat de temperatuur op vijf dagen zien en elke tweede lijn van het raster heeft een getal. Hoeveel graden is de temperatuur op de koudste dag lager dan op de warmste dag?",
+    "solution": [
+      "De getallen staan om de andere lijn en gaan omhoog met {=2*a}, dus één rasterlijn is {a|graad|graden|graden}.",
+      "Het hoogste punt van de grafiek ligt op lijn {=max(b,c,d,e,f)} en het laagste op lijn {=min(b,c,d,e,f)}: ertussen zit {=max(b,c,d,e,f)} − {=min(b,c,d,e,f)} = {=max(b,c,d,e,f)-min(b,c,d,e,f)|lijn|lijnen|lijnen}.",
+      "In graden: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}."
+    ],
+    "hints": [
+      "Zoek met de getallen uit hoeveel graden één rasterlijn is: de getallen gaan om de andere lijn omhoog met {=2*a}.",
+      "Tel hoeveel lijnen het hoogste punt boven het laagste punt ligt en vermenigvuldig met {a|graad|graden|graden}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "highest": "{w_highest} is de temperatuur op de warmste dag, maar de vraag is hoeveel lager de koudste dag is. Het gaat zo: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}.",
+      "lowest": "{w_lowest} is de temperatuur op de koudste dag, maar de vraag gaat over het verschil tussen de warmste en de koudste dag: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}.",
+      "lines": "{w_lines} is het verschil in rasterlijnen, maar één lijn is {a|graad|graden|graden}. Het gaat zo: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}.",
+      "largest-jump": "{w_largest_jump} is de grootste verandering in één dag, maar de koudste en de warmste dag liggen niet altijd naast elkaar. Het gaat zo: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.16": {
+    "text": "De vijf staven van een staafdiagram worden steeds hoger en elke staaf is {b} hoger dan de vorige. De hoogtes van alle vijf de staven zijn samen {a}. Hoe hoog is de hoogste staaf?",
+    "solution": [
+      "De hoogtes gaan gelijkmatig omhoog, dus de middelste staaf is gelijk aan het gemiddelde: {a} : {=5} = {=a/5}.",
+      "Van de middelste staaf naar de hoogste zijn er twee stappen van {b}: {=2} × {b} = {=2*b}.",
+      "De hoogste staaf: {=a/5} + {=2*b} = {r}."
+    ],
+    "hints": [
+      "De hoogtes gaan gelijkmatig omhoog, dus de middelste staaf is gelijk aan het gemiddelde. Reken het uit: {a} : {=5}.",
+      "Het gemiddelde is {=a/5}. Van de middelste staaf naar de hoogste staaf zijn er twee stappen van {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "middle": "{w_middle} is de hoogte van de middelste staaf, maar de vraag gaat over de hoogste staaf: die is twee stappen van {b} hoger. Het gaat zo: {=a/5} + {=2*b} = {r}.",
+      "mean-as-first": "{w_mean_as_first} komt van het gemiddelde {=a/5} als hoogte van de eerste staaf nemen. Maar het gemiddelde is de hoogte van de middelste staaf en vandaar zijn het nog maar twee stappen naar de hoogste: {=a/5} + {=2*b} = {r}.",
+      "one-step": "{w_one_step} telt maar één stap bij het gemiddelde {=a/5} op, maar van de middelste staaf naar de hoogste zijn het er twee: {=a/5} + {=2*b} = {r}."
+    }
+  },
+  "S2.bar-line.17": {
+    "text": "In een pictogram staat één symbool voor {a|boek|boeken|boeken} en een half symbool voor de helft daarvan. Hoeveel boeken laat de tekening zien?",
+    "solution": [
+      "Eén symbool is {a|boek|boeken|boeken}, een half symbool is {=a/2|boek|boeken|boeken}.",
+      "Er zijn {b} hele symbolen: {b} × {a} = {=a*b|boek|boeken|boeken}.",
+      "Samen met het halve symbool: {=a*b} + {=a/2} = {r}."
+    ],
+    "hints": [
+      "Tel de hele symbolen op de tekening en vermenigvuldig met de {a|boek|boeken|boeken} in één symbool.",
+      "Een half symbool is de helft van {a}, dus {=a/2}. Tel dat op bij de boeken van de hele symbolen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "half-as-whole": "{w_half_as_whole} komt van het halve symbool als een heel symbool tellen. Het halve symbool is maar {=a/2|boek|boeken|boeken}: {=a*b} + {=a/2} = {r}.",
+      "half-ignored": "{w_half_ignored} laat het halve symbool weg, en dat laat ook boeken zien: {=a*b} + {=a/2} = {r}.",
+      "half-as-one": "{w_half_as_one} komt van het halve symbool als één boek tellen. Een half symbool is de helft van {a}, dus {=a/2}: {=a*b} + {=a/2} = {r}."
+    }
+  },
+  "S2.bar-line.18": {
+    "text": "De hoogtes van twee staven zijn {a} en {b}. Hoeveel eenheden moeten van de hoge staaf naar de lage staaf om de staven even hoog te maken?",
+    "solution": [
+      "Er gaan evenveel eenheden van de ene staaf af als er bij de andere bij komen, dus de som van de hoogtes blijft gelijk: {a} + {b} = {=a+b}.",
+      "De staven worden even hoog, dus elke staaf wordt {=a+b} : {=2} = {=(a+b)/2} hoog.",
+      "Van de hoge staaf gaat {b} − {=(a+b)/2} = {r} af."
+    ],
+    "hints": [
+      "Bedenk wat niet verandert als eenheden van de ene staaf naar de andere gaan: de som {a} + {b} = {=a+b}.",
+      "De staven worden even hoog, dus elke staaf is de helft van {=a+b}. Vergelijk dat met de hoogte van de hoge staaf.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} is het hele hoogteverschil. Als we dat helemaal verplaatsen, wordt de hoge staaf lager dan de lage. We moeten de helft van het verschil verplaatsen: {=b-a} : {=2} = {r}.",
+      "final-height": "{w_final_height} is de hoogte die beide staven krijgen, maar de vraag is hoeveel eenheden er verplaatst worden. Dat is {b} − {w_final_height} = {r}."
+    }
+  },
+  "S3.mean.01": {
+    "text": "Bereken het gemiddelde van de getallen {a} en {b}.",
+    "solution": [
+      "Het gemiddelde van twee getallen is hun som gedeeld door 2.",
+      "Som: {a} + {b} = {=a+b}.",
+      "Delen door 2: {=a+b} : 2 = {r}. Dat is het gemiddelde."
+    ],
+    "hints": [
+      "Het gemiddelde van twee getallen is hun som gedeeld door 2. Tel {a} en {b} op.",
+      "{a} + {b} = {=a+b}. Deel deze som nu door 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van de twee getallen, maar het gemiddelde is de helft van de som: {=a+b} : {=2} = {r}.",
+      "larger": "{w_larger} is het grootste van de twee getallen, maar het gemiddelde ligt tussen de twee getallen in: {=a+b} : {=2} = {r}.",
+      "half-difference": "{w_half_difference} is de helft van het verschil {b} − {a}. Het gemiddelde is de helft van de som: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S3.mean.02": {
+    "text": "Bereken het gemiddelde van de getallen {a}, {b} en {c}.",
+    "solution": [
+      "Het gemiddelde is de som van de getallen gedeeld door hoeveel getallen het er zijn.",
+      "Som van drie getallen: {a} + {b} + {c} = {=a+b+c}.",
+      "Delen door 3: {=a+b+c} : 3 = {r}. Dat is het gemiddelde."
+    ],
+    "hints": [
+      "Het gemiddelde is de som gedeeld door het aantal getallen. Tel {a}, {b} en {c} op.",
+      "{a} + {b} + {c} = {=a+b+c}. Er zijn drie getallen, dus deel door 3.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van de drie getallen, maar het gemiddelde is een derde daarvan: {=a+b+c} : {=3} = {r}.",
+      "two-numbers": "{w_two_numbers} is het gemiddelde van maar twee van de getallen, terwijl het er drie zijn: {=a+b+c} : {=3} = {r}.",
+      "middle-of-list": "{w_middle_of_list} staat in het midden van de rij, maar het gemiddelde is de som gedeeld door drie: {=a+b+c} : 3 = {r}."
+    }
+  },
+  "S3.mean.03": {
+    "text": "Bereken het gemiddelde van de getallen {a}, {b}, {c} en {d}.",
+    "solution": [
+      "Het gemiddelde is het getal waarin je de som eerlijk kunt verdelen.",
+      "Som van vier getallen: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "Er zijn vier getallen, dus we delen door 4.",
+      "{=a+b+c+d} : 4 = {r}. Dat is het gemiddelde."
+    ],
+    "hints": [
+      "Het gemiddelde is de som gedeeld door het aantal getallen. Tel {a}, {b}, {c} en {d} op.",
+      "{a} + {b} + {c} + {d} = {=a+b+c+d}. Er zijn vier getallen, dus deel door 4.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som, maar het gemiddelde is een vierde daarvan: {=a+b+c+d} : {=4} = {r}.",
+      "divided-by-three": "{w_divided_by_three} komt van delen door 3, maar er zijn vier getallen: {=a+b+c+d} : {=4} = {r}.",
+      "middle-two": "{w_middle_two} is het gemiddelde van de twee getallen in het midden van de rij. Het gemiddelde reken je uit met alle vier de getallen: {=a+b+c+d} : 4 = {r}."
+    }
+  },
+  "S3.mean.04": {
+    "text": "De temperatuur is {=c+d} keer gemeten: bij {c|meting|metingen|metingen} was het {a|graad|graden|graden} en bij {d|meting|metingen|metingen} was het {b|graad|graden|graden}. Wat is de gemiddelde temperatuur van alle metingen?",
+    "solution": [
+      "De temperatuur {a} kwam {c} keer voor, dat is {c} × {a} = {=c*a}.",
+      "De temperatuur {b} kwam {d} keer voor, dat is {d} × {b} = {=d*b}.",
+      "Samen in {=c+d} metingen: {=c*a} + {=d*b} = {=c*a+d*b}.",
+      "Gemiddelde temperatuur: {=c*a+d*b} : {=c+d} = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Zoek de som van alle temperaturen: vermenigvuldig elke waarde met het aantal metingen, {c} × {a} en {d} × {b}.",
+      "De som is {=c*a+d*b} en er zijn {=c+d} metingen. Deel de som door het aantal metingen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "simple-mean": "{w_simple_mean} is het gemiddelde van de twee temperaturen {a} en {b}, maar ze zijn niet even vaak gemeten. Het gaat zo: {=c*a+d*b} : {=c+d} = {r}.",
+      "sum": "{w_sum} is de som van alle temperaturen, maar het gemiddelde is de som gedeeld door het aantal metingen: {=c*a+d*b} : {=c+d} = {r}."
+    }
+  },
+  "S3.mean.05": {
+    "text": "Een groep heeft in {b|dag|dagen|dagen} {x} km gelopen. Hoeveel kilometer is dat gemiddeld per dag?",
+    "solution": [
+      "Het gemiddelde per dag is het aantal kilometers dat je elke dag zou lopen als je elke dag even ver liep.",
+      "Daarvoor delen we de hele afstand, {x} km, door {b|dag|dagen|dagen}.",
+      "{x} : {b} = {r} km per dag."
+    ],
+    "hints": [
+      "De hele afstand is {x} km, gelopen in {b|dag|dagen|dagen}.",
+      "Het gemiddelde per dag is wat elke dag zou zijn als alle dagen gelijk waren: deel {x} door {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is de hele afstand, maar het gemiddelde is de afstand voor één dag: {x} : {b} = {r}.",
+      "days": "{w_days} is het aantal dagen, niet het aantal kilometers per dag. We delen de hele afstand, {x} km, door de dagen: {x} : {b} = {r}."
+    }
+  },
+  "S3.mean.06": {
+    "text": "Gemiddeld werden er per dag {a|bladzijde|bladzijden|bladzijden} gelezen. Hoeveel bladzijden zijn er in {b|dag|dagen|dagen} gelezen?",
+    "solution": [
+      "Gemiddeld {a|bladzijde|bladzijden|bladzijden} per dag betekent dat elke dag op {a} uitkomt.",
+      "Er zijn {b} dagen, dus we nemen {a} {b} keer.",
+      "Samen: {a} × {b} = {r|bladzijde|bladzijden|bladzijden}."
+    ],
+    "hints": [
+      "Een gemiddelde van {a} per dag betekent dat elke dag telt als {a}.",
+      "Er zijn {b|dag|dagen|dagen}: neem {a} zo vaak.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} komt van {a} en {b} optellen, maar het gemiddelde {a} geldt voor elke dag: {a} × {b} = {r}.",
+      "mean": "{w_mean} is het gemiddelde voor één dag, maar de vraag gaat over alle dagen: {a} × {b} = {r}."
+    }
+  },
+  "S3.mean.07": {
+    "text": "Vijf hele getallen volgen op elkaar en het kleinste is {a}. Wat is het gemiddelde van deze getallen?",
+    "solution": [
+      "De getallen volgen op elkaar: {a}, {=a+1}, {=a+2}, {=a+3}, {=a+4}.",
+      "De getallen links en rechts van {r} liggen even ver van {r}: sommige zijn kleiner en sommige groter, en dat heft elkaar op.",
+      "Het gemiddelde is dus het getal in het midden: {r}."
+    ],
+    "hints": [
+      "In een rij getallen die op elkaar volgen, staat het gemiddelde in het midden.",
+      "De getallen zijn {a}, {=a+1}, {=a+2}, {=a+3} en {=a+4}. Welk getal staat in het midden?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "smallest": "{w_smallest} is het kleinste van de vijf, maar het gemiddelde staat in het midden van de rij: {r}.",
+      "largest": "{w_largest} is het grootste van de vijf, maar het gemiddelde staat in het midden van de rij: {r}.",
+      "sum": "{w_sum} is de som van de vijf getallen en het gemiddelde krijg je door de som door {=5} te delen. Makkelijker is het getal in het midden van de rij te nemen: {r}."
+    }
+  },
+  "S3.mean.08": {
+    "text": "Drie dagen lang is er in een boek gelezen: op de eerste dag {a|bladzijde|bladzijden|bladzijden}, op de tweede dag {b|bladzijde|bladzijden|bladzijden} en op de derde dag helemaal niet. Hoeveel bladzijden zijn er gemiddeld per dag gelezen?",
+    "solution": [
+      "De derde dag telt ook mee: toen zijn er 0 bladzijden gelezen.",
+      "Som: {a} + {b} + 0 = {=a+b}.",
+      "Er zijn drie dagen, dus we delen door 3: {=a+b} : 3 = {r|bladzijde|bladzijden|bladzijden} per dag."
+    ],
+    "hints": [
+      "De dag zonder lezen telt ook mee in het gemiddelde: toen zijn er 0 bladzijden gelezen.",
+      "De som van de bladzijden is {=a+b} en er zijn drie dagen. Deel de som door het aantal van alle dagen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-days": "{w_two_days} komt van delen door 2, maar de dag zonder lezen telt ook mee. Er zijn drie dagen: {=a+b} : 3 = {r}.",
+      "sum": "{w_sum} is de som van de bladzijden, maar het gemiddelde is de som gedeeld door het aantal dagen, dat is 3: {=a+b} : 3 = {r}."
+    }
+  },
+  "S3.mean.09": {
+    "text": "Vergelijk het gemiddelde van de getallen {a}, {b} en {c} met het getal {d}. Zet een teken tussen het gemiddelde en het getal {d}.",
+    "solution": [
+      "Som van de drie getallen: {a} + {b} + {c} = {=a+b+c}.",
+      "Gemiddelde: {=a+b+c} : 3 = {=(a+b+c)/3}.",
+      "We vergelijken het gemiddelde met {d}: {=(a+b+c)/3} {r} {d}."
+    ],
+    "hints": [
+      "Zoek eerst het gemiddelde van de drie getallen: tel {a}, {b} en {c} op.",
+      "Deel de som {=a+b+c} door 3 en vergelijk het gemiddelde dat je krijgt met het getal {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reversed": "Het teken {w_reversed} staat andersom: de punt van het teken wijst naar het kleinste getal en de open kant naar het grootste.",
+      "sum-compared": "Het teken {w_sum_compared} komt van het vergelijken van de som {=a+b+c} met {d}. We moeten het gemiddelde vergelijken, dat is de som gedeeld door drie: {=(a+b+c)/3} en {d}."
+    }
+  },
+  "S3.mean.10": {
+    "text": "Bereken het gemiddelde van alle hele getallen van 1 tot en met {a}.",
+    "solution": [
+      "In de rij van 1 tot {a} vormen de buitenste getallen een paar: 1 + {a} = {=a+1}.",
+      "Het volgende paar, 2 en {=a-1}, is ook {=a+1}, en zo gaat het door tot in het midden.",
+      "Het gemiddelde van elk paar is {=a+1} : 2 = {r}, en dat is ook het gemiddelde van alle getallen."
+    ],
+    "hints": [
+      "Het gemiddelde van het eerste en het laatste getal is het gemiddelde van de hele rij. Het eerste getal is 1 en het laatste is {a}.",
+      "Tel 1 en {a} op: dat is {=a+1}. Deel deze som door 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-number": "{w_last_number} is het laatste getal van de rij, maar het gemiddelde ligt precies tussen het eerste en het laatste getal: ({a} + 1) : 2 = {r}.",
+      "first-number": "{w_first_number} is het eerste getal van de rij, maar het gemiddelde ligt precies tussen het eerste en het laatste getal: ({a} + 1) : 2 = {r}.",
+      "sum": "{w_sum} is de som van alle getallen van de rij, maar het gemiddelde is de som gedeeld door het aantal getallen. Het gemiddelde: ({a} + 1) : 2 = {r}."
+    }
+  },
+  "S3.mean.11": {
+    "text": "Een staafdiagram heeft vier staven. De hoogtes zijn gelijkgemaakt, zodat alle vier de staven even hoog zijn en de som van de hoogtes niet verandert. Hoe hoog is elke staaf nu?",
+    "solution": [
+      "De som van de hoogtes is niet veranderd: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "De hoogtes zijn gelijk geworden, dus de som is eerlijk verdeeld over de vier staven.",
+      "De hoogte van elke staaf: {=a+b+c+d} : 4 = {r}."
+    ],
+    "hints": [
+      "Gelijkmaken verandert de som van de hoogtes niet: tel {a}, {b}, {c} en {d} op.",
+      "De som is {=a+b+c+d} en er zijn vier staven. Verdeel de som eerlijk over de staven.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van de hoogtes van alle vier de staven, maar na het gelijkmaken is die eerlijk verdeeld: {=a+b+c+d} : {=4} = {r}.",
+      "tallest": "{w_tallest} is de hoogte van de hoogste staaf. Na het gelijkmaken wordt de som van de hoogtes eerlijk verdeeld over de vier staven: {=a+b+c+d} : {=4} = {r}.",
+      "middle-two": "{w_middle_two} is het gemiddelde van de twee staven in het midden, maar alle vier de staven moeten gelijk worden gemaakt: {=a+b+c+d} : {=4} = {r}."
+    }
+  },
+  "S3.mean.12": {
+    "text": "'s Ochtends was de temperatuur {a|graad|graden|graden} en 's avonds {b|graad|graden|graden}. Bereken de gemiddelde temperatuur van deze twee metingen.",
+    "solution": [
+      "Som van de twee temperaturen: {a} + {b} = {=a+b}.",
+      "Delen door het aantal metingen: {=a+b} : {=2} = {r}.",
+      "De som is oneven, dus het gemiddelde is geen heel getal maar een kommagetal."
+    ],
+    "hints": [
+      "Tel de twee temperaturen op: {a} + {b}.",
+      "De som is {=a+b}. Deel die door 2: de som is oneven, dus je krijgt een kommagetal.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van de twee temperaturen, maar het gemiddelde is de helft van de som: {=a+b} : {=2} = {r}.",
+      "rounded-down": "{w_rounded_down} is het hele deel van het gemiddelde: de helft is weggelaten. Het gemiddelde is {=a+b} : {=2} = {r}.",
+      "larger": "{w_larger} is de hoogste van de twee temperaturen, maar het gemiddelde ligt ertussen: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S3.mean.13": {
+    "text": "Gegeven zijn drie getallen: {a}, {b} en {c}. Waar ligt hun gemiddelde? 1) kleiner dan {=min(a,b,c)}; 2) tussen {=min(a,b,c)} en {=nth(2,a,b,c)}; 3) tussen {=nth(2,a,b,c)} en {=max(a,b,c)}; 4) groter dan {=max(a,b,c)}. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Het gemiddelde is nooit kleiner dan het kleinste getal en nooit groter dan het grootste, dus keuze 1 en 4 passen niet.",
+      "Zoek het gemiddelde: ({a} + {b} + {c}) : 3 = {=(a+b+c)/3}.",
+      "Het middelste getal qua grootte is {=nth(2,a,b,c)}. Een gemiddelde eronder is keuze 2, erboven keuze 3.",
+      "Hier is het keuze {r}."
+    ],
+    "hints": [
+      "Het gemiddelde is nooit kleiner dan het kleinste getal of groter dan het grootste, dus keuze 2 en 3 blijven over.",
+      "Zoek het gemiddelde: ({a} + {b} + {c}) : 3. Vergelijk het dan met het middelste getal qua grootte, {=nth(2,a,b,c)}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "below-min": "Keuze {w_below_min} past niet: het gemiddelde is nooit kleiner dan het kleinste getal. Hier is het gemiddelde {=(a+b+c)/3}, dat is keuze {r}.",
+      "above-max": "Keuze {w_above_max} past niet: het gemiddelde is nooit groter dan het grootste getal. Hier is het gemiddelde {=(a+b+c)/3}, dat is keuze {r}.",
+      "other-interval": "Keuze {w_other_interval} is het stuk ernaast. Het gemiddelde is {=(a+b+c)/3} en het middelste getal qua grootte is {=nth(2,a,b,c)}, dus keuze {r} is de juiste."
+    }
+  },
+  "S3.mean.14": {
+    "text": "Het gemiddelde van {b} opeenvolgende hele getallen is {a}. Wat is het grootste van deze getallen?",
+    "solution": [
+      "De getallen volgen op elkaar, dus het gemiddelde is gelijk aan het getal in het midden: dat is {a}.",
+      "Rechts ervan staan {=(b-1)/2} getallen en elk getal is één meer dan het vorige.",
+      "Het grootste getal: {a} + {=(b-1)/2} = {r}."
+    ],
+    "hints": [
+      "Bij opeenvolgende getallen staat het gemiddelde {a} in het midden van de rij van {b} getallen.",
+      "Rechts van het gemiddelde staan {=(b-1)/2|getal|getallen|getallen}, elk één meer dan het vorige. Hoeveel moet je bij {a} optellen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean": "{w_mean} is het gemiddelde, dus het getal in het midden, maar het grootste getal staat rechts ervan: {a} + {=(b-1)/2} = {r}.",
+      "off-by-one": "{w_off_by_one} komt van één getal te veel rechts van het gemiddelde zetten. Rechts ervan staan {=(b-1)/2|getal|getallen|getallen}: {a} + {=(b-1)/2} = {r}.",
+      "mean-plus-count": "{w_mean_plus_count} is het gemiddelde plus het aantal getallen. Maar rechts van het gemiddelde staat maar de helft van de overige getallen: {a} + {=(b-1)/2} = {r}."
+    }
+  },
+  "S3.mean.15": {
+    "text": "Een lijngrafiek laat de temperatuur op vier momenten van de dag zien. Wat is de gemiddelde temperatuur?",
+    "solution": [
+      "Volgens de grafiek zijn de temperaturen {a}, {b}, {c} en {d}.",
+      "Som: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "Gemiddelde: {=a+b+c+d} : 4 = {r}."
+    ],
+    "hints": [
+      "Lees de temperatuur af bij elk van de vier punten van de grafiek.",
+      "Tel de vier waarden op: {a} + {b} + {c} + {d}. Deel de som door het aantal punten, 4.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van de temperaturen, maar het gemiddelde is een vierde daarvan: {=a+b+c+d} : {=4} = {r}.",
+      "highest": "{w_highest} is de hoogste temperatuur, maar het gemiddelde gebruikt alle vier de punten: {=a+b+c+d} : {=4} = {r}.",
+      "ends": "{w_ends} is het gemiddelde van het eerste en het laatste punt, maar de gemiddelde temperatuur gebruikt alle vier: {=a+b+c+d} : {=4} = {r}."
+    }
+  },
+  "S3.missing.01": {
+    "text": "Het gemiddelde van drie getallen is {a}. Twee van de getallen zijn {b} en {c}. Zoek het derde getal.",
+    "solution": [
+      "Als het gemiddelde van drie getallen {a} is, dan zijn ze samen 3 × {a} = {=3*a}.",
+      "Twee getallen zijn bekend: {b} + {c} = {=b+c}.",
+      "Het derde getal is wat van de som overblijft: {=3*a} − {=b+c} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst de som van de drie getallen: het gemiddelde is {a} en er zijn drie getallen.",
+      "De som is {=3*a}. Twee getallen ken je, {b} en {c}. Haal ze van de som af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is het gemiddelde, maar we zoeken het derde getal: {=3*a} − {=b+c} = {r}.",
+      "sum": "{w_sum} is de som van de drie getallen, maar het derde getal is wat daar nog aan ontbreekt na de twee bekende: {=3*a} − {=b+c} = {r}.",
+      "known-sum": "{w_known_sum} is de som van de twee bekende getallen, maar we zoeken het derde. Die halen we van de hele som {=3*a} af: {=3*a} − {=b+c} = {r}."
+    }
+  },
+  "S3.missing.02": {
+    "text": "Het gemiddelde van twee getallen is {a}. Een van de getallen is {b}. Zoek het andere getal.",
+    "solution": [
+      "Als het gemiddelde van twee getallen {a} is, dan zijn ze samen 2 × {a} = {=2*a}.",
+      "Eén getal is al bekend: {b}.",
+      "Het andere getal: {=2*a} − {b} = {r}."
+    ],
+    "hints": [
+      "Zoek de som van de twee getallen met het gemiddelde: het gemiddelde is {a} en er zijn twee getallen.",
+      "De som is {=2*a}. Eén getal is {b}. Haal dat van de som af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is het gemiddelde, maar we zoeken het andere getal: {=2*a} − {b} = {r}.",
+      "mean-minus-number": "{w_mean_minus_number} komt van het getal van het gemiddelde aftrekken, maar het moet van de som van de twee getallen, {=2*a}, af: {=2*a} − {b} = {r}.",
+      "added": "{w_added} komt van het gemiddelde en het getal optellen. De twee getallen zijn samen {=2*a}, dus we trekken af: {=2*a} − {b} = {r}."
+    }
+  },
+  "S3.missing.03": {
+    "text": "Het gemiddelde van vier getallen is {a}. Drie van de getallen zijn {b}, {c} en {d}. Zoek het vierde getal.",
+    "solution": [
+      "Als het gemiddelde van vier getallen {a} is, dan zijn ze samen 4 × {a} = {=4*a}.",
+      "Drie getallen zijn bekend: {b} + {c} + {d} = {=b+c+d}.",
+      "Het vierde getal is wat van de som overblijft: {=4*a} − {=b+c+d} = {r}."
+    ],
+    "hints": [
+      "Zoek de som van de vier getallen met het gemiddelde: het gemiddelde is {a} en er zijn vier getallen.",
+      "De som is {=4*a}. Drie getallen ken je, {b}, {c} en {d}. Haal ze van de som af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "three-times": "In {w_three_times} is de som voor drie getallen berekend, maar het zijn er vier: {=4*a} − {=b+c+d} = {r}.",
+      "mean-itself": "{w_mean_itself} is het gemiddelde, maar we zoeken het vierde getal: {=4*a} − {=b+c+d} = {r}.",
+      "known-sum": "{w_known_sum} is de som van de drie bekende getallen, maar we zoeken het vierde. Die halen we van de hele som {=4*a} af: {=4*a} − {=b+c+d} = {r}."
+    }
+  },
+  "S3.missing.04": {
+    "text": "Gegeven zijn drie getallen: {a}, {b} en {c}. Welk vierde getal moet erbij, zodat het gemiddelde van de vier getallen {d} wordt?",
+    "solution": [
+      "Om een gemiddelde van {d} voor vier getallen te krijgen, moet hun som 4 × {d} = {=4*d} zijn.",
+      "De drie getallen zijn samen al {a} + {b} + {c} = {=a+b+c}.",
+      "Wat erbij moet, is wat aan de som ontbreekt: {=4*d} − {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "Zoek de som die vier getallen met gemiddelde {d} moeten hebben.",
+      "Die som is {=4*d}. De drie getallen zijn samen al {=a+b+c}. Hoeveel ontbreekt er nog?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "target-mean": "{w_target_mean} is het gemiddelde dat we willen, maar we moeten een getal toevoegen dat samen met de drie gegeven getallen de som {=4*d} geeft: {=4*d} − {=a+b+c} = {r}.",
+      "old-sum": "{w_old_sum} is de som van de drie gegeven getallen. Het vierde getal is wat ontbreekt om de som {=4*d} te bereiken: {=4*d} − {=a+b+c} = {r}."
+    }
+  },
+  "S3.missing.05": {
+    "text": "Het gemiddelde van drie getallen is {a}. Bij elk getal wordt {b} opgeteld. Wat is het gemiddelde nu?",
+    "solution": [
+      "Elk getal werd {b} groter, dus de som van de drie getallen werd 3 × {b} = {=3*b} groter.",
+      "Maar er zijn ook drie getallen, dus het gemiddelde werd precies {b} groter.",
+      "Nieuw gemiddelde: {a} + {b} = {r}."
+    ],
+    "hints": [
+      "Bij elk van de drie getallen komt {b}: hoeveel wordt de som groter?",
+      "De som wordt 3 × {b} groter en je deelt weer door 3. Hoeveel wordt het gemiddelde groter?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "times": "{w_times} komt van vermenigvuldigen, maar bij elk getal is {b} opgeteld, en het gemiddelde werd evenveel groter: {a} + {b} = {r}.",
+      "mean-itself": "{w_mean_itself} is het oude gemiddelde, maar alle getallen werden {b} groter, dus het gemiddelde ook: {a} + {b} = {r}.",
+      "new-sum": "{w_new_sum} is de nieuwe som van de drie getallen, maar de vraag gaat over het gemiddelde: {a} + {b} = {r}."
+    }
+  },
+  "S3.missing.06": {
+    "text": "Het gemiddelde van de getallen {a}, {b} en een onbekend getal is gelijk aan dat onbekende getal. Zoek het.",
+    "solution": [
+      "Het gemiddelde is gelijk aan het onbekende getal, dus {a} en {b} zijn samen precies twee van zulke getallen.",
+      "Hun som: {a} + {b} = {=a+b}.",
+      "Eén zo'n getal: {=a+b} : 2 = {r}."
+    ],
+    "hints": [
+      "Het gemiddelde is gelijk aan het onbekende getal: bedenk hoeveel van zulke getallen er samen met {a} en {b} in de som zitten.",
+      "{a} + {b} = {=a+b} zijn dus twee onbekende getallen. Zoek er één van.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is de som van de twee getallen, maar het onbekende getal is de helft van deze som: {=a+b} : {=2} = {r}.",
+      "larger": "{w_larger} is het grootste van de gegeven getallen, maar het onbekende getal ligt ertussen: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S3.missing.07": {
+    "text": "In de onderste rij van een piramide staan de getallen {a}, {b} en {c}. Boven elke twee buurgetallen staat hun gemiddelde en daarboven het gemiddelde van de twee getallen van de tweede rij. Welk getal staat er bovenaan?",
+    "solution": [
+      "Tweede rij: ({a} + {b}) : 2 = {=(a+b)/2} en ({b} + {c}) : 2 = {=(b+c)/2}.",
+      "De top is het gemiddelde van deze twee getallen: ({=(a+b)/2} + {=(b+c)/2}) : 2.",
+      "Bovenaan staat het getal {r}."
+    ],
+    "hints": [
+      "Zoek eerst de twee getallen van de tweede rij: het gemiddelde van {a} en {b}, en het gemiddelde van {b} en {c}.",
+      "De tweede rij is {=(a+b)/2} en {=(b+c)/2}. Zoek nu het gemiddelde van deze twee getallen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "middle": "{w_middle} is het getal in het midden van de onderste rij, maar de top is het gemiddelde van de twee getallen van de tweede rij, {=(a+b)/2} en {=(b+c)/2}: dat is {r}.",
+      "sum-of-bottom": "{w_sum_of_bottom} is de som van de onderste rij, maar de top komt uit gemiddelden: eerst {=(a+b)/2} en {=(b+c)/2}, dan het gemiddelde van deze twee getallen: {r}."
+    }
+  },
+  "S3.missing.08": {
+    "text": "Gemiddeld moeten er {a|punt|punten|punten} gescoord worden in {b|spel|spellen|spellen}. In de eerste spellen zijn er samen {c|punt|punten|punten} gescoord. Hoeveel punten moeten er in het laatste spel gescoord worden?",
+    "solution": [
+      "In {b} spellen moeten er samen {a} × {b} = {=a*b} punten gescoord worden.",
+      "Er zijn al {c} punten gescoord.",
+      "In het laatste spel is de rest nodig: {=a*b} − {c} = {r|punt|punten|punten}."
+    ],
+    "hints": [
+      "Zoek hoeveel punten er in alle spellen samen gescoord moeten worden: het gemiddelde is {a} en er zijn {b} spellen.",
+      "In totaal zijn {=a*b} punten nodig en er zijn er al {c} gescoord. Hoeveel blijven er over?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-only": "{w_mean_only} is het gemiddelde dat we willen, maar in het laatste spel moeten er genoeg punten komen om samen {=a*b} te halen: {=a*b} − {c} = {r}.",
+      "sum-needed": "{w_sum_needed} is het totaal voor alle spellen, maar een deel is al gescoord: {=a*b} − {c} = {r}."
+    }
+  },
+  "S3.missing.09": {
+    "text": "De gemiddelde massa van vijf dozen is {a} kg. Eén doos van {b} kg wordt weggehaald. Hoeveel kilogram wegen de vier overgebleven dozen samen?",
+    "solution": [
+      "Vijf dozen wegen samen 5 × {a} = {=5*a} kg.",
+      "Eén doos van {b} kg is weggehaald, dus we trekken haar massa af.",
+      "De vier dozen wegen {=5*a} − {b} = {r} kg."
+    ],
+    "hints": [
+      "Zoek de totale massa van de vijf dozen: de gemiddelde massa is {a} kg.",
+      "De vijf dozen wegen samen {=5*a} kg. Eén doos van {b} kg wordt weggehaald.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-times-four": "{w_mean_times_four} komt van de vier overgebleven dozen allemaal de gemiddelde massa geven. Maar er is een doos van {b} kg weggehaald: {=5*a} − {b} = {r}.",
+      "mean-minus-box": "{w_mean_minus_box} komt van de massa van de doos van het gemiddelde aftrekken, maar ze moet van de totale massa van de vijf dozen, {=5*a}, af: {=5*a} − {b} = {r}."
+    }
+  },
+  "S3.missing.10": {
+    "text": "De gemiddelde leeftijd van {b} leden van een schaakclub is {a} jaar. Toen er nog een lid bij kwam, werd de gemiddelde leeftijd {c} jaar. Hoe oud is het nieuwe lid?",
+    "solution": [
+      "Voordat het lid kwam, was de som van de leeftijden {a} × {b} = {=a*b}.",
+      "Na de komst waren er {b} + 1 = {=b+1} leden en was de som van de leeftijden {=b+1} × {c} = {=(b+1)*c}.",
+      "Het nieuwe lid voegde het verschil toe: {=(b+1)*c} − {=a*b} = {r} jaar."
+    ],
+    "hints": [
+      "Zoek de sommen van de leeftijden voor en na de komst van het nieuwe lid.",
+      "Ervoor: {a} × {b} = {=a*b}. Erna zijn er {=b+1} leden met gemiddelde {c}: wat is hun som? De leeftijd van het nieuwe lid is het verschil van de sommen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-after": "{w_mean_after} is het nieuwe gemiddelde, maar we zoeken de leeftijd van het nieuwe lid. Die is gelijk aan het verschil van de sommen van de leeftijden: {=(b+1)*c} − {=a*b} = {r}.",
+      "mean-difference": "{w_mean_difference} is hoeveel het gemiddelde is gestegen, maar de leeftijd van het nieuwe lid vind je met de sommen van de leeftijden: {=(b+1)*c} − {=a*b} = {r}."
+    }
+  },
+  "S3.missing.11": {
+    "text": "Het gemiddelde van zeven getallen is {c}. Het gemiddelde van de eerste vier is {a} en het gemiddelde van de laatste vier is {b}. Wat is het vierde getal?",
+    "solution": [
+      "Som van alle zeven getallen: {c} × {=7} = {=7*c}.",
+      "De eerste vier zijn samen {a} × {=4} = {=4*a}, de laatste vier {b} × {=4} = {=4*b}, samen {=4*a} + {=4*b} = {=4*a+4*b}.",
+      "Het vierde getal zit in beide groepen, dus het is twee keer geteld, en het is gelijk aan het teveel: {=4*a+4*b} − {=7*c} = {r}."
+    ],
+    "hints": [
+      "Zoek de som van alle zeven getallen: het gemiddelde is {c}.",
+      "De twee groepen van vier zijn samen {=4*a} + {=4*b} en alle zeven getallen zijn samen {=7*c}. Het vierde getal zit in beide groepen, dus het is twee keer geteld in de som van de groepen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "two-sums": "{w_two_sums} is de som van de twee groepen, en het vierde getal is daarin twee keer geteld. Het is gelijk aan het teveel: {=4*a+4*b} − {=7*c} = {r}.",
+      "means-only": "{w_means_only} komt van alleen met de gemiddelden rekenen. Gemiddelden kun je niet zo combineren: we gaan terug naar de sommen, {=4*a+4*b} − {=7*c} = {r}.",
+      "sum-of-all": "{w_sum_of_all} is de som van alle zeven getallen, maar het vierde getal is wat in de som van de twee groepen een keer extra is geteld: {=4*a+4*b} − {=7*c} = {r}."
+    }
+  },
+  "S3.missing.12": {
+    "text": "Het gemiddelde van drie getallen is {a}. Het eerste getal ligt {b} onder het gemiddelde en het tweede getal ligt {c} boven het gemiddelde. Wat is het derde getal?",
+    "solution": [
+      "Eerste getal: {a} − {b} = {=a-b}. Tweede getal: {a} + {c} = {=a+c}.",
+      "Alle drie de getallen samen zijn {a} × 3 = {=3*a}.",
+      "Derde getal: {=3*a} − {=a-b} − {=a+c} = {r}."
+    ],
+    "hints": [
+      "Zoek het eerste en het tweede getal: {a} − {b} en {a} + {c}.",
+      "De drie getallen samen zijn 3 × {a} = {=3*a}. Haal de twee getallen die je gevonden hebt van de som af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is het gemiddelde, maar het derde getal maakt de afstanden van de eerste twee goed. Het gaat zo: {=3*a} − {=a-b} − {=a+c} = {r}.",
+      "sign-flipped": "{w_sign_flipped} komt van de afstanden andersom gebruiken. Het eerste getal zit {b} onder het gemiddelde en het tweede zit {c} erboven, dus het derde getal is {a} + {b} − {c} = {r}.",
+      "only-first": "{w_only_first} houdt alleen rekening met het eerste getal. Het tweede zit {c} boven het gemiddelde en het derde getal moet dat ook goedmaken: {a} + {b} − {c} = {r}."
+    }
+  },
+  "S3.missing.13": {
+    "text": "Het gemiddelde van zes getallen is {a}. Twee van de getallen, met een som van {b}, worden weggehaald. Wat is het gemiddelde van de vier overgebleven getallen?",
+    "solution": [
+      "Zes getallen zijn samen {a} × {=6} = {=6*a}.",
+      "Zonder de twee weggehaalde getallen blijft {=6*a} − {b} = {=6*a-b} over.",
+      "Gemiddelde van de vier overgebleven getallen: {=6*a-b} : {=4} = {r}."
+    ],
+    "hints": [
+      "Zoek de som van alle zes de getallen: het gemiddelde is {a} en er zijn zes getallen.",
+      "De som is {=6*a}. Haal de som van de weggehaalde getallen, {b}, eraf en deel door het aantal getallen dat overblijft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is het oude gemiddelde, maar er zijn twee getallen weggehaald en het gemiddelde is veranderd: {=6*a-b} : {=4} = {r}.",
+      "sum-left": "{w_sum_left} is de som van de vier overgebleven getallen, maar het gemiddelde is een vierde daarvan: {=6*a-b} : {=4} = {r}.",
+      "divided-by-six": "{w_divided_by_six} komt van delen door 6, maar er blijven vier getallen over: {=6*a-b} : {=4} = {r}."
+    }
+  },
+  "S3.missing.14": {
+    "text": "Het gemiddelde van twee getallen is {a} en het ene getal is {b} groter dan het andere. Wat is het grootste getal?",
+    "solution": [
+      "Het gemiddelde van twee getallen ligt precies halverwege tussen die getallen, dus elk getal ligt even ver ervan af.",
+      "De getallen liggen {b} uit elkaar, dus elk ligt {b} : 2 = {=b/2} van het gemiddelde.",
+      "Het grootste getal: {a} + {=b/2} = {r}."
+    ],
+    "hints": [
+      "Het gemiddelde van twee getallen ligt precies halverwege tussen die getallen.",
+      "De getallen liggen {b} uit elkaar en het gemiddelde zit in het midden. Hoeveel hoger dan het gemiddelde ligt het grootste getal?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-plus-difference": "{w_mean_plus_difference} is het gemiddelde plus het hele verschil, maar het grootste getal ligt maar de helft van het verschil boven het gemiddelde: {a} + {=b/2} = {r}.",
+      "smaller": "{w_smaller} is het kleinste van de twee getallen, maar de vraag is naar het grootste: {a} + {=b/2} = {r}.",
+      "mean": "{w_mean} is het gemiddelde, maar het grootste getal ligt de helft van het verschil, {=b/2}, boven het gemiddelde: {a} + {=b/2} = {r}."
+    }
+  },
+  "S3.missing.15": {
+    "text": "Het gemiddelde van vijf getallen is {a}. Daarna bleek dat het getal {b} was opgeschreven als {c}. Wat is het gemiddelde na de verbetering?",
+    "solution": [
+      "Som van de vijf getallen zoals opgeschreven: {a} × {=5} = {=5*a}.",
+      "Het getal {c} moet vervangen worden door {b}: {=5*a} + {b} − {c} = {=5*a+b-c}.",
+      "Gemiddelde na de verbetering: {=5*a+b-c} : {=5} = {r}."
+    ],
+    "hints": [
+      "Zoek de som van de vijf getallen zoals opgeschreven: het gemiddelde is {a} en er zijn vijf getallen.",
+      "De som is {=5*a}. Het getal {c} moet vervangen worden door {b}: hoe verandert de som?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "uncorrected": "{w_uncorrected} is het oude gemiddelde, maar na de verbetering is de som veranderd: {=5*a+b-c} : {=5} = {r}.",
+      "difference": "{w_difference} is het verschil tussen de twee getallen, maar het gemiddelde verandert vijf keer minder: {=5*a+b-c} : {=5} = {r}.",
+      "sum": "{w_sum} is de verbeterde som, maar het gemiddelde is een vijfde daarvan: {=5*a+b-c} : {=5} = {r}."
+    }
+  },
+  "S4.pie.01": {
+    "text": "Er zijn {a} mensen ondervraagd. De sector ‘thee’ van het cirkeldiagram beslaat {b} procent van de cirkel. Hoeveel mensen kozen thee?",
+    "solution": [
+      "De hele cirkel zijn alle {a} mensen, en {b} procent is {b} honderdste daarvan.",
+      "Vermenigvuldig: {a} × {b} = {=a*b}.",
+      "Neem het honderdste deel: {=a*b} : 100 = {r}.",
+      "{r} mensen kozen thee."
+    ],
+    "hints": [
+      "De hele cirkel zijn alle {a} mensen, dat is 100 procent. Thee beslaat maar een deel van de cirkel.",
+      "{b} procent is {b} honderdste. Vermenigvuldig {a} met {b} en deel de uitkomst door 100.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "percent-itself": "{w_percent_itself} is het percentage, maar je zoekt een aantal mensen: {a} × {b} : {=100} = {r}.",
+      "all": "{w_all} is het aantal mensen dat is ondervraagd, maar niet iedereen koos thee: {a} × {b} : {=100} = {r}.",
+      "not-divided": "{w_not_divided} komt uit vermenigvuldigen zonder door honderd te delen. Procent betekent honderdste delen van de cirkel, dus deel {=a*b} door {=100}: {r}."
+    }
+  },
+  "S4.pie.02": {
+    "text": "Een cirkel is verdeeld in {a} gelijke sectoren. Hoeveel procent van de cirkel beslaat één sector?",
+    "solution": [
+      "De hele cirkel is 100 procent en is verdeeld in {a} gelijke sectoren.",
+      "De sectoren zijn even groot, dus elke sector beslaat evenveel.",
+      "Eén sector beslaat 100 : {a} = {r} procent."
+    ],
+    "hints": [
+      "De hele cirkel is 100 procent, verdeeld in {a} gelijke sectoren. Elke sector beslaat evenveel.",
+      "Verdeel de 100 procent over de {a} sectoren: deel 100 door {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sectors": "{w_sectors} is het aantal sectoren, maar je zoekt het percentage van één sector: {=100} : {a} = {r}.",
+      "all": "{w_all} is de hele cirkel in procenten, maar één sector beslaat daar maar een deel van: {=100} : {a} = {r}.",
+      "degrees": "{w_degrees} is de hoek van één sector in graden, maar de vraag gaat over procenten. De hele cirkel is {=100} procent: {=100} : {a} = {r}."
+    }
+  },
+  "S4.pie.03": {
+    "text": "Drie sectoren van een cirkeldiagram beslaan {a}, {b} en {c} procent. Hoeveel procent van de cirkel beslaat de rest?",
+    "solution": [
+      "De hele cirkel is 100 procent.",
+      "De drie sectoren samen: {a} + {b} + {c} = {=a+b+c}.",
+      "De rest is wat er aan 100 ontbreekt: 100 − {=a+b+c} = {r} procent."
+    ],
+    "hints": [
+      "De hele cirkel is 100 procent. De rest is wat overblijft na de drie bekende sectoren.",
+      "Tel {a} + {b} + {c} op en trek die som af van 100.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "three-sectors": "{w_three_sectors} is het aantal procent van de drie bekende sectoren, maar je zoekt de rest van de cirkel: {=100} − {w_three_sectors} = {r}.",
+      "one-removed": "{w_one_removed} komt uit één sector aftrekken van {=100}, maar er zijn drie sectoren bekend: {=100} − {=a+b+c} = {r}.",
+      "from-360": "{w_from_360} komt uit aftrekken van {=360}. Hier gaat het om procenten en de hele cirkel is {=100} procent: {=100} − {=a+b+c} = {r}."
+    }
+  },
+  "S4.pie.04": {
+    "text": "Een sector van een cirkeldiagram beslaat {a} procent van de cirkel. Hoe groot is de hoek van de sector in graden?",
+    "solution": [
+      "De hele cirkel is 360 graden en de sector beslaat {a} honderdste daarvan.",
+      "Vermenigvuldig: 360 × {a} = {=360*a}.",
+      "Neem het honderdste deel: {=360*a} : 100 = {r} graden."
+    ],
+    "hints": [
+      "De hele cirkel is 360 graden. De sector beslaat {a} procent daarvan, dus {a} honderdste van 360.",
+      "Eén procent van de cirkel is 3,6 graden. Vermenigvuldig 3,6 met {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "percent-itself": "{w_percent_itself} is het percentage, maar je zoekt graden: {=360} × {a} : {=100} = {r}.",
+      "fraction-of-hundred": "{w_fraction_of_hundred} is de rest van de cirkel in procenten, maar je zoekt de graden van de sector zelf: {=360*a} : {=100} = {r}.",
+      "not-divided": "{w_not_divided} komt uit vermenigvuldigen zonder door honderd te delen. Een procent is een honderdste deel van de cirkel, dus deel {=360*a} door {=100}: {r}."
+    }
+  },
+  "S4.pie.05": {
+    "text": "Van de {a} ondervraagde mensen kozen er {b} thee. Hoeveel procent van het cirkeldiagram beslaat de sector ‘thee’?",
+    "solution": [
+      "Een procent laat zien hoeveel het is van elke 100 mensen.",
+      "Vermenigvuldig het aantal theekiezers met 100: {b} × 100 = {=100*b}.",
+      "Deel door het aantal ondervraagden: {=100*b} : {a} = {r} procent."
+    ],
+    "hints": [
+      "Zoek welk deel van alle {a} ondervraagden thee koos. Procent betekent: een deel van elke 100.",
+      "Vermenigvuldig {b} met 100 en deel dan door {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "people": "{w_people} is een aantal mensen, maar je zoekt een percentage: {b} × {=100} : {a} = {r}.",
+      "all-minus": "{w_all_minus} is het aantal mensen dat geen thee koos, maar je zoekt het aandeel dat wel thee koos, in procenten: {b} × {=100} : {a} = {r}.",
+      "product": "{w_product} komt uit {a} × {b}. Een percentage is het aandeel theekiezers in de hele groep: {b} × {=100} : {a} = {r}."
+    }
+  },
+  "S4.pie.06": {
+    "text": "Een cirkel is verdeeld in 10 gelijke sectoren. {a} procent van de cirkel is gekleurd. Hoeveel sectoren zijn gekleurd?",
+    "solution": [
+      "Een cirkel van {=100} procent is verdeeld in 10 gelijke sectoren, dus één sector is {=100} : 10 = 10 procent.",
+      "Er is {a} procent gekleurd en 10 procent past daar zo vaak in als er sectoren gekleurd zijn.",
+      "{a} : 10 = {r} sectoren."
+    ],
+    "hints": [
+      "De cirkel is {=100} procent en is verdeeld in 10 gelijke sectoren. Hoeveel procent is één sector?",
+      "Eén sector beslaat 10 procent. Zoek hoe vaak 10 in {a} past.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "percent-itself": "{w_percent_itself} is het percentage, maar je zoekt het aantal sectoren. Eén sector beslaat {=10} procent: {a} : {=10} = {r}.",
+      "half": "{w_half} komt uit delen door 2, maar één sector beslaat {=10} procent: {a} : {=10} = {r}.",
+      "unshaded": "{w_unshaded} is het aantal sectoren dat niet gekleurd is, maar je zoekt de gekleurde: {a} : {=10} = {r}."
+    }
+  },
+  "S4.pie.07": {
+    "text": "Er zijn {a} mensen ondervraagd. De eerste sector van het diagram beslaat {b} procent, de tweede {c} procent. Hoeveel mensen zitten er samen in de twee sectoren?",
+    "solution": [
+      "De twee sectoren samen beslaan {b} + {c} = {=b+c} procent.",
+      "Dat is {=b+c} honderdste van {a} mensen.",
+      "Vermenigvuldig: {a} × {=b+c} = {=a*(b+c)}.",
+      "Neem het honderdste deel: {=a*(b+c)} : 100 = {r} mensen."
+    ],
+    "hints": [
+      "Tel eerst de procenten van de twee sectoren op: samen beslaan ze een deel van de cirkel.",
+      "Samen is dat {=b+c} procent. Zoek {=b+c} procent van {a}: {a} × {=b+c} : 100.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "percents": "{w_percents} is het aantal procent van de twee sectoren, maar je zoekt een aantal mensen: {a} × {=b+c} : {=100} = {r}.",
+      "first-only": "{w_first_only} is het aantal mensen in alleen de eerste sector, maar je zoekt beide sectoren samen: {a} × {=b+c} : {=100} = {r}.",
+      "second-only": "{w_second_only} is het aantal mensen in alleen de tweede sector, maar je zoekt beide sectoren samen: {a} × {=b+c} : {=100} = {r}."
+    }
+  },
+  "S4.pie.08": {
+    "text": "Er zijn {a} mensen ondervraagd. De eerste sector van het diagram beslaat {b} procent, de tweede {c} procent. Hoeveel mensen meer zitten er in de eerste sector dan in de tweede?",
+    "solution": [
+      "De eerste sector is {b} − {c} = {=b-c} procent groter dan de tweede.",
+      "Dat is {=b-c} honderdste van {a} mensen.",
+      "Vermenigvuldig: {a} × {=b-c} = {=a*(b-c)}.",
+      "Neem het honderdste deel: {=a*(b-c)} : 100 = {r} mensen meer."
+    ],
+    "hints": [
+      "Je zoekt het verschil tussen de sectoren, niet de som. Zoek eerst hoeveel procent de eerste sector groter is dan de tweede.",
+      "De eerste sector is {=b-c} procent groter. Zoek {=b-c} procent van {a}: {a} × {=b-c} : 100.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "percents": "{w_percents} is het verschil in procenten, maar je zoekt het verschil in mensen: {a} × {=b-c} : {=100} = {r}.",
+      "first-sector": "{w_first_sector} is het aantal mensen in alleen de eerste sector, maar je zoekt het verschil tussen de twee sectoren: {a} × {=b-c} : {=100} = {r}.",
+      "second-sector": "{w_second_sector} is het aantal mensen in alleen de tweede sector, maar je zoekt hoeveel meer de eerste sector heeft: {a} × {=b-c} : {=100} = {r}.",
+      "added": "{w_added} komt uit het optellen van de twee sectoren. Je zoekt hoeveel de ene groter is dan de andere, dus trek je de procenten af: {a} × {=b-c} : {=100} = {r}."
+    }
+  },
+  "S4.pie.09": {
+    "text": "Een sector van een cirkeldiagram beslaat {=1}⁄{b} van de cirkel. Hoeveel mensen zitten er in de hele cirkel, als er in deze sector {a|persoon|mensen|mensen} zitten?",
+    "solution": [
+      "De sector is {=1}⁄{b} van de cirkel, dus de hele cirkel bestaat uit {b} van zulke sectoren.",
+      "In elke sector zitten {a|persoon|mensen|mensen}.",
+      "In de hele cirkel: {a} × {b} = {r} mensen."
+    ],
+    "hints": [
+      "De sector is één van {b} gelijke delen van de cirkel en in elk deel zitten evenveel mensen.",
+      "In één deel zitten {a|persoon|mensen|mensen} en er zijn {b} delen. Vermenigvuldig {a} met {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} komt uit optellen, maar de cirkel bestaat uit {b} gelijke sectoren, dus je moet vermenigvuldigen: {a} × {b} = {r}.",
+      "sector": "{w_sector} is het aantal mensen in één sector, maar je zoekt de hele cirkel: {a} × {b} = {r}.",
+      "sectors": "{w_sectors} is het aantal gelijke delen van de cirkel, maar je zoekt het aantal mensen in de hele cirkel: {a} × {b} = {r}."
+    }
+  },
+  "S4.pie.10": {
+    "text": "Drie sectoren van een cirkeldiagram beslaan {a}, {b} en {c} procent. De hoeveelste sector is de grootste, als je telt in de volgorde waarin ze genoemd zijn?",
+    "solution": [
+      "De grootste sector is die met de meeste procenten.",
+      "Van {a}, {b} en {c} is {=max(a,b,c)} het grootste getal.",
+      "{=max(a,b,c)} staat op plaats {r}, dus de grootste sector is nummer {r}."
+    ],
+    "hints": [
+      "De grootste sector heeft de meeste procenten: {a}, {b} of {c}. Het nummer is de plaats in de rij.",
+      "Zoek het grootste getal van {a}, {b} en {c} en kijk de hoeveelste genoemd het is.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "percent": "{w_percent} is het percentage van de grootste sector, maar je zoekt het nummer in de rij: {r}.",
+      "last": "{w_last} is het nummer van de laatste sector, maar de grootste is nummer {r}.",
+      "smallest": "{w_smallest} is het nummer van de kleinste sector, maar de vraag gaat over de grootste. Dat is nummer {r}."
+    }
+  },
+  "S4.pie.11": {
+    "text": "De eerste sector van een cirkeldiagram beslaat {a} procent van de cirkel, de tweede {c}⁄{b} van de cirkel. Zet een teken tussen de eerste sector en de tweede.",
+    "solution": [
+      "De tweede sector is {c}⁄{b} van de cirkel, dat is {=100} × {c} : {b} = {=100*c/b} procent.",
+      "Vergelijk de procenten van de eerste en de tweede sector: {a} en {=100*c/b}.",
+      "Tussen de eerste en de tweede sector staat het teken {r}: {a} {r} {=100*c/b}."
+    ],
+    "hints": [
+      "Om te vergelijken schrijf je beide delen van de cirkel in dezelfde eenheid: procenten.",
+      "Zet {c}⁄{b} om in procenten: {=100} × {c} : {b} = {=100*c/b}. Vergelijk dan {a} en {=100*c/b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reversed": "Het teken {w_reversed} wijst de andere kant op: de open kant van het teken wijst naar het grootste getal. Hier gaat het om {a} en {=100*c/b}.",
+      "percent-vs-denominator": "Het teken {w_percent_vs_denominator} komt uit het vergelijken van {a} met het getal {b}. Maar {c}⁄{b} is een deel van de cirkel en moet eerst in procenten: {=100*c/b}.",
+      "percent-vs-numerator": "Het teken {w_percent_vs_numerator} komt uit het vergelijken van {a} met het getal {c}. Maar {c}⁄{b} is een deel van de cirkel en moet eerst in procenten: {=100*c/b}."
+    }
+  },
+  "S4.pie.12": {
+    "text": "Een cirkel is verdeeld in gelijke sectoren en een paar daarvan zijn gekleurd. Hoeveel procent van de cirkel is gekleurd?",
+    "solution": [
+      "In het plaatje is de cirkel verdeeld in {a} gelijke sectoren en zijn er {b} gekleurd.",
+      "Eén sector is {=100} : {a} = {=100/a} procent.",
+      "Gekleurd: {b} × {=100/a} = {r} procent."
+    ],
+    "hints": [
+      "Tel in hoeveel gelijke sectoren de cirkel is verdeeld en hoeveel daarvan gekleurd zijn.",
+      "Zoek hoeveel procent één sector beslaat. De hele cirkel is {=100} procent.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "count": "{w_count} is het aantal gekleurde sectoren, maar je zoekt hoeveel procent dat is: {b} × {=100/a} = {r}.",
+      "unshaded": "{w_unshaded} is het percentage van het deel dat niet gekleurd is, maar je zoekt het gekleurde deel: {b} × {=100/a} = {r}.",
+      "one-sector": "{w_one_sector} is het percentage van één sector, maar er zijn er meer gekleurd: {b} × {=100/a} = {r}."
+    }
+  },
+  "S4.pie.13": {
+    "text": "Een klas met {a} kinderen is verdeeld in groepen naar lievelingssport. We willen laten zien welk deel van de hele klas elke groep is. Welk diagram past het best? 1) lijngrafiek; 2) cirkeldiagram; 3) pictogram, één plaatje is één getal. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "We willen delen van een geheel laten zien: welk deel van de hele klas elke groep is.",
+      "Een cirkeldiagram verdeelt een cirkel in delen die samen het geheel vormen.",
+      "Een lijngrafiek laat verandering in de tijd zien en een pictogram laat aantallen zien, maar geen delen van een geheel. Het best past keuze {r}."
+    ],
+    "hints": [
+      "Denk na over wat elk diagram laat zien: verandering in de tijd, aantallen of delen van een geheel.",
+      "We willen delen van een geheel laten zien: alle groepen samen vormen de klas.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "line": "Keuze {w_line} is een lijngrafiek. Die laat zien hoe een waarde in de tijd verandert, maar hier gaat het om delen van één geheel. Daarvoor past een cirkeldiagram: keuze {r}.",
+      "pictogram": "Keuze {w_pictogram} is het pictogram. Dat laat aantallen zien, maar niet welk deel van het geheel elke groep is. Voor delen van een geheel past een cirkeldiagram: keuze {r}."
+    }
+  },
+  "S4.pie.14": {
+    "text": "Een cirkel is verdeeld in drie sectoren. De groottes verhouden zich als {a} tot {b} tot {c}. Hoeveel procent van de cirkel beslaat de grootste sector?",
+    "solution": [
+      "Alle delen: {a} + {b} + {c} = {=a+b+c}.",
+      "De hele cirkel is {=100} procent, dus één deel is {=100} : {=a+b+c} = {=100/(a+b+c)} procent.",
+      "De grootste sector heeft {=max(a,b,c)|deel|delen|delen}: {=max(a,b,c)} × {=100/(a+b+c)} = {r} procent."
+    ],
+    "hints": [
+      "Tel alle delen bij elkaar op en zoek hoeveel procent één deel is.",
+      "De grootste sector heeft de meeste delen. Vermenigvuldig zijn aantal delen met het percentage van één deel.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "parts": "{w_parts} is het aantal delen van de grootste sector, maar je zoekt procenten: {=max(a,b,c)} × {=100/(a+b+c)} = {r}.",
+      "smallest": "{w_smallest} is het percentage van de kleinste sector, maar de vraag gaat over de grootste: {=max(a,b,c)} × {=100/(a+b+c)} = {r}.",
+      "one-part": "{w_one_part} is het percentage van één deel, maar de grootste sector bestaat uit {=max(a,b,c)|deel|delen|delen}: {=max(a,b,c)} × {=100/(a+b+c)} = {r}."
+    }
+  },
+  "S4.pie.15": {
+    "text": "Twee sectoren van een cirkeldiagram beslaan samen {a} procent van de cirkel en de ene is twee keer zo groot als de andere. Hoeveel procent van de cirkel beslaat de grootste?",
+    "solution": [
+      "Noem de kleinste sector één deel. De grootste is dan twee van die delen, samen zijn het dus drie delen.",
+      "Drie delen zijn {a} procent, dus één deel is {a} : {=3} = {=a/3}.",
+      "De grootste sector is twee delen: {=2} × {=a/3} = {r} procent."
+    ],
+    "hints": [
+      "Neem de kleinste sector als één deel. Uit hoeveel delen bestaat de grootste en hoeveel delen zijn het samen?",
+      "Deel de procenten van de twee sectoren door het aantal delen en neem er dan twee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "half-of-total": "{w_half_of_total} is de helft van het totaal. Maar de sectoren zijn niet even groot: de kleinste is een derde en de grootste twee derde. Dus: {=2} × {=a/3} = {r}.",
+      "smaller": "{w_smaller} is de kleinste sector, maar de vraag gaat over de grootste: {=2} × {=a/3} = {r}.",
+      "total": "{w_total} zijn beide sectoren samen, maar je zoekt alleen de grootste: {=2} × {=a/3} = {r}."
+    }
+  },
+  "S5.global.01": {
+    "text": "De temperatuur werd gemeten om 6, 9, 12 en 15 uur: {a}, {b}, {c} en {d|graad|graden|graden}. Hoe laat was de temperatuur het hoogst?",
+    "solution": [
+      "De hoogste temperatuur is het grootste getal van {a}, {b}, {c} en {d}.",
+      "Dat is {w_temperature|graad|graden|graden}.",
+      "Er is op volgorde gemeten om 6, 9, 12 en 15 uur en deze meting was om {r} uur."
+    ],
+    "hints": [
+      "Zoek de hoogste van de vier metingen: {a}, {b}, {c} en {d}. De vraag gaat niet over de temperatuur, maar over het uur.",
+      "Kijk de hoeveelste meting het hoogst is en kies het uur erbij: 6, 9, 12 of 15.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "temperature": "{w_temperature} is de hoogste temperatuur, maar de vraag is hoe laat dat was: om {r} uur.",
+      "last-hour": "{w_last_hour} is het laatste meetuur, maar de hoogste temperatuur was op een ander uur: om {r} uur.",
+      "number-of-reading": "{w_number_of_reading} is de plaats van de meting in de rij, maar de vraag is om welk uur die meting was: {r} uur."
+    }
+  },
+  "S5.global.02": {
+    "text": "Volgens de grafiek is de temperatuur om 9 uur {a|graad|graden|graden} en om 12 uur {b|graad|graden|graden}. Met hoeveel graden is de temperatuur in die tijd gestegen?",
+    "solution": [
+      "Om 9 uur was het {a|graad|graden|graden}, om 12 uur {b}.",
+      "De stijging vind je door het vroegere getal van het latere af te trekken.",
+      "De temperatuur is gestegen met {b} − {a} = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Kijk naar de grafiek: om 9 uur is de temperatuur {a}, om 12 uur is die hoger. Je zoekt het verschil.",
+      "Trek het vroegere getal van het latere af: {b} − {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} komt uit optellen, maar een stijging vind je door af te trekken: {b} − {a} = {r}.",
+      "hours": "{w_hours} is het aantal uren dat verstreken is, maar je zoekt met hoeveel graden de temperatuur steeg: {b} − {a} = {r}.",
+      "later-reading": "{w_later_reading} is de temperatuur om 12 uur, maar je zoekt hoeveel die gestegen is: {b} − {a} = {r}."
+    }
+  },
+  "S5.global.03": {
+    "text": "De grafiek laat een gelijkmatige daling zien: om 12 uur is de temperatuur {x|graad|graden|graden} en {b} uur later {y|graad|graden|graden}. Hoeveel graden daalde de temperatuur elk uur?",
+    "solution": [
+      "De temperatuur daalde van {x} naar {y}, dus de totale daling is {x} − {y} = {=x-y}.",
+      "De daling is gelijkmatig, dus verdeel je haar gelijk over {b} uur.",
+      "Elk uur daalde de temperatuur met {=x-y} : {b} = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel graden de temperatuur in totaal daalde: het was {x} en werd {y}.",
+      "Die daling is gelijk verdeeld over {b} uur. Deel {=x-y} door {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is de totale daling, maar je zoekt de daling in één uur: {=x-y} : {b} = {r}.",
+      "hours": "{w_hours} is het aantal uren, niet de daling van de temperatuur. Deel de totale daling {=x-y} door het aantal uren {b}: {=x-y} : {b} = {r}.",
+      "last-reading": "{w_last_reading} is de temperatuur aan het eind, maar je zoekt hoeveel die in één uur daalde: {=x-y} : {b} = {r}."
+    }
+  },
+  "S5.global.04": {
+    "text": "De grafiek loopt gelijkmatig: om 10 uur is de temperatuur {a|graad|graden|graden}, om 12 uur {b|graad|graden|graden}. Wat was de temperatuur om 11 uur?",
+    "solution": [
+      "11 uur ligt precies in het midden tussen 10 en 12 uur en de grafiek loopt gelijkmatig.",
+      "Dus de temperatuur om 11 uur ligt precies tussen {a} en {b} in.",
+      "Tel op: {a} + {b} = {=a+b}, deel door 2: {=a+b} : 2 = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "11 uur ligt precies tussen 10 en 12 uur en de grafiek loopt gelijkmatig.",
+      "Zoek het getal precies tussen {a} en {b}: tel ze op en deel door 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-reading": "{w_first_reading} is de temperatuur om 10 uur, maar je zoekt die om 11 uur. Die ligt precies tussen {a} en {b}: ({a} + {b}) : {=2} = {r}.",
+      "second-reading": "{w_second_reading} is de temperatuur om 12 uur, maar je zoekt die om 11 uur. Die ligt precies tussen {a} en {b}: ({a} + {b}) : {=2} = {r}.",
+      "sum-not-halved": "{w_sum_not_halved} is de som van de twee temperaturen, maar je zoekt het getal precies tussen die twee. Neem de helft van de som: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S5.global.05": {
+    "text": "Het waterpeil stijgt elk uur met {a} cm. Nu is het {b} cm. Hoe hoog is het over {c} uur?",
+    "solution": [
+      "Elk uur stijgt het peil met {a} cm en er gaan {c} uur voorbij.",
+      "De stijging in die tijd: {a} × {c} = {=a*c} cm.",
+      "Tel de stijging op bij het peil van nu: {b} + {=a*c} = {r} cm."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel centimeter het peil stijgt in {c} uur: elk uur stijgt het {a} cm.",
+      "Vermenigvuldig {a} met {c} en tel de uitkomst op bij het huidige peil {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rise-only": "{w_rise_only} is alleen de stijging in {c} uur, maar je zoekt het waterpeil: {b} + {a} × {c} = {r}.",
+      "one-hour": "{w_one_hour} is het peil na één uur, maar er gaan {c} uur voorbij: {b} + {a} × {c} = {r}.",
+      "all-multiplied": "{w_all_multiplied} komt uit het vermenigvuldigen van zowel de stijging per uur als het huidige peil met {c}. Alleen de stijging wordt vermenigvuldigd: {b} + {a} × {c} = {r}."
+    }
+  },
+  "S5.global.06": {
+    "text": "Het waterpeil stijgt elk uur met {a} cm. Nu is het {b} cm. Na hoeveel uur is het {x} cm?",
+    "solution": [
+      "Het peil moet stijgen van {b} naar {x} cm, dat is {x} − {b} = {=x-b} cm.",
+      "Elk uur stijgt het met {a} cm.",
+      "Kijk hoe vaak {a} in {=x-b} past: {=x-b} : {a} = {r} uur."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel centimeter het peil nog moet stijgen: nu is het {b} cm en het moet {x} cm worden.",
+      "De stijging van {=x-b} cm gaat in stappen van {a} cm per uur. Deel {=x-b} door {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rise": "{w_rise} is hoeveel het peil moet stijgen, maar je zoekt hoeveel uur dat duurt: {=x-b} : {a} = {r}.",
+      "level": "{w_level} is het peil dat bereikt moet worden, maar je zoekt na hoeveel uur dat gebeurt: {=x-b} : {a} = {r}.",
+      "level-not-reduced": "{w_level_not_reduced} komt uit het delen van het hele peil {x} door de stijging per uur. Het peil is al {b} cm, dus je deelt alleen de stijging die nog nodig is: {=x-b} : {a} = {r}."
+    }
+  },
+  "S5.global.07": {
+    "text": "De temperatuur is vier keer gemeten: {a}, {b}, {c} en {d|graad|graden|graden}. De norm is {e|graad|graden|graden}. Hoeveel graden ligt de hoogste meting boven de norm?",
+    "solution": [
+      "De hoogste meting is het grootste getal van {a}, {b}, {c} en {d}: dat is {=max(a,b,c,d)}.",
+      "De norm is {e}.",
+      "Het verschil: {=max(a,b,c,d)} − {e} = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Zoek de hoogste meting van {a}, {b}, {c} en {d}.",
+      "Trek de norm {e} af van de hoogste meting.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "highest": "{w_highest} is de hoogste meting, maar de vraag is hoeveel die boven de norm {e} ligt: {=max(a,b,c,d)} − {e} = {r}.",
+      "norm": "{w_norm} is de norm zelf, maar je zoekt het verschil tussen de hoogste meting en de norm: {=max(a,b,c,d)} − {e} = {r}.",
+      "count": "{w_count} is het aantal metingen boven de norm, maar de vraag is hoeveel graden de hoogste meting boven de norm ligt: {=max(a,b,c,d)} − {e} = {r}.",
+      "last-reading": "{w_last_reading} is de laatste meting min de norm, maar je zoekt de hoogste meting: {=max(a,b,c,d)} − {e} = {r}."
+    }
+  },
+  "S5.global.08": {
+    "text": "De temperatuur daalt elk uur met evenveel graden. Welke grafiek laat dit zien? Antwoord met het nummer van de grafiek.",
+    "solution": [
+      "De temperatuur daalt, dus de lijn in de grafiek gaat omlaag.",
+      "Evenveel dalen in evenveel tijd betekent dat de lijn recht is en niet steiler wordt.",
+      "Dat is grafiek {r}."
+    ],
+    "hints": [
+      "Bepaal of de lijn omhoog of omlaag gaat en of hij recht is of buigt.",
+      "Streep de grafieken weg waarin de lijn omhoog gaat, vlak blijft of steeds steiler daalt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "upward": "Grafiek {w_upward} gaat omhoog, maar de temperatuur daalt. Een gelijkmatige daling is een rechte lijn omlaag: grafiek {r}.",
+      "horizontal": "Grafiek {w_horizontal} loopt vlak en een vlakke lijn betekent dat de temperatuur niet verandert. Een gelijkmatige daling is een rechte lijn omlaag: grafiek {r}.",
+      "steeper-and-steeper": "Grafiek {w_steeper_and_steeper} daalt steeds steiler, maar de temperatuur daalt elk uur evenveel graden. Dat geeft een rechte lijn: grafiek {r}."
+    }
+  },
+  "S5.global.09": {
+    "text": "Een bus staat stil bij een bushalte. Welke grafiek laat de afstand van huis tot de bus in de tijd zien? Antwoord met het nummer van de grafiek.",
+    "solution": [
+      "De bus staat stil, dus de afstand tot huis verandert niet.",
+      "Als het getal niet verandert, gaat de lijn niet omhoog of omlaag, maar loopt hij vlak.",
+      "Dat is grafiek {r}."
+    ],
+    "hints": [
+      "Wat gebeurt er met de afstand terwijl de bus stilstaat?",
+      "Als de afstand niet verandert, loopt de lijn vlak.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "upward": "Grafiek {w_upward} gaat omhoog, maar terwijl de bus stilstaat wordt de afstand niet groter. Je zoekt een vlakke lijn: grafiek {r}.",
+      "downward": "Grafiek {w_downward} gaat omlaag, maar terwijl de bus stilstaat wordt de afstand niet kleiner. Je zoekt een vlakke lijn: grafiek {r}.",
+      "up-then-down": "Grafiek {w_up_then_down} stijgt eerst en daalt dan, maar de bus rijdt nergens heen. Je zoekt een vlakke lijn: grafiek {r}."
+    }
+  },
+  "S5.global.10": {
+    "text": "Een fietser fietst van huis weg en komt daarna langs dezelfde weg terug. Welke grafiek laat de afstand tot huis in de tijd zien? Antwoord met het nummer van de grafiek.",
+    "solution": [
+      "Eerst fietst de fietser weg, de afstand tot huis wordt groter en de lijn gaat omhoog.",
+      "Daarna komt de fietser terug, de afstand wordt kleiner en de lijn gaat omlaag.",
+      "Dat is grafiek {r}."
+    ],
+    "hints": [
+      "Hoe verandert de afstand tot huis terwijl de fietser wegfietst en daarna terugkomt?",
+      "Je zoekt een lijn die eerst stijgt en dan daalt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "upward": "Grafiek {w_upward} stijgt alleen, maar de fietser is weer thuisgekomen. De afstand moet later kleiner worden: grafiek {r}.",
+      "downward": "Grafiek {w_downward} daalt alleen, maar de fietser is eerst van huis weggefietst. De afstand moet eerst groter worden: grafiek {r}.",
+      "horizontal": "Grafiek {w_horizontal} loopt vlak, maar de fietser reed en de afstand veranderde. Je zoekt een lijn omhoog en dan omlaag: grafiek {r}."
+    }
+  },
+  "S5.global.11": {
+    "text": "In het eerste uur fietste een fietser {a} km, in het tweede {b} km en in het derde {c} km. In welk uur fietste de fietser het snelst?",
+    "solution": [
+      "Hoe meer kilometers in een uur, hoe sneller de fietser rijdt.",
+      "Vergelijk {a}, {b} en {c}: het grootste getal is {w_distance}.",
+      "Dat staat op plaats {r}, dus de fietser reed het snelst in uur nummer {r}."
+    ],
+    "hints": [
+      "Hoe meer kilometers in een uur, hoe sneller de fietser rijdt. Vergelijk {a}, {b} en {c}.",
+      "Zoek het grootste van de drie getallen en kijk in welk uur dat is gefietst.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "distance": "{w_distance} is de afstand in het snelste uur, maar de vraag is welk uur het was: {r}.",
+      "last": "{w_last} is het nummer van het laatste uur, maar de fietser reed het snelst in uur nummer {r}.",
+      "slowest": "{w_slowest} is het nummer van het uur met de traagste rit, maar de vraag gaat over de snelste: uur nummer {r}."
+    }
+  },
+  "S5.global.12": {
+    "text": "In het eerste uur fietste een fietser {a} km, in het tweede {b} km en in het derde {c} km. Hoeveel kilometer fietste de fietser in drie uur?",
+    "solution": [
+      "We tellen de kilometers van elk uur op.",
+      "De eerste twee uur: {a} + {b} = {=a+b}.",
+      "Tel het derde uur erbij: {=a+b} + {c} = {r}.",
+      "In drie uur fietste de fietser {r} km."
+    ],
+    "hints": [
+      "Alle drie de uren tellen mee: de afstanden zijn {a}, {b} en {c} km.",
+      "Tel {a} + {b} + {c} op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "fastest": "{w_fastest} is de afstand in het snelste uur, maar je zoekt alle drie de uren: {a} + {b} + {c} = {r}.",
+      "two-hours": "{w_two_hours} laat het derde uur weg: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S5.global.13": {
+    "text": "Drie fietsers vertrekken tegelijk vanaf dezelfde plek. De lijn van elke fietser in de grafiek laat de afstand tot de start in de tijd zien. Wie fietste het snelst? Antwoord met het nummer van de lijn.",
+    "solution": [
+      "Hoe sneller de fietser rijdt, hoe groter de afstand in hetzelfde uur.",
+      "Dus de lijn van de snelste fietser stijgt in dezelfde tijd het hoogst: dat is de steilste lijn.",
+      "Dat is lijn {r}."
+    ],
+    "hints": [
+      "Vergelijk welke lijn in dezelfde tijd het hoogst stijgt.",
+      "Hoe steiler de lijn, hoe sneller de fietser rijdt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "slowest": "Lijn {w_slowest} is het vlakst: in dezelfde tijd steeg die het minst, dus die fietser reed het langzaamst. De snelste fietser heeft de steilste lijn: lijn {r}.",
+      "middle": "Lijn {w_middle} is steiler dan de vlakste, maar niet de steilste. De snelste fietser heeft de steilste lijn: lijn {r}."
+    }
+  },
+  "S5.global.14": {
+    "text": "De luchttemperatuur is een dag lang elk uur gemeten. We willen laten zien hoe de temperatuur in de tijd veranderde. Welk diagram past het best? 1) cirkeldiagram; 2) pictogram, één plaatje is één getal; 3) lijngrafiek. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "We willen verandering in de tijd laten zien: uur na uur stijgt en daalt de temperatuur.",
+      "Een lijngrafiek verbindt de waarden op volgorde, zodat je ziet waar de temperatuur stijgt en waar hij daalt.",
+      "Een cirkeldiagram laat delen van een geheel zien en een pictogram laat aantallen zien zonder volgorde. Het best past keuze {r}."
+    ],
+    "hints": [
+      "Denk na over wat elk diagram laat zien: delen van een geheel, aantallen of verandering in de tijd.",
+      "We willen verandering in de tijd laten zien: de volgorde van de metingen is belangrijk.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "pie": "Keuze {w_pie} is een cirkeldiagram. Dat laat delen van één geheel zien, en temperaturen op verschillende uren vormen geen geheel. Voor verandering in de tijd past een lijngrafiek: keuze {r}.",
+      "pictogram": "Keuze {w_pictogram} is het pictogram. Dat laat aantallen zien, maar niet de volgorde in de tijd en ook niet het stijgen of dalen. Voor verandering in de tijd past een lijngrafiek: keuze {r}."
+    }
+  },
+  "S5.global.15": {
+    "text": "Iemand loopt van huis naar een winkel, blijft even bij de winkel staan en loopt dan langs dezelfde weg terug naar huis. Welke grafiek laat de afstand tot huis in de tijd zien? Antwoord met het nummer van de grafiek.",
+    "solution": [
+      "Terwijl de persoon naar de winkel loopt, wordt de afstand tot huis groter en gaat de lijn omhoog.",
+      "Bij de winkel verandert de afstand niet en loopt de lijn vlak.",
+      "Op de terugweg wordt de afstand kleiner tot nul. Die lijn is grafiek {r}."
+    ],
+    "hints": [
+      "Verdeel de wandeling in drie delen: naar de winkel, bij de winkel, terug naar huis.",
+      "Kies bij elk deel een stuk lijn: omhoog, vlak, omlaag.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "no-stop": "Grafiek {w_no_stop} gaat meteen omlaag na het stijgen, maar de persoon bleef bij de winkel staan en de afstand veranderde een tijdje niet. Je zoekt een vlak stuk tussen omhoog en omlaag: grafiek {r}.",
+      "stays": "Grafiek {w_stays} komt niet meer omlaag, maar de persoon liep terug naar huis en de afstand werd nul. Je zoekt een daling aan het eind: grafiek {r}.",
+      "stop-first": "Grafiek {w_stop_first} begint met een vlak stuk, maar de persoon liep eerst van huis weg. Je zoekt een stijging aan het begin: grafiek {r}."
+    }
+  },
+  "S5.global.16": {
+    "text": "In een tank wordt eerst water gegoten met een sterke straal en daarna met een zwakke, tot de tank vol is. Welke grafiek laat zien hoe het waterpeil in de tijd veranderde? Antwoord met het nummer van de grafiek.",
+    "solution": [
+      "Het waterpeil stijgt steeds, want er wordt alleen water bijgegoten.",
+      "Eerst is de straal sterk, het peil stijgt snel en de lijn is steil. Daarna is de straal zwak en wordt de lijn vlakker.",
+      "Die lijn is grafiek {r}."
+    ],
+    "hints": [
+      "Het peil stijgt de hele tijd. Bedenk waar het sneller stijgt en waar langzamer.",
+      "Snel stijgen is een steile lijn, langzaam stijgen een vlakke. Welke lijn is eerst steil en dan vlak?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "straight": "Grafiek {w_straight} is een rechte lijn en zo stijgt het peil als het water de hele tijd even snel wordt gegoten. Hier is de straal eerst sterk en dan zwak: grafiek {r}.",
+      "slow-then-fast": "Grafiek {w_slow_then_fast} laat het omgekeerde zien: het peil stijgt eerst langzaam en dan snel. Je zoekt een lijn die eerst steil en dan vlakker is: grafiek {r}.",
+      "falling": "Grafiek {w_falling} gaat omlaag, maar er wordt water bijgegoten en het peil stijgt. Je zoekt een lijn omhoog, eerst steiler, dan vlakker: grafiek {r}."
+    }
+  },
+  "S5.global.17": {
+    "text": "De temperatuurgrafiek is een rechte lijn. Om {a} uur is de temperatuur {c|graad|graden|graden} en om {=a+b} uur {v|graad|graden|graden}. Hoe hoog is de temperatuur om {=a+b+e} uur als de lijn zo doorloopt?",
+    "solution": [
+      "In {b} uur steeg de temperatuur van {c} naar {v}, dat is {v} − {c} = {=b*d}.",
+      "De stijging is gelijkmatig, dus in één uur: {=b*d} : {b} = {d}.",
+      "Nog {e} uur geeft een stijging van {e} × {d} = {=e*d}, en de temperatuur wordt {v} + {=e*d} = {r|graad|graden|graden}."
+    ],
+    "hints": [
+      "Zoek hoeveel graden de temperatuur in één uur stijgt: in {b} uur steeg die van {c} naar {v}.",
+      "Vermenigvuldig de stijging in één uur met de {e} uur die nog volgen en tel het op bij {v}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "hours-added": "{w_hours_added} komt uit het optellen van het aantal uren {e}. Maar elk uur stijgt de temperatuur met {d}, dus je telt {e} × {d} = {=e*d} erbij op: {v} + {=e*d} = {r}.",
+      "same-rise": "{w_same_rise} komt uit het herhalen van de stijging tussen de bekende punten, {=b*d}. Maar daarna gaan er {e} uur voorbij, niet {b}: {v} + {=e*d} = {r}.",
+      "one-hour": "{w_one_hour} komt uit het optellen van de stijging van maar één uur. Er gaan nog {e} uur voorbij: {v} + {=e*d} = {r}."
+    }
+  },
+  "S5.global-1S.01": {
+    "text": "De waarden per jaar nemen elke keer met evenveel toe: {a}, {y}, {z}. Wat is de volgende waarde?",
+    "solution": [
+      "Zoek de stap van de stijging: {y} − {a} = {b} en {z} − {y} = {b}.",
+      "De stap is steeds hetzelfde, dus tel je hem op bij de laatste waarde.",
+      "De volgende waarde: {z} + {b} = {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel de waarde elk jaar toeneemt: vergelijk {a} en {y}.",
+      "Tel die stap op bij de laatste waarde {z}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-value": "{w_last_value} is de laatste waarde, die al bekend is. De volgende is een stap groter: {z} + {b} = {r}.",
+      "double-step": "{w_double_step} komt uit het optellen van twee stappen, maar de volgende waarde vind je door er één op te tellen: {z} + {b} = {r}."
+    }
+  },
+  "S5.global-1S.02": {
+    "text": "Een waarde neemt elk jaar met {b} toe. Nu is die {a}. Hoe groot is de waarde over {c} jaar, als de trend zich voortzet?",
+    "solution": [
+      "Elk jaar neemt de waarde met {b} toe en er gaan {c} jaar voorbij.",
+      "De totale toename: {b} × {c} = {=b*c}.",
+      "De waarde na {c} jaar: {a} + {=b*c} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel de waarde in {c} jaar toeneemt: elk jaar komt er {b} bij.",
+      "Vermenigvuldig {b} met {c} en tel de uitkomst op bij {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rise-only": "{w_rise_only} is alleen de toename over {c} jaar, maar je zoekt de waarde: {a} + {b} × {c} = {r}.",
+      "one-year": "{w_one_year} is de waarde na één jaar, maar er gaan {c} jaar voorbij: {a} + {b} × {c} = {r}.",
+      "all-multiplied": "{w_all_multiplied} komt uit het vermenigvuldigen van zowel de toename per jaar als de huidige waarde met {c}. Alleen de toename wordt vermenigvuldigd: {a} + {b} × {c} = {r}."
+    }
+  },
+  "S5.global-1S.03": {
+    "text": "Een waarde neemt elk jaar met {b} toe. Nu is die {a}. Over hoeveel jaar bereikt de waarde {x}, als de trend zich voortzet?",
+    "solution": [
+      "De waarde moet groeien van {a} naar {x}, dat is {x} − {a} = {=x-a}.",
+      "Elk jaar neemt de waarde met {b} toe.",
+      "Kijk hoe vaak {b} in {=x-a} past: {=x-a} : {b} = {r} jaar."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel de waarde nog moet groeien: nu is die {a} en het moet {x} worden.",
+      "De groei van {=x-a} komt in stappen van {b} per jaar. Deel {=x-a} door {b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rise": "{w_rise} is de groei die nodig is, maar de vraag is hoeveel jaar dat duurt: {=x-a} : {b} = {r}.",
+      "target": "{w_target} is de waarde die bereikt moet worden, maar de vraag is na hoeveel jaar dat gebeurt: {=x-a} : {b} = {r}.",
+      "level-not-reduced": "{w_level_not_reduced} komt uit het delen van de hele waarde {x} door de toename per jaar. De waarde is al {a}, dus je deelt alleen de groei die nog nodig is: {=x-a} : {b} = {r}."
+    }
+  },
+  "S5.global-1S.04": {
+    "text": "Een waarde was {a} en {c} jaar later was die {x}. Met hoeveel nam de waarde gemiddeld per jaar toe?",
+    "solution": [
+      "De totale toename: {x} − {a} = {=x-a}.",
+      "Die ontstond in {c} jaar en het gemiddelde per jaar is de totale toename gedeeld door het aantal jaren.",
+      "Per jaar nam de waarde gemiddeld toe met {=x-a} : {c} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel de waarde in totaal toenam: het was {a} en werd {x}.",
+      "Die toename ontstond in {c} jaar. Deel {=x-a} door {c}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is de totale toename, maar je zoekt de toename in één jaar: {=x-a} : {c} = {r}.",
+      "years": "{w_years} is het aantal jaren, niet de toename per jaar. Deel de totale toename {=x-a} door het aantal jaren {c}: {=x-a} : {c} = {r}."
+    }
+  },
+  "S5.global-1S.05": {
+    "text": "De waarden per jaar: {a}, {b}, {c}, {d}. Met hoeveel veranderde de waarde bij de grootste sprong tussen twee opeenvolgende jaren?",
+    "solution": [
+      "Een sprong is het verschil tussen twee opeenvolgende waarden zonder het minteken: tussen {a} en {b} is dat {=max(b-a,a-b)}, tussen {b} en {c} {=max(c-b,b-c)}, tussen {c} en {d} {=max(d-c,c-d)}.",
+      "Een min laat alleen een daling zien, de grootte van de sprong hangt daar niet van af.",
+      "Het grootste van {=max(b-a,a-b)}, {=max(c-b,b-c)} en {=max(d-c,c-d)} is {r}.",
+      "De grootste sprong is dus {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel de waarde veranderde tussen opeenvolgende jaren. Een daling telt ook als sprong, het minteken heb je niet nodig.",
+      "Reken de drie veranderingen uit: tussen {a} en {b}, tussen {b} en {c}, tussen {c} en {d}. Kies de grootste.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-jump": "{w_first_jump} is alleen de eerste verandering, maar je zoekt de grootste van de drie: {r}.",
+      "spread": "{w_spread} is het verschil tussen de grootste en de kleinste waarde, maar je zoekt de sprong tussen opeenvolgende jaren, de grootste van de drie: {r}."
+    }
+  },
+  "S5.global-1S.06": {
+    "text": "De waarden per jaar: {a}, {=a+b}, {=a+b+c}, {=a+b+c+d}. Welke zin past het best bij de trend? 1) de waarden dalen; 2) de waarden blijven gelijk; 3) de waarden stijgen eerst en dalen dan; 4) de waarden stijgen. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Vergelijk opeenvolgende waarden: {=a+b} − {a} = {b}, {=a+b+c} − {=a+b} = {c}, {=a+b+c+d} − {=a+b+c} = {d}.",
+      "Elke keer wordt de waarde groter; hij daalde nooit en bleef nooit gelijk.",
+      "De waarden stijgen dus: dat is keuze {r}."
+    ],
+    "hints": [
+      "Vergelijk elke waarde met de vorige.",
+      "Kijk of de waarden elk jaar toenemen, of dat er een jaar is waarin ze dalen of gelijk blijven.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "falling": "Keuze {w_falling} past niet: elke waarde is groter dan de vorige. De waarden stijgen: keuze {r}.",
+      "constant": "Keuze {w_constant} past niet: de waarden veranderen en elke waarde is groter dan de vorige. De waarden stijgen: keuze {r}.",
+      "up-then-down": "Keuze {w_up_then_down} past niet: er is geen daling, elke waarde is groter dan de vorige. De waarden stijgen: keuze {r}."
+    }
+  },
+  "S5.global-1S.07": {
+    "text": "De waarden per jaar: {a}, {=a-b}, {=a-b-c}, {=a-b-c-d}. Welke zin past het best bij de trend? 1) de waarden dalen; 2) de waarden stijgen; 3) de waarden blijven gelijk; 4) de waarden dalen eerst en stijgen dan. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Vergelijk opeenvolgende waarden: {a} − {=a-b} = {b}, {=a-b} − {=a-b-c} = {c}, {=a-b-c} − {=a-b-c-d} = {d}.",
+      "Elke keer wordt de waarde kleiner; hij steeg nooit en bleef nooit gelijk.",
+      "De waarden dalen dus: dat is keuze {r}."
+    ],
+    "hints": [
+      "Vergelijk elke waarde met de vorige.",
+      "Kijk of de waarden elk jaar dalen, of dat er een jaar is waarin ze stijgen of gelijk blijven.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "rising": "Keuze {w_rising} past niet: elke waarde is kleiner dan de vorige. De waarden dalen: keuze {r}.",
+      "constant": "Keuze {w_constant} past niet: de waarden veranderen en elke waarde is kleiner dan de vorige. De waarden dalen: keuze {r}.",
+      "down-then-up": "Keuze {w_down_then_up} past niet: er is geen stijging, elke waarde is kleiner dan de vorige. De waarden dalen: keuze {r}."
+    }
+  },
+  "S5.global-1S.08": {
+    "text": "De waarden per jaar: {a}, {=a+b}, {=a+b+c}, {=a+b+c-d}, {=a+b+c-d-e}. Welke zin past het best bij de trend? 1) de waarden stijgen alleen; 2) de waarden stijgen eerst en dalen dan; 3) de waarden dalen alleen; 4) de waarden blijven gelijk. Antwoord met het nummer van de keuze.",
+    "solution": [
+      "Eerst stijgen de waarden: {=a+b} − {a} = {b}, {=a+b+c} − {=a+b} = {c}.",
+      "Na {=a+b+c} dalen ze: {=a+b+c} − {=a+b+c-d} = {d}, {=a+b+c-d} − {=a+b+c-d-e} = {e}.",
+      "De waarden stijgen dus eerst en dalen dan: dat is keuze {r}."
+    ],
+    "hints": [
+      "Vergelijk elke waarde met de vorige en zoek waar de richting verandert.",
+      "Kijk of de rij zowel een stijging als een daling heeft.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-rising": "Keuze {w_only_rising} past niet: na {=a+b+c} dalen de waarden. De waarden stijgen eerst en dalen dan: keuze {r}.",
+      "only-falling": "Keuze {w_only_falling} past niet: eerst stijgen de waarden tot {=a+b+c}. De waarden stijgen eerst en dalen dan: keuze {r}.",
+      "constant": "Keuze {w_constant} past niet: opeenvolgende waarden zijn verschillend, ze stijgen en dalen. Het juiste antwoord is keuze {r}."
+    }
+  },
+  "S5.global-1S.09": {
+    "text": "Een waarde groeide van {a} naar {x}. Met hoeveel procent is de waarde gegroeid?",
+    "solution": [
+      "De groei is {x} − {a} = {=x-a}.",
+      "Vergelijk de groei met de beginwaarde: {=x-a} : {a} = {=(x-a)/a}.",
+      "Voor procenten vermenigvuldig je met {=100}: {=(x-a)/a} × {=100} = {=(x-a)/a*100}.",
+      "De waarde is dus {r} procent gegroeid."
+    ],
+    "hints": [
+      "Zoek de groei: het was {a} en werd {x}.",
+      "Deel de groei {=x-a} door de beginwaarde {a} en vermenigvuldig met 100.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "increase": "{w_increase} is de groei in eenheden, maar je zoekt procenten van de beginwaarde: {=x-a} : {a} × {=100} = {r}.",
+      "new-value": "{w_new_value} komt uit optellen, maar procent is de groei gedeeld door de beginwaarde: {=x-a} : {a} × {=100} = {r}.",
+      "of-new-value": "{w_of_new_value} komt uit het vergelijken van de groei {=x-a} met de nieuwe waarde {x}. Je moet hem vergelijken met de beginwaarde {a}: {=x-a} : {a} × {=100} = {r}.",
+      "whole-ratio": "{w_whole_ratio} komt uit het delen van de nieuwe waarde {x} door {a} en vermenigvuldigen met 100. Dat is de nieuwe waarde als percentage van de oude, en de groei is alleen wat boven {=100} uitkomt: {=x-a} : {a} × {=100} = {r}."
+    }
+  },
+  "S5.global-1S.10": {
+    "text": "Een waarde groeit drie jaar gelijkmatig: {a} in het eerste jaar en {x} in het derde jaar. Hoe groot was de waarde in het tweede jaar?",
+    "solution": [
+      "De groei is gelijkmatig, dus elk jaar neemt de waarde met evenveel toe.",
+      "In twee jaar groeide de waarde met {x} − {a} = {=x-a}, dus in één jaar met {=x-a} : 2 = {=(x-a)/2}.",
+      "In het tweede jaar was de waarde {a} + {=(x-a)/2} = {r}."
+    ],
+    "hints": [
+      "Gelijkmatige groei betekent dat de waarde in het tweede jaar precies tussen het eerste en het derde jaar in ligt.",
+      "Zoek het getal precies tussen {a} en {x}: tel ze op en deel door 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first": "{w_first} is de waarde in het eerste jaar, maar je zoekt het tweede. Die is een stap groter dan de eerste: {a} + {=(x-a)/2} = {r}.",
+      "third": "{w_third} is de waarde in het derde jaar, maar je zoekt het tweede. Die is een stap kleiner dan de derde: {x} − {=(x-a)/2} = {r}.",
+      "step-only": "{w_step_only} is de groei in één jaar. Die moet je optellen bij de eerste waarde: {a} + {=(x-a)/2} = {r}."
+    }
+  },
+  "S5.global-1S.11": {
+    "text": "De waarden per jaar: {a}, {=a+b}, {=a+b+c}, {=a+b+c+d}. Hoe groot is de waarde volgend jaar, als die even veel stijgt als gemiddeld per jaar?",
+    "solution": [
+      "De totale toename in drie jaar: {=a+b+c+d} − {a} = {=b+c+d}.",
+      "Gemiddeld per jaar: {=b+c+d} : {=3} = {=(b+c+d)/3}.",
+      "De volgende waarde: {=a+b+c+d} + {=(b+c+d)/3} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst hoeveel de waarde in totaal groeide van het eerste tot het vierde jaar: het was {a} en werd {=a+b+c+d}. Deel de groei door 3.",
+      "Tel de gemiddelde groei per jaar op bij de laatste waarde {=a+b+c+d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-rise": "{w_last_rise} komt uit het optellen van alleen de laatste stijging {d}. Maar je zoekt de gemiddelde stijging: {=(b+c+d)/3}, en {=a+b+c+d} + {=(b+c+d)/3} = {r}.",
+      "total-rise": "{w_total_rise} komt uit het optellen van de hele groei van drie jaar. Volgend jaar groeit de waarde met de gemiddelde stijging van één jaar: {=a+b+c+d} + {=(b+c+d)/3} = {r}.",
+      "last-value": "{w_last_value} is de laatste waarde, en volgend jaar groeit die met de gemiddelde stijging {=(b+c+d)/3}: {=a+b+c+d} + {=(b+c+d)/3} = {r}."
+    }
+  },
+  "S5.global-1S.12": {
+    "text": "Waarde A is nu {a} en neemt elk jaar met {b} toe. Waarde B is nu {x} en neemt elk jaar met {c} toe. Over hoeveel jaar heeft A de waarde B ingehaald?",
+    "solution": [
+      "Nu is B groter dan A met {x} − {a} = {=x-a}.",
+      "Elk jaar groeit A sneller dan B, met {b} − {c} = {=b-c}, en het verschil wordt daarmee kleiner.",
+      "Het verschil is weg na {=x-a} : {=b-c} = {r} jaar."
+    ],
+    "hints": [
+      "Zoek hoeveel A nu kleiner is dan B: vergelijk {a} en {x}.",
+      "Elk jaar loopt A met {b} − {c} in op B. Hoe vaak past {=b-c} in het verschil {=x-a}?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "gap-only": "{w_gap_only} is het verschil tussen de waarden nu, maar je zoekt het aantal jaren: {=x-a} : {=b-c} = {r}.",
+      "rate-gap": "{w_rate_gap} is hoeveel het verschil in één jaar kleiner wordt, maar je zoekt het aantal jaren: {=x-a} : {=b-c} = {r}.",
+      "faster-only": "{w_faster_only} komt uit het delen van het verschil door de groei van A alleen. Maar B groeit ook, en het verschil wordt {=b-c} per jaar kleiner: {=x-a} : {=b-c} = {r}."
+    }
+  },
+  "S5.global-1S.13": {
+    "text": "De waarden per jaar: {a}, {=a+b}, {=a+b+b-c}, {=a+3*b-3*c}. Elk jaar wordt de groei met evenveel kleiner. Wat is de volgende waarde?",
+    "solution": [
+      "De groei in elk jaar: {b}, {=b-c}, {=b-2*c}.",
+      "Elke volgende groei is {c} kleiner, dus de volgende is {=b-2*c} − {c} = {=b-3*c}.",
+      "De volgende waarde: {=a+3*b-3*c} + {=b-3*c} = {r}."
+    ],
+    "hints": [
+      "Zoek de groei in elk jaar: {b}, {=b-c}, {=b-2*c}. Die wordt telkens met evenveel kleiner.",
+      "De volgende groei is {c} kleiner dan de laatste. Zoek hem en tel hem op bij {=a+3*b-3*c}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-rise-again": "{w_last_rise_again} komt uit het herhalen van de laatste groei {=b-2*c}. Maar de groei blijft kleiner worden, en de volgende is {=b-3*c}: {=a+3*b-3*c} + {=b-3*c} = {r}.",
+      "first-rise": "{w_first_rise} komt uit het optellen van de eerste groei {b}. De groei wordt kleiner, en de volgende is {=b-3*c}: {=a+3*b-3*c} + {=b-3*c} = {r}."
+    }
+  },
+  "S5.global-1S.14": {
+    "text": "De waarden per jaar: {a}, {b}, {c}, {d}. Welke grafiek hoort bij deze waarden? Antwoord met het nummer van de grafiek.",
+    "solution": [
+      "Zoek de veranderingen van jaar tot jaar: {b} − {a} = {=b-a}, {c} − {b} = {=c-b}, {d} − {c} = {=d-c}.",
+      "Het teken van een verandering laat zien of de lijn tussen twee punten omhoog of omlaag gaat.",
+      "De grafiek waarin de lijn van links naar rechts precies zo loopt, is grafiek {r}."
+    ],
+    "hints": [
+      "Bepaal bij elk paar opeenvolgende waarden of de lijn omhoog of omlaag gaat.",
+      "Streep de grafieken weg waarin de lijn alleen omhoog gaat, alleen omlaag gaat of in de omgekeerde volgorde loopt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reversed-order": "Grafiek {w_reversed_order} is getekend met dezelfde waarden, maar in omgekeerde volgorde: van links naar rechts loopt de lijn niet zo. Het juiste antwoord is grafiek {r}.",
+      "only-rising": "Grafiek {w_only_rising} stijgt alleen, maar de waarden stijgen én dalen. Het juiste antwoord is grafiek {r}.",
+      "only-falling": "Grafiek {w_only_falling} daalt alleen, maar de waarden stijgen én dalen. Het juiste antwoord is grafiek {r}."
+    }
+  },
+  "S6.patterns.01": {
+    "text": "Zet de rij getallen voort: {row}. Welk getal komt hierna?",
+    "solution": [
+      "De stap van de rij is hoeveel een getal groter is dan zijn linkerbuur: {=a+b} − {a} = {b}.",
+      "Het laatste getal van de rij is {=a+3*b}; tel de stap erbij op: {=a+3*b} + {b} = {r}.",
+      "Het volgende getal is dus {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel elk getal groter is dan het vorige.",
+      "De stap is {b}. Tel die op bij het laatste getal van de rij, {=a+3*b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is het laatste getal van de rij, dat staat er al. Het volgende is een stap groter: {=a+3*b} + {b} = {r}.",
+      "double-step": "{w_double_step} komt uit het optellen van twee stappen van {b}, maar je hebt er maar één nodig: {=a+3*b} + {b} = {r}.",
+      "n-times-step": "{w_n_times_step} is de stap {b} keer {=5}, maar de rij begint niet bij nul. Het volgende getal is het laatste getal plus de stap: {=a+3*b} + {b} = {r}."
+    }
+  },
+  "S6.patterns.02": {
+    "text": "Zet de rij getallen voort: {row}. Welk getal komt hierna?",
+    "solution": [
+      "De stap van de rij is hoeveel een getal kleiner is dan zijn linkerbuur: {a} − {=a-b} = {b}.",
+      "Het laatste getal van de rij is {=a-3*b}; trek de stap ervan af: {=a-3*b} − {b} = {r}.",
+      "Het volgende getal is dus {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel elk getal kleiner is dan het vorige.",
+      "De stap is {b}. Trek die af van het laatste getal van de rij, {=a-3*b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is het laatste getal van de rij, dat staat er al. Het volgende is een stap kleiner: {=a-3*b} − {b} = {r}.",
+      "double-step": "{w_double_step} komt uit het aftrekken van twee stappen van {b}, maar je hebt er maar één nodig: {=a-3*b} − {b} = {r}.",
+      "adds-step": "{w_adds_step} komt uit het optellen van de stap, maar de rij daalt, dus trek je de stap af: {=a-3*b} − {b} = {r}."
+    }
+  },
+  "S6.patterns.03": {
+    "text": "Het eerste getal van een rij is {a} en elk volgend getal is {b} groter dan het vorige. Wat is het tiende getal van de rij?",
+    "solution": [
+      "Van het eerste getal tot het tiende zijn er negen stappen: het eerste getal staat er al.",
+      "Elke stap voegt {b} toe, dus negen stappen voegen {=9} × {b} = {=9*b} toe.",
+      "Het tiende getal: {a} + {=9*b} = {r}."
+    ],
+    "hints": [
+      "Tussen het eerste en het tiende getal zitten negen stappen, niet tien.",
+      "Negen stappen van {b} zijn samen {=9*b}. Tel dat op bij het eerste getal {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "ten-steps": "{w_ten_steps} komt uit tien stappen, maar tussen het eerste en het tiende getal zitten er negen: {a} + {=9} × {b} = {r}.",
+      "eight-steps": "{w_eight_steps} komt uit acht stappen, maar tussen het eerste en het tiende getal zitten er negen: {a} + {=9} × {b} = {r}.",
+      "step-times-ten": "{w_step_times_ten} is tien stappen zonder het eerste getal van de rij. Je hebt negen stappen en het eerste getal nodig: {a} + {=9*b} = {r}."
+    }
+  },
+  "S6.patterns.04": {
+    "text": "Zet de rij getallen voort: {row}. Welk getal komt hierna?",
+    "solution": [
+      "Elk getal is twee keer zo groot als het vorige: {a} × 2 = {=2*a}, {=2*a} × 2 = {=4*a}.",
+      "Het laatste getal van de rij is {=8*a}; verdubbel het: {=8*a} × 2 = {r}.",
+      "Het volgende getal is dus {r}."
+    ],
+    "hints": [
+      "Vergelijk opeenvolgende getallen: hoeveel keer zo groot is elk getal als het vorige?",
+      "Elk getal is twee keer zo groot als het vorige. Vermenigvuldig het laatste getal {=8*a} met 2.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "added": "{w_added} komt uit optellen, maar de getallen van de rij worden verdubbeld: {=8*a} × 2 = {r}.",
+      "last": "{w_last} is het laatste getal van de rij, dat staat er al. Het volgende is de verdubbeling ervan: {=8*a} × 2 = {r}.",
+      "same-difference": "{w_same_difference} komt uit het weer optellen van hetzelfde verschil. Hier worden de getallen verdubbeld, ze nemen niet met evenveel toe: {=8*a} × 2 = {r}."
+    }
+  },
+  "S6.patterns.05": {
+    "text": "Kralen zijn zo geregen dat een patroon van {a} kleuren steeds herhaald wordt. Welke kleur van het patroon, het hoeveelste, heeft kraal nummer {b}?",
+    "solution": [
+      "Het patroon van {a} kleuren herhaalt zich, dus deel je het kraalnummer door {a}: in {b} kralen zitten {=floor(b/a)} hele patronen en blijft {=mod(b,a)} over.",
+      "Als er {=0} overblijft, is de kraal de laatste van zijn patroon en heeft hij kleur nummer {a}. Anders is het kleurnummer gelijk aan wat er overblijft.",
+      "Kraal nummer {b} heeft kleur nummer {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel hele patronen van {a} kralen er voor kraal nummer {b} passen en hoeveel kralen er overblijven.",
+      "Wat overblijft, laat de kleur zien. Blijft er niets over, dan is de kraal de laatste van het patroon: kleur nummer {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "position": "{w_position} is het nummer van de kraal zelf, maar je zoekt het nummer van zijn kleur in een patroon van {a} kleuren: {r}.",
+      "remainder": "{w_remainder} is wat overblijft na het delen van het kraalnummer door {a}. Blijft er niets over, dan heeft de kraal de laatste kleur van het patroon, niet kleur nul. De kleur van de kraal is nummer {r}."
+    }
+  },
+  "S6.patterns.06": {
+    "text": "In de rij getallen ontbreekt één getal: {row}. Zoek het ontbrekende getal.",
+    "solution": [
+      "De stap van de rij: {=a+b} − {a} = {b}, de getallen nemen met {b} toe.",
+      "Het ontbrekende getal komt na {=a+b}: {=a+b} + {b} = {=a+2*b}.",
+      "Controle: {=a+2*b} + {b} = {=a+3*b}, zoals verderop staat. Het ontbrekende getal is dus {r}."
+    ],
+    "hints": [
+      "Zoek de stap met twee getallen die naast elkaar staan.",
+      "De stap is {b}. Tel die op bij het getal voor de lege plek, {=a+b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "before": "{w_before} staat al in de rij voor de lege plek, en het ontbrekende getal komt er meteen na: {=a+b} + {b} = {r}.",
+      "after": "{w_after} staat al in de rij na de lege plek, en het ontbrekende getal is een stap kleiner: {=a+3*b} − {b} = {r}."
+    }
+  },
+  "S6.patterns.07": {
+    "text": "Een rij getallen begint zo: 1, 4, 9, … en loopt door tot {a} × {a}. Wat is het volgende getal van de rij?",
+    "solution": [
+      "De getallen van de rij ontstaan door een getal met zichzelf te vermenigvuldigen: 1 × 1 = 1, 2 × 2 = 4, 3 × 3 = 9.",
+      "Het laatste getal van de rij: {a} × {a} = {=a*a}.",
+      "Het volgende getal is {=a+1} met zichzelf vermenigvuldigd: {=a+1} × {=a+1} = {r}."
+    ],
+    "hints": [
+      "Zoek de regel van de rij: 1 × 1, 2 × 2, 3 × 3.",
+      "Neem het volgende getal en vermenigvuldig het met zichzelf.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is het laatste kwadraat, dat staat er al. Het volgende getal is het kwadraat van {=a+1}: {=a+1} × {=a+1} = {r}.",
+      "doubled": "{w_doubled} is twee keer het laatste getal {=a*a}, maar de getallen van de rij zijn kwadraten: {=a+1} × {=a+1} = {r}.",
+      "twice-the-base": "{w_twice_the_base} komt uit het verdubbelen van {=a+1}, maar de getallen van de rij ontstaan door een getal met zichzelf te vermenigvuldigen: {=a+1} × {=a+1} = {r}."
+    }
+  },
+  "S6.patterns.08": {
+    "text": "Voor één driehoek heb je 3 lucifers nodig, voor een rij van 2 driehoeken 5, voor een rij van 3 driehoeken 7. Hoeveel lucifers heb je nodig voor een rij van {a} driehoeken?",
+    "solution": [
+      "Driehoeken naast elkaar delen één lucifer, dus elke nieuwe driehoek voegt er maar 2 toe.",
+      "De eerste driehoek is 3 lucifers en de andere {=a-1} voegen er elk 2 toe: 3 + {=a-1} × 2 = {r}.",
+      "Voor een rij van {a} driehoeken zijn dus {r} lucifers nodig."
+    ],
+    "hints": [
+      "Zoek hoeveel lucifers elke nieuwe driehoek toevoegt.",
+      "De eerste driehoek is 3 lucifers en elk van de andere {=a-1} voegt er 2 toe.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "separate": "{w_separate} zijn de lucifers voor {a} losse driehoeken van elk 3, maar driehoeken naast elkaar delen een lucifer: 3 + {=a-1} × 2 = {r}.",
+      "two-per-triangle": "{w_two_per_triangle} telt de extra lucifer van de eerste driehoek niet mee: die kost 3 lucifers, niet 2: 3 + {=a-1} × 2 = {r}."
+    }
+  },
+  "S6.patterns.09": {
+    "text": "Bereken de som van alle getallen van 1 tot en met {a}.",
+    "solution": [
+      "Schrijf de getallen van 1 tot en met {a} op en daaronder dezelfde getallen in omgekeerde volgorde.",
+      "In elke kolom is de som 1 + {a} = {=a+1}, en er zijn {a} kolommen: {a} × {=a+1} = {=a*(a+1)}.",
+      "Zo hebben we de som twee keer geteld, dus neem je de helft: {=a*(a+1)} : 2 = {r}."
+    ],
+    "hints": [
+      "Tel het eerste getal op bij het laatste: 1 + {a}.",
+      "Zulke paren geven allemaal {=a+1}, en er zijn half zoveel paren als getallen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is het laatste getal, maar je zoekt de som van ze allemaal: {a} × {=a+1} : 2 = {r}.",
+      "square": "{w_square} is {a} keer {a}, maar de som is de helft van {a} keer {=a+1}: {a} × {=a+1} : 2 = {r}.",
+      "not-halved": "{w_not_halved} komt uit het niet halveren. De getallen zijn twee keer opgeteld, dus neem je de helft: {=a*(a+1)} : 2 = {r}."
+    }
+  },
+  "S6.patterns.10": {
+    "text": "Een rij getallen neemt gelijkmatig toe: {row}. Hoeveel groter is elk getal dan het vorige?",
+    "solution": [
+      "De stap van de rij is hoeveel groter een getal is dan zijn linkerbuur.",
+      "Neem de eerste twee getallen en trek het kleinste van het grootste af: {=a+b} − {a} = {r}.",
+      "Elk getal is dus {r} groter dan het vorige."
+    ],
+    "hints": [
+      "Vergelijk twee getallen van de rij die naast elkaar staan: {a} en het getal erna.",
+      "Trek het kleinste getal van het grootste af: {=a+b} − {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first": "{w_first} is het eerste getal van de rij, maar je zoekt de stap tussen buren: {=a+b} − {a} = {r}.",
+      "two-steps": "{w_two_steps} zijn twee stappen, maar je zoekt er één: {=a+b} − {a} = {r}."
+    }
+  },
+  "S6.patterns.11": {
+    "text": "Begin met het getal {a}. Tel eerst {b} op en trek dan {c} af. Herhaal dit paar handelingen {d} keer achter elkaar. Welk getal heb je aan het eind?",
+    "solution": [
+      "Bij één paar handelingen wordt het getal eerst {b} groter en dan {c} kleiner: {b} − {c} = {=b-c}.",
+      "Er zijn {d} paren, dus het getal verandert met {d} × {=b-c} = {=d*(b-c)}.",
+      "Aan het eind is het {a} + {=d*(b-c)} = {r}."
+    ],
+    "hints": [
+      "Zoek hoe het getal verandert bij één paar handelingen: {b} erbij, {c} eraf.",
+      "Eén paar verandert het getal met {=b-c}. Vermenigvuldig dat met {d} en tel het op bij {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "only-additions": "{w_only_additions} laat het aftrekken weg: {a} + {d} × {=b-c} = {r}.",
+      "one-pair": "{w_one_pair} telt maar één paar handelingen mee, terwijl er {d} zijn: {a} + {d} × {=b-c} = {r}.",
+      "change-only": "{w_change_only} is alleen de verandering, maar je zoekt het getal aan het eind, met het begin {a} erbij: {a} + {d} × {=b-c} = {r}."
+    }
+  },
+  "S6.patterns.12": {
+    "text": "Hoeveel getallen staan er in de rij {row}, als die met stappen van {b} loopt van {a} tot {y}?",
+    "solution": [
+      "Van {a} tot {y} namen de getallen toe met {y} − {a} = {=y-a}.",
+      "Eén stap is {b}, dus er zijn {=y-a} : {b} = {c} stappen.",
+      "Het eerste getal staat er zonder stap, dus er is één getal meer dan stappen: {c} + 1 = {r}.",
+      "De rij heeft dus {r} getallen."
+    ],
+    "hints": [
+      "Tel de stappen tussen het eerste en het laatste getal: van {a} tot {y} met stappen van {b}.",
+      "Deel {y} − {a} door {b}, dan heb je het aantal stappen. Er is één getal meer dan stappen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "steps": "{w_steps} is het aantal stappen, maar er is één getal meer dan stappen, want het eerste getal staat er zonder stap: {c} + 1 = {r}.",
+      "next": "{w_next} is één te veel. Het eerste getal staat er zonder stap: {c} + 1 = {r}.",
+      "difference": "{w_difference} is hoeveel de getallen toenamen van {a} tot {y}, maar je zoekt hoeveel getallen er zijn: {c} + 1 = {r}."
+    }
+  },
+  "S6.patterns.13": {
+    "text": "Kralen zijn zo geregen dat een patroon van {a} kleuren steeds herhaald wordt. Hoeveel kralen van de eerste kleur zitten er in de eerste {b} kralen?",
+    "solution": [
+      "Elk heel patroon heeft één kraal van de eerste kleur. In {b} kralen zitten {=floor(b/a)} hele patronen en blijft {=mod(b,a)} over.",
+      "Blijft er iets over, dan begint daar nog een patroon en dat heeft ook een kraal van de eerste kleur.",
+      "Kralen van de eerste kleur: {=floor(b/a)} + {=min(1,mod(b,a))} = {r}."
+    ],
+    "hints": [
+      "Tel hoeveel hele patronen er in de gegeven kralen passen.",
+      "Vergeet het onvolledige patroon aan het eind niet: de eerste kraal daarvan heeft ook de eerste kleur.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "whole-only": "{w_whole_only} is het aantal hele patronen. Maar de {=mod(b,a)} kralen die overblijven beginnen nog een patroon, en de eerste kraal daarvan heeft de eerste kleur: {=floor(b/a)} + {=min(1,mod(b,a))} = {r}.",
+      "plus-one": "{w_plus_one} komt uit het meetellen van een onvolledig patroon terwijl dat er niet is, of uit een extra erbij. In {b} kralen is het aantal kralen van de eerste kleur {=floor(b/a)} + {=min(1,mod(b,a))} = {r}.",
+      "remainder": "{w_remainder} is wat overblijft na het delen van {b} door {a}, maar je zoekt het aantal kralen van de eerste kleur: {=floor(b/a)} + {=min(1,mod(b,a))} = {r}."
+    }
+  },
+  "S6.patterns.14": {
+    "text": "Een rij begint met het getal {a} en elk volgend getal is {b} groter dan het vorige. Wat is het eerste getal van de rij dat groter is dan {c}?",
+    "solution": [
+      "Van {a} tot {c} is het verschil {c} − {a} = {=c-a}, en daarin passen {=floor((c-a)/b)} hele stappen van {b}.",
+      "Na die stappen is het getal {a} + {=floor((c-a)/b)} × {b} = {=a+floor((c-a)/b)*b} nog niet groter dan {c}, dus je hebt nog één stap nodig.",
+      "Het eerste getal groter dan {c}: {=a+floor((c-a)/b)*b} + {b} = {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel hele stappen je kunt zetten zonder voorbij {c} te komen.",
+      "Het getal dat je bereikt is nog niet groter dan {c}. Zet nog één stap.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-not-above": "{w_last_not_above} is het laatste getal van de rij dat niet groter is dan {c}, maar je zoekt het eerste dat wel groter is: {w_last_not_above} + {b} = {r}.",
+      "limit-itself": "{w_limit_itself} is het getal {c} zelf, maar dat staat misschien niet in de rij, en je zoekt het eerste getal van de rij dat groter is: {=a+floor((c-a)/b)*b} + {b} = {r}.",
+      "ceil-step": "{w_ceil_step} is het eerste getal van de rij dat niet kleiner is dan {c}. Het kan gelijk zijn aan {c}, maar je zoekt een getal dat echt groter is: {=a+floor((c-a)/b)*b} + {b} = {r}."
+    }
+  },
+  "S6.patterns.15": {
+    "text": "De getallen van {=1} tot en met {a} worden achter elkaar opgeschreven in één regel, zonder spaties of komma’s: na {=9} komt {=10}, dan {=11} en zo verder. Hoeveel cijfers staan er in deze regel?",
+    "solution": [
+      "De getallen van {=1} tot en met {=9} hebben één cijfer, het zijn er {=9} en ze hebben samen {=9} cijfers.",
+      "De getallen van {=10} tot en met {a} hebben twee cijfers, het zijn er {a} − {=9} = {=a-9} en ze hebben samen {=a-9} × {=2} = {=2*(a-9)} cijfers.",
+      "Alle cijfers: {=9} + {=2*(a-9)} = {r}."
+    ],
+    "hints": [
+      "Verdeel de getallen in getallen met één cijfer en met twee cijfers.",
+      "Er zijn negen getallen met één cijfer. Hoeveel getallen hebben twee cijfers, en hoeveel cijfers zijn dat samen?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-two": "{w_all_two} komt uit het tellen van twee cijfers voor elk getal. Maar de getallen van {=1} tot en met {=9} hebben één cijfer: {=9} + {=2*(a-9)} = {r}.",
+      "count": "{w_count} is hoeveel getallen het zijn, maar de getallen met twee cijfers hebben er elk twee: {=9} + {=2*(a-9)} = {r}.",
+      "off-by-one": "{w_off_by_one} komt uit het beginnen van de getallen met twee cijfers bij {=11}. Maar {=10} heeft ook twee cijfers: {=9} + {=2*(a-9)} = {r}."
+    }
+  },
+  "S6.patterns.16": {
+    "text": "Met lucifers wordt een rij driehoeken gelegd, waarbij driehoeken naast elkaar één lucifer delen. Voor één driehoek zijn {=3} lucifers nodig, voor een rij van {=2} driehoeken {=5}, voor een rij van {=3} driehoeken {=7}. Hoeveel driehoeken zitten er in de rij waarvoor {s} lucifers nodig waren?",
+    "solution": [
+      "De eerste driehoek is {=3} lucifers en elke volgende voegt er {=2} toe.",
+      "Voor de andere driehoeken waren {s} − {=3} = {=s-3} lucifers nodig, dat zijn {=s-3} : {=2} = {=(s-3)/2} driehoeken.",
+      "Alle driehoeken: {=(s-3)/2} + {=1} = {r}."
+    ],
+    "hints": [
+      "De eerste driehoek kost drie lucifers en elke volgende voegt er twee toe.",
+      "Trek de lucifers van de eerste driehoek af en deel de rest door wat elke volgende driehoek toevoegt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "without-first": "{w_without_first} is het aantal driehoeken zonder de eerste, maar de eerste staat ook in de rij: {=(s-3)/2} + {=1} = {r}.",
+      "one-more": "{w_one_more} is één te veel. De eerste driehoek kost {=3} lucifers, niet {=2}: {=(s-3)/2} + {=1} = {r}.",
+      "separate": "{w_separate} komt uit delen door {=3}, alsof de driehoeken geen lucifers delen. Buren delen er wel een: {=(s-3)/2} + {=1} = {r}."
+    }
+  },
+  "S6.patterns-1S.01": {
+    "text": "Een rij getallen: {row}. De stappen tussen opeenvolgende getallen worden steeds groter: 1, 2, 3 enzovoort. Welk getal komt hierna?",
+    "solution": [
+      "De stappen tussen opeenvolgende getallen zijn 1, 2, 3, 4 en elke stap is 1 groter dan de vorige.",
+      "De volgende stap is 5 en het laatste getal van de rij is {=a+10}.",
+      "Dat geeft {=a+10} + 5 = {r}."
+    ],
+    "hints": [
+      "Zoek de verschillen tussen opeenvolgende getallen: dat zijn 1, 2, 3, 4.",
+      "Het volgende verschil is één groter dan het laatste, dus 5. Tel dat op bij het laatste getal {=a+10}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is het laatste getal van de rij, dat staat er al. Het volgende is de stap 5 groter: {=a+10} + 5 = {r}.",
+      "constant-step": "{w_constant_step} komt uit dezelfde stap van 4 als net, maar de stappen worden steeds groter: {=a+10} + 5 = {r}."
+    }
+  },
+  "S6.patterns-1S.02": {
+    "text": "Een rij getallen is zo gemaakt: elk getal is de som van de twee getallen ervoor. De eerste getallen: {row}. Welk getal komt hierna?",
+    "solution": [
+      "In deze rij is elk getal de som van de twee getallen ervoor: {a} + {b} = {=a+b}.",
+      "De laatste twee getallen van de rij zijn {=a+b} en {=a+2*b}.",
+      "Het volgende getal is hun som: {=a+b} + {=a+2*b} = {r}."
+    ],
+    "hints": [
+      "De regel: elk getal is de som van de twee getallen ervoor. Controleer: {a} + {b} = {=a+b}.",
+      "Tel de laatste twee getallen van de rij bij elkaar op: {=a+b} en {=a+2*b}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is het laatste getal van de rij, dat staat er al. Het volgende is de som van de laatste twee: {=a+b} + {=a+2*b} = {r}.",
+      "doubled": "{w_doubled} is twee keer het laatste getal {=a+2*b}, maar je zoekt de som van de laatste twee: {=a+b} + {=a+2*b} = {r}."
+    }
+  },
+  "S6.patterns-1S.03": {
+    "text": "Bereken de som van de eerste {a} oneven getallen: 1 + 3 + 5 + …",
+    "solution": [
+      "Controleer met de eerste getallen: 1 = 1 × 1, 1 + 3 = {=1+3} = 2 × 2, 1 + 3 + 5 = {=1+3+5} = 3 × 3.",
+      "De som van de eerste oneven getallen is dat aantal keer zichzelf.",
+      "Voor {a} getallen: {a} × {a} = {r}."
+    ],
+    "hints": [
+      "Probeer het met kleine aantallen: 1, 1 + 3, 1 + 3 + 5.",
+      "De uitkomst is het aantal getallen met zichzelf vermenigvuldigd: {a} × {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "count": "{w_count} is het aantal getallen dat je optelt, maar je zoekt de som: {a} × {a} = {r}.",
+      "double": "{w_double} komt uit vermenigvuldigen met 2, maar de som is {a} keer {a}: {r}."
+    }
+  },
+  "S6.patterns-1S.04": {
+    "text": "Een rij getallen: 2, 5, 10, 17, … Elk getal is het kwadraat van zijn plaatsnummer plus 1. Wat is het getal op plaats {a}?",
+    "solution": [
+      "De regel van de rij: vermenigvuldig het plaatsnummer met zichzelf en tel er 1 bij op.",
+      "Plaats {a} met zichzelf vermenigvuldigd: {a} × {a} = {=a*a}.",
+      "Tel er 1 bij op: {=a*a} + 1 = {r}."
+    ],
+    "hints": [
+      "Controleer de regel met de eerste getallen: 1 × 1 + 1 = 2.",
+      "Neem het kwadraat van het plaatsnummer {a} en tel er 1 bij op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "square": "{w_square} is het kwadraat van het plaatsnummer {a}, maar je moet er nog 1 bij optellen: {a} × {a} + 1 = {r}.",
+      "number-plus-one": "{w_number_plus_one} komt uit optellen, maar het plaatsnummer {a} moet je met zichzelf vermenigvuldigen: {a} × {a} + 1 = {r}."
+    }
+  },
+  "S6.patterns-1S.05": {
+    "text": "Voor één vierkant heb je 4 lucifers nodig, voor een rij van 2 vierkanten 7, voor een rij van 3 vierkanten 10. Hoeveel lucifers heb je nodig voor een rij van {a} vierkanten?",
+    "solution": [
+      "Vierkanten naast elkaar delen één lucifer, dus elk nieuw vierkant voegt er maar 3 toe.",
+      "Het eerste vierkant is 4 lucifers en de andere {=a-1} voegen er elk 3 toe: 4 + {=a-1} × 3 = {r}.",
+      "Voor een rij van {a} vierkanten zijn dus {r} lucifers nodig."
+    ],
+    "hints": [
+      "Zoek hoeveel lucifers elk nieuw vierkant toevoegt.",
+      "Het eerste vierkant is 4 lucifers en elk van de andere {=a-1} voegt er 3 toe.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "separate": "{w_separate} zijn de lucifers voor {a} losse vierkanten van elk 4, maar vierkanten naast elkaar delen een lucifer: 4 + {=a-1} × 3 = {r}.",
+      "three-per-square": "{w_three_per_square} telt de vierde lucifer van het eerste vierkant niet mee: 4 + {=a-1} × 3 = {r}."
+    }
+  },
+  "S6.patterns-1S.06": {
+    "text": "In de rij {row} is elk getal {b} groter dan het vorige. Op welke plaats in deze rij staat het getal {y}?",
+    "solution": [
+      "Van {a} tot {y} namen de getallen toe met {y} − {a} = {=y-a}.",
+      "Eén stap is {b}, dus er zijn {=y-a} : {b} = {c} stappen.",
+      "Het getal {a} staat op plaats 1 en elke stap telt 1 op bij de plaats: 1 + {c} = {r}.",
+      "Het getal {y} staat dus op plaats {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel stappen van {b} er zijn van {a} tot {y}.",
+      "Deel {y} − {a} door {b}, dan heb je het aantal stappen. De plaats is één meer.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "steps": "{w_steps} is het aantal stappen, maar de plaats is één meer, want het eerste getal staat op plaats 1: {c} + 1 = {r}.",
+      "value-difference": "{w_value_difference} is het verschil tussen de waarden, maar je zoekt de plaats: {c} + 1 = {r}."
+    }
+  },
+  "S6.patterns-1S.07": {
+    "text": "Een rij getallen: {row}. De stappen wisselen af: eerst tel je {b} op, dan {c}, dan weer {b} enzovoort. Welk getal staat op de zevende plaats?",
+    "solution": [
+      "De stappen komen om de beurt: {b}, {c}, {b}, {c}. Het vijfde getal van de rij is {=a+2*(b+c)}.",
+      "Nog twee stappen leiden naar het zevende getal: eerst {b}, dan {c}.",
+      "Dat geeft {=a+2*(b+c)} + {b} + {c} = {r}."
+    ],
+    "hints": [
+      "De stappen komen in paren: {b} en {c}. Eén paar voegt {=b+c} toe.",
+      "Zes stappen leiden naar het zevende getal: dat zijn drie van zulke paren. Tel drie paren op bij {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-shown": "{w_last_shown} staat op de vijfde plaats, maar je zoekt de zevende: nog twee stappen, {b} en {c}.",
+      "single-step": "{w_single_step} komt uit steeds dezelfde stap {b}, maar de stappen wisselen af: {b}, {c}, {b}, {c}, {b}, {c}."
+    }
+  },
+  "S6.patterns-1S.08": {
+    "text": "Een rij getallen begint zo: 1, 8, 27, … en loopt door tot {a} × {a} × {a}. Wat is het volgende getal van de rij?",
+    "solution": [
+      "De getallen van de rij zijn een getal dat twee keer met zichzelf is vermenigvuldigd: 1 × 1 × 1 = 1, 2 × 2 × 2 = 8.",
+      "Het laatste getal van de rij: {a} × {a} × {a} = {=a*a*a}.",
+      "Het volgende getal gebruikt {=a+1}: {=a+1} × {=a+1} × {=a+1} = {r}."
+    ],
+    "hints": [
+      "Zoek de regel van de rij: 1 × 1 × 1, 2 × 2 × 2.",
+      "Neem het volgende getal, {=a+1}, en vermenigvuldig het twee keer met zichzelf.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is de laatste derdemacht, die staat er al. De volgende: {=a+1} × {=a+1} × {=a+1} = {r}.",
+      "square": "{w_square} is het kwadraat van {=a+1}, maar de rij bestaat uit derdemachten: {=a+1} × {=a+1} × {=a+1} = {r}."
+    }
+  },
+  "S6.patterns-1S.09": {
+    "text": "Hoeveel getallen van 1 tot en met {x} zijn deelbaar door {a}?",
+    "solution": [
+      "De getallen die deelbaar zijn door {a} zijn {a}, {=2*a}, {=3*a} enzovoort, elk {a} groter dan het vorige.",
+      "Ze lopen tot {x} en hun aantal is {x} : {a} = {r}.",
+      "Van 1 tot en met {x} zijn er dus {r} getallen deelbaar door {a}."
+    ],
+    "hints": [
+      "Getallen die deelbaar zijn door {a} komen om de {a}: {a}, {=2*a}, {=3*a} enzovoort.",
+      "Hoe vaak past {a} in {x}? Deel {x} door {a}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "limit": "{w_limit} is de grens, maar je zoekt het aantal veelvouden: {x} : {a} = {r}.",
+      "one-more": "{w_one_more} is er één te veel: na {x} zijn er geen veelvouden meer, en nul telt niet mee: {x} : {a} = {r}."
+    }
+  },
+  "S6.patterns-1S.10": {
+    "text": "Drie getallen {a}, {b} en {c} herhalen zich steeds: {a}, {b}, {c}, {a}, {b}, {c} enzovoort. Wat is de som van de eerste {x} getallen van deze rij?",
+    "solution": [
+      "De eerste {x} getallen zijn {d} drietallen {a}, {b}, {c}.",
+      "Eén drietal geeft {a} + {b} + {c} = {=a+b+c}.",
+      "Alle drietallen samen: {d} × {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "Zoek de som van één drietal: {a} + {b} + {c}.",
+      "De eerste {x} getallen zijn {d} drietallen. Vermenigvuldig de som van één drietal met {d}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-triple": "{w_one_triple} is de som van één drietal, maar er zijn {d} drietallen: {d} × {=a+b+c} = {r}.",
+      "terms": "{w_terms} is het aantal getallen in de rij, maar je zoekt hun som: {d} × {=a+b+c} = {r}."
+    }
+  },
+  "S6.patterns-1S.11": {
+    "text": "Het eerste getal van een rij is {a}. Elk volgend getal is twee keer het vorige, plus {b}. Wat is het vierde getal van de rij?",
+    "solution": [
+      "Het tweede getal: 2 × {a} + {b} = {=2*a+b}.",
+      "Het derde getal: 2 × {=2*a+b} + {b} = {=2*(2*a+b)+b}.",
+      "Het vierde getal: 2 × {=2*(2*a+b)+b} + {b} = {r}."
+    ],
+    "hints": [
+      "Reken de getallen een voor een uit, beginnend bij het eerste: 2 × {a} + {b}.",
+      "Verdubbel elke keer het laatste getal en tel {b} op: doe dit drie keer.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "third": "{w_third} is het derde getal, maar je zoekt het vierde: nog een keer verdubbelen en {b} erbij.",
+      "doubling-only": "{w_doubling_only} laat het optellen van {b} weg: bij elke stap verdubbel je en tel je op."
+    }
+  },
+  "S6.patterns-1S.12": {
+    "text": "Bereken de som van {a} getallen: {=1} + {=2} + {=4} + {=8} + …, waarbij elk volgend getal twee keer zo groot is als het vorige.",
+    "solution": [
+      "Tel één op bij de sommen: {=1} + {=1} = {=2}, {=1} + {=2} + {=1} = {=4}, {=1} + {=2} + {=4} + {=1} = {=8}.",
+      "Elke keer krijg je het volgende getal van de rij, dus voor {a} getallen krijg je {=pow(2,a)}.",
+      "De som zelf is er één minder: {=pow(2,a)} − {=1} = {r}."
+    ],
+    "hints": [
+      "Tel één op bij de eerste sommen en kijk wat er gebeurt.",
+      "De som en die ene samen vormen het volgende getal van de rij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "last-term": "{w_last_term} is het laatste getal van de rij, maar je zoekt de som van alle getallen: {=pow(2,a)} − {=1} = {r}.",
+      "power": "{w_power} is het volgende getal van de rij, en de som is er één minder: {=pow(2,a)} − {=1} = {r}."
+    }
+  },
+  "S6.patterns-1S.13": {
+    "text": "In een rij is elk getal vanaf het derde de som van de twee getallen ervoor. Het derde getal is {=a+b} en het vierde is {=a+2*b}. Wat is het eerste getal?",
+    "solution": [
+      "Het vierde getal is de som van het tweede en het derde, dus het tweede is {=a+2*b} − {=a+b} = {b}.",
+      "Het derde getal is de som van het eerste en het tweede, dus het eerste is {=a+b} − {b} = {r}."
+    ],
+    "hints": [
+      "Zoek eerst het tweede getal: het vierde is de som van het tweede en het derde.",
+      "Zoek dan het eerste: het derde is de som van het eerste en het tweede.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second": "{w_second} is het tweede getal van de rij, maar de vraag gaat over het eerste: {=a+b} − {b} = {r}.",
+      "third": "{w_third} is het derde getal, maar het eerste is daar het tweede getal {b} van kleiner: {=a+b} − {b} = {r}."
+    }
+  },
+  "S6.patterns-1S.14": {
+    "text": "Ruiten worden gemaakt van hokjes: de eerste ruit is {=1} hokje, de tweede {=5} hokjes, de derde {=13} hokjes. De ruit met nummer n bestaat uit een vierkant van n × n en een vierkant van (n − {=1}) × (n − {=1}) hokjes, het ene op het andere. Hoeveel hokjes zitten er in de ruit met nummer {a}?",
+    "solution": [
+      "Het eerste vierkant: {a} × {a} = {=a*a}, het tweede: {=a-1} × {=a-1} = {=(a-1)*(a-1)}.",
+      "Samen: {=a*a} + {=(a-1)*(a-1)} = {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel hokjes elk van de twee vierkanten heeft.",
+      "Tel de hokjes van de twee vierkanten bij elkaar op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "one-square": "{w_one_square} zijn alleen de hokjes van het grote vierkant, maar de ruit heeft ook een kleiner vierkant: {=a*a} + {=(a-1)*(a-1)} = {r}.",
+      "double": "{w_double} komt uit twee grote vierkanten nemen. Het tweede vierkant is kleiner, de zijde is {=a-1}: {=a*a} + {=(a-1)*(a-1)} = {r}.",
+      "plus-side": "{w_plus_side} komt uit het grote vierkant plus zijn zijde. Het tweede vierkant is {=a-1} × {=a-1} = {=(a-1)*(a-1)}: {=a*a} + {=(a-1)*(a-1)} = {r}."
+    }
+  },
+  "S6.patterns-1S.15": {
+    "text": "Een rij begint met het getal {a}. Elk volgend getal is groter dan het vorige, eerst met {=1}, dan met {=2}, dan met {=3} enzovoort: {a}, {=a+1}, {=a+3}, {=a+6}, … Wat is het getal op plaats {b}?",
+    "solution": [
+      "Om bij het getal op plaats {b} te komen zijn {=b-1} stappen nodig, en die zijn {=1}, {=2}, … , {=b-1}.",
+      "De som van de stappen: {=b-1} × {b} : {=2} = {=(b-1)*b/2}.",
+      "Het getal op plaats {b}: {a} + {=(b-1)*b/2} = {r}."
+    ],
+    "hints": [
+      "Hoeveel stappen zijn het van het eerste getal tot het getal op plaats {b}?",
+      "De stappen worden steeds één groter. Tel ze bij elkaar op in paren: de eerste met de laatste, de tweede met de een-na-laatste.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-steps-one": "{w_all_steps_one} komt uit elke stap als 1 rekenen. Maar de stappen worden groter en hun som is {=(b-1)*b/2}: {a} + {=(b-1)*b/2} = {r}.",
+      "one-more-step": "{w_one_more_step} komt uit één stap te veel optellen. Het zijn {=b-1} stappen tot het getal op plaats {b}: {a} + {=(b-1)*b/2} = {r}."
+    }
+  },
+  "S6.patterns-1S.16": {
+    "text": "Hoeveel van de getallen van {=1} tot en met {a} zijn noch deelbaar door {=2}, noch door {=3}?",
+    "solution": [
+      "{a} : {=2} = {=a/2} getallen zijn deelbaar door {=2} en {a} : {=3} = {=a/3} getallen zijn deelbaar door {=3}.",
+      "De getallen die deelbaar zijn door {=6} zaten in beide groepen; het zijn er {a} : {=6} = {=a/6}.",
+      "Noch deelbaar door {=2}, noch door {=3}: {a} − {=a/2} − {=a/3} + {=a/6} = {r}."
+    ],
+    "hints": [
+      "Trek de getallen die deelbaar zijn door 2 af en de getallen die deelbaar zijn door 3.",
+      "Sommige getallen zijn deelbaar door zowel 2 als 3: die heb je twee keer afgetrokken.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "forgot-overlap": "{w_forgot_overlap} komt uit het aftrekken van beide groepen zonder de getallen die deelbaar zijn door {=6} terug te geven. Die zijn twee keer afgetrokken en het zijn er {=a/6}: {a} − {=a/2} − {=a/3} + {=a/6} = {r}.",
+      "only-odd": "{w_only_odd} telt de oneven getallen, maar sommige daarvan zijn deelbaar door {=3}. Die moeten ook weg: {a} − {=a/2} − {=a/3} + {=a/6} = {r}.",
+      "only-three": "{w_only_three} telt de getallen die niet deelbaar zijn door {=3}, maar sommige daarvan zijn even. Die moeten ook weg: {a} − {=a/2} − {=a/3} + {=a/6} = {r}."
+    }
+  },
+  "S7.median-mode.01": {
+    "text": "Gegeven is een reeks getallen: {a}, {b}, {c}, {d}, {e}. Zoek de mediaan van de reeks, dat is het getal in het midden als je de getallen van klein naar groot zet.",
+    "solution": [
+      "Zet de getallen van klein naar groot: {=nth(1,a,b,c,d,e)}, {=nth(2,a,b,c,d,e)}, {=nth(3,a,b,c,d,e)}, {=nth(4,a,b,c,d,e)}, {=nth(5,a,b,c,d,e)}.",
+      "Er zijn vijf getallen, dus de mediaan staat op de derde plaats: links ervan staan twee getallen en rechts ook twee.",
+      "Het derde getal in de rij is {r}, dus de mediaan is {r}."
+    ],
+    "hints": [
+      "Zet de getallen {a}, {b}, {c}, {d}, {e} van klein naar groot.",
+      "Er zijn vijf getallen, dus de mediaan staat op de derde plaats. Zoek het derde getal in de rij.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} is het eerste getal zoals het opgeschreven is, maar de mediaan is het middelste getal nadat je ze op volgorde hebt gezet: {r}.",
+      "middle-written": "{w_middle_written} staat in het midden zoals het opgeschreven is, maar de getallen staan niet op volgorde. Zet ze eerst van klein naar groot, dan is de mediaan {r}.",
+      "mean": "{w_mean} is het gemiddelde van alle getallen, maar je zoekt de mediaan. De mediaan is het middelste getal van de rij van klein naar groot: {r}."
+    }
+  },
+  "S7.median-mode.02": {
+    "text": "Gegeven is een reeks getallen: {a}, {b}, {c}. Zoek de mediaan van de reeks.",
+    "solution": [
+      "Zet de getallen van klein naar groot: {=nth(1,a,b,c)}, {=nth(2,a,b,c)}, {=nth(3,a,b,c)}.",
+      "Er zijn drie getallen, dus de mediaan staat op de tweede plaats: één getal is kleiner en één is groter.",
+      "Het tweede getal in de rij is {r}, dus de mediaan is {r}."
+    ],
+    "hints": [
+      "Zet de getallen {a}, {b} en {c} van klein naar groot.",
+      "Er zijn drie getallen, dus de mediaan staat op de tweede plaats, in het midden.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is het grootste getal, maar de mediaan is het getal in het midden: {r}.",
+      "smallest": "{w_smallest} is het kleinste getal, maar de mediaan is het getal in het midden: {r}.",
+      "middle-written": "{w_middle_written} staat in het midden zoals het opgeschreven is, maar de getallen staan niet op volgorde. Zet ze eerst van klein naar groot, dan is de mediaan {r}."
+    }
+  },
+  "S7.median-mode.03": {
+    "text": "Gegeven is een reeks van vier getallen: {a}, {b}, {c}, {d}. Zoek de mediaan van de reeks, dat is het gemiddelde van de twee getallen in het midden.",
+    "solution": [
+      "Zet de getallen van klein naar groot. Het zijn er vier, dus er staan twee getallen in het midden: het tweede en het derde.",
+      "De mediaan is het getal precies tussen die twee in, dat is hun gemiddelde.",
+      "De twee middelste getallen zijn samen {=2*r}; neem de helft: {=2*r} : {=2} = {r}."
+    ],
+    "hints": [
+      "Zet de getallen {a}, {b}, {c}, {d} van klein naar groot.",
+      "Er zijn vier getallen, dus er staan er twee in het midden: het tweede en het derde. De mediaan is hun gemiddelde.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second-number": "{w_second_number} is een van de twee middelste getallen. De mediaan is het getal precies tussen die twee: ({=nth(2,a,b,c,d)} + {=nth(3,a,b,c,d)}) : {=2} = {r}.",
+      "mean": "{w_mean} is het gemiddelde van alle getallen. De mediaan is het gemiddelde van de twee getallen in het midden: ({=nth(2,a,b,c,d)} + {=nth(3,a,b,c,d)}) : {=2} = {r}.",
+      "unordered-middle": "{w_unordered_middle} is het gemiddelde van de twee getallen die in het midden staan zoals ze opgeschreven zijn. Zet de getallen eerst van klein naar groot, dan staan er twee andere getallen in het midden."
+    }
+  },
+  "S7.median-mode.04": {
+    "text": "Gegeven is een reeks getallen: {row}. Zoek de modus van de reeks, dat is het getal dat het vaakst voorkomt.",
+    "solution": [
+      "Tel hoe vaak elk getal voorkomt: {a} komt drie keer voor en de andere getallen één keer.",
+      "De modus is het getal dat het vaakst voorkomt, dat is {a}.",
+      "De modus van de reeks is dus {r}."
+    ],
+    "hints": [
+      "Tel hoe vaak elk van de getallen voorkomt: {row}.",
+      "Kies het getal dat het vaakst voorkomt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} komt één keer voor, maar de modus is het getal dat het vaakst voorkomt: {r}.",
+      "last-number": "{w_last_number} komt één keer voor, maar de modus is het getal dat het vaakst voorkomt: {r}.",
+      "largest": "{w_largest} is het grootste getal, maar de modus is het getal dat het vaakst voorkomt: {r}.",
+      "count": "{w_count} is hoe vaak de modus voorkomt, maar de vraag is welk getal het is: {r}."
+    }
+  },
+  "S7.median-mode.05": {
+    "text": "Gegeven is een reeks getallen: {a}, {b}, {c}, {d}. Zoek het bereik van de reeks, dat is het verschil tussen het grootste en het kleinste getal.",
+    "solution": [
+      "Van {a}, {b}, {c}, {d} is {=max(a,b,c,d)} het grootste getal en {=min(a,b,c,d)} het kleinste.",
+      "Het bereik is het verschil tussen het grootste en het kleinste getal: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "Het bereik van de reeks is dus {r}."
+    ],
+    "hints": [
+      "Zoek het grootste en het kleinste getal.",
+      "Trek het kleinste getal van het grootste af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is het grootste getal, maar het bereik is het verschil met het kleinste: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "sum-of-extremes": "{w_sum_of_extremes} is de som van het grootste en het kleinste getal, maar het bereik is hun verschil: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}."
+    }
+  },
+  "S7.median-mode.06": {
+    "text": "In een reeks komt het getal {a} vaker voor dan de andere, en de andere getallen zijn allemaal verschillend en komen één keer voor. De reeks heeft {x} getallen. Hoe vaak komt het getal {a} voor, als er {y} andere getallen zijn?",
+    "solution": [
+      "Er zijn {x} getallen in totaal, en {y} andere getallen die één keer voorkomen.",
+      "Alle getallen behalve {a} komen niet dubbel voor, dus voor het getal {a} blijven {x} − {y} = {r} over.",
+      "Het getal {a} komt dus {r} keer voor."
+    ],
+    "hints": [
+      "Er zijn {x} getallen in totaal, en {y} daarvan zijn de andere. De andere komen één keer voor.",
+      "Trek het aantal andere getallen, {y}, af van het totaal, {x}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} is het aantal van alle getallen in de reeks, maar je zoekt hoe vaak de modus voorkomt: {x} − {y} = {r}.",
+      "others": "{w_others} is het aantal andere getallen, maar je zoekt hoe vaak de modus voorkomt: {x} − {y} = {r}."
+    }
+  },
+  "S7.median-mode.07": {
+    "text": "Gegeven is een reeks getallen: {a}, {b}, {c}. Zet een teken tussen de mediaan en het gemiddelde van de reeks.",
+    "solution": [
+      "Het gemiddelde: tel de getallen op en deel door 3: ({a} + {b} + {c}) : 3 = {=(a+b+c)/3}.",
+      "De mediaan is het middelste getal als je {a}, {b}, {c} van klein naar groot zet.",
+      "Vergelijk de mediaan met het gemiddelde {=(a+b+c)/3}: ertussen staat het teken {r}."
+    ],
+    "hints": [
+      "Zet {a}, {b} en {c} van klein naar groot: de mediaan staat in het midden.",
+      "Het gemiddelde is de som gedeeld door 3: ({a} + {b} + {c}) : 3.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "reversed": "Het teken {w_reversed} wijst de andere kant op: de open kant van het teken moet naar het grootste getal wijzen.",
+      "unordered-middle": "Het teken {w_unordered_middle} kwam uit het vergelijken van het gemiddelde met het getal {b}, dat in het midden staat zoals het opgeschreven is. De mediaan is het middelste getal van klein naar groot, en dat is {=nth(2,a,b,c)}."
+    }
+  },
+  "S7.median-mode.08": {
+    "text": "In een reeks die van klein naar groot is gezet, staan {a} getallen. Op welke plaats staat de mediaan?",
+    "solution": [
+      "De mediaan staat in het midden, met aan beide kanten evenveel getallen.",
+      "Behalve de mediaan zijn er {a} − 1 = {=a-1} getallen, die eerlijk verdeeld zijn: {=a-1} : 2 = {=(a-1)/2} aan elke kant.",
+      "De mediaan komt meteen daarna: {=(a-1)/2} + 1 = {r}."
+    ],
+    "hints": [
+      "Zoek hoeveel getallen links van de mediaan staan: van de {a} getallen is er één de mediaan zelf en de rest is eerlijk verdeeld.",
+      "Tel er één bij op: de mediaan zelf neemt ook een plaats in.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "half": "{w_half} is hoeveel getallen links van de mediaan staan, en de mediaan zelf komt daarna: {w_half} + {=1} = {r}.",
+      "last": "{w_last} is het aantal van alle getallen in de reeks, maar de mediaan staat in het midden: ({a} + {=1}) : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.09": {
+    "text": "Gegeven is een reeks getallen: {a}, {b}, {c}, {d}. Wat is de som van het grootste en het kleinste getal?",
+    "solution": [
+      "Van {a}, {b}, {c}, {d} is {=max(a,b,c,d)} het grootste getal en {=min(a,b,c,d)} het kleinste.",
+      "We zoeken de som, dus tel je op: {=max(a,b,c,d)} + {=min(a,b,c,d)} = {r}.",
+      "De som van het grootste en het kleinste getal is dus {r}."
+    ],
+    "hints": [
+      "Zoek het grootste en het kleinste getal.",
+      "Tel ze bij elkaar op.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "range": "{w_range} is het verschil tussen het grootste en het kleinste getal, maar je zoekt de som: {=max(a,b,c,d)} + {=min(a,b,c,d)} = {r}.",
+      "largest": "{w_largest} is alleen het grootste getal, maar je zoekt de som van het grootste en het kleinste: {=max(a,b,c,d)} + {=min(a,b,c,d)} = {r}."
+    }
+  },
+  "S7.median-mode.10": {
+    "text": "Gegeven is een geordende reeks van drie getallen: {a}, {b}, {c}. Daar komt het getal {d} bij, dat groter is dan alle andere. Wat is de mediaan van de reeks van vier getallen?",
+    "solution": [
+      "Het getal {d} is het grootste, dus van klein naar groot is de reeks {a}, {b}, {c}, {d}.",
+      "Nu zijn er vier getallen en in het midden staan het tweede en het derde: {b} en {c}.",
+      "De mediaan is hun gemiddelde: ({b} + {c}) : {=2} = {r}."
+    ],
+    "hints": [
+      "Het nieuwe getal {d} is het grootste, dus het staat aan het eind van de reeks.",
+      "Nu zijn er vier getallen: zoek het gemiddelde van de twee in het midden, {b} en {c}.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "old-median": "{w_old_median} is de oude mediaan, maar na het toevoegen heeft de reeks vier getallen: ({b} + {c}) : {=2} = {r}.",
+      "new-number": "{w_new_number} is het getal dat erbij kwam, maar de mediaan is een getal in het midden: ({b} + {c}) : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.11": {
+    "text": "Gegeven is een reeks getallen: {row}. Zoek de modus van de reeks.",
+    "solution": [
+      "Tel hoe vaak elk getal voorkomt: {a} komt drie keer voor, {b} twee keer en {c} twee keer.",
+      "De modus is het getal dat het vaakst voorkomt, dat is {a}.",
+      "De modus van de reeks is dus {r}."
+    ],
+    "hints": [
+      "Tel hoe vaak elk van de getallen voorkomt: {row}.",
+      "Kies het getal dat het vaakst voorkomt.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} komt twee keer voor, maar de modus is het getal dat drie keer voorkomt: {r}.",
+      "last-number": "{w_last_number} komt twee keer voor, maar de modus is het getal dat drie keer voorkomt: {r}.",
+      "largest": "{w_largest} is het grootste getal, maar de modus is het getal dat het vaakst voorkomt, drie keer: {r}.",
+      "count": "{w_count} is hoe vaak de modus voorkomt, maar de vraag is welk getal het is: {r}."
+    }
+  },
+  "S7.median-mode.12": {
+    "text": "Gegeven is een reeks van zeven getallen: {a}, {b}, {c}, {d}, {e}, {f} en {g}. Zoek de mediaan van de reeks.",
+    "solution": [
+      "Zet de getallen van klein naar groot: {=nth(1,a,b,c,d,e,f,g)}, {=nth(2,a,b,c,d,e,f,g)}, {=nth(3,a,b,c,d,e,f,g)}, {=nth(4,a,b,c,d,e,f,g)}, {=nth(5,a,b,c,d,e,f,g)}, {=nth(6,a,b,c,d,e,f,g)}, {=nth(7,a,b,c,d,e,f,g)}.",
+      "Er zijn zeven getallen, dus de mediaan staat op de vierde plaats: links ervan staan drie getallen en rechts ook drie.",
+      "Het vierde getal in de rij is {r}, dus de mediaan is {r}."
+    ],
+    "hints": [
+      "Zet de getallen van klein naar groot.",
+      "De mediaan staat op de vierde plaats van de zeven.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} is het eerste getal zoals het opgeschreven is, maar de mediaan is het middelste getal nadat je ze op volgorde hebt gezet: {r}.",
+      "middle-written": "{w_middle_written} staat in het midden zoals het opgeschreven is, maar de getallen staan niet op volgorde. Zet ze eerst van klein naar groot, dan is de mediaan {r}.",
+      "mean": "{w_mean} is het gemiddelde van alle getallen, maar je zoekt de mediaan. De mediaan is het middelste getal van de rij van klein naar groot: {r}."
+    }
+  },
+  "S7.median-mode.13": {
+    "text": "Schoenmaten in een klas: maat {a} wordt gedragen door {b|kind|kinderen|kinderen}, maat {=a+1} door {c|kind|kinderen|kinderen}, maat {=a+2} door {d|kind|kinderen|kinderen}. Wat is de modus van deze reeks, dat wil zeggen: welke maat komt het vaakst voor?",
+    "solution": [
+      "De modus is de waarde die het vaakst voorkomt. De maat die het vaakst voorkomt is die van de meeste kinderen: {=max(b,c,d)}.",
+      "Die maat staat {k|stap|stappen|stappen} rechts van maat {a}.",
+      "De modus: {a} + {k} = {r}."
+    ],
+    "hints": [
+      "Zoek welk aantal kinderen het grootste is.",
+      "Je zoekt de maat, niet het aantal kinderen. Welke maat hoort bij het grootste aantal?",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "count": "{w_count} is hoeveel kinderen de meest voorkomende maat dragen, maar de modus is de maat zelf: {a} + {k} = {r}.",
+      "middle-size": "{w_middle_size} is de middelste van de drie maten, maar de modus is de maat die het vaakst voorkomt: {a} + {k} = {r}.",
+      "largest-size": "{w_largest_size} is de grootste maat, maar de maat die het vaakst voorkomt is een andere: {a} + {k} = {r}."
+    }
+  },
+  "S7.median-mode.14": {
+    "text": "Gegeven is een reeks van vier getallen: {a}, {b}, {c}, {d}. Zoek de mediaan van de reeks, dat is het gemiddelde van de twee getallen in het midden. Het antwoord kan een kommagetal zijn.",
+    "solution": [
+      "Zet de getallen van klein naar groot: {=nth(1,a,b,c,d)}, {=nth(2,a,b,c,d)}, {=nth(3,a,b,c,d)}, {=nth(4,a,b,c,d)}.",
+      "In het midden staan {=nth(2,a,b,c,d)} en {=nth(3,a,b,c,d)}, samen {=nth(2,a,b,c,d)+nth(3,a,b,c,d)}.",
+      "De mediaan: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}."
+    ],
+    "hints": [
+      "Zet de getallen eerst van klein naar groot.",
+      "Neem de twee getallen in het midden en zoek het getal precies tussen die twee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "second-number": "{w_second_number} is een van de twee middelste getallen, maar de mediaan is het getal precies tussen die twee: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}.",
+      "unordered-middle": "{w_unordered_middle} komt uit het midden van de getallen zoals ze opgeschreven zijn, maar die staan niet op volgorde. Zet ze eerst van klein naar groot: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}.",
+      "mean": "{w_mean} is het gemiddelde van alle getallen, maar de mediaan is het gemiddelde van de twee getallen in het midden: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.15": {
+    "text": "Gegeven is een reeks van zes getallen: {a}, {b}, {c}, {d}, {e}, {f}. Het kleinste getal is vervangen door het getal {=100}, dat groter is dan alle andere. Wat is de mediaan van de nieuwe reeks?",
+    "solution": [
+      "Zonder het kleinste getal blijven over: {=nth(2,a,b,c,d,e,f)}, {=nth(3,a,b,c,d,e,f)}, {=nth(4,a,b,c,d,e,f)}, {=nth(5,a,b,c,d,e,f)}, {=nth(6,a,b,c,d,e,f)}, en het getal {=100} staat aan het eind.",
+      "Nu staan het derde en het vierde getal in het midden: {=nth(4,a,b,c,d,e,f)} en {=nth(5,a,b,c,d,e,f)}.",
+      "De mediaan: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}."
+    ],
+    "hints": [
+      "Het nieuwe getal staat aan het eind van de geordende reeks en het kleinste getal zit er niet meer in.",
+      "Zoek de twee getallen in het midden van de nieuwe reeks en het getal precies tussen die twee.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "old-median": "{w_old_median} is de oude mediaan. Maar de reeks is veranderd: het kleinste getal is weg en het grootste is erbij gekomen, dus het midden is opgeschoven: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}.",
+      "with-new-number": "{w_with_new_number} komt uit het gebruiken van het nieuwe getal {=100} in het midden. Maar dat staat aan het eind, en in het midden staan het derde en het vierde getal: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}.",
+      "five-numbers": "{w_five_numbers} is de mediaan van de vijf overgebleven getallen, maar het nieuwe getal {=100} hoort er ook bij, dus er zijn weer zes getallen: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.16": {
+    "text": "Drie getallen zijn zo opgeschreven: het gemiddelde is {a}, de mediaan is {b} en het kleinste getal is {c}. Wat is het grootste getal?",
+    "solution": [
+      "De drie getallen samen zijn {a} × {=3} = {=3*a}.",
+      "De mediaan van drie getallen is het middelste getal, dat is {b}, en het kleinste is {c}.",
+      "Het grootste: {=3*a} − {b} − {c} = {r}."
+    ],
+    "hints": [
+      "Zoek met het gemiddelde de som van de drie getallen.",
+      "De mediaan van drie getallen is het op één na grootste. Trek de twee bekende getallen van de som af.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is het gemiddelde, maar je zoekt het grootste getal: {=3*a} − {b} − {c} = {r}.",
+      "no-median": "{w_no_median} komt uit het aftrekken van alleen het kleinste getal. De mediaan is ook een van de drie getallen: {=3*a} − {b} − {c} = {r}.",
+      "sum": "{w_sum} is de som van de drie getallen, maar het grootste is daar maar een deel van: {=3*a} − {b} − {c} = {r}."
+    }
+  },
+  "S7.median-mode.17": {
+    "text": "Een reeks heeft {a} getallen. De modus komt {b} keer voor en elk ander getal komt minder vaak voor. Hoeveel verschillende getallen kan de reeks hoogstens hebben?",
+    "solution": [
+      "Om zo veel mogelijk verschillende getallen te hebben, moet elk van de andere getallen één keer voorkomen.",
+      "Behalve de modus zijn er {a} − {b} = {=a-b} getallen en die zijn allemaal verschillend.",
+      "Verschillende getallen: {=a-b} + {=1} = {r}."
+    ],
+    "hints": [
+      "Hoe moeten de andere getallen liggen om zo veel mogelijk verschillende getallen te krijgen?",
+      "Vergeet niet de modus zelf mee te tellen als een van de verschillende getallen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "without-mode": "{w_without_mode} telt de modus zelf niet mee, en die is ook een van de verschillende getallen: {=a-b} + {=1} = {r}.",
+      "count": "{w_count} is het aantal van alle getallen in de reeks, maar de modus komt {b} keer voor, dus er zijn minder verschillende getallen: {=a-b} + {=1} = {r}."
+    }
+  },
+  "S7.median-mode.18": {
+    "text": "Vijf verschillende natuurlijke getallen staan van klein naar groot, en de mediaan is {a}. Wat is de kleinst mogelijke som van deze vijf getallen?",
+    "solution": [
+      "De twee getallen links zijn kleiner dan {a} en verschillend; de kleinste daarvan zijn {=1} en {=2}, samen {=3}.",
+      "De twee getallen rechts zijn groter dan {a} en verschillend; de kleinste daarvan zijn {=a+1} en {=a+2}.",
+      "De som: {=3} + {a} + {=a+1} + {=a+2} = {r}."
+    ],
+    "hints": [
+      "Waar staat de mediaan bij vijf getallen, en hoeveel getallen staan er links en rechts van?",
+      "Om de som zo klein mogelijk te maken neem je links en rechts de kleinst mogelijke verschillende getallen.",
+      "Antwoord: {r}."
+    ],
+    "explain": {
+      "all-equal": "{w_all_equal} komt uit het nemen van alle getallen gelijk aan de mediaan. Maar de getallen zijn verschillend en links kun je {=1} en {=2} nemen: {=3} + {a} + {=a+1} + {=a+2} = {r}.",
+      "zero-allowed": "{w_zero_allowed} komt uit het nemen van nul links. Maar nul is geen natuurlijk getal en de kleinste zijn {=1} en {=2}: {=3} + {a} + {=a+1} + {=a+2} = {r}.",
+      "equal-right": "{w_equal_right} komt uit het nemen van twee gelijke getallen rechts. Maar de getallen zijn verschillend: rechts zijn de kleinste {=a+1} en {=a+2}: {=3} + {a} + {=a+1} + {=a+2} = {r}."
+    }
+  }
+}

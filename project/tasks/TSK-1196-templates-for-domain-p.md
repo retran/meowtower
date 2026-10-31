@@ -1,7 +1,7 @@
 ---
 id: TSK-1196
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -12,11 +12,11 @@ issue:
 
 # The 7 nodes of domain P have templates for every subtype and answer kind
 
-After this task, each of the 7 nodes of domain P (1 at stretch) has a template for every subtype and answer kind the catalogue gives it, with its text in the per-language file and no string in the code (ADR-0490, REQ-1232).
+After this task, each of the 7 nodes of domain P (1 at stretch) has at least ten templates for every subtype and answer kind the catalogue gives it, with its text in the per-language file and no string in the code (ADR-0490, REQ-1232).
 
 ## Acceptance criteria
 
-1. Given the nodes of domain P, when `./meowtower graph check` lists the subtypes without a template, then none of them is a subtype of domain P. Closed by: the command's output.
+1. Given the nodes of domain P, when `./meowtower graph check` lists the subtypes without a template or with fewer than ten, then none of them is a subtype of domain P. Closed by: the command's output.
 2. Given each template of domain P, when `npm run verify:templates` runs it, then it shows no invalid parameters, no disagreement with the reference solver, no equal traps and no text that breaks the text rules. Closed by: the verification run's report.
 3. Given a template of domain P, when its text is read, then every player-facing string comes from the per-language file through the typed function. Closed by: the lint run's `no-literal-string` result.
 
@@ -33,7 +33,9 @@ Write the templates of domain P in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 138 templates of domain P are in src/templates/p1.ts to p3.ts, written with the short form of src/templates/kitf.ts, with their strings in content/tasks-p.ru.json. Closed by tests/unit/templates.test.ts (ten or more templates for each of the 12 subtypes, 200 seeds for each template) and by `npm run verify:templates` on 10,000 seeds for each template. `./meowtower graph check` lists none of the 12 subtypes of domain P as thin.
+
+A percentage answer is the number of percent, without the sign. P7 holds eleven templates at stretch, all tagged as extensions, because the Dutch goals give only the rule that percentages add over the same whole.
 
 ## Left alone
 

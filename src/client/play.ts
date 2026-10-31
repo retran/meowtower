@@ -19,6 +19,7 @@ import {
   MOVED,
   nextPacket,
   nextSeq,
+  buyHint,
   pause,
   pickChest,
   resumeAdventure,
@@ -27,8 +28,25 @@ import {
   UNREACHABLE,
 } from "./api.js";
 import { flushOnce, retryClock, submitAnswer } from "./answer-queue.js";
-import { act, button, el, heading, link, status } from "./controls.js";
+import {
+  act,
+  button,
+  el,
+  focusField,
+  heading,
+  link,
+  math,
+  status,
+} from "./controls.js";
 import type { Screen } from "./screens.js";
+import {
+  firstLayout,
+  isApple,
+  isPhysical,
+  layoutFromKey,
+  symbolOf,
+  type Layout,
+} from "./keys.js";
 import { t, uiKey, type UiKey } from "./strings.js";
 
 /** No input for this long outside the task window pauses the adventure (REQ-2408). */
@@ -43,7 +61,31 @@ export const HEARTBEAT_MS = 15 * 1000;
 export const DRAFT_EVERY_MS = 10 * 1000;
 
 /** What each InputSpec kind lets into the field; everything else is refused. */
-const ACCEPTS: Record<Room["input"]["kind"], RegExp> = { integer: /^\d*$/ };
+const ACCEPTS: Record<"integer" | "text", RegExp> = {
+  integer: /^\d*$/,
+  text: /^[^\u0000-\u001f]{0,40}$/,
+};
+
+/** The pixels on screen for one unit of a picture. */
+const PICTURE_SCALE = 2.2;
+
+/** A picture the server drew, parsed as SVG so that nothing in it runs. */
+function picture(svg: string): HTMLElement {
+  const holder = el("figure", { className: "picture" });
+  const doc = new DOMParser().parseFromString(svg, "image/svg+xml");
+  const root = doc.documentElement;
+  if (root.localName === "svg" && !doc.querySelector("script, parsererror")) {
+    const node = document.importNode(root, true);
+    // A viewBox has no size of its own: a small figure would stretch to the width of the page.
+    const width = Number(root.getAttribute("viewBox")?.split(" ")[2] ?? 0);
+    if (width > 0) node.style.width = `${Math.round(width * PICTURE_SCALE)}px`;
+    holder.append(node);
+  }
+  return holder;
+}
+
+/** The rungs of the hint ladder a player can buy on screen. */
+const HINT_RUNGS = 2;
 
 /** The badge's word for an outcome; the server decides the outcome. */
 function badgeKey(reply: AnswerOut, dontKnow: boolean): UiKey {
@@ -102,6 +144,7 @@ export const playScreen: Screen = {
     const draw = (...children: Node[]): void => {
       section.replaceChildren(heading("ui.play.title"), ...children);
       delete section.dataset["busy"];
+      focusField(section);
     };
 
     /** Another device holds the adventure: nothing here can play or answer any more (REQ-0222). */
@@ -260,11 +303,12 @@ export const playScreen: Screen = {
       const field = el("input", {
         id: "play-answer",
         type: "text",
-        inputMode: "numeric",
+        inputMode: room.input.kind === "integer" ? "numeric" : "text",
         autocomplete: "off",
       });
       field.dataset["action"] = "play-answer";
-      const accepts = ACCEPTS[room.input.kind];
+      const accepts =
+        ACCEPTS[room.input.kind === "integer" ? "integer" : "text"];
       // The one check the client makes: the input's format (REQ-2402).
       field.addEventListener("beforeinput", (e) => {
         const next =
@@ -273,13 +317,39 @@ export const playScreen: Screen = {
             : field.value + e.data;
         if (!accepts.test(next)) e.preventDefault();
       });
+      const format = room.input.format;
+      const symbol = symbolOf(format);
+      const apple = isApple(navigator.userAgent);
+      let layout: Layout = firstLayout(
+        navigator.language,
+        apple,
+        shell.current === "tablet" && navigator.maxTouchPoints > 0,
+      );
+      const keyHint = el("p", { className: "format" });
+      const showKey = (): void => {
+        if (symbol)
+          keyHint.textContent = t(uiKey(`ui.play.key.${symbol}.${layout}`));
+      };
+      showKey();
+      const preview = el("p", { className: "preview" });
       field.addEventListener("input", () => {
+        if (format === "fraction" || format === "mixed")
+          preview.replaceChildren(...math(field.value));
         if (!accepts.test(field.value))
-          field.value = field.value.replace(/\D/g, "");
+          field.value =
+            room.input.kind === "integer"
+              ? field.value.replace(/\D/g, "")
+              : field.value.slice(0, 40);
         act("play-answer");
       });
       field.addEventListener("keydown", (e) => {
         input.keyPresses++;
+        if (isPhysical(e.code)) {
+          if (layout === "touch")
+            layout = firstLayout(navigator.language, apple, false);
+          layout = layoutFromKey(e, apple) ?? layout;
+          showKey();
+        }
         if (!input.firstKeyMs) input.firstKeyMs = since();
         if (e.key === "Backspace" || e.key === "Delete") input.erasures++;
         else if (e.key.length === 1) input.edits++;
@@ -299,9 +369,13 @@ export const playScreen: Screen = {
       });
       const note = status();
       let sending = false;
-      async function submit(dontKnow: boolean): Promise<void> {
+      async function submit(
+        dontKnow: boolean,
+        given?: string,
+        shown?: string,
+      ): Promise<void> {
         if (sending || !sessionId) return;
-        const raw = dontKnow ? "" : field.value.trim();
+        const raw = dontKnow ? "" : (given ?? field.value.trim());
         if (!dontKnow && !raw) return;
         sending = true;
         input.submittedMs = since();
@@ -319,17 +393,140 @@ export const playScreen: Screen = {
           refused("ui.play.failed");
           return;
         }
-        drawOutcome(delivery.reply, dontKnow);
+        drawOutcome(delivery.reply, dontKnow, shown ?? raw);
       }
+      const labels = room.view.options ?? [];
+      const values = room.input.values ?? [];
+      const answerButton = (
+        label: string,
+        act2: () => void,
+      ): HTMLButtonElement => {
+        const b = el(
+          "button",
+          { type: "button", className: "control option" },
+          ...math(label),
+        );
+        b.addEventListener("click", () => {
+          act("play-option");
+          act2();
+        });
+        return b;
+      };
+      const picked: number[] = [];
+      const pickedLine = el("p", { className: "picked" });
+      const chosen = (): string =>
+        picked.map((i) => labels[i] ?? "").join("; ");
+      const sendPicked = (): void => {
+        if (!picked.length) return;
+        input.method = "choice";
+        void submit(
+          false,
+          picked.map((i) => values[i] ?? "").join(","),
+          chosen(),
+        );
+      };
+      const buttons = labels.map((label, i) => {
+        const b = answerButton(label, () => {
+          if (room.input.kind === "choice") {
+            input.method = "choice";
+            void submit(false, values[i] ?? "", label);
+          } else if (room.input.kind === "set") {
+            const at = picked.indexOf(i);
+            if (at >= 0) picked.splice(at, 1);
+            else picked.push(i);
+            picked.sort((x, y) => x - y);
+            b.setAttribute("aria-pressed", String(at < 0));
+          } else {
+            picked.push(i);
+            b.disabled = true;
+            pickedLine.replaceChildren(...math(chosen()));
+          }
+        });
+        if (label.length > 1 || /\d/.test(label))
+          b.dataset["key"] = String(i + 1);
+        return b;
+      });
+      const undo = (): void => {
+        const last = picked.pop();
+        const b = last === undefined ? undefined : buttons[last];
+        if (b) b.disabled = false;
+        pickedLine.replaceChildren(...math(chosen()));
+      };
+      const typed = room.input.kind === "integer" || room.input.kind === "text";
+      const hints = el("div", { className: "hints" });
+      let threads = room.threads;
+      let rung = 0;
+      const hintButton = el("button", { type: "button", className: "control" });
+      hintButton.dataset["action"] = "play-hint";
+      const showRung = (text: string): void => {
+        rung += 1;
+        hints.append(el("p", { className: "hint" }, ...math(text)));
+        hintButton.textContent = t("ui.play.hint", { n: threads });
+        // The third rung of a template states the answer, so the ladder on screen ends at the second.
+        if (rung >= HINT_RUNGS) hintButton.remove();
+      };
+      hintButton.textContent = t("ui.play.hint", { n: threads });
+      hintButton.addEventListener("click", () => {
+        act("play-hint");
+        if (threads < 1) {
+          note.textContent = t("ui.play.noThreads");
+          return;
+        }
+        void buyHint(room.itemId, rung + 1).then((got) => {
+          if (!got) {
+            note.textContent = t("ui.play.noThreads");
+            return;
+          }
+          threads = got.threads;
+          showRung(got.text);
+        });
+      });
+      for (const level of room.hintLevels)
+        if (level <= HINT_RUNGS)
+          void buyHint(room.itemId, level).then((got) => {
+            if (got) showRung(got.text);
+          });
       draw(
-        el("p", { className: "task" }, room.view.text),
-        el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
-        field,
+        ...(room.view.svg ? [picture(room.view.svg)] : []),
+        el("p", { className: "task" }, ...math(room.view.text)),
+        ...(typed
+          ? [
+              el(
+                "div",
+                { className: "entry" },
+                el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
+                field,
+                ...(format
+                  ? [
+                      el(
+                        "p",
+                        { className: "format" },
+                        t(uiKey(`ui.play.format.${format}`)),
+                      ),
+                    ]
+                  : []),
+                ...(symbol ? [keyHint] : []),
+                preview,
+              ),
+            ]
+          : [
+              el("div", { className: "options" }, ...buttons),
+              ...(room.input.kind === "order" ? [pickedLine] : []),
+            ]),
+        hints,
         note,
         el(
           "nav",
           { className: "actions" },
-          button("ui.play.submit", "play-submit", () => submit(false)),
+          ...(typed
+            ? [button("ui.play.submit", "play-submit", () => submit(false))]
+            : room.input.kind === "choice"
+              ? []
+              : [button("ui.play.submit", "play-submit", sendPicked)]),
+          ...(room.input.kind === "order"
+            ? [button("ui.play.undo", "play-undo", undo)]
+            : []),
+          hintButton,
           button("ui.play.dontKnow", "play-dont-know", () => submit(true)),
           button("ui.play.leave", "play-leave", () => stop("leave")),
         ),
@@ -374,6 +571,13 @@ export const playScreen: Screen = {
         value: scene.draft ?? "",
       });
       field.dataset["action"] = "scene-draft";
+      field.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" || e.shiftKey || e.isComposing) return;
+        e.preventDefault();
+        document
+          .querySelector<HTMLElement>('[data-action="scene-send"]')
+          ?.click();
+      });
       // The draft goes out at once when none went in the last 10 seconds and
       // otherwise once the 10 seconds are up, so the last text isn't lost.
       let sentAt = -Infinity;
@@ -532,7 +736,11 @@ export const playScreen: Screen = {
       restartIdle();
     }
 
-    function drawOutcome(reply: AnswerOut, dontKnow: boolean): void {
+    function drawOutcome(
+      reply: AnswerOut,
+      dontKnow: boolean,
+      entered: string,
+    ): void {
       taskOpen = false;
       const badge = el(
         "p",
@@ -542,13 +750,40 @@ export const playScreen: Screen = {
       const solution = el(
         "ol",
         { className: "solution" },
-        ...reply.shortSolution.map((line) => el("li", {}, line)),
+        ...reply.shortSolution.map((line) => el("li", {}, ...math(line))),
       );
       draw(
-        badge,
+        el(
+          "div",
+          { className: "result" },
+          badge,
+          ...(dontKnow
+            ? []
+            : [
+                el(
+                  "p",
+                  { className: "yours" },
+                  `${t("ui.play.yours")} `,
+                  ...math(entered),
+                ),
+              ]),
+          el(
+            "p",
+            { className: "right" },
+            `${t("ui.play.right")} `,
+            ...math(reply.feedback.correctAnswer),
+          ),
+        ),
+        ...(reply.note
+          ? [el("p", { className: "note" }, ...math(reply.note))]
+          : []),
         el("p", { className: "battle" }, reply.battleLine),
-        el("p", {}, t("ui.play.solution")),
-        solution,
+        el(
+          "div",
+          { className: "result" },
+          el("p", { className: "heading" }, t("ui.play.solution")),
+          solution,
+        ),
         el(
           "nav",
           { className: "actions" },

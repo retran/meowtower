@@ -2,8 +2,8 @@
 id: SPC-0030
 artifact: spec
 status: live
-revised: 2026-10-10
-states: [REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, REQ-0214, REQ-0216, REQ-0218, REQ-0220, REQ-0222, REQ-0224, REQ-0226, REQ-0228, REQ-0230, REQ-0232, REQ-0234, REQ-0236, REQ-2400, REQ-2402, REQ-2404, REQ-2406, REQ-2408, REQ-2410, REQ-2412, REQ-2414, REQ-2416, REQ-2418, REQ-2420, REQ-2422, REQ-2424, REQ-2426, REQ-2428, REQ-2430, REQ-2432, REQ-2434, REQ-2436, REQ-2438, REQ-2440, REQ-2442, REQ-2444, REQ-5414]
+revised: 2026-10-31
+states: [REQ-0200, REQ-0202, REQ-0204, REQ-0206, REQ-0208, REQ-0210, REQ-0212, REQ-0214, REQ-0216, REQ-0218, REQ-0220, REQ-0222, REQ-0224, REQ-0226, REQ-0228, REQ-0230, REQ-0232, REQ-0234, REQ-0236, REQ-2400, REQ-2402, REQ-2404, REQ-2406, REQ-2408, REQ-2410, REQ-2412, REQ-2414, REQ-2416, REQ-2418, REQ-2420, REQ-2422, REQ-2424, REQ-2426, REQ-2428, REQ-2430, REQ-2432, REQ-2434, REQ-2436, REQ-2438, REQ-2440, REQ-2442, REQ-2444, REQ-5414, REQ-7516, REQ-7518, REQ-7524, REQ-7526, REQ-7528, REQ-7536, REQ-7538, REQ-7540]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -244,3 +244,9 @@ While the client has no connection, the hint, explanation and second-attempt con
 | `PUT /api/parent/settings` carries a `threeDayLimit` outside 1 to 7 and not `null` | `400 settings_invalid`, and nothing is logged. |
 | `extend` after `finish_today` on the same game day | `409 day_finished` until 04:00. |
 | The answer or check reply takes longer than 300 ms at the 95th percentile | The verify report shows the measure against ADR-0190's Baselines table. |
+
+## The room, the answer and the result
+
+A task whose answer is chosen takes buttons (REQ-7536): `input.kind` is `choice`, `set` or `order`, `view.options` holds the labels and `input.values` what each one sends. A typed answer carries `input.format`, and the field shows that format with an example before the first key press (REQ-7524). It draws a fraction as it is typed (REQ-7526) and names the key of the entry's symbol on the current layout, read from the keys pressed (REQ-7528).
+
+The task window offers the hints up to the last rung that does not state the answer (REQ-7538). The result says in plain words whether the answer was right (REQ-7516), shows the entry and the correct answer (REQ-7518), and shows `note`, the explanation of a known wrong answer (REQ-7540).

@@ -7,6 +7,7 @@ import {
   CatalogueRowSchema,
   checkCatalogue,
   notGeneratable,
+  thinSubtypes,
   TemplateRefSchema,
 } from "../../src/engine/catalogue.js";
 
@@ -100,5 +101,23 @@ describe("REQ-0852: the strict schemas refuse a level or a weight", () => {
     expect(() =>
       CatalogueRowSchema.parse({ node: "N1", subtypes: ["whole"] }),
     ).not.toThrow();
+  });
+});
+
+describe("ADR-0490: a subtype with fewer than ten templates is thin", () => {
+  const some = (n: number, subtype: string) =>
+    Array.from({ length: n }, (_, i) => ({
+      id: `t${i}`,
+      node: "N1",
+      subtype,
+    }));
+
+  it("lists a subtype that has templates but fewer than ten", () => {
+    expect(thinSubtypes(small, some(9, "whole"))).toEqual(["N1.whole"]);
+  });
+
+  it("does not list a subtype with ten templates, nor one with none", () => {
+    expect(thinSubtypes(small, some(10, "whole"))).toEqual([]);
+    expect(thinSubtypes(small, [])).toEqual([]);
   });
 });

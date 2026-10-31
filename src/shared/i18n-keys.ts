@@ -152,6 +152,37 @@ export interface StringParams {
   "ui.rest.title": NoParams;
   "ui.play.extend": NoParams;
   "ui.days.counter": NoParams;
+  "ui.play.yours": NoParams;
+  "ui.play.right": NoParams;
+  "ui.play.undo": NoParams;
+  "ui.play.format.decimal": NoParams;
+  "ui.play.format.fraction": NoParams;
+  "ui.play.format.mixed": NoParams;
+  "ui.play.format.pair": NoParams;
+  "ui.play.format.time": NoParams;
+  "ui.play.format.line": NoParams;
+  "ui.play.key.comma.latin": NoParams;
+  "ui.play.key.comma.ruMac": NoParams;
+  "ui.play.key.comma.ruPc": NoParams;
+  "ui.play.key.comma.touch": NoParams;
+  "ui.play.key.slash.latin": NoParams;
+  "ui.play.key.slash.ruMac": NoParams;
+  "ui.play.key.slash.ruPc": NoParams;
+  "ui.play.key.slash.touch": NoParams;
+  "ui.play.key.semicolon.latin": NoParams;
+  "ui.play.key.semicolon.ruMac": NoParams;
+  "ui.play.key.semicolon.ruPc": NoParams;
+  "ui.play.key.semicolon.touch": NoParams;
+  "ui.play.key.colon.latin": NoParams;
+  "ui.play.key.colon.ruMac": NoParams;
+  "ui.play.key.colon.ruPc": NoParams;
+  "ui.play.key.colon.touch": NoParams;
+  "ui.play.hint": { n: string | number };
+  "ui.play.noThreads": NoParams;
+  "ui.parentSettings.language": NoParams;
+  "ui.parentSettings.language.ru": NoParams;
+  "ui.parentSettings.language.en": NoParams;
+  "ui.parentSettings.language.nl": NoParams;
 }
 
 export type Key = keyof StringParams;
