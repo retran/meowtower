@@ -35,8 +35,19 @@ const View = z
   .strict();
 
 export const InputSpec = z
-  .object({ kind: z.enum(["integer", "text"]) })
+  .object({
+    /** A typed entry, one button, several buttons, or buttons tapped in order. */
+    kind: z.enum(["integer", "text", "choice", "set", "order"]),
+    /** The answer kind of a typed entry, which names the format the field shows. */
+    format: z
+      .enum(["decimal", "fraction", "mixed", "pair", "time", "line"])
+      .optional(),
+    /** What each option of `view.options` sends as the answer. */
+    values: z.array(z.string()).optional(),
+  })
   .strict();
+
+export type InputSpec = z.infer<typeof InputSpec>;
 
 export const Room = z
   .object({

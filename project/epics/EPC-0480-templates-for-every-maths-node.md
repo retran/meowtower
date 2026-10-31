@@ -54,6 +54,8 @@ Realises exactly ADR-0490. It starts after the knowledge model (EPC-0060, done) 
       closes: REQ-1232
       depends: TSK-0676 (blocking) - the typed string function that task text and keys go through.; TSK-1192 (not blocking) - the first domain settles the template conventions the others copy.
 - [x] T-010 TSK-1201 No subtype of the graph is listed as not_generatable
+- [x] T-011 TSK-1204 The player can enter every answer and understands its result
+- [ ] T-012 TSK-1205 The key hints are checked on Windows
       closes: REQ-1232
       depends: TSK-1192 (blocking) - domain N's templates; TSK-1193 (blocking) - domain A's templates; TSK-1194 (blocking) - domain F's templates; TSK-1195 (blocking) - domain D's templates; TSK-1196 (blocking) - domain P's templates; TSK-1197 (blocking) - domain M's templates; TSK-1198 (blocking) - domain G's templates; TSK-1199 (blocking) - domain S's templates; TSK-1200 (blocking) - domain T's templates.
 

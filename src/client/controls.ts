@@ -19,8 +19,8 @@ function el<K extends keyof HTMLElementTagNameMap>(
 
 export { el };
 
-/** The fraction slash the server writes between a numerator and a denominator (U+2044). */
-const FRACTION = /(\d+)\u2044(\d+)/g;
+/** A fraction as the server writes it (U+2044) or as the player types it. */
+const FRACTION = /(\d+)[\u2044/](\d+)/g;
 
 /** A text with each fraction `3⁄4` drawn as a numerator over a bar over a denominator. */
 export function math(text: string): (Node | string)[] {

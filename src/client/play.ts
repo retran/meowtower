@@ -29,6 +29,14 @@ import {
 import { flushOnce, retryClock, submitAnswer } from "./answer-queue.js";
 import { act, button, el, heading, link, math, status } from "./controls.js";
 import type { Screen } from "./screens.js";
+import {
+  firstLayout,
+  isApple,
+  isPhysical,
+  layoutFromKey,
+  symbolOf,
+  type Layout,
+} from "./keys.js";
 import { t, uiKey, type UiKey } from "./strings.js";
 
 /** No input for this long outside the task window pauses the adventure (REQ-2408). */
@@ -43,7 +51,7 @@ export const HEARTBEAT_MS = 15 * 1000;
 export const DRAFT_EVERY_MS = 10 * 1000;
 
 /** What each InputSpec kind lets into the field; everything else is refused. */
-const ACCEPTS: Record<Room["input"]["kind"], RegExp> = {
+const ACCEPTS: Record<"integer" | "text", RegExp> = {
   integer: /^\d*$/,
   text: /^[^\u0000-\u001f]{0,40}$/,
 };
@@ -277,7 +285,8 @@ export const playScreen: Screen = {
         autocomplete: "off",
       });
       field.dataset["action"] = "play-answer";
-      const accepts = ACCEPTS[room.input.kind];
+      const accepts =
+        ACCEPTS[room.input.kind === "integer" ? "integer" : "text"];
       // The one check the client makes: the input's format (REQ-2402).
       field.addEventListener("beforeinput", (e) => {
         const next =
@@ -286,7 +295,24 @@ export const playScreen: Screen = {
             : field.value + e.data;
         if (!accepts.test(next)) e.preventDefault();
       });
+      const format = room.input.format;
+      const symbol = symbolOf(format);
+      const apple = isApple(navigator.userAgent);
+      let layout: Layout = firstLayout(
+        navigator.language,
+        apple,
+        shell.current === "tablet" && navigator.maxTouchPoints > 0,
+      );
+      const keyHint = el("p", { className: "format" });
+      const showKey = (): void => {
+        if (symbol)
+          keyHint.textContent = t(uiKey(`ui.play.key.${symbol}.${layout}`));
+      };
+      showKey();
+      const preview = el("p", { className: "preview" });
       field.addEventListener("input", () => {
+        if (format === "fraction" || format === "mixed")
+          preview.replaceChildren(...math(field.value));
         if (!accepts.test(field.value))
           field.value =
             room.input.kind === "integer"
@@ -296,6 +322,12 @@ export const playScreen: Screen = {
       });
       field.addEventListener("keydown", (e) => {
         input.keyPresses++;
+        if (isPhysical(e.code)) {
+          if (layout === "touch")
+            layout = firstLayout(navigator.language, apple, false);
+          layout = layoutFromKey(e, apple) ?? layout;
+          showKey();
+        }
         if (!input.firstKeyMs) input.firstKeyMs = since();
         if (e.key === "Backspace" || e.key === "Delete") input.erasures++;
         else if (e.key.length === 1) input.edits++;
@@ -315,9 +347,13 @@ export const playScreen: Screen = {
       });
       const note = status();
       let sending = false;
-      async function submit(dontKnow: boolean): Promise<void> {
+      async function submit(
+        dontKnow: boolean,
+        given?: string,
+        shown?: string,
+      ): Promise<void> {
         if (sending || !sessionId) return;
-        const raw = dontKnow ? "" : field.value.trim();
+        const raw = dontKnow ? "" : (given ?? field.value.trim());
         if (!dontKnow && !raw) return;
         sending = true;
         input.submittedMs = since();
@@ -335,18 +371,99 @@ export const playScreen: Screen = {
           refused("ui.play.failed");
           return;
         }
-        drawOutcome(delivery.reply, dontKnow);
+        drawOutcome(delivery.reply, dontKnow, shown ?? raw);
       }
+      const labels = room.view.options ?? [];
+      const values = room.input.values ?? [];
+      const answerButton = (
+        label: string,
+        act2: () => void,
+      ): HTMLButtonElement => {
+        const b = el(
+          "button",
+          { type: "button", className: "control option" },
+          ...math(label),
+        );
+        b.addEventListener("click", () => {
+          act("play-option");
+          act2();
+        });
+        return b;
+      };
+      const picked: number[] = [];
+      const pickedLine = el("p", { className: "picked" });
+      const chosen = (): string =>
+        picked.map((i) => labels[i] ?? "").join("; ");
+      const sendPicked = (): void => {
+        if (!picked.length) return;
+        input.method = "choice";
+        void submit(
+          false,
+          picked.map((i) => values[i] ?? "").join(","),
+          chosen(),
+        );
+      };
+      const buttons = labels.map((label, i) => {
+        const b = answerButton(label, () => {
+          if (room.input.kind === "choice") {
+            input.method = "choice";
+            void submit(false, values[i] ?? "", label);
+          } else if (room.input.kind === "set") {
+            const at = picked.indexOf(i);
+            if (at >= 0) picked.splice(at, 1);
+            else picked.push(i);
+            picked.sort((x, y) => x - y);
+            b.setAttribute("aria-pressed", String(at < 0));
+          } else {
+            picked.push(i);
+            b.disabled = true;
+            pickedLine.replaceChildren(...math(chosen()));
+          }
+        });
+        return b;
+      });
+      const undo = (): void => {
+        const last = picked.pop();
+        const b = last === undefined ? undefined : buttons[last];
+        if (b) b.disabled = false;
+        pickedLine.replaceChildren(...math(chosen()));
+      };
+      const typed = room.input.kind === "integer" || room.input.kind === "text";
       draw(
         ...(room.view.svg ? [picture(room.view.svg)] : []),
         el("p", { className: "task" }, ...math(room.view.text)),
-        el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
-        field,
+        ...(typed
+          ? [
+              el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
+              field,
+              ...(format
+                ? [
+                    el(
+                      "p",
+                      { className: "format" },
+                      t(uiKey(`ui.play.format.${format}`)),
+                    ),
+                  ]
+                : []),
+              ...(symbol ? [keyHint] : []),
+              preview,
+            ]
+          : [
+              el("div", { className: "options" }, ...buttons),
+              ...(room.input.kind === "order" ? [pickedLine] : []),
+            ]),
         note,
         el(
           "nav",
           { className: "actions" },
-          button("ui.play.submit", "play-submit", () => submit(false)),
+          ...(typed
+            ? [button("ui.play.submit", "play-submit", () => submit(false))]
+            : room.input.kind === "choice"
+              ? []
+              : [button("ui.play.submit", "play-submit", sendPicked)]),
+          ...(room.input.kind === "order"
+            ? [button("ui.play.undo", "play-undo", undo)]
+            : []),
           button("ui.play.dontKnow", "play-dont-know", () => submit(true)),
           button("ui.play.leave", "play-leave", () => stop("leave")),
         ),
@@ -549,7 +666,11 @@ export const playScreen: Screen = {
       restartIdle();
     }
 
-    function drawOutcome(reply: AnswerOut, dontKnow: boolean): void {
+    function drawOutcome(
+      reply: AnswerOut,
+      dontKnow: boolean,
+      entered: string,
+    ): void {
       taskOpen = false;
       const badge = el(
         "p",
@@ -563,6 +684,22 @@ export const playScreen: Screen = {
       );
       draw(
         badge,
+        ...(dontKnow
+          ? []
+          : [
+              el(
+                "p",
+                { className: "yours" },
+                `${t("ui.play.yours")} `,
+                ...math(entered),
+              ),
+            ]),
+        el(
+          "p",
+          { className: "right" },
+          `${t("ui.play.right")} `,
+          ...math(reply.feedback.correctAnswer),
+        ),
         el("p", { className: "battle" }, reply.battleLine),
         el("p", {}, t("ui.play.solution")),
         solution,

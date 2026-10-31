@@ -30,9 +30,10 @@ import { isZone } from "../shared/game-day.js";
 import { baseSeed } from "../math/rng.js";
 import {
   hexOf,
-  inputKindOf,
+  inputOf,
   judge,
   pick,
+  present,
   rebuild,
   twinOf,
 } from "./task-source.js";
@@ -214,7 +215,7 @@ function roomFor(
     kind: "room",
     itemId: shown.itemId,
     view: shown.view,
-    input: { kind: inputKindOf(shown.templateId) },
+    input: inputOf(shown.templateId, shown.seed),
     slot: Math.max(slot, 0) % ROOM_LENGTH,
     roomLength: ROOM_LENGTH,
     attemptNo: shown.attemptNo,
@@ -772,17 +773,18 @@ export function mountPlay(
       const chosen = pick(sessionId, index, STANDIN_ADVENTURE_TASKS);
       const made = chosen.template.make(chosen.base);
       const seed = hexOf(chosen.base);
+      const shape = present({ template: chosen.template, made });
       const shown: ItemShown = {
         itemId: randomUUID(),
         view: {
           locale: "ru",
-          text: made.text,
+          text: shape.text,
           svg: made.svg,
-          options: made.options ? [...made.options] : null,
+          options: shape.options,
           terms: [],
         },
         attemptNo: 1,
-        correctAnswer: made.entry,
+        correctAnswer: shape.answer,
         shortSolution: [...made.solution],
         subtype: chosen.template.subtype,
         seed,
@@ -1510,17 +1512,18 @@ export function mountPlay(
     if (original && shown.templateId) {
       const other = twinOf(shown.templateId, sessionId, original.made);
       if (!other) return c.json({ error: "item_unknown" }, 404);
+      const shape = present(other);
       const twin: ItemShown = {
         itemId: randomUUID(),
         view: {
           locale: "ru",
-          text: other.made.text,
+          text: shape.text,
           svg: other.made.svg,
-          options: other.made.options ? [...other.made.options] : null,
+          options: shape.options,
           terms: [],
         },
         attemptNo: 2,
-        correctAnswer: other.made.entry,
+        correctAnswer: shape.answer,
         shortSolution: [...other.made.solution],
         subtype: shown.subtype,
         seed: other.seed,

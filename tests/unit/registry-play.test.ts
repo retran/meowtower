@@ -8,6 +8,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { createApp } from "../../src/server/app.js";
 import { openDatabase } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
+import { rebuild } from "../../src/server/task-source.js";
 import { AnswerOut, HintOut, Room } from "../../src/shared/api.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-registry-"));
@@ -95,7 +96,8 @@ describe("the registry as the source of tasks", () => {
       templates.add(shown.templateId);
       if (room.view.svg) pictures += 1;
       expect(room.view.text.length).toBeGreaterThan(0);
-      const res = await answer(sessionId, room.itemId, shown.correctAnswer);
+      const entry = rebuild(shown.templateId, shown.seed)?.made.entry ?? "";
+      const res = await answer(sessionId, room.itemId, entry);
       expect(res.status, shown.templateId).toBe(200);
       expect(AnswerOut.parse(await res.json()).outcome).toBe("clean");
     }

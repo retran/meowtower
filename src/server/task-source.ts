@@ -3,6 +3,7 @@
 // to those of group 8 over the tasks of an adventure, one template of each step drawn by the session's seed.
 import { baseSeed } from "../math/rng.js";
 import { templates } from "../templates/index.js";
+import type { InputSpec } from "../shared/api.js";
 import type { Compiled, Made } from "../templates/spec.js";
 
 const byId = new Map(templates.map((c) => [c.id, c]));
@@ -69,13 +70,103 @@ export function twinOf(
   return null;
 }
 
-/** What the answer field accepts: whole numbers for a stand-in task or an integer answer, any short entry otherwise. */
-export const inputKindOf = (
+/** How a task is put before the player: its text, its options and the input they answer through. */
+export interface Presented {
+  readonly text: string;
+  readonly options: string[] | null;
+  readonly input: InputSpec;
+  /** The correct answer as the player reads it. */
+  readonly answer: string;
+}
+
+const NUMBERS = (n: number): string[] =>
+  Array.from({ length: n }, (_, i) => String(i + 1));
+
+/** Splits `Question? 1) a; 2) b. Closing sentence.` into the question and the options. */
+function numberedList(text: string): { text: string; labels: string[] } | null {
+  const m = /^(.*?)\s1\) (.*)\.\s[^.]*\.$/su.exec(text);
+  if (!m) return null;
+  return { text: m[1] ?? "", labels: (m[2] ?? "").split(/; \d+\) /) };
+}
+
+const FORMATS = [
+  "decimal",
+  "fraction",
+  "mixed",
+  "pair",
+  "time",
+  "line",
+] as const;
+const formatOf = (kind: string): InputSpec["format"] =>
+  FORMATS.find((f) => f === kind);
+
+/** The buttons of a compare, choice, set or order task, or the field of any other. */
+export function present({
+  template,
+  made,
+}: Pick<RegistryItem, "template" | "made">): Presented {
+  const kind = template.answer;
+  if (kind === "compare")
+    return {
+      text: made.text,
+      options: ["<", "=", ">"],
+      input: { kind: "choice", values: ["<", "=", ">"] },
+      answer: made.entry,
+    };
+  if (kind === "choice" || kind === "set") {
+    const values = [...(made.options ?? [])];
+    const listed = numberedList(made.text);
+    const inline = /([^\s;]+(?:; [^\s;]+)+)/u.exec(made.text)?.[1]?.split("; ");
+    const labels =
+      listed?.labels.length === values.length
+        ? listed.labels
+        : values.every((v) => /^\d+$/.test(v)) &&
+            inline?.length === values.length
+          ? inline
+          : values;
+    const name = (entry: string): string =>
+      labels[values.indexOf(entry.trim())] ?? entry;
+    return {
+      text: listed?.labels.length === values.length ? listed.text : made.text,
+      options: labels,
+      input: { kind, values },
+      answer: made.entry.split(",").map(name).join("; "),
+    };
+  }
+  if (kind === "order") {
+    const m = /^(.*): (.*)\.$/su.exec(made.text);
+    const labels = (m?.[2] ?? "").split("; ");
+    const values = NUMBERS(labels.length);
+    return {
+      text: `${m?.[1] ?? made.text}.`,
+      options: labels,
+      input: { kind, values },
+      answer: made.entry
+        .split(",")
+        .map((v) => labels[Number(v) - 1] ?? v)
+        .join("; "),
+    };
+  }
+  const format = formatOf(kind);
+  return {
+    text: made.text,
+    options: null,
+    input: {
+      kind: kind === "integer" ? "integer" : "text",
+      ...(format ? { format } : {}),
+    },
+    answer: made.entry,
+  };
+}
+
+/** The input of a task shown: a stand-in task takes a whole number. */
+export function inputOf(
   templateId: string | undefined,
-): "integer" | "text" => {
-  const template = templateId === undefined ? undefined : byId.get(templateId);
-  return template && template.answer !== "integer" ? "text" : "integer";
-};
+  seed: string,
+): InputSpec {
+  const item = templateId ? rebuild(templateId, seed) : null;
+  return item ? present(item).input : { kind: "integer" };
+}
 
 export type RegistryVerdict = "correct" | "wrong" | "unparsed" | "dont_know";
 

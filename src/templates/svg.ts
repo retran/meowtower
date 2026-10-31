@@ -21,7 +21,7 @@ const tint = (i: number, o = 0.35): string =>
 const num = (x: number): string => String(Math.round(x * 100) / 100);
 
 const wrap = (w: number, h: number, body: string): string =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${num(w)} ${num(h)}" role="img" fill="none" stroke="currentColor" stroke-width="1.5">${body}</svg>`;
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${num(w)} ${num(h)}" role="img" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">${body}</svg>`;
 
 const label = (x: number, y: number, t: string | number, size = 11): string =>
   `<text x="${num(x)}" y="${num(y)}" font-size="${size}" text-anchor="middle" fill="currentColor" stroke="none">${t}</text>`;
@@ -1139,18 +1139,20 @@ export function cuboid(a: number, b: number, c: number, cubes = false): string {
   const w = a * k;
   const hgt = c * k;
   const d = b * k;
+  const x = 28;
+  const y = 16;
+  const front = y + d * 0.5;
   let lines = "";
-  if (cubes && a <= 8 && c <= 8)
+  if (cubes && a <= 8 && c <= 8) {
     for (let i = 1; i < a; i += 1)
-      lines += line(10 + i * k, 10 + d * 0.5, 10 + i * k, 10 + d * 0.5 + hgt);
-  if (cubes && a <= 8 && c <= 8)
+      lines += line(x + i * k, front, x + i * k, front + hgt);
     for (let j = 1; j < c; j += 1)
-      lines += line(10, 10 + d * 0.5 + j * k, 10 + w, 10 + d * 0.5 + j * k);
-  return wrap(
-    w + d * 0.5 + 30,
-    hgt + d * 0.5 + 30,
-    `${iso(10, 10, w, hgt, d)}${lines}${label(10 + w / 2, 10 + d * 0.5 + hgt + 14, a)}${label(10 + w + d * 0.5 + 10, 10 + d * 0.25 + hgt / 2, c)}${label(10 + w + d * 0.25 + 6, 10 + d * 0.25 - 2, b)}`,
-  );
+      lines += line(x, front + j * k, x + w, front + j * k);
+  }
+  const body = `${iso(x, y, w, hgt, d)}${lines}`;
+  // Length under the front, height beside the front, depth along the lower slanted edge.
+  const labels = `${label(x + w / 2, front + hgt + 16, a)}${label(x - 12, front + hgt / 2 + 4, c)}${label(x + w + d * 0.25 + 13, front + hgt - d * 0.25 + 12, b)}`;
+  return wrap(w + d * 0.5 + 60, hgt + d * 0.5 + 46, body + labels);
 }
 
 /** Regular polygon outline with one side written, for the tasks that cut a perimeter into equal sides. */

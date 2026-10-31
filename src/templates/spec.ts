@@ -8,6 +8,7 @@
 import { readFileSync } from "node:fs";
 import { z } from "zod";
 import { strayNumbers } from "../engine/tasks/graph.js";
+import { agree, evaluate, writeValue } from "./expr.js";
 import { formatQ } from "../math/format.js";
 import { Q } from "../math/q.js";
 import { candidateSeed, Xoshiro128 } from "../math/rng.js";
@@ -282,16 +283,26 @@ function checkerOf(
   }
 }
 
+/** Fills a string's placeholders; `computed` collects the values its `{=...}` expressions work out. */
 const fill = (
   template: string,
   vars: Record<string, string>,
   id: string,
+  computed: Q[] = [],
 ): string =>
-  template.replace(/\{(\w+)\}/g, (_, name: string) => {
-    const value = vars[name];
+  template.replace(/\{([^{}]+)\}/g, (_, body: string) => {
+    const [head = "", one, few, many] = body.split("|");
+    let value = vars[head];
+    if (head.startsWith("=")) {
+      const worked = evaluate(head.slice(1), vars, id);
+      computed.push(worked);
+      value = writeValue(worked);
+    }
     if (value === undefined)
-      throw new RangeError(`unfilled_placeholder:${id}:${name}`);
-    return value;
+      throw new RangeError(`unfilled_placeholder:${id}:${head}`);
+    return one === undefined || few === undefined || many === undefined
+      ? value
+      : `${value} ${agree(value, [one, few, many])}`;
   });
 
 const NUMBER_TOKEN = /\d+(?:[ \u00A0]\d{3})*(?:,\d+)?/g;
@@ -337,7 +348,9 @@ export function compile<P>(
         const keys = traps.map((t) => keyOf(t.wrong));
         if (new Set(keys).size !== keys.length) continue;
         const vars = spec.vars(p);
-        const stringsOf = (s: string): string => fill(s, vars, spec.id);
+        const computed: Q[] = [];
+        const stringsOf = (s: string): string =>
+          fill(s, vars, spec.id, computed);
         const made: Made = {
           text: stringsOf(text.text),
           svg: spec.picture ? spec.picture(p, pictureLabels(lang)) : null,
@@ -370,6 +383,7 @@ export function compile<P>(
             ...Object.values(vars).flatMap(numbersIn),
             ...numbersOfAnswer(answer),
             ...traps.flatMap((t) => numbersOfAnswer(t.wrong)),
+            ...computed,
             ...(spec.constants ?? []).map((c) =>
               Number.isInteger(c)
                 ? Q.of(BigInt(c))

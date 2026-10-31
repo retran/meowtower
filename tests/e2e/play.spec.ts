@@ -87,17 +87,17 @@ test("REQ-2402: the client refuses a letter, sends a wrong number raw and shows 
   await page.waitForTimeout(300);
   await expect(page.locator(".badge")).toHaveCount(0);
   await expect(page.locator(".play")).not.toContainText(
-    /Распутан начисто|Почти чисто|Узел ослаблен|Принято/,
+    /Правильно!|Почти правильно|Пока не так|Давай посмотрим, как решить/,
   );
   release();
   const reply = (await (await replied).json()) as { outcome?: string };
   // The badge the server's outcome names, and nothing the client decided.
   const word =
     reply.outcome === "clean"
-      ? "Распутан начисто"
+      ? "Правильно!"
       : reply.outcome === "partial"
-        ? "Почти чисто"
-        : "Узел ослаблен";
+        ? "Почти правильно"
+        : "Пока не так";
   await expect(page.locator(".badge")).toHaveText(word);
 });
 
@@ -204,7 +204,9 @@ test("REQ-2430: a scored and an unscored task render the same apart from the tas
   const markup = (): Promise<string> =>
     page.locator(".play").evaluate((section) => {
       const copy = section.cloneNode(true) as HTMLElement;
-      for (const n of copy.querySelectorAll(".task, .battle, .solution li"))
+      for (const n of copy.querySelectorAll(
+        ".task, .battle, .solution li, .right",
+      ))
         n.textContent = "";
       return copy.innerHTML;
     });
@@ -275,4 +277,97 @@ test("a fraction in a task is drawn as a numerator over a denominator, and a pic
     "inputmode",
     "text",
   );
+});
+
+const room = (over: object): object => ({
+  kind: "room",
+  itemId: "buttons-room",
+  view: {
+    locale: "ru",
+    text: "Сравни числа.",
+    svg: null,
+    options: null,
+    terms: [],
+  },
+  input: { kind: "integer" },
+  slot: 0,
+  roomLength: 3,
+  attemptNo: 1,
+  threads: 5,
+  hintLevels: [],
+  ...over,
+});
+
+test("REQ-7536: a comparison is answered with a button, and an order by tapping in turn", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  let sent: { raw?: string } = {};
+  await page.route("**/api/session/*/answer", (route) => {
+    sent = route.request().postDataJSON() as { raw: string };
+    return route.fulfill({
+      json: {
+        outcome: "clean",
+        streak: 1,
+        grants: [],
+        threads: 5,
+        feedback: { correctAnswer: "1⁄3; 5⁄6" },
+        shortSolution: ["1⁄3 меньше 5⁄6."],
+        battleLine: "Нить легла ровно.",
+      },
+    });
+  });
+  let next = room({
+    view: {
+      locale: "ru",
+      text: "Расположи дроби.",
+      svg: null,
+      options: ["5⁄6", "1⁄3"],
+      terms: [],
+    },
+    input: { kind: "order", values: ["1", "2"] },
+  });
+  await page.route("**/api/session/*/next", (route) =>
+    route.fulfill({ json: next }),
+  );
+  await ready(page, "/play");
+  await expect(page.locator("#play-answer")).toHaveCount(0);
+  await page.locator(".option").nth(1).click();
+  await page.locator(".option").nth(0).click();
+  await page.locator('[data-action="play-submit"]').click();
+  await expect(page.locator(".badge")).toHaveText("Правильно!");
+  await expect(page.locator(".right .frac")).toHaveCount(2);
+  await expect(page.locator(".yours .frac")).toHaveCount(2);
+  expect(sent.raw).toBe("2,1");
+
+  next = room({
+    view: {
+      locale: "ru",
+      text: "Сравни числа.",
+      svg: null,
+      options: ["<", "=", ">"],
+      terms: [],
+    },
+    input: { kind: "choice", values: ["<", "=", ">"] },
+  });
+  await page.locator('[data-action="play-next"]').click();
+  await page.locator(".option").nth(2).click();
+  await expect(page.locator(".badge")).toBeVisible();
+  expect(sent.raw).toBe(">");
+});
+
+test("REQ-7524, REQ-7526, REQ-7528: a fraction's field shows its format, its key and the fraction drawn", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  await page.route("**/api/session/*/next", (route) =>
+    route.fulfill({
+      json: room({ input: { kind: "text", format: "fraction" } }),
+    }),
+  );
+  await ready(page, "/play");
+  await expect(page.locator(".format").first()).toContainText("2/4");
+  await expect(page.locator(".format").nth(1)).toContainText("Косая черта");
+  await page.locator("#play-answer").fill("2/4");
+  await expect(page.locator(".preview .frac")).toHaveCount(1);
 });
