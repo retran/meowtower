@@ -17,6 +17,11 @@ export const of =
   (...list: number[]): ((r: Xoshiro128) => number) =>
   (r) =>
     pick(r, list);
+/** The item of a list at an index, or 0 past the end. */
+export const at = (list: readonly number[], i: number): number => list[i] ?? 0;
+/** The item at an index of a list in ascending order, or 0 past the end. */
+export const sortedAt = (list: readonly number[], i: number): number =>
+  [...list].sort((u, v) => u - v)[i] ?? 0;
 /** A parameter that is always the same number. */
 export const fix =
   (n: number): ((r: Xoshiro128) => number) =>
@@ -45,6 +50,7 @@ export interface Def {
   readonly face?: "analogue" | "digital";
   readonly origin?: Origin;
   readonly options?: (...v: number[]) => string[];
+  readonly roles?: Readonly<Record<string, string>>;
   readonly within?: (...v: number[]) => Q;
 }
 
@@ -77,6 +83,7 @@ export const calc =
       ...(d.rule ? { rule: d.rule } : {}),
       ...(d.face ? { face: d.face } : {}),
       ...(d.origin ? { origin: d.origin } : {}),
+      ...(d.roles ? { roles: d.roles } : {}),
       ...(d.options ? { options: fn(d.options) } : {}),
       ...(d.within ? { within: fn(d.within) } : {}),
     });

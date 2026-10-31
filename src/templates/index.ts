@@ -13,6 +13,10 @@ import { gSpecs4 } from "./g4.js";
 import { fSpecs1 } from "./f1.js";
 import { fSpecs2 } from "./f2.js";
 import { fSpecs3 } from "./f3.js";
+import { sSpecs1 } from "./s1.js";
+import { sSpecs2 } from "./s2.js";
+import { tSpecs1 } from "./t1.js";
+import { tSpecs2 } from "./t2.js";
 import { pSpecs1 } from "./p1.js";
 import { pSpecs2 } from "./p2.js";
 import { pSpecs3 } from "./p3.js";
@@ -55,6 +59,8 @@ export const templates: readonly Compiled[] = [
   ...compileAll("d", [...dSpecs1, ...dSpecs2]),
   ...compileAll("p", [...pSpecs1, ...pSpecs2, ...pSpecs3]),
   ...compileAll("g", [...gSpecs1, ...gSpecs2, ...gSpecs3, ...gSpecs4]),
+  ...compileAll("s", [...sSpecs1, ...sSpecs2]),
+  ...compileAll("t", [...tSpecs1, ...tSpecs2]),
   ...compileAll("m", [
     ...mSpecs1,
     ...mSpecs2,

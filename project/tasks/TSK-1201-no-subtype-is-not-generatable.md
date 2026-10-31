@@ -1,7 +1,7 @@
 ---
 id: TSK-1201
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -39,7 +39,7 @@ Run the check over the whole graph and fix any subtype a domain task missed.
 
 ## Evidence
 
-Not yet.
+`./meowtower graph check` lists `not_generatable: 0` and `thin: 0` at this commit. The registry holds 1335 templates, each verified on 10,000 seeds.
 
 ## Left alone
 

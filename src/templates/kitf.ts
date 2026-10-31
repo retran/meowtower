@@ -68,6 +68,8 @@ export interface FracT {
   ])[];
   readonly extra?: (v: number[]) => Record<string, string>;
   readonly consts?: readonly number[];
+  /** The role of each drawn number in the story, such as a price or a count (ADR-0130). */
+  readonly roles?: Readonly<Record<string, string>>;
   /** The options of a set or choice task, in the order shown. */
   readonly options?: (v: number[]) => string[];
   /** How far an entry may lie from the answer of a `line` task. */
@@ -94,6 +96,7 @@ export function frac(node: string, subtype: string, o: FracT): Spec<never> {
     form: o.form,
     groups: o.groups,
     ...(o.origin ? { origin: o.origin } : {}),
+    ...(o.roles ? { roles: o.roles } : {}),
     answer: o.kind,
     ...(o.rule ? { rule: o.rule } : {}),
     ...(o.face ? { face: o.face } : {}),

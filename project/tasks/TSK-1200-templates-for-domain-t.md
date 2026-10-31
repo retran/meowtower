@@ -1,7 +1,7 @@
 ---
 id: TSK-1200
 artifact: task
-status: approved
+status: done
 revised: 2026-10-24
 epic: EPC-0480
 closes: [REQ-1232]
@@ -33,7 +33,7 @@ Write the templates of domain T in the template catalogue, following RES-1200 fo
 
 ## Evidence
 
-Not yet.
+The 46 templates of domain T are in src/templates/t1.ts and t2.ts, with their strings in content/tasks-t.ru.json. Closed by tests/unit/templates.test.ts and by `npm run verify:templates` on 10,000 seeds for each template. Each text is a plain blank with `roles` naming what each number stands for, so the story writer of ADR-0130 can dress it.
 
 ## Left alone
 
