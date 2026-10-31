@@ -16,6 +16,7 @@ export function createApp({
   explainer,
   onSessionEnded,
   sweepLeasesMs,
+  tasks,
 }: {
   db: Db;
   now?: () => number;
@@ -24,6 +25,8 @@ export function createApp({
   onSessionEnded?: (sessionId: string) => void;
   /** Checks the lease this often, so a silent holder's pause reaches the log with no request; tests leave it off. */
   sweepLeasesMs?: number;
+  /** Where the tasks come from; the stand-in tasks unless the server says the registry. */
+  tasks?: "standin" | "registry";
 }): Hono {
   const app = new Hono();
   // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
@@ -61,6 +64,7 @@ export function createApp({
     ...(explainer ? { explainer } : {}),
     ...(onSessionEnded ? { onSessionEnded } : {}),
     ...(sweepLeasesMs ? { sweepLeasesMs } : {}),
+    ...(tasks ? { tasks } : {}),
   });
   return app;
 }

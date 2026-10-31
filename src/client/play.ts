@@ -43,7 +43,20 @@ export const HEARTBEAT_MS = 15 * 1000;
 export const DRAFT_EVERY_MS = 10 * 1000;
 
 /** What each InputSpec kind lets into the field; everything else is refused. */
-const ACCEPTS: Record<Room["input"]["kind"], RegExp> = { integer: /^\d*$/ };
+const ACCEPTS: Record<Room["input"]["kind"], RegExp> = {
+  integer: /^\d*$/,
+  text: /^[^\u0000-\u001f]{0,40}$/,
+};
+
+/** A picture the server drew, parsed as SVG so that nothing in it runs. */
+function picture(svg: string): HTMLElement {
+  const holder = el("figure", { className: "picture" });
+  const doc = new DOMParser().parseFromString(svg, "image/svg+xml");
+  const root = doc.documentElement;
+  if (root.localName === "svg" && !doc.querySelector("script, parsererror"))
+    holder.append(document.importNode(root, true));
+  return holder;
+}
 
 /** The badge's word for an outcome; the server decides the outcome. */
 function badgeKey(reply: AnswerOut, dontKnow: boolean): UiKey {
@@ -260,7 +273,7 @@ export const playScreen: Screen = {
       const field = el("input", {
         id: "play-answer",
         type: "text",
-        inputMode: "numeric",
+        inputMode: room.input.kind === "integer" ? "numeric" : "text",
         autocomplete: "off",
       });
       field.dataset["action"] = "play-answer";
@@ -275,7 +288,10 @@ export const playScreen: Screen = {
       });
       field.addEventListener("input", () => {
         if (!accepts.test(field.value))
-          field.value = field.value.replace(/\D/g, "");
+          field.value =
+            room.input.kind === "integer"
+              ? field.value.replace(/\D/g, "")
+              : field.value.slice(0, 40);
         act("play-answer");
       });
       field.addEventListener("keydown", (e) => {
@@ -322,6 +338,7 @@ export const playScreen: Screen = {
         drawOutcome(delivery.reply, dontKnow);
       }
       draw(
+        ...(room.view.svg ? [picture(room.view.svg)] : []),
         el("p", { className: "task" }, room.view.text),
         el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
         field,

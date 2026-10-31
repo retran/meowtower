@@ -127,7 +127,13 @@ const onSessionEnded = (): void => {
   });
 };
 const game = serve({
-  fetch: createApp({ db, onSessionEnded, sweepLeasesMs: 5000 }).fetch,
+  fetch: createApp({
+    db,
+    onSessionEnded,
+    sweepLeasesMs: 5000,
+    tasks:
+      process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry",
+  }).fetch,
   port,
 });
 const parent = serve({

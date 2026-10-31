@@ -29,6 +29,8 @@ body {
   line-height: 1.4;
 }
 main { margin: 0 auto; }
+.picture { margin: 0; text-align: center; }
+.picture svg { max-width: 100%; max-height: 40vh; height: auto; }
 h1, p, fieldset, form { margin: 0; }
 
 /* One card a screen, its blocks one gap apart. */

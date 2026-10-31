@@ -34,7 +34,9 @@ const View = z
   })
   .strict();
 
-export const InputSpec = z.object({ kind: z.enum(["integer"]) }).strict();
+export const InputSpec = z
+  .object({ kind: z.enum(["integer", "text"]) })
+  .strict();
 
 export const Room = z
   .object({
