@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-7100, REQ-7102, REQ-7104, REQ-7106, REQ-7108, REQ-7110, REQ-7112, REQ-7114, REQ-7116, REQ-7118, REQ-7120, REQ-7122, REQ-7124, REQ-7126, REQ-7128, REQ-7130, REQ-7132, REQ-7134, REQ-7136, REQ-7138, REQ-7140, REQ-7142, REQ-7144, REQ-7146, REQ-7148, REQ-7150, REQ-7152, REQ-7154, REQ-7156, REQ-7158, REQ-7160, REQ-7162, REQ-7164, REQ-7166, REQ-7168, REQ-7170, REQ-7172, REQ-7174, REQ-7176, REQ-7178, REQ-7180, REQ-7182, REQ-7184, REQ-7186, REQ-7188, REQ-7190, REQ-7194, REQ-7196, REQ-7198, REQ-6656, REQ-6664, REQ-6684]
 supersedes: []
+issue: 63
+projected: 7ceaba78bb3e
+tracked: 38f1f2fe70c4
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

@@ -5,6 +5,9 @@ status: approved
 revised: 2026-09-27
 addresses: [REQ-3714]
 supersedes: []
+issue: 40
+projected: a5c9c3d34cf7
+tracked: 37889c078d51
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

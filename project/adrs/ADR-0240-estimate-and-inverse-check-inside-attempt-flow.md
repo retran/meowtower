@@ -5,6 +5,9 @@ status: approved
 revised: 2026-09-28
 addresses: [REQ-5300, REQ-5302, REQ-5304, REQ-5306, REQ-5308, REQ-5310, REQ-5312, REQ-5314, REQ-5316, REQ-5318, REQ-5320, REQ-5322, REQ-5324, REQ-5326, REQ-5328, REQ-5330, REQ-5332, REQ-5334, REQ-5336, REQ-5338, REQ-5340, REQ-5342, REQ-5344, REQ-5346, REQ-5348, REQ-5350, REQ-5352, REQ-5354, REQ-5356, REQ-5358, REQ-5360, REQ-5362, REQ-5364, REQ-5366, REQ-5368, REQ-5370, REQ-5072]
 supersedes: []
+issue: 44
+projected: dff59183c69a
+tracked: f4123f040f48
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5018, REQ-5020, REQ-5022, REQ-5024, REQ-5026, REQ-5028, REQ-5030, REQ-5032, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-5056, REQ-5058, REQ-5060, REQ-5062, REQ-5064, REQ-5066, REQ-5068, REQ-5070, REQ-5072, REQ-5074, REQ-5076, REQ-5078, REQ-5080, REQ-5082, REQ-5086, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5096, REQ-5098]
 supersedes: []
+issue: 41
+projected: 5b65b6ce2a76
+tracked: 9f06b0c9c8ed
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

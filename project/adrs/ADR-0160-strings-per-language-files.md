@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-3810, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-7544, REQ-3312, REQ-3314, REQ-3318, REQ-3320, REQ-3322, REQ-3324, REQ-3326, REQ-3328]
 supersedes: []
+issue: 36
+projected: 57e76f8d9211
+tracked: f77703783521
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->

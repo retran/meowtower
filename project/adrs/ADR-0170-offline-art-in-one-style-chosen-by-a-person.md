@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-1924, REQ-2800, REQ-2802, REQ-2804, REQ-2806, REQ-2808, REQ-2810, REQ-2812, REQ-2814, REQ-2816, REQ-2818, REQ-2820, REQ-2822, REQ-2824, REQ-2826, REQ-2828, REQ-2830, REQ-2832, REQ-2834, REQ-2836, REQ-2838, REQ-2840, REQ-3400, REQ-3402, REQ-3406, REQ-3408, REQ-3410, REQ-3412, REQ-3414, REQ-3416, REQ-3418, REQ-3420, REQ-3422, REQ-1510]
 supersedes: []
+issue: 37
+projected: be22ae95d606
+tracked: 49f30498ea5f
 ---
 
 <!-- Reader: the owner and whoever writes the spec, evaluating the decision. They know RES-2800 and RES-3400. -->

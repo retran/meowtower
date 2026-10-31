@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-5858, REQ-5862, REQ-5864, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898, REQ-6064]
 supersedes: []
+issue: 49
+projected: 216127c431c6
+tracked: 27c76895a262
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
