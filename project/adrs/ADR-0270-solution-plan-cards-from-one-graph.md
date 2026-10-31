@@ -212,3 +212,17 @@ Amended by ADR-0390, approved on 2026-09-28, whose `## Amends` sections change p
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5606 (superseded by REQ-6422, which ADR-0360 addresses); REQ-5636 (superseded by REQ-7508, which ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The plan builder takes the needed cards from one valid graph and the decoys from quantities outside every valid graph (`archive/tasks/TSK-0852-plan-builder-takes-cards-and-decoys-from-one-valid-graph.md`)
+2. Each card's wording sits in `content/plans.ru.json`, written by the template author, with no model call (`archive/tasks/TSK-0853-card-wordings-live-in-the-per-language-file.md`)
+3. The server grades a plan into one of five labels, and the exact-permutation rule of `order` answers stays as it is (`archive/tasks/TSK-0854-grade-plan-by-five-labels-never-by-exact-permutation.md`)
+4. The item builder gives every first-shown word problem its opening phase and input form from fixed counters (`archive/tasks/TSK-0855-opening-phase-comes-from-one-counter-over-the-log.md`)
+5. The server logs the laid plan as `plan_submitted` before she answers, restores it on resume and sends only the strict view (`archive/tasks/TSK-0856-plan-route-plan-submitted-and-resume.md`)
+6. The task window shows a card board with no verdict and labels the step rows with the cards she laid (`archive/tasks/TSK-0857-card-board-and-step-rows-labelled-with-her-cards.md`)
+7. The answer after a plan counts as the answer after no phase, and the label feeds no credit, outcome or estimate (`archive/tasks/TSK-0858-the-plan-label-feeds-no-measure.md`)
+8. After the answer, the knot's scheme shows her cards beside the engine's cards with no tick or cross (`archive/tasks/TSK-0859-knot-scheme-shows-her-plan-beside-the-engines-plan.md`)
+9. The word-problem matrix becomes three counts and two crosses sharing the answer axis (`archive/tasks/TSK-0860-report-shows-planning-errors-and-two-crosses.md`)
+

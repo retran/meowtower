@@ -285,3 +285,23 @@ Amended by ADR-0380, ADR-0390, ADR-0410, ADR-0420, ADR-0430, ADR-0440 and ADR-04
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3700 (superseded by REQ-5076, which ADR-0210 addresses); REQ-3702 (superseded by REQ-5078, which ADR-0210 addresses); REQ-3704 (superseded by REQ-5080, which ADR-0210, ADR-0370 addresses); REQ-3706 (superseded by REQ-5736, which ADR-0280 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. One verify command runs every check group in the tools container and writes one report (`archive/tasks/TSK-0724-verify-command-runs-every-group-and-writes-one-report.md`)
+2. Group 2 runs every template on 10,000 fixed seeds against an independent reference solver (`archive/tasks/TSK-0725-property-tests-against-a-reference-solver-on-fixed-seeds.md`)
+3. The same seeds, times and verdicts give the same outcomes, branches, states, awards and finale (`archive/tasks/TSK-0726-determinism-test-over-seeds-times-and-verdicts.md`)
+4. Every export matches the log's row count, is fully described, and opens in DuckDB and pandas (`archive/tasks/TSK-0727-export-row-counts-dictionary-and-opening-in-duckdb-and-pandas.md`)
+5. Ten synthetic profiles are classified, converge over 30 days and tell "knows" from "doesn't know" (`archive/tasks/TSK-0728-ten-synthetic-profiles-classify-converge-and-tell-knows-apart.md`)
+6. A 60-minute simulated adventure yields enough scored attempts and keeps the success share in its corridor (`archive/tasks/TSK-0729-timed-adventure-yield-and-success-corridor.md`)
+7. A new knowledge-model version scores no lower than the last one on any simulation metric (`archive/tasks/TSK-0730-new-model-version-scores-no-lower-than-the-last.md`)
+8. Automated checks replay recorded model answers, and a missing recording fails the check (`archive/tasks/TSK-0731-automated-checks-replay-recorded-model-answers.md`)
+9. `verify --live` measures the discard share, the branch readiness and the Master's wait within $10 (`archive/tasks/TSK-0732-live-run-measures-discards-branch-readiness-and-wait.md`)
+10. Every agent run ends with a handoff, and five unapproved drafts stop work that needs a new decision (`archive/tasks/TSK-0733-handoff-ends-every-run-and-the-draft-ceiling-holds.md`)
+11. Group 1 refuses a decision log outside the record, a deferred item's trace and the player's personal data (`archive/tasks/TSK-0734-group-one-refuses-decision-logs-deferred-traces-and-personal-data.md`)
+12. Verify reads the current stage from the record, and a stage opens only after the one before it is accepted (`archive/tasks/TSK-0735-stage-comes-from-the-record-and-acceptance-opens-the-next.md`)
+13. An adult runs a checklist on a real iPad at every stage, and 30 seconds without Wi-Fi lose no answer (`archive/tasks/TSK-0736-ipad-checklist-and-thirty-seconds-without-wi-fi.md`)
+14. The MVP and each backlog item are accepted from the player's play and a fast-guess share below 15 % (`archive/tasks/TSK-0737-mvp-and-backlog-acceptance-read-the-player-and-the-fast-guess-share.md`)
+15. A stage's acceptance task holds the verify report, the checklist result and the agent's two readings (`archive/tasks/TSK-0738-stage-acceptance-holds-the-report-the-checklist-and-two-agent-readings.md`)
+

@@ -52,3 +52,9 @@ The checks that read real templates stay unrun until the later epic, and the pla
 - What makes two templates different forms of one subtype; the epic fixes it with the first domain.
 
 Amended on 2026-10-31: the tasks and the interface also ship in English and Dutch, with the parent choosing the language (REQ-7548). Each template reads its strings from `content/tasks-<domain>.<language>.json`, and the numbers and pictures stay language-free.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The key hints are checked on Windows (`archive/tasks/TSK-1205-check-the-key-hints-on-windows.md`)
+

@@ -281,3 +281,22 @@ The player sees none of these. `probe_texts_short`, `probe_text_blocked` and `pr
 - Which templates carry `probeFamily`, beyond the rule of 1 to 2 for each group; the owner approves the list at the stage acceptance.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-7192 (superseded by REQ-7514, which ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. No Dutch probe trace exists before the owner's amendment, and the parent's switch holds the whole probe (`archive/tasks/TSK-1108-probe-scope-guard-and-switch.md`)
+2. A template joins the probe only by naming its family (`archive/tasks/TSK-1109-template-probe-family-field.md`)
+3. The offline run refuses to start on shared models, holds no player data and runs under roles of its own (`archive/tasks/TSK-1110-probe-offline-run-roles-and-refusals.md`)
+4. The pipeline passes a candidate pair only after code, the forbidden list, a blind solve and the language check (`archive/tasks/TSK-1111-probe-pipeline-checks-each-pair.md`)
+5. The parent approves each pair, its marks and its cards, and the game shows only an approved pair (`archive/tasks/TSK-1112-parent-approves-each-pair.md`)
+6. A family is one ordinary template shown in up to five presentations from one approved pair (`archive/tasks/TSK-1113-probe-family-and-presentations.md`)
+7. Letters take a fixed place on the floor, one presentation of a family a game day, in a balanced order (`archive/tasks/TSK-1114-probe-letters-floor-place-and-order.md`)
+8. A letter keeps one set of controls in every presentation and gets no twin and no second attempt (`archive/tasks/TSK-1115-letter-controls-and-no-twin.md`)
+9. A tapped card marks the attempt assisted, and the after-words presentation opens with its cards (`archive/tasks/TSK-1116-word-cards-assisted-mark-and-after-words-opening.md`)
+10. Letters feed only the stream `nl_probe`, and no other measure counts them (`archive/tasks/TSK-1117-letters-feed-only-nl-probe.md`)
+11. The report shows each presentation's share and the two gaps, with «мало данных» under 12 observations (`archive/tasks/TSK-1118-report-probe-shares-and-gaps.md`)
+12. The report shows the card counts, the word list, the practice gain, the native-review share and the families closed short (`archive/tasks/TSK-1119-report-probe-cards-words-practice-and-native-share.md`)
+13. A canon record adds the Mainland and its letters before any letter scene is written (`archive/tasks/TSK-1120-canon-record-for-the-mainland.md`)
+14. A 60-day simulation shows the probe's order, window, floor and phase rules hold (`archive/tasks/TSK-1121-probe-sixty-day-simulation.md`)
+

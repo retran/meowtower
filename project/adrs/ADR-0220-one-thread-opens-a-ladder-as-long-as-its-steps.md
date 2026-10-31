@@ -207,3 +207,23 @@ The premortem, written as though it had happened: three months in, the report sh
 - The thread economy's grants: ADR-0080 keeps them, and the first reversal condition above reopens only the price.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5130 (superseded by REQ-7164, which ADR-0430 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. `hint_shown`, `thread_spent` and `attempt_submitted` carry the ladder's fields, and two framing events join the log (`archive/tasks/TSK-0772-hint-and-thread-payloads-gain-ladder-fields-with-upcasters.md`)
+2. The first tap opens the ladder for 1 thread, each later rung is free, and the log tells a paid rung from a free one (`archive/tasks/TSK-0773-one-thread-opens-the-ladder-and-later-rungs-are-free.md`)
+3. The parallel task opens its own ladder for 1 thread, keeps the first task's features, and draws a missing-number twin at random (`archive/tasks/TSK-0774-twin-opens-its-own-ladder-and-draws-a-missing-number-at-random.md`)
+4. A first attempt that ends right or almost right with at most rung 1 gets no second attempt (`archive/tasks/TSK-0775-no-second-attempt-after-a-right-or-partial-answer-at-rung-one-or-less.md`)
+5. A resume shows the open ladder with the rungs she saw, spends no thread and logs no second `hint_shown` (`archive/tasks/TSK-0776-a-resume-shows-the-open-ladder-and-its-rungs-and-charges-nothing.md`)
+6. A template's ladder has one rung for each real step of its graph, grouped into three above three steps (`archive/tasks/TSK-0777-ladder-has-one-rung-for-each-real-step-up-to-three.md`)
+7. A basic fact's ladder is exactly one strategy rung with the engine's numbers, and no other first rung holds a number (`archive/tasks/TSK-0778-basic-fact-ladder-is-one-strategy-rung-with-engine-numbers.md`)
+8. A fluent mental-arithmetic fact offers no ladder before the answer, and its strategy shows after the answer at no charge (`archive/tasks/TSK-0779-fluent-basic-fact-has-no-ladder-before-the-answer-and-a-free-strategy-after.md`)
+9. A structural check and a seeded check fail a template whose rung 1 or 2 states the answer (`archive/tasks/TSK-0780-rungs-one-and-two-never-state-the-answer.md`)
+10. `npm run framings:generate` writes framing candidates under `FRAMING_MODEL`, and a code check rejects any line with a number before the queue (`archive/tasks/TSK-0781-framing-candidates-are-generated-offline-and-checked-for-numbers.md`)
+11. The parent accepts, rejects or edits each framing line, and the server shows a line only after its approval event and the owner's commit (`archive/tasks/TSK-0782-parent-approves-framing-lines-and-only-approved-lines-show.md`)
+12. The task window shows the familiar's portrait and one approved line beside each rung, and the same line after a resume (`archive/tasks/TSK-0783-task-window-shows-the-familiars-portrait-and-approved-line-beside-a-rung.md`)
+13. The knowledge model keeps four shares of right answers by depth of help beside the pooled "with help" estimate (`archive/tasks/TSK-0784-knowledge-model-keeps-four-shares-by-depth-beside-the-pooled-estimate.md`)
+14. The report marks a node «на пороге» by an explicit rule, and shows it before «почти готово» when both hold (`archive/tasks/TSK-0785-report-marks-a-node-on-the-threshold-before-nearly-ready.md`)
+15. The node card and the help row show the mean depth of help over 30 days, with the count of attempts (`archive/tasks/TSK-0786-report-shows-the-mean-depth-of-help-for-each-node.md`)
+

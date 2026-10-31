@@ -327,3 +327,24 @@ Amended by ADR-0380, ADR-0420, ADR-0430 and ADR-0440, approved on 2026-09-28, wh
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5084 (superseded by REQ-6416, which ADR-0360 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. One module turns a time into a game day, a lint rule bars hour reads elsewhere, and every daily job runs once per game day (`archive/tasks/TSK-0756-game-day-module-and-hour-lint-rule.md`)
+2. The server plans one adventure a game day, and daily quests and rewards come on every game day she plays (`archive/tasks/TSK-0757-one-adventure-a-game-day-and-daily-quests.md`)
+3. The story tells the change of day as the Tower re-knitting itself, and no string she can reach names the hour (`archive/tasks/TSK-0758-day-turn-line-and-no-hour-on-screen.md`)
+4. The seven screens without tasks open whenever the task window is closed, and a new puzzle appears only after the finale (`archive/tasks/TSK-0759-screens-without-tasks-open-when-the-task-window-is-closed.md`)
+5. Time on the screens without tasks counts for the eyes, and the clock check skips a task's own content (`archive/tasks/TSK-0760-time-on-task-free-screens-counts-and-the-clock-check-skips-task-content.md`)
+6. `item_shown`, `attempt_submitted` and `verdict` each get one new version for the whole addendum, and each fact has one record (`archive/tasks/TSK-0761-one-new-version-of-three-event-types-with-upcasters.md`)
+7. Every new form writes a stream of its own, and no stream enters "on her own" until a model version admits it (`archive/tasks/TSK-0762-new-forms-write-streams-outside-on-her-own.md`)
+8. Every event schema names an approved owner, no code names the school's vendor, and the parent's acts have owned types (`archive/tasks/TSK-0763-every-event-type-has-an-owner-and-no-code-names-the-vendor.md`)
+9. `PARSE_MODEL`, `FRAMING_MODEL`, `PUZZLE_MODEL` and `FREE_PEN_MODEL` run as roles of their own, and the gateway checks each output before the game uses it (`archive/tasks/TSK-0764-four-model-roles-with-checked-output-and-offline-keys.md`)
+10. A parse request carries only a masked riddle, five kinds of data leave the Mac, and the school's goal list never does (`archive/tasks/TSK-0765-masked-parse-request-and-the-five-kinds-that-leave-the-mac.md`)
+11. The play key's daily buckets sum below $60, the parse bucket falls back to sentence cards, and «Свободное перо» spends from the adventure's bucket (`archive/tasks/TSK-0766-play-key-buckets-stay-under-sixty-dollars-and-the-parse-bucket-falls-back-to-cards.md`)
+12. A sandbox call charges the offline key under a $20 monthly bucket, and never the play key (`archive/tasks/TSK-0767-sandbox-spends-from-the-offline-key-under-a-monthly-cap.md`)
+13. The sandbox's model routes answer 409 until the gateway and the PIN exist, and its pages are served only on the loopback listener until then (`archive/tasks/TSK-0768-sandbox-model-features-wait-for-the-gateway-and-the-pin.md`)
+14. The scope guard fails on deferred items and Dutch files, and the string check lets in only the Dutch the parent approved (`archive/tasks/TSK-0769-scope-guard-knows-the-mvp-list-the-deferred-list-and-the-dutch-exception.md`)
+15. The Dutch word bridge holds 30 to 50 keywords, and a word shows only after the parent approves it (`archive/tasks/TSK-0770-dutch-bridge-holds-30-to-50-words-and-shows-none-before-approval.md`)
+16. The fact stage offers one set of fact tasks a game day on the stage 0.1 templates, with no model call (`archive/tasks/TSK-0771-fact-stage-offers-one-set-a-game-day-with-no-model-call.md`)
+

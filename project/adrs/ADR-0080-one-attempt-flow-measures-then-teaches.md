@@ -155,3 +155,21 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended on 2026-10-10: this record no longer addresses 12 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0108 (superseded by REQ-5120, which ADR-0220, ADR-0300 addresses); REQ-0414 (superseded by REQ-5130, which ADR-0220 addresses); REQ-0416 (superseded by REQ-5788, which ADR-0280 addresses); REQ-0418 (superseded by REQ-5132, which ADR-0220 addresses); REQ-0500 (superseded by REQ-6248, which ADR-0330 addresses); REQ-0526 (superseded by REQ-5100, which ADR-0220 addresses); REQ-0532 (superseded by REQ-5106, which ADR-0220, ADR-0360 addresses); REQ-0534 (superseded by REQ-5758, which ADR-0280 addresses); REQ-0538 (superseded by REQ-5112, which ADR-0220, ADR-0360 addresses); REQ-0540 (superseded by REQ-6408, which ADR-0360 addresses); REQ-0542 (superseded by REQ-6410, which ADR-0360 addresses); REQ-0548 (superseded by REQ-6250, which ADR-0330, ADR-0360 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Every adventure task runs one attempt flow that the server owns, and the game has no measurement mode (`archive/tasks/TSK-0548-attempt-flow-state-machine.md`)
+2. No packet carries the correct answer or a solution step before the first attempt, and the window shows the answer after every attempt (`archive/tasks/TSK-0549-no-answer-in-any-packet-before-the-first-attempt.md`)
+3. After an answer the window shows a review that depends on the outcome, titled «Схема узла» (`archive/tasks/TSK-0550-review-per-outcome-in-the-task-window.md`)
+4. The short solution and every hint rung show only numbers the engine computed (`archive/tasks/TSK-0551-short-solution-and-rungs-from-one-graph.md`)
+5. The second attempt runs on a parallel task, is logged as assisted, and earns base experience and no bonus (`archive/tasks/TSK-0552-second-attempt-on-a-parallel-task.md`)
+6. After the player sees a solution, every later task of the same node that game day is marked as coming after feedback (`archive/tasks/TSK-0553-solution-shown-and-post-feedback-mark.md`)
+7. A bought hint rung marks the attempt as assisted with the deepest rung (`archive/tasks/TSK-0554-hint-rung-marks-the-attempt-assisted.md`)
+8. The guiding-thread stock is a projection of the log, never above 30, and a surplus thread turns silently into 2 buttons (`archive/tasks/TSK-0555-thread-ledger-cap-and-buttons.md`)
+9. An explanation costs 1 thread, the short solution nothing, and an empty stock gets one pocket thread in each room (`archive/tasks/TSK-0556-thread-spending-pocket-and-inactive-button.md`)
+10. Each source grants its own number of threads: a quest 1, a clean row 1, a big row 0, a find 1 or 2, a familiar 2 (`archive/tasks/TSK-0557-thread-grants-by-source.md`)
+11. A typical day of play yields between 8 and 10 guiding threads (`archive/tasks/TSK-0558-thread-balance-check-of-a-typical-day.md`)
+12. Every task opens in a flat window that holds only the task and its controls and never marks an answer right or wrong (`archive/tasks/TSK-0559-task-window-holds-only-the-task-and-its-controls.md`)
+13. The game screen shows the guiding-thread stock as a ball of yarn with the current number (`archive/tasks/TSK-0560-yarn-ball-shows-the-thread-stock.md`)
+

@@ -212,3 +212,20 @@ The premortem, written as though it had happened: three months in, the node card
 - The check on fractions, on longer expressions and on word problems.
 - How the report words the matrix and the check line for the parent: the spec of ADR-0180's screens and ADR-0160's strings.
 - The other forms of the owner's addendum 1 and the rules every form shares: their own decisions and ADR-0210.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The option builder makes four rounded values of different orders as separate buttons, with the correct one spread over the four positions (`archive/tasks/TSK-0804-option-builder-makes-four-estimate-options-that-keep-the-three-errors-off-the-correct-one.md`)
+2. A catalogue flag and a seeded draw give an estimate to 10 % to 20 % of eligible tasks, one in a room, scored or not alike (`archive/tasks/TSK-0805-estimate-flag-and-the-seeded-draw-give-10-to-20-percent-and-one-a-room.md`)
+3. The estimate travels with the exact answer in one request, its verdict comes back beside the exact verdict, and the outcome reads the exact answer alone (`archive/tasks/TSK-0806-estimate-travels-with-the-exact-answer-and-its-verdict-comes-back-with-theirs.md`)
+4. The server labels an attempt `magnitude`, `magnitude_unaware` or `estimate_off_exact_ok` beside the class and trap, and never against the exact answer (`archive/tasks/TSK-0807-labels-sit-beside-the-class-and-trap-and-never-count-the-exact-answer-wrong.md`)
+5. The `estimate` stream is a number-sense estimate for each node and subtype with a guess rate of 0.25, and it feeds nothing else (`archive/tasks/TSK-0808-estimate-stream-is-a-number-sense-bkt-per-node-and-subtype-that-feeds-nothing-else.md`)
+6. An item with an estimate counts for accuracy and no speed measure reads its time, and the check's time is taken off every other attempt (`archive/tasks/TSK-0809-estimate-step-and-check-time-stay-out-of-the-speed-measures.md`)
+7. The `inverseCheck` flag passes the build only on a bare expression of one operation between two printed numbers (`archive/tasks/TSK-0810-inverse-check-flag-is-allowed-only-on-a-bare-one-operation-expression.md`)
+8. The check route compares her check only with the printed operand, costs nothing, and the field shows a match or a mismatch with no verdict (`archive/tasks/TSK-0811-check-route-compares-her-check-only-with-a-printed-operand-and-shows-a-bare-match.md`)
+9. Using the check doesn't make an attempt assisted, the checked answer isn't an attempt, and the first attempt after a check feeds "on her own" from the first day (`archive/tasks/TSK-0812-checking-leaves-the-attempt-unassisted-and-the-next-answer-is-her-first-attempt.md`)
+10. The estimate is a field of the attempt, each check is a `self_check_used` event, and each fact has one record (`archive/tasks/TSK-0813-estimate-field-and-check-event-keep-each-fact-in-one-place-on-the-new-versions.md`)
+11. The node card shows a matrix of estimate right or wrong by exact answer right or wrong, and «мало данных» under 5 answers a cell (`archive/tasks/TSK-0814-node-card-shows-the-estimate-matrix-and-too-little-data-under-five.md`)
+12. The summary shows each week the share of checks used and the numbers of answers saved and spoiled (`archive/tasks/TSK-0815-weekly-line-counts-checks-used-saved-and-spoiled-answers.md`)
+

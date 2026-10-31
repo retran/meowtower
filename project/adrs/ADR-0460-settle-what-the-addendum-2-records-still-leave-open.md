@@ -207,3 +207,24 @@ The premortem, written as though it had happened: two months into stage 0.3, `ll
 - REQ-7404's open finding on the tested and mapped counts, which waits for the owner as its own requirement.
 
 Amended on 2026-10-10: this record no longer addresses 8 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0980 (superseded by REQ-7506, which this record now addresses); REQ-5636 (superseded by REQ-7508, which this record now addresses); REQ-6426 (superseded by REQ-7510, which this record now addresses); REQ-6668 (superseded by REQ-7500, which this record now addresses); REQ-6818 (superseded by REQ-7502, which this record now addresses); REQ-6936 (superseded by REQ-7512, which this record now addresses); REQ-7192 (superseded by REQ-7514, which this record now addresses); REQ-7360 (superseded by REQ-7504, which this record now addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Only unassisted first attempts feed the estimate, an excluded task can be restored and a hinted retention check counts as wrong (`archive/tasks/TSK-1156-evidence-exclusion-and-retention-rules.md`)
+2. The model's block, uncertainty, number-sense stream and parameter gate follow the settled rules, and a submitted plan logs its choice (`archive/tasks/TSK-1157-model-block-uncertainty-stream-gate-and-plan-answer.md`)
+3. Pocket-thread and twin events carry what the ledger needs, and a puzzle's state and save route follow the settled rules (`archive/tasks/TSK-1158-ledger-events-and-puzzle-routes.md`)
+4. A word problem draws no step from a held node, an unanswerable problem asks for its estimate like a solvable one, and a frame's glossary words get spans (`archive/tasks/TSK-1159-word-problem-held-nodes-estimate-and-glossary-spans.md`)
+5. The day's plan keeps both floors at a slow pace, a room slot names its floor's own domain and the track tasks follow one order (`archive/tasks/TSK-1160-plan-floors-slots-and-track-tasks.md`)
+6. The Volley's share, fact mix and intervals, the bare count and the school goal follow the settled rules (`archive/tasks/TSK-1161-volley-cito-horizon-and-fact-intervals.md`)
+7. The masker and reply check hold from the MVP, the reference set holds every error class and a family's text form waits for its own pass (`archive/tasks/TSK-1162-compose-masker-reference-set-and-family-gate.md`)
+8. Each role has its timeout and token ceiling, a reserved check is never refused and the month's reset spends the daily buckets (`archive/tasks/TSK-1163-gateway-role-limits-reserved-checks-and-month-reset.md`)
+9. The text gate blocks Latin test names, the judge checks four System-line and joke rules, and the gate counts what it checks (`archive/tasks/TSK-1164-russian-text-gate-checklist-and-counters.md`)
+10. A live frame moves to the library only after its checks, and a discarded reply counts as five rejected frames (`archive/tasks/TSK-1165-live-frames-library-move-and-rejection-count.md`)
+11. Report v1 has nine screens, its interval table covers every count, and a thin week pools up to four weeks (`archive/tasks/TSK-1166-report-nine-screens-intervals-and-pooled-weeks.md`)
+12. Check 5 waits for 20 on every cell, the hold tool reads its interval once, and each scope-guard trace names its backlog item (`archive/tasks/TSK-1167-check-5-cells-hold-bar-and-scope-guard-traces.md`)
+13. Sandbox code can't start timers or change the flag, a reset is compared by table hashes and a start-up writes missing pointers (`archive/tasks/TSK-1168-sandbox-lints-pointers-and-header-state.md`)
+14. A first encounter is computed from the log at its recorded versions, and a side slot takes a context she has met (`archive/tasks/TSK-1169-first-encounter-contexts-and-recompute.md`)
+15. A probe template names its family, every Dutch text passes its checks and the player's word cards reach the source question (`archive/tasks/TSK-1170-probe-template-text-checks-and-word-cards.md`)
+16. A letter's seed is its task's base seed, a family closes at its last presentation, and the day's letters follow the count of templates (`archive/tasks/TSK-1171-probe-seed-family-window-and-daily-letters.md`)
+

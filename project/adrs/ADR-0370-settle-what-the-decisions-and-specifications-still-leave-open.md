@@ -188,3 +188,24 @@ The premortem, written as though it had happened: at the stage 0 bake-off no loc
 - Whether REQ-1010 gains a raised-mode exception, which ADR-0360 left to its third reversal condition.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0608 (superseded by REQ-6500, which this record now addresses); REQ-0626 (superseded by REQ-6502, which this record now addresses); REQ-5994 (superseded by REQ-6504, which this record now addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Version 1 events read as paid and adventure, and the threshold version joins both of its sources (`archive/tasks/TSK-1012-upcasters-for-version-1-events-and-composite-threshold-version.md`)
+2. The disk ceiling counts the live database, every projection has a class, and a lost blob row comes back (`archive/tasks/TSK-1013-storage-ceiling-projection-classes-and-blob-recovery.md`)
+3. A moved lease, a resumed adventure and a repeated `next` each have one answer a route test can assert (`archive/tasks/TSK-1014-lease-session-routes-idempotent-next-and-route-statuses.md`)
+4. A bought explanation comes back on resume, and the client sends every kind of event through one queue (`archive/tasks/TSK-1015-explanation-repeat-event-queue-and-plan-draft.md`)
+5. The knowledge model fixes which check sets a state, when forgetting is read, and what a partial answer does (`archive/tasks/TSK-1016-knowledge-model-tested-state-confidence-and-forgetting-time.md`)
+6. A Volley counts as two first attempts, and three measurement edge cases get one rule each (`archive/tasks/TSK-1017-volley-count-resume-check-count-clock-jump-and-rapid-guess-window.md`)
+7. A judge's `scared` label starts the fear path, a creepy scene has one definition, and the wait is measured on every path (`archive/tasks/TSK-1018-fear-path-label-creepy-scene-wait-and-name-triggers.md`)
+8. Every library text carries a minimum level, names characters by id, and passes the numeral and guilt tests (`archive/tasks/TSK-1019-content-levels-numerals-entity-ids-and-guilt-phrases.md`)
+9. Explanations are grouped by the kind of answer, hold only engine numbers, and are checked offline per template (`archive/tasks/TSK-1020-explanation-groups-engine-numbers-and-template-checks.md`)
+10. An edited frame is accepted only after its checks, and verify counts only frames the log shows accepted (`archive/tasks/TSK-1021-edited-frames-new-frame-events-and-verified-frame-count.md`)
+11. The naming filter, the reward return, the chest slots and the assisted share each get one stated rule (`archive/tasks/TSK-1022-naming-filter-reward-return-chest-slots-and-assisted-share.md`)
+12. A first start-up with no content stops, a floor's first triumph gives a special reward, and the day opens on «В прошлый раз…» (`archive/tasks/TSK-1023-first-start-floor-special-reward-and-opening-scene.md`)
+13. A custom palette always passes contrast, the voice button always leads somewhere, and art never uses pure black (`archive/tasks/TSK-1024-palette-fallback-dictation-line-art-references-and-black-floor.md`)
+14. Marks can be removed, checks declare their stage, the stage is read from approvals, and the spike has a sound page (`archive/tasks/TSK-1025-parent-room-controls-first-stages-and-spike-sound-page.md`)
+15. A judge passes by one stated agreement bar, providers come from one table, and the sandbox choices stand (`archive/tasks/TSK-1026-judge-agreement-provider-table-sandbox-choices-and-test-ban.md`)
+16. The Director takes the least recently shown template, and four counters and notices get one rule each (`archive/tasks/TSK-1027-template-order-weeks-notice-t1-counter-and-puzzle-report.md`)
+

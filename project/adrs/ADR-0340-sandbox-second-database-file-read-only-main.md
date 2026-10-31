@@ -247,3 +247,22 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0420, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The sandbox keeps its game in a file of its own in the database volume, opened with a role (`archive/tasks/TSK-0964-sandbox-files-in-the-volume-with-a-role-each.md`)
+2. The player's file refuses a sandbox event over any connection, and the server won't start without that refusal (`archive/tasks/TSK-0965-profile-column-and-a-guard-that-fails-closed.md`)
+3. Every sandbox event carries its mark, and `appendEvents` refuses a mismatch before the database sees it (`archive/tasks/TSK-0966-appendevents-refuses-by-context-and-marks-by-request.md`)
+4. The sandbox reaches the player's file only through a connection that can't write, and no handler holds a module-level handle (`archive/tasks/TSK-0967-sandbox-reads-the-player-file-only-read-only.md`)
+5. A sandbox snapshot shows the player's state at one moment and holds no credential (`archive/tasks/TSK-0968-snapshot-builder-copies-one-moment-with-no-credential.md`)
+6. A reset starts the sandbox from an empty profile or a copy of the player and leaves her file unchanged (`archive/tasks/TSK-0969-reset-starts-from-an-empty-profile-or-a-copy.md`)
+7. Every sandbox model call lands in the sandbox's file and ledger, and none enters the play key's count (`archive/tasks/TSK-0970-sandbox-calls-are-recorded-and-counted-apart-from-play.md`)
+8. Every sandbox route on the network listener needs the parent's PIN session, renews it, and writes nothing to the player's file (`archive/tasks/TSK-0971-sandbox-routes-need-a-parent-session-and-renew-it.md`)
+9. Every sandbox screen shows the striped frame and its label, and the sandbox has no calibration (`archive/tasks/TSK-0972-every-sandbox-screen-wears-the-frame-and-has-no-calibration.md`)
+10. A confirmed action applies after a second press and enters the player's log as exactly one event (`archive/tasks/TSK-0973-confirmed-actions-take-two-presses-and-write-one-event.md`)
+11. A disabled template stays disabled after a restart and a rebuild, and every older parent event reads as before (`archive/tasks/TSK-0974-disabled-content-holds-through-restart-and-old-events-read-the-same.md`)
+12. `./meowtower sandbox` runs an item, a batch or an adventure, prints JSON with a mark and writes no file (`archive/tasks/TSK-0975-command-line-sandbox-prints-json-marked-and-writes-no-file.md`)
+13. The repository scan fails on a tracked file that holds output of a run on a snapshot of the player's state (`archive/tasks/TSK-0976-repository-scan-fails-on-output-of-a-snapshot-run.md`)
+14. Acceptance test 18 shows the sandbox changes the player's file only through the six confirmed actions (`archive/tasks/TSK-0977-a-sandbox-scenario-leaves-the-player-file-unchanged.md`)
+

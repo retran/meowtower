@@ -431,3 +431,24 @@ Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change p
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 6 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-2646 (superseded by REQ-5042, which ADR-0210 addresses); REQ-2636 (superseded by REQ-5044, which ADR-0210 addresses); REQ-2640 (superseded by REQ-5212, which ADR-0230 addresses); REQ-2642 (superseded by REQ-2648, which ADR-0350, ADR-0370 addresses); REQ-2724 (superseded by REQ-2732, which ADR-0350 addresses); REQ-2730 (superseded by REQ-6412, which ADR-0360, ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. One gateway module opens every model connection and takes each role's model from `.env` (`archive/tasks/TSK-0580-one-gateway-and-roles-from-env.md`)
+2. An explanation request leaves only after a spent thread and holds only the fields the requirement lists (`archive/tasks/TSK-0581-explanation-and-blind-check-requests.md`)
+3. The egress guard replaces names and contact details, refuses topic names and digits, and keeps her text out of picture prompts (`archive/tasks/TSK-0582-egress-guard-cleans-and-refuses.md`)
+4. Each request goes under a privacy tier its role fixes, to a provider list the owner can change without a rebuild (`archive/tasks/TSK-0583-privacy-tiers-fixed-by-role.md`)
+5. The server refuses to start when a configured model is missing or a player-tier model has no zero-retention endpoint (`archive/tasks/TSK-0584-start-up-check-refuses-an-unsafe-model.md`)
+6. Each call reserves its worst-case cost first, and an adventure's spend stops at $1.5 (`archive/tasks/TSK-0585-reserve-before-each-call-adventure-budget.md`)
+7. Live explanations stop at $0.3 and 20 a game day, and a spent thread still gets one from the cache or a template (`archive/tasks/TSK-0586-explanation-budget-and-cache-fallback.md`)
+8. The play key's month stops at $60, every later session uses the fallbacks, and the parent sees a notice (`archive/tasks/TSK-0587-month-limit-play-key-and-notice.md`)
+9. Offline runs spend from their own key and stop at their own budgets: $40 for art, $25 for the bake-off, $0.5 for live art (`archive/tasks/TSK-0588-offline-key-and-run-buckets.md`)
+10. Every call to a model service is recorded with its cost (`archive/tasks/TSK-0589-every-call-is-logged-with-its-cost.md`)
+11. When a budget runs out or the service is down, the game plays checked library text at its usual pace (`archive/tasks/TSK-0590-play-continues-on-checked-library-text.md`)
+12. The judge model takes only checks with fixed answers, only after a passing test-set record, and falls back to the safety model (`archive/tasks/TSK-0591-judge-takes-fixed-answer-checks-only.md`)
+13. A Master order that fails goes to the fallback model before the scene falls back to the library (`archive/tasks/TSK-0592-master-order-goes-to-a-fallback-model.md`)
+14. The parent switches the Master's model among approved models, and the pick applies at the next adventure (`archive/tasks/TSK-0593-parent-picks-the-masters-model.md`)
+15. The bake-off sends every candidate through the play route, scores answers blind and excludes a model with a safety failure (`archive/tasks/TSK-0594-blind-bake-off-through-the-play-route.md`)
+16. The Parent Room's page on what leaves the Mac states that outcome events coarsely reflect how well she does (`archive/tasks/TSK-0595-page-on-what-leaves-the-mac.md`)
+

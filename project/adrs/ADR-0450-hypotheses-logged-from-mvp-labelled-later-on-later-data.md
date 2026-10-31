@@ -241,3 +241,19 @@ The premortem, written as though it had happened: a year after the label shipped
 - ADR-0310: once its two screens exist, a hypothesis may link to a school goal for display beside that goal's values, and the link never enters a hypothesis label.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-7360 (superseded by REQ-7504, which ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Two parent events record a hypothesis whole, behind the parent session (`archive/tasks/TSK-1140-hypothesis-events-and-parent-routes.md`)
+2. The tab «Гипотезы» holds the form, the node links, the history and the text-criteria notice (`archive/tasks/TSK-1141-hypotheses-tab-form-history-text-notice.md`)
+3. The scope guard keeps the post-MVP part out, and the player's screens show no hypothesis (`archive/tasks/TSK-1142-hypothesis-scope-guard-and-player-screen-scan.md`)
+4. Version 2 of the events and the fixed list of home measures (`archive/tasks/TSK-1143-hypothesis-events-version-2-and-measure-list.md`)
+5. Condition states and the label come from counted observations after the judging window opened (`archive/tasks/TSK-1144-hypothesis-condition-states-and-label.md`)
+6. `hypothesis_days` keeps each day's states and the hold decides the shown label (`archive/tasks/TSK-1145-hypothesis-days-hold-and-shown-label.md`)
+7. A version change restarts every hold and marks the label change it causes (`archive/tasks/TSK-1146-hypothesis-version-change-restarts-hold.md`)
+8. The report line shows the label, the states, the versions and the data before the window (`archive/tasks/TSK-1147-hypothesis-report-line.md`)
+9. Static checks keep a hypothesis off the gateway and the model off the label (`archive/tasks/TSK-1148-hypothesis-leak-path-checks.md`)
+10. `tools/hypothesis-hold.ts` measures the false-label rate for each hold (`archive/tasks/TSK-1149-hypothesis-hold-measurement-tool.md`)
+11. The example hypothesis tells the maths-gap player from the language-gap player, behind a lock (`archive/tasks/TSK-1150-hypothesis-example-run-and-lock.md`)
+

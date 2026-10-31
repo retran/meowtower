@@ -161,3 +161,24 @@ Amended by ADR-0410 and ADR-0430, approved on 2026-09-28, whose `## Amends` sect
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3610 (superseded by REQ-6928, which ADR-0410 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. A frame is placeholder text with a record, and code fills it with the engine's numbers (`archive/tasks/TSK-0628-frame-record-and-code-filled-placeholders.md`)
+2. The author request carries the problem's structure and asks for five variants, and a reply outside the schema is discarded whole (`archive/tasks/TSK-0629-author-request-with-structure-and-five-variants.md`)
+3. Code rejects a frame whose placeholders are wrong or that holds a number of its own (`archive/tasks/TSK-0630-code-checks-reject-a-frame-with-wrong-placeholders-or-numbers.md`)
+4. Model text reaches the player only as `CheckedText`, and the safety question also asks whether the frame holds a joke (`archive/tasks/TSK-0631-safety-check-on-unfilled-text-and-no-joke-in-a-task.md`)
+5. A frame passes only when a checking model, solving blind, gets the engine's answer on three sets of numbers (`archive/tasks/TSK-0632-three-blind-solves-must-match-the-engine.md`)
+6. `npm run frames:generate` runs the pipeline offline and writes the passing variants to a candidates file (`archive/tasks/TSK-0633-frames-generate-fills-the-candidates-file.md`)
+7. The parent accepts, rejects or edits each frame candidate in the Parent Room (`archive/tasks/TSK-0634-parent-accepts-rejects-or-edits-a-frame-candidate.md`)
+8. The frame library is the set of frames the log accepted, and the build counts them for each structure (`archive/tasks/TSK-0635-library-is-the-set-of-frames-the-log-accepted.md`)
+9. A task takes the least recently shown library frame, and only a top-up slot may take a live one (`archive/tasks/TSK-0636-library-frame-picker-and-live-frames-on-top-up-slots-only.md`)
+10. The live queue keeps checked frames two to three rooms ahead and keeps every live frame with its status (`archive/tasks/TSK-0637-live-queue-keeps-checked-frames-two-to-three-rooms-ahead.md`)
+11. A live frame passes one more blind solve with the task's own numbers before the player sees it (`archive/tasks/TSK-0638-live-frame-gets-one-more-blind-solve-with-the-tasks-numbers.md`)
+12. Live generation stops for the rest of the game day when more than 30 % of checked live frames fail (`archive/tasks/TSK-0639-live-generation-pauses-when-too-many-live-frames-fail.md`)
+13. One action moves a live frame into the library (`archive/tasks/TSK-0640-parent-moves-a-live-frame-into-the-library.md`)
+14. The science bank is a hand-checked file, each wrong option names its misconception, and no code path writes a question during play (`archive/tasks/TSK-0641-science-bank-file-and-a-module-with-no-model-import.md`)
+15. A science question is served only when the log holds the parent's approval of its current hash (`archive/tasks/TSK-0642-science-question-served-only-with-an-approval-of-its-hash.md`)
+16. A science question repeats only outside a 45 or 90 day window, and every repeat is marked (`archive/tasks/TSK-0643-science-question-repeat-windows-and-repeat-marks.md`)
+
