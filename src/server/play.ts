@@ -28,6 +28,7 @@ import {
 import { resumeFromLog } from "../engine/projections/resume.js";
 import { isZone } from "../shared/game-day.js";
 import { baseSeed } from "../math/rng.js";
+import { notation } from "../templates/spec.js";
 import {
   hexOf,
   inputOf,
@@ -74,7 +75,7 @@ import {
   SessionStartOut,
   StopOffer,
 } from "../shared/api.js";
-import { keyFor, t } from "../shared/i18n.js";
+import { keyFor, lang, t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
 import { createRateCap } from "./rate.js";
@@ -216,7 +217,7 @@ function roomFor(
     kind: "room",
     itemId: shown.itemId,
     view: shown.view,
-    input: inputOf(shown.templateId, shown.seed),
+    input: inputOf(shown.templateId, shown.seed, shown.view.locale),
     slot: Math.max(slot, 0) % ROOM_LENGTH,
     roomLength: ROOM_LENGTH,
     attemptNo: shown.attemptNo,
@@ -244,7 +245,9 @@ function answerReply(
     );
   const last = verdicts[verdicts.length - 1];
   const outcome = last?.outcome ?? "alt";
-  const item = shown.templateId ? rebuild(shown.templateId, shown.seed) : null;
+  const item = shown.templateId
+    ? rebuild(shown.templateId, shown.seed, shown.view.locale)
+    : null;
   const note = item?.made.traps.find((t) => t.id === last?.trapId)?.explanation;
   // The streak counts clean first attempts in a row.
   const firsts = verdicts.filter((v) => v.attemptNo === 1);
@@ -535,7 +538,7 @@ export function mountPlay(
       room: (roomIndex % STANDIN_ROOMS_PER_FLOOR) + 1,
       slot: index % ROOM_LENGTH,
       itemId: point?.open?.itemId ?? null,
-      view: point?.open ? { ...point.open.view, locale: "ru" } : null,
+      view: point?.open ? { ...point.open.view, locale: lang } : null,
       attemptNo: point?.open?.attemptNo ?? null,
       hintLevels: point?.open?.hintLevels ?? [],
       explainedItemIds: (point?.explained ?? []).filter(
@@ -782,20 +785,20 @@ export function mountPlay(
     }
     if (tasks === "registry") {
       const chosen = pick(sessionId, index, STANDIN_ADVENTURE_TASKS);
-      const made = chosen.template.make(chosen.base);
+      const made = chosen.template.make(chosen.base, lang);
       const seed = hexOf(chosen.base);
       const shape = present({ template: chosen.template, made });
       const shown: ItemShown = {
         itemId: randomUUID(),
         view: {
-          locale: "ru",
+          locale: lang,
           text: shape.text,
           svg: made.svg,
           options: shape.options,
           terms: [],
         },
         attemptNo: 1,
-        correctAnswer: shape.answer,
+        correctAnswer: notation(shape.answer, lang),
         shortSolution: [...made.solution],
         subtype: chosen.template.subtype,
         seed,
@@ -833,7 +836,7 @@ export function mountPlay(
     const shown: ItemShown = {
       itemId: randomUUID(),
       view: {
-        locale: "ru",
+        locale: lang,
         text: taskText(task),
         svg: null,
         options: null,
@@ -1262,7 +1265,7 @@ export function mountPlay(
 
     // The server checks `raw` itself and ignores the client's `parsed`.
     const registry = shown.templateId
-      ? rebuild(shown.templateId, shown.seed)
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
       : null;
     const verdict: Verdict = registry
       ? judge(registry, a.raw, a.dontKnow)
@@ -1355,7 +1358,7 @@ export function mountPlay(
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
     const registry = shown.templateId
-      ? rebuild(shown.templateId, shown.seed)
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
       : null;
     const hintText = (n: number): string =>
       registry
@@ -1430,7 +1433,7 @@ export function mountPlay(
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
     const registry = shown.templateId
-      ? rebuild(shown.templateId, shown.seed)
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
       : null;
     if (!task && !registry) return c.json({ error: "item_unknown" }, 404);
     const key = `explain:${deviceId}:${body.data.clientSeq}`;
@@ -1521,23 +1524,28 @@ export function mountPlay(
     if (!answered) return c.json({ error: "attempt_open" }, 409);
     const task = taskOf(shown.subtype);
     const original = shown.templateId
-      ? rebuild(shown.templateId, shown.seed)
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
       : null;
     if (original && shown.templateId) {
-      const other = twinOf(shown.templateId, sessionId, original.made);
+      const other = twinOf(
+        shown.templateId,
+        sessionId,
+        original.made,
+        shown.view.locale,
+      );
       if (!other) return c.json({ error: "item_unknown" }, 404);
       const shape = present(other);
       const twin: ItemShown = {
         itemId: randomUUID(),
         view: {
-          locale: "ru",
+          locale: lang,
           text: shape.text,
           svg: other.made.svg,
           options: shape.options,
           terms: [],
         },
         attemptNo: 2,
-        correctAnswer: shape.answer,
+        correctAnswer: notation(shape.answer, shown.view.locale),
         shortSolution: [...other.made.solution],
         subtype: shown.subtype,
         seed: other.seed,

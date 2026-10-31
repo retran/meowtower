@@ -172,5 +172,9 @@
   "ui.play.key.colon.ruPc": "Двоеточие на этой раскладке: Shift и цифра 6",
   "ui.play.key.colon.touch": "Двоеточие: на клавиатуре экрана нажми 123",
   "ui.play.hint": "Подсказка · осталось {n}",
-  "ui.play.noThreads": "Подсказки на сегодня закончились. Попробуй сам."
+  "ui.play.noThreads": "Подсказки на сегодня закончились. Попробуй сам.",
+  "ui.parentSettings.language": "Язык игры",
+  "ui.parentSettings.language.ru": "Русский",
+  "ui.parentSettings.language.en": "English",
+  "ui.parentSettings.language.nl": "Nederlands"
 }

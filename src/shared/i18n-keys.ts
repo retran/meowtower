@@ -179,6 +179,10 @@ export interface StringParams {
   "ui.play.key.colon.touch": NoParams;
   "ui.play.hint": { n: string | number };
   "ui.play.noThreads": NoParams;
+  "ui.parentSettings.language": NoParams;
+  "ui.parentSettings.language.ru": NoParams;
+  "ui.parentSettings.language.en": NoParams;
+  "ui.parentSettings.language.nl": NoParams;
 }
 
 export type Key = keyof StringParams;

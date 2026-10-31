@@ -1,0 +1,38 @@
+{
+  "units": [
+    "nul",
+    "een",
+    "twee",
+    "drie",
+    "vier",
+    "vijf",
+    "zes",
+    "zeven",
+    "acht",
+    "negen",
+    "tien",
+    "elf",
+    "twaalf",
+    "dertien",
+    "veertien",
+    "vijftien",
+    "zestien",
+    "zeventien",
+    "achttien",
+    "negentien"
+  ],
+  "tens": [
+    "",
+    "",
+    "twintig",
+    "dertig",
+    "veertig",
+    "vijftig",
+    "zestig",
+    "zeventig",
+    "tachtig",
+    "negentig"
+  ],
+  "hundred": "honderd",
+  "thousand": "duizend"
+}

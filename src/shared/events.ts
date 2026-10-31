@@ -76,7 +76,9 @@ const itemShownBase = z.object({
   itemId,
   view: z
     .object({
-      locale: z.enum(["ru"]).describe("the language the view was rendered in"),
+      locale: z
+        .enum(["ru", "en", "nl"])
+        .describe("the language the view was rendered in"),
       text: z.string().describe("the task's text as rendered"),
       svg: z
         .string()

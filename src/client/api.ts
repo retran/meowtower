@@ -118,6 +118,7 @@ export async function parentDevices(): Promise<ParentReply<ParentDevice[]>> {
 /** The parent settings; a null limit means the three-day rule is off (REQ-0234). */
 export interface ParentSettings {
   threeDayLimit: number | null;
+  language: string;
 }
 
 export async function parentSettings(): Promise<ParentReply<ParentSettings>> {
@@ -126,7 +127,7 @@ export async function parentSettings(): Promise<ParentReply<ParentSettings>> {
 }
 
 export async function saveParentSettings(
-  settings: ParentSettings,
+  settings: Partial<ParentSettings>,
 ): Promise<ParentReply<ParentSettings>> {
   const { status, body } = await call("/api/parent/settings", {
     method: "PUT",

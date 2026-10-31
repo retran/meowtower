@@ -5,10 +5,11 @@
 // its strings into a task that is rebuilt byte for byte from a seed. Pure: no clock, no network.
 // The strings are a plain blank, not finished story text: ADR-0130 has a model write the story frame
 // around the same numbers, so a string states the maths once, in neutral words, with no joke.
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { z } from "zod";
 import { strayNumbers } from "../engine/tasks/graph.js";
 import { agree, evaluate, readsFraction, writeValue } from "./expr.js";
+import { setWordsLang } from "./words.js";
 import { formatQ } from "../math/format.js";
 import { Q } from "../math/q.js";
 import { candidateSeed, Xoshiro128 } from "../math/rng.js";
@@ -103,19 +104,25 @@ export type TaskStrings = z.infer<typeof Strings>;
 
 const cache = new Map<string, Record<string, TaskStrings>>();
 
-/** The strings of one domain from `content/tasks-<domain>.ru.json`, checked against their schema. */
-export function taskStrings(domain: string): Record<string, TaskStrings> {
-  const hit = cache.get(domain);
+/** The strings of one domain from `content/tasks-<domain>.<language>.json`, checked against their schema. */
+export function taskStrings(
+  domain: string,
+  lang = "ru",
+): Record<string, TaskStrings> {
+  const name = `${domain.toLowerCase()}.${lang}`;
+  const hit = cache.get(name);
   if (hit) return hit;
-  const file = new URL(
-    `../../content/tasks-${domain.toLowerCase()}.ru.json`,
-    import.meta.url,
-  );
-  const raw = JSON.parse(readFileSync(file, "utf8")) as Record<string, unknown>;
+  const file = new URL(`../../content/tasks-${name}.json`, import.meta.url);
+  // Russian is the source: a language that has no file yet shows it.
+  const raw = (
+    lang !== "ru" && !existsSync(file)
+      ? {}
+      : JSON.parse(readFileSync(file, "utf8"))
+  ) as Record<string, unknown>;
   const parsed = Object.fromEntries(
     Object.entries(raw).map(([id, value]) => [id, Strings.parse(value)]),
   );
-  cache.set(domain, parsed);
+  cache.set(name, parsed);
   return parsed;
 }
 
@@ -283,12 +290,19 @@ function checkerOf(
   }
 }
 
+/** The writing of numbers in a language: English takes a decimal point and a division sign. */
+export const notation = (text: string, lang: string): string =>
+  lang === "en"
+    ? text.replace(/(\d),(\d)/g, "$1.$2").replace(/ : (?=[\d(])/g, " \u00F7 ")
+    : text;
+
 /** Fills a string's placeholders; `computed` collects the values its `{=...}` expressions work out. */
 const fill = (
   template: string,
   vars: Record<string, string>,
   id: string,
   computed: Q[] = [],
+  lang = "ru",
 ): string =>
   template.replace(/\{([^{}]+)\}/g, (_, body: string) => {
     const [head = "", one, few, many] = body.split("|");
@@ -302,7 +316,7 @@ const fill = (
       throw new RangeError(`unfilled_placeholder:${id}:${head}`);
     return one === undefined || few === undefined || many === undefined
       ? value
-      : `${value} ${agree(value, [one, few, many])}`;
+      : `${value} ${agree(value, [one, few, many], lang)}`;
   });
 
 const NUMBER_TOKEN = /\d+(?:[ \u00A0]\d{3})*(?:,\d+)?/g;
@@ -321,8 +335,9 @@ export function compile<P>(
   spec: Spec<P>,
   strings: Record<string, TaskStrings>,
 ): Compiled {
-  const text = strings[spec.id];
-  if (text === undefined) throw new RangeError(`no_strings:${spec.id}`);
+  const source = strings[spec.id];
+  if (source === undefined) throw new RangeError(`no_strings:${spec.id}`);
+  const domain = spec.id.charAt(0);
   return {
     id: spec.id,
     node: spec.node,
@@ -332,6 +347,9 @@ export function compile<P>(
     origin: spec.origin,
     answer: spec.answer,
     make(seed, lang = "ru") {
+      const text =
+        lang === "ru" ? source : (taskStrings(domain, lang)[spec.id] ?? source);
+      setWordsLang(lang);
       for (let k = 0; k < MAX_CANDIDATES; k += 1) {
         const rng = Xoshiro128.fromSeed(candidateSeed(seed, k));
         const p = spec.draw(rng);
@@ -350,7 +368,7 @@ export function compile<P>(
         const vars = spec.vars(p);
         const computed: Q[] = [];
         const stringsOf = (s: string): string =>
-          fill(s, vars, spec.id, computed);
+          notation(fill(s, vars, spec.id, computed, lang), lang);
         const checker = checkerOf(
           spec.answer,
           answer,

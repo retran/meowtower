@@ -135,9 +135,13 @@ export function evaluate(
 export function agree(
   value: string,
   [one, few, many]: readonly [string, string, string],
+  lang = "ru",
 ): string {
   const parsed = readValue(value);
   if (parsed === null) return many;
+  // English and Dutch have one plural; only the number one takes the singular.
+  if (lang !== "ru")
+    return parsed.eq(Q.of(1n)) || parsed.eq(Q.of(-1n)) ? one : many;
   if (parsed.d !== 1n || value.includes(SLASH)) return few;
   const n = parsed.n < 0n ? -parsed.n : parsed.n;
   const hundred = n % 100n;

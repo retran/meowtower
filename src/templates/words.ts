@@ -14,6 +14,71 @@ const Words = z
   })
   .strict();
 
+const LatinWords = z
+  .object({
+    units: z.array(z.string()).length(20),
+    tens: z.array(z.string()).length(10),
+    hundred: z.string().min(1),
+    thousand: z.string().min(1),
+  })
+  .strict();
+type Latin = z.infer<typeof LatinWords>;
+
+const latin = (lang: string): Latin =>
+  LatinWords.parse(
+    JSON.parse(
+      readFileSync(
+        new URL(`../../content/tasks-numbers.${lang}.json`, import.meta.url),
+        "utf8",
+      ),
+    ),
+  );
+const english = latin("en");
+const dutch = latin("nl");
+
+let wordsLang = "ru";
+
+/** Chooses the language `numberWords` writes in; a task is built in one go, so this holds for that build. */
+export const setWordsLang = (lang: string): void => {
+  wordsLang = lang;
+};
+
+/** Below a hundred: `twenty-one` in English, `eenentwintig` in Dutch, with its unit first. */
+function tensAndUnits(n: number, w: Latin): string {
+  if (n < 20) return w.units[n] ?? "";
+  const tens = w.tens[Math.floor(n / 10)] ?? "";
+  const one = n % 10;
+  if (one === 0) return tens;
+  const unit = w.units[one] ?? "";
+  if (w === english) return `${tens}-${unit}`;
+  return `${unit}${unit.endsWith("e") ? "\u00EBn" : "en"}${tens}`;
+}
+
+/** Below a thousand. A Dutch number is written as one word, an English one with spaces. */
+function latinBelow1000(n: number, w: Latin): string {
+  const h = Math.floor(n / 100);
+  const rest = tensAndUnits(n % 100, w);
+  const tail = n % 100 === 0 ? "" : rest;
+  if (h === 0) return tail;
+  if (w === english)
+    return [`${w.units[h] ?? ""} ${w.hundred}`, tail].filter(Boolean).join(" ");
+  return `${h === 1 ? "" : (w.units[h] ?? "")}${w.hundred}${tail}`;
+}
+
+function latinWords(n: number, w: Latin): string {
+  if (!Number.isInteger(n) || n < 0 || n > 999_999)
+    throw new RangeError("out_of_range");
+  if (n === 0) return w.units[0] ?? "";
+  const k = Math.floor(n / 1000);
+  const low = latinBelow1000(n % 1000, w);
+  if (k === 0) return low;
+  const high =
+    w === english
+      ? `${latinBelow1000(k, w)} ${w.thousand}`
+      : `${k === 1 ? "" : latinBelow1000(k, w)}${w.thousand}`;
+  return [high, low].filter(Boolean).join(" ");
+}
+
 const words = Words.parse(
   JSON.parse(
     readFileSync(
@@ -56,6 +121,8 @@ function thousandForm(k: number): string {
 
 /** `n` from 0 to 999,999 in words, such as twenty-three, in the Russian of `content/tasks-numbers.ru.json`. */
 export function numberWords(n: number): string {
+  if (wordsLang === "en") return latinWords(n, english);
+  if (wordsLang === "nl") return latinWords(n, dutch);
   if (!Number.isInteger(n) || n < 0 || n > 999_999)
     throw new RangeError("out_of_range");
   if (n === 0) return words.units[0] ?? "";

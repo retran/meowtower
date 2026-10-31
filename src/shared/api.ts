@@ -26,7 +26,7 @@ export const SessionStartOut = z
 
 const View = z
   .object({
-    locale: z.enum(["ru"]),
+    locale: z.enum(["ru", "en", "nl"]),
     text: z.string(),
     svg: z.string().nullable(),
     options: z.array(z.string()).nullable(),

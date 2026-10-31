@@ -90,10 +90,10 @@ describe("REQ-3308: a System line holds no digit and a number comes from a place
 });
 
 describe("REQ-3326: a language outside the shipped set is skipped", () => {
-  it("lists ru.json and skips nl.json", () => {
+  it("lists ru.json and skips de.json", () => {
     mkdirSync(join(root, "content", "i18n"), { recursive: true });
     writeFileSync(join(root, "content", "i18n", "ru.json"), "{}");
-    writeFileSync(join(root, "content", "i18n", "nl.json"), "{}");
+    writeFileSync(join(root, "content", "i18n", "de.json"), "{}");
     expect(contentFiles(root).json).toEqual([
       join("content", "i18n", "ru.json"),
     ]);

@@ -398,6 +398,8 @@ const parentDevicesScreen: Screen = {
 /** The three-day limits, in adventure days, as the server accepts them; null is off. */
 const THREE_DAY_LIMITS = [null, 1, 2, 3, 4, 5, 6, 7];
 
+const LANGUAGES = ["ru", "en", "nl"] as const;
+
 // Stand-in until the Parent Room's own page exists: the three-day limit alone
 // (REQ-0234). A choice saves at once, as the device settings do.
 const parentSettingsScreen: Screen = {
@@ -405,11 +407,13 @@ const parentSettingsScreen: Screen = {
   render() {
     const note = status();
     const limits = el("fieldset", {});
+    const languages = el("fieldset", {});
     const nav = el("nav", { className: "actions" });
     const section = el(
       "section",
       {},
       heading("ui.parentSettings.title"),
+      languages,
       limits,
       note,
       nav,
@@ -422,6 +426,26 @@ const parentSettingsScreen: Screen = {
         delete section.dataset["busy"];
         return;
       }
+      languages.append(
+        el("legend", {}, t("ui.parentSettings.language")),
+        ...LANGUAGES.map((code) =>
+          choice(
+            "language",
+            code,
+            uiKey(`ui.parentSettings.language.${code}`),
+            code === current.language,
+            async () => {
+              note.textContent = "";
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ language: code }),
+              );
+              // The strings of the page come from the server in the new language.
+              if (saved) location.reload();
+              else note.textContent = t("ui.devices.failed");
+            },
+          ),
+        ),
+      );
       limits.append(
         el("legend", {}, t("ui.parentSettings.threeDay")),
         ...THREE_DAY_LIMITS.map((limit) => {

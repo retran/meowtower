@@ -29,7 +29,7 @@ export const opaqueId = (secret: Uint8Array, taskId: string): string =>
 export const clientViewSchema = z
   .object({
     itemId: z.string().regex(/^[0-9a-f]{32}$/),
-    locale: z.literal("ru"),
+    locale: z.enum(["ru", "en", "nl"]),
     text: z.string(),
     svg: z.string().nullable(),
     options: z.array(z.string()).nullable(),

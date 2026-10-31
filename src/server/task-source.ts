@@ -4,7 +4,7 @@
 import { baseSeed } from "../math/rng.js";
 import { templates } from "../templates/index.js";
 import type { InputSpec } from "../shared/api.js";
-import type { Compiled, Made } from "../templates/spec.js";
+import type { Compiled, Lang, Made } from "../templates/spec.js";
 
 const byId = new Map(templates.map((c) => [c.id, c]));
 
@@ -47,10 +47,14 @@ export function pick(
 }
 
 /** A task rebuilt from its template id and base seed, as it was shown. */
-export function rebuild(templateId: string, seed: string): RegistryItem | null {
+export function rebuild(
+  templateId: string,
+  seed: string,
+  lang: Lang = "ru",
+): RegistryItem | null {
   const template = byId.get(templateId);
   if (!template) return null;
-  return { template, made: template.make(seedOf(seed)), seed };
+  return { template, made: template.make(seedOf(seed), lang), seed };
 }
 
 /** The parallel task of a second attempt: the same template drawn at another seed, with other numbers. */
@@ -58,12 +62,13 @@ export function twinOf(
   templateId: string,
   sessionId: string,
   first: Made,
+  lang: Lang = "ru",
 ): RegistryItem | null {
   const template = byId.get(templateId);
   if (!template) return null;
   for (let k = 0; k < 20; k += 1) {
     const base = baseSeed(sessionId, `${templateId}.twin`, k);
-    const made = template.make(base);
+    const made = template.make(base, lang);
     if (made.paramsKey !== first.paramsKey)
       return { template, made, seed: hexOf(base) };
   }
@@ -163,8 +168,9 @@ export function present({
 export function inputOf(
   templateId: string | undefined,
   seed: string,
+  lang: Lang = "ru",
 ): InputSpec {
-  const item = templateId ? rebuild(templateId, seed) : null;
+  const item = templateId ? rebuild(templateId, seed, lang) : null;
   return item ? present(item).input : { kind: "integer" };
 }
 

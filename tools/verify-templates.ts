@@ -61,7 +61,7 @@ export const TEXT_RULES: readonly {
   { name: "decimal_point", pattern: /\d\.\d/ },
   { name: "asterisk", pattern: /\*/ },
   { name: "division_slash", pattern: /\d\s*\/\s*\d/ },
-  { name: "ungrouped_four_digits", pattern: /(?<![\d  ])\d{4,}(?!\d)/ },
+  { name: "ungrouped_four_digits", pattern: /(?<![\d  ,(])\d{4,}(?!\d)/ },
 ];
 
 const numbersIn = (text: string): string[] => text.match(/\d+/g) ?? [];
