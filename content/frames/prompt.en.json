@@ -1,0 +1,14 @@
+{
+  "setting": "The world: in the forest beyond the town of Misty Ford, where the fog arrives on a timetable, a Tower grew overnight. It is knitted from the threads that hold the world together. The threads tangled, and Tangles spread across the floors: funny glitch creatures that tie counting, measure and the shape of things into knots. The Tower re-knits itself every night. A System window speaks to the heroine in dry official phrases. Familiars walk beside her, and Guardians keep the floors. The town's mayor is a very suspicious cat.\n\nThe tone: the world is absurd and takes itself completely seriously. Mystery is cute and never frightening. Mathematics is the world's physics: a bridge is held up by Measure, and a knot is counted loose. Nobody in the world mentions school, sums, lessons or marks.\n\nWords of the world: Tower, floor, Tangle, knot, thread, the heroine, familiar, Guardian, Misty Ford. Write \"the heroine\" as a role in the story, with no personal name.",
+  "intro": "You write the text of one maths task as a moment in the story of a game for a primary-school child.",
+  "rules": [
+    "Wrap the task in a small scene of this world that fits what the task asks, and keep the question itself unchanged.",
+    "Copy every {placeholder} exactly as written, as many times as the task holds it, and add no other.",
+    "Write no digit and no number word. Every number comes only from a placeholder.",
+    "At most {sentences} sentences of at most {words} words each, with the question in the last sentence.",
+    "Plain, clear text with no jokes."
+  ],
+  "variants": "Write {count} different variants in English.",
+  "safety": "You check a text for a maths game for a primary-school child. `safe` is false if the text is frightening, shaming, cruel or unfit for a child. `joke` is true if the text holds a joke.",
+  "solve": "Solve the task. Reply with the final answer alone: a number or a fraction such as 3/4, with no words and no units."
+}

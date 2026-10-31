@@ -29,6 +29,19 @@ body {
   line-height: 1.4;
 }
 main { margin: 0 auto; }
+/* A screen and a step of play arrive with a short fade; the waiting scene knits a thread until the server answers. */
+@keyframes arrive { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes knit { to { background-position: 40px 0; } }
+main > *, .step { animation: arrive 220ms ease-out; }
+[data-busy] { cursor: progress; }
+[data-busy]::after, .waiting::after {
+  content: ""; display: block; height: 4px; margin-top: var(--space-3); border-radius: 2px;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 16px, transparent 16px 40px);
+  background-size: 40px 4px; animation: knit 900ms linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  main > *, .step, [data-busy]::after, .waiting::after { animation: none; }
+}
 h1 { font-size: 1.6em; line-height: 1.2; }
 .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.15; margin: 0 0.15em; }
 .frac > span { padding: 0 0.2em; }

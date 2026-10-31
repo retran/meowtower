@@ -1,4 +1,8 @@
 import { serve } from "@hono/node-server";
+import { createFrameQueue, type FrameQueue } from "./frames/queue.js";
+import { ConfigInvalid, readConfig } from "./gateway/config.js";
+import { createGateway, verifyModels } from "./gateway/gateway.js";
+import { liveRoutes } from "./gateway/routes.js";
 import { createApp } from "./app.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
@@ -126,6 +130,47 @@ const onSessionEnded = (): void => {
     now: Date.now,
   });
 };
+// Live frames run once the roles are set (ADR-3100). A bad value or a missing model stops the start;
+// an unreachable service leaves frames off, and the check retries every 10 minutes.
+let frames: FrameQueue | undefined;
+try {
+  const config = readConfig(process.env);
+  if (config) {
+    const routes = liveRoutes(config);
+    const zone = process.env["MEOWTOWER_ZONE"] ?? "UTC";
+    const turnOn = async (): Promise<boolean> => {
+      const check = await verifyModels(config, routes);
+      if (check.state === "missing")
+        throw new ConfigInvalid(check.role, "the model is not on its route");
+      return check.state === "ok";
+    };
+    const queue = createFrameQueue({
+      db,
+      gateway: createGateway({ db, config, routes }),
+      zone,
+    });
+    if (await turnOn()) frames = queue;
+    else {
+      console.error("models_unverified: live frames are off");
+      const retry = setInterval(() => {
+        void turnOn()
+          .then((ok) => {
+            if (!ok) return;
+            live.current = queue;
+            clearInterval(retry);
+          })
+          .catch((err: unknown) => {
+            console.error(err instanceof Error ? err.message : String(err));
+          });
+      }, 600_000);
+      retry.unref();
+    }
+  }
+} catch (err) {
+  console.error(err instanceof Error ? err.message : String(err));
+  process.exit(1);
+}
+const live: { current: FrameQueue | undefined } = { current: frames };
 const game = serve({
   fetch: createApp({
     db,
@@ -133,6 +178,10 @@ const game = serve({
     sweepLeasesMs: 5000,
     tasks:
       process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry",
+    frames: {
+      prepare: (task) => live.current?.prepare(task) ?? Promise.resolve(),
+      take: (task) => live.current?.take(task) ?? null,
+    },
   }).fetch,
   port,
 });
