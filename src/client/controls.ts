@@ -19,6 +19,27 @@ function el<K extends keyof HTMLElementTagNameMap>(
 
 export { el };
 
+/** The fraction slash the server writes between a numerator and a denominator (U+2044). */
+const FRACTION = /(\d+)\u2044(\d+)/g;
+
+/** A text with each fraction `3⁄4` drawn as a numerator over a bar over a denominator. */
+export function math(text: string): (Node | string)[] {
+  const parts: (Node | string)[] = [];
+  let from = 0;
+  for (const m of text.matchAll(FRACTION)) {
+    const at = m.index ?? 0;
+    if (at > from) parts.push(text.slice(from, at));
+    const frac = el("span", { className: "frac" });
+    frac.setAttribute("role", "math");
+    frac.setAttribute("aria-label", `${m[1] ?? ""}/${m[2] ?? ""}`);
+    frac.append(el("span", {}, m[1] ?? ""), el("span", {}, m[2] ?? ""));
+    parts.push(frac);
+    from = at + m[0].length;
+  }
+  if (from < text.length) parts.push(text.slice(from));
+  return parts;
+}
+
 export function heading(key: UiKey): HTMLHeadingElement {
   return el("h1", { id: "screen-title" }, t(key));
 }

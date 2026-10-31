@@ -29,6 +29,9 @@ body {
   line-height: 1.4;
 }
 main { margin: 0 auto; }
+.frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.15; margin: 0 0.15em; }
+.frac > span { padding: 0 0.2em; }
+.frac > span:first-child { border-bottom: 2px solid currentColor; }
 .picture { margin: 0; text-align: center; }
 .picture svg { max-width: 100%; max-height: 40vh; height: auto; }
 h1, p, fieldset, form { margin: 0; }

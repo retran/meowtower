@@ -235,3 +235,44 @@ test("REQ-2430: a scored and an unscored task render the same apart from the tas
   expect(warmup?.room).toBe(scored?.room);
   expect(warmup?.outcome).toBe(scored?.outcome);
 });
+
+test("a fraction in a task is drawn as a numerator over a denominator, and a picture is drawn", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  await page.route("**/api/session/*/next", (route) =>
+    route.fulfill({
+      json: {
+        kind: "room",
+        itemId: "fraction-room",
+        view: {
+          locale: "ru",
+          text: "Какая из дробей 4⁄7 и 2⁄7 ближе к целому?",
+          svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18"/></svg>',
+          options: null,
+          terms: [],
+        },
+        input: { kind: "text" },
+        slot: 0,
+        roomLength: 3,
+        attemptNo: 1,
+        threads: 5,
+        hintLevels: [],
+      },
+    }),
+  );
+  await ready(page, "/play");
+  const fractions = page.locator(".play .task .frac");
+  await expect(fractions).toHaveCount(2);
+  await expect(fractions.first().locator("span").first()).toHaveText("4");
+  await expect(fractions.first().locator("span").last()).toHaveText("7");
+  const box = await fractions.first().boundingBox();
+  const num = await fractions.first().locator("span").first().boundingBox();
+  const den = await fractions.first().locator("span").last().boundingBox();
+  expect(box && num && den && den.y > num.y + num.height - 1).toBe(true);
+  await expect(page.locator(".play .picture svg rect")).toHaveCount(1);
+  await expect(page.locator("#play-answer")).toHaveAttribute(
+    "inputmode",
+    "text",
+  );
+});

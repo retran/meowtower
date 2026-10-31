@@ -27,7 +27,7 @@ import {
   UNREACHABLE,
 } from "./api.js";
 import { flushOnce, retryClock, submitAnswer } from "./answer-queue.js";
-import { act, button, el, heading, link, status } from "./controls.js";
+import { act, button, el, heading, link, math, status } from "./controls.js";
 import type { Screen } from "./screens.js";
 import { t, uiKey, type UiKey } from "./strings.js";
 
@@ -339,7 +339,7 @@ export const playScreen: Screen = {
       }
       draw(
         ...(room.view.svg ? [picture(room.view.svg)] : []),
-        el("p", { className: "task" }, room.view.text),
+        el("p", { className: "task" }, ...math(room.view.text)),
         el("label", { htmlFor: "play-answer" }, t("ui.play.answer")),
         field,
         note,
@@ -559,7 +559,7 @@ export const playScreen: Screen = {
       const solution = el(
         "ol",
         { className: "solution" },
-        ...reply.shortSolution.map((line) => el("li", {}, line)),
+        ...reply.shortSolution.map((line) => el("li", {}, ...math(line))),
       );
       draw(
         badge,
