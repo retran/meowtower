@@ -16,6 +16,18 @@ const ws = (
   s: (typeof SIGNS)[number],
   ...no: (typeof SIGNS)[number][]
 ): (typeof SIGNS)[number] | null => (no.includes(s) ? null : s);
+/** `v` added `n` times, one addition at a time. */
+const sumTimes = (n: number, v: number): number => {
+  let s = 0;
+  for (let i = 0; i < n; i++) s += v;
+  return s;
+};
+/** How many times `step` can be taken from `total`, counted by taking it away one time after another. */
+const takeAway = (total: number, step: number): number => {
+  let n = 0;
+  for (let left = total; left > 0; left -= step) n++;
+  return n;
+};
 const divs = (n: number): number =>
   Array.from({ length: n }, (_, i) => i + 1).filter((k) => n % k === 0).length;
 const pairs = (n: number): number => Math.floor((divs(n) + 1) / 2);
@@ -51,6 +63,7 @@ const M4_rect_squares = calc("M4", "rect-squares");
 const M4_rect_squares_specs: readonly Spec<never>[] = [
   M4_rect_squares({
     id: "M4.rect-squares.01",
+    alt: (a, b) => q(4 * a + 2 * (b - a)),
     form: "perimeter-of-a-rectangle-in-squares",
     g: [5, 6],
     kind: "integer",
@@ -61,11 +74,14 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
       area: (a, b) => q(a * b),
       "one-pair": (a, b) => q(a + b),
       "three-sides": (a, b) => w(2 * a + b, 2 * (a + b), a * b, a + b),
+      "border-cells": (a, b) =>
+        w(2 * (a + b) - 4, 2 * (a + b), a * b, a + b, 2 * a + b),
     },
     c: [1, 2],
   }),
   M4_rect_squares({
     id: "M4.rect-squares.02",
+    alt: (a, b) => q(sumTimes(b, a)),
     form: "area-of-a-rectangle-in-squares",
     g: [5, 6],
     kind: "integer",
@@ -80,10 +96,11 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.03",
+    alt: (a) => q(sumTimes(4, a)),
     form: "perimeter-of-a-square-in-squares",
     g: [5, 6],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     ok: (a) => a !== 4,
     f: (a) => q(4 * a),
     t: {
@@ -95,6 +112,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.04",
+    alt: (a, b) => q((a - 2) * (b - 2) - 4),
     form: "how-much-larger-the-area-is-than-the-perimeter",
     g: [5, 6],
     kind: "integer",
@@ -111,6 +129,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.05",
+    alt: (a, b) => q(a * b - (a - 2) * (b - 2)),
     form: "squares-along-the-border",
     g: [5, 6],
     kind: "integer",
@@ -127,6 +146,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.06",
+    alt: (a, b) => q(2 * (a + b) + 2),
     form: "perimeter-after-adding-a-row",
     g: [5, 6],
     kind: "integer",
@@ -142,6 +162,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.07",
+    alt: (a, b) => q(a * b + a * b),
     form: "area-after-doubling-the-length",
     g: [5, 6],
     kind: "integer",
@@ -156,10 +177,11 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.08",
+    alt: (a, b) => q(4 * (a + b) - 2 * b),
     form: "perimeter-of-two-rectangles-joined",
     g: [5, 6],
     kind: "integer",
-    p: [rg(2, 6), rg(2, 6)],
+    p: [rg(2, 8), rg(2, 8)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(2 * (2 * a + b)),
     t: {
@@ -171,12 +193,14 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.09",
+    alt: (a) => q((a + 1) ** 2 - a ** 2),
     form: "how-much-bigger-the-next-square-is",
     g: [5, 6],
     kind: "integer",
-    p: [rg(3, 9)],
+    p: [rg(3, 14)],
     f: (a) => q(2 * a + 1),
     t: {
+      "side-increase": () => q(1),
       "side-doubled": (a) => q(2 * a),
       "new-area": (a) => w((a + 1) * (a + 1), 2 * a + 1, 2 * a),
       "one-strip": (a) => w(a + 1, 2 * a + 1, 2 * a, (a + 1) * (a + 1)),
@@ -185,6 +209,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.10",
+    alt: (a, b) => q(a + b + a + b - 1 - 1 + 1 + 1),
     form: "a-corner-square-cut-out",
     g: [5, 6],
     kind: "integer",
@@ -200,10 +225,14 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.11",
+    alt: (a) => {
+      const cells = (a * (a + 1)) / 2;
+      return q(4 * cells - 4 * (cells - a));
+    },
     form: "perimeter-of-a-staircase",
     g: [5, 6],
     kind: "integer",
-    p: [rg(2, 8)],
+    p: [rg(2, 12)],
     ok: (a) => (a * (a + 1)) / 2 !== 4 * a,
     f: (a) => q(4 * a),
     t: {
@@ -215,6 +244,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.12",
+    alt: (a) => q(4 * a - 2 * (a - 1)),
     form: "perimeter-of-a-chain-of-squares",
     g: [5, 6],
     kind: "integer",
@@ -223,6 +253,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
     t: {
       "separate-squares": (a) => q(4 * a),
       "joins-hide-one": (a) => q(3 * a + 1),
+      "one-joint-too-many": (a) => q(2 * a),
     },
     c: [4, 2, 1],
     origin: {
@@ -233,6 +264,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
   }),
   M4_rect_squares({
     id: "M4.rect-squares.13",
+    alt: (a, b, c) => q(a + b + a + b + c + c + c + c),
     form: "perimeter-of-a-rectangle-with-a-hole",
     g: [5, 6],
     kind: "integer",
@@ -242,11 +274,19 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
     t: {
       "outer-only": (a, b) => q(2 * (a + b)),
       "hole-area-added": (a, b, c) => q(2 * (a + b) + c * c),
+      "one-side-of-hole": (a, b, c) =>
+        w(
+          2 * (a + b) + c,
+          2 * (a + b) + 4 * c,
+          2 * (a + b),
+          2 * (a + b) + c * c,
+        ),
     },
     c: [1, 2, 4],
   }),
   M4_rect_squares({
     id: "M4.rect-squares.14",
+    alt: (a, b) => q((a + 2) * (b + 2) - a * b),
     form: "squares-in-a-frame-around-a-rectangle",
     g: [5, 6],
     kind: "integer",
@@ -256,6 +296,7 @@ const M4_rect_squares_specs: readonly Spec<never>[] = [
     t: {
       "without-corners": (a, b) => q(2 * (a + b)),
       "whole-figure": (a, b) => q((a + 2) * (b + 2)),
+      "two-corners": (a, b) => q(2 * (a + b) + 2),
     },
     c: [2, 4],
   }),
@@ -265,6 +306,7 @@ const M4_rect_sides = calc("M4", "rect-sides");
 const M4_rect_sides_specs: readonly Spec<never>[] = [
   M4_rect_sides({
     id: "M4.rect-sides.01",
+    alt: (a, b) => q(4 * b + 2 * (a - b)),
     form: "perimeter-from-the-sides",
     g: [6, 6],
     kind: "integer",
@@ -280,6 +322,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.02",
+    alt: (a, b) => q(sumTimes(b, a)),
     form: "area-from-the-sides",
     g: [6, 6],
     kind: "integer",
@@ -293,6 +336,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.03",
+    alt: (a) => q(sumTimes(4, a)),
     form: "perimeter-of-a-square",
     g: [6, 6],
     kind: "integer",
@@ -308,6 +352,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.04",
+    alt: (a, b) => q((2 * (a + b) - 2 * a) / 2),
     form: "the-other-side-from-the-perimeter",
     g: [6, 6],
     kind: "integer",
@@ -323,6 +368,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.05",
+    alt: (a, b) => q(sumTimes(a, b)),
     form: "the-area-of-a-floor",
     g: [6, 6],
     kind: "integer",
@@ -336,6 +382,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.06",
+    alt: (a, b) => q(4 * b - 2 * (b - a)),
     form: "the-length-of-a-fence",
     g: [6, 6],
     kind: "integer",
@@ -351,6 +398,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.07",
+    alt: (a, b, c, d) => sign(q(a + b), q(c + d)),
     form: "compare-two-perimeters",
     g: [6, 6],
     kind: "compare",
@@ -378,6 +426,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.08",
+    alt: (a, b) => q((100 * a * (10 * b)) / 100),
     form: "area-with-sides-in-different-units",
     g: [6, 6],
     kind: "integer",
@@ -393,6 +442,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.09",
+    alt: (a, b) => q(takeAway(a * b, a)),
     form: "the-other-side-from-the-area",
     g: [6, 6],
     kind: "integer",
@@ -407,6 +457,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.10",
+    alt: (a, b, c, d) => q(sumTimes(b, a) + sumTimes(d, c)),
     form: "the-total-area-of-two-rectangles",
     g: [6, 6],
     kind: "integer",
@@ -423,6 +474,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.11",
+    alt: (a, b) => q((2 * a * (2 * b)) / 4),
     form: "the-number-of-large-tiles",
     g: [6, 6],
     kind: "integer",
@@ -439,6 +491,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.12",
+    alt: (a, b, c) => q(a + b + a + (b - c)),
     form: "a-baseboard-around-a-room",
     g: [6, 6],
     kind: "integer",
@@ -448,6 +501,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
     t: {
       "door-ignored": (a, b) => q(2 * (a + b)),
       "door-twice": (a, b, c) => q(2 * (a + b) - 2 * c),
+      "door-added": (a, b, c) => q(2 * (a + b) + c),
     },
     c: [2],
     roles: {
@@ -458,6 +512,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.13",
+    alt: (a, b) => q(sumTimes(2, 100 * a) + sumTimes(2, b)),
     form: "perimeter-with-sides-in-different-units",
     g: [6, 6],
     kind: "integer",
@@ -472,6 +527,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
   }),
   M4_rect_sides({
     id: "M4.rect-sides.14",
+    alt: (a, b) => q(2 * (a + b) - b),
     form: "a-pen-against-a-wall",
     g: [6, 6],
     kind: "integer",
@@ -481,11 +537,16 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
     t: {
       "full-perimeter": (a, b) => q(2 * (a + b)),
       "one-width-only": (a, b) => q(a + b),
+      "wall-side-swapped": (a, b) => q(2 * b + a),
     },
     roles: { a: "width of the pen", b: "length along the wall" },
   }),
   M4_rect_sides({
     id: "M4.rect-sides.15",
+    alt: (a, b) => {
+      const part = 1;
+      return q(2 * (part + b) + 2 * (a - part + b) - 2 * (a + b));
+    },
     form: "the-perimeters-after-a-cut",
     g: [6, 8],
     kind: "integer",
@@ -495,6 +556,7 @@ const M4_rect_sides_specs: readonly Spec<never>[] = [
     t: {
       "no-change": () => q(0),
       "cut-once": (a, b) => q(b),
+      "sum-of-parts": (a, b) => q(2 * a + 4 * b),
     },
     c: [2],
     origin: {
@@ -508,6 +570,7 @@ const M4_not_rect = calc("M4", "not-rect");
 const M4_not_rect_specs: readonly Spec<never>[] = [
   M4_not_rect({
     id: "M4.not-rect.01",
+    alt: (a, b, c, d) => q(sumTimes(b, a) + sumTimes(d, c)),
     form: "area-of-two-joined-rectangles",
     g: [6, 7],
     kind: "integer",
@@ -524,6 +587,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.02",
+    alt: (a, b, c, d) => q((a - c) * b + c * (b - d)),
     form: "area-of-a-rectangle-with-a-corner-cut-out",
     g: [6, 7],
     kind: "integer",
@@ -539,6 +603,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.03",
+    alt: (a, b, c, d) => q(b + a + (b - d) + c + d + (a - c)),
     form: "perimeter-of-a-rectangle-with-a-corner-cut-out",
     g: [6, 7],
     kind: "integer",
@@ -559,6 +624,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.04",
+    alt: (a, b, c, d) => q(sumTimes(b, a) - sumTimes(d, c)),
     form: "area-of-a-frame",
     g: [6, 7],
     kind: "integer",
@@ -581,10 +647,11 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.05",
+    alt: (a) => q(5 * 4 * a - 4 * 2 * a),
     form: "perimeter-of-a-cross",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 6)],
+    p: [rg(2, 9)],
     f: (a) => q(12 * a),
     t: {
       "squares-perimeter": (a) => q(20 * a),
@@ -595,6 +662,8 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.06",
+    alt: (a, b, c, d, e, f) =>
+      q(sumTimes(b, a) + sumTimes(d, c) + sumTimes(f, e)),
     form: "area-of-three-rectangles",
     g: [6, 7],
     kind: "integer",
@@ -616,10 +685,14 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.07",
+    alt: (a, b) => {
+      const cells = (b * (b + 1)) / 2;
+      return q(a * (4 * cells - 4 * (cells - b)));
+    },
     form: "perimeter-of-a-staircase-shape",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 6), rg(2, 5)],
+    p: [rg(2, 8), rg(2, 5)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(4 * a * b),
     t: {
@@ -632,6 +705,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.08",
+    alt: (a, b, c) => q(2 * c * a + 2 * c * b + 4 * c * c),
     form: "area-of-a-path-around-a-garden",
     g: [6, 7],
     kind: "integer",
@@ -658,6 +732,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.09",
+    alt: (a, b, c, d) => q(takeAway(a * b + c * d - a * b, c)),
     form: "the-missing-side-of-a-second-rectangle",
     g: [6, 7],
     kind: "integer",
@@ -674,6 +749,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.10",
+    alt: (a, b, c) => q((a - c) * b + c * (b - c)),
     form: "area-of-a-corner-piece-and-the-rest",
     g: [6, 7],
     kind: "integer",
@@ -690,10 +766,12 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.11",
+    alt: (a, b) => q(4 * a - b + 3 * b),
     form: "perimeter-of-two-squares-side-by-side",
     g: [6, 7],
     kind: "integer",
-    p: [rg(4, 9), rg(2, 3)],
+    p: [rg(4, 10), rg(2, 5)],
+    ok: (a, b) => b < a,
     f: (a, b) => q(4 * a + 2 * b),
     t: {
       "perimeters-added": (a, b) => q(4 * a + 4 * b),
@@ -705,15 +783,18 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.12",
+    alt: (a, b, c) => q(a * b - (a - c) * (b - c)),
     form: "area-of-an-l-shaped-path",
     g: [6, 7],
     kind: "integer",
-    p: [rg(8, 14), rg(7, 12), rg(2, 3)],
+    p: [rg(8, 14), rg(7, 12), rg(2, 4)],
     ok: (a, b) => a !== b,
     f: (a, b, c) => q(c * (a + b - c)),
     t: {
       "corner-twice": (a, b, c) => q(c * (a + b)),
       "rest-of-the-plot": (a, b, c) => q((a - c) * (b - c)),
+      "corner-removed-twice": (a, b, c) =>
+        w(c * (a + b - 2 * c), c * (a + b - c), c * (a + b), (a - c) * (b - c)),
     },
     roles: {
       a: "length of the plot",
@@ -723,6 +804,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.13",
+    alt: (a, b, c) => q(a * b - c * a - c * b + c * c),
     form: "a-garden-with-two-crossing-paths",
     g: [6, 8],
     kind: "integer",
@@ -732,6 +814,13 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
     t: {
       "crossing-counted-twice": (a, b, c) => q(a * b - c * a - c * b),
       "one-path-only": (a, b, c) => q(a * (b - c)),
+      "paths-area": (a, b, c) =>
+        w(
+          c * (a + b - c),
+          (a - c) * (b - c),
+          a * b - c * a - c * b,
+          a * (b - c),
+        ),
     },
     origin: {
       olympiad:
@@ -745,6 +834,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
   }),
   M4_not_rect({
     id: "M4.not-rect.14",
+    alt: (a, b, c, d) => q(a - c + 2 * d + c + a + 2 * b),
     form: "perimeter-with-a-notch-in-a-side",
     g: [6, 7],
     kind: "integer",
@@ -754,6 +844,7 @@ const M4_not_rect_specs: readonly Spec<never>[] = [
     t: {
       "perimeter-unchanged": (a, b) => q(2 * (a + b)),
       "depth-once": (a, b, c, d) => q(2 * (a + b) + d),
+      "bottom-added": (a, b, c, d) => q(2 * (a + b) + 2 * d + c),
     },
     c: [2],
   }),
@@ -763,6 +854,7 @@ const M4_side_from_perimeter = calc("M4", "side-from-perimeter");
 const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.01",
+    alt: (a) => q((4 * a) / 2 / 2),
     form: "the-side-of-a-square",
     g: [6, 7],
     kind: "integer",
@@ -778,6 +870,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.02",
+    alt: (a, b) => q((100 * a - 2 * b) / 2),
     form: "the-other-side-of-a-rectangle",
     g: [6, 7],
     kind: "integer",
@@ -786,16 +879,18 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
     t: {
       "not-halved": (a, b) => q(100 * a - b),
       "side-doubled-forgotten": (a, b) => q(50 * a - b / 2),
+      "two-sides-left": (a, b) => q(100 * a - 2 * b),
     },
     c: [100, 2],
     roles: { a: "perimeter in metres", b: "one side in centimetres" },
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.03",
+    alt: (a) => q(takeAway(3 * a, 3)),
     form: "the-side-of-an-equilateral-triangle",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 19)],
+    p: [of(4, 6, 8, 10, 12, 14, 16, 18)],
     f: (a) => q(a),
     t: {
       "perimeter-itself": (a) => q(3 * a),
@@ -807,10 +902,11 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.04",
+    alt: (a) => q(takeAway(5 * a, 5)),
     form: "the-side-of-a-regular-pentagon",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 15)],
+    p: [of(4, 6, 8, 12, 16, 18, 20, 24)],
     f: (a) => q(a),
     t: {
       "perimeter-itself": (a) => q(5 * a),
@@ -822,6 +918,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.05",
+    alt: (a) => q((6 * a) / 2 / 3),
     form: "the-width-when-the-length-is-twice-the-width",
     g: [6, 7],
     kind: "integer",
@@ -837,6 +934,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.06",
+    alt: (a) => q(takeAway(6 * a, 6)),
     form: "the-side-of-a-regular-hexagon",
     g: [6, 7],
     kind: "integer",
@@ -852,10 +950,11 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.07",
+    alt: (a, b) => q(2 * a + b - a - a),
     form: "the-base-of-an-isosceles-triangle",
     g: [6, 7],
     kind: "integer",
-    p: [rg(4, 12), rg(3, 9)],
+    p: [rg(4, 12), of(4, 6, 8, 10, 12)],
     ok: (a, b) => b < 2 * a && a !== b,
     f: (a, b) => q(b),
     t: {
@@ -869,6 +968,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.08",
+    alt: (a) => q(sumTimes(a, a)),
     form: "the-area-of-a-square-from-its-perimeter",
     g: [6, 7],
     kind: "integer",
@@ -884,6 +984,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.09",
+    alt: (a, b) => q(a * (a + b) - a * a),
     form: "the-area-from-the-perimeter-and-one-side",
     g: [6, 7],
     kind: "integer",
@@ -900,6 +1001,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.10",
+    alt: (a) => q(takeAway(8 * a, 8)),
     form: "the-side-of-a-regular-octagon",
     g: [6, 7],
     kind: "integer",
@@ -915,6 +1017,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.11",
+    alt: (a) => q(3 * ((10 * a) / 2 / 5)),
     form: "the-longer-side-of-a-rectangle-with-sides-in-a-ratio",
     g: [6, 7],
     kind: "integer",
@@ -930,6 +1033,12 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.12",
+    alt: (a, b) => {
+      const perimeter = 4 * a + 2 * b;
+      let side = 1;
+      while (4 * side + 2 * b !== perimeter && side < 1000) side++;
+      return q(side);
+    },
     form: "the-shorter-side-from-the-perimeter-and-the-difference",
     g: [6, 7],
     kind: "integer",
@@ -944,6 +1053,11 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.13",
+    alt: (a) => {
+      let n = 0;
+      for (let s = 1; s <= a / 2 - s; s++) n++;
+      return q(n);
+    },
     form: "how-many-rectangles-have-a-perimeter",
     g: [6, 8],
     kind: "integer",
@@ -969,6 +1083,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.14",
+    alt: (a, b) => q(((2 * a + 2) * b) / (2 * a + 2)),
     form: "the-square-in-a-row-from-the-perimeter",
     g: [6, 7],
     kind: "integer",
@@ -984,6 +1099,7 @@ const M4_side_from_perimeter_specs: readonly Spec<never>[] = [
   }),
   M4_side_from_perimeter({
     id: "M4.side-from-perimeter.15",
+    alt: (a, b) => q((4 * a - 2 * b) / 2),
     form: "a-rectangle-with-the-perimeter-of-a-square",
     g: [6, 7],
     kind: "integer",
@@ -1002,6 +1118,7 @@ const M4_same_area = calc("M4", "same-area");
 const M4_same_area_specs: readonly Spec<never>[] = [
   M4_same_area({
     id: "M4.same-area.01",
+    alt: (a, b, c) => q(takeAway(a * (b * c), a * b)),
     form: "the-other-side-at-the-same-area",
     g: [6, 8],
     kind: "integer",
@@ -1017,6 +1134,7 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.02",
+    alt: (a, b) => q(2 * a + 2 * takeAway(a * b, a)),
     form: "the-perimeter-from-the-area-and-one-side",
     g: [6, 8],
     kind: "integer",
@@ -1033,6 +1151,10 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.03",
+    alt: (a) => {
+      const [m, n, k, l] = equalArea(a);
+      return sign(q(m + n), q(k + l));
+    },
     form: "which-has-the-longer-perimeter",
     g: [6, 8],
     kind: "compare",
@@ -1059,7 +1181,12 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     form: "how-many-rectangles-with-whole-sides-have-an-area",
     g: [6, 8],
     kind: "integer",
-    p: [of(12, 18, 20, 24, 30, 36)],
+    p: [of(12, 16, 18, 20, 24, 28, 30, 36, 40, 48)],
+    alt: (a) => {
+      let n = 0;
+      for (let k = 1; k * k <= a; k++) if (a % k === 0) n++;
+      return q(n);
+    },
     x: (a) => ({
       pairs: Array.from({ length: a }, (_, i) => i + 1)
         .filter((k) => a % k === 0 && k * k <= a)
@@ -1090,10 +1217,16 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.05",
+    alt: (a, b) => {
+      const area = a * a * b * b;
+      let side = 1;
+      while (side * side < area) side++;
+      return q(side);
+    },
     form: "the-side-of-a-square-with-the-same-area",
     g: [6, 8],
     kind: "integer",
-    p: [rg(2, 3), rg(2, 3)],
+    p: [rg(2, 4), rg(2, 5)],
     f: (a, b) => q(a * b),
     t: {
       "longer-side": (a, b) => q(a * a * b),
@@ -1105,6 +1238,7 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.06",
+    alt: (a, b) => q(2 * a).mul(q(b, 2)),
     form: "stretching-one-side-and-shrinking-the-other",
     g: [6, 8],
     kind: "integer",
@@ -1123,8 +1257,14 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     form: "the-area-after-cutting-and-rearranging",
     g: [6, 8],
     kind: "integer",
-    p: [rg(1, 6), rg(2, 3)],
-    ok: (a, b) => a * b * b <= 36,
+    alt: (a, b) => {
+      const area = a * (a * b * b);
+      let side = 1;
+      while (side * side < area) side++;
+      return q(side);
+    },
+    p: [rg(2, 9), rg(2, 4)],
+    ok: (a, b) => a * b * b <= 100,
     f: (a, b) => q(a * b),
     t: {
       "mean-of-sides": (a, b) => w((a + a * b * b) / 2, a * b),
@@ -1139,6 +1279,12 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.08",
+    alt: (a) => {
+      let best = Infinity;
+      for (let k = 1; k <= a; k++)
+        if (a % k === 0) best = Math.min(best, 2 * (k + a / k));
+      return q(best);
+    },
     form: "the-smallest-perimeter-for-a-square-area",
     g: [6, 8],
     kind: "integer",
@@ -1167,7 +1313,13 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     form: "the-largest-perimeter-for-a-given-area",
     g: [6, 8],
     kind: "integer",
-    p: [of(12, 18, 20, 24, 30)],
+    alt: (a) => {
+      let best = 0;
+      for (let k = 1; k <= a; k++)
+        if (a % k === 0) best = Math.max(best, 2 * (k + a / k));
+      return q(best);
+    },
+    p: [of(12, 14, 15, 18, 20, 21, 24, 28, 30)],
     f: (a) => q(2 * (1 + a)),
     t: {
       half: (a) => q(1 + a),
@@ -1178,10 +1330,11 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.10",
+    alt: (a, b) => q(2 * b * (a - 1) * (a - 1)),
     form: "how-much-longer-the-rectangle-border-is",
     g: [6, 8],
     kind: "integer",
-    p: [rg(2, 3), rg(2, 3)],
+    p: [rg(2, 4), rg(2, 5)],
     f: (a, b) => q(2 * (a * a * b + b) - 4 * a * b),
     t: {
       "rectangle-only": (a, b) => q(2 * (a * a * b + b)),
@@ -1200,6 +1353,7 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.11",
+    alt: (a, b) => q(sumTimes(6, a * b)),
     form: "the-area-of-the-enlarged-rectangle",
     g: [6, 8],
     kind: "integer",
@@ -1214,6 +1368,12 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.12",
+    alt: (a) => {
+      const growth = 2 * a + 1;
+      let side = 1;
+      while ((side + 1) ** 2 - side ** 2 !== growth && side < 1000) side++;
+      return q(side);
+    },
     form: "the-side-of-a-square-from-the-growth-of-its-area",
     g: [6, 8],
     kind: "integer",
@@ -1222,6 +1382,7 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     t: {
       "increase-as-side": (a) => q(2 * a + 1),
       "not-halved": (a) => q(2 * a),
+      "corner-added": (a) => q(a + 1),
     },
     x: (a) => ({ x: String(2 * a + 1) }),
     c: [1, 2],
@@ -1232,6 +1393,7 @@ const M4_same_area_specs: readonly Spec<never>[] = [
   }),
   M4_same_area({
     id: "M4.same-area.13",
+    alt: (a, b) => q(a * a - (a + b) * (a - b)),
     form: "a-square-with-one-side-longer-and-the-other-shorter",
     g: [6, 8],
     kind: "integer",
@@ -1240,10 +1402,16 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     t: {
       unchanged: () => q(0),
       "shift-taken": (a, b) => q(b),
+      "both-shifts": (a, b) => q(2 * b),
     },
   }),
   M4_same_area({
     id: "M4.same-area.14",
+    alt: (a, b) => {
+      const x = a + b;
+      const y = a - b;
+      return q(((x + y) / 2) ** 2 - x * y);
+    },
     form: "how-much-larger-the-square-is-at-an-equal-perimeter",
     g: [6, 8],
     kind: "integer",
@@ -1252,6 +1420,7 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     t: {
       "equal-areas": () => q(0),
       "side-difference": (a, b) => q(2 * b),
+      "square-side": (a, b) => w(a, b * b, 2 * b),
     },
     x: (a, b) => ({ x: String(a + b), y: String(a - b) }),
     c: [2],

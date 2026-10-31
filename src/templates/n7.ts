@@ -65,6 +65,13 @@ const define = <P>(sp: Spec<P>): Spec<never> => {
 const flip = (sign: "<" | "=" | ">"): "<" | "=" | ">" =>
   sign === "<" ? ">" : sign === ">" ? "<" : "=";
 
+/** Walks a number line one degree at a time: a second route for the thermometer sums. */
+const walk = (from: number, steps: number): number => {
+  let at = from;
+  for (let i = 0; i < Math.abs(steps); i += 1) at += Math.sign(steps);
+  return at;
+};
+
 interface T {
   a: number;
   b: number;
@@ -122,7 +129,7 @@ const thermometer = [
     draw: (r) => ({ a: between(r, 1, 15), d: between(r, 1, 25) }),
     valid: (p) => p.a !== p.d,
     solve: (p) => qi(p.d - p.a),
-    reference: (p) => qi(-p.a + p.d),
+    reference: (p) => qi(walk(-p.a, p.d)),
     traps: [
       {
         id: "added-magnitudes",
@@ -146,7 +153,7 @@ const thermometer = [
     draw: (r) => ({ t: between(r, 1, 15), d: between(r, 2, 30) }),
     valid: (p) => p.d > p.t,
     solve: (p) => qi(p.t - p.d),
-    reference: (p) => qi(-(p.d - p.t)),
+    reference: (p) => qi(walk(p.t, -p.d)),
     traps: [
       {
         id: "positive-result",
@@ -174,7 +181,7 @@ const thermometer = [
     draw: (r) => ({ a: between(r, 1, 20), b: between(r, 1, 20) }),
     valid: (p) => p.a !== p.b,
     solve: (p) => qi(p.a + p.b),
-    reference: (p) => qi(p.b - -p.a),
+    reference: (p) => qi(walk(0, p.b) - walk(0, -p.a)),
     traps: [
       {
         id: "difference-of-numbers",
@@ -264,7 +271,7 @@ const thermometer = [
     }),
     valid: (p) => p.s - p.f + p.u !== 0 && p.s - p.f - p.u !== p.s - p.f + p.u,
     solve: (p) => qi(p.s - p.f + p.u),
-    reference: (p) => qi(p.s + -p.f + p.u),
+    reference: (p) => qi(walk(walk(p.s, -p.f), p.u)),
     traps: [
       {
         id: "both-down",
@@ -297,7 +304,11 @@ const thermometer = [
     draw: (r) => ({ a: between(r, 5, 30), b: between(r, 1, 25) }),
     valid: (p) => p.a > p.b,
     solve: (p) => qi(p.a - p.b),
-    reference: (p) => qi(-p.b - -p.a),
+    reference: (p) => {
+      let steps = 0;
+      for (let x = -p.a; x < -p.b; x += 1) steps += 1;
+      return qi(steps);
+    },
     traps: [
       {
         id: "added-magnitudes",
@@ -314,7 +325,11 @@ const thermometer = [
     roles: { a: "degrees below zero now" },
     draw: (r) => ({ a: between(r, 1, 30) }),
     solve: (p) => qi(p.a),
-    reference: (p) => qi(0 - -p.a),
+    reference: (p) => {
+      let steps = 0;
+      for (let x = -p.a; x < 0; x += 1) steps += 1;
+      return qi(steps);
+    },
     traps: [
       { id: "negative-answer", kind: "conceptual", wrong: (p) => qi(-p.a) },
     ],
@@ -454,7 +469,8 @@ const thermometer = [
     },
     valid: (p) => p.k !== p.q && p.k * 2 !== 10,
     solve: (p) => qi(p.step * (p.k - p.q)),
-    reference: (p) => qi(-p.step * p.q + p.k * p.step),
+    reference: (p) =>
+      qi(-p.step * p.q + ((p.step * (10 - p.q) - -p.step * p.q) * p.k) / 10),
     traps: [
       {
         id: "sign-lost",
@@ -841,7 +857,15 @@ const orderSpecs = [
           100 * (d[a] ?? 0) + 10 * (d[b] ?? 0) + (d[c] ?? 0),
       );
       const skip = r.int(6);
-      return perms.filter((_, i) => i !== skip);
+      const kept = perms.filter((_, i) => i !== skip);
+      // Shuffled, so that the list is not already in order.
+      for (let i = kept.length - 1; i > 0; i -= 1) {
+        const j = r.int(i + 1);
+        const t = kept[i] ?? 0;
+        kept[i] = kept[j] ?? 0;
+        kept[j] = t;
+      }
+      return kept;
     },
     label: (x) => s(x),
     dir: "asc",

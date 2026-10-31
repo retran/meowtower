@@ -42,6 +42,18 @@ const notations = (p: number, by: number) => {
 const chosenOf = (p: number, by: number): string[] =>
   notations(p, by).flatMap((x, i) => (x.right ? [String(i + 1)] : []));
 
+/** `x` added `n` times: a second route by repeated addition. */
+const times = (x: Q, n: number): Q => {
+  let s = q(0);
+  for (let i = 0; i < n; i += 1) s = s.add(x);
+  return s;
+};
+/** The first whole number `i` from `from` up for which `ok(i)` holds. */
+const search = (ok: (i: number) => boolean, from = 1, to = 100000): number => {
+  for (let i = from; i <= to; i += 1) if (ok(i)) return i;
+  return -1;
+};
+
 const p1 = forFraction("P1", "half-tenth");
 const halfTenth = [
   p1({
@@ -50,7 +62,7 @@ const halfTenth = [
     groups: [7, 7],
     kind: "fraction",
     rule: "equivalent",
-    draw: (r) => [pick(r, [2, 3, 4, 5, 8, 10])],
+    draw: (r) => [between(r, 2, 12)],
     solve: ([d = 0]) => q(1, d),
     ref: ([d = 0]) => q(2, 2 * d),
     traps: [
@@ -72,7 +84,7 @@ const halfTenth = [
     draw: (r) => [between(r, 1, 9), pick(r, [2, 4, 5, 10])],
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, d = 0]) => q((100 * n) / d),
-    ref: ([n = 0, d = 0]) => q(n, d).mul(q(100)),
+    ref: ([n = 0, d = 0]) => times(q(100, d), n),
     traps: [
       ["numerator-itself", "conceptual", ([n = 0]) => q(n)],
       ["one-part-only", "procedural", ([, d = 0]) => q(100, d)],
@@ -87,10 +99,11 @@ const halfTenth = [
     kind: "integer",
     draw: (r) => [pick(r, [2, 4, 5, 10, 20, 25, 50])],
     solve: ([d = 0]) => q(100 / d),
-    ref: ([d = 0]) => q(1, d).mul(q(100)),
+    ref: ([d = 0]) => q(search((p) => p * d === 100)),
     traps: [
       ["denominator-itself", "conceptual", ([d = 0]) => q(d)],
       ["multiplied-by-the-denominator", "procedural", ([d = 0]) => q(100 * d)],
+      ["one-itself", "conceptual", () => q(1)],
     ],
     consts: [100],
   }),
@@ -102,7 +115,7 @@ const halfTenth = [
     draw: (r) => [between(r, 11, 89)],
     valid: ([p = 0]) => p !== 50,
     solve: ([p = 0]) => q(p),
-    ref: ([p = 0]) => q(p, 100).mul(q(100)),
+    ref: ([p = 0]) => times(q(1), p),
     traps: [
       ["the-rest", "conceptual", ([p = 0]) => q(100 - p)],
       ["the-whole", "conceptual", () => q(100)],
@@ -117,7 +130,15 @@ const halfTenth = [
     draw: (r) => [between(r, 11, 89)],
     valid: ([p = 0]) => p !== 50,
     solve: ([p = 0]) => q(100 - p),
-    ref: ([p = 0]) => q(100).sub(q(p)),
+    ref: ([p = 0]) => {
+      let s = p;
+      let left = 0;
+      while (s < 100) {
+        s += 1;
+        left += 1;
+      }
+      return q(left);
+    },
     traps: [
       ["the-given-percentage", "conceptual", ([p = 0]) => q(p)],
       ["added", "procedural", ([p = 0]) => q(100 + p)],
@@ -131,7 +152,7 @@ const halfTenth = [
     kind: "integer",
     draw: (r) => [between(r, 12, 98)],
     solve: () => q(100),
-    ref: ([a = 0]) => q(a).div(q(a)).mul(q(100)),
+    ref: ([a = 0]) => times(q(100, a), a),
     traps: [
       ["the-number-itself", "conceptual", ([a = 0]) => q(a)],
       ["the-whole-is-one", "conceptual", () => q(1)],
@@ -145,10 +166,7 @@ const halfTenth = [
     kind: "integer",
     draw: (r) => [2 * between(r, 6, 49)],
     solve: () => q(50),
-    ref: ([a = 0]) =>
-      q(a / 2)
-        .div(q(a))
-        .mul(q(100)),
+    ref: ([a = 0]) => q(search((p) => p * a === 100 * (a / 2))),
     traps: [
       ["half-of-the-number", "conceptual", ([a = 0]) => q(a / 2)],
       ["the-whole", "conceptual", () => q(100)],
@@ -162,9 +180,9 @@ const halfTenth = [
     form: "quarters-as-a-percentage",
     groups: [7, 7],
     kind: "integer",
-    draw: (r) => [pick(r, [1, 2, 3, 5, 6, 7])],
+    draw: (r) => [pick(r, [1, 2, 3, 5, 6, 7, 9])],
     solve: ([k = 0]) => q(25 * k),
-    ref: ([k = 0]) => q(k, 4).mul(q(100)),
+    ref: ([k = 0]) => times(q(25), k),
     traps: [
       ["numerator-itself", "conceptual", ([k = 0]) => q(k)],
       ["one-quarter-only", "procedural", () => q(25)],
@@ -184,7 +202,7 @@ const halfTenth = [
     kind: "integer",
     draw: (r) => [between(r, 1, 9)],
     solve: ([k = 0]) => q(10 * k),
-    ref: ([k = 0]) => q(k, 10).mul(q(100)),
+    ref: ([k = 0]) => times(q(10), k),
     traps: [
       ["numerator-itself", "conceptual", ([k = 0]) => q(k)],
       ["one-tenth-only", "procedural", () => q(10)],
@@ -198,9 +216,10 @@ const halfTenth = [
     form: "fifths-as-a-percentage",
     groups: [7, 7],
     kind: "integer",
-    draw: (r) => [between(r, 1, 4)],
+    draw: (r) => [between(r, 1, 9)],
+    valid: ([k = 0]) => k !== 5,
     solve: ([k = 0]) => q(20 * k),
-    ref: ([k = 0]) => q(k, 5).mul(q(100)),
+    ref: ([k = 0]) => times(q(20), k),
     traps: [
       ["numerator-itself", "conceptual", ([k = 0]) => q(k)],
       ["one-fifth-only", "procedural", () => q(20)],
@@ -217,7 +236,7 @@ const halfTenth = [
     draw: (r) => [between(r, 1, 19)],
     valid: ([n = 0]) => n !== 10,
     solve: ([n = 0]) => q(5 * n),
-    ref: ([n = 0]) => q(n, 20).mul(q(100)),
+    ref: ([n = 0]) => times(q(5), n),
     traps: [
       ["count-itself", "conceptual", ([n = 0]) => q(n)],
       ["one-student-only", "procedural", ([n = 0]) => (n === 5 ? null : q(5))],
@@ -230,9 +249,17 @@ const halfTenth = [
     form: "how-many-times-a-percentage-fits-in-the-whole",
     groups: [7, 7],
     kind: "integer",
-    draw: (r) => [pick(r, [10, 20, 25, 50])],
+    draw: (r) => [pick(r, [2, 4, 5, 10, 20, 25, 50])],
     solve: ([p = 0]) => q(100 / p),
-    ref: ([p = 0]) => q(100).div(q(p)),
+    ref: ([p = 0]) => {
+      let sum = 0;
+      let count = 0;
+      while (sum < 100) {
+        sum += p;
+        count += 1;
+      }
+      return q(count);
+    },
     traps: [
       ["the-percentage-itself", "conceptual", ([p = 0]) => q(p)],
       ["multiplied", "procedural", ([p = 0]) => q(100 * p)],
@@ -250,7 +277,12 @@ const halfTenthMore = [
     kind: "integer",
     draw: (r) => [between(r, 1, 8), between(r, 1, 9)],
     solve: ([k = 0, e = 0]) => q(10 * k + e),
-    ref: ([k = 0, e = 0]) => q(k, 10).add(q(e, 100)).mul(q(100)),
+    ref: ([k = 0, e = 0]) => {
+      let shaded = 0;
+      for (let cell = 0; cell < 100; cell += 1)
+        if (cell < 10 * k + e) shaded += 1;
+      return q(shaded);
+    },
     traps: [
       ["full-rows-only", "conceptual", ([k = 0]) => q(10 * k)],
       ["loose-cells-only", "conceptual", ([, e = 0]) => q(e)],
@@ -266,7 +298,7 @@ const halfTenthMore = [
     draw: (r) => [between(r, 1, 9), pick(r, [4, 5, 10])],
     valid: ([n = 0, d = 0]) => n < d && 2 * n !== d,
     solve: ([n = 0, d = 0]) => q((100 * n) / d),
-    ref: ([n = 0, d = 0]) => q(n, d).mul(q(100)),
+    ref: ([n = 0, d = 0]) => times(q(100, d), n),
     traps: [
       ["number-of-parts", "conceptual", ([n = 0]) => q(n)],
       [
@@ -294,7 +326,7 @@ const halfTenthMore = [
     draw: (r) => [pick(r, [2, 4, 5, 10]), pick(r, [2, 4, 5, 10])],
     valid: ([x = 0, y = 0]) => 100 % (x * y) === 0,
     solve: ([x = 0, y = 0]) => q(100 / (x * y)),
-    ref: ([x = 0, y = 0]) => q(1, x).mul(q(1, y)).mul(q(100)),
+    ref: ([x = 0, y = 0]) => q(100).div(q(x)).div(q(y)),
     traps: [
       ["added", "procedural", ([x = 0, y = 0]) => q(100 / x + 100 / y)],
       [
@@ -317,9 +349,17 @@ const decimal = [
     groups: [7, 8],
     kind: "fraction",
     rule: "simplest",
-    draw: (r) => [pick(r, [25, 50, 75, 20, 40, 60, 80, 10, 5, 30])],
+    draw: (r) => [
+      pick(
+        r,
+        [5, 10, 12, 15, 16, 20, 24, 25, 30, 35, 40, 45, 50, 60, 64, 65, 75, 80],
+      ),
+    ],
     solve: ([p = 0]) => q(p, 100),
-    ref: ([p = 0]) => q(p / 5, 20),
+    ref: ([p = 0]) => {
+      const den = search((m) => (p * m) % 100 === 0);
+      return q((p * den) / 100, den);
+    },
     traps: [
       [
         "tenths",
@@ -343,7 +383,7 @@ const decimal = [
     draw: (r) => [between(r, 11, 89)],
     valid: ([p = 0]) => p % 10 !== 0,
     solve: ([p = 0]) => qd(p, 2),
-    ref: ([p = 0]) => q(p).div(q(100)),
+    ref: ([p = 0]) => times(qd(1, 2), p),
     traps: [
       ["tenths", "conceptual", ([p = 0]) => qd(p, 1)],
       ["thousandths", "procedural", ([p = 0]) => qd(p, 3)],
@@ -359,7 +399,7 @@ const decimal = [
     draw: (r) => [between(r, 11, 89)],
     valid: ([h = 0]) => h % 10 !== 0,
     solve: ([h = 0]) => q(h),
-    ref: ([h = 0]) => qd(h, 2).mul(q(100)),
+    ref: ([h = 0]) => times(q(1), h),
     traps: [
       ["moved-one-place", "procedural", ([h = 0]) => q(10 * h)],
       ["digits-times-hundred", "procedural", ([h = 0]) => q(100 * h)],
@@ -375,7 +415,7 @@ const decimal = [
     draw: (r) => [between(r, 1, 19), pick(r, [20, 25, 50])],
     valid: ([n = 0, d = 0]) => n < d && (100 * n) % d === 0 && n * 2 !== d,
     solve: ([n = 0, d = 0]) => q((100 * n) / d),
-    ref: ([n = 0, d = 0]) => q(n, d).mul(q(100)),
+    ref: ([n = 0, d = 0]) => times(q(100, d), n),
     traps: [
       ["numerator-itself", "conceptual", ([n = 0]) => q(n)],
       [
@@ -396,7 +436,7 @@ const decimal = [
     draw: (r) => [between(r, 3, 30), pick(r, [20, 25, 40, 50])],
     valid: ([n = 0, t = 0]) => n < t && (100 * n) % t === 0 && 2 * n !== t,
     solve: ([n = 0, t = 0]) => q((100 * n) / t),
-    ref: ([n = 0, t = 0]) => q(n).div(q(t)).mul(q(100)),
+    ref: ([n = 0, t = 0]) => times(q(100, t), n),
     traps: [
       ["count-itself", "conceptual", ([n = 0]) => q(n)],
       [
@@ -423,7 +463,7 @@ const decimal = [
       new Set([`${p}%`, `${10 * p}%`, `${dec(p, 1, true)}%`, fr(1, p)]).size ===
       4,
     solve: ([p = 0]) => `${p}%`,
-    ref: ([p = 0]) => `${(p / 100) * 100}%`,
+    ref: ([p = 0]) => `${dec(p, 2).replace(/\D/g, "").replace(/^0+/, "")}%`,
     traps: [
       ["ten-times-too-big", "conceptual", ([p = 0]) => `${10 * p}%`],
       ["ten-times-too-small", "conceptual", ([p = 0]) => `${dec(p, 1, true)}%`],
@@ -437,9 +477,9 @@ const decimal = [
     form: "a-percentage-above-one-hundred-as-a-decimal",
     groups: [8, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, [110, 120, 125, 150, 175, 200, 250])],
+    draw: (r) => [between(r, 101, 199)],
     solve: ([p = 0]) => qd(p, 2),
-    ref: ([p = 0]) => q(p).div(q(100)),
+    ref: ([p = 0]) => times(qd(1, 2), p),
     traps: [
       ["tenths", "conceptual", ([p = 0]) => qd(p, 1)],
       ["forgot-the-whole", "conceptual", ([p = 0]) => qd(p - 100, 2)],
@@ -455,7 +495,12 @@ const decimal = [
     draw: (r) => [between(r, 11, 49), between(r, 11, 49)],
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => q(a + b),
-    ref: ([a = 0, b = 0]) => q(b).add(q(a)),
+    // Both rises are shares of one original price; take the price 200 and count in units.
+    ref: ([a = 0, b = 0]) =>
+      q(200 * a, 100)
+        .add(q(200 * b, 100))
+        .div(q(200))
+        .mul(q(100)),
     traps: [
       ["multiplied", "procedural", ([a = 0, b = 0]) => q(a * b)],
       ["subtracted", "procedural", ([a = 0, b = 0]) => q(Math.abs(a - b))],
@@ -553,6 +598,7 @@ const decimal = [
       ],
     ],
     extra: ([p = 0, n = 0, d = 0, h = 0]) => ({
+      x: dec(h, 2),
       list: [`${p}%`, fr(n, d), dec(h, 2)].join("; "),
       sorted: [
         [p / 100, `${p}%`],
@@ -569,9 +615,9 @@ const decimal = [
     form: "eighths-as-a-percentage",
     groups: [8, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, [1, 3, 5, 7])],
+    draw: (r) => [pick(r, [1, 3, 5, 7, 9, 11, 13, 15])],
     solve: ([n = 0]) => qd(125 * n, 1),
-    ref: ([n = 0]) => q(n, 8).mul(q(100)),
+    ref: ([n = 0]) => times(qd(125, 1), n),
     traps: [
       ["numerator-itself", "conceptual", ([n = 0]) => q(n)],
       ["one-eighth-only", "procedural", () => qd(125, 1)],
@@ -587,7 +633,11 @@ const decimal = [
     kind: "integer",
     draw: (r) => [pick(r, [2, 4, 5, 10, 20, 25, 50])],
     solve: ([d = 0]) => q(100 / d),
-    ref: ([d = 0]) => q(1, d).mul(q(100)),
+    ref: ([d = 0]) => {
+      let hit = 0;
+      for (let item = 1; item <= 100; item += 1) if (item % d === 0) hit += 1;
+      return q(hit);
+    },
     traps: [
       ["denominator-itself", "conceptual", ([d = 0]) => q(d)],
       ["multiplied", "procedural", ([d = 0]) => q(100 * d)],
@@ -605,7 +655,7 @@ const decimalMore = [
     kind: "decimal",
     draw: (r) => [between(r, 1, 9)],
     solve: ([p = 0]) => qd(p, 2),
-    ref: ([p = 0]) => q(p).div(q(100)),
+    ref: ([p = 0]) => times(qd(1, 2), p),
     traps: [
       ["tenths", "conceptual", ([p = 0]) => qd(p, 1)],
       ["thousandths", "procedural", ([p = 0]) => qd(p, 3)],
@@ -622,7 +672,12 @@ const decimalMore = [
     options: () => ["1", "2", "3", "4"],
     solve: ([p = 0, by = 0]) => chosenOf(p, by),
     ref: ([p = 0, by = 0]) =>
-      notations(p, by).flatMap((x, i) => (x.right ? [String(i + 1)] : [])),
+      notations(p, by).flatMap((x, i) => {
+        const [top = "", bottom] = x.text.replace(",", ".").split("⁄");
+        const value =
+          bottom === undefined ? Number(top) : Number(top) / Number(bottom);
+        return Math.abs(value - p / 100) < 1e-9 ? [String(i + 1)] : [];
+      }),
     traps: [
       [
         "only-the-decimal",
@@ -672,7 +727,7 @@ const decimalMore = [
         "a clever count of the numerators that cancel to a whole percentage (RES-4287)",
     },
     kind: "integer",
-    draw: (r) => [pick(r, [12, 15, 16, 24, 30, 40, 60])],
+    draw: (r) => [pick(r, [12, 15, 16, 18, 24, 30, 36, 40, 45, 48, 60])],
     solve: ([d = 0]) => q(Math.floor((d - 1) / (d / gcd(d, 100)))),
     ref: ([d = 0]) => {
       let count = 0;
@@ -702,7 +757,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [2 * between(r, 6, 60)],
     solve: ([n = 0]) => q(n / 2),
-    ref: ([n = 0]) => q(n).mul(qd(50, 2)),
+    ref: ([n = 0]) => times(q(n, 100), 50),
     traps: [
       ["percentage-as-a-factor", "procedural", ([n = 0]) => q(50 * n)],
       ["divided-by-the-percentage", "procedural", ([n = 0]) => exact(n, 50)],
@@ -717,7 +772,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [4 * between(r, 4, 50)],
     solve: ([n = 0]) => q(n / 4),
-    ref: ([n = 0]) => q(n).mul(qd(25, 2)),
+    ref: ([n = 0]) => times(q(n, 100), 25),
     traps: [
       ["half", "conceptual", ([n = 0]) => q(n / 2)],
       ["percentage-as-a-factor", "procedural", ([n = 0]) => q(25 * n)],
@@ -732,7 +787,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [10 * between(r, 5, 90)],
     solve: ([n = 0]) => q(n / 10),
-    ref: ([n = 0]) => q(n).mul(qd(10, 2)),
+    ref: ([n = 0]) => times(q(n, 100), 10),
     traps: [
       ["ten-times", "procedural", ([n = 0]) => q(10 * n)],
       ["one-percent", "conceptual", ([n = 0]) => exact(n, 100)],
@@ -747,7 +802,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [5 * between(r, 8, 60)],
     solve: ([n = 0]) => q(n / 5),
-    ref: ([n = 0]) => q(n).mul(qd(20, 2)),
+    ref: ([n = 0]) => times(q(n, 100), 20),
     traps: [
       ["twenty-times", "procedural", ([n = 0]) => q(20 * n)],
       ["divided-by-the-percentage", "procedural", ([n = 0]) => exact(n, 20)],
@@ -762,7 +817,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [4 * between(r, 4, 40)],
     solve: ([n = 0]) => q((3 * n) / 4),
-    ref: ([n = 0]) => q(n).mul(qd(75, 2)),
+    ref: ([n = 0]) => times(q(n, 100), 75),
     traps: [
       ["a-quarter-only", "conceptual", ([n = 0]) => q(n / 4)],
       ["percentage-as-a-factor", "procedural", ([n = 0]) => q(75 * n)],
@@ -777,7 +832,7 @@ const percentOf = [
     kind: "decimal",
     draw: (r) => [pick(r, [15, 30, 35, 45, 60]), 20 * between(r, 2, 10)],
     solve: ([p = 0, n = 0]) => q(p * n, 100),
-    ref: ([p = 0, n = 0]) => q(n, 100).mul(q(p)),
+    ref: ([p = 0, n = 0]) => times(q(n, 100), p),
     traps: [
       ["one-percent-only", "procedural", ([, n = 0]) => qd(n, 2)],
       ["percentage-as-a-factor", "procedural", ([p = 0, n = 0]) => q(p * n)],
@@ -793,7 +848,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [100 * between(r, 2, 50)],
     solve: ([n = 0]) => q(n / 100),
-    ref: ([n = 0]) => q(n).mul(qd(1, 2)),
+    ref: ([n = 0]) => q(Number(String(n).slice(0, -2))),
     traps: [
       ["ten-percent", "conceptual", ([n = 0]) => q(n / 10)],
       ["the-number-itself", "conceptual", ([n = 0]) => q(n)],
@@ -808,7 +863,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [pick(r, [10, 20, 25, 50]), 20 * between(r, 2, 10)],
     solve: ([p = 0, n = 0]) => q((p * n) / 100),
-    ref: ([p = 0, n = 0]) => qd(p, 2).mul(q(n)),
+    ref: ([p = 0, n = 0]) => times(q(n, 100), p),
     traps: [
       ["percentage-as-a-factor", "procedural", ([p = 0, n = 0]) => q(p * n)],
       [
@@ -830,7 +885,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [pick(r, [10, 20, 25, 50]), between(r, 3, 24)],
     solve: ([, k = 0]) => q(100 * k),
-    ref: ([p = 0, k = 0]) => q(p * k).div(qd(p, 2)),
+    ref: ([p = 0, k = 0]) => q(search((w) => w * p === 100 * p * k)),
     traps: [
       [
         "percentage-of-the-part",
@@ -859,7 +914,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [pick(r, [10, 20, 25, 40, 50, 75]), 20 * between(r, 1, 6)],
     solve: ([p = 0, n = 0]) => q((p * n) / 100),
-    ref: ([p = 0, n = 0]) => q(n).mul(qd(p, 2)),
+    ref: ([p = 0, n = 0]) => times(q(n, 100), p),
     traps: [
       ["the-rest", "conceptual", ([p = 0, n = 0]) => q(n - (p * n) / 100)],
       ["percentage-itself", "conceptual", ([p = 0]) => q(p)],
@@ -872,9 +927,9 @@ const percentOf = [
     form: "a-discount-in-euros",
     groups: [8, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, [15, 30, 35]), 20 * between(r, 2, 6)],
+    draw: (r) => [pick(r, [15, 30, 35]), 10 * between(r, 3, 15)],
     solve: ([p = 0, n = 0]) => qd(p * n, 2),
-    ref: ([p = 0, n = 0]) => q(n).mul(q(p, 100)),
+    ref: ([p = 0, n = 0]) => times(q(n, 100), p),
     traps: [
       ["percentage-as-a-factor", "procedural", ([p = 0, n = 0]) => q(p * n)],
       ["price-after", "conceptual", ([p = 0, n = 0]) => q(n).sub(qd(p * n, 2))],
@@ -889,7 +944,7 @@ const percentOf = [
     kind: "integer",
     draw: (r) => [pick(r, [150, 200, 250]), 4 * between(r, 5, 30)],
     solve: ([p = 0, n = 0]) => q((p * n) / 100),
-    ref: ([p = 0, n = 0]) => q(n).mul(qd(p, 2)),
+    ref: ([p = 0, n = 0]) => times(q(n, 100), p),
     traps: [
       ["capped-at-the-number", "conceptual", ([, n = 0]) => q(n)],
       ["percentage-as-a-factor", "procedural", ([p = 0, n = 0]) => q(p * n)],
@@ -911,7 +966,7 @@ const percentOfMore = [
     kind: "decimal",
     draw: (r) => [pick(r, [10, 20, 25, 50]), 2 * between(r, 4, 24)],
     solve: ([p = 0, t = 0]) => qd(p * t, 3),
-    ref: ([p = 0, t = 0]) => qd(t, 1).mul(q(p, 100)),
+    ref: ([p = 0, t = 0]) => times(q(t, 1000), p),
     traps: [
       [
         "percentage-as-a-factor",
@@ -935,10 +990,11 @@ const percentOfMore = [
     kind: "integer",
     draw: (r) => [pick(r, [10, 20, 25, 50, 75]), between(r, 1, 5)],
     solve: ([p = 0, h = 0]) => q((p * h * 60) / 100),
-    ref: ([p = 0, h = 0]) => q(h).mul(q(60)).mul(q(p, 100)),
+    ref: ([p = 0, h = 0]) => times(times(q(60, 100), p), h),
     traps: [
       ["hour-as-a-hundred", "conceptual", ([p = 0, h = 0]) => q(p * h)],
       ["percentage-itself", "conceptual", ([p = 0]) => q(p)],
+      ["one-hour-only", "procedural", ([p = 0]) => q((p * 60) / 100)],
     ],
     consts: [60, 100],
   }),
@@ -949,7 +1005,7 @@ const percentOfMore = [
     kind: "integer",
     draw: (r) => [10 * between(r, 1, 9), 10 * between(r, 3, 25)],
     solve: ([a = 0, b = 0]) => q((a * b) / 100),
-    ref: ([a = 0, b = 0]) => q(b).mul(qd(a, 2)),
+    ref: ([a = 0, b = 0]) => times(q(b, 10), a / 10),
     traps: [
       ["percentage-as-a-factor", "procedural", ([a = 0, b = 0]) => q(a * b)],
       [
@@ -981,13 +1037,18 @@ const percentOfMore = [
       return [p, (n * (100 - 2 * p)) / 100];
     },
     solve: ([p = 0, k = 0]) => q((100 * k) / (100 - 2 * p)),
-    ref: ([p = 0, k = 0]) => q(k).div(qd(100 - 2 * p, 2)),
+    ref: ([p = 0, k = 0]) => q(search((n) => n * (100 - 2 * p) === 100 * k)),
     traps: [
       ["difference-as-the-whole", "conceptual", ([, k = 0]) => q(k)],
       [
         "boys-as-the-difference",
         "conceptual",
         ([p = 0, k = 0]) => exact(100 * k, 100 - p),
+      ],
+      [
+        "girls-as-the-difference",
+        "conceptual",
+        ([p = 0, k = 0]) => exact(100 * k, p),
       ],
     ],
     roles: { a: "percent of girls", b: "how many more boys than girls" },
@@ -1010,7 +1071,8 @@ const percentOfMore = [
     valid: ([p = 0, s = 0, a = 0]) =>
       p !== s && (((p * a) / 100) * 100) % s === 0,
     solve: ([p = 0, s = 0, a = 0]) => q((p * a) / s),
-    ref: ([p = 0, s = 0, a = 0]) => q(p * a, 100).div(qd(s, 2)),
+    ref: ([p = 0, s = 0, a = 0]) =>
+      q(search((b) => s * b === p * a, 1, 1000000)),
     traps: [
       ["same-number", "conceptual", ([, , a = 0]) => q(a)],
       ["the-part-itself", "conceptual", ([p = 0, , a = 0]) => q((p * a) / 100)],

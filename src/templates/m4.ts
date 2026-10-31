@@ -17,6 +17,13 @@ const ws = (
   ...no: (typeof SIGNS)[number][]
 ): (typeof SIGNS)[number] | null => (no.includes(s) ? null : s);
 const gcd = (x: number, y: number): number => (y === 0 ? x : gcd(y, x % y));
+/** `per` added `n` times, a second route to a product that adds instead of multiplying. */
+const times = (n: number, per: number): number => {
+  let sum = 0;
+  for (let i = 0; i < n; i += 1) sum += per;
+  return sum;
+};
+const repeat = (n: number, per: number): Q => q(times(n, per));
 /** n over d when it is a finite decimal, otherwise null. */
 const dq = (n: number, d: number): Q | null => {
   let m = d / gcd(n, d);
@@ -49,6 +56,7 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     p: [rg(2, 5), rg(2, 5), rg(2, 4)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a * b * c),
+    alt: (a, b, c) => repeat(c, a * b),
     t: {
       sum: (a, b, c) => q(a + b + c),
       "sum-of-edges": (a, b, c) => w(4 * (a + b + c), a * b * c, a + b + c),
@@ -64,6 +72,7 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    alt: (a, b) => repeat(a, b),
     t: { sum: (a, b) => q(a + b), "one-layer": (a, b) => w(b, a * b, a + b) },
     c: [1],
   }),
@@ -75,6 +84,7 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     p: [rg(2, 5), rg(2, 5), rg(2, 5)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a * b * c),
+    alt: (a, b, c) => repeat(c, a * b),
     t: {
       "one-layer": (a, b) => q(a * b),
       sum: (a, b, c) => w(a + b + c, a * b * c, a * b),
@@ -87,9 +97,9 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     form: "the-volume-of-a-cube",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 6)],
-    ok: (a) => a !== 3,
+    p: [rg(2, 8)],
     f: (a) => q(a * a * a),
+    alt: (a) => repeat(a, a * a),
     t: {
       "area-of-a-face": (a) => q(a * a),
       "edge-times-three": (a) => w(3 * a, a * a * a, a * a),
@@ -104,6 +114,15 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(b),
+    alt: (a, b) => {
+      let left = a * b;
+      let rounds = 0;
+      while (left > 0) {
+        left -= a;
+        rounds += 1;
+      }
+      return q(rounds);
+    },
     t: {
       multiplied: (a, b) => q(a * b * a),
       "total-minus-layers": (a, b) => w(a * b - a, b, a * b * a),
@@ -119,11 +138,14 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     p: [rg(2, 5), rg(2, 5), rg(3, 6), rg(1, 2)],
     ok: (a, b, c, d) => a !== b && d < c,
     f: (a, b, c, d) => q(a * b * (c - d)),
+    alt: (a, b, c, d) => q(a * b * c - a * b * d),
     t: {
       "filled-layers": (a, b, c, d) => q(a * b * d),
       "whole-box": (a, b, c, d) => w(a * b * c, a * b * (c - d), a * b * d),
       "missing-layers": (a, b, c, d) =>
         w(c - d, a * b * (c - d), a * b * d, a * b * c),
+      "cubes-minus-layers": (a, b, c, d) =>
+        w(a * b * c - d, a * b * (c - d), a * b * d, a * b * c, c - d),
     },
     c: [1],
   }),
@@ -132,8 +154,13 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     form: "a-tower-of-columns",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 7)],
+    p: [rg(3, 10)],
     f: (a) => q((a * (a + 1)) / 2),
+    alt: (a) => {
+      let sum = 0;
+      for (let k = 1; k <= a; k += 1) sum += k;
+      return q(sum);
+    },
     t: {
       square: (a) => q(a * a),
       "not-halved": (a) => w(a * (a + 1), (a * (a + 1)) / 2, a * a),
@@ -147,8 +174,9 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     form: "unit-cubes-without-a-painted-face",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 6)],
+    p: [rg(3, 8)],
     f: (a) => q((a - 2) ** 3),
+    alt: (a) => q(a ** 3 - (8 + 12 * (a - 2) + 6 * (a - 2) ** 2)),
     t: {
       "all-cubes": (a) => q(a ** 3),
       "painted-cubes": (a) => w(a ** 3 - (a - 2) ** 3, (a - 2) ** 3, a ** 3),
@@ -166,6 +194,7 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     p: [rg(2, 4), rg(2, 4), rg(2, 3), rg(2, 4), rg(2, 3), rg(2, 3)],
     ok: (a, b, c, d, e, f) => a * b * c !== d * e * f,
     f: (a, b, c, d, e, f) => q(a * b * c + d * e * f),
+    alt: (a, b, c, d, e, f) => q(times(c, a * b) + times(f, d * e)),
     t: {
       "one-box": (a, b, c) => q(a * b * c),
       sum: (a, b, c, d, e, f) =>
@@ -184,11 +213,13 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     form: "stacks-of-cubes",
     g: [6, 7],
     kind: "integer",
-    p: [rg(5, 9), rg(4, 12), rg(2, 4)],
+    p: [rg(6, 9), rg(4, 12), rg(2, 4)],
     f: (a, b, c) => q((a - c) * b),
+    alt: (a, b, c) => q(a * b - c * b),
     t: {
       "removed-only": (a, b, c) => q(c * b),
       "stacks-minus-cubes": (a, b, c) => w(a * b - c, (a - c) * b, c * b),
+      "stacks-only": (a, b, c) => w(a - c, (a - c) * b, c * b, a * b - c),
     },
   }),
   M7_by_cubes({
@@ -199,9 +230,11 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     p: [rg(3, 5), rg(3, 5), rg(3, 4), rg(2, 3), rg(2, 3), rg(2, 3)],
     ok: (a, b, c, d, e, f) => a * b * c > d * e * f && a * b - d * e > 0,
     f: (a, b, c, d, e, f) => q(a * b * c - d * e * f),
+    alt: (a, b, c, d, e, f) => q(times(c, a * b) - times(f, d * e)),
     t: {
       "one-tower": (a, b, c) => q(a * b * c),
       "bases-compared": (a, b, c, d, e) => q(a * b - d * e),
+      "sum-of-towers": (a, b, c, d, e, f) => q(a * b * c + d * e * f),
     },
   }),
   M7_by_cubes({
@@ -209,11 +242,13 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     form: "cubes-painted-on-exactly-one-side",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 6)],
+    p: [rg(3, 8)],
     f: (a) => q(6 * (a - 2) ** 2),
+    alt: (a) => q(a ** 3 - (a - 2) ** 3 - 12 * (a - 2) - 8),
     t: {
       "edges-included": (a) => q(6 * a * a),
       "one-face-only": (a) => q((a - 2) ** 2),
+      "no-paint": (a) => w((a - 2) ** 3, 6 * (a - 2) ** 2, (a - 2) ** 2),
     },
     c: [1, 6],
     origin: {
@@ -226,11 +261,13 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     form: "cubes-painted-on-exactly-two-sides",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 7)],
+    p: [rg(3, 8)],
     f: (a) => q(12 * (a - 2)),
+    alt: (a) => q(a ** 3 - (a - 2) ** 3 - 6 * (a - 2) ** 2 - 8),
     t: {
       "corners-included": (a) => q(12 * a),
       "one-edge": (a) => q(a - 2),
+      "corners-only": (a) => w(8, 12 * (a - 2), a - 2, 12 * a),
     },
     c: [1, 2, 12],
     origin: {
@@ -243,11 +280,13 @@ const M7_by_cubes_specs: readonly Spec<never>[] = [
     form: "a-cube-without-its-top-layer",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 7)],
+    p: [rg(3, 8)],
     f: (a) => q(a * a * (a - 1)),
+    alt: (a) => repeat(a - 1, a * a),
     t: {
       "whole-cube": (a) => q(a ** 3),
       "removed-layer": (a) => q(a * a),
+      "smaller-cube": (a) => w((a - 1) ** 3, a * a * (a - 1), a ** 3, a * a),
     },
   }),
 ];
@@ -262,6 +301,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 8), rg(2, 6)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a * b * c),
+    alt: (a, b, c) => repeat(c, a * b),
     t: {
       "surface-like": (a, b, c) => q(2 * (a * b + b * c + a * c)),
       "sum-of-edges": (a, b, c) =>
@@ -278,6 +318,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(3, 7), rg(2, 3)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a * b * c),
+    alt: (a, b, c) => repeat(c, a * b),
     t: {
       "floor-only": (a, b) => q(a * b),
       "surface-like": (a, b, c) =>
@@ -292,8 +333,8 @@ const M7_formula_specs: readonly Spec<never>[] = [
     g: [7, 8],
     kind: "integer",
     p: [rg(2, 9)],
-    ok: (a) => a !== 3,
     f: (a) => q(a * a * a),
+    alt: (a) => repeat(a, a * a),
     t: {
       "edge-times-three": (a) => q(3 * a),
       "face-area": (a) => w(a * a, a * a * a, 3 * a),
@@ -309,6 +350,11 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(2, 6), rg(2, 6)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(c),
+    alt: (a, b, c) => {
+      let height = 1;
+      while (a * b * height !== a * b * c) height += 1;
+      return q(height);
+    },
     t: {
       "volume-over-one-side": (a, b, c) => q((a * b * c) / a),
       "base-area": (a, b, c) => w(a * b, c, b * c),
@@ -324,6 +370,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(3, 8), rg(2, 6), rg(2, 5)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a * b * c),
+    alt: (a, b, c) => repeat(c, a * b),
     t: {
       "surface-like": (a, b, c) => q(2 * (a * b + b * c + a * c)),
       "base-only": (a, b, c) =>
@@ -340,6 +387,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(1000 * a),
+    alt: (a) => repeat(a, 10 * 10 * 10),
     t: {
       hundred: (a) => q(100 * a),
       ten: (a) => w(10 * a, 1000 * a, 100 * a),
@@ -354,6 +402,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(1000 * a),
+    alt: (a) => repeat(a, 10 * 10 * 10),
     t: {
       hundred: (a) => q(100 * a),
       ten: (a) => w(10 * a, 1000 * a, 100 * a),
@@ -369,6 +418,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(12, 40), rg(2, 8)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    alt: (a, b) => repeat(b, a),
     t: {
       sum: (a, b) => q(a + b),
       "base-squared": (a, b) => w(a * a * b, a * b, a + b),
@@ -380,8 +430,10 @@ const M7_formula_specs: readonly Spec<never>[] = [
     form: "all-sides-doubled",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     f: (a) => q(8 * a),
+    // The box 1 by 1 by a, with every measurement doubled.
+    alt: (a) => q(2 * 1 * (2 * 1) * (2 * a)),
     t: {
       doubled: (a) => q(2 * a),
       "four-times": (a) => w(4 * a, 8 * a, 2 * a),
@@ -397,6 +449,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [of(10, 20, 25), of(5, 8, 10), rg(1, 3)],
     ok: (a, b) => a !== b,
     f: (a, b, c) => q(a * b * c),
+    alt: (a, b, c) => repeat(c, a * b),
     t: {
       "floor-only": (a, b) => q(a * b),
       "surface-like": (a, b, c) =>
@@ -413,6 +466,7 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(2, 5), rg(2, 5), rg(2, 5)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a * b * c),
+    alt: (a, b, c) => q((10 * a * 10 * b * 10 * c) / 1000),
     t: {
       "cubic-centimetres": (a, b, c) => q(1000 * a * b * c),
       "divided-by-ten": (a, b, c) =>
@@ -440,9 +494,11 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(1, 2), of(40, 50, 60), of(30, 40, 50)],
     ok: (a, b, c) => b !== c,
     f: (a, b, c) => q((a * b * c) / 10),
+    alt: (a, b, c) => q((100 * a * b * c) / 1000),
     t: {
       "units-not-converted": (a, b, c) => q(a * b * c),
       "cubic-centimetres": (a, b, c) => q(100 * a * b * c),
+      "cm-as-dm": (a, b, c) => w(10 * a * b * c, (a * b * c) / 10),
     },
     c: [1, 1000],
   }),
@@ -453,9 +509,15 @@ const M7_formula_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(a ** 3),
+    alt: (a) => {
+      let edge = 1;
+      while (12 * edge !== 12 * a) edge += 1;
+      return q(edge * edge * edge);
+    },
     t: {
       "edge-itself": (a) => q(a),
       "edge-by-six": (a) => q((2 * a) ** 3),
+      "edge-by-four": (a) => q((3 * a) ** 3),
     },
     x: (a) => ({ x: String(12 * a) }),
     c: [12],
@@ -468,8 +530,10 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(5, 8), rg(4, 6), rg(3, 5), rg(1, 2)],
     ok: (a, b, c) => a !== b && b !== c,
     f: (a, b, c, d) => q(a * b * c - d ** 3),
+    alt: (a, b, c, d) => q(times(c, a * b) - times(d, d * d)),
     t: {
       "cut-added": (a, b, c, d) => q(a * b * c + d ** 3),
+      "whole-block": (a, b, c) => q(a * b * c),
       "cut-face": (a, b, c, d) => w(a * b * c - d * d, a * b * c - d ** 3),
     },
   }),
@@ -481,6 +545,8 @@ const M7_formula_specs: readonly Spec<never>[] = [
     p: [rg(2, 5), rg(3, 6), rg(4, 7)],
     ok: (a, b, c) => a !== b && b !== c,
     f: (a, b, c) => q(a * b * c),
+    // The square root of the product of the three face areas.
+    alt: (a, b, c) => q(Math.round(Math.sqrt(a * b * (b * c) * (a * c)))),
     t: {
       "product-of-areas": (a, b, c) => q(a * b * (b * c) * (a * c)),
       "areas-added": (a, b, c) => q(a * b + b * c + a * c),
@@ -503,6 +569,11 @@ const M8_speed_specs: readonly Spec<never>[] = [
     p: [rg(3, 6), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a) => q(a),
+    alt: (a, b) => {
+      let speed = 1;
+      while (speed * b !== a * b) speed += 1;
+      return q(speed);
+    },
     t: {
       difference: (a, b) => q(a * b - b),
       multiplied: (a, b) => w(a * b * b, a, a * b - b),
@@ -518,6 +589,7 @@ const M8_speed_specs: readonly Spec<never>[] = [
     p: [rg(8, 25), rg(2, 6)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    alt: (a, b) => repeat(b, a),
     t: {
       added: (a, b) => q(a + b),
       divided: (a, b) => w(a / b, a * b, a + b),
@@ -529,9 +601,17 @@ const M8_speed_specs: readonly Spec<never>[] = [
     form: "the-time-for-a-journey",
     g: [6, 7],
     kind: "integer",
-    p: [rg(40, 100), rg(2, 6)],
-    ok: (a, b) => a !== b,
+    p: [of(40, 50, 60, 70, 80, 90, 100), rg(2, 9)],
     f: (a, b) => q(b),
+    alt: (a, b) => {
+      let left = a * b;
+      let hours = 0;
+      while (left > 0) {
+        left -= a;
+        hours += 1;
+      }
+      return q(hours);
+    },
     t: {
       multiplied: (a, b) => q(a * b),
       "given-multiplied": (a, b) => w(a * a * b, b, a * b),
@@ -544,8 +624,10 @@ const M8_speed_specs: readonly Spec<never>[] = [
     form: "metres-per-second-to-kilometres-per-hour",
     g: [6, 7],
     kind: "integer",
-    p: [of(5, 10, 15, 20, 25)],
+    p: [of(5, 10, 15, 20, 25, 30, 35, 40)],
     f: (a) => q((18 * a) / 5),
+    // One metre per second is 3,6 kilometres per hour.
+    alt: (a) => q(36 * a, 10),
     t: {
       "ten-times": (a) => q(10 * a),
       "seconds-only": (a) => w(3600 * a, (18 * a) / 5, 10 * a),
@@ -558,8 +640,10 @@ const M8_speed_specs: readonly Spec<never>[] = [
     form: "kilometres-per-hour-to-metres-per-second",
     g: [6, 7],
     kind: "integer",
-    p: [of(18, 36, 54, 72, 90)],
+    p: [of(18, 36, 54, 72, 90, 108, 126, 144)],
     f: (a) => q((5 * a) / 18),
+    // One kilometre per hour is 1 : 3,6 metres per second.
+    alt: (a) => q(10 * a, 36),
     t: {
       "not-divided": (a) => q(a * 1000),
       "metres-per-minute": (a) => w((a * 1000) / 60, (5 * a) / 18, a * 1000),
@@ -578,6 +662,7 @@ const M8_speed_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(60, 70, 80, 90), rg(5, 20)],
     f: (a, b) => q(a * b),
+    alt: (a, b) => repeat(b, a),
     t: {
       added: (a, b) => q(a + b),
       divided: (a, b) => w(a / b, a * b, a + b),
@@ -589,16 +674,22 @@ const M8_speed_specs: readonly Spec<never>[] = [
     form: "which-vehicle-is-faster",
     g: [6, 7],
     kind: "compare",
-    p: [rg(100, 240), rg(2, 4), rg(100, 240), rg(2, 4)],
+    p: [rg(40, 90), rg(2, 4), rg(40, 90), rg(2, 4)],
     ok: (a, b, c, d) =>
-      b !== d && sign(q(a * b, b), q(c, d)) !== sign(q(a * b), q(c)),
-    f: (a, b, c, d) => sign(q(a * b, b), q(c, d)),
+      a !== c && b !== d && sign(q(a), q(c)) !== sign(q(a * b), q(c * d)),
+    f: (a, b, c) => sign(q(a), q(c)),
+    // Both vehicles over the common time b by d.
+    alt: (a, b, c, d) => sign(q(a * b * d), q(c * d * b)),
     t: {
-      "distances-compared": (a, b, c) => sign(q(a * b), q(c)),
+      "distances-compared": (a, b, c, d) => sign(q(a * b), q(c * d)),
       "times-compared": (a, b, c, d) =>
-        ws(sign(q(b), q(d)), sign(q(a * b, b), q(c, d)), sign(q(a * b), q(c))),
+        ws(sign(q(b), q(d)), sign(q(a), q(c)), sign(q(a * b), q(c * d))),
     },
-    x: (a, b, c, d) => ({ x: String(a * b), sign: sign(q(a * b, b), q(c, d)) }),
+    x: (a, b, c, d) => ({
+      x: String(a * b),
+      y: String(c * d),
+      sign: sign(q(a), q(c)),
+    }),
   }),
   M8_speed({
     id: "M8.speed.08",
@@ -608,6 +699,7 @@ const M8_speed_specs: readonly Spec<never>[] = [
     p: [rg(4, 12), rg(4, 12), rg(2, 4)],
     ok: (a, b) => a !== b,
     f: (a, b, c) => q((a + b) * c),
+    alt: (a, b, c) => q(a * c + b * c),
     t: {
       "one-speed": (a, b, c) => q(a * c),
       "speeds-subtracted": (a, b, c) =>
@@ -624,6 +716,7 @@ const M8_speed_specs: readonly Spec<never>[] = [
     p: [rg(12, 24), rg(4, 11), rg(2, 4)],
     ok: (a, b) => a > b,
     f: (a, b, c) => q((a - b) * c),
+    alt: (a, b, c) => repeat(c, a - b),
     t: {
       "speeds-added": (a, b, c) => q((a + b) * c),
       "difference-only": (a, b, c) => w(a - b, (a - b) * c, (a + b) * c),
@@ -635,8 +728,10 @@ const M8_speed_specs: readonly Spec<never>[] = [
     form: "the-distance-in-half-an-hour",
     g: [6, 7],
     kind: "integer",
-    p: [of(60, 80, 100, 120)],
+    p: [of(30, 40, 50, 60, 70, 80, 90, 100, 110, 120)],
     f: (a) => q(a / 2),
+    // The distance in one minute, taken for thirty minutes.
+    alt: (a) => q(a * 30, 60),
     t: {
       "full-hour": (a) => q(a),
       "point-three": (a) => w((3 * a) / 10, a / 2, a),
@@ -652,8 +747,17 @@ const M8_speed_specs: readonly Spec<never>[] = [
     },
     g: [6, 7],
     kind: "integer",
-    p: [of(60, 70, 80), rg(3, 9)],
+    p: [of(50, 60, 70, 80, 90), rg(3, 9)],
     f: (a, b) => q(b),
+    alt: (a, b) => {
+      let left = a * b;
+      let minutes = 0;
+      while (left > 0) {
+        left -= a;
+        minutes += 1;
+      }
+      return q(minutes);
+    },
     t: {
       multiplied: (a, b) => q(a * b),
       "given-multiplied": (a, b) => w(a * a * b, b, a * b),
@@ -668,6 +772,8 @@ const M8_speed_specs: readonly Spec<never>[] = [
     kind: "decimal",
     p: [rg(2, 12), of(20, 30, 40, 50)],
     f: (a, b) => q(60 * a, b),
+    // The kilometres in one minute, taken for sixty minutes.
+    alt: (a, b) => q(a, b).mul(q(60)),
     t: {
       "minutes-as-hours": (a, b) => dq(a, b),
       "hundred-minutes": (a, b) => dq(100 * a, b),
@@ -681,6 +787,10 @@ const M8_speed_specs: readonly Spec<never>[] = [
     kind: "pair",
     p: [rg(1, 4), of(15, 30, 45), of(40, 48, 60, 64, 80)],
     f: (a, b) => [q(a), q(b)],
+    alt: (a, b, c) => {
+      const minutes = Math.round(((c * a + (c * b) / 60) * 60) / c);
+      return [q(Math.floor(minutes / 60)), q(minutes % 60)];
+    },
     t: {
       "decimal-digits-as-minutes": (a, b) => [q(a), q((100 * b) / 60)],
       swapped: (a, b) => [q(b), q(a)],
@@ -696,8 +806,11 @@ const M8_speed_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 12), of(5, 7, 9)],
     f: (a, b) => q(a * b),
+    // Read from the point at two hours, which is 2a kilometres.
+    alt: (a, b) => q(2 * a * b, 2),
     t: {
       "first-point-as-speed": (a, b) => q(2 * a * b),
+      "last-point": (a, b) => w(4 * a, a * b, 2 * a * b, 4 * a + (b - 4)),
       "additive-extension": (a, b) => q(4 * a + (b - 4)),
     },
     c: [4],
@@ -712,6 +825,15 @@ const M8_speed_specs: readonly Spec<never>[] = [
     ok: (a, b, c) =>
       (a * b) % c === 0 && (a * b) / c !== b && (a * b) / c !== c,
     f: (a, b, c) => q((a * b) / c),
+    alt: (a, b, c) => {
+      let gap = a * b;
+      let hours = 0;
+      while (gap > 0) {
+        gap -= c;
+        hours += 1;
+      }
+      return q(hours);
+    },
     t: {
       "head-start-repeated": (a, b) => q(b),
       "closing-speed": (a, b, c) => q(c),
@@ -739,6 +861,8 @@ const M8_speed_specs: readonly Spec<never>[] = [
     p: [of(10, 15, 20), of(100, 150, 200), of(200, 300, 400, 500)],
     ok: (a, b, c) => (b + c) % a === 0 && b / a !== c / a,
     f: (a, b, c) => q((b + c) / a),
+    // The head crosses the bridge, then the tail covers the length of the train.
+    alt: (a, b, c) => q(c / a + b / a),
     t: {
       "bridge-only": (a, b, c) => (c % a === 0 ? q(c / a) : null),
       "train-only": (a, b) => (b % a === 0 ? q(b / a) : null),
@@ -762,8 +886,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "square-metres-to-square-centimetres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(10000 * a),
+    alt: (a) => repeat(a, 100 * 100),
     t: {
       hundred: (a) => q(100 * a),
       "two-hundred": (a) => w(200 * a, 10000 * a, 100 * a),
@@ -776,8 +901,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "square-centimetres-to-square-millimetres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(100 * a),
+    alt: (a) => repeat(a, 10 * 10),
     t: {
       ten: (a) => q(10 * a),
       twenty: (a) => w(20 * a, 100 * a, 10 * a),
@@ -790,8 +916,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "square-kilometres-to-hectares",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(100 * a),
+    alt: (a) => repeat(a, 10 * 10),
     t: {
       ten: (a) => q(10 * a),
       twenty: (a) => w(20 * a, 100 * a, 10 * a),
@@ -804,8 +931,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "hectares-to-square-metres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(10000 * a),
+    alt: (a) => repeat(a, 100 * 100),
     t: {
       thousand: (a) => q(1000 * a),
       hundred: (a) => w(100 * a, 10000 * a, 1000 * a),
@@ -818,8 +946,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "square-metres-to-square-decimetres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(100 * a),
+    alt: (a) => repeat(a, 10 * 10),
     t: {
       ten: (a) => q(10 * a),
       twenty: (a) => w(20 * a, 100 * a, 10 * a),
@@ -832,8 +961,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "square-decimetres-to-square-centimetres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(100 * a),
+    alt: (a) => repeat(a, 10 * 10),
     t: {
       ten: (a) => q(10 * a),
       twenty: (a) => w(20 * a, 100 * a, 10 * a),
@@ -846,8 +976,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "ares-to-square-metres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(100 * a),
+    alt: (a) => repeat(a, 10 * 10),
     t: {
       ten: (a) => q(10 * a),
       twenty: (a) => w(20 * a, 100 * a, 10 * a),
@@ -860,8 +991,9 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "hectares-to-ares",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(100 * a),
+    alt: (a) => repeat(a, 10 * 10),
     t: {
       ten: (a) => q(10 * a),
       twenty: (a) => w(20 * a, 100 * a, 10 * a),
@@ -874,8 +1006,10 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "compare-areas-in-different-units",
     g: [7, 8],
     kind: "compare",
-    p: [rg(2, 5), of(-40, -10, 0, 10, 40)],
+    p: [rg(2, 5), of(-60, -40, -20, -10, 0, 10, 20, 40)],
     f: (a, b) => sign(q(100 * a), q(100 * a + b)),
+    // Both areas in square metres.
+    alt: (a, b) => sign(q(a), q(100 * a + b, 100)),
     t: { "numbers-compared": (a, b) => sign(q(a), q(100 * a + b)) },
     x: (a, b) => ({
       b: String(100 * a + b),
@@ -888,8 +1022,25 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "square-metres-as-a-fraction-of-a-hectare",
     g: [7, 8],
     kind: "decimal",
-    p: [of(2500, 5000, 7500, 12500)],
+    p: [
+      of(
+        1000,
+        2000,
+        2500,
+        3000,
+        4000,
+        5000,
+        6500,
+        7500,
+        8000,
+        12500,
+        15000,
+        20000,
+      ),
+    ],
     f: (a) => q(a, 10000),
+    // Square metres to ares, then ares to hectares.
+    alt: (a) => q(a, 100).mul(q(1, 100)),
     t: {
       "moved-too-far": (a) => q(a, 1000),
       "moved-two-places": (a) => dq(a, 100),
@@ -902,22 +1053,27 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "tiles-for-a-floor-in-different-units",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
-    f: (a) => q(25 * a),
+    p: [rg(2, 9), of(10, 20, 25, 50)],
+    f: (a, b) => q(a * (100 / b) ** 2),
+    // The floor in square centimetres divided by the area of one tile.
+    alt: (a, b) => q((10000 * a) / (b * b)),
     t: {
-      "forgot-square": (a) => q(5 * a),
-      "ten-thousand": (a) => w(10000 * a, 25 * a, 5 * a),
-      "tile-area-twenty": (a) => w(500 * a, 25 * a, 5 * a, 10000 * a),
+      "forgot-square": (a, b) => q((100 * a) / b),
+      "ten-thousand": (a, b) => w(10000 * a, a * (100 / b) ** 2, (100 * a) / b),
+      "tile-area-twenty": (a, b) =>
+        w((10000 * a) / b, a * (100 / b) ** 2, (100 * a) / b, 10000 * a),
     },
-    c: [1, 20, 400, 10000],
+    c: [1, 100, 10000],
   }),
   M9_area_units({
     id: "M9.area-units.12",
     form: "compare-square-decimetres-against-square-metres",
     g: [7, 8],
     kind: "compare",
-    p: [rg(2, 5), of(-60, -20, 0, 20, 60)],
+    p: [rg(2, 5), of(-60, -40, -20, -10, 0, 10, 20, 40)],
     f: (a, b) => sign(q(100 * a + b), q(100 * a)),
+    // Both areas in square metres.
+    alt: (a, b) => sign(q(100 * a + b, 100), q(a)),
     t: { "numbers-compared": (a, b) => sign(q(100 * a + b), q(a)) },
     x: (a, b) => ({ b: String(100 * a + b) }),
     c: [1, 100],
@@ -930,9 +1086,12 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     p: [rg(11, 59)],
     ok: (a) => a % 10 !== 0,
     f: (a) => q(10 * a),
+    // The whole square metres and the tenths, each in square decimetres.
+    alt: (a) => q(100 * Math.floor(a / 10) + 10 * (a % 10)),
     t: {
       "linear-factor": (a) => q(a),
       "ten-thousand": (a) => q(1000 * a),
+      "cubic-factor": (a) => q(100 * a),
     },
     x: (a) => ({ x: dec(a, 1) }),
     c: [10, 100, 10000],
@@ -942,8 +1101,10 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "a-square-kilometre-in-a-line-of-square-metres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(1000 * a),
+    // The squares in a row of one square kilometre, each one metre long, in kilometres.
+    alt: (a) => q((a * 1000 * 1000) / 1000),
     t: {
       "metres-not-kilometres": (a) => q(1000000 * a),
       "linear-factor": (a) => q(a),
@@ -959,10 +1120,14 @@ const M9_area_units_specs: readonly Spec<never>[] = [
     form: "the-fence-around-a-square-field-in-hectares",
     g: [7, 8],
     kind: "integer",
-    p: [of(1, 4, 9, 16, 25)],
+    p: [of(1, 4, 9, 16, 25, 36, 49, 64, 81, 100)],
     f: (a) => q(400 * Math.sqrt(a)),
+    // One hectare is one square hectometre: the side in hectometres, times four, in metres.
+    alt: (a) => q(Math.sqrt(a) * 4 * 100),
     t: {
       "side-only": (a) => q(100 * Math.sqrt(a)),
+      "hectares-times-four": (a) =>
+        w(4 * a, 400 * Math.sqrt(a), 100 * Math.sqrt(a)),
       "side-by-hundreds": (a) => w(400 * a, 400 * Math.sqrt(a)),
     },
     x: (a) => ({ s: String(100 * Math.sqrt(a)) }),
@@ -977,8 +1142,9 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     form: "litres-to-decilitres",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(10 * a),
+    alt: (a) => repeat(a, 10),
     t: {
       hundred: (a) => q(100 * a),
       thousand: (a) => w(1000 * a, 10 * a, 100 * a),
@@ -990,8 +1156,9 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     form: "litres-to-centilitres",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(100 * a),
+    alt: (a) => repeat(a, 100),
     t: { ten: (a) => q(10 * a), thousand: (a) => w(1000 * a, 100 * a, 10 * a) },
     c: [10, 100],
   }),
@@ -1000,8 +1167,9 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     form: "litres-to-millilitres",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(1000 * a),
+    alt: (a) => repeat(a, 1000),
     t: {
       hundred: (a) => q(100 * a),
       ten: (a) => w(10 * a, 1000 * a, 100 * a),
@@ -1016,6 +1184,7 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(10 * a),
+    alt: (a) => q((100 * a) / 10),
     t: {
       hundred: (a) => q(100 * a),
       thousand: (a) => w(1000 * a, 10 * a, 100 * a),
@@ -1027,8 +1196,17 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     form: "millilitres-to-litres",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(a),
+    alt: (a) => {
+      let left = 1000 * a;
+      let litres = 0;
+      while (left > 0) {
+        left -= 1000;
+        litres += 1;
+      }
+      return q(litres);
+    },
     t: {
       "too-many": (a) => q(100 * a),
       "divided-by-hundred": (a) => w(10 * a, a, 100 * a),
@@ -1042,15 +1220,24 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     form: "glasses-from-a-jug",
     g: [6, 7],
     kind: "decimal",
-    p: [rg(2, 6), rg(2, 4)],
-    ok: (a, b) => (a * 10) % (b * 2) === 0 && a * 10 !== b * 2,
-    f: (a, b) => q((a * 10) / (b * 2)),
-    t: {
-      "litres-over-decilitres": (a, b) => q(a, b * 2),
-      inverse: (a, b) => dq(b * 2, a * 10),
-      centilitres: (a, b) => dq(a * 100, b * 2),
+    p: [rg(2, 9), of(2, 4, 5)],
+    ok: (a, b) => (a * 10) % b === 0 && a * 10 !== b,
+    f: (a, b) => q((a * 10) / b),
+    alt: (a, b) => {
+      let left = a * 10;
+      let glasses = 0;
+      while (left >= b) {
+        left -= b;
+        glasses += 1;
+      }
+      return q(glasses);
     },
-    x: (a, b) => ({ x: String(b * 2) }),
+    t: {
+      "litres-over-decilitres": (a, b) => q(a, b),
+      inverse: (a, b) => dq(b, a * 10),
+      centilitres: (a, b) => dq(a * 100, b),
+    },
+    x: (a, b) => ({ x: String(b) }),
     c: [10],
   }),
   M10_capacity({
@@ -1058,9 +1245,10 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     form: "bottles-in-total",
     g: [6, 7],
     kind: "integer",
-    p: [rg(3, 9), of(1, 2, 3)],
+    p: [rg(3, 9), of(2, 3, 4, 5, 6)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    alt: (a, b) => repeat(a, b),
     t: {
       added: (a, b) => q(a + b),
       divided: (a, b) => w(a / b, a * b, a + b),
@@ -1074,6 +1262,7 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 19)],
     f: (a) => q(10 * a),
+    alt: (a) => repeat(a, 10),
     t: {
       hundred: (a) => q(100 * a),
       thousand: (a) => w(1000 * a, 10 * a, 100 * a),
@@ -1085,8 +1274,10 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     form: "a-litre-against-decilitres",
     g: [6, 7],
     kind: "compare",
-    p: [of(5, 7, 9, 10, 12, 15)],
+    p: [of(5, 6, 7, 8, 9, 10, 11, 12, 15)],
     f: (a) => sign(q(10), q(a)),
+    // Both in litres.
+    alt: (a) => sign(q(1), q(a, 10)),
     t: { "numbers-compared": (a) => sign(q(1), q(a)) },
     x: (a) => ({ sign: sign(q(10), q(a)) }),
     c: [1, 10],
@@ -1099,6 +1290,15 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), of(300, 400, 600, 700)],
     ok: (a, b) => (1000 * a) % b !== 0,
     f: (a, b) => q(Math.floor((1000 * a) / b)),
+    alt: (a, b) => {
+      let left = 1000 * a;
+      let days = 0;
+      while (left >= b) {
+        left -= b;
+        days += 1;
+      }
+      return q(days);
+    },
     t: {
       "rounded-up": (a, b) => q(Math.ceil((1000 * a) / b)),
       "remainder-as-answer": (a, b) =>
@@ -1114,6 +1314,8 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     p: [rg(2, 9), rg(2, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(10 * a + b),
+    // Both in millilitres, then back to decilitres.
+    alt: (a, b) => q(1000 * a + 100 * b, 100),
     t: {
       "counts-added": (a, b) => q(a + b),
       "second-converted": (a, b) => w(a + 10 * b, 10 * a + b, a + b),
@@ -1128,6 +1330,8 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 5), rg(2, 4), of(2, 3)],
     f: (a, b, c) => q(10 * a - b * c),
+    // Everything in centilitres, then back to decilitres.
+    alt: (a, b, c) => q(100 * a - 10 * b * c, 10),
     t: {
       "poured-only": (a, b, c) => q(b * c),
       "litres-not-converted": (a, b, c) => w(a - b * c, 10 * a - b * c),
@@ -1141,6 +1345,8 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     kind: "decimal",
     p: [rg(2, 6), rg(3, 9)],
     f: (a, b) => q(a * b, 10),
+    // The price of one decilitre, taken b times.
+    alt: (a, b) => q(a, 10).mul(q(b)),
     t: {
       "decilitres-as-litres": (a, b) => q(a * b),
       hundredths: (a, b) => q(a * b, 100),
@@ -1155,6 +1361,15 @@ const M10_capacity_specs: readonly Spec<never>[] = [
     p: [rg(2, 5), of(300, 400, 600, 700)],
     ok: (a, b) => (1000 * a) % b !== 0,
     f: (a, b) => [q(Math.floor((1000 * a) / b)), q((1000 * a) % b)],
+    alt: (a, b) => {
+      let left = 1000 * a;
+      let portions = 0;
+      while (left >= b) {
+        left -= b;
+        portions += 1;
+      }
+      return [q(portions), q(left)];
+    },
     t: {
       swapped: (a, b) => [q((1000 * a) % b), q(Math.floor((1000 * a) / b))],
       "remainder-dropped": (a, b) => [q(Math.floor((1000 * a) / b)), q(0)],
@@ -1171,8 +1386,10 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "litres-in-a-pool-from-cubic-metres",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9), of(250, 500, 750)],
+    p: [rg(2, 9), of(125, 250, 300, 400, 500, 600, 750, 800)],
     f: (a, b) => q(1000 * a + b),
+    // The litres of each cubic metre added up one by one.
+    alt: (a, b) => q(times(a, 1000) + b),
     t: {
       "units-added": (a, b) => q(a + b),
       "hundred-factor": (a, b) => q(100 * a + b),
@@ -1186,6 +1403,8 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(11, 99)],
     f: (a) => q(a),
+    // A litre is a cube of 10 cm, which is 1000 cm³: the dm³ are the cm³ divided by 1000.
+    alt: (a) => q(1000 * a, 1000),
     t: { thousand: (a) => q(1000 * a), hundred: (a) => q(100 * a) },
     c: [1, 100, 1000],
   }),
@@ -1194,8 +1413,9 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "cubic-centimetres-in-a-litre-sized-box",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 19)],
     f: (a) => q(1000 * a),
+    alt: (a) => repeat(a, 10 * 10 * 10),
     t: {
       hundred: (a) => q(100 * a),
       ten: (a) => w(10 * a, 1000 * a, 100 * a),
@@ -1208,8 +1428,10 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "cubic-centimetres-to-millilitres",
     g: [7, 8],
     kind: "decimal",
-    p: [of(150, 250, 350, 500, 750)],
+    p: [of(120, 150, 180, 250, 300, 350, 450, 500, 600, 750, 900)],
     f: (a) => q(a),
+    // Through litres: the cm³ over 1000, then the litres times 1000.
+    alt: (a) => q(a, 1000).mul(q(1000)),
     t: { litres: (a) => q(a, 1000), thousand: (a) => w(1000 * a, a, a / 1000) },
     c: [1],
   }),
@@ -1218,8 +1440,10 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "millilitres-to-a-decimal-number-of-litres",
     g: [7, 8],
     kind: "decimal",
-    p: [of(250, 500, 750, 1250, 2500)],
+    p: [of(125, 250, 350, 500, 750, 900, 1250, 1800, 2500, 3200)],
     f: (a) => q(a, 1000),
+    // Tenths of a litre first, then hundredths of those.
+    alt: (a) => q(a, 100).mul(q(1, 10)),
     t: {
       "moved-two-places": (a) => q(a, 100),
       "moved-one-place": (a) => dq(a, 10),
@@ -1235,6 +1459,8 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     p: [of(30, 40, 50, 60), of(20, 30, 40), of(20, 30, 40, 50)],
     ok: (a, b, c) => (a * b * c) % 1000 === 0 && a !== b && b !== c && a !== c,
     f: (a, b, c) => q((a * b * c) / 1000),
+    // The sides in decimetres, then the volume in dm³, which is litres.
+    alt: (a, b, c) => q(a, 10).mul(q(b, 10)).mul(q(c, 10)),
     t: {
       "cubic-centimetres": (a, b, c) => q(a * b * c),
       "divided-by-hundred": (a, b, c) =>
@@ -1249,9 +1475,11 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "litres-from-millilitres-of-two-bottles",
     g: [7, 8],
     kind: "decimal",
-    p: [of(250, 500, 750), of(500, 750, 1250)],
+    p: [of(250, 300, 400, 500, 600, 750), of(200, 350, 500, 750, 900, 1250)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a + b, 1000),
+    // Each bottle in litres first, then the sum.
+    alt: (a, b) => q(a, 1000).add(q(b, 1000)),
     t: {
       "millilitres-as-litres": (a, b) => q(a + b),
       "moved-two-places": (a, b) => dq(a + b, 100),
@@ -1264,8 +1492,10 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "litres-as-a-decimal-part-of-a-cubic-metre",
     g: [7, 8],
     kind: "decimal",
-    p: [of(250, 500, 750, 1250)],
+    p: [of(125, 250, 350, 500, 750, 900, 1250, 1800, 2500, 3200)],
     f: (a) => q(a, 1000),
+    // Litres are cubic decimetres, and a cubic metre is a thousand of them.
+    alt: (a) => q(a).mul(q(1, 1000)),
     t: {
       "moved-two-places": (a) => q(a, 100),
       "moved-one-place": (a) => dq(a, 10),
@@ -1278,14 +1508,17 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "glasses-from-a-large-bottle",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 6)],
-    f: (a) => q(4 * a),
+    p: [rg(2, 9), of(125, 200, 250, 500)],
+    f: (a, b) => q(a * (1000 / b)),
+    // The whole bottle in millilitres over one glass.
+    alt: (a, b) => q(1000 * a, b),
     t: {
-      millilitres: (a) => q(250 * a),
-      quarter: (a) => w(a / 4, 4 * a, 250 * a),
-      "total-millilitres": (a) => w(1000 * a, 4 * a, 250 * a, a / 4),
+      millilitres: (a, b) => q(a * b),
+      quarter: (a, b) => w(a / (1000 / b), a * (1000 / b), a * b),
+      "total-millilitres": (a, b) =>
+        w(1000 * a, a * (1000 / b), a * b, a / (1000 / b)),
     },
-    c: [4, 250],
+    c: [1000],
   }),
   M10_capacity_1S({
     id: "M10.capacity-1S.10",
@@ -1295,6 +1528,7 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     p: [rg(4, 8), rg(3, 6), rg(3, 5), of(10, 15, 20, 25)],
     ok: (a, b, c, d) => a !== b && a * b * c - d >= 10,
     f: (a, b, c, d) => q(a * b * c - d),
+    alt: (a, b, c, d) => q(times(c, a * b) - d),
     t: {
       "added-back": (a, b, c, d) => q(a * b * c + d),
       "poured-out-forgotten": (a, b, c) => q(a * b * c),
@@ -1306,8 +1540,9 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     form: "rain-on-a-roof",
     g: [7, 8],
     kind: "integer",
-    p: [rg(2, 9), of(10, 20, 50)],
+    p: [rg(2, 9), of(10, 15, 20, 25, 40, 50)],
     f: (a, b) => q(a * b),
+    alt: (a, b) => repeat(a, b),
     t: {
       added: (a, b) => q(a + b),
       divided: (a, b) => w(b / a, a * b, a + b),
@@ -1324,9 +1559,12 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     p: [rg(2, 4), rg(2, 5), rg(2, 5)],
     ok: (a, b, c) => b < c && gcd(b, c) === 1,
     f: (a) => q(a),
+    // The greatest common divisor of the two vessels, by Euclid's steps.
+    alt: (a, b, c) => q(gcd(a * b, a * c)),
     t: {
       difference: (a, b, c) => w(a * (c - b), a),
       "smaller-vessel": (a, b) => w(a * b, a),
+      "one-litre": (a) => w(1, a),
     },
     x: (a, b, c) => ({ x: String(a * b), y: String(a * c) }),
     c: [1],
@@ -1343,6 +1581,15 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
     p: [rg(4, 8), rg(3, 5), rg(3, 6), of(4, 5, 6, 8, 10)],
     ok: (a, b, c, d) => (a * b * c) % d === 0 && (a * b * c) / d > 2,
     f: (a, b, c, d) => q((a * b * c) / d),
+    alt: (a, b, c, d) => {
+      let left = a * b * c;
+      let minutes = 0;
+      while (left > 0) {
+        left -= d;
+        minutes += 1;
+      }
+      return q(minutes);
+    },
     t: {
       "volume-times-rate": (a, b, c, d) => q(a * b * c * d),
       "base-over-rate": (a, b, c, d) =>
@@ -1363,6 +1610,11 @@ const M10_capacity_1S_specs: readonly Spec<never>[] = [
       "edge-kept": (a) =>
         w(levelOf(a)[0], levelOf(a)[0] ** 3 / (levelOf(a)[1] * levelOf(a)[2])),
       "volume-itself": (a) => q(levelOf(a)[0] ** 3),
+    },
+    // The edge times the ratio of the area of a face to the area of the bottom.
+    alt: (a) => {
+      const [e, b, c] = levelOf(a);
+      return q(e).mul(q(e * e, b * c));
     },
     x: (a) => {
       const [e, b, c] = levelOf(a);

@@ -344,8 +344,35 @@ export function diamonds(top: number): string {
   return wrap(x0, (2 * top - 1) * s + 20, body);
 }
 
+/** The orders in which the numbers of a mode task are written: places in [mode, other, other, ...]. */
+export const MODE_ROWS_6: readonly (readonly number[])[] = [
+  [1, 0, 2, 0, 3, 0],
+  [0, 1, 0, 2, 0, 3],
+  [1, 2, 0, 3, 0, 0],
+  [0, 0, 1, 2, 0, 3],
+  [2, 1, 0, 3, 0, 0],
+  [3, 0, 1, 0, 0, 2],
+];
+export const MODE_ROWS_7: readonly (readonly number[])[] = [
+  [1, 0, 2, 0, 1, 0, 2],
+  [0, 1, 0, 2, 0, 1, 2],
+  [1, 2, 0, 1, 0, 2, 0],
+  [2, 0, 1, 0, 2, 0, 1],
+  [0, 0, 1, 2, 1, 0, 2],
+  [1, 0, 2, 1, 0, 2, 0],
+];
+/** The numbers of a row in the order the draw `k` gives, taken from `vals` by place. */
+export const writtenRow = (
+  orders: readonly (readonly number[])[],
+  k: number,
+  vals: readonly number[],
+): number[] => (orders[k % orders.length] ?? []).map((i) => vals[i] ?? 0);
+
 export const PICTURES_S: Readonly<Record<string, Draw>> = {
-  "S1.tables.06": (v) => table([[tm(8, n(v, 0)), tm(9, n(v, 1))]]),
+  "S1.tables.06": (v) =>
+    table([[tm(n(v, 2), n(v, 0)), tm(n(v, 2) + 1, n(v, 1))]]),
+  "S2.bar-line.05": (v) =>
+    lineGraph([n(v, 0), n(v, 1)], [n(v, 2), n(v, 2) + n(v, 3)]),
   "S1.tables.13": (v) =>
     table([
       ["?", "?", "?", n(v, 0)],
@@ -486,6 +513,12 @@ export const PICTURES_S: Readonly<Record<string, Draw>> = {
   "S7.median-mode.14": (v) => numberRow([n(v, 0), n(v, 1), n(v, 2), n(v, 3)]),
   "S7.median-mode.15": (v) => numberRow([0, 1, 2, 3, 4, 5].map((i) => n(v, i))),
   "S7.median-mode.18": () => numberRow(["?", "?", "?", "?", "?"]),
+  "S7.median-mode.04": (v) =>
+    numberRow(
+      writtenRow(MODE_ROWS_6, n(v, 4), [n(v, 0), n(v, 1), n(v, 2), n(v, 3)]),
+    ),
+  "S7.median-mode.11": (v) =>
+    numberRow(writtenRow(MODE_ROWS_7, n(v, 3), [n(v, 0), n(v, 1), n(v, 2)])),
   "S3.mean.11": (v) => bars([n(v, 0), n(v, 1), n(v, 2), n(v, 3)]),
   "S3.mean.15": (v) => lineGraph([n(v, 0), n(v, 1), n(v, 2), n(v, 3)]),
   "S3.missing.11": () => overlapping(),

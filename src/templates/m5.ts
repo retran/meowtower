@@ -25,6 +25,7 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 19)],
     f: (a) => q(2 * a),
+    alt: (a) => q(6 * a).div(q(3)),
     t: {
       "radius-itself": (a) => q(a),
       halved: (a) => (a % 2 === 0 ? q(a / 2) : null),
@@ -40,7 +41,12 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 19)],
     f: (a) => q(a),
-    t: { "diameter-itself": (a) => q(2 * a), doubled: (a) => q(4 * a) },
+    alt: (a) => q(3 * 2 * a, 6),
+    t: {
+      "diameter-itself": (a) => q(2 * a),
+      doubled: (a) => q(4 * a),
+      "subtracted-two": (a) => q(2 * a - 2),
+    },
     x: (a) => ({ x: String(2 * a) }),
     c: [2],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
@@ -52,6 +58,7 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(3 * a),
+    alt: (a) => q(a + a + a),
     t: {
       added: (a) => q(a + 3),
       "area-formula": (a) => (a === 2 ? null : q(3 * a * a)),
@@ -67,6 +74,7 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(6 * a),
+    alt: (a) => q(3 * a).add(q(3 * a)),
     t: {
       "diameter-times-one": (a) => q(2 * a),
       "pi-times-radius": (a) => q(3 * a),
@@ -80,8 +88,9 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "the-area-from-the-radius",
     g: [8, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     f: (a) => q(3 * a * a),
+    alt: (a) => q(4 * a * a).mul(q(3, 4)),
     t: {
       "diameter-squared": (a) => q(12 * a * a),
       "circumference-formula": (a) => q(6 * a),
@@ -95,8 +104,9 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "the-area-from-the-diameter",
     g: [8, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     f: (a) => q(3 * a * a),
+    alt: (a) => q(3 * (2 * a) * (2 * a), 4),
     t: {
       "diameter-used": (a) => q(12 * a * a),
       "circumference-formula": (a) => q(6 * a),
@@ -113,6 +123,7 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(a),
+    alt: (a) => q(6 * a).div(q(6)),
     t: {
       diameter: (a) => q(2 * a),
       "circumference-itself": (a) => q(6 * a),
@@ -129,6 +140,16 @@ const M11_circle_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 15)],
     f: (a) => q(a),
+    alt: (a) => {
+      // How many threes fit into the circumference, counted by taking them away one at a time.
+      let left = 3 * a;
+      let count = 0;
+      while (left >= 3) {
+        left -= 3;
+        count += 1;
+      }
+      return q(count);
+    },
     t: {
       "circumference-itself": (a) => q(3 * a),
       "pi-multiplied": (a) => q(9 * a),
@@ -143,8 +164,9 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "the-length-of-a-semicircle-arc",
     g: [8, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     f: (a) => q(3 * a),
+    alt: (a) => q(3 * (2 * a), 2),
     t: {
       "whole-circle": (a) => q(6 * a),
       "with-diameter": (a) => q(5 * a),
@@ -161,6 +183,12 @@ const M11_circle_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(2, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(3 * a * b),
+    alt: (a, b) => {
+      // One turn after another, added up.
+      let road = 0;
+      for (let turn = 0; turn < b; turn += 1) road += 3 * a;
+      return q(road);
+    },
     t: {
       "one-turn": (a) => q(3 * a),
       "radius-formula": (a, b) => q(6 * a * b),
@@ -174,9 +202,10 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "the-circumference-with-a-better-pi",
     g: [8, 8],
     kind: "decimal",
-    p: [of(10, 20, 30, 40, 50)],
+    p: [rg(5, 40)],
     ok: () => true,
     f: (a) => qd(314 * a, 2),
+    alt: (a) => q(3 * a).add(qd(14 * a, 2)),
     t: {
       "pi-as-three": (a) => q(3 * a),
       "radius-formula": (a) => qd(628 * a, 2),
@@ -190,9 +219,10 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "the-area-of-a-ring",
     g: [8, 8],
     kind: "integer",
-    p: [rg(3, 9), rg(1, 2)],
+    p: [rg(3, 12), rg(1, 2)],
     ok: (a, b) => a > b,
     f: (a, b) => q(3 * (a * a - b * b)),
+    alt: (a, b) => q(3 * (a - b) * (a + b)),
     t: {
       "radii-subtracted": (a, b) =>
         a === 2 * b ? null : q(3 * (a - b) * (a - b)),
@@ -207,11 +237,13 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "the-perimeter-of-a-half-disc",
     g: [8, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     f: (a) => q(5 * a),
+    alt: (a) => q(3 * (2 * a), 2).add(q(2 * a)),
     t: {
       "arc-only": (a) => q(3 * a),
       "arc-and-radius": (a) => q(4 * a),
+      "whole-circle-and-diameter": (a) => q(8 * a),
     },
     c: [2, 3],
     origin: { extension: "the circle, Russian grade 6 (RES-4286)" },
@@ -220,9 +252,10 @@ const M11_circle_specs: readonly Spec<never>[] = [
     id: "M11.circle.14",
     form: "the-area-of-a-half-disc",
     g: [8, 8],
-    kind: "integer",
-    p: [of(2, 4, 6, 8)],
-    f: (a) => q((3 * a * a) / 2),
+    kind: "decimal",
+    p: [rg(2, 12)],
+    f: (a) => qd(15 * a * a, 1),
+    alt: (a) => q(3 * a * a, 4).add(q(3 * a * a, 4)),
     t: {
       "whole-circle": (a) => q(3 * a * a),
       "arc-length": (a) => q(3 * a),
@@ -235,8 +268,9 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "a-square-around-a-circle-minus-the-circle",
     g: [8, 8],
     kind: "integer",
-    p: [rg(2, 8)],
+    p: [rg(2, 12)],
     f: (a) => q(a * a),
+    alt: (a) => q(4 * a * a).sub(q(3 * a * a)),
     t: {
       "circle-only": (a) => q(3 * a * a),
       "square-only": (a) => q(4 * a * a),
@@ -252,11 +286,13 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "a-rope-round-two-pipes",
     g: [8, 8],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     f: (a) => q(10 * a),
+    alt: (a) => q(6 * a + 2 * (2 * a)),
     t: {
       "two-circumferences": (a) => q(12 * a),
       "arcs-only": (a) => q(6 * a),
+      "one-straight-piece": (a) => q(8 * a),
     },
     c: [2, 3],
     origin: {
@@ -269,8 +305,9 @@ const M11_circle_specs: readonly Spec<never>[] = [
     form: "the-circumference-from-the-radius-with-a-better-pi",
     g: [8, 8],
     kind: "decimal",
-    p: [rg(2, 9)],
+    p: [rg(2, 12)],
     f: (a) => qd(628 * a, 2),
+    alt: (a) => qd(314 * (2 * a), 2),
     t: {
       "pi-times-radius": (a) => qd(314 * a, 2),
       "pi-as-three": (a) => q(6 * a),
@@ -503,7 +540,7 @@ const M12_benchmark_specs: readonly Spec<never>[] = [
       "a-hundred-times-too-large": (a) => place(a, 3),
     },
     options: () => ["1", "2", "3", "4"],
-    x: (a) => values(a, ["2", "0,2", "20", "200"]),
+    x: (a) => values(a, ["1", "0,1", "10", "100"]),
     c: [1, 2, 3, 4],
   }),
   M12_benchmark({
@@ -819,6 +856,12 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 4), rg(7, 12)],
     f: (a, b) => q(b - a),
+    alt: (a, b) => {
+      // Walk along the ruler one centimetre at a time and count the steps.
+      let steps = 0;
+      for (let mark = a; mark < b; mark += 1) steps += 1;
+      return q(steps);
+    },
     t: {
       "end-mark": (a, b) => q(b),
       "counted-marks": (a, b) => q(b - a + 1),
@@ -832,6 +875,7 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9), rg(1, 9)],
     f: (a, b) => q(10 * a + b),
+    alt: (a, b) => q(10 * a + b, 10).mul(q(10)),
     t: {
       "counts-added": (a, b) => q(a + b),
       "hundred-per-cm": (a, b) => q(100 * a + b),
@@ -844,8 +888,9 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     form: "a-level-in-a-measuring-cup",
     g: [5, 7],
     kind: "integer",
-    p: [rg(1, 6)],
+    p: [rg(2, 10)],
     f: (a) => q(50 * a),
+    alt: (a) => q(a, 2).mul(q(100)),
     t: {
       "mark-number": (a) => q(a),
       added: (a) => q(a + 50),
@@ -860,6 +905,7 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 9)],
     f: (a) => q(100 * a + 50),
+    alt: (a) => q(100 * a + (100 * a + 100), 2),
     t: {
       "lower-mark": (a) => q(100 * a),
       "upper-mark": (a) => q(100 * a + 100),
@@ -873,8 +919,14 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     form: "a-thermometer-with-marks-every-two-degrees",
     g: [5, 7],
     kind: "integer",
-    p: [rg(1, 12)],
+    p: [rg(2, 12)],
     f: (a) => q(2 * a),
+    alt: (a) => {
+      // Climb the scale one mark at a time, two degrees each.
+      let degrees = 0;
+      for (let mark = 0; mark < a; mark += 1) degrees += 2;
+      return q(degrees);
+    },
     t: {
       "mark-number": (a) => q(a),
       added: (a) => (a === 2 ? null : q(a + 2)),
@@ -887,8 +939,14 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     form: "a-thermometer-below-zero",
     g: [5, 7],
     kind: "integer",
-    p: [rg(1, 15)],
+    p: [rg(2, 15)],
     f: (a) => q(-a),
+    alt: (a) => {
+      // Go down from zero one degree at a time.
+      let temperature = 0;
+      for (let step = 0; step < a; step += 1) temperature -= 1;
+      return q(temperature);
+    },
     t: { "no-sign": (a) => q(a), "zero-counted": (a) => q(-(a + 1)) },
     c: [1],
   }),
@@ -897,9 +955,10 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     form: "a-clinical-thermometer",
     g: [5, 7],
     kind: "decimal",
-    p: [rg(1, 9)],
-    ok: () => true,
+    p: [rg(1, 14)],
+    ok: (a) => a !== 10,
     f: (a) => qd(360 + a, 1),
+    alt: (a) => q(36).add(q(1, 10).mul(q(a))),
     t: {
       "tenths-as-wholes": (a) => q(36 + a),
       hundredths: (a) => qd(3600 + a, 2),
@@ -914,6 +973,9 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(11, 49), rg(52, 99)],
     f: (a, b) => q(b - a),
+    // Tens and ones apart, with the ones allowed to come out negative.
+    alt: (a, b) =>
+      q((Math.floor(b / 10) - Math.floor(a / 10)) * 10 + ((b % 10) - (a % 10))),
     t: {
       added: (a, b) => q(a + b),
       "no-borrow": (a, b) => {
@@ -927,8 +989,10 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     form: "a-speedometer-reading",
     g: [5, 7],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 11)],
     f: (a) => q(10 * a),
+    // The dial runs from 0 to 120 in 12 equal steps, so one mark is 120 / 12.
+    alt: (a) => q(120, 12).mul(q(a)),
     t: {
       "mark-number": (a) => q(a),
       added: (a) => q(a + 10),
@@ -943,6 +1007,11 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(200, 480), rg(520, 900)],
     f: (a, b) => q(b - a),
+    // Count on from the empty box up to the next hundred, then on to the full box.
+    alt: (a, b) => {
+      const hundred = a - (a % 100) + 100;
+      return q(hundred - a + (b - hundred));
+    },
     t: {
       added: (a, b) => q(a + b),
       "full-weight": (a, b) => q(b),
@@ -957,8 +1026,10 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     form: "a-rain-gauge",
     g: [5, 7],
     kind: "integer",
-    p: [rg(2, 9)],
+    p: [rg(2, 14)],
     f: (a) => q(2 * a),
+    // The scale runs from 0 to 20 mm in 10 equal divisions.
+    alt: (a) => q(20, 10).mul(q(a)),
     t: {
       "mark-number": (a) => q(a),
       added: (a) => (a === 2 ? null : q(a + 2)),
@@ -974,6 +1045,12 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     p: [rg(4, 9), rg(1, 3)],
     ok: (a, b) => a - b >= 2,
     f: (a, b) => q(a - b),
+    // Add weight to the right pan until the pans balance.
+    alt: (a, b) => {
+      let object = 0;
+      while (object + b < a) object += 1;
+      return q(object);
+    },
     t: {
       "weights-added": (a, b) => q(a + b),
       "left-weight": (a) => q(a),
@@ -988,17 +1065,30 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     form: "the-lighter-coin-on-a-balance",
     g: [7, 8],
     kind: "integer",
-    p: [of(4, 9, 10, 27, 28, 50, 81)],
+    p: [of(4, 5, 8, 9, 10, 12, 26, 27, 28, 40, 50, 81, 82, 100)],
     f: (a) => q(weighings(a, 3)),
+    // Follow the heaviest pile that can be left: a third of the coins, rounded up, after every weighing.
+    alt: (a) => {
+      let left = a;
+      let count = 0;
+      while (left > 1) {
+        left = Math.ceil(left / 3);
+        count += 1;
+      }
+      return q(count);
+    },
     t: {
       halves: (a) => w(weighings(a, 2), weighings(a, 3)),
       "one-by-one": (a) => w(a - 1, weighings(a, 3)),
+      "third-of-the-coins": (a) => w(Math.ceil(a / 3), weighings(a, 3)),
     },
     x: (a) => {
       const k = weighings(a, 3);
       return {
-        e: `${Array.from({ length: k }, () => "3").join(" \\u00d7 ")} = ${3 ** k}`,
-        s: Array.from({ length: k }, () => "1").join(" + "),
+        e: Array.from({ length: k }, () => "3").join(" × "),
+        n: String(3 ** k),
+        p: String(3 ** (k - 1)),
+        m: String(k - 1),
       };
     },
     c: [3],
@@ -1015,6 +1105,13 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     p: [of(100, 200), of(4, 5, 10), rg(1, 3)],
     ok: (a, b, c) => c < b,
     f: (a, b, c) => q(a + (c * 100) / b),
+    // Raise the water one division at a time.
+    alt: (a, b, c) => {
+      let level = q(a);
+      for (let division = 0; division < c; division += 1)
+        level = level.add(q(100, b));
+      return level;
+    },
     t: {
       "ticks-as-millilitres": (a, b, c) => q(a + c),
       "ticks-as-hundreds": (a, b, c) => q(a + 100 * c),
@@ -1029,14 +1126,26 @@ const M13_instruments_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(-10, 0, 10, 20), rg(1, 4)],
     f: (a, b) => q(a + 2 * b),
+    // Go up from the labelled mark one short division at a time, 10 / 5 degrees each.
+    alt: (a, b) => {
+      let level = q(a);
+      for (let division = 0; division < b; division += 1)
+        level = level.add(q(10, 5));
+      return level;
+    },
     t: {
       "ticks-as-degrees": (a, b) => q(a + b),
       "next-mark": (a) => q(a + 10),
     },
-    x: (a) => ({ a: a < 0 ? `\u2212${-a}` : String(a) }),
+    x: (a) => ({ a: a < 0 ? `−${-a}` : String(a) }),
     c: [2, 4, 5, 10],
   }),
 ];
+
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+/** The smallest number that all of `list` divide. */
+const lcm = (...list: number[]): number =>
+  list.reduce((m, n) => (m * n) / gcd(m, n), 1);
 
 /** Times in which three workers do a job alone, chosen so that together they need a whole number of hours. */
 const TRIOS: readonly (readonly [number, number, number])[] = [
@@ -1044,9 +1153,53 @@ const TRIOS: readonly (readonly [number, number, number])[] = [
   [10, 15, 30],
   [4, 12, 6],
   [12, 24, 24],
+  [8, 24, 12],
+  [20, 30, 60],
+  [12, 12, 6],
+  [15, 15, 30],
+  [6, 8, 24],
+  [12, 18, 36],
+  [3, 12, 12],
+  [10, 20, 20],
 ];
 const trio = (i: number): readonly [number, number, number] =>
   TRIOS[i] ?? [6, 12, 12];
+/** The hours three workers need together. */
+const together = (x: number, y: number, z: number): number => {
+  const whole = lcm(x, y, z);
+  return whole / (whole / x + whole / y + whole / z);
+};
+
+/** Speeds on three equal parts of a road, chosen so that the average speed and the plain mean are whole numbers. */
+const SPEEDS: readonly (readonly [number, number, number])[] = [
+  [12, 18, 36],
+  [18, 27, 54],
+  [24, 36, 72],
+  [30, 45, 90],
+  [36, 54, 108],
+  [30, 60, 60],
+  [36, 72, 72],
+  [42, 84, 84],
+];
+/** The six orders in which three things can stand. */
+const PERMUTATIONS: readonly (readonly [number, number, number])[] = [
+  [0, 1, 2],
+  [0, 2, 1],
+  [1, 0, 2],
+  [1, 2, 0],
+  [2, 0, 1],
+  [2, 1, 0],
+];
+/** The three speeds of a table row, in the order that the second number picks. */
+const speeds = (row: number, order: number): [number, number, number] => {
+  const base = SPEEDS[row] ?? [12, 18, 36];
+  const perm = PERMUTATIONS[order] ?? [0, 1, 2];
+  return [
+    base[perm[0] ?? 0] ?? 0,
+    base[perm[1] ?? 1] ?? 0,
+    base[perm[2] ?? 2] ?? 0,
+  ];
+};
 
 const M14_average_speed = calc("M14", "average-speed");
 const M14_average_speed_specs: readonly Spec<never>[] = [
@@ -1055,12 +1208,15 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "two-legs-of-the-same-duration",
     g: [8, 8],
     kind: "integer",
-    p: [of(40, 60, 80, 100), of(20, 40, 60, 80)],
+    p: [of(40, 60, 80, 100), of(20, 40, 60, 80), rg(2, 5)],
     ok: (a, b) => a !== b && (a + b) % 2 === 0 && (2 * a * b) % (a + b) === 0,
     f: (a, b) => q((a + b) / 2),
+    // All the road over all the time.
+    alt: (a, b, c) => q(a * c + b * c, c + c),
     t: {
       harmonic: (a, b) => q((2 * a * b) / (a + b)),
       "sum-of-speeds": (a, b) => q(a + b),
+      "distance-halved": (a, b, c) => (c === 2 ? null : q((c * (a + b)) / 2)),
     },
     c: [2],
     origin: {
@@ -1079,11 +1235,23 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
       (a + b) % 2 === 0 &&
       (a + b) / 2 !== (2 * a * b) / (a + b),
     f: (a, b) => q((2 * a * b) / (a + b)),
+    // A road length that both speeds divide, then all the road over all the time.
+    alt: (a, b) => q(2 * lcm(a, b), lcm(a, b) / a + lcm(a, b) / b),
     t: {
       "arithmetic-mean": (a, b) => q((a + b) / 2),
       "sum-of-speeds": (a, b) => q(a + b),
       "product-over-sum": (a, b) =>
         (a * b) % (a + b) === 0 ? q((a * b) / (a + b)) : null,
+    },
+    x: (a, b) => {
+      const road = lcm(a, b);
+      return {
+        L: String(road),
+        ta: String(road / a),
+        tb: String(road / b),
+        D: String(2 * road),
+        T: String(road / a + road / b),
+      };
     },
     origin: {
       extension: "average speed and work problems, Russian grade 6 (RES-4286)",
@@ -1094,12 +1262,14 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "total-distance-over-total-time",
     g: [8, 8],
     kind: "integer",
-    p: [of(60, 80), rg(2, 4), of(40, 60), rg(2, 4)],
+    p: [of(40, 50, 60, 70, 80, 90), rg(2, 5), of(30, 40, 50, 60, 90), rg(2, 5)],
     ok: (a, b, c, d) =>
       b !== d &&
       (a * b + c * d) % (b + d) === 0 &&
       (a + c) / 2 !== (a * b + c * d) / (b + d),
     f: (a, b, c, d) => q((a * b + c * d) / (b + d)),
+    // Start from the first speed and add the pull of the second one, weighted by its hours.
+    alt: (a, b, c, d) => q(a).add(q((c - a) * d, b + d)),
     t: {
       "speeds-averaged": (a, b, c) => q((a + c) / 2),
       "distance-only": (a, b, c, d) => q(a * b + c * d),
@@ -1115,9 +1285,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "a-journey-with-a-stop",
     g: [8, 8],
     kind: "integer",
-    p: [of(60, 80, 90), rg(2, 4), rg(1, 2)],
+    p: [of(40, 50, 60, 70, 80, 90), rg(2, 5), rg(1, 3)],
     ok: (a, b, c) => (a * b) % (b + c) === 0 && b !== c,
     f: (a, b, c) => q((a * b) / (b + c)),
+    // The speed on the move, less what the stop takes away from it.
+    alt: (a, b, c) => q(a).sub(q(a * c, b + c)),
     t: {
       "stop-ignored": (a) => q(a),
       "distance-only": (a, b) => q(a * b),
@@ -1132,9 +1304,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "two-workers-together",
     g: [8, 8],
     kind: "integer",
-    p: [of(3, 4, 6, 10, 12), of(6, 12, 15, 24)],
+    p: [of(3, 4, 5, 6, 8, 10, 12, 15, 20), of(6, 10, 12, 15, 20, 24, 30, 60)],
     ok: (a, b) => a < b && (a * b) % (a + b) === 0,
     f: (a, b) => q((a * b) / (a + b)),
+    // One over the sum of the two shares of the job done in an hour.
+    alt: (a, b) => q(1).div(q(1, a).add(q(1, b))),
     t: {
       "sum-of-times": (a, b) => q(a + b),
       "average-of-times": (a, b) => ((a + b) % 2 === 0 ? q((a + b) / 2) : null),
@@ -1150,13 +1324,24 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "the-time-to-meet",
     g: [8, 8],
     kind: "integer",
-    p: [of(40, 50, 60), of(30, 40, 60), rg(2, 6)],
-    ok: (a, b, c) => a !== b && (c * (a + b)) % a === 0,
+    p: [of(40, 50, 60, 70, 80), of(30, 40, 50, 60, 90), rg(2, 6)],
+    ok: (a, b, c) =>
+      a !== b && (c * (a + b)) % a === 0 && (c * (a + b)) % b === 0,
     f: (a, b, c) => q(c),
+    // Let the trains run hour by hour until together they have covered the road.
+    alt: (a, b, c) => {
+      const road = c * (a + b);
+      let hours = 0;
+      let covered = 0;
+      while (covered < road) {
+        hours += 1;
+        covered += a + b;
+      }
+      return q(hours);
+    },
     t: {
       "one-speed": (a, b, c) => q((c * (a + b)) / a),
-      "other-train": (a, b, c) =>
-        (c * (a + b)) % b === 0 ? q((c * (a + b)) / b) : null,
+      "other-train": (a, b, c) => q((c * (a + b)) / b),
       "speeds-subtracted": (a, b, c) => {
         const d = Math.abs(a - b);
         return (c * (a + b)) % d === 0 && d !== a && d !== b
@@ -1177,6 +1362,8 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [rg(8, 20), rg(2, 5)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a + b),
+    // Twice the speed of the boat, less the speed against the current.
+    alt: (a, b) => q(2 * a).sub(q(a - b)),
     t: {
       "against-the-current": (a, b) => q(a - b),
       "boat-itself": (a) => q(a),
@@ -1194,6 +1381,8 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [rg(8, 20), rg(2, 5)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a - b),
+    // Twice the speed of the boat, less the speed with the current.
+    alt: (a, b) => q(2 * a).sub(q(a + b)),
     t: {
       "with-the-current": (a, b) => q(a + b),
       "boat-itself": (a) => q(a),
@@ -1208,9 +1397,11 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "the-average-of-three-days",
     g: [8, 8],
     kind: "integer",
-    p: [of(60, 80, 100), of(90, 120, 150), of(120, 150, 180)],
-    ok: (a, b, c) => (a + b + c) % 3 === 0 && a !== b && b !== c,
+    p: [rg(10, 25), rg(10, 25), rg(10, 25)],
+    ok: (a, b, c) => (a + b + c) % 3 === 0 && a < b && b < c,
     f: (a, b, c) => q((a + b + c) / 3),
+    // Level the days out: the first day plus the average of the other two days' extra kilometres.
+    alt: (a, b, c) => q(3 * a + (b - a) + (c - a), 3),
     t: {
       total: (a, b, c) => q(a + b + c),
       "divided-by-two": (a, b, c) =>
@@ -1230,6 +1421,8 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     p: [rg(40, 80), rg(2, 6)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    // The kilometres in one minute, over all the minutes.
+    alt: (a, b) => q(a, 60).mul(q(60 * b)),
     t: {
       added: (a, b) => q(a + b),
       divided: (a, b) => (a % b === 0 ? q(a / b) : null),
@@ -1244,22 +1437,39 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "the-average-speed-of-a-round-trip-of-equal-halves",
     g: [8, 8],
     kind: "integer",
-    p: [rg(1, 4)],
-    f: (k) => q(15 * k),
-    t: {
-      "slowest-speed": (k) => q(10 * k),
-      "arithmetic-mean": (k) => w((55 * k) / 3, 15 * k),
+    p: [rg(0, SPEEDS.length - 1), rg(0, PERMUTATIONS.length - 1)],
+    f: (row, order) => {
+      const [a, b, c] = speeds(row, order);
+      const road = lcm(a, b, c);
+      return q(3 * road, road / a + road / b + road / c);
     },
-    x: (k) => ({
-      a: String(10 * k),
-      b: String(15 * k),
-      c: String(30 * k),
-      L: String(30 * k),
-      ta: "3",
-      tb: "2",
-      tc: "1",
-      t: "6",
-    }),
+    // Three divided by the sum of the reciprocals of the speeds.
+    alt: (row, order) => {
+      const [a, b, c] = speeds(row, order);
+      return q(3).div(q(1, a).add(q(1, b)).add(q(1, c)));
+    },
+    t: {
+      "slowest-speed": (row, order) => q(Math.min(...speeds(row, order))),
+      "arithmetic-mean": (row, order) => {
+        const [a, b, c] = speeds(row, order);
+        return q((a + b + c) / 3);
+      },
+    },
+    x: (row, order) => {
+      const [a, b, c] = speeds(row, order);
+      const road = lcm(a, b, c);
+      return {
+        a: String(a),
+        b: String(b),
+        c: String(c),
+        L: String(road),
+        ta: String(road / a),
+        tb: String(road / b),
+        tc: String(road / c),
+        T: String(road / a + road / b + road / c),
+        D: String(3 * road),
+      };
+    },
     origin: {
       extension: "average speed and work problems, Russian grade 6 (RES-4286)",
     },
@@ -1269,9 +1479,14 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "a-pool-with-a-pipe-in-and-a-pipe-out",
     g: [8, 8],
     kind: "integer",
-    p: [of(2, 3, 4, 6, 8, 10), of(4, 6, 12, 15, 24)],
+    p: [
+      of(2, 3, 4, 5, 6, 8, 10, 12),
+      of(4, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60),
+    ],
     ok: (a, b) => a < b && (a * b) % (b - a) === 0,
     f: (a, b) => q((a * b) / (b - a)),
+    // One over what the first pipe adds in an hour, less what the second pipe takes away.
+    alt: (a, b) => q(1).div(q(1, a).sub(q(1, b))),
     t: {
       "rates-added": (a, b) =>
         (a * b) % (a + b) === 0
@@ -1289,9 +1504,15 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     form: "a-boat-there-and-back-on-a-river",
     g: [8, 8],
     kind: "integer",
-    p: [of(8, 9, 10, 15), of(2, 3, 5), of(24, 40, 48)],
+    p: [
+      of(8, 9, 10, 12, 15, 20),
+      of(2, 3, 4, 5),
+      of(24, 30, 36, 40, 48, 60, 72, 120),
+    ],
     ok: (a, b, c) => a > b && c % (a + b) === 0 && c % (a - b) === 0,
     f: (a, b, c) => q(c / (a + b) + c / (a - b)),
+    // Both times over one fraction: c times 2a over the difference of the squares.
+    alt: (a, b, c) => q(2 * a * c, a * a - b * b),
     t: {
       "still-water-speed": (a, b, c) =>
         (2 * c) % a === 0 ? w((2 * c) / a, c / (a + b) + c / (a - b)) : null,
@@ -1311,25 +1532,34 @@ const M14_average_speed_specs: readonly Spec<never>[] = [
     g: [8, 8],
     kind: "integer",
     p: [rg(0, TRIOS.length - 1)],
-    f: (a) => {
-      const [x, y, z] = trio(a);
-      return q((x * y * z) / (y * z + x * z + x * y));
+    f: (i) => {
+      const [x, y, z] = trio(i);
+      return q(together(x, y, z));
+    },
+    // One over the sum of the shares of the job that each does in an hour.
+    alt: (i) => {
+      const [x, y, z] = trio(i);
+      return q(1).div(q(1, x).add(q(1, y)).add(q(1, z)));
     },
     t: {
-      "average-of-times": (a) => {
-        const [x, y, z] = trio(a);
-        return w((x + y + z) / 3, (x * y * z) / (y * z + x * z + x * y));
+      "average-of-times": (i) => {
+        const [x, y, z] = trio(i);
+        return w((x + y + z) / 3, together(x, y, z));
       },
-      "two-workers-only": (a) => {
-        const [x, y, z] = trio(a);
+      "two-workers-only": (i) => {
+        const [x, y, z] = trio(i);
         return (x * y) % (x + y) === 0
-          ? w((x * y) / (x + y), (x * y * z) / (y * z + x * z + x * y))
+          ? w((x * y) / (x + y), together(x, y, z))
           : null;
       },
+      "sum-of-times": (i) => {
+        const [x, y, z] = trio(i);
+        return w(x + y + z, together(x, y, z));
+      },
     },
-    x: (a) => {
-      const [x, y, z] = trio(a);
-      const whole = x * y * z;
+    x: (i) => {
+      const [x, y, z] = trio(i);
+      const whole = lcm(x, y, z);
       return {
         a: String(x),
         b: String(y),

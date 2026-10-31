@@ -26,16 +26,15 @@ system, screen mock-ups and a clickable prototype.
 <principle name="project_in_english">
 Write the project itself in English: code, comments, commit messages and
 project documents. The owner asked for this on 2026-09-26. Text the player
-sees is in Russian only for now, with one exception the owner added on
-2026-09-28: the Dutch bridge's 30 to 50 keywords, kept as data beside the
+sees is in Russian by default, and on 2026-10-31 the owner added English and
+Dutch versions of the interface and the tasks, chosen by the parent
+(REQ-7548). One older exception the owner added on 2026-09-28 stands: the Dutch bridge's 30 to 50 keywords, kept as data beside the
 Russian text and approved by the parent word by word (REQ-5080). A second
 exception, added on 2026-09-29, lets the Dutch diagnostic probe of ADR-0430
 show its letters in Dutch after the MVP, from text pairs the parent approves;
-its story, hints and explanations stay Russian. Build the game so that English and Dutch can
-be added later and the player can switch between the three languages: keep
-every player-facing string out of the code in a per-language file, because a
-string hard-coded in a component has to be found and moved before a second
-language can ship.
+its story, hints and explanations stay Russian. Keep every player-facing
+string out of the code in a per-language file, because a string hard-coded in
+a component has no translation and shows Russian in every language.
 </principle>
 
 <principle name="no_commits_of_design">

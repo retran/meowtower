@@ -398,7 +398,7 @@ const specs = [
         "counting the numbers with a given digit sum, a Kangaroo-style count; RES-4281 (Kangoeroe 2003)",
     },
     answer: "integer",
-    draw: (r) => ({ sum: between(r, 3, 9) }),
+    draw: (r) => ({ sum: between(r, 2, 9) }),
     solve: (p: { sum: number }) => qi(p.sum),
     reference: (p: { sum: number }) => {
       let c = 0;
@@ -410,6 +410,7 @@ const specs = [
     },
     traps: numberTraps<{ sum: number }>([
       ["count-single-digit", "conceptual", (p) => p.sum + 1],
+      ["zero-ones-forgotten", "conceptual", (p) => p.sum - 1],
       [
         "ignored-order",
         "conceptual",
@@ -465,10 +466,15 @@ const specs = [
       k: between(r, 1, 3),
     }),
     solve: (p: { a: number; b: number; k: number }) => qi(10 ** p.k),
-    reference: (p: { a: number; b: number; k: number }) =>
-      qi(
-        (10 ** (p.k + 1) * p.a + 10 ** p.k * p.b - 10 ** (p.k + 1) * p.a) / p.b,
-      ),
+    // The second route tries every place until the whole sum gives the number.
+    reference: (p: { a: number; b: number; k: number }) => {
+      const n = Number(`${p.a}${p.b}${"0".repeat(p.k)}`);
+      return qi(
+        [10, 100, 1000, 10000].find(
+          (c) => p.a * 10 ** (p.k + 1) + p.b * c === n,
+        ) ?? -1,
+      );
+    },
     traps: numberTraps<{ a: number; b: number; k: number }>([
       ["place-above", "conceptual", (p) => 10 ** (p.k + 1)],
       ["place-below", "conceptual", (p) => 10 ** (p.k - 1)],

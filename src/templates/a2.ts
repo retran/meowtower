@@ -3,7 +3,14 @@
 // 1,000 at group 5 and multiply by one digit with a split at group 5 to 6. Texts are plain blanks in
 // `content/tasks-a.ru.json`, keyed by the template id.
 import { between, pick } from "./draw.js";
-import { FOUR, forChoice, forSubtype, placeOf, turn } from "./a1.js";
+import {
+  FOUR,
+  forChoice,
+  forSubtype,
+  placeOf,
+  repeatedTakeAway,
+  turn,
+} from "./a1.js";
 import type { Spec } from "./spec.js";
 
 const sum = (n: number, x: number): number =>
@@ -36,9 +43,7 @@ const divide = [
     draw: (r) => [pick(r, [2, 5, 10]), between(r, 3, 10)],
     valid: ([a = 0, q = 0]) => a !== q,
     solve: ([, q = 0]) => q,
-    ref: ([a = 0, q = 0]) =>
-      Array.from({ length: 11 }, (_, x) => x).find((x) => a * x === a * q) ??
-      -1,
+    ref: ([a = 0, q = 0]) => repeatedTakeAway(a * q, a),
     traps: [
       ["subtracted", "procedural", ([a = 0, q = 0]) => a * q - a],
       ["neighbour-above", "fact", ([a = 0, q = 0]) => keep(q + 1, a * q - a)],
@@ -57,9 +62,7 @@ const divide = [
     draw: (r) => [pick(r, [3, 4]), between(r, 3, 10)],
     valid: ([a = 0, q = 0]) => a !== q,
     solve: ([, q = 0]) => q,
-    ref: ([a = 0, q = 0]) =>
-      Array.from({ length: 11 }, (_, x) => x).find((x) => a * x === a * q) ??
-      -1,
+    ref: ([a = 0, q = 0]) => repeatedTakeAway(a * q, a),
     traps: [
       ["subtracted", "procedural", ([a = 0, q = 0]) => a * q - a],
       ["neighbour-above", "fact", ([a = 0, q = 0]) => keep(q + 1, a * q - a)],
@@ -78,9 +81,7 @@ const divide = [
     draw: (r) => [between(r, 6, 9), between(r, 6, 9)],
     valid: ([a = 0, q = 0]) => a !== q,
     solve: ([, q = 0]) => q,
-    ref: ([a = 0, q = 0]) =>
-      Array.from({ length: 11 }, (_, x) => x).find((x) => a * x === a * q) ??
-      -1,
+    ref: ([a = 0, q = 0]) => repeatedTakeAway(a * q, a),
     traps: [
       ["divisor-as-answer", "conceptual", ([a = 0]) => a],
       ["neighbour-above", "fact", ([a = 0, q = 0]) => keep(q + 1, a)],
@@ -127,7 +128,7 @@ const divide = [
     draw: (r) => [between(r, 3, 9), between(r, 3, 9)],
     valid: ([a = 0, q = 0]) => a !== q,
     solve: ([, q = 0]) => q,
-    ref: ([a = 0, q = 0]) => sum(a, q) / a,
+    ref: ([a = 0, q = 0]) => repeatedTakeAway(a * q, a),
     traps: [
       ["subtracted", "procedural", ([a = 0, q = 0]) => a * q - a],
       ["neighbour-above", "fact", ([a = 0, q = 0]) => keep(q + 1, a * q - a)],
@@ -146,9 +147,7 @@ const divide = [
     draw: (r) => [between(r, 3, 9), between(r, 3, 9)],
     valid: ([a = 0, q = 0]) => a !== q,
     solve: ([, q = 0]) => q,
-    ref: ([a = 0, q = 0]) =>
-      Array.from({ length: 12 }, (_, x) => x).find((x) => x * a === q * a) ??
-      -1,
+    ref: ([a = 0, q = 0]) => repeatedTakeAway(a * q, a),
     traps: [
       ["multiplied", "procedural", ([a = 0, q = 0]) => a * q * a],
       [
@@ -356,9 +355,7 @@ const divide = [
     draw: (r) => [between(r, 4, 10), between(r, 2, 9)],
     valid: ([a = 0, q = 0]) => a !== q,
     solve: ([, q = 0]) => q,
-    ref: ([a = 0, q = 0]) =>
-      Array.from({ length: 12 }, (_, x) => x).find((x) => a * x === a * q) ??
-      -1,
+    ref: ([a = 0, q = 0]) => repeatedTakeAway(a * q, a),
     traps: [
       ["how-much-longer", "conceptual", ([a = 0, q = 0]) => a * q - a],
       ["shorter-length", "conceptual", ([a = 0, q = 0]) => keep(a, a * q - a)],
@@ -596,7 +593,8 @@ const column = [
     draw: (r) => [100 * between(r, 4, 9), between(r, 101, 399)],
     valid: ([a = 0, b = 0]) => a > b && ones(b) !== 0 && tens(b) !== 0,
     solve: ([a = 0, b = 0]) => a - b,
-    ref: ([a = 0, b = 0]) => a - 1 - b + 1,
+    ref: ([a = 0, b = 0]) =>
+      100 * (hundreds(b) + 1) - b + (a - 100 * (hundreds(b) + 1)),
     traps: [
       ["zero-skipped", "procedural", ([a = 0, b = 0]) => a - b + 10],
       [
@@ -641,7 +639,8 @@ const column = [
     draw: (r) => [between(r, 120, 480), between(r, 250, 500)],
     valid: ([a = 0, b = 0]) => a + b < 1000,
     solve: ([a = 0]) => a,
-    ref: ([a = 0, b = 0]) => a + b - b,
+    ref: ([a = 0, b = 0]) =>
+      100 * (hundreds(b) + 1) - b + (a + b - 100 * (hundreds(b) + 1)),
     traps: [
       ["added", "procedural", ([a = 0, b = 0]) => a + b],
       [
@@ -669,7 +668,11 @@ const column = [
     draw: (r) => [between(r, 150, 480), between(r, 120, 450)],
     valid: ([a = 0, b = 0]) => a !== b && a + b < 1000,
     solve: ([a = 0, b = 0]) => a + b,
-    ref: ([a = 0, b = 0]) => b + a,
+    ref: ([a = 0, b = 0]) =>
+      100 * (hundreds(a) + hundreds(b)) +
+      10 * (tens(a) + tens(b)) +
+      ones(a) +
+      ones(b),
     traps: [
       ["difference", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)],
       [
@@ -693,7 +696,8 @@ const column = [
     groups: [5, 5],
     draw: (r) => [between(r, 450, 980), between(r, 120, 440)],
     solve: ([a = 0, b = 0]) => a - b,
-    ref: ([a = 0, b = 0]) => -(b - a),
+    ref: ([a = 0, b = 0]) =>
+      100 * (hundreds(b) + 1) - b + (a - 100 * (hundreds(b) + 1)),
     traps: [
       ["added", "procedural", ([a = 0, b = 0]) => a + b],
       [
@@ -727,7 +731,11 @@ const column = [
     ],
     valid: ([a = 0, b = 0]) => a + b < 1000,
     solve: ([a = 0, b = 0]) => a + b,
-    ref: ([a = 0, b = 0]) => b + a,
+    ref: ([a = 0, b = 0]) =>
+      100 * (hundreds(a) + hundreds(b)) +
+      10 * (tens(a) + tens(b)) +
+      ones(a) +
+      ones(b),
     traps: [
       ["stated-answer", "conceptual", ([a = 0, b = 0, c = 0]) => a + b + c],
       ["subtracted", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)],
@@ -745,7 +753,10 @@ const column = [
     groups: [5, 5],
     draw: (r) => [between(r, 301, 900), between(r, 2, 9)],
     solve: ([, b = 0]) => b,
-    ref: ([a = 0, b = 0]) => a - (a - b),
+    ref: ([a = 0, b = 0]) =>
+      10 * (Math.floor((a - b) / 10) + 1) -
+      (a - b) +
+      (a - 10 * (Math.floor((a - b) / 10) + 1)),
     traps: [
       ["first-number-minus-gap", "conceptual", ([a = 0, b = 0]) => a - b],
       ["added", "procedural", ([a = 0, b = 0]) => a + (a - b)],
@@ -1070,7 +1081,7 @@ const byOne = [
     draw: (r) => [between(r, 3, 9), between(r, 12, 49)],
     valid: ([, n = 0]) => ones(n) > 0,
     solve: ([, n = 0]) => n,
-    ref: ([d = 0, n = 0]) => (d * n) / d,
+    ref: ([d = 0, n = 0]) => repeatedTakeAway(d * n, d),
     traps: [
       ["divisor-as-answer", "conceptual", ([d = 0]) => d],
       ["subtracted", "procedural", ([d = 0, n = 0]) => d * n - d],
@@ -1084,7 +1095,11 @@ const byOne = [
     groups: [5, 6],
     draw: (r) => [between(r, 12, 98)],
     solve: ([a = 0]) => 8 * a,
-    ref: ([a = 0]) => a * 2 * 2 * 2,
+    ref: ([a = 0]) => {
+      const two = a + a;
+      const four = two + two;
+      return four + four;
+    },
     traps: [
       ["adding-two", "conceptual", ([a = 0]) => 6 * a],
       ["doubled-twice", "conceptual", ([a = 0]) => 4 * a],
@@ -1233,9 +1248,7 @@ const byOne = [
     ],
     solve: ([, , x = 0]) => x,
     ref: ([d = 0, h = 0, x = 0, o = 0]) =>
-      Array.from({ length: 10 }, (_, k) => k).find(
-        (k) => d * (100 * h + 10 * k + o) === d * (100 * h + 10 * x + o),
-      ) ?? -1,
+      Math.floor(repeatedTakeAway(d * (100 * h + 10 * x + o), d) / 10) % 10,
     traps: [
       [
         "the-whole-factor",
@@ -1326,7 +1339,7 @@ const round = [
     draw: (r) => [between(r, 2, 9), 10 * between(r, 2, 9)],
     valid: ([d = 0, q = 0]) => d !== q / 10,
     solve: ([, q = 0]) => q,
-    ref: ([d = 0, q = 0]) => (d * q) / d,
+    ref: ([d = 0, q = 0]) => repeatedTakeAway(d * q, d),
     traps: [
       ["zero-dropped", "procedural", ([, q = 0]) => q / 10],
       ["extra-zero", "procedural", ([, q = 0]) => q * 10],
@@ -1345,7 +1358,7 @@ const round = [
     draw: (r) => [between(r, 2, 9), 100 * between(r, 2, 9)],
     valid: ([d = 0, q = 0]) => d !== q / 100,
     solve: ([, q = 0]) => q,
-    ref: ([d = 0, q = 0]) => (d * q) / d,
+    ref: ([d = 0, q = 0]) => repeatedTakeAway(d * q, d),
     traps: [
       ["one-zero-lost", "procedural", ([, q = 0]) => q / 10],
       ["two-zeros-lost", "procedural", ([, q = 0]) => q / 100],
@@ -1393,7 +1406,7 @@ const round = [
     draw: (r) => [10 * between(r, 2, 9), between(r, 2, 9)],
     valid: ([x = 0, q = 0]) => x / 10 !== q,
     solve: ([, q = 0]) => q,
-    ref: ([x = 0, q = 0]) => (x * q) / x,
+    ref: ([x = 0, q = 0]) => repeatedTakeAway(x * q, x),
     traps: [
       ["extra-zero", "procedural", ([, q = 0]) => q * 10],
       ["divided-by-ten-only", "procedural", ([x = 0, q = 0]) => (x * q) / 10],
@@ -1425,7 +1438,7 @@ const round = [
     draw: (r) => [10 * between(r, 2, 9), between(r, 2, 9)],
     valid: ([x = 0, q = 0]) => x / 10 !== q,
     solve: ([, q = 0]) => q,
-    ref: ([x = 0, q = 0]) => (x * q) / x,
+    ref: ([x = 0, q = 0]) => repeatedTakeAway(x * q, x),
     traps: [
       ["extra-zero", "procedural", ([, q = 0]) => q * 10],
       ["divided-by-ten-only", "procedural", ([x = 0, q = 0]) => (x * q) / 10],

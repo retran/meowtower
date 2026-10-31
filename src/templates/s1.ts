@@ -33,6 +33,7 @@ const S1_tables_specs: readonly Spec<never>[] = [
     p: [rg(5, 30), rg(5, 30), rg(5, 30)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b) => q(b),
+    alt: (a, b, c) => q(a + b + c - a - c),
     t: {
       monday: (a) => q(a),
       wednesday: (a, b, c) => q(c),
@@ -47,6 +48,8 @@ const S1_tables_specs: readonly Spec<never>[] = [
     p: [rg(5, 20), rg(25, 40), rg(5, 40)],
     ok: (a, b, c) => c !== b && c > a,
     f: (a, b) => q(b - a),
+    alt: (a, b) =>
+      q(Array.from({ length: b }, (_, i) => i + 1).filter((z) => z > a).length),
     t: { sum: (a, b) => q(a + b), wednesday: (a, b, c) => q(c - a) },
   }),
   S1_tables({
@@ -57,6 +60,13 @@ const S1_tables_specs: readonly Spec<never>[] = [
     p: [rg(5, 30), rg(5, 30), rg(5, 30)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a + b + c),
+    alt: (a, b, c) =>
+      q(
+        10 * (Math.floor(a / 10) + Math.floor(b / 10) + Math.floor(c / 10)) +
+          (a % 10) +
+          (b % 10) +
+          (c % 10),
+      ),
     t: {
       largest: (a, b, c) => q(Math.max(a, b, c)),
       "two-days": (a, b) => q(a + b),
@@ -68,8 +78,10 @@ const S1_tables_specs: readonly Spec<never>[] = [
     g: [4, 5],
     kind: "integer",
     p: [rg(60, 90), rg(10, 30), rg(10, 30)],
-    ok: (a, b, c) => b !== c,
+    ok: (a, b, c) => b !== c && a - b - c >= 5,
     f: (a, b, c) => q(a - b - c),
+    alt: (a, b, c) =>
+      q([...Array(a + 1).keys()].find((x) => b + c + x === a) ?? 0),
     t: {
       "one-day-removed": (a, b) => q(a - b),
       "known-days": (a, b, c) => q(b + c),
@@ -80,9 +92,10 @@ const S1_tables_specs: readonly Spec<never>[] = [
     form: "the-cost-of-two-kinds",
     g: [4, 5],
     kind: "integer",
-    p: [rg(1, 4), rg(1, 4)],
+    p: [rg(2, 9), rg(2, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(2 * a + 3 * b),
+    alt: (a, b) => q(a + a + b + b + b),
     t: {
       "swapped-counts": (a, b) => q(3 * a + 2 * b),
       "one-of-each": (a, b) => q(a + b),
@@ -94,14 +107,16 @@ const S1_tables_specs: readonly Spec<never>[] = [
     form: "the-time-in-a-timetable",
     g: [4, 5],
     kind: "integer",
-    p: [rg(20, 50), rg(5, 15)],
+    p: [rg(20, 50), rg(5, 15), rg(7, 10)],
     f: (a, b) => q(60 - a + b),
+    alt: (a, b, c) => q((c + 1) * 60 + b - (c * 60 + a)),
+    x: (a, b, c) => ({ t1: tm(c, a), t2: tm(c + 1, b) }),
     t: {
       "minutes-subtracted": (a, b) => q(a - b),
       "hour-only": () => q(60),
       "hour-added": (a, b) => q(60 + b),
     },
-    c: [8, 9, 60],
+    c: [60],
   }),
   S1_tables({
     id: "S1.tables.07",
@@ -114,6 +129,7 @@ const S1_tables_specs: readonly Spec<never>[] = [
       [a, b, c, d].filter((z) => z > e).length >= 1 &&
       [a, b, c, d].filter((z) => z > e).length <= 3,
     f: (a, b, c, d, e) => q([a, b, c, d].filter((z) => z > e).length),
+    alt: (a, b, c, d, e) => q(4 - [a, b, c, d].filter((z) => z < e).length),
     t: {
       all: () => q(4),
       "not-above": (a, b, c, d, e) => {
@@ -133,9 +149,22 @@ const S1_tables_specs: readonly Spec<never>[] = [
       new Set([a, b, c, d]).size === 4 &&
       Math.min(a, b, c, d) !== Math.max(a, b, c, d) - Math.min(a, b, c, d),
     f: (a, b, c, d) => q(Math.max(a, b, c, d) - Math.min(a, b, c, d)),
+    alt: (a, b, c, d) => {
+      const s = [a, b, c, d].sort((u, v) => u - v);
+      return q(
+        (s[1] ?? 0) -
+          (s[0] ?? 0) +
+          ((s[2] ?? 0) - (s[1] ?? 0)) +
+          ((s[3] ?? 0) - (s[2] ?? 0)),
+      );
+    },
     t: {
       largest: (a, b, c, d) => q(Math.max(a, b, c, d)),
       smallest: (a, b, c, d) => q(Math.min(a, b, c, d)),
+      "first-last": (a, b, c, d) => {
+        const w = Math.abs(a - d);
+        return w === Math.max(a, b, c, d) - Math.min(a, b, c, d) ? null : q(w);
+      },
     },
   }),
   S1_tables({
@@ -144,11 +173,13 @@ const S1_tables_specs: readonly Spec<never>[] = [
     g: [4, 5],
     kind: "integer",
     p: [rg(2, 9), rg(2, 9), rg(2, 9), rg(2, 9)],
-    ok: (a, b, c, d) => new Set([b + d, a + c, c + d]).size === 3,
+    ok: (a, b, c, d) => new Set([b + d, a + c, c + d, a + b]).size === 4,
     f: (a, b, c, d) => q(b + d),
+    alt: (a, b, c, d) => q(a + b + c + d - (a + c)),
     t: {
       "first-column": (a, b, c) => q(a + c),
       "second-row": (a, b, c, d) => q(c + d),
+      "first-row": (a, b) => q(a + b),
     },
   }),
   S1_tables({
@@ -158,6 +189,7 @@ const S1_tables_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9), rg(2, 9), rg(2, 9)],
     f: (a, b, c) => q(2 * (a + b + c)),
+    alt: (a, b, c) => q(2 * a + 2 * b + 2 * c),
     t: {
       "first-row": (a, b, c) => q(a + b + c),
       tripled: (a, b, c) => q(3 * (a + b + c)),
@@ -172,6 +204,7 @@ const S1_tables_specs: readonly Spec<never>[] = [
     p: [rg(10, 99), rg(10, 99)],
     ok: (a, b) => a !== b,
     f: (a, b) => sign(q(a), q(b)),
+    alt: (a, b) => sign(q(a - b), q(0)),
     t: {
       reversed: (a, b) => {
         const w = sign(q(b), q(a));
@@ -191,7 +224,12 @@ const S1_tables_specs: readonly Spec<never>[] = [
     p: [rg(4, 9), rg(1, 3), rg(2, 6)],
     ok: (a, b) => a > b,
     f: (a, b, c) => q(c * (a - b)),
-    t: { "one-item": (a, b) => q(a - b), "first-store": (a, b, c) => q(c * a) },
+    alt: (a, b, c) => q(c * a - c * b),
+    t: {
+      "one-item": (a, b) => q(a - b),
+      "first-store": (a, b, c) => q(c * a),
+      "second-store": (a, b, c) => (a === 2 * b ? null : q(c * b)),
+    },
   }),
   S1_tables({
     id: "S1.tables.13",
@@ -205,7 +243,8 @@ const S1_tables_specs: readonly Spec<never>[] = [
       a + b - c - d >= 5 &&
       ![a, b, c, d].includes(a + b - c - d),
     f: (a, b, c, d) => q(a + b - c - d),
-    alt: (a, b, c, d) => q(a + b - (c + d)),
+    alt: (a, b, c, d) =>
+      q([...Array(a + b + 1).keys()].find((x) => c + d + x === a + b) ?? 0),
     t: {
       "whole-table": (a, b) => q(a + b),
       "two-columns": (a, b, c, d) => q(c + d),
@@ -221,6 +260,18 @@ const S1_tables_specs: readonly Spec<never>[] = [
     kind: "time",
     p: [rg(6, 9), of(5, 10, 20, 25, 40, 50), of(15, 20, 25, 35, 40, 45)],
     f: (a, b, c) => departure(a, b, c, 4),
+    alt: (a, b, c) => {
+      let h = a;
+      let m = b;
+      for (let i = 0; i < 4; i += 1) {
+        m += c;
+        if (m >= 60) {
+          m -= 60;
+          h += 1;
+        }
+      }
+      return [q(h), q(m)];
+    },
     t: {
       fourth: (a, b, c) => departure(a, b, c, 3),
       sixth: (a, b, c) => departure(a, b, c, 5),
@@ -290,7 +341,16 @@ const S1_tables_specs: readonly Spec<never>[] = [
     ok: (a, b, c) =>
       a !== b && b !== c && a !== c && [a, b, c].every((x) => x % 5 !== 0),
     f: (a, b, c) => q(a + b + c),
+    alt: (a, b, c) =>
+      q(
+        5 * (Math.floor(a / 5) + Math.floor(b / 5) + Math.floor(c / 5)) +
+          (a % 5) +
+          (b % 5) +
+          (c % 5),
+      ),
     t: {
+      "bundle-as-one": (a, b, c) =>
+        q([a, b, c].reduce((s, x) => s + Math.floor(x / 5) + (x % 5), 0)),
       "bundle-as-four": (a, b, c) =>
         q([a, b, c].reduce((s, x) => s + Math.floor(x / 5) * 4 + (x % 5), 0)),
       "largest-row": (a, b, c) => q(Math.max(a, b, c)),
@@ -308,6 +368,12 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    alt: (a, b) =>
+      q(
+        Array<number>(b)
+          .fill(a)
+          .reduce((s, x) => s + x, 0),
+      ),
     t: { "icons-only": (a, b) => q(b), sum: (a, b) => q(a + b) },
   }),
   S2_bar_line({
@@ -317,6 +383,8 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(5, 20), rg(25, 40)],
     f: (a, b) => q(b - a),
+    alt: (a, b) =>
+      q(Array.from({ length: b }, (_, i) => i + 1).filter((z) => z > a).length),
     t: { sum: (a, b) => q(a + b), "second-only": (a, b) => q(b) },
   }),
   S2_bar_line({
@@ -327,6 +395,13 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     p: [rg(5, 30), rg(5, 30), rg(5, 30)],
     ok: (a, b, c) => a !== b && b !== c && a !== c,
     f: (a, b, c) => q(a + b + c),
+    alt: (a, b, c) =>
+      q(
+        10 * (Math.floor(a / 10) + Math.floor(b / 10) + Math.floor(c / 10)) +
+          (a % 10) +
+          (b % 10) +
+          (c % 10),
+      ),
     t: {
       highest: (a, b, c) => q(Math.max(a, b, c)),
       "two-bars": (a, b) => q(a + b),
@@ -339,6 +414,7 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(10, 20, 30, 40, 50, 60), of(10, 20, 40)],
     f: (a, g) => q(a + g / 2),
+    alt: (a, g) => q((a + (a + g)) / 2),
     t: {
       "lower-mark": (a) => q(a),
       "upper-mark": (a, g) => q(a + g),
@@ -353,10 +429,10 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     form: "the-rise-on-a-line-graph",
     g: [3, 6],
     kind: "integer",
-    p: [rg(3, 12), rg(14, 25)],
+    p: [rg(3, 12), rg(14, 25), rg(6, 10), rg(3, 5)],
     f: (a, b) => q(b - a),
-    t: { sum: (a, b) => q(a + b), hours: () => q(12 - 8) },
-    c: [8, 12],
+    alt: (a, b) => q([...Array(b + 1).keys()].filter((z) => z > a).length),
+    t: { sum: (a, b) => q(a + b), hours: (a, b, c, d) => q(d) },
   }),
   S2_bar_line({
     id: "S2.bar-line.06",
@@ -366,6 +442,8 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     p: [rg(2, 8), rg(2, 6), rg(2, 5)],
     ok: (a, b, c) => b !== c,
     f: (a, b) => q(b),
+    alt: (a, b, c) =>
+      q([...Array(b * c + 1).keys()].find((k) => k * c === b * c) ?? 0),
     t: { total: (a, b, c) => q(b * c), hours: (a, b, c) => q(c) },
     x: (a, b, c) => ({ x: String(a), y: String(a + b * c) }),
   }),
@@ -385,6 +463,7 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
       [a, b, c, d].filter((z) => z > e).length >= 1 &&
       [a, b, c, d].filter((z) => z > e).length <= 3,
     f: (a, b, c, d, e) => q([a, b, c, d].filter((z) => z > e).length),
+    alt: (a, b, c, d, e) => q(4 - [a, b, c, d].filter((z) => z < e).length),
     t: {
       all: () => q(4),
       "not-above": (a, b, c, d, e) => {
@@ -407,8 +486,14 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
       Math.max(a, b, c) !== [a, b, c].indexOf(Math.max(a, b, c)) + 1 &&
       [a, b, c].indexOf(Math.max(a, b, c)) !== 2,
     f: (a, b, c) => q([a, b, c].indexOf(Math.max(a, b, c)) + 1),
+    alt: (a, b, c) =>
+      q(
+        ([a, b, c]
+          .map((h, i) => [h, i] as const)
+          .sort((u, v) => v[0] - u[0])[0]?.[1] ?? 0) + 1,
+      ),
     t: { height: (a, b, c) => q(Math.max(a, b, c)), last: () => q(3) },
-    c: [1, 3],
+    c: [1, 2, 3],
   }),
   S2_bar_line({
     id: "S2.bar-line.09",
@@ -418,9 +503,11 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     p: [rg(5, 12), rg(3, 8), rg(1, 5)],
     ok: (a, b, c) => b !== c,
     f: (a, b, c) => q(a + b - c),
+    alt: (a, b, c) => q(a + (b - c)),
     t: {
       "all-added": (a, b, c) => q(a + b + c),
       "rise-only": (a, b) => q(a + b),
+      "fall-only": (a, b, c) => q(a - c),
     },
   }),
   S2_bar_line({
@@ -430,7 +517,12 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 15)],
     f: (a) => q(3 * a),
-    t: { "three-more": (a) => q(a + 3), same: (a) => q(a) },
+    alt: (a) => q(a + a + a),
+    t: {
+      "three-more": (a) => q(a + 3),
+      same: (a) => q(a),
+      doubled: (a) => q(2 * a),
+    },
     c: [3],
   }),
   S2_bar_line({
@@ -440,6 +532,7 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 5), rg(3, 6), rg(7, 12)],
     f: (a, b, c) => q(a * (c - b)),
+    alt: (a, b, c) => q(c * a - b * a),
     t: {
       cells: (a, b, c) => q(c - b),
       "unit-of-second": (a, b, c) => q(a * c),
@@ -451,8 +544,10 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     g: [3, 6],
     kind: "integer",
     p: [rg(60, 90), rg(10, 30), rg(10, 30)],
-    ok: (a, b, c) => b !== c,
+    ok: (a, b, c) => b !== c && a - b - c >= 5,
     f: (a, b, c) => q(a - b - c),
+    alt: (a, b, c) =>
+      q([...Array(a + 1).keys()].find((x) => b + c + x === a) ?? 0),
     t: { "one-removed": (a, b) => q(a - b), known: (a, b, c) => q(b + c) },
   }),
   S2_bar_line({
@@ -462,6 +557,10 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(5, 15), rg(9, 15), rg(1, 4), rg(1, 4), rg(1, 3)],
     f: (_a, _b, _c, _d, e) => q(e),
+    alt: (_a, b, c, d, e) => {
+      const rise = [e === 1 ? b : c, e === 2 ? b : c, e === 3 ? b : d];
+      return q(rise.indexOf(Math.max(...rise)) + 1);
+    },
     t: {
       "highest-point": (_a, _b, _c, _d, e) => (e === 3 ? null : q(3)),
       "value-of-the-rise": (_a, b) => q(b),
@@ -587,7 +686,12 @@ const S3_mean_specs: readonly Spec<never>[] = [
     p: [rg(2, 20), rg(21, 40)],
     ok: (a, b) => (a + b) % 2 === 0,
     f: (a, b) => q((a + b) / 2),
-    t: { sum: (a, b) => q(a + b), larger: (a, b) => q(b) },
+    alt: (a, b) => q(a + (b - a) / 2),
+    t: {
+      sum: (a, b) => q(a + b),
+      larger: (a, b) => q(b),
+      "half-difference": (a, b) => q((b - a) / 2),
+    },
     c: [2],
   }),
   S3_mean({
@@ -602,6 +706,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
       b !== c &&
       Number.isInteger((a + b) / 2),
     f: (a, b, c) => q((a + b + c) / 3),
+    alt: (a, b, c) => q(a + (b - a + (c - a)) / 3),
     t: {
       sum: (a, b, c) => q(a + b + c),
       "two-numbers": (a, b) => q((a + b) / 2),
@@ -618,6 +723,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
     ok: (a, b, c, d) =>
       (a + b + c + d) % 4 === 0 && (a + b + c + d) % 3 === 0 && a !== b,
     f: (a, b, c, d) => q((a + b + c + d) / 4),
+    alt: (a, b, c, d) => q(a + (b - a + (c - a) + (d - a)) / 4),
     t: {
       sum: (a, b, c, d) => q(a + b + c + d),
       "divided-by-three": (a, b, c, d) => q((a + b + c + d) / 3),
@@ -637,6 +743,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
       (a + b) / 2 !== (c * a + d * b) / (c + d) &&
       Number.isInteger((a + b) / 2),
     f: (a, b, c, d) => q((c * a + d * b) / (c + d)),
+    alt: (a, b, c, d) => q(a + (d * (b - a)) / (c + d)),
     t: {
       "simple-mean": (a, b) => q((a + b) / 2),
       sum: (a, b, c, d) => q(c * a + d * b),
@@ -650,6 +757,8 @@ const S3_mean_specs: readonly Spec<never>[] = [
     p: [rg(3, 15), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a) => q(a),
+    alt: (a, b) =>
+      q([...Array(a * b + 1).keys()].find((k) => k * b === a * b) ?? 0),
     t: { total: (a, b) => q(a * b), days: (a, b) => q(b) },
     x: (a, b) => ({ x: String(a * b) }),
   }),
@@ -661,6 +770,12 @@ const S3_mean_specs: readonly Spec<never>[] = [
     p: [rg(3, 15), rg(3, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    alt: (a, b) =>
+      q(
+        Array<number>(b)
+          .fill(a)
+          .reduce((s, x) => s + x, 0),
+      ),
     t: { sum: (a, b) => q(a + b), mean: (a) => q(a) },
   }),
   S3_mean({
@@ -670,6 +785,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 40)],
     f: (a) => q(a + 2),
+    alt: (a) => q([0, 1, 2, 3, 4].reduce((s, i) => s + a + i, 0) / 5),
     t: {
       smallest: (a) => q(a),
       largest: (a) => q(a + 4),
@@ -685,6 +801,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
     p: [rg(3, 14), rg(3, 14)],
     ok: (a, b) => (a + b) % 3 === 0 && a !== b,
     f: (a, b) => q((a + b) / 3),
+    alt: (a, b) => q(a / 3 + b / 3),
     t: {
       "two-days": (a, b) => ((a + b) % 2 === 0 ? q((a + b) / 2) : null),
       sum: (a, b) => q(a + b),
@@ -700,6 +817,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
     ok: (a, b, c, d) =>
       (a + b + c) % 3 === 0 && (a + b + c) / 3 !== d && !(a === b && b === c),
     f: (a, b, c, d) => sign(q((a + b + c) / 3), q(d)),
+    alt: (a, b, c, d) => sign(q(a + b + c), q(3 * d)),
     t: {
       reversed: (a, b, c, d) => {
         const w = sign(q(d), q((a + b + c) / 3));
@@ -719,6 +837,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(5, 7, 9, 11, 13, 15, 17, 19)],
     f: (a) => q((a + 1) / 2),
+    alt: (a) => q([...Array(a + 1).keys()].reduce((s, x) => s + x, 0) / a),
     t: {
       "last-number": (a) => q(a),
       "first-number": () => q(1),
@@ -770,6 +889,7 @@ const S3_mean_specs: readonly Spec<never>[] = [
       (a + b + c) % 3 === 0 &&
       (a + b + c) / 3 !== sortedAt([a, b, c], 1),
     f: (a, b, c) => ((a + b + c) / 3 < sortedAt([a, b, c], 1) ? "2" : "3"),
+    alt: (a, b, c) => (a + b + c < 3 * sortedAt([a, b, c], 1) ? "2" : "3"),
     t: {
       "below-min": () => "1",
       "above-max": () => "4",
@@ -827,6 +947,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(8, 15), rg(3, 20), rg(3, 20)],
     ok: (a, b, c) => 3 * a - b - c > 0 && 3 * a - b - c !== a && b !== c,
     f: (a, b, c) => q(3 * a - b - c),
+    alt: (a, b, c) => q(a + (a - b) + (a - c)),
     t: {
       "mean-itself": (a) => q(a),
       sum: (a) => q(3 * a),
@@ -842,6 +963,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(8, 20), rg(3, 20)],
     ok: (a, b) => 2 * a - b > 0 && 2 * a - b !== a && a - b > 0 && a !== b,
     f: (a, b) => q(2 * a - b),
+    alt: (a, b) => q(a + (a - b)),
     t: {
       "mean-itself": (a) => q(a),
       "mean-minus-number": (a, b) => q(a - b),
@@ -860,6 +982,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
       4 * a - b - c - d !== a &&
       3 * a - b - c - d !== 4 * a - b - c - d,
     f: (a, b, c, d) => q(4 * a - b - c - d),
+    alt: (a, b, c, d) => q(a + (a - b) + (a - c) + (a - d)),
     t: {
       "three-times": (a, b, c, d) =>
         3 * a - b - c - d > 0 ? q(3 * a - b - c - d) : null,
@@ -876,6 +999,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(2, 9), rg(2, 9), rg(2, 9), rg(10, 14)],
     ok: (a, b, c, d) => 4 * d - a - b - c > d,
     f: (a, b, c, d) => q(4 * d - a - b - c),
+    alt: (a, b, c, d) => q(d + (d - a) + (d - b) + (d - c)),
     t: {
       "target-mean": (a, b, c, d) => q(d),
       "old-sum": (a, b, c) => q(a + b + c),
@@ -890,7 +1014,12 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(5, 15), rg(2, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a + b),
-    t: { times: (a, b) => q(a * b), "mean-itself": (a) => q(a) },
+    alt: (a, b) => q((3 * a + 3 * b) / 3),
+    t: {
+      times: (a, b) => q(a * b),
+      "mean-itself": (a) => q(a),
+      "new-sum": (a, b) => q(3 * (a + b)),
+    },
     c: [3],
   }),
   S3_missing({
@@ -901,6 +1030,8 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(2, 20), rg(2, 20)],
     ok: (a, b) => (a + b) % 2 === 0 && a !== b,
     f: (a, b) => q((a + b) / 2),
+    alt: (a, b) =>
+      q([...Array(a + b + 1).keys()].find((x) => 3 * x === a + b + x) ?? 0),
     t: { sum: (a, b) => q(a + b), larger: (a, b) => q(Math.max(a, b)) },
     c: [2],
   }),
@@ -916,6 +1047,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
       (b + c) % 2 === 0 &&
       (a + 2 * b + c) / 4 !== b,
     f: (a, b, c) => q((a + 2 * b + c) / 4),
+    alt: (a, b, c) => q(((a + b) / 2 + (b + c) / 2) / 2),
     t: { middle: (a, b) => q(b), "sum-of-bottom": (a, b, c) => q(a + b + c) },
     c: [2, 4],
   }),
@@ -927,6 +1059,8 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(6, 9), rg(3, 5), rg(10, 20)],
     ok: (a, b, c) => a * b - c > 0 && a * b - c !== a,
     f: (a, b, c) => q(a * b - c),
+    alt: (a, b, c) =>
+      q([...Array(a * b + 1).keys()].find((x) => c + x === a * b) ?? 0),
     t: { "mean-only": (a) => q(a), "sum-needed": (a, b) => q(a * b) },
   }),
   S3_missing({
@@ -937,6 +1071,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 8)],
     ok: (a, b) => a !== b && 5 * a - b !== 4 * a && a > b,
     f: (a, b) => q(5 * a - b),
+    alt: (a, b) => q(4 * a + (a - b)),
     t: {
       "mean-times-four": (a) => q(4 * a),
       "mean-minus-box": (a, b) => q(a - b),
@@ -955,6 +1090,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
       (b + 1) * c - a * b !== c &&
       (b + 1) * c - a * b !== c - a,
     f: (a, b, c) => q((b + 1) * c - a * b),
+    alt: (a, b, c) => q(c + b * (c - a)),
     t: {
       "mean-after": (a, b, c) => q(c),
       "mean-difference": (a, b, c) => q(c - a),
@@ -1016,7 +1152,7 @@ const S3_missing_specs: readonly Spec<never>[] = [
     p: [rg(6, 15), rg(8, 40)],
     ok: (a, b) => (6 * a - b) % 4 === 0 && b < 3 * a && (6 * a - b) / 4 !== a,
     f: (a, b) => q((6 * a - b) / 4),
-    alt: (a, b) => q((6 * a - b) / 4),
+    alt: (a, b) => q(a + (2 * a - b) / 4),
     t: {
       "mean-itself": (a) => q(a),
       "sum-left": (a, b) => q(6 * a - b),
@@ -1086,8 +1222,9 @@ const ROLES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     b: "price of a carton of milk",
   },
   "S1.tables.06": {
-    a: "minutes past 8 when the bus leaves",
-    b: "minutes past 9 when the bus arrives",
+    a: "minutes past the hour when the bus leaves",
+    b: "minutes past the next hour when the bus arrives",
+    c: "hour when the bus leaves",
   },
   "S1.tables.07": {
     a: "height of the first child",
@@ -1160,8 +1297,10 @@ const ROLES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     b: "gap between the two marks",
   },
   "S2.bar-line.05": {
-    a: "temperature at 8 o'clock",
-    b: "temperature at 12 o'clock",
+    a: "temperature at the first hour",
+    b: "temperature at the later hour",
+    c: "the first hour",
+    d: "hours between the two points",
   },
   "S2.bar-line.06": {
     a: "temperature at the start",

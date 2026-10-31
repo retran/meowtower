@@ -13,6 +13,9 @@ const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
 const mix = (w: number, n: number, d: number): Q => q(w).add(q(n, d));
 const mixText = (w: number, n: number, d: number): string => `${w} ${fr(n, d)}`;
 const coprime = (a: number, b: number): boolean => gcd(a, b) === 1;
+/** A mixed number as a text, or just the fraction when there are no wholes. */
+const mixOr = (w: number, n: number, d: number): string =>
+  w === 0 ? fr(n, d) : mixText(w, n, d);
 
 const f4 = forFraction("F4", "equivalent");
 const equivalent = [
@@ -65,7 +68,11 @@ const equivalent = [
     draw: (r) => [between(r, 1, 5), between(r, 2, 8), between(r, 2, 5)],
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([n = 0, d = 0, k = 0]) => [q(n * k), q(d * k)],
-    ref: ([n = 0, d = 0, k = 0]) => [q(n).mul(q(k)), q(d).mul(q(k))],
+    ref: ([n = 0, d = 0, k = 0]) => {
+      let x = 0;
+      while (x * d < n * d * k) x += 1;
+      return [q(x), q(d * k)];
+    },
     traps: [
       [
         "numerator-unchanged",
@@ -131,7 +138,17 @@ const equivalent = [
       return list.map((_, i) => list[(i + by) % 4] ?? "");
     },
     solve: ([n = 0, d = 0, k = 0]) => fr(n * k, d * k),
-    ref: ([n = 0, d = 0, k = 0]) => fr(n * k, d * k),
+    ref: ([n = 0, d = 0, k = 0]) => {
+      const pairs = [
+        [n * k, d * k],
+        [n + k, d + k],
+        [n * k, d],
+        [n, d * k],
+      ] as const;
+      const [top = 0, bottom = 1] =
+        pairs.find(([x, y]) => x * d === n * y) ?? [];
+      return fr(top, bottom);
+    },
     traps: [
       [
         "same-addend",
@@ -159,7 +176,7 @@ const equivalent = [
     draw: (r) => [between(r, 1, 9), pick(r, [2, 4, 5, 10, 20, 25])],
     valid: ([n = 0, d = 0]) => n < d,
     solve: ([n = 0, d = 0]) => q((100 * n) / d),
-    ref: ([n = 0, d = 0]) => q(n, d).mul(q(100)),
+    ref: ([n = 0, d = 0]) => q(100).div(q(d)).mul(q(n)),
     traps: [
       ["numerator-itself", "conceptual", ([n = 0]) => q(n)],
       ["times-hundred", "procedural", ([n = 0]) => q(100 * n)],
@@ -173,9 +190,13 @@ const equivalent = [
     form: "how-many-pieces-make-half-of-a-pizza",
     groups: [6, 7],
     kind: "integer",
-    draw: (r) => [2 * between(r, 2, 6)],
+    draw: (r) => [2 * between(r, 2, 8)],
     solve: ([e = 0]) => q(e / 2),
-    ref: ([e = 0]) => q(1, 2).mul(q(e)),
+    ref: ([e = 0]) => {
+      let x = 0;
+      while (x + x < e) x += 1;
+      return q(x);
+    },
     traps: [
       ["all-pieces", "conceptual", ([e = 0]) => q(e)],
       ["doubled", "procedural", ([e = 0]) => q(2 * e)],
@@ -190,7 +211,7 @@ const equivalent = [
     draw: (r) => [between(r, 2, 5), between(r, 6, 9)],
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([n = 0]) => q(4 * n),
-    ref: ([n = 0]) => q(n + n + n + n),
+    ref: ([n = 0, d = 0]) => q(n, d).mul(q(4 * d)),
     traps: [
       ["step-of-one", "procedural", ([n = 0]) => q(3 * n + 1)],
       ["last-numerator-repeated", "conceptual", ([n = 0]) => q(3 * n)],
@@ -211,7 +232,7 @@ const equivalent = [
     draw: (r) => [between(r, 1, 5), between(r, 2, 8), between(r, 2, 6)],
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([n = 0]) => q(n),
-    ref: ([n = 0, , k = 0]) => q(n * k).div(q(k)),
+    ref: ([n = 0, d = 0, k = 0]) => q(n * k, d * k).mul(q(d)),
     traps: [
       ["the-large-numerator", "conceptual", ([n = 0, , k = 0]) => q(n * k)],
       [
@@ -262,7 +283,11 @@ const equivalent = [
     kind: "integer",
     draw: (r) => [1, pick(r, [2, 3, 4, 5, 6, 10, 12])],
     solve: ([n = 0, d = 0]) => q((60 * n) / d),
-    ref: ([n = 0, d = 0]) => q(n, d).mul(q(60)),
+    ref: ([n = 0, d = 0]) => {
+      let x = 0;
+      while (x * d < 60 * n) x += 1;
+      return q(x);
+    },
     traps: [
       ["denominator-itself", "conceptual", ([, d = 0]) => q(d)],
       ["multiplied", "procedural", ([, d = 0]) => q(60 * d)],
@@ -285,7 +310,17 @@ const simplify = [
     draw: (r) => [between(r, 1, 5), between(r, 2, 7), pick(r, COMPOSITE)],
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([n = 0, d = 0]) => q(n, d),
-    ref: ([n = 0, d = 0, k = 0]) => q(n * k, d * k),
+    ref: ([n = 0, d = 0, k = 0]) => {
+      let x = n * k;
+      let y = d * k;
+      for (let p = 2; p <= x;) {
+        if (x % p === 0 && y % p === 0) {
+          x /= p;
+          y /= p;
+        } else p += 1;
+      }
+      return q(x, y);
+    },
     traps: [
       [
         "divided-only-the-numerator",
@@ -375,7 +410,8 @@ const simplify = [
       [
         "swapped-parts",
         "conceptual",
-        ([w = 0, n = 0, d = 0]) => (w === n ? null : mix(n, w, d)),
+        ([w = 0, n = 0, d = 0]) =>
+          w === n || gcd(w, d) > 1 ? null : mix(n, w, d),
       ],
     ],
     extra: ([w = 0, n = 0, d = 0]) => ({
@@ -411,7 +447,10 @@ const simplify = [
         ([w = 0, n = 0, d = 0]) => q(w * d + n, w * d),
       ],
     ],
-    extra: ([w = 0, n = 0, d = 0]) => ({ m: mixText(w, n, d) }),
+    extra: ([w = 0, n = 0, d = 0]) => ({
+      m: mixText(w, n, d),
+      r: fr(w * d + n, d),
+    }),
   }),
   f4s({
     id: "F4.simplify.06",
@@ -459,7 +498,7 @@ const simplify = [
     draw: (r) => [between(r, 2, 6), between(r, 2, 6)],
     valid: ([m = 0, k = 0]) => m !== k,
     solve: ([, k = 0]) => q(1, k),
-    ref: ([m = 0, k = 0]) => q(m, m * k),
+    ref: ([m = 0, k = 0]) => q(1).div(q(m * k, m)),
     traps: [
       ["upside-down", "conceptual", ([, k = 0]) => q(k)],
       [
@@ -482,7 +521,7 @@ const simplify = [
     groups: [7, 7],
     kind: "fraction",
     rule: "simplest",
-    draw: (r) => [pick(r, [10, 15, 20, 30, 45, 50])],
+    draw: (r) => [pick(r, [5, 10, 12, 15, 20, 25, 30, 40, 45, 50])],
     solve: ([m = 0]) => q(m, 60),
     ref: ([m = 0]) => q(m / gcd(m, 60), 60 / gcd(m, 60)),
     traps: [
@@ -521,6 +560,7 @@ const simplify = [
       c < d &&
       e < f &&
       g < h &&
+      new Set([fr(a, b), fr(c, d), fr(e, f), fr(g, h)]).size === 4 &&
       [coprime(a, b), coprime(c, d), coprime(e, f), coprime(g, h)].filter(
         Boolean,
       ).length %
@@ -539,7 +579,12 @@ const simplify = [
           [c, d],
           [e, f],
           [g, h],
-        ].reduce((acc, [n = 0, m = 0]) => (gcd(n, m) === 1 ? acc + 1 : acc), 0),
+        ].reduce((acc, [n = 0, m = 0]) => {
+          let shared = false;
+          for (let t = 2; t <= n; t += 1)
+            if (n % t === 0 && m % t === 0) shared = true;
+          return shared ? acc : acc + 1;
+        }, 0),
       ),
     traps: [
       [
@@ -677,7 +722,11 @@ const addLike = [
       ["dropped-the-denominator", "conceptual", ([a = 0, b = 0]) => q(a + b)],
       ["whole-lost", "conceptual", ([a = 0, b = 0, d = 0]) => q(a + b - d, d)],
     ],
-    extra: ([a = 0, b = 0, d = 0]) => ({ f: fr(a, d), g: fr(b, d) }),
+    extra: ([a = 0, b = 0, d = 0]) => ({
+      f: fr(a, d),
+      g: fr(b, d),
+      r: mixText(Math.floor((a + b) / d), (a + b) % d, d),
+    }),
   }),
   f5({
     id: "F5.add-same-den.04",
@@ -790,6 +839,7 @@ const addLike = [
       f: fr(a, d),
       g: fr(b, d),
       h: fr(c, d),
+      r: mixText(Math.floor((a + b + c) / d), (a + b + c) % d, d),
     }),
   }),
   f5({
@@ -807,7 +857,10 @@ const addLike = [
       ["forgot-to-borrow", "conceptual", ([a = 0, d = 0]) => q(4 * d - a, d)],
       ["added", "procedural", ([a = 0, d = 0]) => q(3 * d + a, d)],
     ],
-    extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
+    extra: ([a = 0, d = 0]) => ({
+      f: fr(a, d),
+      r: mixText(2, d - a, d),
+    }),
     consts: [3],
   }),
   f5({
@@ -858,7 +911,11 @@ const addLike = [
     draw: (r) => [between(r, 1, 6), between(r, 7, 12)],
     valid: ([a = 0, d = 0]) => a < d && a !== d - a,
     solve: ([a = 0, d = 0]) => q(d - a),
-    ref: ([a = 0, d = 0]) => q(d).sub(q(a)),
+    ref: ([a = 0, d = 0]) => {
+      let added = 0;
+      while (a + added < d) added += 1;
+      return q(added);
+    },
     traps: [
       ["the-given-numerator", "conceptual", ([a = 0]) => q(a)],
       ["all-the-parts", "conceptual", ([, d = 0]) => q(d)],
@@ -874,13 +931,16 @@ const addLike = [
     draw: (r) => [between(r, 3, 8), between(r, 7, 12)],
     valid: ([a = 0, d = 0]) => a < d && 2 * a > d,
     solve: ([a = 0, d = 0]) => q(2 * a, d),
-    ref: ([a = 0, d = 0]) => q(a, d).add(q(a, d)),
+    ref: ([a = 0, d = 0]) => q(a, d).mul(q(2)),
     traps: [
       ["denominators-added", "procedural", ([a = 0, d = 0]) => q(2 * a, 2 * d)],
       ["multiplied-numerators", "procedural", ([a = 0, d = 0]) => q(a * a, d)],
       ["denominator-doubled", "conceptual", ([a = 0, d = 0]) => q(a, 2 * d)],
     ],
-    extra: ([a = 0, d = 0]) => ({ f: fr(a, d) }),
+    extra: ([a = 0, d = 0]) => ({
+      f: fr(a, d),
+      r: mixText(1, 2 * a - d, d),
+    }),
   }),
 ];
 
@@ -902,7 +962,8 @@ const mixedNumbers = [
       [
         "swapped-parts",
         "conceptual",
-        ([w = 0, n = 0, d = 0]) => (w === n ? null : mix(n, w, d)),
+        ([w = 0, n = 0, d = 0]) =>
+          w === n || gcd(w, d) > 1 ? null : mix(n, w, d),
       ],
     ],
     extra: ([w = 0, n = 0, d = 0]) => ({ f: fr(w * d + n, d) }),
@@ -935,7 +996,10 @@ const mixedNumbers = [
         ([w = 0, n = 0, d = 0]) => (w === 1 ? null : q(n, d)),
       ],
     ],
-    extra: ([w = 0, n = 0, d = 0]) => ({ m: mixText(w, n, d) }),
+    extra: ([w = 0, n = 0, d = 0]) => ({
+      m: mixText(w, n, d),
+      r: fr(w * d + n, d),
+    }),
   }),
   f5m({
     id: "F5.mixed.03",
@@ -953,7 +1017,7 @@ const mixedNumbers = [
     valid: ([, a = 0, , b = 0, d = 0]) => a + b < d,
     solve: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b, d),
     ref: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) =>
-      mix(w1, a, d).add(mix(w2, b, d)),
+      q(w1 * d + a + w2 * d + b, d),
     traps: [
       ["wholes-only", "conceptual", ([w1 = 0, , w2 = 0]) => q(w1 + w2)],
       [
@@ -970,6 +1034,7 @@ const mixedNumbers = [
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
       k: mixText(w2, b, d),
+      r: mixText(w1 + w2, a + b, d),
     }),
   }),
   f5m({
@@ -988,7 +1053,7 @@ const mixedNumbers = [
     valid: ([, a = 0, , b = 0, d = 0]) => a < d && b < d && a + b > d,
     solve: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => mix(w1 + w2, a + b, d),
     ref: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) =>
-      mix(w1, a, d).add(mix(w2, b, d)),
+      q(w1 * d + a + w2 * d + b, d),
     traps: [
       [
         "carry-lost",
@@ -1005,6 +1070,7 @@ const mixedNumbers = [
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
       k: mixText(w2, b, d),
+      r: mixText(w1 + w2 + 1, a + b - d, d),
     }),
   }),
   f5m({
@@ -1040,6 +1106,7 @@ const mixedNumbers = [
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
       k: mixText(w2, b, d),
+      r: mixOr(w1 - w2, a - b, d),
     }),
   }),
   f5m({
@@ -1076,6 +1143,7 @@ const mixedNumbers = [
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
       k: mixText(w2, b, d),
+      r: mixOr(w1 - w2 - 1, d + a - b, d),
     }),
   }),
   f5m({
@@ -1087,7 +1155,7 @@ const mixedNumbers = [
     draw: (r) => [between(r, 1, 6), between(r, 1, 4), between(r, 5, 9)],
     valid: ([, n = 0, d = 0]) => n < d,
     solve: ([w = 0, n = 0, d = 0]) => mix(w, n, d),
-    ref: ([w = 0, n = 0, d = 0]) => q(w).add(q(n, d)),
+    ref: ([w = 0, n = 0, d = 0]) => q(w * d + n, d),
     traps: [
       ["multiplied", "procedural", ([w = 0, n = 0, d = 0]) => q(w * n, d)],
       [
@@ -1195,6 +1263,7 @@ const mixedNumbers = [
     extra: ([w1 = 0, a = 0, w2 = 0, b = 0, d = 0]) => ({
       m: mixText(w1, a, d),
       k: mixText(w2, b, d),
+      r: mixText(w1 + w2 + 1, a + b - d, d),
     }),
   }),
   f5m({
@@ -1416,7 +1485,13 @@ const equivalentMore = [
     valid: ([n = 0, d = 0, k1 = 0, k2 = 0]) =>
       n < d && coprime(n, d) && k1 !== k2,
     solve: ([n = 0, d = 0, k1 = 0, k2 = 0]) => [q(n * k1), q(d * k2)],
-    ref: ([n = 0, d = 0, k1 = 0, k2 = 0]) => [q(n).mul(q(k1)), q(d).mul(q(k2))],
+    ref: ([n = 0, d = 0, k1 = 0, k2 = 0]) => {
+      let x = 0;
+      while (x * d < n * d * k1) x += 1;
+      let y = 0;
+      while (n * y < n * d * k2) y += 1;
+      return [q(x), q(y)];
+    },
     traps: [
       [
         "swapped",
@@ -1450,7 +1525,11 @@ const equivalentMore = [
     draw: (r) => [between(r, 1, 5), between(r, 2, 8), between(r, 2, 9)],
     valid: ([n = 0, d = 0]) => n < d && coprime(n, d),
     solve: ([n = 0, , k = 0]) => q(n * k),
-    ref: ([n = 0, d = 0, k = 0]) => q((n + d) * k).mul(q(n, n + d)),
+    ref: ([n = 0, d = 0, k = 0]) => {
+      let part = 0;
+      while (part * (n + d) < (n + d) * k) part += 1;
+      return q(n * part);
+    },
     traps: [
       ["the-denominator", "conceptual", ([, d = 0, k = 0]) => q(d * k)],
       ["the-given-numerator", "conceptual", ([n = 0]) => q(n)],
@@ -1691,7 +1770,10 @@ const addLikeMore = [
     draw: (r) => [between(r, 1, 6), between(r, 1, 6), between(r, 8, 13)],
     valid: ([a = 0, b = 0, d = 0]) => a + b < d && a !== b,
     solve: ([, b = 0]) => q(b),
-    ref: ([a = 0, b = 0]) => q(a + b).sub(q(a)),
+    ref: ([a = 0, b = 0, d = 0]) =>
+      q(a + b, d)
+        .sub(q(a, d))
+        .mul(q(d)),
     traps: [
       ["the-sum-itself", "conceptual", ([a = 0, b = 0]) => q(a + b)],
       ["added-instead", "procedural", ([a = 0, b = 0]) => q(2 * a + b)],
@@ -1715,7 +1797,7 @@ const addLikeMore = [
         "against-the-rest",
         "conceptual",
         ([a = 0, b = 0, d = 0]) =>
-          d - a - b === d ? null : q(a + b, d - a - b),
+          (a + b) % (d - a - b) === 0 ? null : q(a + b, d - a - b),
       ],
     ],
     extra: ([a = 0, b = 0, d = 0]) => ({ r: fr(a + b, d) }),
@@ -1807,7 +1889,10 @@ const mixedMore = [
         ([w = 0, m = 0, n = 0, d = 0]) => mix(w - m, n, d),
       ],
     ],
-    extra: ([, m = 0, n = 0, d = 0]) => ({ m: mixText(m, n, d) }),
+    extra: ([w = 0, m = 0, n = 0, d = 0]) => ({
+      m: mixText(m, n, d),
+      r: mixText(w - m - 1, d - n, d),
+    }),
   }),
   f5m({
     id: "F5.mixed.14",

@@ -51,6 +51,18 @@ const define = <P>(sp: Spec<P>): Spec<never> => {
     }),
   });
 };
+/** Walks a number line one step at a time: a second route that shares no formula with `solve`. */
+const walk = (from: number, steps: number): number => {
+  let at = from;
+  for (let i = 0; i < Math.abs(steps); i += 1) at += Math.sign(steps);
+  return at;
+};
+/** Counts the steps from one whole number up to a larger one. */
+const stepsUp = (from: number, to: number): number => {
+  let n = 0;
+  for (let x = from; x < to; x += 1) n += 1;
+  return n;
+};
 const EXTENSION = {
   extension: "negative-number arithmetic, Russian grade 6 (RES-4281)",
 };
@@ -100,7 +112,7 @@ const operate = [
     form: "negative-plus-a-larger-positive",
     draw: (r) => ({ a: between(r, 1, 20), b: between(r, 21, 40) }),
     solve: (p) => qi(-p.a + p.b),
-    reference: (p) => qi(p.b - p.a),
+    reference: (p) => qi(walk(-p.a, p.b)),
     traps: [
       {
         id: "all-negative",
@@ -118,7 +130,7 @@ const operate = [
     form: "negative-minus-a-positive",
     draw: (r) => ({ a: between(r, 1, 30), b: between(r, 1, 30) }),
     solve: (p) => qi(-p.a - p.b),
-    reference: (p) => qi(-(p.a + p.b)),
+    reference: (p) => qi(walk(-p.a, -p.b)),
     traps: [
       {
         id: "positive-result",
@@ -140,7 +152,7 @@ const operate = [
     draw: (r) => ({ a: between(r, 1, 30), b: between(r, 1, 40) }),
     valid: (p) => p.b > p.a,
     solve: (p) => qi(p.a - p.b),
-    reference: (p) => qi(-(p.b - p.a)),
+    reference: (p) => qi(walk(p.a, -p.b)),
     traps: [
       {
         id: "positive-result",
@@ -162,7 +174,8 @@ const operate = [
     form: "negative-times-positive",
     draw: (r) => ({ a: between(r, 2, 12), b: between(r, 2, 12) }),
     solve: (p) => qi(-p.a * p.b),
-    reference: (p) => qi(-(p.a * p.b)),
+    reference: (p) =>
+      qi(Array.from({ length: p.b }, () => -p.a).reduce((x, y) => x + y, 0)),
     traps: [
       {
         id: "positive-result",
@@ -183,7 +196,8 @@ const operate = [
     form: "negative-times-negative",
     draw: (r) => ({ a: between(r, 2, 12), b: between(r, 2, 12) }),
     solve: (p) => qi(p.a * p.b),
-    reference: (p) => qi(-p.a * -p.b),
+    reference: (p) =>
+      qi(-Array.from({ length: p.b }, () => -p.a).reduce((x, y) => x + y, 0)),
     traps: [
       {
         id: "negative-result",
@@ -200,7 +214,11 @@ const operate = [
     form: "negative-divided-by-positive",
     draw: (r) => ({ b: between(r, 2, 9), q: between(r, 2, 12) }),
     solve: (p) => qi(-p.q),
-    reference: (p) => qi(-(p.b * p.q) / p.b),
+    reference: (p) => {
+      let k = 0;
+      while (k * p.b > -(p.b * p.q)) k -= 1;
+      return qi(k);
+    },
     traps: [
       { id: "positive-result", kind: "conceptual", wrong: (p) => qi(p.q) },
     ],
@@ -213,7 +231,7 @@ const operate = [
     draw: (r) => ({ a: between(r, 1, 30), b: between(r, 1, 30) }),
     valid: (p) => p.a !== p.b,
     solve: (p) => qi(p.a + p.b),
-    reference: (p) => qi(p.a - -p.b),
+    reference: (p) => qi(walk(p.a, p.b)),
     traps: [
       {
         id: "plain-subtraction",
@@ -236,7 +254,7 @@ const operate = [
     draw: (r) => ({ a: between(r, 1, 30), b: between(r, 1, 30) }),
     valid: (p) => p.a !== p.b,
     solve: (p) => qi(-p.a + p.b),
-    reference: (p) => qi(-p.a - -p.b),
+    reference: (p) => qi(walk(-p.a, p.b)),
     traps: [
       {
         id: "both-subtracted",
@@ -410,7 +428,7 @@ const operate = [
     draw: (r) => ({ x: -between(r, 2, 15), y: between(r, -10, 20) }),
     valid: (p) => p.y > p.x && Math.abs(p.y) !== Math.abs(p.x) && p.y !== 0,
     solve: (p) => qi(p.y - p.x),
-    reference: (p) => qi(p.y + Math.abs(p.x)),
+    reference: (p) => qi(stepsUp(p.x, p.y)),
     traps: [
       {
         id: "magnitudes-subtracted",
@@ -486,7 +504,7 @@ const scale = [
     draw: (r) => ({ a: between(r, 1, 15), b: between(r, 1, 15) }),
     valid: (p) => (p.b - p.a) % 2 === 0 && p.a !== p.b,
     solve: (p) => qi((p.b - p.a) / 2),
-    reference: (p) => qi((-p.a + p.b) / 2),
+    reference: (p) => qi(-p.a + (p.a + p.b) / 2),
     traps: [
       {
         id: "magnitudes-added",
@@ -525,7 +543,11 @@ const scale = [
     valid: (p) =>
       Math.abs(3 * p.m - p.x - p.y) <= 20 && p.m !== 0 && 3 * p.m !== 0,
     solve: (p) => qi(p.m),
-    reference: (p) => qi((p.x + p.y + (3 * p.m - p.x - p.y)) / 3),
+    reference: (p) => {
+      const z = 3 * p.m - p.x - p.y;
+      const lo = Math.min(p.x, p.y, z);
+      return qi(lo + (p.x - lo + (p.y - lo) + (z - lo)) / 3);
+    },
     traps: [
       { id: "not-divided", kind: "procedural", wrong: (p) => qi(3 * p.m) },
       {
@@ -560,7 +582,7 @@ const scale = [
     roles: { d: "depth of the diver in metres", u: "metres the diver rose" },
     draw: (r) => ({ d: between(r, 10, 60), u: between(r, 1, 9) }),
     solve: (p) => qi(-p.d + p.u),
-    reference: (p) => qi(-(p.d - p.u)),
+    reference: (p) => qi(walk(-p.d, p.u)),
     traps: [
       { id: "went-deeper", kind: "conceptual", wrong: (p) => qi(-(p.d + p.u)) },
       {
@@ -587,7 +609,7 @@ const scale = [
     },
     draw: (r) => ({ a: between(r, 1, 4), b: between(r, 2, 12) }),
     solve: (p) => qi(p.a + p.b),
-    reference: (p) => qi(p.b - -p.a),
+    reference: (p) => qi(stepsUp(-p.a, p.b)),
     traps: [
       {
         id: "difference-of-numbers",
@@ -619,7 +641,7 @@ const scale = [
     }),
     valid: (p) => -p.a + p.b - p.c !== -p.a + p.b + p.c,
     solve: (p) => qi(-p.a + p.b - p.c),
-    reference: (p) => qi(p.b - p.a - p.c),
+    reference: (p) => qi(walk(walk(-p.a, p.b), -p.c)),
     traps: [
       {
         id: "purchase-added",
@@ -705,7 +727,7 @@ const scale = [
     },
     draw: (r) => ({ a: between(r, 2, 9) * 100, b: between(r, 1, 9) * 100 }),
     solve: (p) => qi(p.a + p.b),
-    reference: (p) => qi(p.a - -p.b),
+    reference: (p) => qi(stepsUp(-p.b, p.a)),
     traps: [
       {
         id: "difference-of-numbers",
@@ -728,7 +750,15 @@ const scale = [
     },
     draw: (r) => ({ r: between(r, 2, 5), k: between(r, 2, 8) }),
     solve: (p) => qi(p.k),
-    reference: (p) => qi((p.r * p.k) / p.r),
+    reference: (p) => {
+      let at = -(p.r * p.k);
+      let hours = 0;
+      while (at < 0) {
+        at += p.r;
+        hours += 1;
+      }
+      return qi(hours);
+    },
     traps: [
       { id: "multiplied", kind: "procedural", wrong: (p) => qi(p.r * p.k) },
       {
@@ -751,7 +781,7 @@ const scale = [
     draw: (r) => ({ d: between(r, 3, 15), r: between(r, 1, 25) }),
     valid: (p) => p.d !== p.r,
     solve: (p) => qi(-p.r + p.d),
-    reference: (p) => qi(p.d - p.r),
+    reference: (p) => qi(walk(-p.r, p.d)),
     traps: [
       {
         id: "fall-subtracted-again",
@@ -792,7 +822,7 @@ const scale = [
       );
     },
     solve: (p) => qi(p.a + p.j),
-    reference: (p) => qi(p.j + p.a),
+    reference: (p) => qi(walk(p.a, p.j)),
     traps: [
       {
         id: "wrong-direction",
@@ -827,7 +857,12 @@ const scale = [
       p.g * p.w - p.q * p.l !== 0 &&
       p.g * p.l - p.q * p.w !== p.g * p.w - p.q * p.l,
     solve: (p) => qi(p.g * p.w - p.q * p.l),
-    reference: (p) => qi(p.w * p.g + -(p.l * p.q)),
+    reference: (p) => {
+      let score = 0;
+      for (let i = 0; i < p.w; i += 1) score += p.g;
+      for (let i = 0; i < p.l; i += 1) score -= p.q;
+      return qi(score);
+    },
     traps: [
       {
         id: "losses-added",
@@ -910,7 +945,7 @@ const scale = [
     draw: (r) => ({ na: between(r, 2, 11), b: between(r, 2, 11) }),
     valid: (p) => p.na !== p.b,
     solve: (p) => qi(p.na + p.b),
-    reference: (p) => qi(p.b - -p.na),
+    reference: (p) => qi(stepsUp(-p.na, p.b)),
     traps: [
       {
         id: "magnitudes-subtracted",

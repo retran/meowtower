@@ -1,0 +1,2691 @@
+{
+  "G1.shapes.01": {
+    "text": "{a|polygon|polygons|polygons} lie apart from each other, and each one has {b|side|sides|sides}. How many sides do they have altogether?",
+    "solution": [
+      "The polygons lie apart, so each one keeps all of its own sides.",
+      "Each has {b|side|sides|sides}, and there are {a} polygons: {a} × {b} = {=a*b}.",
+      "So they have {r|side|sides|sides} altogether."
+    ],
+    "hints": [
+      "The polygons lie apart, so no side belongs to two of them.",
+      "One polygon has {b|side|sides|sides}. Take {b} once for every polygon, so {a} times.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "figures-added": "{w_figures_added} comes from adding {a} and {b}, which adds the number of polygons to the number of sides of one. Take {b|side|sides|sides} once for each polygon: {a} × {b} = {r}.",
+      "one-polygon": "{w_one_polygon} is the number of sides of only one polygon, but there are {a} of them: {a} × {b} = {r}."
+    }
+  },
+  "G1.shapes.02": {
+    "text": "{a|square|squares|squares} and {b|circle|circles|circles} lie on the table. How many corners do all these shapes have together?",
+    "solution": [
+      "A square has 4 corners and a circle has none, so the circles add nothing.",
+      "Only the squares have corners: 4 × {a} = {=4*a}.",
+      "So all the shapes together have {r|corner|corners|corners}."
+    ],
+    "hints": [
+      "Look at each kind of shape and ask: are there places where two sides meet?",
+      "Count 4 corners for each of the {a|square|squares|squares} and leave the circles out.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "circles-counted": "{w_circles_counted} counts corners for the {b|circle|circles|circles} too, but a circle has no sides, so it has no corners. Only the squares count: 4 × {a} = {r}.",
+      "figures-added": "{w_figures_added} is {a} + {b}, the number of shapes, but each square has 4 corners: 4 × {a} = {r}.",
+      "all-as-squares": "{w_all_as_squares} treats every shape as a square with 4 corners. A circle has no corners, so only the squares count: 4 × {a} = {r}."
+    }
+  },
+  "G1.shapes.03": {
+    "text": "{a|triangle|triangles|triangles} and {b|quadrilateral|quadrilaterals|quadrilaterals} were cut out of paper. How many sides do the cut-out shapes have altogether?",
+    "solution": [
+      "A triangle has 3 sides and a quadrilateral has 4.",
+      "The triangles have 3 × {a} = {=3*a} sides, and the quadrilaterals have 4 × {b} = {=4*b} sides.",
+      "Add the sides of all the shapes: {=3*a} + {=4*b} = {=3*a+4*b}.",
+      "So the shapes have {r|side|sides|sides} altogether."
+    ],
+    "hints": [
+      "A triangle and a quadrilateral do not have the same number of sides, so count them in two groups.",
+      "Each of the {a|triangle|triangles|triangles} has 3 sides and each of the {b|quadrilateral|quadrilaterals|quadrilaterals} has 4. Work out both totals, then add them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "figures-counted": "{w_figures_counted} is {a} + {b}, the number of shapes, but the question is about sides: a triangle has 3 and a quadrilateral has 4. {=3*a} + {=4*b} = {r}.",
+      "all-as-triangles": "{w_all_as_triangles} gives every shape 3 sides, but a quadrilateral has 4: {=3*a} + {=4*b} = {r}."
+    }
+  },
+  "G1.shapes.04": {
+    "text": "Two squares with sides of {a} cm are put together along whole sides. They make a rectangle. How long is its long side, in centimetres?",
+    "solution": [
+      "The squares touch along whole sides, so the long side of the rectangle runs along one side of each square.",
+      "It is made of the sides of both squares: {a} + {a} = {=2*a}.",
+      "So the long side is {r} cm."
+    ],
+    "hints": [
+      "Draw the two squares next to each other. The long side of the rectangle runs along both of them.",
+      "Along the long side lie two square sides of {a} cm each. Put them together.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-side": "{w_one_side} is the side of one square, but the long side is made of two such sides: {a} + {a} = {r}.",
+      "area": "{w_area} is the area of the two squares, but the question is about a length. The long side is {a} + {a} = {r}.",
+      "perimeter": "{w_perimeter} is the perimeter, the distance all the way round the rectangle. The question asks only for the long side: {a} + {a} = {r}."
+    }
+  },
+  "G1.shapes.05": {
+    "text": "A square with sides of {a} cm is cut into four equal squares. How long is the side of one small square, in centimetres?",
+    "solution": [
+      "The big square is cut into four equal squares, two in each row.",
+      "So one side of the big square is made of two sides of small squares.",
+      "One side of a small square is {a} : 2 = {=a/2}.",
+      "So the side of a small square is {r} cm."
+    ],
+    "hints": [
+      "Picture the big square cut into four equal squares. How many small squares lie along one side?",
+      "Two sides of small squares together make {a} cm. Share {a} between the 2 squares.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "quarter": "{w_quarter} comes from dividing {a} by 4. But 4 is the number of all the small squares, and only 2 of them lie along one side: {a} : 2 = {r}.",
+      "whole-side": "{w_whole_side} is the side of the big square. It is made of two sides of small squares: {a} : 2 = {r}."
+    }
+  },
+  "G1.shapes.06": {
+    "text": "{c|identical rectangle|identical rectangles|identical rectangles} are drawn, with sides of {a} cm and {b} cm. How many sides of length {a} cm do they have altogether?",
+    "solution": [
+      "A rectangle has equal opposite sides, so it has two sides of length {a} cm.",
+      "There are {c} rectangles and each has two such sides: {c} × 2 = {=2*c}.",
+      "So there are {r} sides of length {a} cm altogether."
+    ],
+    "hints": [
+      "In a rectangle the sides opposite each other are equal. Which sides of one rectangle are {a} cm long?",
+      "One rectangle has 2 sides of {a} cm, and there are {c} rectangles. Put these together.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-sides": "{w_all_sides} counts all 4 sides of every rectangle. Only 2 sides of each are {a} cm long, the other 2 are {b} cm: {c} × 2 = {r}.",
+      "one-side": "{w_one_side} forgets the opposite side, which is also {a} cm long. Each rectangle has 2 such sides: {c} × 2 = {r}."
+    }
+  },
+  "G1.shapes.07": {
+    "text": "All the diagonals are drawn from one vertex of a convex polygon with {a} sides. Into how many triangles do they cut the polygon?",
+    "solution": [
+      "From one vertex you cannot draw a diagonal to the vertex itself or to its two neighbours.",
+      "That leaves {a} − 3 = {=a-3} other vertices, so there are {=a-3} diagonals.",
+      "There is one more triangle than there are diagonals: {=a-3} + {=1} = {=a-3+1}.",
+      "So the polygon is cut into {r|triangle|triangles|triangles}."
+    ],
+    "hints": [
+      "Draw the polygon and pick one vertex. The diagonals from it cut the polygon into triangles.",
+      "There are {a} − 3 diagonals from that vertex, because the vertex itself and its two neighbours do not count. There is one more triangle than diagonals.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sides": "{w_sides} is the number of sides. The two sides that meet at the chosen vertex do not make triangles, so the answer is 2 less: {a} − 2 = {r}.",
+      "one-less": "{w_one_less} takes away only one. It has to be 2 less than the number of sides: {a} − 2 = {r}.",
+      "diagonals": "{w_diagonals} is the number of diagonals from the vertex, {a} − 3. There is one more triangle than diagonals: {w_diagonals} + {=1} = {r}."
+    }
+  },
+  "G1.shapes.08": {
+    "text": "A square is divided into {a} × {a} equal cells. How many squares of any size can you find in it, counting the big square too?",
+    "solution": [
+      "Count the squares by size: with a side of {=1} cell, of {=2} cells, and so on up to the whole square.",
+      "With a side of {=1} cell there are {a} × {a} = {=a*a} squares. The bigger the side, the fewer squares: with a side of {=2} cells there are ({a} − 1) × ({a} − 1) = {=(a-1)*(a-1)}.",
+      "There is only one biggest square. Add them all: {sizes} = {r}.",
+      "So there are {r} squares altogether."
+    ],
+    "hints": [
+      "Squares come in different sizes: first those with a side of {=1} cell, then {=2} cells, and so on.",
+      "With a side of {=1} cell there are {a} × {a} = {=a*a} squares, with a side of {=2} cells there are ({a} − 1) × ({a} − 1) = {=(a-1)*(a-1)}. Carry on up to the biggest square and add everything.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "unit-squares-only": "{w_unit_squares_only} counts only the squares of {=1} cell. There are bigger squares too: {sizes} = {r}.",
+      "without-the-big-one": "{w_without_the_big_one} leaves out the big square itself. The question counts it too: {sizes} = {r}.",
+      "two-sizes-only": "{w_two_sizes_only} counts squares of only two sizes, {=1} cell and {=2} cells. The bigger ones count as well: {sizes} = {r}.",
+      "cells-and-the-whole": "{w_cells_and_the_whole} is the {=a*a} small cells plus the one big square. The squares of the sizes in between are missing: {sizes} = {r}."
+    }
+  },
+  "G1.shapes.09": {
+    "text": "A polygon has {a|side|sides|sides}. One corner is cut off with a straight line that does not pass through any vertex. How many sides does the new shape have?",
+    "solution": [
+      "The line crosses two neighbouring sides and cuts off the corner between them.",
+      "Both sides get shorter but they stay, and along the cut one new side appears between them.",
+      "There were {a|side|sides|sides} and one more has been added: {a} + 1 = {=a+1}.",
+      "So the new shape has {r|side|sides|sides}."
+    ],
+    "hints": [
+      "Imagine cutting the corner off a paper polygon with scissors. What happens to the two sides at that corner?",
+      "Both sides stay, just shorter, and the cut itself becomes a new side. Add it to the {a|side|sides|sides} you started with.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same": "{w_same} leaves out the new side. The cut itself is one more side: {a} + 1 = {r}.",
+      "one-less": "{w_one_less} takes one away, as if the corner took a side with it. Both sides at the corner stay and the cut adds one: {a} + 1 = {r}.",
+      "two-new": "{w_two_new} adds two new sides. The cut is only one new side, and the two old sides just get shorter: {a} + 1 = {r}."
+    }
+  },
+  "G1.shapes.10": {
+    "text": "What is the name of the shape that has four equal sides and four right angles? 1) square; 2) triangle; 3) circle; 4) pentagon. Answer with the number of the option.",
+    "solution": [
+      "A triangle has three sides, a circle has no sides and a pentagon has five sides.",
+      "Only the square has four equal sides and four right angles.",
+      "So the answer is option {r}, the square."
+    ],
+    "hints": [
+      "The shape needs both: four equal sides and four right angles. Check how many sides each option has.",
+      "Go through the options one by one: how many sides has a triangle? A circle? A pentagon? Does any of them fit?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "triangle": "Option {w_triangle} is a triangle. It has three sides, not four.",
+      "circle": "Option {w_circle} is a circle. It has no sides and no corners.",
+      "pentagon": "Option {w_pentagon} is a pentagon. It has five sides, not four."
+    }
+  },
+  "G1.shapes.11": {
+    "text": "Which of these shapes has no corners? 1) square; 2) circle; 3) triangle; 4) rectangle. Answer with the number of the option.",
+    "solution": [
+      "A corner is where two sides meet.",
+      "A square, a triangle and a rectangle have sides that meet in corners.",
+      "A circle has no sides, so it has no corners.",
+      "So the answer is option {r}, the circle."
+    ],
+    "hints": [
+      "Think about where a shape has corners: where its sides meet.",
+      "Look at the options one by one. Which shape has no sides that meet anywhere?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "square": "Option {w_square} is a square. It has four corners.",
+      "triangle": "Option {w_triangle} is a triangle. It has three corners.",
+      "rectangle": "Option {w_rectangle} is a rectangle. It has four corners."
+    }
+  },
+  "G1.shapes.12": {
+    "text": "Which of these shapes are quadrilaterals? 1) square; 2) triangle; 3) rectangle; 4) circle. Answer with the numbers of all the options that fit, separated by commas.",
+    "solution": [
+      "A quadrilateral is a shape with four sides.",
+      "A square and a rectangle have four sides each, a triangle has three and a circle has none.",
+      "So the answer is options {r}: the square and the rectangle."
+    ],
+    "hints": [
+      "A quadrilateral is a shape with four sides. Check every option.",
+      "Count the sides of the square, the triangle, the rectangle and the circle. Choose all the shapes that have four.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-the-square": "{w_only_the_square} is not complete: a rectangle is a quadrilateral too, because it has four sides.",
+      "with-the-triangle": "{w_with_the_triangle} has one option too many: a triangle has three sides, not four."
+    }
+  },
+  "G2.angles.01": {
+    "text": "Two angles of a triangle are {a|degree|degrees|degrees} and {b|degree|degrees|degrees}. How big is the third angle, in degrees?",
+    "solution": [
+      "The three angles of a triangle add up to 180 degrees.",
+      "The two known angles make {a} + {b} = {=a+b}.",
+      "The third angle is what is missing up to 180: 180 − {=a+b} = {=180-a-b}.",
+      "So the third angle is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "The three angles of a triangle together make 180 degrees.",
+      "Add the two known angles, {a} and {b}, and see how much is missing up to 180.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum-of-two": "{w_sum_of_two} is the sum of the two known angles, {a} + {b}. The third angle is what is missing up to 180: 180 − {w_sum_of_two} = {r}.",
+      "from-360": "{w_from_360} comes from taking the sum away from 360, but the angles of a triangle add up to 180: 180 − {=a+b} = {r}.",
+      "one-angle": "{w_one_angle} takes only one angle away from 180. Both known angles have to be taken away: 180 − {a} − {b} = {r}."
+    }
+  },
+  "G2.angles.02": {
+    "text": "Two angles lie next to each other on a straight line. One of them is {a|degree|degrees|degrees}. How big is the other angle, in degrees?",
+    "solution": [
+      "Two angles side by side on a straight line make a straight angle, 180 degrees.",
+      "One angle is known, so the other is what is left: 180 − {a} = {=180-a}.",
+      "So the other angle is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Two angles side by side on a straight line together make a straight angle, 180 degrees.",
+      "Take the known angle, {a}, away from 180.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same-angle": "{w_same_angle} is the angle we already know. The other angle is what is left of 180: 180 − {a} = {r}.",
+      "from-90": "{w_from_90} comes from taking {a} away from {=90}, which is how you find the rest of a right angle. Two angles on a straight line make {=180}: {=180} − {a} = {r}.",
+      "from-360": "{w_from_360} comes from taking {a} away from {=360}, a full turn. Two angles on a straight line make {=180}: {=180} − {a} = {r}."
+    }
+  },
+  "G2.angles.03": {
+    "text": "A right angle is split into two parts. One part is {a|degree|degrees|degrees}. How big is the other part, in degrees?",
+    "solution": [
+      "The two parts together make the whole right angle, 90 degrees.",
+      "One part is {a} degrees, so the other is what is left: 90 − {a} = {=90-a}.",
+      "So the other part is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "The two parts together make a right angle. Remember how many degrees that is.",
+      "Take the known part, {a}, away from 90.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "from-180": "{w_from_180} comes from 180, but a right angle is 90 degrees: 90 − {a} = {r}.",
+      "sum": "{w_sum} is {a} + 90. What is left of a right angle is found by taking away: 90 − {a} = {r}."
+    }
+  },
+  "G2.angles.04": {
+    "text": "In an isosceles triangle, the angle between the two equal sides is {a|degree|degrees|degrees}. How big is a base angle, in degrees?",
+    "solution": [
+      "The three angles of a triangle make 180 degrees, and one of them is {a|degree|degrees|degrees}.",
+      "That leaves 180 − {a} = {=180-a} for the two base angles.",
+      "The two base angles are equal, so we share it between them: {=180-a} : 2 = {=(180-a)/2}.",
+      "So a base angle is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "The angles of a triangle add up to 180 degrees, and one angle, {a}, is known.",
+      "Take {a} away from 180. What is left is shared by the two base angles, which are equal.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "not-halved": "{w_not_halved} is 180 − {a}, the two base angles together. There are two equal angles, so share it: {w_not_halved} : 2 = {r}.",
+      "half-of-the-top": "{w_half_of_the_top} is half of the top angle. It is what is left of 180 that has to be halved: (180 − {a}) : 2 = {r}.",
+      "equal-to-the-top": "{w_equal_to_the_top} is the top angle itself. The two base angles are equal to each other, not to the top angle: (180 − {a}) : 2 = {r}."
+    }
+  },
+  "G2.angles.05": {
+    "text": "The clock shows exactly {a} o'clock. How big is the smaller angle between the hour hand and the minute hand, in degrees?",
+    "solution": [
+      "The whole clock face is 360 degrees and it has 12 hours, so one hour is 360 : 12 = {=360/12} degrees.",
+      "The minute hand points to 12. The short way round, there are {=min(a,12-a)|hour|hours|hours} between the hands.",
+      "The smaller angle is {=min(a,12-a)} × 30 = {r}.",
+      "So the smaller angle between the hands is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "The minute hand points to 12. Count the hours between the hands the short way round.",
+      "Between 12 and {a} there are {=min(a,12-a)|hour|hours|hours} the short way round, and each hour is 30 degrees.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "five-per-hour": "{w_five_per_hour} comes from multiplying {a} by 5, as for the minute marks. Between two neighbouring hours there are 30 degrees: {=min(a,12-a)} × 30 = {r}.",
+      "other-way": "{w_other_way} is the bigger angle, the long way round. The question asks for the smaller one: {=min(a,12-a)} × 30 = {r}."
+    }
+  },
+  "G2.angles.06": {
+    "text": "By how many degrees does the minute hand turn in {a|minute|minutes|minutes}?",
+    "solution": [
+      "In 60 minutes the minute hand makes a full turn, 360 degrees.",
+      "In one minute it turns 360 : 60 = {=360/60} degrees.",
+      "In {a|minute|minutes|minutes} it turns {a} × 6 = {=6*a}.",
+      "So the minute hand turns {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "In 60 minutes the minute hand makes one full turn.",
+      "Work out how many degrees it turns in one minute: 360 : 60. Then multiply by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-per-minute": "{w_one_per_minute} counts one degree for each minute, but in one minute the hand turns 360 : 60 = 6 degrees: 6 × {a} = {r}.",
+      "hour-hand": "{w_hour_hand} is half the number of minutes. That is how the hour hand moves, not the minute hand. The minute hand turns 6 × {a} = {r}.",
+      "hour-step": "{w_hour_step} counts 30 degrees for each minute. But 30 degrees is 5 minutes on the clock face, and one minute is 6 degrees: 6 × {a} = {r}."
+    }
+  },
+  "G2.angles.07": {
+    "text": "How big is each angle of a regular polygon with {a} sides, in degrees?",
+    "solution": [
+      "Diagonals from one vertex cut the polygon into {a} − 2 = {=a-2} triangles.",
+      "Each triangle has 180 degrees, so all the angles together make 180 × {=a-2} = {=180*(a-2)}.",
+      "In a regular polygon all {a} angles are equal, so we divide by {a}: {=180*(a-2)} : {a} = {=180*(a-2)/a}.",
+      "So each angle is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "First find the sum of all the angles of the polygon. How many triangles do the diagonals from one vertex make?",
+      "The sum of the angles is 180 × ({a} − 2). All {a} angles are equal, so divide this sum by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum-of-angles": "{w_sum_of_angles} is the sum of all {a} angles together, but the question asks for one angle: {w_sum_of_angles} : {a} = {r}.",
+      "central-angle": "{w_central_angle} is 360 : {a}, the angle between two lines from the centre to neighbouring vertices. The question asks for the angle of the polygon at a vertex: {=180*(a-2)} : {a} = {r}."
+    }
+  },
+  "G2.angles.08": {
+    "text": "What is the sum of the angles of a convex polygon with {a} sides, in degrees?",
+    "solution": [
+      "Diagonals from one vertex cut the polygon into {a} − 2 = {=a-2} triangles.",
+      "Each triangle has 180 degrees, and the angles of all the triangles together make the angles of the polygon.",
+      "Add them: {=a-2} × 180 = {=180*(a-2)}.",
+      "So the sum of the angles of the polygon is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Draw the diagonals from one vertex: the polygon is cut into triangles.",
+      "There are {a} − 2 triangles, and the angles of each one add up to 180 degrees.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "times-sides": "{w_times_sides} is 180 times the number of sides, but there are 2 fewer triangles than sides: 180 × {=a-2} = {r}.",
+      "minus-one": "{w_minus_one} is 180 × ({a} − {=1}): only one was taken away. It has to be 2: 180 × {=a-2} = {r}.",
+      "always-360": "{w_always_360} is the sum of the angles of a quadrilateral. A polygon with {a} sides has a different sum: 180 × {=a-2} = {r}."
+    }
+  },
+  "G2.angles.09": {
+    "text": "A hiker turns through 90 degrees in the same direction {a|time|times|times} in a row. What is the total angle the hiker has turned through, in degrees?",
+    "solution": [
+      "The hiker always turns the same way, so the turns add up.",
+      "Each turn is 90 degrees and there are {a} turns: 90 × {a} = {=90*a}.",
+      "So the total turn is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "All the turns go the same way, so their angles add up.",
+      "One turn is 90 degrees and there are {a} of them: add 90 that many times.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-turn": "{w_one_turn} is just one turn, but the hiker turned {a|time|times|times}: 90 × {a} = {r}.",
+      "full-turns": "{w_full_turns} treats every turn as a whole circle of 360 degrees. One turn is 90 degrees: 90 × {a} = {r}."
+    }
+  },
+  "G2.angles.10": {
+    "text": "A path goes up like a staircase and has {a|step|steps|steps}. Each step goes up and then to the right. How many right-angle turns are there along the whole path?",
+    "solution": [
+      "Each step is a part going up and a part going right, so there are {a} × 2 = {=2*a} parts altogether.",
+      "They follow each other, and there is a turn wherever one part changes into the next.",
+      "There is one turn fewer than there are parts: {=2*a} − 1 = {=2*a-1}.",
+      "So there are {r|turn|turns|turns} along the path."
+    ],
+    "hints": [
+      "Draw the staircase and mark the points where the path changes direction.",
+      "The path has {a} × 2 parts. A turn is where two neighbouring parts meet, so there is one turn fewer than parts.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "twice": "{w_twice} is the number of parts, but there is one turn fewer, because a turn is between two neighbouring parts: {=2*a} − 1 = {r}.",
+      "steps": "{w_steps} is the number of steps. Every step has two parts, and a turn is between each two neighbouring parts: {=2*a} − 1 = {r}.",
+      "between-steps": "{w_between_steps} counts only the turns between one step and the next. There is also a turn inside each step: {=2*a} − 1 = {r}."
+    }
+  },
+  "G2.angles.11": {
+    "text": "{a|rectangle|rectangles|rectangles} are drawn, each one apart from the others. How many right angles do they have altogether?",
+    "solution": [
+      "The rectangles are drawn apart, so their corners do not merge.",
+      "Each rectangle has 4 right angles, and there are {a} rectangles: {a} × 4 = {=4*a}.",
+      "So there are {r} right angles altogether."
+    ],
+    "hints": [
+      "The rectangles are apart, so no corner is shared. How many right angles does one rectangle have?",
+      "One rectangle has 4 right angles and there are {a} rectangles: add 4 that many times.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rectangles-only": "{w_rectangles_only} is the number of rectangles, but each one has 4 right angles: 4 × {a} = {r}.",
+      "two-per-rectangle": "{w_two_per_rectangle} counts only 2 angles of each rectangle, but all 4 are right angles: 4 × {a} = {r}."
+    }
+  },
+  "G2.angles.12": {
+    "text": "An angle of {a|degree|degrees|degrees} is folded exactly in half. How big is each half, in degrees?",
+    "solution": [
+      "The fold cuts the angle into two equal parts.",
+      "So we divide the angle by 2: {a} : 2 = {=a/2}.",
+      "So each half is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "The fold cuts the angle into two equal parts. How do you find half of a number?",
+      "Divide {a} by 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "doubled": "{w_doubled} comes from multiplying by 2, but half means dividing by 2: {a} : 2 = {r}.",
+      "whole": "{w_whole} is the whole angle, but the question asks for half of it: {a} : 2 = {r}.",
+      "minus-two": "{w_minus_two} comes from taking 2 away. To find half you divide by 2: {a} : 2 = {r}."
+    }
+  },
+  "G2.angles.13": {
+    "text": "The two arms of an angle pass through the marks {a} and {b} on the scale of a protractor. How big is the angle between them, in degrees?",
+    "solution": [
+      "The angle between the arms is the distance on the scale from one mark to the other.",
+      "The arms point to the marks {a} and {b}, so we take the smaller mark away from the bigger one: {b} − {a} = {=b-a}.",
+      "So the angle between the arms is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Both arms start at the centre of the scale and point to marks on the same scale. The angle is the gap between the marks.",
+      "Take the smaller mark, {a}, away from the bigger mark, {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "far-mark": "{w_far_mark} is the far mark, but the angle is measured from the nearer arm, not from zero: {b} − {a} = {r}.",
+      "marks-added": "{w_marks_added} is the two marks added together. The gap between marks is found by taking away: {b} − {a} = {r}.",
+      "wrong-scale": "{w_wrong_scale} appears if one arm is read on one scale of the protractor and the other arm on the other scale. Take both marks, {a} and {b}, from the same scale: {b} − {a} = {r}."
+    }
+  },
+  "G3.symmetry.01": {
+    "text": "How many lines of symmetry does a regular polygon with {a} sides have?",
+    "solution": [
+      "A regular polygon has all its sides and all its angles equal, so it can be folded in half along several lines.",
+      "If the number of sides is odd, each line of symmetry goes from a vertex to the middle of the opposite side. If it is even, half of the lines go through pairs of opposite vertices and the other half through the middles of opposite sides.",
+      "Either way, there are as many lines as sides: {a}.",
+      "So it has {r|line of symmetry|lines of symmetry|lines of symmetry}."
+    ],
+    "hints": [
+      "A line of symmetry goes through a vertex or through the middle of a side. Think how you could fold the shape in half.",
+      "Count the lines through vertices and the lines through the middles of sides: how many of each does a polygon with {a} sides have?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-axis": "{w_one_axis} is only one line, but a regular polygon with {a} sides has as many lines of symmetry as sides: {r}.",
+      "doubled": "{w_doubled} is twice too many: each line was counted two times, and the number of lines is {r}.",
+      "half-of-sides": "{w_half_of_sides} counts only the lines through vertices. There are lines through the middles of sides as well, and a polygon with {a} sides has {r} lines altogether."
+    }
+  },
+  "G3.symmetry.02": {
+    "text": "The number {a} is marked on a number line. A mirror stands at {b}. Which number is the reflection of {a}?",
+    "solution": [
+      "The distance from {a} to the mirror is {b} − {a} = {=b-a}.",
+      "The reflection is behind the mirror at the same distance, so from {b} we go another {=b-a}.",
+      "{b} + {=b-a} = {=2*b-a}.",
+      "So the reflection of {a} is the number {r}."
+    ],
+    "hints": [
+      "The mirror stands between the number and its reflection, so the reflection is on the other side of {b}.",
+      "Find the distance from {a} to {b}, then go the same distance on from {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "distance-only": "{w_distance_only} is the distance from {a} to the mirror. The reflection is the same distance again behind the mirror: {b} + {w_distance_only} = {r}.",
+      "mirror-itself": "{w_mirror_itself} is the point where the mirror stands, not the reflection of {a}: {b} + {=b-a} = {r}.",
+      "wrong-side": "{w_wrong_side} comes from going from {a} away from the mirror. The reflection is behind the mirror: {b} + {=b-a} = {r}."
+    }
+  },
+  "G3.symmetry.03": {
+    "text": "A point stands on the grid at position ({a}; {b}). The vertical grid line number {c} is a line of symmetry. At which position does the mirror point stand? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "The line of symmetry is vertical, so the point is reflected left and right and its height does not change: the second coordinate stays {b}.",
+      "From the point to the line it is {c} − {a} = {=c-a|square|squares|squares}, and the same distance on the other side of the line.",
+      "The first coordinate of the reflection is {c} + {=c-a} = {=2*c-a}.",
+      "So the mirror point stands at position {r}."
+    ],
+    "hints": [
+      "The line is vertical, so the height of the point stays the same.",
+      "The point is {=c-a|square|squares|squares} from the line. Go the same distance on the other side of the line.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same-point": "Position {w_same_point} is the point itself, but we need the mirror point.",
+      "swapped": "Position {w_swapped} has the two coordinates in the opposite order, but the first coordinate always comes first.",
+      "on-the-axis": "Position {w_on_the_axis} lies right on the line, but the mirror point is on the other side of the line at the same distance: {=c-a} squares beyond it.",
+      "horizontal-mirror": "Position {w_horizontal_mirror} comes from reflecting in a horizontal line, but this line is vertical. The height stays {b} and the first coordinate changes: {r}."
+    }
+  },
+  "G3.symmetry.04": {
+    "text": "Point A stands at position ({a}; {b}) and point O at position ({c}; {d}) is the centre of symmetry. At which position does the point stand that is the reflection of A in O? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "The centre is exactly halfway between a point and its reflection, so we work on each coordinate separately.",
+      "First: from {a} to {c} is {c} − {a} = {=c-a}, and the same again: {c} + {=c-a} = {=2*c-a}.",
+      "Second: from {b} to {d} is {d} − {b} = {=d-b}, and the same again: {d} + {=d-b} = {=2*d-b}.",
+      "So the reflected point stands at position {r}."
+    ],
+    "hints": [
+      "Reflect in the centre one coordinate at a time.",
+      "O is halfway between A and its reflection. Go from A to O in the first coordinate ({a} to {c}) and in the second ({b} to {d}), then go on the same distance again.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "centre": "Position {w_centre} is the centre itself, but we need the reflected point.",
+      "line-mirror": "Position {w_line_mirror} changes only the first coordinate, but reflecting in a centre changes both.",
+      "horizontal-mirror": "Position {w_horizontal_mirror} changes only the second coordinate, but reflecting in a centre changes both."
+    }
+  },
+  "G3.symmetry.05": {
+    "text": "Which of these letters have a vertical line of symmetry? 1) A; 2) R; 3) T; 4) B. Answer with the numbers of all the options that fit, separated by commas.",
+    "solution": [
+      "A vertical line of symmetry splits a letter into a left half and a right half that must match like a mirror image.",
+      "A and T have identical left and right halves.",
+      "R and B have different halves: R has a bump and a leg only on the right, and B has its bulges only on the right.",
+      "So the answer is options {r}: A and T."
+    ],
+    "hints": [
+      "A vertical line of symmetry splits a letter into a left half and a right half. Imagine folding each letter along that line.",
+      "Check A, R, T and B one by one: do the left and right halves match?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-the-first": "{w_only_the_first} is not complete: the left and right halves of T match too.",
+      "only-the-third": "{w_only_the_third} is not complete: the left and right halves of A match too.",
+      "with-the-fourth": "{w_with_the_fourth} has one option too many: B has no vertical line of symmetry, because its bulges are only on the right."
+    }
+  },
+  "G3.symmetry.06": {
+    "text": "Which of these letters have a horizontal line of symmetry? 1) E; 2) L; 3) B; 4) F. Answer with the numbers of all the options that fit, separated by commas.",
+    "solution": [
+      "A horizontal line of symmetry splits a letter into a top half and a bottom half that must match like a mirror image.",
+      "E and B have the same top and bottom.",
+      "L and F have different tops and bottoms: L has its foot only at the bottom, and F has its top bar and middle bar only in the top half.",
+      "So the answer is options {r}: E and B."
+    ],
+    "hints": [
+      "A horizontal line of symmetry splits a letter into a top half and a bottom half. Imagine folding each letter along that line.",
+      "Check E, L, B and F one by one: do the top and the bottom match?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-the-first": "{w_only_the_first} is not complete: the top and bottom of B match too.",
+      "only-the-third": "{w_only_the_third} is not complete: the top and bottom of E match too.",
+      "with-the-second": "{w_with_the_second} has one option too many: the top and bottom of L are different, because the foot is only at the bottom."
+    }
+  },
+  "G3.symmetry.07": {
+    "text": "Which of these letters has two lines of symmetry? 1) T; 2) E; 3) H; 4) R. Answer with the number of the option.",
+    "solution": [
+      "Two lines of symmetry means a vertical one and a horizontal one together.",
+      "T has only a vertical line, E has only a horizontal line, and R has none.",
+      "H has both: you can fold it in half from top to bottom and from left to right.",
+      "So the answer is option {r}, the letter H."
+    ],
+    "hints": [
+      "Two lines of symmetry means the letter can be folded in half in two ways: one vertical, one horizontal.",
+      "For each letter ask: does a vertical fold work? Does a horizontal fold work? Which letter passes both tests?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-vertical-axis": "Option {w_one_vertical_axis} is T. It can be folded only along a vertical line, so it has one line of symmetry, not two.",
+      "one-horizontal-axis": "Option {w_one_horizontal_axis} is E. It can be folded only along a horizontal line, so it has one line of symmetry, not two.",
+      "no-axis": "Option {w_no_axis} is R. It cannot be folded in half so that the halves match, so it has no line of symmetry."
+    }
+  },
+  "G3.symmetry.08": {
+    "text": "{c|identical rectangle|identical rectangles|identical rectangles} were cut out, with sides of {a} cm and {b} cm. How many lines of symmetry do all these rectangles have together?",
+    "solution": [
+      "A rectangle can be folded in half in two ways: along and across, through the middles of opposite sides.",
+      "It cannot be folded along a diagonal: the sides of {a} cm and {b} cm are different, and the corners would not match.",
+      "One rectangle has two lines and there are {c} rectangles: 2 × {c} = {=2*c}.",
+      "So there are {r} lines of symmetry altogether."
+    ],
+    "hints": [
+      "A rectangle can be folded in half along a line through the middles of opposite sides. A diagonal is not a line of symmetry.",
+      "One rectangle has two such lines, and there are {c} rectangles. Put these together.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "as-a-square": "{w_as_a_square} comes from counting the two diagonals of each rectangle as lines of symmetry too. A diagonal is not a line of symmetry here, because the sides of {a} cm and {b} cm are different.",
+      "one": "{w_one} comes from noticing only one line for each rectangle. There is another line through the middles of the other two sides: {c} × 2 = {r}."
+    }
+  },
+  "G3.symmetry.09": {
+    "text": "Some triangles were cut out: {a|isosceles triangle|isosceles triangles|isosceles triangles}, which have only two equal sides, {b|equilateral triangle|equilateral triangles|equilateral triangles}, and {c|scalene triangle|scalene triangles|scalene triangles}, which have sides that are all different. How many lines of symmetry do all these triangles have together?",
+    "solution": [
+      "An isosceles triangle has one line of symmetry: from the vertex between the equal sides to the middle of the third side.",
+      "An equilateral triangle has three, one from each vertex. A scalene triangle has none: the halves never match along any line.",
+      "Total: {a} × 1 + {b} × 3 + {c} × 0 = {=a+3*b}.",
+      "So all the triangles have {r|line of symmetry|lines of symmetry|lines of symmetry} together."
+    ],
+    "hints": [
+      "How many lines of symmetry does each kind of triangle have?",
+      "Multiply the number of lines by the number of triangles of each kind: {a} isosceles, {b} equilateral, {c} scalene. Then add.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "scalene-with-an-axis": "{w_scalene_with_an_axis} comes from counting one line for each scalene triangle. All its sides are different, so it has no line of symmetry.",
+      "equilateral-with-one-axis": "{w_equilateral_with_one_axis} comes from counting only one line for each equilateral triangle. It has three, one through each vertex.",
+      "one-axis-each": "{w_one_axis_each} gives one line to every triangle. But an equilateral triangle has three and a scalene one has none."
+    }
+  },
+  "G3.symmetry.10": {
+    "text": "A sheet of paper is folded in half {a|time|times|times}, each time along a new fold line. Then one hole is punched straight through it, not on a fold, and the sheet is unfolded. How many holes are there?",
+    "solution": [
+      "Each fold doubles the number of layers: we multiply by 2 once for every fold.",
+      "There are {a} folds. Before the last fold there were {=pow(2,a-1)|layer|layers|layers}, and after it {=pow(2,a-1)} × 2 = {r}.",
+      "The hole goes through every layer, so each layer gets a hole.",
+      "So the unfolded sheet has {r|hole|holes|holes}."
+    ],
+    "hints": [
+      "Each fold stacks the sheet into more layers. How many layers are there after all the folds?",
+      "After every fold there are twice as many layers: start with one layer and double it {a|time|times|times}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-hole": "{w_one_hole} is just one hole, but the punch went through all the layers.",
+      "per-fold": "{w_per_fold} is the number of folds, but the layers double after every fold.",
+      "one-fold-less": "{w_one_fold_less} is the number of layers before the last fold. The last fold doubles them once more: {=pow(2,a-1)} × 2 = {r}."
+    }
+  },
+  "G3.symmetry.11": {
+    "text": "A card with a picture is flipped over {a|time|times|times} in a row, each time along the same line. How does it lie now? 1) as in a mirror; 2) the same as at the start; 3) upside down; 4) turned a quarter turn. Answer with the number of the option.",
+    "solution": [
+      "One flip along a line gives a mirror image of the card, and a second flip along the same line puts it back where it was.",
+      "There are {a} flips: pairs of flips {=floor(a/2)}, left-over flips {=mod(a,2)}.",
+      "Pairs do not change the card. With no left-over flip it lies as at the start, and with one it lies as in a mirror: option {r} fits."
+    ],
+    "hints": [
+      "What does one flip along the line do? And two in a row?",
+      "There are {a} flips. Put them in pairs: how many pairs are there, and is one flip left over?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "upside-down": "Option {w_upside_down} does not fit: a card lies upside down after flips along two different lines, but here the line is always the same.",
+      "quarter-turn": "Option {w_quarter_turn} does not fit: flipping along a line never turns the card a quarter turn.",
+      "the-other-parity": "Option {w_the_other_parity} goes with the other number of left-over flips: there are {a} flips, {=floor(a/2)} pairs and {=mod(a,2)} left over."
+    }
+  },
+  "G3.symmetry.12": {
+    "text": "{a|square|squares|squares} and {b|rectangle|rectangles|rectangles} with sides of different lengths were cut out. How many lines of symmetry do all these shapes have together?",
+    "solution": [
+      "A square has four lines of symmetry: two through the middles of the sides and two diagonals.",
+      "A rectangle with different sides has only two lines; the diagonals do not work.",
+      "Total: {a} × 4 + {b} × 2 = {=4*a+2*b}.",
+      "So all the shapes have {r|line of symmetry|lines of symmetry|lines of symmetry} together."
+    ],
+    "hints": [
+      "How many lines of symmetry has a square, and how many has a rectangle with different sides?",
+      "Multiply: {a} squares with 4 lines each and {b} rectangles with 2 lines each. Then add.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "as-a-rectangle": "{w_as_a_rectangle} comes from counting only the lines through the middles of the sides for each square. A square has two diagonals as well.",
+      "diagonals-of-rectangles": "{w_diagonals_of_rectangles} comes from counting the diagonals of the rectangles too. The diagonal of a rectangle with different sides is not a line of symmetry."
+    }
+  },
+  "G4.coordinates.01": {
+    "text": "Points A({a}; {c}) and B({b}; {c}) are in the same row of the grid. How many squares do you have to move along the grid line from A to B?",
+    "solution": [
+      "A and B have the same second coordinate {c}, so they are in the same row.",
+      "So they differ only in the first coordinate: {b} − {a} = {=b-a}.",
+      "So from A to B you move {r|square|squares|squares}."
+    ],
+    "hints": [
+      "Both points have the same second coordinate, {c}: only the first coordinate changes.",
+      "Take the smaller first coordinate, {a}, away from the bigger one, {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "far-coordinate": "{w_far_coordinate} is the coordinate of point B, but the distance is measured from point A: {b} − {a} = {r}.",
+      "coordinates-added": "{w_coordinates_added} is the two coordinates added, but a distance is found by taking away: {b} − {a} = {r}.",
+      "counted-points": "{w_counted_points} comes from counting the points A and B themselves. We count the gaps between them: {b} − {a} = {r}."
+    }
+  },
+  "G4.coordinates.02": {
+    "text": "Points A({a}; {b}) and B({a}; {c}) are in the same column of the grid. How many squares do you have to move along the grid line from A to B?",
+    "solution": [
+      "A and B have the same first coordinate {a}, so they are in the same column.",
+      "So they differ only in the second coordinate: {c} − {b} = {=c-b}.",
+      "So from A to B you move {r|square|squares|squares}."
+    ],
+    "hints": [
+      "Both points have the same first coordinate, {a}: only the second coordinate changes.",
+      "Take the smaller second coordinate, {b}, away from the bigger one, {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "far-coordinate": "{w_far_coordinate} is the second coordinate of point B, but the distance is measured from point A: {c} − {b} = {r}.",
+      "coordinates-added": "{w_coordinates_added} is the two coordinates added, but a distance is found by taking away: {c} − {b} = {r}.",
+      "counted-points": "{w_counted_points} comes from counting the points A and B themselves. We count the gaps between them: {c} − {b} = {r}."
+    }
+  },
+  "G4.coordinates.03": {
+    "text": "Three vertices of a rectangle with sides along the grid lines stand at positions ({a}; {b}), ({c}; {b}) and ({c}; {d}). At which position does the fourth vertex stand? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "The sides of the rectangle run along the grid, so two vertices always share a row and two others share a column.",
+      "The first and second vertices are in row {b}, and the second and third are in column {c}.",
+      "The fourth vertex is in the same column as the first, so its first coordinate is {a}, and in the same row as the third, so its second coordinate is {d}.",
+      "So the fourth vertex stands at position {r}."
+    ],
+    "hints": [
+      "Sketch the three given vertices: the first and second are in row {b}, the second and third are in column {c}.",
+      "The fourth vertex is in the same column as the first, column {a}. Which row is it in, if it shares a row with the third?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-vertex": "Position {w_first_vertex} is the first vertex, which is already given. The fourth is in the same column as the first and in the same row as the third: {r}.",
+      "third-vertex": "Position {w_third_vertex} is the third vertex, which is already given. The fourth is in the same column as the first and in the same row as the third: {r}.",
+      "swapped": "Position {w_swapped} has the coordinates in the opposite order. The first coordinate, the column {a}, comes first and the second, the row {d}, after it: {r}."
+    }
+  },
+  "G4.coordinates.04": {
+    "text": "A counter stands at position ({a}; {b}). It is moved {c|square|squares|squares} to the right and {d|square|squares|squares} up. At which position is it now? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "Moving to the right changes the first coordinate: {a} + {c} = {=a+c}.",
+      "Moving up changes the second coordinate: {b} + {d} = {=b+d}.",
+      "So the counter is now at position {r}."
+    ],
+    "hints": [
+      "Moving right changes the first coordinate and moving up changes the second.",
+      "Add {c} to the first coordinate, {a}, and add {d} to the second coordinate, {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "swapped-shifts": "Position {w_swapped_shifts} puts the moves on the other coordinates: moving right changes the first coordinate and moving up changes the second.",
+      "shifts-only": "Position {w_shifts_only} leaves out the starting position: the moves have to be added to ({a}; {b}).",
+      "swapped": "Position {w_swapped} has the coordinates in the opposite order. The move to the right, {=a+c}, comes first and the move up, {=b+d}, second: {r}."
+    }
+  },
+  "G4.coordinates.05": {
+    "text": "The ends of a segment stand at positions ({a}; {c}) and ({b}; {c}). At which position is the middle of the segment? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "Both ends of the segment are in row {c}, so the middle also has second coordinate {c}.",
+      "The first coordinate of the middle is halfway between {a} and {b}: ({a} + {b}) : 2 = {=(a+b)/2}.",
+      "So the middle of the segment stands at position {r}."
+    ],
+    "hints": [
+      "Both ends are in row {c}, so the second coordinate of the middle is {c}.",
+      "The first coordinate of the middle is the average of {a} and {b}: add them and divide by 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-end": "Position {w_left_end} is the left end of the segment, not the middle.",
+      "half-the-sum": "Position {w_half_the_sum} puts the first coordinate where the second belongs, but the second coordinate stays {c}.",
+      "swapped": "Position {w_swapped} has the coordinates in the opposite order. The first coordinate of the middle is {=(a+b)/2} and the second is {c}: {r}.",
+      "not-halved": "In position {w_not_halved} the first coordinate is the sum of {a} and {b}, but it has to be halved: ({a} + {b}) : 2 = {=(a+b)/2}."
+    }
+  },
+  "G4.coordinates.06": {
+    "text": "Two opposite vertices of a rectangle with sides along the grid lines stand at positions ({a}; {b}) and ({c}; {d}). What is its area, in squares?",
+    "solution": [
+      "The sides run along the grid, so their lengths are differences of coordinates.",
+      "Horizontally {c} − {a} = {=c-a}, vertically {d} − {b} = {=d-b}.",
+      "The area of a rectangle is the product of its sides: {=c-a} × {=d-b} = {=(c-a)*(d-b)}.",
+      "So the area of the rectangle is {r|square|squares|squares}."
+    ],
+    "hints": [
+      "The sides run along the grid, so the length of each side is the difference of two coordinates.",
+      "Work out {c} − {a} horizontally and {d} − {b} vertically, then multiply them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "perimeter": "{w_perimeter} is the perimeter, but the question asks for the area.",
+      "sides-added": "{w_sides_added} comes from adding the lengths of the sides, but the area is found by multiplying.",
+      "far-vertex-product": "{w_far_vertex_product} is the product of the coordinates of the far vertex. The sides of the rectangle are differences of coordinates: {=c-a} × {=d-b} = {r}."
+    }
+  },
+  "G4.coordinates.07": {
+    "text": "A walker goes along the grid lines, only to the right and up, from position ({a}; {b}) to position ({c}; {d}). How many squares does the walker go along the shortest path?",
+    "solution": [
+      "The walker goes only right and up, with no extra steps, so the path is the sum of the moves.",
+      "Right: {c} − {a} = {=c-a}, up: {d} − {b} = {=d-b}.",
+      "Add them: {=c-a} + {=d-b} = {=c-a+d-b}.",
+      "So the shortest path is {r|square|squares|squares}."
+    ],
+    "hints": [
+      "The walker can only go right and up, so count these moves separately.",
+      "Right from {a} to {c}, and up from {b} to {d}. Add the two numbers of moves.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "longer-side": "{w_longer_side} is only the longer of the two moves, but the walker has to go both right and up.",
+      "end-coordinates": "{w_end_coordinates} is the sum of the coordinates of the goal, but the path does not start at the corner of the grid.",
+      "area": "{w_area} comes from multiplying the two moves, but the path is made of them one after the other: {=c-a} + {=d-b} = {r}."
+    }
+  },
+  "G4.coordinates.08": {
+    "text": "How many points with whole-number, non-negative coordinates ({x}; {y}) have both coordinates no bigger than {a}? Count the zeros too.",
+    "solution": [
+      "Each of the two coordinates can be any whole number from 0 to {a}, and zero counts too.",
+      "The number of values of one coordinate: {a} + 1 = {=a+1}.",
+      "Every value of {x} goes with every value of {y}, so we multiply: {=a+1} × {=a+1} = {=(a+1)*(a+1)}.",
+      "So there are {r} such points."
+    ],
+    "hints": [
+      "Zeros count too: each coordinate can be from 0 up to {a}.",
+      "Each coordinate has {a} + 1 = {=a+1} values. Every value of one goes with every value of the other: multiply.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "without-zero": "{w_without_zero} comes from leaving out the zeros: each coordinate would have {a} values. Zero is a value too, so there are {=a+1}, and the points are {=a+1} × {=a+1} = {r}.",
+      "one-axis": "{w_one_axis} is the number of values of one coordinate, but the points are pairs of values.",
+      "counts-added": "{w_counts_added} comes from adding the numbers of values of the two coordinates. Every value of one coordinate goes with every value of the other, so we multiply: {=a+1} × {=a+1} = {r}."
+    }
+  },
+  "G4.coordinates.09": {
+    "text": "A point stands at position ({a}; {b}) on the grid. The horizontal axis runs along row zero. How many squares is the point from the horizontal axis?",
+    "solution": [
+      "The distance to the horizontal axis is the height of the point, that is, its second coordinate.",
+      "The point ({a}; {b}) has second coordinate {b}.",
+      "So the point is {r|square|squares|squares} from the axis."
+    ],
+    "hints": [
+      "The horizontal axis runs along the first coordinate, and the distance to it is measured up and down.",
+      "Look at the second coordinate of the point ({a}; {b}): how many squares up is it from row zero?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-coordinate": "{w_first_coordinate} is the distance to the vertical axis, not to the horizontal one.",
+      "coordinates-added": "{w_coordinates_added} is the two coordinates added, but we need the distance to one axis.",
+      "counted-rows": "{w_counted_rows} comes from counting row zero as well. We count the steps from the axis to the point: {b}."
+    }
+  },
+  "G4.coordinates.10": {
+    "text": "A traveller set off from the origin of the grid, position (0; 0), went {a|square|squares|squares} to the right and {b|square|squares|squares} up, and then {c|square|squares|squares} to the left and {d|square|squares|squares} down. At which position did the traveller end up? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "Right and left change the first coordinate, and left goes back: {a} − {c} = {=a-c}.",
+      "Up and down change the second coordinate, and down goes back: {b} − {d} = {=b-d}.",
+      "So the traveller ended up at position {r}."
+    ],
+    "hints": [
+      "Right and left change the first coordinate, up and down change the second. Deal with each pair together.",
+      "First coordinate: {a} to the right and {c} to the left. Second: {b} up and {d} down. Going back takes away.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-added": "Position {w_all_added} adds the moves to the left and down, but they go back and are taken away.",
+      "first-part": "Position {w_first_part} leaves out the walk back.",
+      "swapped": "Position {w_swapped} has the coordinates in the opposite order. The first coordinate (right and left), {=a-c}, comes first and the second (up and down), {=b-d}, after it: {r}."
+    }
+  },
+  "G4.coordinates.11": {
+    "text": "Point A is {a|square|squares|squares} above the horizontal axis and point B is {b|square|squares|squares} above it. Compare the heights: put a sign between the height of point A and the height of point B.",
+    "solution": [
+      "Height is the number of squares above the axis, so we compare the numbers {a} and {b}.",
+      "The sign opens towards the bigger number.",
+      "We get {a} {r} {b}: the sign between the height of A and the height of B is {r}."
+    ],
+    "hints": [
+      "The higher point is the one with more squares above the axis. Compare {a} and {b}.",
+      "The sign opens towards the bigger number. Which of {a} and {b} is bigger?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reversed": "The sign {w_reversed} opens towards the smaller number, but it must open towards the bigger one. Compare {a} and {b}: the sign needed is {r}."
+    }
+  },
+  "G5.solids-nets.01": {
+    "text": "There are {a|cube|cubes|cubes} standing apart. How many edges do they have altogether?",
+    "solution": [
+      "One cube has 12 edges: 4 on top, 4 at the bottom and 4 standing upright.",
+      "The cubes stand apart, so each has its own edges: {a} × 12 = {=12*a}.",
+      "So the cubes have {r|edge|edges|edges} in all."
+    ],
+    "hints": [
+      "The cubes are not stuck together, so every cube has its own edges. How many edges does one cube have? Count the top, the bottom and the ones between.",
+      "One cube has 12 edges. Take 12 edges {a} times: 12 × {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "faces-instead": "{w_faces_instead} is {a} × 6, the number of faces. The question is about edges, and every cube has 12 of them: {a} × 12 = {r}.",
+      "cubes-only": "{w_cubes_only} is only the number of cubes. Each cube has 12 edges, so {a} × 12 = {r}.",
+      "visible-edges": "{w_visible_edges} counts the edges you can see: {=9} of the 12 on one cube. The other {=3} are hidden, but they are there: {a} × 12 = {r}."
+    }
+  },
+  "G5.solids-nets.02": {
+    "text": "There are {a|box|boxes|boxes} shaped like a cuboid standing apart. How many faces do they have altogether?",
+    "solution": [
+      "A cuboid has 6 faces: top, bottom and four sides.",
+      "The boxes stand apart, so each has its own faces: {a} × 6 = {=6*a}.",
+      "So the boxes have {r|face|faces|faces} in all."
+    ],
+    "hints": [
+      "The boxes do not touch, so count the faces of each box on its own. How many faces does one box have? Count the top, the bottom and the sides.",
+      "One box has 6 faces. Take 6 faces {a} times: 6 × {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "edges-instead": "{w_edges_instead} is {a} × 12, the number of edges. The question is about faces, and each box has 6: {a} × 6 = {r}.",
+      "boxes-only": "{w_boxes_only} is only the number of boxes. Each box has 6 faces, so {a} × 6 = {r}.",
+      "visible-faces": "{w_visible_faces} counts the faces you can see: {=3} of the 6 on one box. The other three are hidden, but they are there: {a} × 6 = {r}."
+    }
+  },
+  "G5.solids-nets.03": {
+    "text": "The base of a pyramid is a polygon with {a|side|sides|sides}. How many faces does the pyramid have, counting the base?",
+    "solution": [
+      "Every side of the base has one sloping face standing on it, so there are {a} sloping faces.",
+      "The base is a face too: {a} + 1 = {=a+1}.",
+      "So the pyramid has {r|face|faces|faces}."
+    ],
+    "hints": [
+      "A pyramid has two kinds of faces: the sloping triangles and the base. How many sides does the base have? There are as many sloping faces.",
+      "The base has {a|side|sides|sides}, so there are {a} sloping faces. Now add the base.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "base-forgotten": "{w_base_forgotten} counts only the sloping faces. The base is a face too: {a} + 1 = {r}.",
+      "edges": "{w_edges} is {a} × 2, the number of edges. The question is about faces: {a} sloping ones and the base, so {r}.",
+      "two-bases": "{w_two_bases} counts two bases, as on a prism. A pyramid has one base and a point on top: {a} + 1 = {r}."
+    }
+  },
+  "G5.solids-nets.04": {
+    "text": "The base of a pyramid is a polygon with {a|side|sides|sides}. How many edges does the pyramid have?",
+    "solution": [
+      "The edges of the base run along its sides, so there are {a} of them.",
+      "From each corner of the base an edge climbs to the top, so there are {a} sloping edges too.",
+      "Add them: {a} + {a} = {=2*a}.",
+      "So the pyramid has {r|edge|edges|edges}."
+    ],
+    "hints": [
+      "A pyramid has two kinds of edges: the edges of the base and the edges that climb to the top. First count the ones on the base.",
+      "The base has {a|side|sides|sides}, so {a} edges lie at the bottom. One more edge climbs up from every corner of the base: how many is that?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "base-only": "{w_base_only} counts only the edges of the base. Another {a} edges climb to the top: {a} + {a} = {r}.",
+      "faces": "{w_faces} is the number of faces: {a} sloping ones and the base. The question is about edges: {a} at the bottom and {a} climbing up, {r} in all.",
+      "triangle-sides": "{w_triangle_sides} is {a} × {=3}: each sloping face is a triangle with three sides. But neighbouring faces share their sloping edges, so those edges were counted twice. The pyramid has {a} + {a} = {r} edges."
+    }
+  },
+  "G5.solids-nets.05": {
+    "text": "The base of a prism is a polygon with {a|side|sides|sides}. How many vertices does the prism have?",
+    "solution": [
+      "A prism has two equal bases, one at the bottom and one on top, and all its vertices lie in them.",
+      "Each base has {a|vertex|vertices|vertices}.",
+      "Add them: {a} + {a} = {=2*a}.",
+      "So the prism has {r|vertex|vertices|vertices}."
+    ],
+    "hints": [
+      "Vertices are the corners of the prism. They lie only in the bases: the bottom one and the top one.",
+      "The base has {a|side|sides|sides}, so it has {a} corners. The top base is the same polygon: how many corners do the two bases have together?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-base": "{w_one_base} counts the vertices of one base only. The top base has {a} more: {a} + {a} = {r}.",
+      "edges": "{w_edges} is {a} × 3, the number of edges. The question is about vertices: {a} + {a} = {r} in the two bases.",
+      "faces": "{w_faces} is the number of faces: {a} sides and two bases. The question is about vertices: {a} at the bottom and {a} on top, {r} in all."
+    }
+  },
+  "G5.solids-nets.06": {
+    "text": "The base of a prism is a polygon with {a|side|sides|sides}. How many side faces does the prism have, that is, faces that are not bases?",
+    "solution": [
+      "Each side face is a rectangle standing on one side of the base.",
+      "The base has {a|side|sides|sides}, so there are {a} side faces too.",
+      "The two bases, bottom and top, are not counted as side faces.",
+      "So the prism has {r} side faces."
+    ],
+    "hints": [
+      "The side faces are the walls of the prism, not its top and bottom. Each wall stands on one side of the base.",
+      "The base has {a|side|sides|sides}. How many walls fit around it?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-faces": "{w_all_faces} is {a} + 2: the two bases were added to the side faces. The question does not count the bases, so the prism has {r} side faces.",
+      "edges": "{w_edges} is {a} × 3, the number of edges. The question is about side faces: one for each side of the base, {r}.",
+      "vertices": "{w_vertices} is {a} × 2, the number of vertices. There is one side face for each side of the base: {r}."
+    }
+  },
+  "G5.solids-nets.07": {
+    "text": "On a die, the dots on opposite faces add up to 7. One face has {a|dot|dots|dots}. How many dots are on the opposite face?",
+    "solution": [
+      "On a die, two opposite faces always have 7 dots together.",
+      "One face has {a|dot|dots|dots}, so the opposite face has 7 − {a} = {=7-a}.",
+      "So the opposite face has {r|dot|dots|dots}."
+    ],
+    "hints": [
+      "Opposite faces are the ones that do not touch: one on top, one underneath. Together they always have 7 dots.",
+      "How many dots must you add to {a} to make 7? Or take {a} away from 7.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same-face": "{w_same_face} is the face you already know. The question is about the opposite face: 7 − {a} = {r}.",
+      "from-six": "{w_from_six} comes from taking {a} away from 6. Opposite faces on a die add up to 7: 7 − {a} = {r}.",
+      "next-number": "{w_next_number} is the next number after {a}. But the opposite face is not the next number; it makes the pair add up to 7: 7 − {a} = {r}."
+    }
+  },
+  "G5.solids-nets.08": {
+    "text": "A die has 21 dots on its six faces together. Three faces can be seen, with {a}, {b} and {c|dot|dots|dots}. How many dots are there on the three hidden faces together?",
+    "solution": [
+      "First find how many dots you can see: {a} + {b} + {c} = {=a+b+c}.",
+      "The whole die has 21 dots, and the hidden faces carry the rest: 21 − {=a+b+c} = {=21-a-b-c}.",
+      "So the three hidden faces have {r|dot|dots|dots} together."
+    ],
+    "hints": [
+      "The whole die has 21 dots. First find how many dots are on the three faces you can see.",
+      "The visible faces have {a}, {b} and {c} dots. Add them, then take the sum away from 21.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "visible-sum": "{w_visible_sum} is the number of dots you can see, but the question is about the hidden faces. They have what is left of 21: 21 − {w_visible_sum} = {r}.",
+      "from-seven": "{w_from_seven} comes from taking the visible dots away from {=18}, as if opposite faces had {=6} dots together. A die has 21 dots in all (three pairs of 7): 21 − {=a+b+c} = {r}."
+    }
+  },
+  "G5.solids-nets.09": {
+    "text": "A cube {a} × {a} × {a} made of equal small cubes is painted on the outside. How many small cubes have exactly one painted face?",
+    "solution": [
+      "A small cube has exactly one painted face when it is in the middle of a face of the big cube, not on an edge.",
+      "In a row of {a} cubes the two end ones are on edges, so {a} − 2 = {=a-2} are left in the middle.",
+      "Cubes in the middle of one face: {=a-2} × {=a-2} = {=(a-2)*(a-2)}. The big cube has 6 faces: 6 × {=(a-2)*(a-2)} = {=6*(a-2)*(a-2)}.",
+      "So {r|cube has|cubes have|cubes have} exactly one painted face."
+    ],
+    "hints": [
+      "A small cube has exactly one painted face if it is in the middle of a face of the big cube, not on an edge or in a corner. Start with one face.",
+      "On one face a row has {a} cubes, and the two at the ends sit on edges. How many cubes are in the middle of a row, and how many on the whole face?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-surface-cubes": "{w_all_surface_cubes} is 6 × {a} × {a}, all the little squares on the faces. But the cubes along the edges of a face have two or three painted faces, so they must be left out: {r} have exactly one.",
+      "one-face-only": "{w_one_face_only} is the number of such cubes on one face, and a cube has 6 faces: 6 × {w_one_face_only} = {r}.",
+      "edge-cubes": "{w_edge_cubes} counts the cubes on the edges (not in the corners), which have two painted faces. We need the ones with one painted face, in the middle of the faces: 6 × {=(a-2)*(a-2)} = {r}."
+    }
+  },
+  "G5.solids-nets.10": {
+    "text": "All the edges of a cube with edge {a} cm are made of wire. How many centimetres of wire are needed?",
+    "solution": [
+      "A cube has 12 edges, all the same length.",
+      "Each edge needs {a} cm of wire: 12 × {a} = {=12*a}.",
+      "So {r} cm of wire is needed."
+    ],
+    "hints": [
+      "The wire is for all the edges, not the faces. The edges of a cube are its sticks: at the top, at the bottom and between them.",
+      "A cube has 12 edges, each {a} cm long. Multiply 12 by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "face-edges": "{w_face_edges} is the wire for the edges of one face only (4 edges). A cube has 12: 12 × {a} = {r}.",
+      "faces": "{w_faces} is 6 × {a}: a cube has 6 faces but 12 edges. The wire is for the edges: 12 × {a} = {r}.",
+      "vertices": "{w_vertices} is {=8} × {a}: a cube has 8 vertices, not 8 edges. It has 12 edges, so 12 × {a} = {r}."
+    }
+  },
+  "G5.solids-nets.11": {
+    "text": "The net of a cube with edge {a} cm is cut out of paper. What is the area of the net in square centimetres?",
+    "solution": [
+      "The net of a cube is made of 6 equal squares, one for each face.",
+      "The area of one square is {a} × {a} = {=a*a} cm².",
+      "Multiply by the number of squares: 6 × {=a*a} = {=6*a*a}.",
+      "So the net has an area of {r} cm²."
+    ],
+    "hints": [
+      "The net is all six faces of the cube laid out flat on paper. Its area is the area of the six faces together.",
+      "One face is a square with side {a} cm. Find its area ({a} × {a}) and take six such squares.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-face": "{w_one_face} is the area of one face. The net has six of them: 6 × {w_one_face} = {r}.",
+      "edge-times-six": "{w_edge_times_six} is 6 × {a}: the edge was only multiplied by 6. The area of a square is edge times edge: {a} × {a} = {=a*a}, and there are six such squares: {r}."
+    }
+  },
+  "G5.solids-nets.12": {
+    "text": "Cubes are put on a table in one row, with their whole faces pressed together. There are {a|cube|cubes|cubes} in all. How many faces are not pressed against another cube? Count the faces that stand on the table too.",
+    "solution": [
+      "Every cube has 4 faces that do not touch a neighbour: top, bottom, front and back.",
+      "{a} × 4 = {=4*a}. There is one more free face at each end of the row: {=4*a} + 2 = {=4*a+2}.",
+      "So the number of free faces is {r}."
+    ],
+    "hints": [
+      "A face does not count when another cube is pressed against it. Look at a cube in the middle of the row: how many free faces does it have? Then think about the two cubes at the ends.",
+      "Every cube has 4 free faces: top, bottom, front and back. Take them for {a} cubes, then do not forget the two ends of the row.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-faces": "{w_all_faces} is {a} × 6, all the faces of all the cubes. But where cubes touch, the faces are covered: {a} × 4 + 2 = {r}.",
+      "four-per-cube": "{w_four_per_cube} is {a} × 4, but the two ends of the row are free too: {=4*a} + 2 = {r}.",
+      "no-table": "{w_no_table} leaves out the bottom faces, the ones standing on the table. The question counts them: {a} × 4 + 2 = {r}."
+    }
+  },
+  "G5.solids-nets.13": {
+    "text": "Which of these things is shaped like a ball? 1) a football; 2) a little cube; 3) a box; 4) a pencil. Answer with the number of the option.",
+    "solution": [
+      "A ball is round on every side. It has no flat faces and no edges.",
+      "A cube and a box have flat faces, and a pencil is long and thin.",
+      "So option {r}, the football, is the one."
+    ],
+    "hints": [
+      "Think about which thing is round on every side, with no flat faces and no corners.",
+      "The cube, the box and the pencil all have flat faces or edges. Which thing does not?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cube": "Option {w_cube} is a cube. It has flat faces and sharp edges, but a ball is round on every side.",
+      "box": "Option {w_box} is a box. It has flat faces and corners; a ball has none.",
+      "pencil": "Option {w_pencil} is a pencil. It is long and thin, but a ball looks the same from every side."
+    }
+  },
+  "G6.views.01": {
+    "text": "Three stacks of cubes stand in a row, {a}, {b} and {c|cube|cubes|cubes} high. How many squares can you see when you look at the row from the front?",
+    "solution": [
+      "From the front you see all three stacks in the row, each one in its full height.",
+      "The heights are {a}, {b} and {c}, so we add them: {a} + {b} + {c} = {=a+b+c}.",
+      "So you see {r|square|squares|squares} from the front."
+    ],
+    "hints": [
+      "From the front you see all three stacks, standing in a row facing you. Each cube of a stack shows one square.",
+      "The stacks have heights {a}, {b} and {c}. How many squares do the three stacks give together?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "highest-only": "{w_highest_only} is the height of the tallest stack only, but you see every stack in full: {a} + {b} + {c} = {r}.",
+      "columns": "{w_columns} is the number of stacks, but the question is about squares, one for each cube: {a} + {b} + {c} = {r}.",
+      "highest-times-three": "{w_highest_times_three} is 3 × {=max(a,b,c)}, as if every stack were as tall as the tallest. But the heights are different: {a} + {b} + {c} = {r}."
+    }
+  },
+  "G6.views.02": {
+    "text": "Three stacks of cubes stand in a row, {a}, {b} and {c|cube|cubes|cubes} high. How many squares are in the tallest stack you see when you look at the row from the side?",
+    "solution": [
+      "From the side the stacks stand one behind the other, and the low ones are hidden by the tall ones.",
+      "You see as many squares as the tallest stack has: of {a}, {b} and {c} the greatest is {r}.",
+      "So the tallest stack you see has {r|square|squares|squares}."
+    ],
+    "hints": [
+      "From the side the stacks stand one behind the other, and the low ones are hidden by the tall ones. What can you still see above them?",
+      "Find the greatest of the heights {a}, {b} and {c}: that is how many squares you see in the tallest stack.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is all the cubes of all the stacks together. From the side the stacks hide each other, and you see only the height of the tallest one.",
+      "lowest": "{w_lowest} is the lowest stack, which is hidden behind taller ones. From the side you see the tallest.",
+      "first-column": "{w_first_column} is the height of the first stack. But from the side you see the tallest of the three, and that is not the first one."
+    }
+  },
+  "G6.views.03": {
+    "text": "A building of cubes covers a rectangle on the table: {a|cell|cells|cells} long and {b|cell|cells|cells} wide. How many squares can you see when you look at the building from above?",
+    "solution": [
+      "From above you see one square for every cell of the table that the building covers.",
+      "The rectangle is {a} cells long and {b} cells wide: {a} × {b} = {=a*b}.",
+      "So you see {r|square|squares|squares} from above."
+    ],
+    "hints": [
+      "From above you see one square for each table cell the building covers. The height does not matter.",
+      "The rectangle is {a} cells long and {b} cells wide. How many cells does it have in all?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sides-added": "{w_sides_added} is {a} + {b}. You see all the cells of the rectangle, and you find them by multiplying: {a} × {b} = {r}.",
+      "perimeter": "{w_perimeter} counts the cells along the edge of the rectangle, but from above you see all the cells: {a} × {b} = {r}.",
+      "front-row": "{w_front_row} is only one side of the building, as seen from the front. From above you see all the cells, not just the length: {a} × {b} = {r}."
+    }
+  },
+  "G6.views.04": {
+    "text": "A cuboid {a} × {b} × {c} is built from cubes. You can see it from three sides: the front, the right and the top. How many cubes cannot be seen from any of these sides?",
+    "solution": [
+      "You can see the cubes on the front, right and top faces of the cuboid. If you take away these three layers, a cuboid of hidden cubes is left.",
+      "Each of the three sizes becomes one cube shorter: {a} − 1 = {=a-1}, {b} − 1 = {=b-1}, {c} − 1 = {=c-1}.",
+      "Hidden cubes: {=a-1} × {=b-1} × {=c-1} = {r}.",
+      "So {r|cube is|cubes are|cubes are} hidden."
+    ],
+    "hints": [
+      "You can see three sides of the cuboid: front, right and top. The hidden cubes are behind them, inside.",
+      "In your mind take away the layers you can see: each of the sizes {a}, {b} and {c} becomes 1 less. What cuboid is left?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "visible-cubes": "{w_visible_cubes} is the number of cubes you can see, but the question is about the hidden ones: {=a-1} × {=b-1} × {=c-1} = {r}.",
+      "all-cubes": "{w_all_cubes} is all the cubes of the cuboid, but some of them can be seen from the three sides."
+    }
+  },
+  "G6.views.05": {
+    "text": "A building of {a} cubes looks like {b|square|squares|squares} from above. How many cubes lie on top of other cubes?",
+    "solution": [
+      "From above you see one square for each stack, so there are {b} stacks.",
+      "In every stack the bottom cube stands on the table and is not on top of anything, so there are {b} such cubes.",
+      "All the others lie on top of other cubes: {a} − {b} = {=a-b}.",
+      "So {r|cube lies|cubes lie|cubes lie} on top of other cubes."
+    ],
+    "hints": [
+      "From above you see only the top cube of each stack: one square per stack. How many stacks are there?",
+      "In each stack the bottom cube stands on the table. There are as many of them as stacks: {b}. The rest of the {a} cubes lie on top of others.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "visible": "{w_visible} is the number of stacks, that is, the cubes standing on the table. The others lie on top: {a} − {b} = {r}.",
+      "all": "{w_all} is all the cubes of the building, but {b} of them stand on the table. The cubes on top of others are {a} − {b} = {r}."
+    }
+  },
+  "G6.views.06": {
+    "text": "Three stacks stand in a row, {a}, {b} and {c|cube|cubes|cubes} high. How many of them are at least {d|cube|cubes|cubes} high?",
+    "solution": [
+      "A stack counts if its height is at least {d}.",
+      "Out of the heights {a}, {b} and {c} we pick those that are {d} or more.",
+      "So the number of such stacks is {r}."
+    ],
+    "hints": [
+      "Look at the stacks one at a time and compare each height with {d}. ‘At least’ means the same or more.",
+      "The heights are {a}, {b} and {c}. For each one ask: is it {d} or more? Count the times the answer is yes.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} is all the stacks, but not every stack reaches {d}. Only the ones that are not lower than {d} count.",
+      "exact": "{w_exact} counts the stacks that are exactly {d} high. But ‘at least’ means taller ones count too: {r}.",
+      "taller-only": "{w_taller_only} counts the stacks taller than {d}. ‘At least’ also includes stacks exactly {d} high: {r}."
+    }
+  },
+  "G6.views.07": {
+    "text": "You are standing facing north. In which direction is your right hand? 1) to the west; 2) to the east; 3) to the south; 4) to the north. Answer with the number of the option.",
+    "solution": [
+      "When you face north, west is on your left, east is on your right and south is behind you.",
+      "So your right hand points to the east, option {r}."
+    ],
+    "hints": [
+      "On a map north is at the top and east on the right. Face north and see where your right hand points.",
+      "North is in front of you. Stretch your right hand out to the side: does it point to where the sun rises or to where it sets?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "west": "Option {w_west} is the west. It is on your left when you face north. Your right hand points east.",
+      "south": "Option {w_south} is the south. It is behind you, and your right hand points to the side.",
+      "north": "Option {w_north} is the north. It is in front of you, and your right hand points to the side."
+    }
+  },
+  "G6.views.08": {
+    "text": "What does a ball look like when you look at it from above, from the front and from the side? 1) a circle from above and a square from the side; 2) a square from every side; 3) a circle from every side; 4) a square from above and a circle from the front. Answer with the number of the option.",
+    "solution": [
+      "A ball is round on every side, so it looks the same from any side.",
+      "From above, from the front and from the side you see a circle.",
+      "So option {r} fits: a circle from every side."
+    ],
+    "hints": [
+      "A ball is round on every side. What shape do you see when you look from above? And from the front?",
+      "Walk round the ball: does the shape you see change, or does it stay the same?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "circle-and-square": "Option {w_circle_and_square}: from above a ball is a circle, but from the side it is a circle too, not a square.",
+      "square-everywhere": "Option {w_square_everywhere}: a cube can look like a square, but a ball is round, so from any side you see a circle.",
+      "square-and-circle": "Option {w_square_and_circle}: from above a ball is not a square but a circle. It looks the same from every side."
+    }
+  },
+  "G6.views.09": {
+    "text": "What does a box shaped like a cuboid look like from above, when it lies on the table on its biggest face? 1) like a circle; 2) like a triangle; 3) like a pentagon; 4) like a rectangle. Answer with the number of the option.",
+    "solution": [
+      "The box lies on its biggest face, so from above you see the top face, which is the same size.",
+      "A face of a cuboid is a rectangle.",
+      "So from above the box looks like a rectangle, option {r}."
+    ],
+    "hints": [
+      "The box lies on its biggest face. Which face do you see from above?",
+      "What flat shapes do the faces of a cuboid have? Compare with the options.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "circle": "Option {w_circle}: the box has no round faces; from above you see a rectangle.",
+      "triangle": "Option {w_triangle}: a cuboid has no triangular faces, all its faces are rectangles.",
+      "pentagon": "Option {w_pentagon}: a cuboid has no pentagonal faces; from above you see a rectangle."
+    }
+  },
+  "G6.views.10": {
+    "text": "A cuboid {a} × {b} × {c} was built from cubes, and then {d|cube was|cubes were|cubes were} taken away. How many cubes are left?",
+    "solution": [
+      "The whole cuboid has {a} × {b} × {c} = {=a*b*c} cubes.",
+      "{d|cube was|cubes were|cubes were} taken away, so we subtract: {=a*b*c} − {d} = {=a*b*c-d}.",
+      "So {r|cube is|cubes are|cubes are} left."
+    ],
+    "hints": [
+      "First find how many cubes the whole cuboid has: it is made of equal layers.",
+      "The cuboid has {a} × {b} × {c} cubes. Take away the {d|cube|cubes|cubes} that were removed.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "removed": "{w_removed} is the number of cubes that were taken away, but the question is about the ones left: {=a*b*c} − {d} = {r}.",
+      "sum": "{w_sum} is {a} + {b} + {c} − {d}. The number of cubes in a cuboid is found by multiplying: {a} × {b} × {c} = {=a*b*c}, and then you subtract the removed ones: {r}.",
+      "one-layer": "{w_one_layer} is {a} × {b} − {d}: only one layer was used instead of all {c} layers. The whole cuboid has {=a*b*c} cubes, and after {d} were taken away, {r} are left."
+    }
+  },
+  "G6.blocks.01": {
+    "text": "On the plan of a building made of cubes the heights of the stacks are written in the cells: in the first row {a} and {b}, in the second row {c} and {d}. How many cubes does the building have?",
+    "solution": [
+      "The number in a cell of the plan is the height of the stack, that is, how many cubes it has.",
+      "Add all four numbers: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "So the building has {r|cube|cubes|cubes}."
+    ],
+    "hints": [
+      "The number in each cell of the plan tells how many cubes are in that stack. You need the cubes of all four stacks together.",
+      "Add the four numbers: {a}, {b}, {c} and {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cells": "{w_cells} is the number of cells on the plan, but each cell holds a stack of several cubes. The cubes are {a} + {b} + {c} + {d} = {r}.",
+      "highest-times-four": "{w_highest_times_four} is what you get if all four stacks are as tall as the tallest. But the heights are different: {a} + {b} + {c} + {d} = {r}.",
+      "first-row": "{w_first_row} is only the first row of the plan. The second row has stacks too: {a} + {b} + {c} + {d} = {r}."
+    }
+  },
+  "G6.blocks.02": {
+    "text": "On the plan of a building made of cubes the heights of the stacks are written in the cells: in the first row {a} and {b}, in the second row {c} and {d}. How many cubes are in the tallest stack?",
+    "solution": [
+      "The number in a cell of the plan is the height of the stack, so the tallest stack is where the number is the greatest.",
+      "Of the numbers {a}, {b}, {c} and {d} the greatest is {r}.",
+      "So the tallest stack has {r|cube|cubes|cubes}."
+    ],
+    "hints": [
+      "The number in a cell of the plan is the height of the stack. The tallest stack is where the number is the greatest.",
+      "Compare the numbers {a}, {b}, {c} and {d}: which one is the greatest?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is all the cubes of the building together, but the question is about the one tallest stack.",
+      "lowest": "{w_lowest} is the lowest stack, but we need the tallest.",
+      "first-cell": "{w_first_cell} is the height of the stack in the first cell of the plan, but it is not the tallest."
+    }
+  },
+  "G6.blocks.03": {
+    "text": "Three stacks stand in a row, {a}, {b} and {c|cube|cubes|cubes} high. How many cubes must be added so that all the stacks become {d|cube|cubes|cubes} high?",
+    "solution": [
+      "If all three stacks are built up to height {d}, we need 3 × {d} = {=3*d} cubes.",
+      "Now there are {a} + {b} + {c} = {=a+b+c}.",
+      "We must add the difference: {=3*d} − {=a+b+c} = {=3*d-a-b-c}.",
+      "So {r|cube|cubes|cubes} must be added."
+    ],
+    "hints": [
+      "Each stack is missing some cubes up to height {d}. Find how many the first stack is missing: {d} − {a}.",
+      "Find how many each of the three stacks ({a}, {b} and {c}) is missing, and add.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-column": "{w_one_column} is how many the first stack alone is missing, but cubes must be added to all three: {r}.",
+      "built": "{w_built} is how many cubes already stand. We must add enough to bring each stack up to {d}: 3 × {d} − {=a+b+c} = {r}.",
+      "target-only": "{w_target_only} is how many cubes the three stacks will have after building. The ones already standing need not be added: {=3*d} − {=a+b+c} = {r}."
+    }
+  },
+  "G6.blocks.04": {
+    "text": "A stack of {a|cube|cubes|cubes} with edge 1 cm stands on a table. How many square centimetres of its surface can you see, not counting the part that stands on the table?",
+    "solution": [
+      "One side of the stack is {a|square|squares|squares} one above the other, one for each cube.",
+      "There are four sides: 4 × {a} = {=4*a}.",
+      "The top adds one more square: {=4*a} + 1 = {=4*a+1}.",
+      "So the surface is {r} cm²."
+    ],
+    "hints": [
+      "A stack has four sides and a top. The bottom stands on the table, so we do not count it.",
+      "One side is {a|square|squares|squares} one above the other. There are four sides, and the top as well.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "with-bottom": "{w_with_bottom} counts the bottom too, which stands on the table. It is not counted: 4 × {a} + 1 = {r}.",
+      "sides-only": "{w_sides_only} is the sides only. The top can be seen too: 4 × {a} + 1 = {r}.",
+      "five-per-cube": "{w_five_per_cube} is {=5} × {a}: five faces were counted for every cube. But only four side faces of each cube show, and the top shows only on the top cube: 4 × {a} + 1 = {r}."
+    }
+  },
+  "G6.blocks.05": {
+    "text": "A staircase is made of stacks of height 1, 2, 3 and so on up to {a|cube|cubes|cubes}. How many cubes are there in three such staircases?",
+    "solution": [
+      "Two equal staircases put together facing each other make a rectangle {a} × ({a} + 1) = {=a*(a+1)} cubes.",
+      "One staircase is half of it: {=a*(a+1)} : 2 = {=a*(a+1)/2}.",
+      "There are three staircases: 3 × {=a*(a+1)/2} = {r}.",
+      "So three staircases have {r|cube|cubes|cubes}."
+    ],
+    "hints": [
+      "One staircase is stacks of height 1, 2, 3 and so on up to {a}. First count the cubes in one staircase.",
+      "Two such staircases put together facing each other make a rectangle {a} × {=a+1}. One staircase is half of it. Then multiply by 3.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-staircase": "{w_one_staircase} is the number of cubes in one staircase, but there are three staircases: 3 × {w_one_staircase} = {r}.",
+      "by-the-top": "{w_by_the_top} is 3 × {a}: only the height of the top stack was used. The staircase has stacks of 1, 2, 3 and so on up to {a}, and all their cubes must be added.",
+      "not-halved": "{w_not_halved} is three rectangles {a} × {=a+1}, and each holds two staircases. A staircase is half of a rectangle, so 3 × {=a*(a+1)} : 2 = {r}."
+    }
+  },
+  "G6.blocks.06": {
+    "text": "One corner cube was taken away from a cube {a} × {a} × {a} made of cubes with edge 1 cm. What is the whole surface of the solid now, in square centimetres?",
+    "solution": [
+      "The whole cube has a surface of 6 × {a} × {a} = {=6*a*a} cm².",
+      "The corner cube had three faces on the outside, and they disappeared when it was taken away.",
+      "But three neighbouring cubes now show one face each that used to be hidden inside.",
+      "We lost three faces and gained three, so the surface is the same: {r} cm²."
+    ],
+    "hints": [
+      "First find the surface of the whole cube: six faces of {a} × {a}.",
+      "When the corner cube is taken away, three of its faces disappear, and three new ones appear on the neighbours. Compare how many were lost and how many were gained.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "minus-three": "{w_minus_three} is {=6*a*a} − 3: only the three lost faces were counted. But three more faces of the neighbours were opened, so the surface did not change: {r}.",
+      "plus-three": "{w_plus_three} is {=6*a*a} + 3: only the newly opened faces were counted. But the three faces of the removed cube are gone, so the surface did not change: {r}.",
+      "volume-less-one": "{w_volume_less_one} is {a} × {a} × {a} − 1, the number of cubes left, but the question is about the surface in square centimetres: 6 × {a} × {a} = {r}."
+    }
+  },
+  "G6.blocks.07": {
+    "text": "{a|stack|stacks|stacks} of {b|cube|cubes|cubes} each were built. Then the top cube was taken off {c|stack|stacks|stacks}. How many cubes are left?",
+    "solution": [
+      "At first there were {a} × {b} = {=a*b} cubes.",
+      "One cube was taken off each of {c|stack|stacks|stacks}, so {c|cube is|cubes are|cubes are} gone in all.",
+      "Left: {=a*b} − {c} = {r}.",
+      "So {r|cube is|cubes are|cubes are} left."
+    ],
+    "hints": [
+      "First find how many cubes there were before anything was taken away.",
+      "There were {a} stacks with {b} cubes in each. From {c|stack|stacks|stacks} one cube was taken off: subtract.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "removed-all-tops": "{w_removed_all_tops} is what you get if the top cube is taken off all {a} stacks. But it was taken off only {c|stack|stacks|stacks}: {=a*b} − {c} = {r}.",
+      "sum": "{w_sum} was found by adding. The cubes in {a} stacks of {b} are found by multiplying: {a} × {b} = {=a*b}, and then you subtract {c}: {r}.",
+      "whole-columns": "{w_whole_columns} is what you get if {c|whole stack is|whole stacks are|whole stacks are} taken away. But only the top cube of each of those stacks was taken: {=a*b} − {c} = {r}."
+    }
+  },
+  "G6.blocks.08": {
+    "text": "A rectangle of cubes {a} × {b} was built {c|layer|layers|layers} high. How many cubes lie above the first layer?",
+    "solution": [
+      "One layer has {a} × {b} = {=a*b} cubes.",
+      "The first layer is not counted, so the number of layers left is {c} − 1 = {=c-1}.",
+      "Above the first layer: {=a*b} × {=c-1} = {r}.",
+      "So {r|cube lies|cubes lie|cubes lie} above the first layer."
+    ],
+    "hints": [
+      "Every layer has the same number of cubes. The first layer is not counted in the question.",
+      "One layer has {a} × {b} cubes. The number of layers above the first is one less than all of them: {c} − 1.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-layer": "{w_one_layer} is the cubes of one layer, but above the first one there are {=c-1} such layers: {=a*b} × {=c-1} = {r}.",
+      "all-layers": "{w_all_layers} is the cubes of all {c} layers, the first one included. The first layer is not counted: {=a*b} × {=c-1} = {r}."
+    }
+  },
+  "G6.blocks.09": {
+    "text": "On the plan there are {a|row|rows|rows} and {b|column|columns|columns}, and in every cell stands a stack {c|cube|cubes|cubes} high. How many cubes does the building have?",
+    "solution": [
+      "The plan has {a} × {b} = {=a*b} cells, and every cell has one stack.",
+      "Each stack has {c|cube|cubes|cubes}.",
+      "In all: {=a*b} × {c} = {r}.",
+      "So the building has {r|cube|cubes|cubes}."
+    ],
+    "hints": [
+      "First find how many cells the plan has. Every cell has a stack of the same height.",
+      "There are {a} × {b} cells. Each gives {c|cube|cubes|cubes}: multiply.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cells": "{w_cells} is the number of cells, that is, of stacks. Each has {c|cube|cubes|cubes}, so {=a*b} × {c} = {r}.",
+      "sum": "{w_sum} was found by adding {a} + {b} + {c}. Cubes are counted by multiplying: {a} × {b} × {c} = {r}.",
+      "rows-plus-columns": "{w_rows_plus_columns} is ({a} + {b}) × {c}: the rows and columns were added. The number of cells is not {a} + {b} but {a} × {b} = {=a*b}, so the cubes are {=a*b} × {c} = {r}."
+    }
+  },
+  "G6.blocks.10": {
+    "text": "A pyramid of cubes is built in layers: the bottom layer is {a} × {a}, the layer above is one cube shorter on each side, and so on up to a single cube. How many cubes does the pyramid have in all?",
+    "solution": [
+      "The layers are squares with sides 1, 2, 3 and so on up to {a}. Their cubes in order: 1, 4, 9, {=16}, {=25}, {=36}, {=49}, {=64}. We need the first {a} of them.",
+      "Adding them one after another gives the totals 1, {=5}, {=14}, {=30}, {=55}, {=91}, {=140}, {=204}.",
+      "The pyramid has {a|layer|layers|layers}, so take total number {a} in the list: {r|cube|cubes|cubes}."
+    ],
+    "hints": [
+      "The layers are squares: 1 × 1 on top, then 2 × 2, and so on down to {a} × {a}. How many cubes are in each layer?",
+      "Count the cubes of the layers one after another: 1, 4, 9, … Add them in order until you reach layer number {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "bottom-layer": "{w_bottom_layer} is only the bottom layer {a} × {a}. There are more layers on top of it, so in all there are {r}.",
+      "sides-added": "{w_sides_added} is 1 + 2 + … + {a}: the sides of the layers were added. But each layer has as many cubes as a square: side times side.",
+      "one-layer-short": "{w_one_layer_short} is the total for one layer fewer. The bottom layer {a} × {a} counts too: take total number {a}, which gives {r}."
+    }
+  },
+  "G7.plan.01": {
+    "text": "You are walking north and turn right by {a|quarter turn|quarter turns|quarter turns}. Which way are you walking now? 1) east; 2) west; 3) south; 4) north. Answer with the number of the option.",
+    "solution": [
+      "On a map north is at the top, east on the right, south at the bottom and west on the left. A turn to the right goes clockwise: north, east, south, west, and north again.",
+      "Each quarter turn is one step round this circle. Four steps are a whole turn and bring you back to the same place, so we drop whole turns. Left over: {=mod(a,4)|step|steps|steps}.",
+      "After {=mod(a,4)|step|steps|steps} from north we get option {r}."
+    ],
+    "hints": [
+      "A turn to the right goes clockwise. North is at the top, east on the right, south at the bottom and west on the left.",
+      "One quarter turn is one step round the circle north, east, south, west. Count {a|step|steps|steps} from north; do not count whole turns of 4 steps.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-other-way": "Option {w_the_other_way} comes from turning left, but you turn right.",
+      "one-quarter-fewer": "Option {w_one_quarter_fewer} is one quarter turn too few. Count exactly {a|quarter turn|quarter turns|quarter turns}.",
+      "one-quarter-more": "Option {w_one_quarter_more} is one quarter turn too many. Count exactly {a|quarter turn|quarter turns|quarter turns}."
+    }
+  },
+  "G7.plan.02": {
+    "text": "You are walking north and turn left by {a|quarter turn|quarter turns|quarter turns}. Which way are you walking now? 1) east; 2) west; 3) south; 4) north. Answer with the number of the option.",
+    "solution": [
+      "On a map north is at the top, west on the left, south at the bottom and east on the right. A turn to the left goes anticlockwise: north, west, south, east, and north again.",
+      "Each quarter turn is one step round this circle. Four steps are a whole turn and bring you back to the same place, so we drop whole turns. Left over: {=mod(a,4)|step|steps|steps}.",
+      "After {=mod(a,4)|step|steps|steps} from north we get option {r}."
+    ],
+    "hints": [
+      "A turn to the left goes anticlockwise. North is at the top, west on the left, south at the bottom and east on the right.",
+      "One quarter turn is one step round the circle north, west, south, east. Count {a|step|steps|steps} from north; do not count whole turns of 4 steps.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-other-way": "Option {w_the_other_way} comes from turning right, but you turn left.",
+      "one-quarter-fewer": "Option {w_one_quarter_fewer} is one quarter turn too few. Count exactly {a|quarter turn|quarter turns|quarter turns}.",
+      "one-quarter-more": "Option {w_one_quarter_more} is one quarter turn too many. Count exactly {a|quarter turn|quarter turns|quarter turns}."
+    }
+  },
+  "G7.plan.03": {
+    "text": "Which direction is opposite to east? 1) north; 2) south; 3) west; 4) north-west. Answer with the number of the option.",
+    "solution": [
+      "East is on the right of a map, and opposite to it, on the left, is west.",
+      "North and south are opposite to each other too, so they do not fit east.",
+      "Opposite to east is west, option {r}."
+    ],
+    "hints": [
+      "Opposite directions lie across the compass from each other, on either side of the centre.",
+      "East is on the right of the map. What is on the opposite side, on the left?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "north": "Option {w_north} is north. It is opposite to south, not to east.",
+      "south": "Option {w_south} is south. It is opposite to north, not to east.",
+      "north-west": "Option {w_north_west} is north-west. It lies between north and west and is opposite to south-east."
+    }
+  },
+  "G7.plan.04": {
+    "text": "What is the direction between north and east called? 1) south-west; 2) south-east; 3) north-west; 4) north-east. Answer with the number of the option.",
+    "solution": [
+      "North is at the top of a map and east on the right, and the direction between them is in the corner.",
+      "Its name is made from the two neighbours: first north, then east.",
+      "That is north-east, option {r}."
+    ],
+    "hints": [
+      "North is at the top, east on the right. Which direction lies between them, in the top right corner of the compass?",
+      "The name of an in-between direction is made from the two neighbours: north or south comes first.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "south-west": "Option {w_south_west} is south-west. It is at the bottom left, not between north and east.",
+      "south-east": "Option {w_south_east} is south-east. It is at the bottom right, not between north and east.",
+      "north-west": "Option {w_north_west} is north-west. It is at the top left, not between north and east."
+    }
+  },
+  "G7.plan.05": {
+    "text": "City B is south-east of city A. In which direction from city B is city A? 1) north-west; 2) south-east; 3) north-east; 4) south-west. Answer with the number of the option.",
+    "solution": [
+      "City B is south-east of city A: from A you go down and to the right.",
+      "From B back to A you go the opposite way: up and to the left.",
+      "Up and to the left is north-west, option {r}."
+    ],
+    "hints": [
+      "Picture a map: from A to B you go down and to the right. Now stand in B and look at A.",
+      "From B to A you go along the same path, but the other way: up and to the left. What is that direction called?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same-direction": "Option {w_same_direction} is the same direction as from A to B. From B to A the direction is the opposite one.",
+      "north-east": "Option {w_north_east} is up and to the right, but from B to A you go up and to the left.",
+      "south-west": "Option {w_south_west} is down and to the left, but from B to A you go up and to the left."
+    }
+  },
+  "G7.plan.06": {
+    "text": "You are facing north and turn clockwise by {a|quarter|quarters|quarters} of a full turn, and then by {b|quarter|quarters|quarters} more. Which way are you facing? 1) north; 2) east; 3) south; 4) west. Answer with the number of the option.",
+    "solution": [
+      "In all you turned {a} + {b} = {=a+b|quarter|quarters|quarters} of a turn.",
+      "Each quarter is one step round the circle: north, east, south, west, and north again.",
+      "Four quarters are a full turn and bring you back to the same place, so we drop them. Left over: {=mod(a+b,4)|quarter|quarters|quarters}.",
+      "Count them from north and you reach option {r}."
+    ],
+    "hints": [
+      "North is option 1; going clockwise come east, south, west. Each quarter is one step.",
+      "Add the quarters of the two turns: {a} + {b}. Drop whole turns of 4 quarters.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-turn": "Option {w_no_turn} is north, as if the turns brought you back. But of {=a+b|quarter|quarters|quarters} dropping whole turns leaves {=mod(a+b,4)|quarter|quarters|quarters}.",
+      "first-turn-only": "Option {w_first_turn_only} counts only the first turn of {a|quarter|quarters|quarters}, but there was a second one.",
+      "turned-back": "Option {w_turned_back} comes from making the second turn the other way. Both turns are clockwise, so they are added: {a} + {b}."
+    }
+  },
+  "G7.plan.07": {
+    "text": "A hiker walked {a|cell|cells|cells} north and {b|cell|cells|cells} east, and then came back to the start by the same way. How many cells did the hiker walk in all?",
+    "solution": [
+      "Out, the hiker walked {a} + {b} = {=a+b} cells.",
+      "The way back was the same, so the same distance again.",
+      "In all, there and back: 2 × {=a+b} = {r} cells."
+    ],
+    "hints": [
+      "The hiker goes out and comes back the same way. How many cells is it one way?",
+      "One way is {a} north and {b} east. The way back is just as long, so double the result.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-way": "{w_one_way} is the way out only. The hiker came back the same way too: 2 × {w_one_way} = {r}.",
+      "straight-line": "{w_straight_line} is the length of the longer of the two parts. The hiker walked both and came back: 2 × ({a} + {b}) = {r}.",
+      "one-leg-doubled": "{w_one_leg_doubled} is 2 × {a} + {b}: one part is doubled and the other is not. On the way back the hiker walked both: 2 × ({a} + {b}) = {r}."
+    }
+  },
+  "G7.plan.08": {
+    "text": "A hiker walked {a|cell|cells|cells} north and then {b|cell|cells|cells} south. How many cells north of the start is the hiker now?",
+    "solution": [
+      "North and south are opposite directions, so the steps south take the hiker back.",
+      "Take the steps south away from the steps north: {a} − {b} = {=a-b}.",
+      "So the hiker is {r|cell|cells|cells} north of the start."
+    ],
+    "hints": [
+      "North and south are opposite directions: steps south take you back.",
+      "Of the {a} cells north, {b} cells were taken back. How many cells are left?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total-path": "{w_total_path} is the whole path walked, {a} + {b}. But the steps south went backwards, so the hiker is {a} − {b} = {r} from the start.",
+      "south-only": "{w_south_only} is only the path south. The hiker first went north, so the hiker is {a} − {b} = {r} north of the start.",
+      "north-only": "{w_north_only} is the path north with no way back. But part of the path went back south: {a} − {b} = {r}."
+    }
+  },
+  "G7.plan.09": {
+    "text": "A hiker walked {a|cell|cells|cells} east, then {b|cell|cells|cells} north and then {a|cell|cells|cells} west. How many cells did the hiker walk in all?",
+    "solution": [
+      "The hiker walked three parts: {a} east, {b} north and {a} west.",
+      "For the length of a path the directions do not matter, so we add the lengths of the parts.",
+      "In all: {a} + {b} + {a} = {r}.",
+      "So the hiker walked {r|cell|cells|cells}."
+    ],
+    "hints": [
+      "The question is about the length of the path walked, not the distance from the start. The directions do not matter for the length.",
+      "Add all three parts: {a}, {b} and {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-legs": "{w_two_legs} is {a} + {b}, only two parts. The third, {a} west, was walked too: {a} + {b} + {a} = {r}.",
+      "straight-line": "{w_straight_line} is the distance in a straight line from the start to the end, to the north. The question is how far the hiker walked: {a} + {b} + {a} = {r}.",
+      "there-and-back": "{w_there_and_back} is 2 × ({a} + {b}), as if the hiker came back by the same way. But the hiker went north only once: {a} + {b} + {a} = {r}."
+    }
+  },
+  "G7.plan.10": {
+    "text": "A house is {a|cell|cells|cells} south and {b|cell|cells|cells} west of the park. How many cells must you walk along the grid lines to get from the park to the house?",
+    "solution": [
+      "From the park you must go {a} cells south and {b} cells west.",
+      "You can walk only along the grid lines, not straight across, so we add the two parts.",
+      "In all: {a} + {b} = {r} cells."
+    ],
+    "hints": [
+      "You can walk only along the grid lines, like streets: first one way, then the other.",
+      "You must walk {a} cells south and {b} west. How many is that together?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "longer-side": "{w_longer_side} is only the longer part. But you must walk the other part too: {a} + {b} = {r}.",
+      "product": "{w_product} is {a} × {b}, like an area. A path along grid lines is counted by adding: {a} + {b} = {r}.",
+      "difference": "{w_difference} is the difference of the parts. You must walk both parts, so they are added: {a} + {b} = {r}."
+    }
+  },
+  "G7.plan-1S.01": {
+    "text": "On a map 1 cm stands for {a} km. The distance between two cities on the map is {b} cm. What is the distance between the cities in kilometres?",
+    "solution": [
+      "One centimetre of the map is {a} km on the ground.",
+      "We have {b} centimetres, so we take {a} km {b} times.",
+      "The distance between the cities: {a} × {b} = {=a*b} km."
+    ],
+    "hints": [
+      "One centimetre of the map is {a} km on the ground. You need to find how many kilometres there are in {b} centimetres.",
+      "Take {a} km as many times as there are centimetres on the map: {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from adding {a} + {b}. The kilometres of each centimetre repeat, so we multiply: {a} × {b} = {r}.",
+      "map-distance": "{w_map_distance} is the distance on the map in centimetres, but the question asks for kilometres on the ground: {a} × {b} = {r}.",
+      "divided": "{w_divided} comes from dividing. But the distance on the ground is longer than on the map, so the kilometres are found by multiplying: {a} × {b} = {r}."
+    }
+  },
+  "G7.plan-1S.02": {
+    "text": "On a map 1 cm stands for {a} km. The distance between two cities is {x} km. How many centimetres apart are they on the map?",
+    "solution": [
+      "One centimetre of the map is {a} km on the ground.",
+      "We need to find how many times {a} km fits into {x} km.",
+      "Divide: {x} : {a} = {r} cm on the map."
+    ],
+    "hints": [
+      "One centimetre of the map is {a} km on the ground. How many pieces of {a} km fit into {x} km?",
+      "Divide {x} km by {a} km: you get the number of centimetres on the map.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "product": "{w_product} is {a} × {x}: it was multiplied instead of divided. The distance on the map is shorter than on the ground, so we divide: {x} : {a} = {r}.",
+      "distance-itself": "{w_distance_itself} is the distance on the ground in kilometres, but the question asks for centimetres on the map: {x} : {a} = {r}.",
+      "scale-number": "{w_scale_number} is how many kilometres one centimetre stands for. But we need the number of centimetres: {x} : {a} = {r}."
+    }
+  },
+  "G7.plan-1S.03": {
+    "text": "On a plan 1 cm stands for {a} m. A plot on the plan is a rectangle {b} cm by {c} cm. What is the perimeter of the plot on the ground, in metres?",
+    "solution": [
+      "First the perimeter on the plan: 2 × ({b} + {c}) = {=2*(b+c)} cm.",
+      "Each centimetre of the plan is {a} m on the ground.",
+      "The perimeter of the plot: {=2*(b+c)} × {a} = {r} m."
+    ],
+    "hints": [
+      "The perimeter is the sum of the lengths of all the sides. You can first find the perimeter on the plan and then change it to metres.",
+      "The perimeter on the plan is 2 × ({b} + {c}). Each centimetre of the plan is {a} m on the ground.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "on-the-plan": "{w_on_the_plan} is the perimeter on the plan in centimetres, but the question asks for metres on the ground: {w_on_the_plan} × {a} = {r}.",
+      "area-style": "{w_area_style} is {b} × {c} × {a}, as if the area was asked for. The perimeter is the sum of the sides: 2 × ({b} + {c}) × {a} = {r}.",
+      "half-perimeter": "{w_half_perimeter} counts only two sides, the length and the width. The perimeter has all four sides: 2 × ({b} + {c}) × {a} = {r}."
+    }
+  },
+  "G7.plan-1S.04": {
+    "text": "In the legend of a map, one symbol stands for {a|house|houses|houses}. There are {b|symbol|symbols|symbols} drawn on the map. How many houses are shown?",
+    "solution": [
+      "One symbol stands for {a|house|houses|houses}.",
+      "There are {b} symbols, and each adds as many houses.",
+      "The houses in all: {a} × {b} = {=a*b}."
+    ],
+    "hints": [
+      "One symbol stands for several houses. How many houses do all the symbols stand for together?",
+      "Multiply the number of houses in one symbol ({a}) by the number of symbols ({b}).",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "icons-only": "{w_icons_only} is the number of symbols, but each symbol stands for {a|house|houses|houses}: {a} × {b} = {r}.",
+      "sum": "{w_sum} comes from adding {a} + {b}. Each symbol stands for {a|house|houses|houses}, so the symbols are multiplied: {a} × {b} = {r}.",
+      "divided": "{w_divided} comes from dividing {b} by {a}. But there are more houses than symbols, so we multiply: {a} × {b} = {r}."
+    }
+  },
+  "G7.plan-1S.05": {
+    "text": "A route on a plan has three parts: {a}, {b} and {c|cell|cells|cells}. The side of a cell of the plan is {d} m on the ground. How many metres long is the route?",
+    "solution": [
+      "The length of the route in cells: {a} + {b} + {c} = {=a+b+c}.",
+      "One cell of the plan is {d} m on the ground.",
+      "The length of the route: {=a+b+c} × {d} = {r} m."
+    ],
+    "hints": [
+      "The route is measured in cells of the plan, and one cell is several metres on the ground.",
+      "Find the length of the route in cells ({a} + {b} + {c}), then multiply by {d} m.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cells-only": "{w_cells_only} is the length of the route in cells, but the question asks for metres: {w_cells_only} × {d} = {r}.",
+      "last-leg": "{w_last_leg} is only the last part in metres. The route has three parts: ({a} + {b} + {c}) × {d} = {r}.",
+      "all-added": "{w_all_added} comes from adding all four numbers, but {d} is not a part of the route, it is the metres in one cell. The length in cells is multiplied by {d}: {=a+b+c} × {d} = {r}."
+    }
+  },
+  "G7.plan-1S.06": {
+    "text": "On a map 1 cm stands for {a} km. Two cities are {b} cm apart on the map. A bus drives at {c} km/h. How many hours does the bus need for this distance?",
+    "solution": [
+      "First the distance between the cities: {a} × {b} = {=a*b} km.",
+      "To find the time, divide the distance by the speed of the bus.",
+      "The bus drives {=a*b} : {c} = {r|hour|hours|hours}."
+    ],
+    "hints": [
+      "Time is the distance divided by the speed. First you need the distance in kilometres.",
+      "The distance from the map: {b} cm with {a} km in each. Then divide it by the speed of {c} km/h.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "distance": "{w_distance} is the distance in kilometres, but the question asks for the time. Time is distance divided by speed: {=a*b} : {c} = {r}.",
+      "map-distance": "{w_map_distance} is the distance on the map in centimetres. First it must be changed to kilometres ({a} km in each centimetre), then divided by the speed: {=a*b} : {c} = {r}.",
+      "distance-times-speed": "{w_distance_times_speed} comes from multiplying the distance by the speed. Time is found by dividing: {=a*b} : {c} = {r}."
+    }
+  },
+  "G7.plan-1S.07": {
+    "text": "On a plan a plot is a rectangle {b} cm by {c} cm, and 1 cm of the plan is {a} m on the ground. What is the area of the plot on the ground, in square metres?",
+    "solution": [
+      "The sides of the plot on the ground: {b} × {a} = {=a*b} m and {c} × {a} = {=a*c} m.",
+      "The scale works on both sides, so each side is multiplied by {a}.",
+      "The area of a rectangle is the product of its sides: {=a*b} × {=a*c} = {r} m²."
+    ],
+    "hints": [
+      "The scale changes both sides of the plot. First find the sides on the ground, then the area.",
+      "The sides on the ground: {b} × {a} and {c} × {a}. The area of a rectangle is the product of its sides.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "on-the-plan": "{w_on_the_plan} is the area on the plan in square centimetres, but the question asks for square metres on the ground. The sides are multiplied by {a}, and the area comes out as {r}.",
+      "area-times-scale": "{w_area_times_scale} is {b} × {c} × {a}: only the area was multiplied by the scale. But the scale works on each side, so the area is {a} × {a} times bigger: {=b*c} × {=a*a} = {r}.",
+      "ground-perimeter": "{w_ground_perimeter} is the perimeter of the plot on the ground, but the question asks for the area: {=a*b} × {=a*c} = {r}."
+    }
+  },
+  "G7.plan-1S.08": {
+    "text": "One cell of the plan stands for {a|square metre|square metres|square metres}. A shape on the plan covers {b|cell|cells|cells}. What is its area on the ground, in square metres?",
+    "solution": [
+      "One cell of the plan is {a|square metre|square metres|square metres} on the ground.",
+      "The shape covers {b|cell|cells|cells}, so the area of one cell is taken {b} times.",
+      "The area: {a} × {b} = {r} m²."
+    ],
+    "hints": [
+      "One cell of the plan is several square metres. The shape covers several cells.",
+      "Multiply the area of one cell ({a}) by the number of cells ({b}).",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cells-only": "{w_cells_only} is the number of cells, but each cell stands for {a|square metre|square metres|square metres}: {a} × {b} = {r}.",
+      "sum": "{w_sum} comes from adding {a} + {b}. The area of a cell is added as many times as there are cells, that is, multiplied: {a} × {b} = {r}.",
+      "divided": "{w_divided} comes from dividing. The area on the ground is bigger than the number of cells, so we multiply: {a} × {b} = {r}."
+    }
+  },
+  "G7.plan-1S.09": {
+    "text": "The side of a grid cell on the map is 1 km. A house is at position ({a}; {b}), a shop at position ({c}; {d}). How many kilometres is it along the grid lines from the house to the shop?",
+    "solution": [
+      "Horizontally you go from {a} to {c}: {c} − {a} = {=c-a}.",
+      "Vertically you go from {b} to {d}: {d} − {b} = {=d-b}.",
+      "You can walk only along the grid lines, so we add both parts: {=c-a} + {=d-b} = {r}.",
+      "One cell is 1 km, so it is {r} km from the house to the shop."
+    ],
+    "hints": [
+      "You can walk only along the grid lines: first horizontally, then vertically. Find both parts.",
+      "The horizontal part goes from {a} to {c}, the vertical part from {b} to {d}. How many cells is each?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "end-coordinates": "{w_end_coordinates} is the sum of the coordinates of the shop, {c} + {d}. But the house is not at the origin, so we take differences: ({c} − {a}) + ({d} − {b}) = {r}.",
+      "longer-side": "{w_longer_side} is only the longer part. You must walk both: {r}.",
+      "horizontal-only": "{w_horizontal_only} is only the horizontal part. You must walk the vertical part too: {r}."
+    }
+  },
+  "G7.plan-1S.10": {
+    "text": "A segment {x} km long on the ground is shown on a map as a segment of {b} cm. How many kilometres on the ground does one centimetre of the map stand for?",
+    "solution": [
+      "A segment of {b} cm on the map is {x} km on the ground.",
+      "One centimetre is {b} times shorter, so it holds {x} : {b} = {r} km.",
+      "So one centimetre of the map stands for {r} km."
+    ],
+    "hints": [
+      "The whole segment is {b} cm on the map and {x} km on the ground. You need how many kilometres fall on one centimetre.",
+      "Divide {x} km by {b} cm.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "multiplied": "{w_multiplied} comes from multiplying. But one centimetre is only a part of the segment, so it holds fewer kilometres, and we divide: {x} : {b} = {r}.",
+      "distance-itself": "{w_distance_itself} is the length of the whole segment on the ground, but the question is about one centimetre: {x} : {b} = {r}.",
+      "map-length": "{w_map_length} is the length of the segment on the map in centimetres. But we need the number of kilometres in one centimetre: {x} : {b} = {r}."
+    }
+  },
+  "G1.shapes.13": {
+    "text": "A square is turned and stood on one of its corners. What is the shape now? 1) still the same square; 2) no longer a square, but a different shape; 3) a triangle. Answer with the number of the option.",
+    "solution": [
+      "Turning does not change the sides or the angles: all four sides are still equal and all four angles are still right angles.",
+      "So it is still the same square, option {r}."
+    ],
+    "hints": [
+      "Look at the sides and the angles of the shape, not at how it is standing.",
+      "What changed when the square was turned: the lengths of its sides and its angles, or only its position?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rotated-square-is-not-a-square": "Option {w_rotated_square_is_not_a_square} says the shape has become a different one, but turning changes neither the sides nor the angles. It is still a square.",
+      "a-triangle-on-top": "Option {w_a_triangle_on_top} does not fit: the shape still has four sides, and a triangle has three."
+    }
+  },
+  "G2.angles.14": {
+    "text": "Angle A is {a|degree|degrees|degrees}, and its arms are drawn short. Angle B is {b|degree|degrees|degrees}, and its arms are drawn {c|time|times|times} as long. Put a sign between angle A and angle B.",
+    "solution": [
+      "The size of an angle depends on how far apart its arms are, not on how long they are.",
+      "So we compare only the degrees: {a} and {b}.",
+      "So angle A {r} angle B."
+    ],
+    "hints": [
+      "The length of the arms does not change the size of the angle: the arms can be drawn as long as you like.",
+      "Compare only the numbers of degrees, {a} and {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "longer-arms-bigger": "{w_longer_arms_bigger} treats the longer arms as a bigger angle. Arms can be made as long as you like and the angle stays the same, so compare {a} and {b} degrees."
+    }
+  },
+  "G1.shapes.14": {
+    "text": "In a triangle, {a|segment|segments|segments} are drawn from one vertex to the opposite side. How many triangles are there in the picture, counting the big one?",
+    "solution": [
+      "Together with the two ends of the side the segments go to, there are {=a+2|point|points|points} marked on it.",
+      "Every triangle is made of the top vertex and two of these points, so we count pairs of points.",
+      "The first point can be chosen in {=a+2} ways and the second in {=a+1} ways, but each pair has been counted twice: {=a+2} × {=a+1} : 2 = {r}.",
+      "So there are {r|triangle|triangles|triangles} in the picture."
+    ],
+    "hints": [
+      "Every triangle rests with its top vertex on two of the marked points of the bottom side.",
+      "There are {=a+2|point|points|points} on the bottom side, counting both ends. Make pairs from them: each pair gives one triangle.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "small-only": "{w_small_only} counts only the narrow triangles between neighbouring segments. There are also triangles made of several parts.",
+      "segments-only": "{w_segments_only} is only the number of segments that were drawn. There are more triangles: every pair of points on the bottom side gives its own triangle.",
+      "without-the-big-one": "{w_without_the_big_one} leaves out the big triangle. The question counts it too, so the total is {r}."
+    }
+  },
+  "G1.shapes.15": {
+    "text": "A chequered board is {a} × {b} cells. How many rectangles can you outline along the grid lines? Squares and the whole board count too.",
+    "solution": [
+      "A rectangle is fixed by two vertical grid lines and two horizontal ones.",
+      "There are {=b+1} vertical lines, and a pair of them can be chosen in {=b+1} × {b} : 2 = {=(b+1)*b/2} ways.",
+      "There are {=a+1} horizontal lines, and a pair of them can be chosen in {=a+1} × {a} : 2 = {=(a+1)*a/2} ways.",
+      "Any pair of vertical lines goes with any pair of horizontal lines: {=(b+1)*b/2} × {=(a+1)*a/2} = {r}."
+    ],
+    "hints": [
+      "A rectangle is fixed by four grid lines: two vertical and two horizontal.",
+      "There are {=b+1} vertical and {=a+1} horizontal lines. First work out in how many ways you can choose a pair of vertical lines, then a pair of horizontal lines.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cells-only": "{w_cells_only} is only the number of single cells. There are more rectangles, made of two, three or more cells.",
+      "cells-and-the-whole": "{w_cells_and_the_whole} is the {=a*b} cells plus the whole board. There are also rectangles of two cells, three cells and so on.",
+      "pairs-added": "{w_pairs_added} adds the two numbers of ways. They have to be multiplied, because every pair of vertical lines goes with every pair of horizontal lines."
+    }
+  },
+  "G1.shapes.16": {
+    "text": "A convex polygon has {a|vertex|vertices|vertices}. How many diagonals does it have altogether? A diagonal joins two vertices that are not next to each other.",
+    "solution": [
+      "From each vertex, diagonals go to all the vertices except itself and its two neighbours: {a} − 3 = {=a-3}.",
+      "From all {a} vertices there are {a} × {=a-3} = {=a*(a-3)} diagonals, but every diagonal has two ends, so it has been counted twice.",
+      "Halve it: {=a*(a-3)} : 2 = {r}.",
+      "So the polygon has {r|diagonal|diagonals|diagonals}."
+    ],
+    "hints": [
+      "How many diagonals leave one vertex? Do not count the vertex itself or its two neighbours.",
+      "From one vertex there are {a} − 3 diagonals. Multiply by the {a} vertices, but remember that each diagonal has two ends.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "from-one-vertex": "{w_from_one_vertex} is the number of diagonals from one vertex only, but the polygon has {a} vertices.",
+      "counted-twice": "{w_counted_twice} counts every diagonal twice: it has two ends, so it was counted from both of them.",
+      "all-segments": "{w_all_segments} counts all the segments between vertices, and the sides are among them. Diagonals are only the segments that are not sides."
+    }
+  },
+  "G1.shapes.17": {
+    "text": "A square with sides of {a} cm is cut by one straight cut, parallel to a side, into two rectangles. What is the sum of the perimeters of these two rectangles, in centimetres?",
+    "solution": [
+      "The perimeter of the whole square is 4 × {a} = {=4*a} cm.",
+      "The cut, {a} cm long, becomes a side of both rectangles, so it counts twice in the sum of the perimeters.",
+      "That adds 2 × {a} = {=2*a} cm to the perimeter of the square: {=4*a} + {=2*a} = {r}.",
+      "So the sum of the perimeters is {r} cm."
+    ],
+    "hints": [
+      "The perimeter is the sum of the lengths of all the sides of a shape. Which new sides appear after the cut?",
+      "The cut, {a} cm long, is a side of one rectangle and also a side of the other. What does that add to the perimeter of the square?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-square-perimeter": "{w_the_square_perimeter} is the perimeter of the square itself, but the cut gives both rectangles new sides.",
+      "cut-counted-once": "{w_cut_counted_once} counts the cut only once, but both rectangles have it: it adds {a} + {a} = {=2*a}.",
+      "perimeter-doubled": "{w_perimeter_doubled} is twice the perimeter of the square. The outer sides stay the same and only the cut is added, twice: {=4*a} + {=2*a} = {r}."
+    }
+  },
+  "G1.shapes.18": {
+    "text": "The picture shows {a|square|squares|squares}, {b|rectangle|rectangles|rectangles}, {c|triangle|triangles|triangles} and {d|circle|circles|circles}. How many of these shapes have corners?",
+    "solution": [
+      "Squares, rectangles and triangles have corners. A circle has no sides, so it has no corners.",
+      "Add these shapes: {a} + {b} + {c} = {=a+b+c}.",
+      "So {r|shape|shapes|shapes} have corners."
+    ],
+    "hints": [
+      "Think about which of these shapes have corners.",
+      "Add the squares ({a}), the rectangles ({b}) and the triangles ({c}). Leave the circles out.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-figures": "{w_all_figures} is the number of all the shapes together, but a circle has no corners.",
+      "quadrilaterals-only": "{w_quadrilaterals_only} is only the squares and rectangles, but a triangle has corners too.",
+      "circles-only": "{w_circles_only} is the number of circles. The question asks about the shapes with corners: {a} + {b} + {c} = {r}."
+    }
+  },
+  "G1.shapes.19": {
+    "text": "What is a polygon with {a} sides called? 1) triangle; 2) quadrilateral; 3) pentagon; 4) hexagon; 5) heptagon; 6) octagon. Answer with the number of the option.",
+    "solution": [
+      "The name of a polygon tells how many sides it has: a triangle has three, a quadrilateral four, a pentagon five, a hexagon six, a heptagon seven and an octagon eight.",
+      "A polygon with {a} sides is named in option {r}."
+    ],
+    "hints": [
+      "The name of a polygon hides a number: how many sides it has.",
+      "Find in the list the shape with {a} sides. The number of the option is not the same as the number of sides, so find the name first.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-fewer-sides": "Option {w_the_fewer_sides} is a polygon with {=a-1} sides, but this shape has {a}.",
+      "the-more-sides": "Option {w_the_more_sides} is a polygon with {=a+1} sides, but this shape has {a}.",
+      "number-as-sides": "Option {w_number_as_sides} comes from using {a}, the number of sides, as the number of the option. Look for the name of the shape with {a} sides instead: that is option {r}."
+    }
+  },
+  "G2.angles.15": {
+    "text": "An angle is {a|degree|degrees|degrees}. What kind of angle is it? 1) acute; 2) right; 3) obtuse; 4) straight. Answer with the number of the option.",
+    "solution": [
+      "An acute angle is smaller than a right angle, and an obtuse angle is bigger than a right angle but smaller than a straight angle. A right angle is 90 degrees and a straight angle is 180 degrees.",
+      "Compare {a} with 90 and with 180: option {r} fits."
+    ],
+    "hints": [
+      "The kinds of angle are told apart by their degrees. A right angle is 90 degrees and a straight angle is 180 degrees.",
+      "Compare {a} with 90 and with 180: is it smaller than 90, exactly 90, between 90 and 180, or exactly 180?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-opposite-kind": "Option {w_the_opposite_kind} does not fit. Compare {a} with 90 and with 180: smaller than 90 is acute, exactly 90 is right, between 90 and 180 is obtuse, exactly 180 is straight. The answer is option {r}.",
+      "the-neighbour-kind": "Option {w_the_neighbour_kind} is close but not right: the kind of angle is chosen by comparing {a} with 90 and with 180, and that gives option {r}."
+    }
+  },
+  "G2.angles.16": {
+    "text": "One arm of an angle lies on the zero mark of the protractor scale, and the other is shown in the picture. How big is the angle, in degrees?",
+    "solution": [
+      "The labelled marks are 30 degrees apart, and between them there are three divisions: each division is 10 degrees.",
+      "The arm has passed the labelled mark {=floor(a/30)*30} and then {=(a-floor(a/30)*30)/10|division|divisions|divisions} more.",
+      "The angle is {=floor(a/30)*30} + {=(a-floor(a/30)*30)/10} × 10 = {r}.",
+      "So the angle is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Read the number on the scale that has its zero at the first arm of the angle.",
+      "Find the last labelled mark the arm has passed (the labels are 30 apart) and count the divisions after it, 10 degrees each.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "other-scale": "{w_other_scale} was read from the other scale, which has its zero at the second arm. You need the scale with its zero at the first arm.",
+      "nearest-label": "{w_nearest_label} is the nearest label, but the arm lies between labels: count the divisions of 10 degrees as well.",
+      "divisions-as-ones": "{w_divisions_as_ones} counts every division as one degree. A division is 10 degrees: {=floor(a/30)*30} + {=(a-floor(a/30)*30)/10} × 10 = {r}."
+    }
+  },
+  "G2.angles.17": {
+    "text": "The clock shows half past {a}. How big is the smaller angle between the hour hand and the minute hand, in degrees?",
+    "solution": [
+      "The clock face has 12 hours and 360 degrees, so one hour is 360 : 12 = 30 degrees.",
+      "At half past, the minute hand points to 6, which is 6 × 30 = 180 degrees from the top.",
+      "The hour hand has gone {a|hour|hours|hours} from the top and another half hour, which is 15 degrees: {a} × 30 + 15 = {=30*a+15}.",
+      "Between the hands there are {=max(180,30*a+15)} − {=min(180,30*a+15)} = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "At half past, the minute hand points to 6. The hour hand is exactly halfway between {a} and the next number.",
+      "The hour hand is {a} × 30 + 15 = {=30*a+15} degrees from the top, and the minute hand is 180 degrees from the top. Find the gap between them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "hour-hand-not-moved": "{w_hour_hand_not_moved} comes from putting the hour hand exactly on {a}. In half an hour it has moved on another 15 degrees.",
+      "bigger-angle": "{w_bigger_angle} is the bigger angle between the hands. The question asks for the smaller one.",
+      "minute-hand-on-twelve": "{w_minute_hand_on_twelve} comes from putting the minute hand on 12. At half past it points to 6, which is 180 degrees from the top: {=max(180,30*a+15)} − {=min(180,30*a+15)} = {r}."
+    }
+  },
+  "G2.angles.18": {
+    "text": "The angles of a triangle are in the ratio {u}:{v}:{t}. How big is the biggest angle, in degrees?",
+    "solution": [
+      "Altogether there are {u} + {v} + {t} = {=u+v+t} parts.",
+      "The angles of a triangle add up to 180 degrees, so one part is 180 : {=u+v+t} = {=180/(u+v+t)}.",
+      "The biggest angle is {m|part|parts|parts}: {m} × {=180/(u+v+t)} = {r}.",
+      "So the biggest angle is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "How many equal parts are there in the three angles together?",
+      "There are {=u+v+t} parts to share 180 degrees. Find one part, then take as many parts as the biggest angle has.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-part": "{w_one_part} is one part, but the biggest angle takes {m|part|parts|parts}: {m} × {w_one_part} = {r}.",
+      "from-360": "{w_from_360} comes from using 360 degrees, but the angles of a triangle add up to 180: {m} × {=180/(u+v+t)} = {r}."
+    }
+  },
+  "G2.angles.19": {
+    "text": "Two straight lines cross and make four angles. Two vertically opposite angles together make {a|degree|degrees|degrees}. How big is each of the other two angles, in degrees?",
+    "solution": [
+      "Vertically opposite angles are equal, so each of them is {a} : 2 = {=a/2}.",
+      "The angle next to it makes a straight angle with it, 180 degrees.",
+      "The other angle is 180 − {=a/2} = {r}.",
+      "So each of the other two angles is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Vertically opposite angles are equal. How many degrees is one of them?",
+      "One of them is {a} : 2. The angle next to it makes 180 degrees together with it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-vertical-angle": "{w_the_vertical_angle} is {a} : 2, one of the first two angles, but the question is about the other two: 180 − {w_the_vertical_angle} = {r}.",
+      "from-180-the-sum": "{w_from_180_the_sum} comes from taking the sum {a} away from 180, but only one of the two equal angles has to be taken away: 180 − {=a/2} = {r}.",
+      "both-others": "{w_both_others} is the other two angles together, 360 − {a}. The question asks for one of them: {w_both_others} : 2 = {r}."
+    }
+  },
+  "G2.angles.20": {
+    "text": "A straight angle is split by a ray into two angles. One of them is {a|degree|degrees|degrees} bigger than the other. How big is the bigger angle, in degrees?",
+    "solution": [
+      "If we take the extra {a} degrees off the bigger angle, the angles are equal, and together they make 180 − {a} = {=180-a}.",
+      "The smaller angle is {=180-a} : 2 = {=(180-a)/2}.",
+      "The bigger angle is {=(180-a)/2} + {a} = {r}.",
+      "So the bigger angle is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "A straight angle is 180 degrees. It is made of two angles, and one is {a} bigger than the other.",
+      "Take the difference, {a}, away from the bigger angle: two equal angles are left, together 180 − {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-smaller-angle": "{w_the_smaller_angle} is the smaller angle, but the question asks for the bigger one.",
+      "half-plus-difference": "{w_half_plus_difference} comes from adding {a} to half of 180. First take the difference away, then halve, and only then add it back: {=(180-a)/2} + {a} = {r}.",
+      "just-the-rest": "{w_just_the_rest} comes from taking the difference away from 180, but that is two equal angles together. Each of them is half of it, and the difference goes back to the bigger one: {=(180-a)/2} + {a} = {r}."
+    }
+  },
+  "G2.angles.21": {
+    "text": "A hand turns {a|degree|degrees|degrees} clockwise, then {b|degree|degrees|degrees} anticlockwise, and then another {c|degree|degrees|degrees} clockwise. How many degrees is it turned from where it started?",
+    "solution": [
+      "Turns clockwise move the hand forward and a turn anticlockwise moves it back, so we add the first kind and take away the second.",
+      "Total: {a} − {b} + {c} = {=a-b+c}.",
+      "So the hand is turned {r|degree|degrees|degrees} from where it started."
+    ],
+    "hints": [
+      "Turns the same way add up, and a turn the other way takes some of the turning back.",
+      "First {a} forward, then {b} back, then {c} forward again. Work through them in order.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-added": "{w_all_added} comes from adding all the turns, but the turn anticlockwise takes some away: {a} − {b} + {c} = {r}.",
+      "wrong-sign": "{w_wrong_sign} comes from adding the anticlockwise turn and taking away the last clockwise one. The signs are swapped: {a} − {b} + {c} = {r}.",
+      "all-subtracted": "{w_all_subtracted} comes from taking away the last turn as well. It is clockwise like the first turn, so it is added: {a} − {b} + {c} = {r}."
+    }
+  },
+  "G3.symmetry.13": {
+    "text": "A clock seen in a mirror shows {t}. What time is it really?",
+    "solution": [
+      "A mirror swaps the sides, so the time in the mirror and the real time together make exactly 12:00. The real time is 12:00 − {t}.",
+      "Minutes: 60 − {b} = {=60-b}.",
+      "Hours: 11 − {a} = {=11-a}, because one hour was used up for the minutes.",
+      "So the real time is {r}."
+    ],
+    "hints": [
+      "The time in the mirror and the real time together make 12 hours.",
+      "Take the mirror time away from 12:00: first the minutes (60 − {b}), then the hours (11 − {a}, because one hour went into the minutes).",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-shown-time": "{w_the_shown_time} is the time in the mirror itself, but the real time together with it makes 12:00.",
+      "same-minutes": "{w_same_minutes}: the hours are found, but the minutes were left as they were. The real minutes are 60 − {b} = {=60-b}.",
+      "forgot-the-hour": "{w_forgot_the_hour}: the minutes are found, but the hours were taken from 12 without the hour that went into the minutes. The hours are 11 − {a} = {=11-a}."
+    }
+  },
+  "G3.symmetry.14": {
+    "text": "A rectangle with sides of {a} cm and {b} cm is reflected in a line on which its side of {b} cm lies. The rectangle and its reflection together make one shape. What is the perimeter of this shape, in centimetres?",
+    "solution": [
+      "The rectangle and its reflection touch along the side of {b} cm and together make one big rectangle.",
+      "One side of it is {b} cm and the other is twice the side of {a} cm: 2 × {a} = {=2*a}.",
+      "Perimeter: 2 × ({=2*a} + {b}) = {r}.",
+      "So the perimeter of the shape is {r} cm."
+    ],
+    "hints": [
+      "What shape do you get if you put the rectangle next to its reflection?",
+      "You get one big rectangle with sides of {b} cm and twice {a} cm. The shared side is inside the shape, so it is not part of the perimeter.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "both-perimeters": "{w_both_perimeters} is the sum of the perimeters of the two rectangles. The shared side of {b} cm is inside the shape, so it does not count in the perimeter.",
+      "one-perimeter": "{w_one_perimeter} is the perimeter of one rectangle, but the shape is twice as wide: with its reflection, its side is {=2*a} cm.",
+      "area": "{w_area} is the area of the shape, but the question asks for the perimeter, the sum of all the sides: 2 × ({=2*a} + {b}) = {r}."
+    }
+  },
+  "G3.symmetry.15": {
+    "text": "A strip is made of {a|cell|cells|cells}. Each cell is painted blue or white. How many colourings have a vertical line of symmetry, that is, the left half is the mirror image of the right half?",
+    "solution": [
+      "The line of symmetry cuts the strip in half and the colours of the right half repeat the left half in reverse order, so the right half does not have to be chosen. With an odd number of cells the middle cell is on the line and is chosen freely.",
+      "Free cells: {=floor((a+1)/2)}, each with two colours.",
+      "Every free cell doubles the number of colourings: before the last one there were {=pow(2,floor((a+1)/2)-1)}, and with it {=pow(2,floor((a+1)/2)-1)} × 2 = {r}.",
+      "So there are {r} symmetric colourings."
+    ],
+    "hints": [
+      "The right half of the strip repeats the left half.",
+      "{=floor((a+1)/2)|cell|cells|cells} can be coloured freely, and each has two colours. Every free cell doubles the number of colourings.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-colourings": "{w_all_colourings} is all the colourings together, but we need only the symmetric ones: the right half of the strip repeats the left half.",
+      "middle-cell-forgotten": "{w_middle_cell_forgotten} is found without the middle cell. It stands on the line and its colour is chosen as well: there are {=floor((a+1)/2)} free cells.",
+      "free-cells": "{w_free_cells} is the number of free cells, but there are more colourings: each free cell gives two colours."
+    }
+  },
+  "G3.symmetry.16": {
+    "text": "A number with {a} digits reads the same from left to right and from right to left, like 121 or 1331. How many such numbers are there? The first digit cannot be zero.",
+    "solution": [
+      "The right half of the number repeats the left half in reverse order, so we choose freely only the first {=floor((a+1)/2)|digit|digits|digits}.",
+      "The first digit can be anything except zero: 9 ways. Each of the other free digits has ten choices, and there are {=floor((a+1)/2)-1} of them.",
+      "In total: 9 × {=pow(10,floor((a+1)/2)-1)} = {r}."
+    ],
+    "hints": [
+      "How many digits can you choose freely?",
+      "The first digit is not zero and the other free digits can be anything. The first {=floor((a+1)/2)|digit|digits|digits} decide the whole number.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-numbers": "{w_all_numbers} is all the numbers with {a} digits, but we need only those that read the same both ways.",
+      "zero-first": "{w_zero_first} allows zero as the first digit too. The first digit can be anything except zero: 9 ways."
+    }
+  },
+  "G3.symmetry.17": {
+    "text": "Point A stands at position ({a}; {b}) and point B at position ({c}; {d}). They are symmetric about the point O. At which position does point O stand? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "The centre of symmetry is exactly halfway between a point and its reflection, so O is the middle of the segment AB.",
+      "First coordinate: ({a} + {c}) : 2 = {=(a+c)/2}.",
+      "Second coordinate: ({b} + {d}) : 2 = {=(b+d)/2}.",
+      "So point O stands at position {r}."
+    ],
+    "hints": [
+      "The centre of symmetry is the middle of the segment between a point and its reflection.",
+      "Find the middle of each coordinate separately: {a} and {c}, then {b} and {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum-not-halved": "Position {w_sum_not_halved} is made of sums, but the middle lies halfway: each sum has to be halved.",
+      "swapped": "Position {w_swapped} has the coordinates in the opposite order. The first coordinate, {=(a+c)/2}, comes first and the second, {=(b+d)/2}, after it.",
+      "first-point": "Position {w_first_point} is point A, but the centre lies between A and B."
+    }
+  },
+  "G3.symmetry.18": {
+    "text": "A point stands on the grid at position ({a}; {b}). The horizontal grid line number {c} is a line of symmetry. At which position does the mirror point stand? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "The line is horizontal, so the point is reflected up and down and its place from left to right does not change: the first coordinate stays {a}.",
+      "From the point to the line it is {c} − {b} = {=c-b|square|squares|squares}, and the same distance on the other side of the line.",
+      "The second coordinate of the reflection is {c} + {=c-b} = {=2*c-b}.",
+      "So the mirror point stands at position {r}."
+    ],
+    "hints": [
+      "The line is horizontal, so the first coordinate of the point stays the same.",
+      "The point is {=c-b|square|squares|squares} below the line. Go the same distance above it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same-point": "Position {w_same_point} is the point itself, but we need the mirror point.",
+      "swapped": "Position {w_swapped} has the coordinates in the opposite order. The first coordinate, {a}, comes first and the second, {=2*c-b}, after it.",
+      "vertical-mirror": "Position {w_vertical_mirror} comes from reflecting in a vertical line, but this line is horizontal. The first coordinate stays {a}.",
+      "on-the-axis": "Position {w_on_the_axis} lies right on the line, but the mirror point is on the other side of the line at the same distance."
+    }
+  },
+  "G4.coordinates.12": {
+    "text": "A point P is marked on a grid. What are its coordinates? Write the first coordinate, then the second, separated by a semicolon.",
+    "solution": [
+      "The first coordinate is the number of squares to the right of the origin, and the second is the number of squares up.",
+      "From the origin to the point it is {a|square|squares|squares} to the right and {b|square|squares|squares} up.",
+      "We write the number to the right first, then the number up. So the coordinates of the point are {r}."
+    ],
+    "hints": [
+      "The origin of the grid is the position where both coordinates are zero.",
+      "Count the squares to the right first, then up. Do not start counting at one.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "swapped": "Position {w_swapped} has the coordinates in the opposite order. The squares to the right, {a}, come first and the squares up, {b}, after them.",
+      "counted-from-one": "Position {w_counted_from_one} comes from starting to count at one. The origin is zero, and the squares are counted from there."
+    }
+  },
+  "G4.coordinates.13": {
+    "text": "The vertices of a rectangle with sides along the grid lines stand at positions ({a}; {b}) and ({c}; {d}); these are two opposite vertices. How many grid points lie strictly inside the rectangle, not on its sides?",
+    "solution": [
+      "Only the points that are not on the sides lie inside: in each direction we step in by one from the edges.",
+      "Horizontally there are {=c-a|step|steps|steps} between the sides, and the points strictly inside a row are one fewer: {=c-a} − 1 = {=c-a-1|point|points|points}.",
+      "Vertically there are {=d-b|step|steps|steps} between the sides, and the points strictly inside a column are one fewer: {=d-b} − 1 = {=d-b-1|point|points|points}.",
+      "Inside points altogether: {=c-a-1} × {=d-b-1} = {r}."
+    ],
+    "hints": [
+      "Points on the sides must not be counted.",
+      "Strictly inside a row there are {=c-a} − 1 points, and there are {=d-b} − 1 such rows. Multiply.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-points": "{w_all_points} counts all the grid points, including those on the sides. Inside there are only {=c-a-1} × {=d-b-1} = {r}.",
+      "area": "{w_area} is the area of the rectangle in squares, but we need the grid points inside: there are fewer, because we count the points, not the squares between them.",
+      "one-direction-only": "{w_one_direction_only} takes one away in only one direction. One has to be taken away both horizontally and vertically: {=c-a-1} × {=d-b-1} = {r}."
+    }
+  },
+  "G4.coordinates.14": {
+    "text": "A counter stands at the origin of the grid, position (0; 0), and goes to position ({u}; {v}). In one move it goes one square to the right or one square up. How many different shortest paths can it take?",
+    "solution": [
+      "You can reach any point of the grid only from the left or from below, so the number of paths to a point is the sum of the numbers of paths to the point on its left and the point below it.",
+      "Points on the left and bottom lines have one path each, and then we add the numbers square by square until we reach the goal.",
+      "The point to the left of the goal can be reached in {p1|path|paths|paths}, and the point below it in {p2|path|paths|paths}.",
+      "To the goal: {p1} + {p2} = {r}."
+    ],
+    "hints": [
+      "Every point of the grid is reached from the left or from below. How are the numbers of paths to neighbouring points connected?",
+      "Write the number of paths at every point of the grid, starting at the origin: points on the bottom and left lines have one path, then add the numbers from the left and from below.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "steps-count": "{w_steps_count} is the number of steps in a path, not the number of different paths: the order of the steps right and up can be changed.",
+      "two-corner-routes": "{w_two_corner_routes} counts only the two paths along the edges, first right and then up, and the other way round. Many more paths go through the middle of the grid.",
+      "points-count": "{w_points_count} is the number of grid points, not paths: every point has a different number of paths."
+    }
+  },
+  "G4.coordinates.15": {
+    "text": "A counter stands at the origin of the grid, position (0; 0). In one move it goes to a neighbouring square: right, left, up or down. The counter made exactly {n} moves and never stayed still. At which of these positions could it be? 1) ({x1}; {y1}); 2) ({x2}; {y2}); 3) ({x3}; {y3}); 4) ({x4}; {y4}). Answer with the number of the option.",
+    "solution": [
+      "Each move changes one coordinate by one, so after every move the sum of the coordinates changes between odd and even.",
+      "After {n} moves the sum of the distances along the axes is odd or even in the same way as {n}, and it is not more than {n}, because in one move the counter gets at most one square further from the origin.",
+      "The sums of the distances for the options are {s1}, {s2}, {s3}, {s4}.",
+      "Option {r} fits: its sum is not more than {n} and is odd or even in the same way as {n}."
+    ],
+    "hints": [
+      "Does the sum of the coordinates become odd or even in one move? What happens in the next move?",
+      "For each option work out the sum of the distances along the axes. Is it not more than {n}, and is it odd or even in the same way as {n}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "wrong-parity": "Option {w_wrong_parity} does not fit: the sum of the distances along its axes is odd or even in a different way from the number of moves, {n}.",
+      "too-far": "Option {w_too_far} does not fit: this position is more than {n} moves from the origin."
+    }
+  },
+  "G4.coordinates.16": {
+    "text": "The vertices of a triangle stand at positions ({a}; {b}), ({c}; {b}) and ({c}; {d}). What is the area of this triangle, in squares?",
+    "solution": [
+      "The first and second vertices are in the same row, and the second and third are in the same column, so the angle at the second vertex is a right angle and the legs run along the grid lines.",
+      "The legs: {c} − {a} = {=c-a} and {d} − {b} = {=d-b}.",
+      "The area of a right-angled triangle is half the product of its legs: {=c-a} × {=d-b} : 2 = {r}.",
+      "So the area of the triangle is {r|square|squares|squares}."
+    ],
+    "hints": [
+      "Find the lengths of the sides that run along the grid lines: {c} − {a} and {d} − {b}.",
+      "The triangle is half of the rectangle with the same legs: multiply the legs, then halve.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rectangle-area": "{w_rectangle_area} is the area of the rectangle with these legs, and the triangle is half of it.",
+      "legs-added": "{w_legs_added} is the sum of the legs, but the area is found by multiplying, and then taking half."
+    }
+  },
+  "G4.coordinates.17": {
+    "text": "How many points with whole-number, positive coordinates ({x}; {y}) lie on the line where the sum of the coordinates {x} + {y} is {a}?",
+    "solution": [
+      "Positive whole coordinates start at one, and the second coordinate is {a} minus the first.",
+      "The first coordinate can be any number from 1 to {=a-1}: with a bigger one the second would become zero.",
+      "There are exactly {=a-1} numbers from 1 to {=a-1}, one fewer than {a}: {a} − 1 = {r}.",
+      "So there are {r} such points."
+    ],
+    "hints": [
+      "What can the first and the second coordinate be if their sum is {a}?",
+      "The coordinates cannot be zero. For which values of the first coordinate does the second stay positive?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "with-zeros": "{w_with_zeros} comes from counting the points with a zero coordinate too. Positive coordinates start at one.",
+      "fence-post": "{w_fence_post} comes from throwing out too many: every value of the first coordinate from 1 to {=a-1} is allowed, and there are {r}."
+    }
+  },
+  "G5.solids-nets.14": {
+    "text": "The picture shows four nets made of six squares. Which of them folds into a cube with no gaps and no overlaps? 1) the first; 2) the second; 3) the third; 4) the fourth. Answer with the number of the option.",
+    "solution": [
+      "A net folds into a cube if its six squares become six different faces, so no two squares may land on the same place.",
+      "Take one square as the bottom and fold the neighbours up. If a square lands where another one already is, the net does not work.",
+      "Checking all four nets this way, only net number {r} folds without overlaps."
+    ],
+    "hints": [
+      "A net of a cube is six squares that can be folded into a cube. Fold each net in your head and look for two squares that would land on the same place.",
+      "Take one square as the bottom and fold four squares up around it. Where do the last two squares go: one on the lid and one on the empty wall, or both on the same place?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-first-wrong-net": "Net number {w_the_first_wrong_net} does not fold into a cube: two of its squares land on the same face, and another face stays empty.",
+      "the-second-wrong-net": "Net number {w_the_second_wrong_net} does not fold into a cube: two of its squares land on the same face, and another face stays empty.",
+      "the-third-wrong-net": "Net number {w_the_third_wrong_net} does not fold into a cube: two of its squares land on the same face, and another face stays empty."
+    }
+  },
+  "G5.solids-nets.15": {
+    "text": "On the squares of a net of a cube there are dots: each square has its own number from 1 to 6, all different. How many dots will be on the face opposite the face with {k|dot|dots|dots}, once the net is folded into a cube? Choose the number of dots.",
+    "solution": [
+      "Opposite faces of a cube do not touch each other, not even at a corner: four other faces lie between them.",
+      "Put the face with {k|dot|dots|dots} on the table as the bottom and fold up the net: the face that becomes the lid is the opposite one.",
+      "The lid is the face with {r|dot|dots|dots}."
+    ],
+    "hints": [
+      "Opposite faces of a cube never touch; four other faces lie between them. Find the square with {k|dot|dots|dots} on the net.",
+      "Take the square with {k|dot|dots|dots} as the bottom and fold the neighbours up. Which square becomes the lid?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "a-neighbour-face": "{w_a_neighbour_face} is a square that stands next to the right one on the net. After folding it still touches that face, so it is a neighbour, not the opposite face.",
+      "seven-minus": "{w_seven_minus} comes from the rule of a real die, where opposite faces add up to 7. Here the dots are placed differently, so you find the opposite face by folding the net."
+    }
+  },
+  "G5.solids-nets.16": {
+    "text": "A cube {a} × {a} × {a} made of equal small cubes is painted on the outside. How many small cubes have exactly two painted faces?",
+    "solution": [
+      "Exactly two faces are painted on the small cubes that sit on the edges of the big cube, but not in a corner: a corner cube has three painted faces.",
+      "One edge has {a|cube|cubes|cubes}, and the two at the ends are corner cubes, so {a} − 2 = {=a-2} are left.",
+      "A cube has 12 edges: 12 × {=a-2} = {r}.",
+      "So {r|cube has|cubes have|cubes have} exactly two painted faces."
+    ],
+    "hints": [
+      "You need the small cubes on the edges of the big cube, but not in the corners: a corner cube has three painted faces. Start with one edge.",
+      "One edge has {a|cube|cubes|cubes}, and the two at the ends are in corners. How many cubes are between the corners, and how many edges does a cube have?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-edge-cubes": "{w_all_edge_cubes} is 12 × {a}: the corner cubes were counted too, and they have three painted faces. Between the corners of one edge there are {=a-2} of them: 12 × {=a-2} = {r}.",
+      "one-edge": "{w_one_edge} is the number of cubes on one edge between the corners, but a cube has 12 edges: 12 × {w_one_edge} = {r}.",
+      "one-face-answer": "{w_one_face_answer} counts the cubes in the middle of the faces, which have one painted face. We need the ones on the edges: 12 × {=a-2} = {r}."
+    }
+  },
+  "G5.solids-nets.17": {
+    "text": "A cube {a} × {a} × {a} made of equal small cubes is painted on the outside. How many small cubes are not painted at all?",
+    "solution": [
+      "The unpainted cubes are the ones inside: none of their faces is on the outside.",
+      "Take one layer off each of the six sides of the big cube and a cube with side {a} − 2 = {=a-2} is left.",
+      "Cubes in it: {=a-2} × {=a-2} × {=a-2} = {r}.",
+      "So {r|cube is|cubes are|cubes are} not painted at all."
+    ],
+    "hints": [
+      "Look for the cubes with none of their faces on the outside; they are hidden inside the big cube.",
+      "Take a layer off each of the six sides. In one row, how many cubes are left when you remove one from each end?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-cubes": "{w_all_cubes} is all the cubes of the big cube, but the ones on the outside are painted.",
+      "one-layer": "{w_one_layer} is the number of cubes in one layer inside, but the inner cube is {=a-2} such layers thick: {=a-2} × {=a-2} × {=a-2} = {r}.",
+      "layer-off": "{w_layer_off} is a cube with side {=a-1}: a layer was taken off only one side in each direction. The layer comes off both sides, so the inner cube has side {a} − 2 = {=a-2}, and the number of cubes in it is {r}."
+    }
+  },
+  "G5.solids-nets.18": {
+    "text": "Every edge of a polyhedron lies on exactly two of its faces. The polyhedron has {t|triangular face|triangular faces|triangular faces}, {s|quadrilateral face|quadrilateral faces|quadrilateral faces} and {f|pentagonal face|pentagonal faces|pentagonal faces}, and no other faces. How many edges does it have?",
+    "solution": [
+      "Count the sides of all the faces: triangles {t} × 3 = {=3*t}, quadrilaterals {s} × 4 = {=4*s}, pentagons {f} × 5 = {=5*f}.",
+      "In all there are {=3*t} + {=4*s} + {=5*f} = {=3*t+4*s+5*f} sides.",
+      "Every edge was counted twice, once in each of its two faces, so there are half as many edges: {=3*t+4*s+5*f} : 2 = {r}.",
+      "So the polyhedron has {r|edge|edges|edges}."
+    ],
+    "hints": [
+      "Every edge is a side shared by two faces. How many sides do all the faces have together, counted one face at a time?",
+      "The faces have triangles {t} × 3, quadrilaterals {s} × 4 and pentagons {f} × 5 sides. Add them up, and remember that you counted every edge twice.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sides-counted-once": "{w_sides_counted_once} is the number of sides of all the faces together. Every edge is in it twice, once for each of its two faces, so there are half as many edges: {w_sides_counted_once} : 2 = {r}.",
+      "faces-count": "{w_faces_count} is the number of faces, but the question is about edges. Count the sides of all the faces and halve it: {=3*t+4*s+5*f} : 2 = {r}."
+    }
+  },
+  "G5.solids-nets.19": {
+    "text": "A cube is sawn into pieces by flat cuts: {a|cut|cuts|cuts} parallel to the top face, {b|cut|cuts|cuts} parallel to the front face and {c|cut|cuts|cuts} parallel to the side face. Into how many pieces does the cube fall apart?",
+    "solution": [
+      "Cuts in one direction divide the cube into layers, and there is one more layer than there are cuts: {a} + 1 = {=a+1}.",
+      "In the two other directions there are {=b+1} and {=c+1} layers.",
+      "Cuts in the three directions do not get in each other's way, so the numbers of layers are multiplied: {=a+1} × {=b+1} × {=c+1} = {r}.",
+      "So the cube falls into {r|piece|pieces|pieces}."
+    ],
+    "hints": [
+      "How many layers do the cuts in one direction make? Think: one cut divides a cube into two layers.",
+      "Find the number of layers in each direction: {a} + 1, {b} + 1 and {c} + 1. Layers of different directions cross each other.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum-plus-one": "{w_sum_plus_one} is {a} + {b} + {c} + 1, as if all the cuts went one after another in one direction. But cuts in three directions cross, and the numbers of layers multiply.",
+      "product-of-cuts": "{w_product_of_cuts} is the product of the numbers of cuts, but there is one more layer than there are cuts: {=a+1} × {=b+1} × {=c+1} = {r}.",
+      "layers-added": "{w_layers_added} is the sum of the numbers of layers {=a+1} + {=b+1} + {=c+1}. Layers of different directions do not add up, they cross, so the numbers of layers are multiplied: {r}."
+    }
+  },
+  "G6.views.11": {
+    "text": "Three stacks of cubes stand in a row; from left to right they are {a}, {b} and {c|cube|cubes|cubes} high. You walk round the row and look at it from the opposite side. Which stack is on your left now? 1) the stack of height {o1}; 2) the stack of height {o2}; 3) the stack of height {o3}. Answer with the number of the option.",
+    "solution": [
+      "When you walk round the row and look from the other side, the order of the stacks is reversed: the old right stack is now on the left.",
+      "From left to right it was {a}, {b}, {c}, and now it is {c}, {b}, {a}.",
+      "On the left there is now the stack of height {c}: that is option {r}."
+    ],
+    "hints": [
+      "You have walked round the row and now stand on the other side. What is on your left now?",
+      "From left to right the stacks were {a}, {b}, {c}. Which one was on the right? From the other side it is on the left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-old-left": "Option {w_the_old_left} is the stack that was on the left before. From the other side it is on the right.",
+      "the-middle": "Option {w_the_middle} is the middle stack: it stays in the middle from the other side too."
+    }
+  },
+  "G6.views.12": {
+    "text": "A plan of a building made of cubes shows the heights of the stacks: in the first row {a} and {b}, in the second row {c} and {d}. The first row is the one nearest to you, the second row is further away. How many squares can you see when you look at the building from the front? Stacks standing one behind the other hide each other.",
+    "solution": [
+      "From the front, the two stacks in one column of the plan stand one behind the other, and you see as many squares as the taller one has.",
+      "In the first column, of {a} and {c} the taller is {=max(a,c)}. In the second column, of {b} and {d} the taller is {=max(b,d)}.",
+      "Add them: {=max(a,c)} + {=max(b,d)} = {r}.",
+      "So you see {r|square|squares|squares} from the front."
+    ],
+    "hints": [
+      "From the front the stacks in one column of the plan stand one behind the other. What can you see of each such pair?",
+      "In the first column of the plan stand {a} and {c}, in the second {b} and {d}. In each column you see as many squares as the taller stack has.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-cubes": "{w_all_cubes} is all the cubes of the building. From the front the low stacks are covered by taller ones, so you see fewer.",
+      "near-row": "{w_near_row} is the near row only. But a far stack that is taller than the near one shows above it.",
+      "far-row": "{w_far_row} is the far row only. But if the near stack is taller, it covers the far one, and you see the near one."
+    }
+  },
+  "G6.views.13": {
+    "text": "A building stands on a square of 3 × 3 cells. From the front you see stacks of height {a}, {b} and {c}, and from the side {d}, {e} and {f}. What is the greatest number of cubes the building can have?",
+    "solution": [
+      "In each cell the stack can be no taller than both views allow, so we take the smaller of the two heights. In the first row the side height is {d}: {=min(a,d)} + {=min(b,d)} + {=min(c,d)} = {=min(a,d)+min(b,d)+min(c,d)}.",
+      "In the second row the side height is {e}: {=min(a,e)} + {=min(b,e)} + {=min(c,e)} = {=min(a,e)+min(b,e)+min(c,e)}.",
+      "In the third row the side height is {f}: {=min(a,f)} + {=min(b,f)} + {=min(c,f)} = {=min(a,f)+min(b,f)+min(c,f)}.",
+      "In all: {=min(a,d)+min(b,d)+min(c,d)} + {=min(a,e)+min(b,e)+min(c,e)} + {=min(a,f)+min(b,f)+min(c,f)} = {r}."
+    ],
+    "hints": [
+      "For each cell of the base look at both views: how many cubes does the front view allow and how many does the side view allow? You cannot put more than the smaller of the two numbers.",
+      "There are nine cells. From the front the heights are {a}, {b}, {c}, from the side {d}, {e}, {f}: in each cell take the smaller of the two heights and add up all nine.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "front-times-three": "{w_front_times_three} is what you get if the three rows are the same and repeat the front view. But the height of a row is limited by the side view too: in each cell we take the smaller of the two heights.",
+      "views-added": "{w_views_added} is all the squares of the two views together. The building has more cubes: each of the nine cells has its own stack.",
+      "all-tallest": "{w_all_tallest} is {=9} × {=max(a,b,c)}: all nine stacks as tall as the tallest one. But the views do not allow that: in each cell we take the smaller of the two heights, which gives {r}."
+    }
+  },
+  "G6.blocks.11": {
+    "text": "On the plan of a building made of cubes with edge 1 cm the heights of the stacks are written: in the first row {a} and {b}, in the second row {c} and {d}. What is the surface area of the building in square centimetres, not counting the part that stands on the table?",
+    "solution": [
+      "From above you see one square for each of the 4 stacks: 4 cm².",
+      "Each stack has two sides facing outwards: 2 × ({a} + {b} + {c} + {d}) = {=2*(a+b+c+d)} cm².",
+      "Between neighbouring stacks you see steps as high as the difference of their heights: {=max(a,b)-min(a,b)} + {=max(c,d)-min(c,d)} + {=max(a,c)-min(a,c)} + {=max(b,d)-min(b,d)} = {s} cm².",
+      "The whole surface: 4 + {=2*(a+b+c+d)} + {s} = {r} cm²."
+    ],
+    "hints": [
+      "The surface has three parts: the top, the outer walls and the steps between stacks of different heights.",
+      "The top gives 4 cm². Each of the stacks {a}, {b}, {c}, {d} has two outer walls. A step between neighbours is the difference of their heights; there are four pairs of neighbours.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-inner-steps": "{w_no_inner_steps} leaves out the steps between stacks of different heights. They are part of the surface too, {s} cm² together, so the total is {r}.",
+      "with-the-bottom": "{w_with_the_bottom} counts the bottom too, but it stands on the table: 4 cm² too many. The surface is {r}.",
+      "hidden-walls-counted": "{w_hidden_walls_counted} is 4 + 4 × {=a+b+c+d}: all four walls of every stack were counted. But where stacks stand side by side, the walls are covered. We count the outer walls and the steps: {r}."
+    }
+  },
+  "G6.blocks.12": {
+    "text": "A staircase has {a|stack|stacks|stacks}: the first is 1 cube high, and each next one is {b|cube|cubes|cubes} higher than the one before. How many cubes does the staircase have in all?",
+    "solution": [
+      "The height of the last stack: 1 + ({a} − 1) × {b} = {=1+(a-1)*b}.",
+      "The first and the last stacks together have 1 + {=1+(a-1)*b} = {=2+(a-1)*b}, and the second and the last but one have just as many, and so on.",
+      "If we add all the stacks twice, in order and in reverse order, we get {=2+(a-1)*b} × {a} = {=(2+(a-1)*b)*a}; once is half of that: {=(2+(a-1)*b)*a} : 2 = {r}.",
+      "So the staircase has {r|cube|cubes|cubes}."
+    ],
+    "hints": [
+      "Find the height of the last stack: it grows by {b|cube|cubes|cubes} with every stack.",
+      "The first and the last stack together have as many as the second and the last but one. How many such pairs do you get if you add everything twice, and what is the sum of a pair?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-times-count": "{w_last_times_count} is the number of stacks times the height of the last one. But the others are lower, and on average they have fewer cubes.",
+      "pairs-not-halved": "{w_pairs_not_halved} is the sum of a pair times the number of stacks. That counts every stack twice, so the result must be halved.",
+      "last-tower": "{w_last_tower} is the height of the last stack only, but we need the cubes of the whole staircase."
+    }
+  },
+  "G6.blocks.13": {
+    "text": "A cube {a} × {a} × {a} was built from cubes, and then all the cubes that have no face on the outside were taken away. How many cubes are left?",
+    "solution": [
+      "The cubes with no face outside are the ones inside. Take one layer off each of the six sides and an inner cube with side {a} − 2 = {=a-2} is left.",
+      "The whole cube: {a} × {a} × {a} = {=a*a*a}, the inner one: {=a-2} × {=a-2} × {=a-2} = {=(a-2)*(a-2)*(a-2)}.",
+      "What is left is the outside: {=a*a*a} − {=(a-2)*(a-2)*(a-2)} = {r}.",
+      "So {r|cube is|cubes are|cubes are} left."
+    ],
+    "hints": [
+      "The cubes inside were taken away, the ones on the outside are left. First find how many cubes are inside.",
+      "The inner cube is 2 shorter on every side: {a} − 2. Take it away from the whole cube.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "faces-times-six": "{w_faces_times_six} is six faces of {a} × {a}, but the cubes on the edges and in the corners were counted two and three times.",
+      "one-layer-removed": "{w_one_layer_removed} is {a} × {a} × {a} − {=a-1} × {=a-1} × {=a-1}: the inner cube was taken to have side {=a-1}. The inner cube is two cubes shorter on every side: {=a-2}.",
+      "inner-cube": "{w_inner_cube} is the cubes inside, which are the ones taken away. What is left is the shell: {=a*a*a} − {w_inner_cube} = {r}."
+    }
+  },
+  "G7.plan.11": {
+    "text": "You are facing north. First you turn right by {a|quarter turn|quarter turns|quarter turns}, and then left by {b|quarter turn|quarter turns|quarter turns}. Which way are you facing now? 1) north; 2) east; 3) south; 4) west. Answer with the number of the option.",
+    "solution": [
+      "A turn to the right goes round the circle north, east, south, west, and a turn to the left goes the other way.",
+      "Left cancels the same amount of right, so we take the difference: {a} − {b} = {=a-b}.",
+      "A whole turn is 4 quarters and changes nothing, so what is left is {=mod(a-b+8,4)|step|steps|steps} round the circle to the right of north: that is option {r}."
+    ],
+    "hints": [
+      "A turn to the left cancels a turn to the right. First think how many quarters you have turned to the right in the end.",
+      "Find the difference {a} − {b}: if it is negative, you ended up turned to the left. Drop whole turns of 4 quarters.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-as-right": "Option {w_left_as_right} comes from adding {a} + {b}, as if both turns were to the right. Left is the other way, so we subtract.",
+      "only-the-first": "Option {w_only_the_first} counts only the turn to the right, but there was a turn to the left too.",
+      "sides-swapped": "Option {w_sides_swapped} comes from turning right by {b|quarter turn|quarter turns|quarter turns} and left by {a|quarter turn|quarter turns|quarter turns}. The sides are mixed up."
+    }
+  },
+  "G7.plan.12": {
+    "text": "You are facing north and turn clockwise by {a} degrees. Which way are you facing now? 1) north-east; 2) south-east; 3) south-west; 4) north-west. Answer with the number of the option.",
+    "solution": [
+      "Going clockwise, north is 0 degrees, east is 90, south is 180 and west is 270.",
+      "A full turn is 360 degrees and changes nothing. Left over: {=mod(a,360)} degrees.",
+      "An angle of {=mod(a,360)} degrees lies between {=mod(a,360)-45} and {=mod(a,360)+45} degrees, exactly halfway between two main directions.",
+      "That is option {r}."
+    ],
+    "hints": [
+      "North is 0 degrees, east is 90, south is 180 and west is 270. If the angle is more than 360 degrees, drop the full turn.",
+      "Between which two main directions does the angle of {=mod(a,360)} degrees lie?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "anticlockwise": "Option {w_anticlockwise} comes from turning anticlockwise, but the turn is clockwise.",
+      "the-opposite": "Option {w_the_opposite} is the opposite direction. The angle is measured from north, clockwise, not from south."
+    }
+  },
+  "G7.plan.13": {
+    "text": "A snail crawls along grid lines. First it crawls 1 cell north, then it turns left and crawls 2 cells, turns left again and crawls 3 cells, and so on: each next part is one cell longer, and the turn is always to the left. The snail has crawled {n|part|parts|parts}. How many cells from the start is it now, counting along the grid lines?",
+    "solution": [
+      "Mark the positions after each part, starting from (0; 0): {trail}.",
+      "From north, turning left gives west, then south, then east, then north again: the directions repeat after four parts.",
+      "The snail is at ({fx}; {fy}), and from the start to it along the grid lines is {ax} + {ay} = {r}.",
+      "So the snail is {r|cell|cells|cells} from the start."
+    ],
+    "hints": [
+      "Write down the snail's position after each part, starting from (0; 0).",
+      "The directions go round in a circle: north, west, south, east. The distance along the grid lines is how many cells the snail went left or right plus how many it went up or down.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "walked-length": "{w_walked_length} is the length of the whole path of the snail, but we need the distance from the start: the snail went back many times.",
+      "last-leg": "{w_last_leg} is the length of the last part, but we need the distance from the start to the end of the path.",
+      "horizontal-shift": "{w_horizontal_shift} is the shift to the left or right only, but the snail also went up or down: {ax} + {ay} = {r}."
+    }
+  },
+  "G7.plan-1S.11": {
+    "text": "The scale of a plan is 1 : {a}, that is, 1 cm on the plan is {a} cm on the ground. A segment on the plan is {b} cm. How long is this segment on the ground, in metres?",
+    "solution": [
+      "Each centimetre of the plan is {a} cm on the ground.",
+      "The whole segment: {b} × {a} = {=a*b} cm.",
+      "There are 100 cm in a metre, so in metres: {=a*b} : 100 = {r}.",
+      "So the segment on the ground is {r} m long."
+    ],
+    "hints": [
+      "A scale of 1 : {a} means that one centimetre of the plan is {a} cm on the ground. The metres come at the end.",
+      "Multiply {b} cm by {a}, then change the centimetres to metres: there are 100 cm in a metre.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "centimetres-not-converted": "{w_centimetres_not_converted} is the length in centimetres, but the question asks for metres: there are 100 cm in a metre.",
+      "ten-instead-of-hundred": "{w_ten_instead_of_hundred} comes from dividing by 10, but there are 100 cm in a metre: {=a*b} : 100 = {r}."
+    }
+  },
+  "G7.plan-1S.12": {
+    "text": "On one map 1 cm stands for {p} km, and on another map for {a} km. On the first map two cities are {c} cm apart. How many centimetres apart are these cities on the second map?",
+    "solution": [
+      "On the first map {c} cm is {c} × {p} = {=c*a*b} km on the ground.",
+      "On the second map one centimetre is {a} km, so we need as many centimetres as {a} km fits into {=c*a*b} km.",
+      "Divide: {=c*a*b} : {a} = {r} cm.",
+      "So on the second map the cities are {r} cm apart."
+    ],
+    "hints": [
+      "First find how many kilometres the cities are apart on the ground: multiply the centimetres on the first map by the kilometres in one centimetre of it.",
+      "On the second map one centimetre is {a} km. Divide the distance between the cities by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "same-centimetres": "{w_same_centimetres} is the centimetres on the first map. But the scale of the second map is finer: one centimetre is only {a} km, so there are more centimetres: {r}.",
+      "kilometres": "{w_kilometres} is the distance in kilometres, but the question asks for centimetres on the second map. We divide by {a} km in a centimetre and get {r}.",
+      "inverted": "{w_inverted} comes from dividing. But on the second map one centimetre stands for fewer kilometres, so the distance in centimetres is bigger, and we multiply: {r}."
+    }
+  },
+  "G7.plan-1S.13": {
+    "text": "On a map 1 cm stands for {a} km. The cities are {b} cm apart on the map. Two cyclists set off at the same time from these cities towards each other, at {c} km/h and {d} km/h. After how many hours do they meet?",
+    "solution": [
+      "The distance between the cities: {a} × {b} = {=a*b} km.",
+      "The cyclists ride towards each other, so every hour the distance between them shrinks by {c} + {d} = {=c+d} km.",
+      "The time until they meet: {=a*b} : {=c+d} = {r}.",
+      "So they meet after {r|hour|hours|hours}."
+    ],
+    "hints": [
+      "First find the distance between the cities in kilometres. The cyclists ride towards each other, and both shorten the distance.",
+      "Every hour the distance shrinks by the sum of the speeds: {c} + {d}. Divide the distance by it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-speed": "{w_one_speed} comes from dividing by the speed of one cyclist. But both ride, and the distance shrinks by {c} + {d} km every hour.",
+      "speeds-subtracted": "{w_speeds_subtracted} comes from dividing by the difference of the speeds. That is for riders going the same way. Towards each other the speeds are added: {c} + {d}.",
+      "distance": "{w_distance} is the distance between the cities in kilometres, but the question asks for the time: {=a*b} : {=c+d} = {r}."
+    }
+  },
+  "G4.coordinates.18": {
+    "text": "The squares of a map are named by column and row: the columns from left to right are A, B, C, D, E, and the rows from bottom to top are 1, 2, 3, 4, 5. A house stands in square {l}{b}. What is the number of its column, counting from the left, and what is its row? Write the column number, then the row number, separated by a semicolon.",
+    "solution": [
+      "The letter shows the column: A is the first, B the second, C the third, D the fourth, E the fifth.",
+      "Square {l}{b}: column {l} is column number {a}, and the row is number {b}.",
+      "We write the column number first, then the row number. So the house stands at position {r}."
+    ],
+    "hints": [
+      "Which place in the line A, B, C, D, E does the letter {l} have?",
+      "Write the number of the column first, then the number of the row.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "swapped": "Position {w_swapped} has the numbers in the opposite order. The column, {a}, comes first and the row, {b}, after it.",
+      "counted-from-zero": "Position {w_counted_from_zero} comes from counting the columns from zero. The first column is A, and its number is 1."
+    }
+  }
+}

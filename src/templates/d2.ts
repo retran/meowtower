@@ -44,6 +44,12 @@ const multiply = [
         "procedural",
         ([t = 0, k = 0]) => qd(t * k, 2),
       ],
+      [
+        "parts-multiplied-separately",
+        "conceptual",
+        ([t = 0, k = 0]) =>
+          Q.fromDecimal(`${Math.floor(t / 10) * k},${(t % 10) * k}`),
+      ],
     ],
     extra: ([t = 0]) => ({ x: dec(t, 1) }),
   }),
@@ -112,7 +118,7 @@ const multiply = [
     form: "half-as-a-decimal-times-a-whole-number",
     groups: [7, 7],
     kind: "decimal",
-    draw: (r) => [between(r, 3, 19)],
+    draw: (r) => [between(r, 3, 49)],
     valid: ([k = 0]) => k % 2 === 1,
     solve: ([k = 0]) => qd(5 * k, 1),
     ref: ([k = 0]) => q(k).div(q(2)),
@@ -144,6 +150,12 @@ const multiply = [
       ],
       ["added", "procedural", ([t = 0, k = 0]) => qd(t + 10 * k, 1)],
       ["comma-lost", "procedural", ([t = 0, k = 0]) => q(t * k)],
+      [
+        "parts-multiplied-separately",
+        "conceptual",
+        ([t = 0, k = 0]) =>
+          Q.fromDecimal(`${Math.floor(t / 10) * k},${(t % 10) * k}`),
+      ],
     ],
     extra: ([t = 0]) => ({ x: dec(t, 1) }),
   }),
@@ -310,7 +322,12 @@ const multiply = [
     draw: (r) => [between(r, 101, 999), between(r, 3, 12)],
     valid: ([h = 0]) => h % 10 !== 0 && h % 100 !== 50 && h % 100 > 10,
     solve: ([h = 0, k = 0]) => q(Math.floor((h + 50) / 100) * k),
-    ref: ([h = 0, k = 0]) => q(Math.round(h / 100) * k),
+    ref: ([h = 0, k = 0]) => {
+      // The nearer whole number by distance, not by the half-up rule of `solve`.
+      const low = Math.floor(h / 100);
+      const nearer = h - 100 * low > 100 * (low + 1) - h ? low + 1 : low;
+      return q(nearer * k);
+    },
     traps: [
       [
         "cut-off",
@@ -621,7 +638,7 @@ const multiplyS = [
     form: "five-hundredths-times-a-whole-number",
     groups: [7, 8],
     kind: "decimal",
-    draw: (r) => [between(r, 3, 19)],
+    draw: (r) => [between(r, 3, 49)],
     valid: ([k = 0]) => k % 2 === 1,
     solve: ([k = 0]) => qd(5 * k, 2),
     ref: ([k = 0]) => qd(5, 2).mul(q(k)),
@@ -673,8 +690,9 @@ const multiplyS = [
     form: "two-tenths-whose-product-ends-in-a-zero",
     groups: [7, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, [2, 4, 5, 6, 8]), pick(r, [5, 5, 5, 5, 5])],
-    valid: ([a = 0]) => (a * 5) % 10 === 0,
+    draw: (r) => [between(r, 2, 19), between(r, 2, 19)],
+    valid: ([a = 0, b = 0]) =>
+      a !== b && a % 10 !== 0 && b % 10 !== 0 && (a * b) % 10 === 0,
     solve: ([a = 0, b = 0]) => qd(a * b, 2),
     ref: ([a = 0, b = 0]) => qd(a, 1).mul(qd(b, 1)),
     traps: [
@@ -713,6 +731,11 @@ const multiplyS = [
           p + e - 1 === Math.max(p, e) || p + e - 1 === 0
             ? null
             : qd(k * l, p + e - 1),
+      ],
+      [
+        "one-place-too-many",
+        "procedural",
+        ([k = 0, l = 0, p = 0, e = 0]) => qd(k * l, p + e + 1),
       ],
     ],
     extra: ([k = 0, l = 0, p = 0, e = 0]) => ({
@@ -887,6 +910,11 @@ const divide = [
         ([t = 0, k = 0]) => q(t * k, 10).mul(qd(t, 1)),
       ],
       ["comma-ignored", "procedural", ([, k = 0]) => qd(k, 1)],
+      [
+        "dividend-only-multiplied",
+        "procedural",
+        ([t = 0, k = 0]) => q(t * k).div(qd(t, 1)),
+      ],
     ],
     extra: ([t = 0, k = 0]) => ({ x: dec(t, 1), n: String((t * k) / 10) }),
     consts: [10],
@@ -896,8 +924,8 @@ const divide = [
     form: "a-decimal-divided-by-a-whole-number",
     groups: [7, 8],
     kind: "decimal",
-    draw: (r) => [between(r, 2, 9), between(r, 2, 9)],
-    valid: ([k = 0, m = 0]) => (k * m) % 10 !== 0 && k !== m,
+    draw: (r) => [between(r, 2, 9), between(r, 2, 39)],
+    valid: ([k = 0, m = 0]) => (k * m) % 10 !== 0 && m % 10 !== 0 && k !== m,
     solve: ([, m = 0]) => qd(m, 1),
     ref: ([k = 0, m = 0]) => qd(k * m, 1).div(q(k)),
     traps: [
@@ -912,7 +940,7 @@ const divide = [
     form: "a-whole-number-divided-by-a-half",
     groups: [7, 8],
     kind: "integer",
-    draw: (r) => [2 * between(r, 2, 12)],
+    draw: (r) => [2 * between(r, 2, 25)],
     solve: ([n = 0]) => q(2 * n),
     ref: ([n = 0]) => q(n).div(qd(5, 1)),
     traps: [
@@ -928,7 +956,7 @@ const divide = [
     form: "a-whole-number-divided-by-a-quarter",
     groups: [7, 8],
     kind: "integer",
-    draw: (r) => [4 * between(r, 1, 6)],
+    draw: (r) => [4 * between(r, 1, 15)],
     solve: ([n = 0]) => q(4 * n),
     ref: ([n = 0]) => q(n).div(qd(25, 2)),
     traps: [
@@ -943,16 +971,16 @@ const divide = [
     form: "a-decimal-divided-by-a-single-digit",
     groups: [7, 8],
     kind: "decimal",
-    draw: (r) => [between(r, 3, 9), between(r, 2, 9)],
-    valid: ([k = 0, m = 0]) => k !== m && (k * m) % 10 !== 0,
-    solve: ([, m = 0]) => qd(m, 1),
-    ref: ([k = 0, m = 0]) => qd(k * m, 1).div(q(k)),
+    draw: (r) => [between(r, 3, 9), between(r, 11, 99)],
+    valid: ([k = 0, m = 0]) => m % 10 !== 0 && (k * m) % 10 !== 0,
+    solve: ([, m = 0]) => qd(m, 2),
+    ref: ([k = 0, m = 0]) => qd(k * m, 2).div(q(k)),
     traps: [
-      ["comma-moved", "procedural", ([, m = 0]) => qd(m, 2)],
-      ["multiplied", "procedural", ([k = 0, m = 0]) => qd(k * m, 1).mul(q(k))],
+      ["comma-moved", "procedural", ([, m = 0]) => qd(m, 3)],
+      ["multiplied", "procedural", ([k = 0, m = 0]) => qd(k * m, 2).mul(q(k))],
       ["whole-answer", "conceptual", ([, m = 0]) => q(m)],
     ],
-    extra: ([k = 0, m = 0]) => ({ x: dec(k * m, 1) }),
+    extra: ([k = 0, m = 0]) => ({ x: dec(k * m, 2) }),
   }),
   d5({
     id: "D5.divide.06",
@@ -975,19 +1003,28 @@ const divide = [
     form: "one-divided-by-a-simple-decimal",
     groups: [7, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, [2, 4, 5, 10])],
+    draw: (r) => [pick(r, [2, 4, 5, 10, 20, 25, 50])],
     solve: ([i = 0]) => q(i),
     ref: ([i = 0]) => q(1).div(qd(100 / i, 2)),
     traps: [
-      ["comma-ignored", "procedural", ([i = 0]) => qd(i, 2)],
+      // The divisor read as a whole number: 1 : 0,25 as 1 : 25, and 1 : 0,5 as 1 : 5.
       [
-        "multiplied",
+        "comma-ignored",
         "procedural",
-        ([i = 0]) => (i === 10 ? null : qd(100 / i, 2)),
+        ([i = 0]) => q(1, (100 / i) % 10 === 0 ? 10 / i : 100 / i),
       ],
-      ["comma-moved", "procedural", ([i = 0]) => qd(i, 1)],
+      ["multiplied", "procedural", ([i = 0]) => qd(100 / i, 2)],
+      // One place too few, which only a divisor with two digits after the comma allows.
+      [
+        "comma-moved",
+        "procedural",
+        ([i = 0]) => ((100 / i) % 10 === 0 ? null : qd(i, 1)),
+      ],
     ],
-    extra: ([i = 0]) => ({ x: dec(100 / i, 2) }),
+    extra: ([i = 0]) => ({
+      x: dec(100 / i, 2, true),
+      nn: String((100 / i) % 10 === 0 ? 10 / i : 100 / i),
+    }),
     consts: [1],
   }),
   d5({
@@ -995,7 +1032,7 @@ const divide = [
     form: "a-quotient-rounded-to-hundredths",
     groups: [8, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, [10, 20, 5, 7, 8, 11]), pick(r, [3, 6, 7, 9])],
+    draw: (r) => [between(r, 5, 40), pick(r, [3, 6, 7, 9, 11])],
     valid: ([n = 0, d = 0]) =>
       (100 * n) % d !== 0 && roundHundredths(n, d) !== cutHundredths(n, d),
     solve: ([n = 0, d = 0]) => qd(roundHundredths(n, d), 2),
@@ -1039,7 +1076,7 @@ const divide = [
     groups: [7, 8],
     roles: { n: "litres in all", x: "portion in hundredths of a litre" },
     kind: "integer",
-    draw: (r) => [between(r, 2, 8)],
+    draw: (r) => [between(r, 2, 16)],
     solve: ([j = 0]) => q(4 * j),
     ref: ([j = 0]) => q(3 * j).div(qd(75, 2)),
     traps: [
@@ -1062,6 +1099,7 @@ const divide = [
     traps: [
       ["multiplied", "procedural", ([d = 0, k = 0]) => qd(d * d * k, 2)],
       ["comma-ignored", "procedural", ([, k = 0]) => qd(k, 1)],
+      ["dividend-only-moved", "procedural", ([, k = 0]) => q(10 * k)],
     ],
     extra: ([d = 0, k = 0]) => ({ x: dec(d * k, 1), y: dec(d, 1) }),
     consts: [10],
@@ -1536,7 +1574,8 @@ const convert = [
     rule: "equivalent",
     draw: (r) => [between(r, 1, 9)],
     solve: ([t = 0]) => qd(t, 1),
-    ref: ([t = 0]) => q(t, 10),
+    // Read the digit after the comma as the numerator of tenths, by text.
+    ref: ([t = 0]) => Q.fromDecimal(`0,${t}`),
     traps: [
       ["hundredths-denominator", "procedural", ([t = 0]) => q(t, 100)],
       ["inverted", "conceptual", ([t = 0]) => q(10, t)],
@@ -1553,7 +1592,7 @@ const convert = [
     rule: "simplest",
     draw: (r) => [pick(r, [25, 75, 20, 40, 60, 80, 12, 16, 24, 36])],
     solve: ([h = 0]) => qd(h, 2),
-    ref: ([h = 0]) => q(h, 100),
+    ref: ([h = 0]) => Q.fromDecimal(`0,${String(h).padStart(2, "0")}`),
     traps: [
       ["tenths-denominator", "procedural", ([h = 0]) => q(h, 10)],
       ["inverted", "conceptual", ([h = 0]) => q(100, h)],
@@ -1611,9 +1650,9 @@ const convert = [
     groups: [7, 8],
     kind: "fraction",
     rule: "simplest",
-    draw: (r) => [pick(r, [2, 4, 5, 6, 8])],
+    draw: (r) => [pick(r, [2, 4, 5, 6, 8, 1, 3, 7, 9])],
     solve: ([t = 0]) => qd(t, 1),
-    ref: ([t = 0]) => q(t, 10),
+    ref: ([t = 0]) => Q.fromDecimal(`0,${t}`),
     traps: [
       ["hundredths-denominator", "procedural", ([t = 0]) => q(t, 100)],
       ["inverted", "conceptual", ([t = 0]) => q(10, t)],
@@ -1630,7 +1669,7 @@ const convert = [
     draw: (r) => [between(r, 11, 99)],
     valid: ([h = 0]) => h % 10 !== 0,
     solve: ([h = 0]) => qd(h, 2),
-    ref: ([h = 0]) => q(h, 100),
+    ref: ([h = 0]) => Q.fromDecimal(`0,${String(h).padStart(2, "0")}`),
     traps: [
       ["whole", "conceptual", ([h = 0]) => q(h)],
       ["thousandths", "procedural", ([h = 0]) => qd(h, 3)],
@@ -1714,7 +1753,7 @@ const convert = [
     rule: "equivalent",
     draw: (r) => [pick(r, [3, 7, 9, 11, 13, 17, 19, 21, 23, 27])],
     solve: ([h = 0]) => qd(h, 2),
-    ref: ([h = 0]) => q(h, 100),
+    ref: ([h = 0]) => Q.fromDecimal(`0,${String(h).padStart(2, "0")}`),
     traps: [
       ["reciprocal", "conceptual", ([h = 0]) => q(1, h)],
       ["thousandths", "procedural", ([h = 0]) => q(h, 1000)],
@@ -1899,7 +1938,8 @@ const convertS = [
     form: "eighths-as-a-decimal",
     groups: [8, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, EIGHTHS)],
+    draw: (r) => [between(r, 1, 15)],
+    valid: ([n = 0]) => n % 8 !== 0,
     solve: ([n = 0]) => q(n, 8),
     ref: ([n = 0]) => qd(125 * n, 3),
     traps: [
@@ -1921,7 +1961,7 @@ const convertS = [
     rule: "simplest",
     draw: (r) => [pick(r, [22, 26, 34, 38, 42, 46, 14, 18])],
     solve: ([h = 0]) => qd(h, 2),
-    ref: ([h = 0]) => q(h, 100),
+    ref: ([h = 0]) => Q.fromDecimal(`0,${String(h).padStart(2, "0")}`),
     traps: [
       ["denominator-halved", "procedural", ([h = 0]) => q(h, 50)],
       ["numerator-halved-only", "procedural", ([h = 0]) => q(h / 2, 100)],
@@ -2085,9 +2125,9 @@ const convertS = [
     groups: [8, 8],
     kind: "fraction",
     rule: "simplest",
-    draw: (r) => [pick(r, [125, 375, 625, 875])],
+    draw: (r) => [pick(r, [125, 375, 625, 875, 25, 75, 175, 225])],
     solve: ([h = 0]) => qd(h, 3),
-    ref: ([h = 0]) => q(h, 1000),
+    ref: ([h = 0]) => Q.fromDecimal(`0,${String(h).padStart(3, "0")}`),
     traps: [
       ["hundredths-denominator", "procedural", ([h = 0]) => q(h, 100)],
       ["inverted", "conceptual", ([h = 0]) => q(1000, h)],
@@ -2104,7 +2144,7 @@ const convertS = [
     rule: "simplest",
     draw: (r) => [pick(r, [4, 8, 12, 16, 24, 28, 36, 44])],
     solve: ([h = 0]) => qd(h, 2),
-    ref: ([h = 0]) => q(h, 100),
+    ref: ([h = 0]) => Q.fromDecimal(`0,${String(h).padStart(2, "0")}`),
     traps: [
       ["reciprocal", "conceptual", ([h = 0]) => q(1, h)],
       ["inverted", "conceptual", ([h = 0]) => q(100, h)],
@@ -2163,7 +2203,7 @@ const convertS = [
     groups: [8, 8],
     roles: { a: "numerator over eight" },
     kind: "decimal",
-    draw: (r) => [pick(r, [1, 3, 5, 7])],
+    draw: (r) => [between(r, 1, 7)],
     solve: ([n = 0]) => qd(125 * n, 1),
     ref: ([n = 0]) => q(n, 8).mul(q(100)),
     traps: [
@@ -2517,7 +2557,7 @@ const UNIT_FRACTIONS: readonly (readonly [number, number])[] = [
   [1, 5],
 ];
 /** Tenths used by the bracket tasks: 0,5 to 4. */
-const BRACKET_NUMBERS = [5, 10, 15, 20, 25, 30, 40];
+const BRACKET_NUMBERS = [5, 15, 20, 25, 30, 40];
 /** Operation orders of the bracket task, three signs for four numbers. */
 const BRACKET_OPS: readonly (readonly string[])[] = [
   ["+", "×", "−"],
@@ -3273,6 +3313,12 @@ const mixedOps = [
             ? null
             : qd(u, 1).sub(qd(t, 1).div(q(n, d))),
       ],
+      ["reduction-forgotten", "procedural", ([t = 0, , d = 0]) => qd(t * d, 1)],
+      [
+        "increased-instead",
+        "conceptual",
+        ([t = 0, , d = 0, u = 0]) => qd(t * d + u, 1),
+      ],
       [
         "dividend-and-divisor-swapped",
         "conceptual",
@@ -3345,6 +3391,15 @@ const mixedOps = [
         ([a = 0, b = 0, c = 0]) => {
           const [lo = 0, mid = 0, hi = 0] = [a, b, c].sort((x, y) => x - y);
           return qd((mid - lo) * hi, 2);
+        },
+      ],
+      [
+        "numbers-in-order",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => {
+          const [lo = 0, mid = 0, hi = 0] = [a, b, c].sort((x, y) => x - y);
+          const wrong = qd((hi - mid) * lo, 2);
+          return wrong.eq(qd((mid - lo) * hi, 2)) ? null : wrong;
         },
       ],
     ],

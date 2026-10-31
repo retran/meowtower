@@ -268,6 +268,16 @@ const placeValue = [
             : wrong;
         },
       ],
+      [
+        "digits-as-whole-numbers",
+        "conceptual",
+        ([a = 0, b = 0, c = 0]) => {
+          const wrong = ranked([a, b, c], (x) => (x % 10 === 0 ? x / 10 : x));
+          return wrong.join() === ranked([a, b, c], (x) => x).join()
+            ? null
+            : wrong;
+        },
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0]) => ({
       list: [a, b, c].map((x) => dec(x, 2, true)).join("; "),
@@ -284,10 +294,10 @@ const placeValue = [
     form: "write-hundredths-as-a-decimal",
     groups: [5, 6],
     kind: "decimal",
-    draw: (r) => [between(r, 11, 99)],
+    draw: (r) => [between(r, 2, 99)],
     valid: ([a = 0]) => a % 10 !== 0,
     solve: ([a = 0]) => qd(a, 2),
-    ref: ([a = 0]) => Q.fromDecimal(`0,${a}`),
+    ref: ([a = 0]) => Q.fromDecimal(`0,${String(a).padStart(2, "0")}`),
     traps: [
       ["tenths", "conceptual", ([a = 0]) => qd(a, 1)],
       ["whole-number", "conceptual", ([a = 0]) => q(a)],
@@ -447,6 +457,15 @@ const placeValue = [
             : wrong;
         },
       ],
+      [
+        "tenths-tie",
+        "conceptual",
+        ([, ...h]) => {
+          const tenths = h.map((x) => Math.floor(x / 10));
+          const wrong = String(tenths.indexOf(Math.max(...tenths)) + 1);
+          return wrong === String(h.indexOf(Math.max(...h)) + 1) ? null : wrong;
+        },
+      ],
     ],
     extra: ([w = 0, ...h]) => {
       const best = Math.max(...h);
@@ -570,6 +589,12 @@ const placeValue = [
             : x;
         },
       ],
+      [
+        "carry-lost",
+        "procedural",
+        ([w = 0, t = 0, h = 0]) =>
+          t === 9 && h >= 5 ? qd(10 * w + 1, 1) : null,
+      ],
     ],
     extra: ([w = 0, t = 0, h = 0]) => ({
       n: dec(100 * w + 10 * t + h, 2),
@@ -586,7 +611,7 @@ const placeValue = [
         "counting the numbers strictly between two ends, a fence-post count in the style of Kangaroo (RES-4282)",
     },
     kind: "integer",
-    draw: (r) => [between(r, 0, 9), between(r, 1, 8), between(r, 1, 3)],
+    draw: (r) => [between(r, 0, 9), between(r, 1, 9), between(r, 1, 6)],
     solve: ([, , g = 0]) => q(10 * g - 1),
     ref: ([w = 0, t = 0, g = 0]) => {
       const lo = 10 * (10 * w + t);
@@ -632,6 +657,11 @@ const placeValue = [
           qd(100 * c + 10 * b + a - (100 * a + 10 * c + b), 2),
       ],
       ["wholes-only", "conceptual", ([a = 0, , c = 0]) => q(c - a)],
+      [
+        "smaller-from-larger-column",
+        "procedural",
+        ([a = 0, , c = 0]) => qd(101 * (c - a), 2),
+      ],
     ],
     extra: ([a = 0, b = 0, c = 0]) => ({
       hi: dec(100 * c + 10 * b + a, 2),
@@ -1093,6 +1123,12 @@ const addSub = [
         "procedural",
         ([a = 0, p1 = 0, p2 = 0]) => qd(100 * a + p1 + p2, 2),
       ],
+      [
+        "no-borrowing",
+        "procedural",
+        ([a = 0, p1 = 0, p2 = 0]) =>
+          qd(100 * (a - Math.floor((p1 + p2) / 100)) + ((p1 + p2) % 100), 2),
+      ],
     ],
     roles: {
       a: "money on the account in euros",
@@ -1178,7 +1214,7 @@ const addSub = [
         "pairing the first and the last term, a Gauss sum with decimals (RES-4282)",
     },
     kind: "decimal",
-    draw: (r) => [pick(r, [9, 11, 13, 14, 15, 17, 19])],
+    draw: (r) => [between(r, 8, 29)],
     solve: ([k = 0]) => qd((k * (k + 1)) / 2, 1),
     ref: ([k = 0]) =>
       Array.from({ length: k }, (_, i) => qd(i + 1, 1)).reduce(
@@ -1484,6 +1520,11 @@ const shift = [
         ([, , k = 0]) => (k === 1 ? null : q(10 ** (k - 1))),
       ],
       ["one-zero-too-many", "conceptual", ([, , k = 0]) => q(10 ** (k + 1))],
+      [
+        "number-of-places",
+        "conceptual",
+        ([, , k = 0]) => (k === 1 ? null : q(k)),
+      ],
     ],
     extra: ([n = 0, p = 0, k = 0]) => ({
       x: dec(n, p),
@@ -1586,8 +1627,8 @@ const shift = [
       ],
     ],
     extra: ([n = 0, a = 0, b = 0, c = 0, d = 0]) => ({
-      f: `${dec(n, a)} × ${10 ** b}`,
-      g: `${dec(n, c)} × ${10 ** d}`,
+      f: `${dec(n, a, true)} × ${10 ** b}`,
+      g: `${dec(n, c, true)} × ${10 ** d}`,
       u: dec(n * 10 ** b, a, true),
       w: dec(n * 10 ** d, c, true),
     }),

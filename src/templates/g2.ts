@@ -14,6 +14,8 @@ export const GRID_PATHS: readonly (readonly [number, number])[] = [
   [3, 3],
   [2, 4],
   [3, 4],
+  [2, 5],
+  [3, 5],
 ];
 const legsOf = (i: number): [number, number] => {
   const [u = 2, v = 2] = GRID_PATHS[i] ?? [];
@@ -73,8 +75,9 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     form: "the-axes-of-a-regular-polygon",
     g: [5, 6],
     kind: "integer",
-    p: [of(3, 4, 5, 6, 8)],
+    p: [of(3, 4, 5, 6, 7, 8, 9, 10, 12)],
     f: (a) => q(a),
+    alt: (a) => q(a % 2 === 1 ? a : a / 2 + a / 2),
     t: {
       "one-axis": () => q(1),
       doubled: (a) => q(2 * a),
@@ -89,6 +92,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 8), rg(9, 15)],
     f: (a, b) => q(2 * b - a),
+    alt: (a, b) => {
+      let image = 0;
+      while ((a + image) / 2 !== b) image += 1;
+      return q(image);
+    },
     t: {
       "distance-only": (a, b) => q(b - a),
       "mirror-itself": (a, b) => q(b),
@@ -104,6 +112,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     p: [rg(1, 4), rg(1, 6), rg(5, 7)],
     ok: (a, b, c) => b !== 2 * c - a,
     f: (a, b, c) => [q(2 * c - a), q(b)] as const,
+    alt: (a, b, c) => {
+      let image = 0;
+      while ((a + image) / 2 !== c) image += 1;
+      return [q(image), q(b)] as const;
+    },
     t: {
       "same-point": (a, b) => [q(a), q(b)] as const,
       swapped: (a, b, c) => [q(b), q(2 * c - a)] as const,
@@ -120,6 +133,13 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "pair",
     p: [rg(1, 4), rg(1, 4), rg(5, 7), rg(5, 7)],
     f: (a, b, c, d) => [q(2 * c - a), q(2 * d - b)] as const,
+    alt: (a, b, c, d) => {
+      let x = 0;
+      while ((a + x) / 2 !== c) x += 1;
+      let y = 0;
+      while ((b + y) / 2 !== d) y += 1;
+      return [q(x), q(y)] as const;
+    },
     t: {
       centre: (a, b, c, d) => [q(c), q(d)] as const,
       "line-mirror": (a, b, c) => [q(2 * c - a), q(b)] as const,
@@ -183,6 +203,12 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9), rg(10, 19), rg(2, 5)],
     f: (a, b, c) => q(2 * c),
+    alt: (a, b, c) => {
+      const perRectangle = ["along", "across"];
+      let axes = 0;
+      for (let i = 0; i < c; i += 1) axes += perRectangle.length;
+      return q(axes);
+    },
     t: {
       "as-a-square": (a, b, c) => q(4 * c),
       one: (a, b, c) => q(c),
@@ -201,6 +227,14 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 4), rg(1, 3), rg(1, 4)],
     f: (a, b) => q(a + 3 * b),
+    alt: (a, b, c) => {
+      const kinds: readonly (readonly [number, number])[] = [
+        [a, 1],
+        [b, 3],
+        [c, 0],
+      ];
+      return q(kinds.reduce((s, [count, axes]) => s + count * axes, 0));
+    },
     t: {
       "scalene-with-an-axis": (a, b, c) => q(a + 3 * b + c),
       "equilateral-with-one-axis": (a, b) => q(a + b),
@@ -218,11 +252,16 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     form: "the-holes-in-a-folded-sheet",
     g: [5, 6],
     kind: "integer",
-    p: [rg(1, 5)],
+    p: [rg(1, 6)],
     f: (a) => q(2 ** a),
+    alt: (a) => {
+      let layers = [1];
+      for (let fold = 0; fold < a; fold += 1) layers = [...layers, ...layers];
+      return q(layers.length);
+    },
     t: {
       "one-hole": () => q(1),
-      "per-fold": (a) => (a === 2 ? null : q(a)),
+      "per-fold": (a) => (a <= 2 ? null : q(a)),
       "one-fold-less": (a) => (a <= 2 ? null : q(2 ** (a - 1))),
     },
     c: [2],
@@ -234,6 +273,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "choice",
     p: [rg(2, 7)],
     f: (a) => (a % 2 === 0 ? "2" : "1"),
+    alt: (a) => {
+      let mirrored = false;
+      for (let flip = 0; flip < a; flip += 1) mirrored = !mirrored;
+      return mirrored ? "1" : "2";
+    },
     t: {
       "upside-down": () => "3",
       "quarter-turn": () => "4",
@@ -250,6 +294,14 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 4), rg(1, 4)],
     f: (a, b) => q(4 * a + 2 * b),
+    alt: (a, b) => {
+      const square = ["across", "along", "diagonal", "other diagonal"];
+      const rectangle = ["across", "along"];
+      let axes = 0;
+      for (let i = 0; i < a; i += 1) axes += square.length;
+      for (let i = 0; i < b; i += 1) axes += rectangle.length;
+      return q(axes);
+    },
     t: {
       "as-a-rectangle": (a, b) => q(2 * a + 2 * b),
       "diagonals-of-rectangles": (a, b) => q(4 * a + 4 * b),
@@ -290,10 +342,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     p: [rg(2, 9), rg(2, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(2 * (2 * a + b)),
-    alt: (a, b) => q(4 * a + 2 * b),
+    alt: (a, b) => q(2 * (2 * (a + b)) - 2 * b),
     t: {
       "both-perimeters": (a, b) => q(4 * (a + b)),
       "one-perimeter": (a, b) => q(2 * (a + b)),
+      area: (a, b) => q(2 * a * b),
     },
     c: [2],
     roles: { a: "side across the mirror", b: "side along the mirror" },
@@ -306,8 +359,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     p: [rg(3, 10)],
     f: (a) => q(2 ** Math.floor((a + 1) / 2)),
     alt: (a) => {
-      let count = 1;
-      for (let i = 0; i < Math.floor((a + 1) / 2); i += 1) count *= 2;
+      let count = 0;
+      for (let mask = 0; mask < 2 ** a; mask += 1) {
+        const cells = Array.from({ length: a }, (_, i) => (mask >> i) & 1);
+        if (cells.every((cell, i) => cell === cells[a - 1 - i])) count += 1;
+      }
       return q(count);
     },
     t: {
@@ -331,8 +387,14 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     p: [rg(3, 8)],
     f: (a) => q(9 * 10 ** (Math.floor((a + 1) / 2) - 1)),
     alt: (a) => {
-      let count = 9;
-      for (let i = 1; i < Math.floor((a + 1) / 2); i += 1) count *= 10;
+      const half = Math.floor((a + 1) / 2);
+      let count = 0;
+      for (let h = 10 ** (half - 1); h < 10 ** half; h += 1) {
+        const left = String(h);
+        const whole = left + [...left.slice(0, a - half)].reverse().join("");
+        if (whole.length === a && whole === [...whole].reverse().join(""))
+          count += 1;
+      }
       return q(count);
     },
     t: {
@@ -355,6 +417,7 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     ok: (a, b, c, d) =>
       (a + c) % 2 === 0 && (b + d) % 2 === 0 && a + c !== b + d,
     f: (a, b, c, d) => [q((a + c) / 2), q((b + d) / 2)] as const,
+    alt: (a, b, c, d) => [q(a + (c - a) / 2), q(b + (d - b) / 2)] as const,
     t: {
       "sum-not-halved": (a, b, c, d) => [q(a + c), q(b + d)] as const,
       swapped: (a, b, c, d) => [q((b + d) / 2), q((a + c) / 2)] as const,
@@ -373,6 +436,11 @@ const G3_symmetry_specs: readonly Spec<never>[] = [
     kind: "pair",
     p: [rg(1, 6), rg(1, 4), rg(5, 7)],
     f: (a, b, c) => [q(a), q(2 * c - b)] as const,
+    alt: (a, b, c) => {
+      let image = 0;
+      while ((b + image) / 2 !== c) image += 1;
+      return [q(a), q(image)] as const;
+    },
     t: {
       "same-point": (a, b) => [q(a), q(b)] as const,
       swapped: (a, b, c) => [q(2 * c - b), q(a)] as const,
@@ -393,6 +461,11 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 5), rg(6, 12), rg(1, 9)],
     f: (a, b) => q(b - a),
+    alt: (a, b) => {
+      let steps = 0;
+      for (let x = a; x < b; x += 1) steps += 1;
+      return q(steps);
+    },
     t: {
       "far-coordinate": (a, b) => q(b),
       "coordinates-added": (a, b) => q(a + b),
@@ -406,6 +479,11 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 9), rg(1, 5), rg(6, 12)],
     f: (a, b, c) => q(c - b),
+    alt: (a, b, c) => {
+      let steps = 0;
+      for (let y = b; y < c; y += 1) steps += 1;
+      return q(steps);
+    },
     t: {
       "far-coordinate": (a, b, c) => q(c),
       "coordinates-added": (a, b, c) => q(b + c),
@@ -419,6 +497,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     kind: "pair",
     p: [rg(1, 3), rg(1, 3), rg(5, 9), rg(5, 9)],
     f: (a, b, c, d) => [q(a), q(d)] as const,
+    alt: (a, b, c, d) => [q(a + c - c), q(b + d - b)] as const,
     t: {
       "first-vertex": (a, b) => [q(a), q(b)] as const,
       "third-vertex": (a, b, c, d) => [q(c), q(d)] as const,
@@ -433,6 +512,13 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [rg(1, 4), rg(1, 4), rg(1, 5), rg(1, 5)],
     ok: (a, b, c, d) => c !== d,
     f: (a, b, c, d) => [q(a + c), q(b + d)] as const,
+    alt: (a, b, c, d) => {
+      let x = a;
+      let y = b;
+      for (let step = 0; step < c; step += 1) x += 1;
+      for (let step = 0; step < d; step += 1) y += 1;
+      return [q(x), q(y)] as const;
+    },
     t: {
       "swapped-shifts": (a, b, c, d) => [q(a + d), q(b + c)] as const,
       "shifts-only": (a, b, c, d) => [q(c), q(d)] as const,
@@ -447,6 +533,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [of(2, 4, 6), of(8, 10, 12), rg(1, 9)],
     ok: (a, b, c) => (a + b) / 2 !== c,
     f: (a, b, c) => [q((a + b) / 2), q(c)] as const,
+    alt: (a, b, c) => [q(a + (b - a) / 2), q(c)] as const,
     t: {
       "left-end": (a, b, c) => [q(a), q(c)] as const,
       "half-the-sum": (a, b) => [q((a + b) / 2), q((a + b) / 2)] as const,
@@ -463,6 +550,11 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [rg(1, 3), rg(1, 3), rg(5, 9), rg(5, 9)],
     ok: (a, b, c, d) => c - a !== d - b,
     f: (a, b, c, d) => q((c - a) * (d - b)),
+    alt: (a, b, c, d) => {
+      let cells = 0;
+      for (let x = a; x < c; x += 1) for (let y = b; y < d; y += 1) cells += 1;
+      return q(cells);
+    },
     t: {
       perimeter: (a, b, c, d) => q(2 * (c - a + (d - b))),
       "sides-added": (a, b, c, d) => q(c - a + (d - b)),
@@ -481,6 +573,17 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [rg(1, 4), rg(1, 4), rg(5, 9), rg(5, 9)],
     ok: (a, b, c, d) => c - a !== d - b,
     f: (a, b, c, d) => q(c - a + (d - b)),
+    alt: (a, b, c, d) => {
+      let x = a;
+      let y = b;
+      let steps = 0;
+      while (x < c || y < d) {
+        if (x < c) x += 1;
+        else y += 1;
+        steps += 1;
+      }
+      return q(steps);
+    },
     t: {
       "longer-side": (a, b, c, d) => q(Math.max(c - a, d - b)),
       "end-coordinates": (a, b, c, d) => q(c + d),
@@ -496,8 +599,14 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     form: "the-points-with-both-coordinates-up-to-a-bound",
     g: [6, 7],
     kind: "integer",
-    p: [rg(2, 6)],
+    p: [rg(2, 9)],
     f: (a) => q((a + 1) * (a + 1)),
+    alt: (a) => {
+      let points = 0;
+      for (let x = 0; x <= a; x += 1)
+        for (let y = 0; y <= a; y += 1) points += 1;
+      return q(points);
+    },
     t: {
       "without-zero": (a) => q(a * a),
       "one-axis": (a) => q(a + 1),
@@ -513,9 +622,15 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 5), rg(6, 12)],
     f: (a, b) => q(b),
+    alt: (a, b) => {
+      let rows = 0;
+      for (let row = b; row > 0; row -= 1) rows += 1;
+      return q(rows);
+    },
     t: {
       "first-coordinate": (a) => q(a),
       "coordinates-added": (a, b) => q(a + b),
+      "counted-rows": (a, b) => q(b + 1),
     },
     c: [0],
   }),
@@ -527,6 +642,15 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [rg(4, 7), rg(4, 7), rg(1, 3), rg(1, 3)],
     ok: (a, b, c, d) => c !== d,
     f: (a, b, c, d) => [q(a - c), q(b - d)] as const,
+    alt: (a, b, c, d) => {
+      let x = 0;
+      let y = 0;
+      for (let step = 0; step < a; step += 1) x += 1;
+      for (let step = 0; step < b; step += 1) y += 1;
+      for (let step = 0; step < c; step += 1) x -= 1;
+      for (let step = 0; step < d; step += 1) y -= 1;
+      return [q(x), q(y)] as const;
+    },
     t: {
       "all-added": (a, b, c, d) => [q(a + c), q(b + d)] as const,
       "first-part": (a, b) => [q(a), q(b)] as const,
@@ -543,6 +667,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [rg(1, 9), rg(1, 9)],
     ok: (a, b) => a !== b,
     f: (a, b) => sign(q(a), q(b)),
+    alt: (a, b) => SIGNS[Math.sign(a - b) + 1] ?? "=",
     t: { reversed: (a, b) => sign(q(b), q(a)) },
   }),
   G4_coordinates({
@@ -553,6 +678,13 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [rg(1, 9), rg(1, 7)],
     ok: (a, b) => a !== b,
     f: (a, b) => [q(a), q(b)] as const,
+    alt: (a, b) => {
+      let right = 0;
+      let up = 0;
+      while (right < a) right += 1;
+      while (up < b) up += 1;
+      return [q(right), q(up)] as const;
+    },
     t: {
       swapped: (a, b) => [q(b), q(a)] as const,
       "counted-from-one": (a, b) => [q(a + 1), q(b + 1)] as const,
@@ -574,6 +706,7 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     t: {
       "all-points": (a, b, c, d) => q((c - a + 1) * (d - b + 1)),
       area: (a, b, c, d) => q((c - a) * (d - b)),
+      "one-direction-only": (a, b, c, d) => q((c - a - 1) * (d - b)),
     },
     c: [1],
     origin: {
@@ -636,6 +769,15 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     ],
     ok: (...v) => reachOptions(v).distinct,
     f: (...v) => String(reachOptions(v).answer),
+    alt: (...v) => {
+      const n = v[0] ?? 0;
+      const o = reachOptions(v);
+      const fits = o.points.flatMap(([x, y], i) => {
+        const far = Math.abs(x) + Math.abs(y);
+        return far <= n && (n - far) % 2 === 0 ? [String(i + 1)] : [];
+      });
+      return fits.length === 1 ? (fits[0] ?? "") : "";
+    },
     t: {
       "wrong-parity": (...v) => String(reachOptions(v).parity),
       "too-far": (...v) => String(reachOptions(v).far),
@@ -690,6 +832,11 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(5, 12)],
     f: (a) => q(a - 1),
+    alt: (a) => {
+      let points = 0;
+      for (let x = 1; x < a; x += 1) if (a - x >= 1) points += 1;
+      return q(points);
+    },
     t: {
       "with-zeros": (a) => q(a + 1),
       "fence-post": (a) => q(a - 2),
@@ -709,6 +856,8 @@ const G4_coordinates_specs: readonly Spec<never>[] = [
     p: [rg(2, 5), rg(1, 5)],
     ok: (a, b) => a !== b,
     f: (a, b) => [q(a), q(b)] as const,
+    alt: (a, b) =>
+      [q("ABCDE".indexOf(String.fromCharCode(64 + a)) + 1), q(b)] as const,
     t: {
       swapped: (a, b) => [q(b), q(a)] as const,
       "counted-from-zero": (a, b) => [q(a - 1), q(b)] as const,

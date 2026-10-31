@@ -33,6 +33,17 @@ const sum = (n: number, x: number): number =>
 const ones = (n: number): number => n % 10;
 const tens = (n: number): number => Math.floor(n / 10);
 
+/** How many times `step` can be taken away from `total` before nothing is left. */
+export const repeatedTakeAway = (total: number, step: number): number => {
+  let left = total;
+  let count = 0;
+  while (left >= step) {
+    left -= step;
+    count += 1;
+  }
+  return count;
+};
+
 const keep = (x: number, ...not: number[]): number | null =>
   Number.isInteger(x) && x >= 0 && !not.includes(x) ? x : null;
 
@@ -103,12 +114,10 @@ const add20 = [
     form: "a-missing-addend",
     groups: [2, 3],
     draw: (r) => [between(r, 2, 12), between(r, 13, 20)],
+    valid: ([a = 0, b = 0]) => b - a >= 3,
     solve: ([a = 0, b = 0]) => b - a,
     ref: ([a = 0, b = 0]) =>
-      Array.from({ length: b }, (_, i) => i).filter((x) => x + a === b).length >
-      0
-        ? b - a
-        : -1,
+      Array.from({ length: b + 1 }, (_, x) => x).find((x) => a + x === b) ?? -1,
     traps: [
       ["added", "procedural", ([a = 0, b = 0]) => a + b],
       [
@@ -131,10 +140,7 @@ const add20 = [
     draw: (r) => [between(r, 11, 20), between(r, 2, 9)],
     solve: ([a = 0, b = 0]) => a - b,
     ref: ([a = 0, b = 0]) =>
-      Array.from({ length: a + 1 }, (_, x) => x).find((x) => a - x === b) !==
-      undefined
-        ? a - b
-        : -1,
+      Array.from({ length: a + 1 }, (_, x) => x).find((x) => a - x === b) ?? -1,
     traps: [
       ["added", "procedural", ([a = 0, b = 0]) => a + b],
       ["counted-one-more", "procedural", ([a = 0, b = 0]) => a - b + 1],
@@ -145,9 +151,9 @@ const add20 = [
     id: "A1.add-sub-20.07",
     form: "a-near-double",
     groups: [2, 3],
-    draw: (r) => [between(r, 4, 9)],
+    draw: (r) => [between(r, 3, 9)],
     solve: ([a = 0]) => 2 * a + 1,
-    ref: ([a = 0]) => a + (a + 1),
+    ref: ([a = 0]) => 2 * (a + 1) - 1,
     traps: [
       ["double-only", "conceptual", ([a = 0]) => 2 * a],
       ["doubled-bigger", "conceptual", ([a = 0]) => 2 * a + 2],
@@ -176,7 +182,8 @@ const add20 = [
     roles: { a: "count in the larger pile", b: "count in the smaller pile" },
     draw: (r) => [between(r, 11, 20), between(r, 3, 9)],
     solve: ([a = 0, b = 0]) => a - b,
-    ref: ([a = 0, b = 0]) => -(b - a),
+    ref: ([a = 0, b = 0]) =>
+      Array.from({ length: a }, (_, i) => i + 1).filter((i) => i > b).length,
     traps: [
       ["added", "procedural", ([a = 0, b = 0]) => a + b],
       ["counted-one-more", "procedural", ([a = 0, b = 0]) => a - b + 1],
@@ -404,8 +411,8 @@ const add20 = [
     kind: "choice",
     origin: { olympiad: "parity of a sum, Kangaroo style (RES-4283, F13)" },
     draw: (r) => {
-      const even = 2 * between(r, 4, 9);
-      const odd = [1, 3, 5, 7, 9].map((k) => 2 * k + 1);
+      const even = 2 * between(r, 2, 10);
+      const odd = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => 2 * k + 1);
       const first = pick(r, odd);
       const second = pick(
         r,
@@ -673,7 +680,7 @@ const mental = [
     form: "what-to-add-to-reach-a-round-number",
     groups: [4, 4],
     draw: (r) => [between(r, 11, 78), 10 * between(r, 5, 10)],
-    valid: ([a = 0, b = 0]) => b > a && ones(a) !== 0,
+    valid: ([a = 0, b = 0]) => b - a >= 12 && ones(a) !== 0,
     solve: ([a = 0, b = 0]) => b - a,
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: 101 }, (_, x) => x).filter((x) => a + x === b)[0] ??
@@ -722,7 +729,7 @@ const mental = [
     draw: (r) => [between(r, 24, 58), between(r, 15, 39)],
     valid: ([a = 0, b = 0]) => a + b <= 100 && a !== b,
     solve: ([a = 0, b = 0]) => a + b,
-    ref: ([a = 0, b = 0]) => b + a,
+    ref: ([a = 0, b = 0]) => 10 * (tens(a) + tens(b)) + ones(a) + ones(b),
     traps: [
       ["difference", "procedural", ([a = 0, b = 0]) => Math.abs(a - b)],
       [
@@ -751,7 +758,7 @@ const mental = [
     draw: (r) => [between(r, 52, 95), between(r, 18, 47)],
     valid: ([a = 0, b = 0]) => ones(b) > ones(a),
     solve: ([a = 0, b = 0]) => a - b,
-    ref: ([a = 0, b = 0]) => -(b - a),
+    ref: ([a = 0, b = 0]) => 10 * (tens(b) + 1) - b + (a - 10 * (tens(b) + 1)),
     traps: [
       ["added", "procedural", ([a = 0, b = 0]) => a + b],
       [
@@ -959,9 +966,7 @@ const table = [
     draw: (r) => [between(r, 2, 9), between(r, 3, 10)],
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([, b = 0]) => b,
-    ref: ([a = 0, b = 0]) =>
-      Array.from({ length: 11 }, (_, x) => x).find((x) => a * x === a * b) ??
-      -1,
+    ref: ([a = 0, b = 0]) => repeatedTakeAway(a * b, a),
     traps: [
       ["product-minus-factor", "procedural", ([a = 0, b = 0]) => a * b - a],
       ["neighbour-above", "fact", ([a = 0, b = 0]) => keep(b + 1, a * b - a)],
@@ -1114,9 +1119,9 @@ const table = [
     solve: ([p = 0, s = 0]) => s - smallerOf(p, s),
     ref: ([p = 0, s = 0]) =>
       Math.max(
-        ...Array.from({ length: 10 }, (_, k) => k + 1)
-          .filter((x) => p % x === 0 && x + p / x === s)
-          .map((x) => p / x),
+        ...Array.from({ length: 10 }, (_, k) => k + 1).filter(
+          (y) => y * (s - y) === p,
+        ),
       ),
     traps: [
       ["the-smaller-number", "conceptual", ([p = 0, s = 0]) => smallerOf(p, s)],
@@ -1129,6 +1134,11 @@ const table = [
             ? null
             : keep(p / d, s - smallerOf(p, s), smallerOf(p, s));
         },
+      ],
+      [
+        "the-half-of-the-sum",
+        "conceptual",
+        ([, s = 0]) => (s % 2 === 0 ? s / 2 : null),
       ],
     ],
     extra: ([p = 0, s = 0]) => ({

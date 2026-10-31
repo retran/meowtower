@@ -242,10 +242,10 @@ export const PICTURES_M: Readonly<Record<string, Draw>> = {
       labels: [{ x: 3.4, y: -0.4, t: n(v, 0) }],
     }),
   // M13: instruments
-  "M13.instruments.03": (v) => scale(0, 300, 50, 0, 50 * n(v, 0)),
+  "M13.instruments.03": (v) => scale(0, 500, 50, 0, 50 * n(v, 0)),
   "M13.instruments.04": (v) => dial(10, n(v, 0) + 0.5, [0, "1000"]),
   "M13.instruments.09": (v) => dial(12, n(v, 0), [0, 120]),
-  "M13.instruments.11": (v) => scale(0, 20, 2, 0, 2 * n(v, 0)),
+  "M13.instruments.11": (v) => scale(0, 30, 2, 0, 2 * n(v, 0)),
   "M13.instruments.12": (v) => balance([n(v, 0)], ["?", n(v, 1)]),
   "M13.instruments.13": () => balance(["•••"], ["•••"]),
   "M13.instruments.14": (v) =>

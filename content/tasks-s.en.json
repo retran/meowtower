@@ -1,0 +1,2857 @@
+{
+  "S1.tables.01": {
+    "text": "A table shows how many pages were read: {a} on Monday, {b} on Tuesday and {c} on Wednesday. How many pages were read on Tuesday?",
+    "solution": [
+      "The table has three numbers: Monday {a}, Tuesday {b}, Wednesday {c}.",
+      "The question is about Tuesday, so we take the number from the Tuesday row: {b}.",
+      "On Tuesday they read {r|page|pages|pages}."
+    ],
+    "hints": [
+      "Find the row for Tuesday in the table.",
+      "Monday has {a} and Wednesday has {c}. Those rows are not the one you need.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "monday": "{w_monday} is the number in the Monday row, but the question is about Tuesday. On Tuesday they read {b} pages.",
+      "wednesday": "{w_wednesday} is the number in the Wednesday row, but the question is about Tuesday. On Tuesday they read {b} pages.",
+      "all-added": "{w_all_added} is all three numbers added together, but the question is only about Tuesday. We take the number from its row: {b}."
+    }
+  },
+  "S1.tables.02": {
+    "text": "A table shows how many pages were read: {a} on Monday, {b} on Tuesday and {c} on Wednesday. How many more pages were read on Tuesday than on Monday?",
+    "solution": [
+      "We want to know how much more Tuesday is than Monday, so we find the difference.",
+      "We take Monday's number away from Tuesday's: {b} − {a} = {r}.",
+      "On Tuesday they read {r|page|pages|pages} more."
+    ],
+    "hints": [
+      "Find the numbers for Monday and Tuesday.",
+      "Tuesday has {b} and Monday has {a}. 'How many more' asks for the difference between them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from adding, but 'how many more' asks for the difference, so we subtract: {b} − {a} = {r}.",
+      "wednesday": "{w_wednesday} compares Wednesday with Monday, but the question is about Tuesday. It goes like this: {b} − {a} = {r}."
+    }
+  },
+  "S1.tables.03": {
+    "text": "A table shows how many pages were read: {a} on Monday, {b} on Tuesday and {c} on Wednesday. How many pages were read in the three days altogether?",
+    "solution": [
+      "For all three days we add the numbers of all three rows.",
+      "First Monday and Tuesday: {a} + {b} = {=a+b}.",
+      "Then we add Wednesday: {=a+b} + {c} = {r}.",
+      "In the three days they read {r|page|pages|pages}."
+    ],
+    "hints": [
+      "All three days count: Monday, Tuesday and Wednesday.",
+      "Add {a} and {b} first, then add {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is only the biggest of the three numbers. For all three days we add them: {a} + {b} + {c} = {r}.",
+      "two-days": "{w_two_days} is only two of the days added together. One day is left out: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S1.tables.04": {
+    "text": "A table shows that {a|page was|pages were|pages were} read in the three days altogether. {b} were read on Monday and {c} on Tuesday. How many pages were read on Wednesday?",
+    "solution": [
+      "Altogether {a} pages were read, and Monday and Tuesday are known.",
+      "First add the known days: {b} + {c} = {=b+c}.",
+      "What is left of the total was read on Wednesday: {a} − {=b+c} = {r}.",
+      "On Wednesday they read {r|page|pages|pages}."
+    ],
+    "hints": [
+      "The total is {a}. Part of it, Monday and Tuesday, is already known.",
+      "Add the known days: {b} + {c}. How much is still missing to reach {a}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-day-removed": "{w_one_day_removed} is the total with only one day taken away. Both Monday and Tuesday must be taken away: {a} − {b} − {c} = {r}.",
+      "known-days": "{w_known_days} is Monday and Tuesday together. Wednesday is what is left of the total: {a} − {=b+c} = {r}."
+    }
+  },
+  "S1.tables.05": {
+    "text": "A price table shows that a loaf of bread costs {a|euro|euros|euros} and a carton of milk costs {b|euro|euros|euros}. How many euros do 2 loaves of bread and 3 cartons of milk cost together?",
+    "solution": [
+      "2 loaves of bread cost 2 × {a} = {=2*a|euro|euros|euros}.",
+      "3 cartons of milk cost 3 × {b} = {=3*b|euro|euros|euros}.",
+      "Together they cost {=2*a} + {=3*b} = {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "Work out the price of the bread and the price of the milk separately.",
+      "2 loaves cost 2 × {a} and 3 cartons cost 3 × {b}. Add the two amounts.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "swapped-counts": "In {w_swapped_counts} the numbers of loaves and cartons are swapped. It goes like this: {=2} × {a} + {=3} × {b} = {r}.",
+      "one-of-each": "{w_one_of_each} is the price of one loaf and one carton, but 2 loaves and 3 cartons are bought: {=2} × {a} + {=3} × {b} = {r}."
+    }
+  },
+  "S1.tables.06": {
+    "text": "According to the timetable the bus leaves at {t1} and arrives at {t2}. How many minutes is the bus on the road?",
+    "solution": [
+      "From {t1} to exactly {=c+1} o'clock is 60 − {a} = {=60-a|minute|minutes|minutes}.",
+      "Then the bus drives {b|minute|minutes|minutes} more, until {t2}.",
+      "Journey time: {=60-a} + {b} = {r|minute|minutes|minutes}."
+    ],
+    "hints": [
+      "First go to the next whole hour, then keep counting.",
+      "From {t1} to {=c+1} o'clock is 60 − {a} minutes. Then add the {b} minutes after the hour.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "minutes-subtracted": "{w_minutes_subtracted} comes from taking {b} away from {a}. But the bus arrives after a whole hour. Until the hour it drives {=60-a} minutes, then {b} more: {=60-a} + {b} = {r}.",
+      "hour-only": "{w_hour_only} is one whole hour, but the journey does not take exactly an hour: {=60-a} + {b} = {r}.",
+      "hour-added": "{w_hour_added} comes from adding {b} minutes to a whole hour. Until the next hour the bus drives {=60-a} minutes, not 60: {=60-a} + {b} = {r}."
+    }
+  },
+  "S1.tables.07": {
+    "text": "A table shows the heights of four children in centimetres: {a}, {b}, {c} and {d}. How many children are taller than {e} cm?",
+    "solution": [
+      "Put {e} cm in a row with the heights of the children, from small to large: {=nth(1,a,b,c,d,e)}, {=nth(2,a,b,c,d,e)}, {=nth(3,a,b,c,d,e)}, {=nth(4,a,b,c,d,e)}, {=nth(5,a,b,c,d,e)}.",
+      "To the right of {e} are the numbers bigger than {e}, to the left the smaller ones.",
+      "Shorter than {e} cm: {=4-r|child|children|children}, so taller: {=4} − {=4-r} = {r}.",
+      "So {r|child is|children are|children are} taller than {e} cm."
+    ],
+    "hints": [
+      "Compare the height of each child with {e} cm.",
+      "Look at {a}, {b}, {c} and {d}: mark the numbers bigger than {e} and count them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} is all four children, but not every child is taller than {e} cm. We count only the heights bigger than {e}: there are {r}.",
+      "not-above": "{w_not_above} counts the children who are shorter than {e} cm, but the question asks for the taller ones. There are {r}."
+    }
+  },
+  "S1.tables.08": {
+    "text": "A row of the table has the numbers {a}, {b}, {c} and {d}. How much bigger is the biggest number than the smallest?",
+    "solution": [
+      "Of the numbers {a}, {b}, {c} and {d}, the biggest is {=max(a,b,c,d)} and the smallest is {=min(a,b,c,d)}.",
+      "To see how much bigger one number is than another, we take the smaller from the bigger.",
+      "Difference: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}."
+    ],
+    "hints": [
+      "Pick out the biggest and the smallest number of the row.",
+      "The biggest is {=max(a,b,c,d)} and the smallest is {=min(a,b,c,d)}. Now find how much bigger the first is than the second.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is the biggest number, but the question asks how much bigger it is than the smallest: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "smallest": "{w_smallest} is the smallest number, but the question asks how much bigger the biggest is than it: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "first-last": "{w_first_last} is the difference between the first and the last number of the row, and these are not the biggest and the smallest. The biggest is {=max(a,b,c,d)} and the smallest is {=min(a,b,c,d)}: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}."
+    }
+  },
+  "S1.tables.09": {
+    "text": "A table has two rows. The first row has {a} and {b}, the second row has {c} and {d}. What is the sum of the numbers in the second column?",
+    "solution": [
+      "The second column holds the numbers that stand second in each row: {b} in the first row and {d} in the second.",
+      "We add them: {b} + {d} = {r}.",
+      "The numbers of the second column add up to {r}."
+    ],
+    "hints": [
+      "A column goes from the top to the bottom.",
+      "The second column has {b} in the first row and {d} in the second row. Add them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-column": "{w_first_column} is the sum of the first column, but we need the second column: {b} + {d} = {r}.",
+      "second-row": "{w_second_row} is the sum of the second row, but we need the second column: {b} + {d} = {r}.",
+      "first-row": "{w_first_row} is the sum of the first row ({a} + {b}), but we need the second column: {b} + {d} = {r}."
+    }
+  },
+  "S1.tables.10": {
+    "text": "The first row of a table has {a}, {b} and {c}. The numbers in the second row are twice as big. What is the sum of the numbers in the second row?",
+    "solution": [
+      "Sum of the first row: {a} + {b} + {c} = {=a+b+c}.",
+      "Every number in the second row is twice as big, so the whole sum is twice as big too.",
+      "Sum of the second row: 2 × {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "First find the sum of the first row.",
+      "{a} + {b} + {c} is the first row. The numbers in the second row are twice as big.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-row": "{w_first_row} is the sum of the first row. The numbers in the second row are twice as big, so the sum is twice as big: {=2} × {w_first_row} = {r}.",
+      "tripled": "{w_tripled} is three times the sum of the first row, but the numbers of the second row are twice as big: {=2} × {=a+b+c} = {r}."
+    }
+  },
+  "S1.tables.11": {
+    "text": "One cell of the table has {a}, another cell has {b}. Put the right sign between the first and the second number.",
+    "solution": [
+      "Both numbers have two digits, so we compare the tens first: the number with more tens is bigger.",
+      "If the tens are the same, we compare the ones.",
+      "Comparing {a} and {b} gives {a} {r} {b}."
+    ],
+    "hints": [
+      "Look at the tens: how many are there in {a} and how many in {b}?",
+      "The tens are {=floor(a/10)} and {=floor(b/10)}. If they differ, they decide; if they are the same, compare the ones.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reversed": "The sign {w_reversed} is turned the other way round: the open side of the sign faces the bigger number and the point faces the smaller one.",
+      "units-first": "The sign {w_units_first} comes from comparing only the ones. First compare the tens: {a} has {=floor(a/10)} and {b} has {=floor(b/10)}."
+    }
+  },
+  "S1.tables.12": {
+    "text": "A table shows the price of one notebook: {a} euros in the first shop and {b|euro|euros|euros} in the second. How many euros do you save on {c|notebook|notebooks|notebooks} by buying them in the second shop?",
+    "solution": [
+      "In the first shop a notebook costs {=a-b|euro|euros|euros} more: {a} − {b} = {=a-b}.",
+      "That is what you save on each notebook bought in the second shop.",
+      "With {c|notebook|notebooks|notebooks} you save {=a-b} × {c} = {r|euro|euros|euros}."
+    ],
+    "hints": [
+      "First find out how much cheaper one notebook is in the second shop.",
+      "One notebook is {a} − {b} cheaper. You buy {c}, so multiply.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-item": "{w_one_item} is the saving on one notebook, but {c|notebook is|notebooks are|notebooks are} bought: {=a-b} × {c} = {r}.",
+      "first-store": "{w_first_store} is the cost of {c|notebook|notebooks|notebooks} in the first shop, but the question asks for the saving: {=a-b} × {c} = {r}.",
+      "second-store": "{w_second_store} is the cost of {c|notebook|notebooks|notebooks} in the second shop, but the question asks for the saving: {=a-b} × {c} = {r}."
+    }
+  },
+  "S1.tables.13": {
+    "text": "A table has two rows and three columns. The numbers in the cells are not known. The numbers of the first row add up to {a} and those of the second row to {b}. The numbers of the first column add up to {c} and those of the second column to {d}. What do the numbers of the third column add up to?",
+    "solution": [
+      "All the numbers in the table can be added in two ways, by rows and by columns, and the total is the same.",
+      "By rows: {a} + {b} = {=a+b}. The first two columns together make {c} + {d} = {=c+d}.",
+      "That leaves {=a+b} − {=c+d} = {r} for the third column."
+    ],
+    "hints": [
+      "Add the sums of the two rows: {a} and {b}. That is the total of the whole table.",
+      "The same numbers also make up the three columns together. Two columns are known: {c} and {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "whole-table": "{w_whole_table} is the total of the whole table, but the third column holds only a part of it. From {w_whole_table} we still have to take the first two columns: {w_whole_table} − {=c+d} = {r}.",
+      "two-columns": "{w_two_columns} is the total of the first two columns, but the question is about the third. We take the two columns away from the total of the table, {=a+b}: {=a+b} − {w_two_columns} = {r}."
+    }
+  },
+  "S1.tables.14": {
+    "text": "According to the timetable a bus leaves at {t1}, at {t2} and at {t3}, and it carries on like that, with equal gaps. At what time does the fifth bus leave?",
+    "solution": [
+      "The gap between two departures is {c|minute|minutes|minutes}.",
+      "From the first bus to the fifth there are four gaps: {=4} × {c} = {=4*c|minute|minutes|minutes}.",
+      "We add {=4*c|minute|minutes|minutes} to {t1}, going over the whole hours: that gives {r}."
+    ],
+    "hints": [
+      "From {t1} to {t2} is {c} minutes: that is the gap between two buses.",
+      "From the first bus to the fifth there are four gaps, so {=4} × {c} minutes. When the minutes pass {=60}, the hour goes up.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "fourth": "{w_fourth} is when the fourth bus leaves: from the first bus to the fifth there are four gaps, not three.",
+      "sixth": "{w_sixth} is when the sixth bus leaves: from the first bus to the fifth there are four gaps, not five.",
+      "hour-not-changed": "In {w_hour_not_changed} the hour stayed the same, but {=4*c|minute|minutes|minutes} is an hour or more. When the minutes reach {=60}, the hour goes up."
+    }
+  },
+  "S1.tables.15": {
+    "text": "Two dice were rolled once. The {=6} × {=6} table shows all pairs of scores: the row is the first die and the column is the second die. Each cell holds the sum of the pair. How many cells of the table contain the sum {a}?",
+    "solution": [
+      "We need the pairs of scores that add up to {a}: {pairs}.",
+      "The order matters: a pair with the dice swapped is in a different cell. The sum {=7} has six pairs, and with every step away from {=7} there is one pair fewer.",
+      "Pairs with the sum {a}: {=6} − {=max(a-7,7-a)} = {r}."
+    ],
+    "hints": [
+      "Write down the pairs of scores with the sum {a}. A pair and the same pair with the dice swapped are different cells.",
+      "The sum {=7} has the most pairs, six. The sum {a} is {=max(a-7,7-a)} away from {=7}, so it has that many pairs fewer.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "unordered": "{w_unordered} comes from counting a pair and the same pair with the dice swapped as one. But the dice are different, so these are different cells of the table. The answer is {r}.",
+      "a-minus-one": "{w_a_minus_one} only works for sums up to {=7}. For the sum {a} there are fewer pairs: the further the sum is from {=7}, the fewer pairs there are. It goes like this: {=6} − {=max(a-7,7-a)} = {r}.",
+      "six": "{w_six} is the number of pairs for the sum {=7}. For the sum {a} there are fewer: {=6} − {=max(a-7,7-a)} = {r}."
+    }
+  },
+  "S1.tables.16": {
+    "text": "In a multiplication table the rows are labelled {a} and {b} and the columns are labelled {c} and {d}. A cell holds the product of the number of its row and the number of its column. Which number belongs in the empty cell, in row {b} and column {d}?",
+    "solution": [
+      "A cell holds the product of the number of its row and the number of its column.",
+      "The empty cell is in row {b} and column {d}.",
+      "So it holds {b} × {d} = {r}."
+    ],
+    "hints": [
+      "The empty cell is in row {b} and column {d}.",
+      "In a multiplication table a cell is the product of these two numbers: {b} × {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of {b} and {d}, but in a multiplication table the cells hold products.",
+      "other-row": "{w_other_row} is {a} × {d}: row {a} was used, but the empty cell is in row {b}.",
+      "other-column": "{w_other_column} is {b} × {c}: column {c} was used, but the empty cell is in column {d}."
+    }
+  },
+  "S1.tables.17": {
+    "text": "In the picture, tally marks show how many people chose each of three answers. Every five marks are crossed by one slanting line. How many people answered in all?",
+    "solution": [
+      "A bundle of five marks with a slanting line is {=5} people; marks outside a bundle are counted one by one.",
+      "First row: {=floor(a/5)} × {=5} + {=mod(a,5)} = {a}, second row: {=floor(b/5)} × {=5} + {=mod(b,5)} = {b}, third row: {=floor(c/5)} × {=5} + {=mod(c,5)} = {c}.",
+      "Altogether: {a} + {b} + {c} = {r}."
+    ],
+    "hints": [
+      "Count the people in each row: a bundle of five marks with a slanting line is five people.",
+      "The first row has {=floor(a/5)|bundle|bundles|bundles} of five and {=mod(a,5)|single mark|single marks|single marks}. Count the other rows in the same way, then add.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "bundle-as-four": "{w_bundle_as_four} comes from counting four marks in each bundle. But the slanting line is one person too, so a bundle has five. It goes like this: {a} + {b} + {c} = {r}.",
+      "largest-row": "{w_largest_row} is only the longest row, but the question is about all three. We add them: {a} + {b} + {c} = {r}.",
+      "bundle-as-one": "{w_bundle_as_one} comes from counting every bundle as one person. A bundle has five marks, so it is five people: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S2.bar-line.01": {
+    "text": "In a pictogram one symbol stands for {a|book|books|books}. {b} symbols are drawn. How many books does the pictogram show?",
+    "solution": [
+      "One symbol stands for {a|book|books|books}.",
+      "There are {b} symbols, and each one shows the same number of books.",
+      "Altogether the pictogram shows {a} × {b} = {r|book|books|books}."
+    ],
+    "hints": [
+      "Find out how many books one symbol stands for.",
+      "There are {b} symbols and each one stands for {a|book|books|books}. Multiply.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "icons-only": "{w_icons_only} is the number of symbols, but each symbol stands for {a|book|books|books}: {a} × {b} = {r}.",
+      "sum": "{w_sum} comes from adding {a} and {b}. The symbols are all the same, so we multiply: {a} × {b} = {r}."
+    }
+  },
+  "S2.bar-line.02": {
+    "text": "In a bar chart the first bar is {a} high and the second bar is {b} high. How much higher is the second bar than the first?",
+    "solution": [
+      "We need the difference of the heights, so we take the smaller height from the bigger.",
+      "The second bar is higher than the first by {b} − {a} = {r}.",
+      "The difference in height is {r}."
+    ],
+    "hints": [
+      "Find the heights of both bars: {a} and {b}.",
+      "Take the smaller height from the bigger: take {a} from {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of the heights, but 'how much higher' asks for a difference: {b} − {a} = {r}.",
+      "second-only": "{w_second_only} is the height of the second bar, but we must take away the height of the first bar: {b} − {a} = {r}."
+    }
+  },
+  "S2.bar-line.03": {
+    "text": "The heights of three bars in a bar chart are {a}, {b} and {c}. What is the sum of the heights?",
+    "solution": [
+      "We have to add the heights of all three bars.",
+      "First two bars: {a} + {b} = {=a+b}.",
+      "Then the third bar: {=a+b} + {c} = {r}.",
+      "The sum of the heights is {r}."
+    ],
+    "hints": [
+      "All three bars count: {a}, {b} and {c}.",
+      "Add {a} and {b} first, then add {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "highest": "{w_highest} is the highest bar, but we need the sum of all three: {a} + {b} + {c} = {r}.",
+      "two-bars": "{w_two_bars} leaves out the third bar: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S2.bar-line.04": {
+    "text": "A bar in a bar chart ends exactly halfway between the marks {a} and {y} on the scale. How high is the bar?",
+    "solution": [
+      "The distance between the marks {a} and {y} is {y} − {a} = {=y-a}.",
+      "The bar ends in the middle, so at half of that distance: {=y-a} : 2 = {=(y-a)/2}.",
+      "Height of the bar: {a} + {=(y-a)/2} = {r}."
+    ],
+    "hints": [
+      "Find the distance between the marks {a} and {y}.",
+      "The distance between the marks is {=y-a}. The bar ends in the middle, so half of that distance above {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "lower-mark": "{w_lower_mark} is the lower mark, but the bar is higher than that by half the distance between the marks: {a} + {=(y-a)/2} = {r}.",
+      "upper-mark": "{w_upper_mark} is the upper mark, but the bar does not reach it: {a} + {=(y-a)/2} = {r}.",
+      "half-of-upper": "{w_half_of_upper} is half of the upper mark {y}. It is the distance between the marks that we halve: {a} + {=(y-a)/2} = {r}.",
+      "half-gap": "{w_half_gap} is only half the distance between the marks {a} and {y}. This half must be added to the lower mark {a}: {a} + {=(y-a)/2} = {r}."
+    }
+  },
+  "S2.bar-line.05": {
+    "text": "On a line graph the temperature at {c} o'clock is {a|degree|degrees|degrees} and at {=c+d} o'clock it is {b|degree|degrees|degrees}. By how many degrees did it rise?",
+    "solution": [
+      "The temperature rose, so we take the earlier value away from the later one.",
+      "At {=c+d} o'clock it was {b} and at {c} o'clock {a}: {b} − {a} = {r}.",
+      "So it rose by {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Find the values on the graph at {c} o'clock and at {=c+d} o'clock: {a} and {b}.",
+      "The temperature rose, so take the earlier value {a} away from the later value {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from adding, but a rise is found by subtracting: {b} − {a} = {r}.",
+      "hours": "{w_hours} is how many hours passed, but the question asks by how many degrees the temperature rose: {b} − {a} = {r}."
+    }
+  },
+  "S2.bar-line.06": {
+    "text": "On a graph the temperature rose evenly from {x} to {y} degrees in {c|hour|hours|hours}. By how many degrees did it rise each hour?",
+    "solution": [
+      "First the rise over the whole time: {y} − {x} = {=y-x}.",
+      "The rise is even, so we share these degrees equally over {c|hour|hours|hours}.",
+      "Each hour the temperature rose by {=y-x} : {c} = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "First find the rise over the whole time, from {x} to {y}.",
+      "The rise of {=y-x} degrees is spread evenly over {c|hour|hours|hours}. Divide.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the rise over the whole time, but we need the rise in one hour: {=y-x} : {c} = {r}.",
+      "hours": "{w_hours} is the number of hours, not the rise in temperature. We divide the rise over the whole time, {=y-x}, by the number of hours, {c}: {=y-x} : {c} = {r}."
+    }
+  },
+  "S2.bar-line.07": {
+    "text": "A bar chart has four bars, and a dashed line shows the level {e}. How many bars are higher than this level?",
+    "solution": [
+      "The heights of the bars on the scale: {a}, {b}, {c} and {d}. Put the level {e} in a row with them, from small to large: {=nth(1,a,b,c,d,e)}, {=nth(2,a,b,c,d,e)}, {=nth(3,a,b,c,d,e)}, {=nth(4,a,b,c,d,e)}, {=nth(5,a,b,c,d,e)}.",
+      "To the right of {e} are the heights bigger than {e}, to the left the smaller ones.",
+      "Below the level {e}: {=4-r|bar|bars|bars}, so higher: {=4} − {=4-r} = {r}."
+    ],
+    "hints": [
+      "Find the dashed line at the level {e} in the picture.",
+      "The bars are {a}, {b}, {c} and {d} high. Compare the top of each bar with {e}: is it above the line or below it?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} is all four bars, but not every bar is above the level. We count only the bars whose tops are above the dashed line: there are {r}.",
+      "not-above": "{w_not_above} counts the bars below the level, but we need the bars above it. There are {r}."
+    }
+  },
+  "S2.bar-line.08": {
+    "text": "Bar heights per day: Monday {a}, Tuesday {b}, Wednesday {c}. Counting Monday as day 1, which number does the day with the highest bar have?",
+    "solution": [
+      "Of the heights {a}, {b} and {c} the biggest is {=max(a,b,c)}.",
+      "We count the days from Monday: Monday is first, Tuesday second, Wednesday third.",
+      "The bar of height {=max(a,b,c)} belongs to the day with number {r}."
+    ],
+    "hints": [
+      "Compare the heights {a}, {b} and {c}. Which one is the biggest?",
+      "Count the days from Monday: Monday is 1, Tuesday is 2, Wednesday is 3. Which number does the day with the biggest height have?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "height": "{w_height} is the height of the highest bar, but the question asks for the number of its day. That number is {r}.",
+      "last": "{w_last} is the number of the last day, but the highest bar is not on that day. It is on day number {r}."
+    }
+  },
+  "S2.bar-line.09": {
+    "text": "In the morning the temperature is {a|degree|degrees|degrees}. By noon it rose by {b} and by the evening it fell by {c}. What is the temperature in the evening?",
+    "solution": [
+      "By noon the temperature rose: {a} + {b} = {=a+b}.",
+      "By the evening it fell, so we subtract: {=a+b} − {c} = {r}.",
+      "In the evening the temperature is {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Follow the graph from left to right: in the morning it is {a}.",
+      "First add the rise of {b}, then take away the fall of {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-added": "{w_all_added} comes from adding all three numbers, but by the evening the temperature fell: {a} + {b} − {c} = {r}.",
+      "rise-only": "{w_rise_only} leaves out the fall in the evening: {a} + {b} − {c} = {r}.",
+      "fall-only": "{w_fall_only} leaves out the rise by noon: {a} + {b} − {c} = {r}."
+    }
+  },
+  "S2.bar-line.10": {
+    "text": "The first bar is {a} high. The second bar is three times as high. How high is the second bar?",
+    "solution": [
+      "Three times as high means three of these heights in a row: {a} + {a} + {a}.",
+      "Adding the same number again and again is multiplying: 3 × {a} = {r}.",
+      "The second bar is {r} high."
+    ],
+    "hints": [
+      "Three times as high is three times the height of the first bar, {a}.",
+      "Three times {a} is {a} + {a} + {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "three-more": "{w_three_more} is 3 more, but 'three times as high' means 3 times as much: {=3} × {a} = {r}.",
+      "same": "{w_same} is the height of the first bar, but the second bar is three times as high: {=3} × {a} = {r}.",
+      "doubled": "{w_doubled} is twice the height of the first bar, but the second bar is three times as high: {=3} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.11": {
+    "text": "One square up the side of the chart stands for {a|unit|units|units}. The first bar covers {b|square|squares|squares} and the second bar covers {c}. How many units higher is the second bar than the first?",
+    "solution": [
+      "The second bar is higher than the first by {c} − {b} = {=c-b|square|squares|squares}.",
+      "Each square up the side stands for {a|unit|units|units}.",
+      "Difference in units: {=c-b} × {a} = {r|unit|units|units}."
+    ],
+    "hints": [
+      "Find the difference in squares: {c} − {b}.",
+      "Each square is {a|unit|units|units}. Multiply the number of squares in the difference by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cells": "{w_cells} is the difference in squares, but each square stands for {a|unit|units|units}: {=c-b} × {a} = {r}.",
+      "unit-of-second": "{w_unit_of_second} is the height of the second bar in units, but we need the difference between the bars: {=c-b} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.12": {
+    "text": "The heights of three bars add up to {a}. The first bar is {b} high and the second bar is {c} high. How high is the third bar?",
+    "solution": [
+      "Three bars together make {a} and two of them are known: {b} and {c}.",
+      "Together these two bars make {b} + {c} = {=b+c}.",
+      "What is left of the total is the height of the third bar: {a} − {=b+c} = {r}."
+    ],
+    "hints": [
+      "The third bar is what is left of the total {a}.",
+      "Add the two known bars, {b} + {c}, and take the result away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-removed": "{w_one_removed} comes from taking away only one bar, but two are known: {a} − {b} − {c} = {r}.",
+      "known": "{w_known} is the two known bars together, but we need the third bar: {a} − {=b+c} = {r}."
+    }
+  },
+  "S2.bar-line.13": {
+    "text": "A line graph goes through the values {p}, {s}, {u} and {v}. On which part does the line rise the most: part 1, part 2 or part 3? Answer with the number of the part.",
+    "solution": [
+      "The steepest part is the one where the value rose the most.",
+      "Rise per part: {s} − {p} = {=s-p}, {u} − {s} = {=u-s}, {v} − {u} = {=v-u}.",
+      "The biggest rise is on part number {r}."
+    ],
+    "hints": [
+      "Do not look at how high a point is, but at the rise between neighbouring points.",
+      "Work out {s} − {p}, {u} − {s} and {v} − {u}. Compare the three results.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "highest-point": "{w_highest_point} is the part that ends at the highest point, but the line is steepest where the rise is the biggest, and that is another part: part number {r}.",
+      "value-of-the-rise": "{w_value_of_the_rise} is the rise itself on the steepest part, but we need the number of that part: part number {r}."
+    }
+  },
+  "S2.bar-line.14": {
+    "text": "In the bar chart every second grid line has a label. How high is the highest bar?",
+    "solution": [
+      "The labels go up by {=2*a} every other line, so between two labelled lines there is one more line, and one grid line is {a|unit|units|units}.",
+      "The highest bar ends on line number {b}, so it covers {b|grid line|grid lines|grid lines}.",
+      "Its height: {b} × {a} = {r}."
+    ],
+    "hints": [
+      "The labels go up by {=2*a} every other line, so one grid line is {a|unit|units|units}.",
+      "Count the grid lines from zero to the top of the highest bar and multiply their number by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "lower-label": "{w_lower_label} is the label of the line below the top, but the bar ends on an unlabelled line above it. It goes like this: {b} × {a} = {r}.",
+      "upper-label": "{w_upper_label} is the label of the line above the top, but the bar does not reach it. It goes like this: {b} × {a} = {r}.",
+      "lines": "{w_lines} is the number of lines the bar covers, but one line is {a|unit|units|units}. It goes like this: {b} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.15": {
+    "text": "A line graph shows the temperature on five days, and every second grid line has a label. By how many degrees is the temperature on the coldest day lower than on the warmest day?",
+    "solution": [
+      "The labels are on every other line and go up by {=2*a}, so one grid line is {a|degree|degrees|degrees}.",
+      "The highest point of the graph is on line {=max(b,c,d,e,f)} and the lowest on line {=min(b,c,d,e,f)}: between them is {=max(b,c,d,e,f)} − {=min(b,c,d,e,f)} = {=max(b,c,d,e,f)-min(b,c,d,e,f)|line|lines|lines}.",
+      "In degrees: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}."
+    ],
+    "hints": [
+      "Use the labels to find how many degrees one grid line is: the labels go up by {=2*a} every other line.",
+      "Count how many lines the highest point is above the lowest point, and multiply by {a|degree|degrees|degrees}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "highest": "{w_highest} is the temperature on the warmest day, but the question asks how much lower the coldest day is. It goes like this: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}.",
+      "lowest": "{w_lowest} is the temperature on the coldest day, but the question is about the difference between the warmest and the coldest day: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}.",
+      "lines": "{w_lines} is the difference in grid lines, but one line is {a|degree|degrees|degrees}. It goes like this: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}.",
+      "largest-jump": "{w_largest_jump} is the biggest change in one day, but the coldest and the warmest day are not always next to each other. It goes like this: {=max(b,c,d,e,f)-min(b,c,d,e,f)} × {a} = {r}."
+    }
+  },
+  "S2.bar-line.16": {
+    "text": "The five bars of a bar chart go up from low to high, and each bar is {b} higher than the one before. The heights of all five bars add up to {a}. How high is the highest bar?",
+    "solution": [
+      "The heights go up evenly, so the middle bar is equal to the mean: {a} : {=5} = {=a/5}.",
+      "From the middle bar to the highest there are two steps of {b}: {=2} × {b} = {=2*b}.",
+      "The highest bar: {=a/5} + {=2*b} = {r}."
+    ],
+    "hints": [
+      "The heights go up evenly, so the middle bar is equal to the mean. Find it: {a} : {=5}.",
+      "The mean is {=a/5}. From the middle bar to the highest bar there are two steps of {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "middle": "{w_middle} is the height of the middle bar, but the question is about the highest bar: it is two steps of {b} higher. It goes like this: {=a/5} + {=2*b} = {r}.",
+      "mean-as-first": "{w_mean_as_first} comes from taking the mean {=a/5} as the height of the first bar. But the mean is the height of the middle bar, and from there it is only two steps to the highest: {=a/5} + {=2*b} = {r}.",
+      "one-step": "{w_one_step} adds only one step to the mean {=a/5}, but from the middle bar to the highest there are two: {=a/5} + {=2*b} = {r}."
+    }
+  },
+  "S2.bar-line.17": {
+    "text": "In a pictogram one symbol stands for {a|book|books|books}, and half a symbol stands for half of that number. How many books does the picture show?",
+    "solution": [
+      "One symbol is {a|book|books|books}, half a symbol is {=a/2|book|books|books}.",
+      "There are {b} whole symbols: {b} × {a} = {=a*b|book|books|books}.",
+      "Together with the half symbol: {=a*b} + {=a/2} = {r}."
+    ],
+    "hints": [
+      "Count the whole symbols in the picture and multiply by the {a|book|books|books} in one symbol.",
+      "Half a symbol is half of {a}, that is {=a/2}. Add it to the books of the whole symbols.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "half-as-whole": "{w_half_as_whole} comes from counting the half symbol as a whole symbol. The half symbol is only {=a/2|book|books|books}: {=a*b} + {=a/2} = {r}.",
+      "half-ignored": "{w_half_ignored} leaves out the half symbol, and it shows books too: {=a*b} + {=a/2} = {r}.",
+      "half-as-one": "{w_half_as_one} comes from counting the half symbol as one book. Half a symbol is half of {a}, that is {=a/2}: {=a*b} + {=a/2} = {r}."
+    }
+  },
+  "S2.bar-line.18": {
+    "text": "The heights of two bars are {a} and {b}. How many units must be moved from the tall bar to the short bar to make the bars equally high?",
+    "solution": [
+      "As many units are taken from one bar as are added to the other, so the sum of the heights stays the same: {a} + {b} = {=a+b}.",
+      "The bars become equal, so each becomes {=a+b} : {=2} = {=(a+b)/2} high.",
+      "From the tall bar we move {b} − {=(a+b)/2} = {r}."
+    ],
+    "hints": [
+      "Think about what does not change when units move from one bar to the other: the sum {a} + {b} = {=a+b}.",
+      "The bars will be equally high, so each is half of {=a+b}. Compare that with the height of the tall bar.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "difference": "{w_difference} is the whole difference in height. If we moved all of it, the tall bar would end up lower than the short one. We have to move half of the difference: {=b-a} : {=2} = {r}.",
+      "final-height": "{w_final_height} is the height both bars reach, but the question asks how many units are moved. That is {b} − {w_final_height} = {r}."
+    }
+  },
+  "S3.mean.01": {
+    "text": "Find the mean of the numbers {a} and {b}.",
+    "solution": [
+      "The mean of two numbers is their sum divided by 2.",
+      "Sum: {a} + {b} = {=a+b}.",
+      "Divide by 2: {=a+b} : 2 = {r}. That is the mean."
+    ],
+    "hints": [
+      "The mean of two numbers is their sum divided by 2. Add {a} and {b}.",
+      "{a} + {b} = {=a+b}. Now divide this sum by 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of the two numbers, but the mean is half of the sum: {=a+b} : {=2} = {r}.",
+      "larger": "{w_larger} is the larger of the two numbers, but the mean lies between them: {=a+b} : {=2} = {r}.",
+      "half-difference": "{w_half_difference} is half of the difference {b} − {a}. The mean is half of the sum: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S3.mean.02": {
+    "text": "Find the mean of the numbers {a}, {b} and {c}.",
+    "solution": [
+      "The mean is the sum of the numbers divided by how many there are.",
+      "Sum of three numbers: {a} + {b} + {c} = {=a+b+c}.",
+      "Divide by 3: {=a+b+c} : 3 = {r}. That is the mean."
+    ],
+    "hints": [
+      "The mean is the sum divided by how many numbers there are. Add {a}, {b} and {c}.",
+      "{a} + {b} + {c} = {=a+b+c}. There are three numbers, so divide by 3.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of the three numbers, but the mean is a third of it: {=a+b+c} : {=3} = {r}.",
+      "two-numbers": "{w_two_numbers} is the mean of only two of the numbers, but there are three: {=a+b+c} : {=3} = {r}.",
+      "middle-of-list": "{w_middle_of_list} stands in the middle of the list, but the mean is the sum divided by three: {=a+b+c} : 3 = {r}."
+    }
+  },
+  "S3.mean.03": {
+    "text": "Find the mean of the numbers {a}, {b}, {c} and {d}.",
+    "solution": [
+      "The mean is the number that the sum can be shared out equally into.",
+      "Sum of four numbers: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "There are four numbers, so we divide by 4.",
+      "{=a+b+c+d} : 4 = {r}. That is the mean."
+    ],
+    "hints": [
+      "The mean is the sum divided by how many numbers there are. Add {a}, {b}, {c} and {d}.",
+      "{a} + {b} + {c} + {d} = {=a+b+c+d}. There are four numbers, so divide by 4.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum, but the mean is a quarter of it: {=a+b+c+d} : {=4} = {r}.",
+      "divided-by-three": "{w_divided_by_three} comes from dividing by 3, but there are four numbers: {=a+b+c+d} : {=4} = {r}.",
+      "middle-two": "{w_middle_two} is the mean of the two numbers in the middle of the list. The mean is worked out from all four numbers: {=a+b+c+d} : 4 = {r}."
+    }
+  },
+  "S3.mean.04": {
+    "text": "The temperature was measured {=c+d} times: {c|measurement|measurements|measurements} showed {a|degree|degrees|degrees} and {d|measurement|measurements|measurements} showed {b|degree|degrees|degrees}. What is the mean temperature of all the measurements?",
+    "solution": [
+      "The temperature {a} came up {c|time|times|times}, which makes {c} × {a} = {=c*a}.",
+      "The temperature {b} came up {d|time|times|times}, which makes {d} × {b} = {=d*b}.",
+      "Altogether in {=c+d} measurements: {=c*a} + {=d*b} = {=c*a+d*b}.",
+      "Mean temperature: {=c*a+d*b} : {=c+d} = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Find the sum of all the temperatures: multiply each value by how many measurements had it, {c} × {a} and {d} × {b}.",
+      "The sum is {=c*a+d*b} and there are {=c+d} measurements. Divide the sum by the number of measurements.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "simple-mean": "{w_simple_mean} is the mean of the two temperatures {a} and {b}, but each of them was measured a different number of times. It goes like this: {=c*a+d*b} : {=c+d} = {r}.",
+      "sum": "{w_sum} is the sum of all the temperatures, but the mean is the sum divided by the number of measurements: {=c*a+d*b} : {=c+d} = {r}."
+    }
+  },
+  "S3.mean.05": {
+    "text": "A group walked {x} km in {b|day|days|days}. On average, how many kilometres did they walk per day?",
+    "solution": [
+      "The mean per day is the number of kilometres that would come out each day if the same distance were walked every day.",
+      "For that we divide the whole distance, {x} km, by {b|day|days|days}.",
+      "{x} : {b} = {r} km per day."
+    ],
+    "hints": [
+      "The whole distance is {x} km, walked in {b|day|days|days}.",
+      "The mean per day is what each day would be if all the days were the same: divide {x} by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the whole distance, but the mean is the distance for one day: {x} : {b} = {r}.",
+      "days": "{w_days} is the number of days, not the kilometres per day. We divide the whole distance, {x} km, by the days: {x} : {b} = {r}."
+    }
+  },
+  "S3.mean.06": {
+    "text": "On average, {a|page|pages|pages} were read per day. How many pages were read in {b|day|days|days}?",
+    "solution": [
+      "A mean of {a|page|pages|pages} per day means that every day comes out at {a}.",
+      "There are {b} days, so we take {a} {b} times.",
+      "Altogether: {a} × {b} = {r|page|pages|pages}."
+    ],
+    "hints": [
+      "A mean of {a} per day means that every day counts as {a}.",
+      "There are {b|day|days|days}: take {a} that many times.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from adding {a} and {b}, but the mean {a} is for each day: {a} × {b} = {r}.",
+      "mean": "{w_mean} is the mean for one day, but the question is about all the days: {a} × {b} = {r}."
+    }
+  },
+  "S3.mean.07": {
+    "text": "Five whole numbers follow each other, and the smallest of them is {a}. What is the mean of these numbers?",
+    "solution": [
+      "The numbers follow each other: {a}, {=a+1}, {=a+2}, {=a+3}, {=a+4}.",
+      "The numbers to the left and right of {r} are the same distance away from it: some are smaller and some are bigger, and it balances out.",
+      "So the mean is the number in the middle: {r}."
+    ],
+    "hints": [
+      "In a row of numbers that follow each other, the mean is in the middle.",
+      "The numbers are {a}, {=a+1}, {=a+2}, {=a+3} and {=a+4}. Which one is in the middle?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "smallest": "{w_smallest} is the smallest of the five, but the mean is in the middle of the row: {r}.",
+      "largest": "{w_largest} is the biggest of the five, but the mean is in the middle of the row: {r}.",
+      "sum": "{w_sum} is the sum of the five numbers, and the mean comes from dividing the sum by {=5}. It is simpler to take the number in the middle of the row: {r}."
+    }
+  },
+  "S3.mean.08": {
+    "text": "A book was read for three days: {a|page|pages|pages} on the first day, {b|page|pages|pages} on the second day and nothing at all on the third. On average, how many pages were read per day?",
+    "solution": [
+      "The third day counts too: 0 pages were read.",
+      "Sum: {a} + {b} + 0 = {=a+b}.",
+      "There are three days, so we divide by 3: {=a+b} : 3 = {r|page|pages|pages} per day."
+    ],
+    "hints": [
+      "The day without reading counts in the mean too: on that day 0 pages were read.",
+      "The sum of the pages is {=a+b} and there are three days. Divide the sum by the number of all the days.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-days": "{w_two_days} comes from dividing by 2, but the day without reading counts too. There are three days: {=a+b} : 3 = {r}.",
+      "sum": "{w_sum} is the sum of the pages, but the mean is the sum divided by the number of days, that is 3: {=a+b} : 3 = {r}."
+    }
+  },
+  "S3.mean.09": {
+    "text": "Compare the mean of the numbers {a}, {b} and {c} with the number {d}. Put a sign between the mean and the number {d}.",
+    "solution": [
+      "Sum of the three numbers: {a} + {b} + {c} = {=a+b+c}.",
+      "Mean: {=a+b+c} : 3 = {=(a+b+c)/3}.",
+      "Comparing the mean with {d}: {=(a+b+c)/3} {r} {d}."
+    ],
+    "hints": [
+      "First find the mean of the three numbers: add {a}, {b} and {c}.",
+      "Divide the sum {=a+b+c} by 3 and compare the mean you get with the number {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reversed": "The sign {w_reversed} is turned the other way round: the point of the sign faces the smaller number and the open side faces the bigger one.",
+      "sum-compared": "The sign {w_sum_compared} comes from comparing the sum {=a+b+c} with {d}. We have to compare the mean, that is the sum divided by three: {=(a+b+c)/3} and {d}."
+    }
+  },
+  "S3.mean.10": {
+    "text": "Find the mean of all the whole numbers from 1 to {a}.",
+    "solution": [
+      "In the row from 1 to {a} the outer numbers make a pair: 1 + {a} = {=a+1}.",
+      "The next pair, 2 and {=a-1}, also makes {=a+1}, and so on up to the middle.",
+      "The mean of each pair is {=a+1} : 2 = {r}, and that is also the mean of all the numbers."
+    ],
+    "hints": [
+      "The mean of the first and last number is the mean of the whole row. The first number is 1 and the last is {a}.",
+      "Add 1 and {a}: that makes {=a+1}. Divide this sum by 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-number": "{w_last_number} is the last number of the row, but the mean lies halfway between the first and the last number: ({a} + 1) : 2 = {r}.",
+      "first-number": "{w_first_number} is the first number of the row, but the mean lies halfway between the first and the last number: ({a} + 1) : 2 = {r}.",
+      "sum": "{w_sum} is the sum of all the numbers of the row, but the mean is the sum divided by how many numbers there are. The mean: ({a} + 1) : 2 = {r}."
+    }
+  },
+  "S3.mean.11": {
+    "text": "A bar chart has four bars. Their heights were levelled out so that all four are the same, and the sum of the heights did not change. How high is each bar now?",
+    "solution": [
+      "The sum of the heights did not change: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "The heights became equal, so the sum is shared equally between the four bars.",
+      "The height of each bar: {=a+b+c+d} : 4 = {r}."
+    ],
+    "hints": [
+      "Levelling out does not change the sum of the heights: add {a}, {b}, {c} and {d}.",
+      "The sum is {=a+b+c+d} and there are four bars. Share the sum equally between them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of the heights of all four bars, but after levelling out it is shared equally: {=a+b+c+d} : {=4} = {r}.",
+      "tallest": "{w_tallest} is the height of the tallest bar. After levelling out, the sum of the heights is shared equally between the four bars: {=a+b+c+d} : {=4} = {r}.",
+      "middle-two": "{w_middle_two} is the mean of the two bars in the middle, but all four bars must be levelled out: {=a+b+c+d} : {=4} = {r}."
+    }
+  },
+  "S3.mean.12": {
+    "text": "In the morning the temperature was {a|degree|degrees|degrees} and in the evening {b|degree|degrees|degrees}. Find the mean temperature of these two measurements.",
+    "solution": [
+      "Sum of the two temperatures: {a} + {b} = {=a+b}.",
+      "Divide by the number of measurements: {=a+b} : {=2} = {r}.",
+      "The sum is odd, so the mean is not a whole number but a decimal number with a comma."
+    ],
+    "hints": [
+      "Add the two temperatures: {a} + {b}.",
+      "The sum is {=a+b}. Divide it by 2: the sum is odd, so you get a decimal number with a comma.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of the two temperatures, but the mean is half of the sum: {=a+b} : {=2} = {r}.",
+      "rounded-down": "{w_rounded_down} is the whole part of the mean: the half was left out. The mean is {=a+b} : {=2} = {r}.",
+      "larger": "{w_larger} is the higher of the two temperatures, but the mean lies between them: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S3.mean.13": {
+    "text": "Three numbers are given: {a}, {b} and {c}. Where does their mean lie? 1) less than {=min(a,b,c)}; 2) between {=min(a,b,c)} and {=nth(2,a,b,c)}; 3) between {=nth(2,a,b,c)} and {=max(a,b,c)}; 4) more than {=max(a,b,c)}. Answer with the number of the option.",
+    "solution": [
+      "The mean is never less than the smallest number and never more than the largest, so options 1 and 4 do not fit.",
+      "Find the mean: ({a} + {b} + {c}) : 3 = {=(a+b+c)/3}.",
+      "The number in the middle by size is {=nth(2,a,b,c)}. A mean below it is option 2, above it option 3.",
+      "Here it is option {r}."
+    ],
+    "hints": [
+      "The mean is never less than the smallest number or more than the largest, so options 2 and 3 are left.",
+      "Find the mean: ({a} + {b} + {c}) : 3. Then compare it with the number in the middle by size, {=nth(2,a,b,c)}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "below-min": "Option {w_below_min} does not fit: the mean is never less than the smallest number. Here the mean is {=(a+b+c)/3}, which is option {r}.",
+      "above-max": "Option {w_above_max} does not fit: the mean is never more than the largest number. Here the mean is {=(a+b+c)/3}, which is option {r}.",
+      "other-interval": "Option {w_other_interval} is the neighbouring interval. The mean is {=(a+b+c)/3} and the number in the middle by size is {=nth(2,a,b,c)}, so option {r} is the one."
+    }
+  },
+  "S3.mean.14": {
+    "text": "The mean of {b} whole numbers that follow each other is {a}. What is the biggest of these numbers?",
+    "solution": [
+      "The numbers follow each other, so the mean equals the number in the middle: that is {a}.",
+      "To the right of it are {=(b-1)/2} numbers, and each is one more than the one before.",
+      "The biggest number: {a} + {=(b-1)/2} = {r}."
+    ],
+    "hints": [
+      "For numbers that follow each other, the mean {a} is in the middle of the row of {b} numbers.",
+      "To the right of the mean there are {=(b-1)/2|number|numbers|numbers}, each one more than the one before. How much must be added to {a}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean": "{w_mean} is the mean, that is the number in the middle, but the biggest number is to the right of it: {a} + {=(b-1)/2} = {r}.",
+      "off-by-one": "{w_off_by_one} comes from putting one number too many to the right of the mean. To the right of it are {=(b-1)/2|number|numbers|numbers}: {a} + {=(b-1)/2} = {r}.",
+      "mean-plus-count": "{w_mean_plus_count} is the mean plus how many numbers there are. But to the right of the mean there is only half of the remaining numbers: {a} + {=(b-1)/2} = {r}."
+    }
+  },
+  "S3.mean.15": {
+    "text": "A line graph shows the temperature at four moments of the day. What is the mean temperature?",
+    "solution": [
+      "From the graph the temperatures are {a}, {b}, {c} and {d}.",
+      "Sum: {a} + {b} + {c} + {d} = {=a+b+c+d}.",
+      "Mean: {=a+b+c+d} : 4 = {r}."
+    ],
+    "hints": [
+      "Read the temperature at each of the four points of the graph.",
+      "Add the four values: {a} + {b} + {c} + {d}. Divide the sum by the number of points, 4.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of the temperatures, but the mean is a quarter of it: {=a+b+c+d} : {=4} = {r}.",
+      "highest": "{w_highest} is the highest temperature, but the mean uses all four points: {=a+b+c+d} : {=4} = {r}.",
+      "ends": "{w_ends} is the mean of the first and the last point, but the mean temperature uses all four: {=a+b+c+d} : {=4} = {r}."
+    }
+  },
+  "S3.missing.01": {
+    "text": "The mean of three numbers is {a}. Two of the numbers are {b} and {c}. Find the third number.",
+    "solution": [
+      "If the mean of three numbers is {a}, together they make 3 × {a} = {=3*a}.",
+      "Two numbers are known: {b} + {c} = {=b+c}.",
+      "The third number is what is left of the sum: {=3*a} − {=b+c} = {r}."
+    ],
+    "hints": [
+      "First find the sum of the three numbers: the mean is {a} and there are three numbers.",
+      "The sum is {=3*a}. Two numbers are known, {b} and {c}. Take them away from the sum.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is the mean, but we need the third number: {=3*a} − {=b+c} = {r}.",
+      "sum": "{w_sum} is the sum of the three numbers, but the third number is what is still missing from it after the two known ones: {=3*a} − {=b+c} = {r}.",
+      "known-sum": "{w_known_sum} is the sum of the two known numbers, but we need the third. We take that away from the whole sum {=3*a}: {=3*a} − {=b+c} = {r}."
+    }
+  },
+  "S3.missing.02": {
+    "text": "The mean of two numbers is {a}. One of the numbers is {b}. Find the other number.",
+    "solution": [
+      "If the mean of two numbers is {a}, together they make 2 × {a} = {=2*a}.",
+      "One number is already known: {b}.",
+      "The other number: {=2*a} − {b} = {r}."
+    ],
+    "hints": [
+      "Find the sum of the two numbers from the mean: the mean is {a} and there are two numbers.",
+      "The sum is {=2*a}. One number is {b}. Take it away from the sum.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is the mean, but we need the other number: {=2*a} − {b} = {r}.",
+      "mean-minus-number": "{w_mean_minus_number} comes from taking the number away from the mean, but it has to be taken away from the sum of the two numbers, {=2*a}: {=2*a} − {b} = {r}.",
+      "added": "{w_added} comes from adding the mean and the number. Together the two numbers make {=2*a}, so we subtract: {=2*a} − {b} = {r}."
+    }
+  },
+  "S3.missing.03": {
+    "text": "The mean of four numbers is {a}. Three of the numbers are {b}, {c} and {d}. Find the fourth number.",
+    "solution": [
+      "If the mean of four numbers is {a}, together they make 4 × {a} = {=4*a}.",
+      "Three numbers are known: {b} + {c} + {d} = {=b+c+d}.",
+      "The fourth number is what is left of the sum: {=4*a} − {=b+c+d} = {r}."
+    ],
+    "hints": [
+      "Find the sum of the four numbers from the mean: the mean is {a} and there are four numbers.",
+      "The sum is {=4*a}. Three numbers are known, {b}, {c} and {d}. Take them away from the sum.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "three-times": "In {w_three_times} the sum was found for three numbers, but there are four: {=4*a} − {=b+c+d} = {r}.",
+      "mean-itself": "{w_mean_itself} is the mean, but we need the fourth number: {=4*a} − {=b+c+d} = {r}.",
+      "known-sum": "{w_known_sum} is the sum of the three known numbers, but we need the fourth. We take that away from the whole sum {=4*a}: {=4*a} − {=b+c+d} = {r}."
+    }
+  },
+  "S3.missing.04": {
+    "text": "Three numbers are given: {a}, {b} and {c}. Which fourth number must be added so that the mean of the four numbers becomes {d}?",
+    "solution": [
+      "For the mean of four numbers to be {d}, their sum must be 4 × {d} = {=4*d}.",
+      "The three numbers already make {a} + {b} + {c} = {=a+b+c}.",
+      "What must be added is what is missing from the sum: {=4*d} − {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "Find the sum that four numbers with the mean {d} must have.",
+      "That sum is {=4*d}. The three numbers already make {=a+b+c}. How much is missing?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "target-mean": "{w_target_mean} is the mean we want, but we have to add a number that makes the sum {=4*d} together with the three given ones: {=4*d} − {=a+b+c} = {r}.",
+      "old-sum": "{w_old_sum} is the sum of the three given numbers. The fourth number is what is missing to reach the sum {=4*d}: {=4*d} − {=a+b+c} = {r}."
+    }
+  },
+  "S3.missing.05": {
+    "text": "The mean of three numbers is {a}. {b} is added to each number. What is the mean now?",
+    "solution": [
+      "Every number became {b} bigger, so the sum of the three numbers grew by 3 × {b} = {=3*b}.",
+      "But there are also three numbers, so the mean grew by exactly {b}.",
+      "New mean: {a} + {b} = {r}."
+    ],
+    "hints": [
+      "{b} is added to each of the three numbers: by how much does the sum grow?",
+      "The sum grows by 3 × {b}, and it is divided by 3 again. By how much does the mean grow?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "times": "{w_times} comes from multiplying, but {b} was added to each number, and the mean grew by the same amount: {a} + {b} = {r}.",
+      "mean-itself": "{w_mean_itself} is the old mean, but all the numbers grew by {b}, so the mean did too: {a} + {b} = {r}.",
+      "new-sum": "{w_new_sum} is the new sum of the three numbers, but the question asks for the mean: {a} + {b} = {r}."
+    }
+  },
+  "S3.missing.06": {
+    "text": "The mean of the numbers {a}, {b} and an unknown number equals that unknown number. Find it.",
+    "solution": [
+      "The mean equals the unknown number, so {a} and {b} together make exactly two such numbers.",
+      "Their sum: {a} + {b} = {=a+b}.",
+      "One such number: {=a+b} : 2 = {r}."
+    ],
+    "hints": [
+      "The mean equals the unknown number: think how many such numbers make up the sum together with {a} and {b}.",
+      "So {a} + {b} = {=a+b} is two of the unknown numbers. Find one of them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} is the sum of the two numbers, but the unknown number is half of this sum: {=a+b} : {=2} = {r}.",
+      "larger": "{w_larger} is the larger of the given numbers, but the unknown number lies between them: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S3.missing.07": {
+    "text": "The bottom row of a pyramid has the numbers {a}, {b} and {c}. Above every two neighbouring numbers is their mean, and above those is the mean of the two numbers of the second row. Which number is at the top?",
+    "solution": [
+      "Second row: ({a} + {b}) : 2 = {=(a+b)/2} and ({b} + {c}) : 2 = {=(b+c)/2}.",
+      "The top is the mean of these two numbers: ({=(a+b)/2} + {=(b+c)/2}) : 2.",
+      "At the top is the number {r}."
+    ],
+    "hints": [
+      "First find the two numbers of the second row: the mean of {a} and {b}, and the mean of {b} and {c}.",
+      "The second row is {=(a+b)/2} and {=(b+c)/2}. Now find the mean of these two numbers.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "middle": "{w_middle} is the number in the middle of the bottom row, but the top is the mean of the two numbers of the second row, {=(a+b)/2} and {=(b+c)/2}: that is {r}.",
+      "sum-of-bottom": "{w_sum_of_bottom} is the sum of the bottom row, but the top comes from means: first {=(a+b)/2} and {=(b+c)/2}, then the mean of these two numbers: {r}."
+    }
+  },
+  "S3.missing.08": {
+    "text": "On average, {a|point|points|points} must be scored over {b|game|games|games}. In the first games {c|point was|points were|points were} scored in total. How many points must be scored in the last game?",
+    "solution": [
+      "Over {b} games, {a} × {b} = {=a*b} points must be scored in total.",
+      "{c} points have already been scored.",
+      "In the last game the rest is needed: {=a*b} − {c} = {r|point|points|points}."
+    ],
+    "hints": [
+      "Find how many points must be scored in all the games together: the mean is {a} and there are {b} games.",
+      "In total {=a*b} are needed and {c} are already scored. How many are left?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-only": "{w_mean_only} is the mean we want, but in the last game enough must be scored to make the total {=a*b}: {=a*b} − {c} = {r}.",
+      "sum-needed": "{w_sum_needed} is the total for all the games, but part of it is already scored: {=a*b} − {c} = {r}."
+    }
+  },
+  "S3.missing.09": {
+    "text": "The mean mass of five boxes is {a} kg. One box with a mass of {b} kg is taken away. How many kilograms do the four remaining boxes weigh together?",
+    "solution": [
+      "Five boxes together weigh 5 × {a} = {=5*a} kg.",
+      "One box of {b} kg was taken away, so we subtract its mass.",
+      "The four boxes weigh {=5*a} − {b} = {r} kg."
+    ],
+    "hints": [
+      "Find the total mass of the five boxes: the mean mass is {a} kg.",
+      "The five boxes weigh {=5*a} kg together. One box of {b} kg is taken away.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-times-four": "{w_mean_times_four} comes from treating the four remaining boxes as if each had the mean mass. But a box of {b} kg was taken away: {=5*a} − {b} = {r}.",
+      "mean-minus-box": "{w_mean_minus_box} comes from taking the mass of the box away from the mean, but it has to be taken away from the total mass of the five boxes, {=5*a}: {=5*a} − {b} = {r}."
+    }
+  },
+  "S3.missing.10": {
+    "text": "The mean age of {b} members of a chess club is {a|year|years|years}. When one more member joined, the mean age became {c|year|years|years}. How old is the new member?",
+    "solution": [
+      "Before the member came, the sum of the ages was {a} × {b} = {=a*b}.",
+      "After the arrival there were {b} + 1 = {=b+1} members, and the sum of the ages was {=b+1} × {c} = {=(b+1)*c}.",
+      "The new member added the difference: {=(b+1)*c} − {=a*b} = {r|year|years|years}."
+    ],
+    "hints": [
+      "Find the sums of the ages before and after the new member came.",
+      "Before: {a} × {b} = {=a*b}. After there are {=b+1} members with the mean {c}: what is their sum? The age of the new member is the difference of the sums.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-after": "{w_mean_after} is the new mean, but we need the age of the new member. It equals the difference of the sums of the ages: {=(b+1)*c} − {=a*b} = {r}.",
+      "mean-difference": "{w_mean_difference} is how much the mean went up, but the age of the new member comes from the sums of the ages: {=(b+1)*c} − {=a*b} = {r}."
+    }
+  },
+  "S3.missing.11": {
+    "text": "The mean of seven numbers is {c}. The mean of the first four of them is {a} and the mean of the last four is {b}. What is the fourth number?",
+    "solution": [
+      "Sum of all seven numbers: {c} × {=7} = {=7*c}.",
+      "The first four make {a} × {=4} = {=4*a}, the last four {b} × {=4} = {=4*b}, together {=4*a} + {=4*b} = {=4*a+4*b}.",
+      "The fourth number is in both groups, so it was counted twice, and it equals the extra: {=4*a+4*b} − {=7*c} = {r}."
+    ],
+    "hints": [
+      "Find the sum of all seven numbers: the mean is {c}.",
+      "The two groups of four make {=4*a} + {=4*b}, and all seven numbers make {=7*c}. The fourth number is in both groups, so it is counted twice in the sum of the groups.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-sums": "{w_two_sums} is the sum of the two groups, and the fourth number is counted twice in it. It equals the extra: {=4*a+4*b} − {=7*c} = {r}.",
+      "means-only": "{w_means_only} comes from working with the means only. Means cannot be combined like this: we go back to the sums, {=4*a+4*b} − {=7*c} = {r}.",
+      "sum-of-all": "{w_sum_of_all} is the sum of all seven numbers, but the fourth number is what was counted an extra time in the sum of the two groups: {=4*a+4*b} − {=7*c} = {r}."
+    }
+  },
+  "S3.missing.12": {
+    "text": "The mean of three numbers is {a}. The first number is {b} below the mean and the second number is {c} above the mean. What is the third number?",
+    "solution": [
+      "First number: {a} − {b} = {=a-b}. Second number: {a} + {c} = {=a+c}.",
+      "All three numbers together make {a} × 3 = {=3*a}.",
+      "Third number: {=3*a} − {=a-b} − {=a+c} = {r}."
+    ],
+    "hints": [
+      "Find the first and the second number: {a} − {b} and {a} + {c}.",
+      "The three numbers together make 3 × {a} = {=3*a}. Take the two numbers you found away from the sum.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is the mean, but the third number makes up for the distances of the first two. It goes like this: {=3*a} − {=a-b} − {=a+c} = {r}.",
+      "sign-flipped": "{w_sign_flipped} comes from using the distances the other way round. The first number is {b} short of the mean and the second is {c} above it, so the third number is {a} + {b} − {c} = {r}.",
+      "only-first": "{w_only_first} only takes the first number into account. The second is {c} above the mean, and the third number must make up for that too: {a} + {b} − {c} = {r}."
+    }
+  },
+  "S3.missing.13": {
+    "text": "The mean of six numbers is {a}. Two of the numbers, with a sum of {b}, are taken away. What is the mean of the four remaining numbers?",
+    "solution": [
+      "Six numbers together make {a} × {=6} = {=6*a}.",
+      "Without the two numbers taken away, {=6*a} − {b} = {=6*a-b} is left.",
+      "Mean of the four remaining numbers: {=6*a-b} : {=4} = {r}."
+    ],
+    "hints": [
+      "Find the sum of all six numbers: the mean is {a} and there are six numbers.",
+      "The sum is {=6*a}. Take away the sum of the removed numbers, {b}, and divide by how many numbers are left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is the old mean, but two numbers were taken away and the mean changed: {=6*a-b} : {=4} = {r}.",
+      "sum-left": "{w_sum_left} is the sum of the four remaining numbers, but the mean is a quarter of it: {=6*a-b} : {=4} = {r}.",
+      "divided-by-six": "{w_divided_by_six} comes from dividing by 6, but four numbers are left: {=6*a-b} : {=4} = {r}."
+    }
+  },
+  "S3.missing.14": {
+    "text": "The mean of two numbers is {a}, and one of them is {b} bigger than the other. What is the bigger number?",
+    "solution": [
+      "The mean of two numbers lies exactly halfway between them, so each number is the same distance from it.",
+      "The numbers are {b} apart, so each is {b} : 2 = {=b/2} from the mean.",
+      "The bigger number: {a} + {=b/2} = {r}."
+    ],
+    "hints": [
+      "The mean of two numbers lies exactly halfway between them.",
+      "The numbers are {b} apart and the mean is halfway. How much higher than the mean is the bigger number?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-plus-difference": "{w_mean_plus_difference} is the mean plus the whole difference, but the bigger number is only half the difference above the mean: {a} + {=b/2} = {r}.",
+      "smaller": "{w_smaller} is the smaller of the two numbers, but the question asks for the bigger one: {a} + {=b/2} = {r}.",
+      "mean": "{w_mean} is the mean, but the bigger number is half the difference, {=b/2}, above the mean: {a} + {=b/2} = {r}."
+    }
+  },
+  "S3.missing.15": {
+    "text": "The mean of five numbers is {a}. Then it turned out that the number {b} had been written down as {c}. What is the mean after the correction?",
+    "solution": [
+      "Sum of the five numbers as written down: {a} × {=5} = {=5*a}.",
+      "The number {c} must be replaced by {b}: {=5*a} + {b} − {c} = {=5*a+b-c}.",
+      "Mean after the correction: {=5*a+b-c} : {=5} = {r}."
+    ],
+    "hints": [
+      "Find the sum of the five numbers as written down: the mean is {a} and there are five numbers.",
+      "The sum is {=5*a}. The number {c} must be replaced by {b}: how does the sum change?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "uncorrected": "{w_uncorrected} is the old mean, but after the correction the sum changed: {=5*a+b-c} : {=5} = {r}.",
+      "difference": "{w_difference} is how much the two numbers differ, but the mean changes five times less: {=5*a+b-c} : {=5} = {r}.",
+      "sum": "{w_sum} is the corrected sum, but the mean is a fifth of it: {=5*a+b-c} : {=5} = {r}."
+    }
+  },
+  "S4.pie.01": {
+    "text": "{a} people were asked. The sector ‘tea’ of the pie chart takes up {b} percent of the circle. How many people chose tea?",
+    "solution": [
+      "The whole circle is all {a} people, and {b} percent means {b} hundredths of them.",
+      "Multiply: {a} × {b} = {=a*b}.",
+      "Take one hundredth part: {=a*b} : 100 = {r}.",
+      "{r} people chose tea."
+    ],
+    "hints": [
+      "The whole circle is all {a} people, which is 100 percent. Tea takes only part of the circle.",
+      "{b} percent is {b} hundredths. Multiply {a} by {b}, then divide the result by 100.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "percent-itself": "{w_percent_itself} is the percentage, but you need a number of people: {a} × {b} : {=100} = {r}.",
+      "all": "{w_all} is everybody who was asked, but only some of them chose tea: {a} × {b} : {=100} = {r}.",
+      "not-divided": "{w_not_divided} comes from multiplying without dividing by a hundred. Percent means hundredths of the circle, so divide {=a*b} by {=100}: {r}."
+    }
+  },
+  "S4.pie.02": {
+    "text": "A circle is divided into {a} equal sectors. How many percent of the circle does one sector take?",
+    "solution": [
+      "The whole circle is 100 percent, and it is divided into {a} equal sectors.",
+      "The sectors are equal, so each one takes the same share.",
+      "One sector takes 100 : {a} = {r} percent."
+    ],
+    "hints": [
+      "The whole circle is 100 percent, cut into {a} equal sectors. Every sector takes the same share.",
+      "Share the 100 percent between the {a} sectors: divide 100 by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sectors": "{w_sectors} is the number of sectors, but you need the percent of one sector: {=100} : {a} = {r}.",
+      "all": "{w_all} is the whole circle in percent, but one sector takes only a part of it: {=100} : {a} = {r}.",
+      "degrees": "{w_degrees} is the angle of one sector in degrees, but the question is about percent. The whole circle is {=100} percent: {=100} : {a} = {r}."
+    }
+  },
+  "S4.pie.03": {
+    "text": "Three sectors of a pie chart take {a}, {b} and {c} percent. How many percent of the circle is the rest?",
+    "solution": [
+      "The whole circle is 100 percent.",
+      "The three sectors together: {a} + {b} + {c} = {=a+b+c}.",
+      "The rest is what is missing up to 100: 100 − {=a+b+c} = {r} percent."
+    ],
+    "hints": [
+      "The whole circle is 100 percent. The rest is what is left after the three known sectors.",
+      "Add {a} + {b} + {c}, then subtract that sum from 100.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "three-sectors": "{w_three_sectors} is the percent of the three known sectors, but you need the rest of the circle: {=100} − {w_three_sectors} = {r}.",
+      "one-removed": "{w_one_removed} comes from taking only one sector away from {=100}, but three sectors are known: {=100} − {=a+b+c} = {r}.",
+      "from-360": "{w_from_360} comes from subtracting from {=360}. These are percent, and the whole circle is {=100} percent: {=100} − {=a+b+c} = {r}."
+    }
+  },
+  "S4.pie.04": {
+    "text": "A sector of a pie chart takes {a} percent of the circle. What is the angle of the sector in degrees?",
+    "solution": [
+      "The whole circle is 360 degrees, and the sector takes {a} hundredths of it.",
+      "Multiply: 360 × {a} = {=360*a}.",
+      "Take one hundredth part: {=360*a} : 100 = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "The whole circle is 360 degrees. The sector takes {a} percent of it, that is {a} hundredths of 360.",
+      "One percent of the circle is 3,6 degrees. Multiply 3,6 by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "percent-itself": "{w_percent_itself} is the percentage, but you need degrees: {=360} × {a} : {=100} = {r}.",
+      "fraction-of-hundred": "{w_fraction_of_hundred} is the rest of the circle in percent, but you need the degrees of the sector itself: {=360*a} : {=100} = {r}.",
+      "not-divided": "{w_not_divided} comes from multiplying without dividing by a hundred. A percent is a hundredth of the circle, so divide {=360*a} by {=100}: {r}."
+    }
+  },
+  "S4.pie.05": {
+    "text": "Out of {a} people asked, {b|person|people|people} chose tea. How many percent of the pie chart does the sector ‘tea’ take?",
+    "solution": [
+      "A percent shows the share out of every 100 people.",
+      "Multiply the number who chose tea by 100: {b} × 100 = {=100*b}.",
+      "Divide by the number of people asked: {=100*b} : {a} = {r} percent."
+    ],
+    "hints": [
+      "Find what part of all {a} people chose tea. Percent means a share out of every 100.",
+      "Multiply {b} by 100, then divide by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "people": "{w_people} is a number of people, but you need a percentage: {b} × {=100} : {a} = {r}.",
+      "all-minus": "{w_all_minus} is the number of people who did not choose tea, but you need the share of those who did, in percent: {b} × {=100} : {a} = {r}.",
+      "product": "{w_product} comes from multiplying {a} by {b}. A percentage is the share of the tea drinkers among everyone: {b} × {=100} : {a} = {r}."
+    }
+  },
+  "S4.pie.06": {
+    "text": "A circle is divided into 10 equal sectors. {a} percent of the circle is shaded. How many sectors are shaded?",
+    "solution": [
+      "A circle of {=100} percent is divided into 10 equal sectors, so one sector is {=100} : 10 = 10 percent.",
+      "{a} percent are shaded, and 10 percent fit into it as many times as there are shaded sectors.",
+      "{a} : 10 = {r} sectors."
+    ],
+    "hints": [
+      "The circle is {=100} percent and it is divided into 10 equal sectors. How many percent is one sector?",
+      "One sector takes 10 percent. Find how many times 10 fits into {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "percent-itself": "{w_percent_itself} is the percentage, but you need the number of sectors. One sector takes {=10} percent: {a} : {=10} = {r}.",
+      "half": "{w_half} comes from dividing by 2, but one sector takes {=10} percent: {a} : {=10} = {r}.",
+      "unshaded": "{w_unshaded} is the number of sectors that are not shaded, but you need the shaded ones: {a} : {=10} = {r}."
+    }
+  },
+  "S4.pie.07": {
+    "text": "{a} people were asked. The first sector of the chart takes {b} percent, the second takes {c} percent. How many people are in the two sectors together?",
+    "solution": [
+      "The two sectors together take {b} + {c} = {=b+c} percent.",
+      "That is {=b+c} hundredths of {a} people.",
+      "Multiply: {a} × {=b+c} = {=a*(b+c)}.",
+      "Take one hundredth part: {=a*(b+c)} : 100 = {r} people."
+    ],
+    "hints": [
+      "First add the percents of the two sectors: together they take part of the circle.",
+      "Together that is {=b+c} percent. Find {=b+c} percent of {a}: {a} × {=b+c} : 100.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "percents": "{w_percents} is the percent of the two sectors, but you need a number of people: {a} × {=b+c} : {=100} = {r}.",
+      "first-only": "{w_first_only} is the number of people in the first sector only, but you need both sectors: {a} × {=b+c} : {=100} = {r}.",
+      "second-only": "{w_second_only} is the number of people in the second sector only, but you need both sectors together: {a} × {=b+c} : {=100} = {r}."
+    }
+  },
+  "S4.pie.08": {
+    "text": "{a} people were asked. The first sector of the chart takes {b} percent, the second takes {c} percent. How many more people are in the first sector than in the second?",
+    "solution": [
+      "The first sector is larger than the second by {b} − {c} = {=b-c} percent.",
+      "That is {=b-c} hundredths of {a} people.",
+      "Multiply: {a} × {=b-c} = {=a*(b-c)}.",
+      "Take one hundredth part: {=a*(b-c)} : 100 = {r} more people."
+    ],
+    "hints": [
+      "You need the difference between the sectors, not the sum. First find by how many percent the first sector is larger than the second.",
+      "The first sector is larger by {=b-c} percent. Find {=b-c} percent of {a}: {a} × {=b-c} : 100.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "percents": "{w_percents} is the difference in percent, but you need the difference in people: {a} × {=b-c} : {=100} = {r}.",
+      "first-sector": "{w_first_sector} is the number of people in the first sector only, but you need the difference between the two sectors: {a} × {=b-c} : {=100} = {r}.",
+      "second-sector": "{w_second_sector} is the number of people in the second sector only, but you need how many more the first sector has: {a} × {=b-c} : {=100} = {r}.",
+      "added": "{w_added} comes from adding the two sectors. The question is how much larger one is than the other, so the percents are subtracted: {a} × {=b-c} : {=100} = {r}."
+    }
+  },
+  "S4.pie.09": {
+    "text": "A sector of a pie chart takes {=1}⁄{b} of the circle. How many people are in the whole circle, if there are {a|person|people|people} in this sector?",
+    "solution": [
+      "The sector is {=1}⁄{b} of the circle, so the whole circle is {b} such sectors.",
+      "Each sector has {a|person|people|people}.",
+      "In the whole circle: {a} × {b} = {r} people."
+    ],
+    "hints": [
+      "The sector is one of {b} equal parts of the circle, and every part has the same number of people.",
+      "One part has {a|person|people|people} and there are {b} parts. Multiply {a} by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from adding, but the circle is made of {b} equal sectors, so you need to multiply: {a} × {b} = {r}.",
+      "sector": "{w_sector} is the number of people in one sector, but you need the whole circle: {a} × {b} = {r}.",
+      "sectors": "{w_sectors} is the number of equal parts of the circle, but you need the number of people in the whole circle: {a} × {b} = {r}."
+    }
+  },
+  "S4.pie.10": {
+    "text": "Three sectors of a pie chart take {a}, {b} and {c} percent. Which sector, counting in the order they are listed, is the largest?",
+    "solution": [
+      "The largest sector is the one with the most percent.",
+      "Among {a}, {b} and {c} the largest number is {=max(a,b,c)}.",
+      "{=max(a,b,c)} stands in place {r}, so the largest sector is number {r}."
+    ],
+    "hints": [
+      "The largest sector has the most percent: {a}, {b} or {c}. Its number is its place in the list.",
+      "Find the largest of {a}, {b} and {c} and see which one it is in the list.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "percent": "{w_percent} is the percent of the largest sector, but you need its number in the list: {r}.",
+      "last": "{w_last} is the number of the last sector, but the largest one is number {r}.",
+      "smallest": "{w_smallest} is the number of the smallest sector, but the question is about the largest one. It is number {r}."
+    }
+  },
+  "S4.pie.11": {
+    "text": "The first sector of a pie chart takes {a} percent of the circle, and the second takes {c}⁄{b} of the circle. Put a sign between the first sector and the second.",
+    "solution": [
+      "The second sector is {c}⁄{b} of the circle, which is {=100} × {c} : {b} = {=100*c/b} percent.",
+      "Compare the percents of the first and the second sector: {a} and {=100*c/b}.",
+      "Between the first and the second sector goes the sign {r}: {a} {r} {=100*c/b}."
+    ],
+    "hints": [
+      "To compare, write both parts of the circle in the same unit: percent.",
+      "Turn {c}⁄{b} into percent: {=100} × {c} : {b} = {=100*c/b}. Then compare {a} and {=100*c/b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reversed": "The sign {w_reversed} points the other way: the open side of the sign faces the larger number. Here the numbers are {a} and {=100*c/b}.",
+      "percent-vs-denominator": "The sign {w_percent_vs_denominator} comes from comparing {a} with the number {b}. But {c}⁄{b} is a part of the circle and has to be turned into percent first: {=100*c/b}.",
+      "percent-vs-numerator": "The sign {w_percent_vs_numerator} comes from comparing {a} with the number {c}. But {c}⁄{b} is a part of the circle and has to be turned into percent first: {=100*c/b}."
+    }
+  },
+  "S4.pie.12": {
+    "text": "A circle is divided into equal sectors, and some of them are shaded. How many percent of the circle is shaded?",
+    "solution": [
+      "In the picture the circle is divided into {a} equal sectors, and {b} are shaded.",
+      "One sector is {=100} : {a} = {=100/a} percent.",
+      "Shaded: {b} × {=100/a} = {r} percent."
+    ],
+    "hints": [
+      "Count how many equal sectors the circle has and how many of them are shaded.",
+      "Find how many percent one sector takes. The whole circle is {=100} percent.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "count": "{w_count} is the number of shaded sectors, but the question is how many percent that is: {b} × {=100/a} = {r}.",
+      "unshaded": "{w_unshaded} is the percent of the part that is not shaded, but you need the shaded part: {b} × {=100/a} = {r}.",
+      "one-sector": "{w_one_sector} is the percent of one sector, but several are shaded: {b} × {=100/a} = {r}."
+    }
+  },
+  "S4.pie.13": {
+    "text": "A class with {a} children is split into groups by favourite sport. We want to show what part of the whole class each group makes. Which chart suits best? 1) line graph; 2) pie chart; 3) pictogram, one picture stands for one number. Answer with the number of the option.",
+    "solution": [
+      "We need to show parts of a whole: how much of the whole class each group makes.",
+      "A pie chart cuts a circle into parts that together make the whole.",
+      "A line graph shows change over time, and pictures show numbers but not parts of a whole. The best is option {r}."
+    ],
+    "hints": [
+      "Think about what each chart shows: change over time, numbers, or parts of a whole.",
+      "We need parts of a whole: all the groups together make the class.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "line": "Option {w_line} is a line graph. It shows how a value changes over time, but here we need parts of one whole. A pie chart does that: option {r}.",
+      "pictogram": "Option {w_pictogram} is the pictogram. It shows numbers, but not what part of the whole each group makes. For parts of a whole a pie chart fits: option {r}."
+    }
+  },
+  "S4.pie.14": {
+    "text": "A circle is divided into three sectors whose sizes are in the ratio {a} to {b} to {c}. How many percent of the circle does the largest sector take?",
+    "solution": [
+      "All the parts: {a} + {b} + {c} = {=a+b+c}.",
+      "The whole circle is {=100} percent, so one part is {=100} : {=a+b+c} = {=100/(a+b+c)} percent.",
+      "The largest sector has {=max(a,b,c)|part|parts|parts}: {=max(a,b,c)} × {=100/(a+b+c)} = {r} percent."
+    ],
+    "hints": [
+      "Add up all the parts and find how many percent one part is.",
+      "The largest sector has the most parts. Multiply its number of parts by the percent of one part.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "parts": "{w_parts} is the number of parts of the largest sector, but you need percent: {=max(a,b,c)} × {=100/(a+b+c)} = {r}.",
+      "smallest": "{w_smallest} is the percent of the smallest sector, but the question is about the largest one: {=max(a,b,c)} × {=100/(a+b+c)} = {r}.",
+      "one-part": "{w_one_part} is the percent of one part, but the largest sector is made of {=max(a,b,c)|part|parts|parts}: {=max(a,b,c)} × {=100/(a+b+c)} = {r}."
+    }
+  },
+  "S4.pie.15": {
+    "text": "Two sectors of a pie chart together take {a} percent of the circle, and one of them is twice as large as the other. How many percent of the circle does the larger one take?",
+    "solution": [
+      "Call the smaller sector one part. The larger is two such parts, so together there are three parts.",
+      "Three parts take {a} percent, so one part is {a} : {=3} = {=a/3}.",
+      "The larger sector is two parts: {=2} × {=a/3} = {r} percent."
+    ],
+    "hints": [
+      "If you take the smaller sector as one part, how many parts does the larger one have, and how many are there in all?",
+      "Divide the percent of the two sectors by the number of parts and take two parts.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "half-of-total": "{w_half_of_total} is half of the total percent. But the sectors are not equal: the smaller is a third and the larger is two thirds. So: {=2} × {=a/3} = {r}.",
+      "smaller": "{w_smaller} is the smaller sector, but the question is about the larger one: {=2} × {=a/3} = {r}.",
+      "total": "{w_total} is both sectors together, but you need only the larger one: {=2} × {=a/3} = {r}."
+    }
+  },
+  "S5.global.01": {
+    "text": "The temperature was measured at 6, 9, 12 and 15 o’clock: {a}, {b}, {c} and {d|degree|degrees|degrees}. At which hour was the temperature the highest?",
+    "solution": [
+      "The highest temperature is the largest of {a}, {b}, {c} and {d}.",
+      "That is {w_temperature|degree|degrees|degrees}.",
+      "The readings were taken in order at 6, 9, 12 and 15 o’clock, and this reading was taken at {r} o’clock."
+    ],
+    "hints": [
+      "Find the highest of the four readings: {a}, {b}, {c} and {d}. But the question asks for the hour, not for the temperature.",
+      "See which reading in the list is the highest and pick its hour: 6, 9, 12 or 15.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "temperature": "{w_temperature} is the highest temperature, but the question asks at which hour it was: at {r} o’clock.",
+      "last-hour": "{w_last_hour} is the last hour of measuring, but the highest temperature was at another hour: at {r} o’clock.",
+      "number-of-reading": "{w_number_of_reading} is the place of the reading in the list, but the question asks for the hour of that reading: {r} o’clock."
+    }
+  },
+  "S5.global.02": {
+    "text": "At 9 o’clock the graph shows a temperature of {a|degree|degrees|degrees}, at 12 o’clock {b|degree|degrees|degrees}. By how many degrees did the temperature rise in that time?",
+    "solution": [
+      "At 9 o’clock it was {a|degree|degrees|degrees}, at 12 o’clock it was {b}.",
+      "To find the rise, subtract the earlier reading from the later one.",
+      "The temperature rose by {b} − {a} = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Look at the graph: at 9 o’clock the temperature is {a}, at 12 o’clock it is higher. You need the difference.",
+      "Subtract the earlier reading from the later one: {b} − {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum": "{w_sum} comes from adding, but a rise is found by subtracting: {b} − {a} = {r}.",
+      "hours": "{w_hours} is the number of hours that passed, but you need the number of degrees the temperature rose: {b} − {a} = {r}.",
+      "later-reading": "{w_later_reading} is the temperature at 12 o’clock, but you need how much it rose: {b} − {a} = {r}."
+    }
+  },
+  "S5.global.03": {
+    "text": "The graph shows a steady fall: at 12 o’clock the temperature is {x|degree|degrees|degrees}, and {b|hour|hours|hours} later it is {y|degree|degrees|degrees}. By how many degrees did it fall each hour?",
+    "solution": [
+      "The temperature fell from {x} to {y}, so the total fall is {x} − {y} = {=x-y}.",
+      "The fall is steady, so share it equally over the {b|hour|hours|hours}.",
+      "Each hour the temperature fell by {=x-y} : {b} = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "First find how many degrees the temperature fell in all: it was {x} and became {y}.",
+      "That fall was spread equally over {b|hour|hours|hours}. Divide {=x-y} by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the total fall, but you need the fall in one hour: {=x-y} : {b} = {r}.",
+      "hours": "{w_hours} is the number of hours, not the fall in temperature. Divide the total fall {=x-y} by the number of hours {b}: {=x-y} : {b} = {r}.",
+      "last-reading": "{w_last_reading} is the temperature at the end, but you need how much it fell in one hour: {=x-y} : {b} = {r}."
+    }
+  },
+  "S5.global.04": {
+    "text": "The graph runs steadily: at 10 o’clock the temperature is {a|degree|degrees|degrees}, at 12 o’clock it is {b|degree|degrees|degrees}. What was the temperature at 11 o’clock?",
+    "solution": [
+      "11 o’clock is exactly halfway between 10 and 12, and the graph runs steadily.",
+      "So the temperature at 11 o’clock is halfway between {a} and {b}.",
+      "Add: {a} + {b} = {=a+b}, then divide by 2: {=a+b} : 2 = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "11 o’clock is exactly halfway between 10 and 12, and the graph runs steadily.",
+      "Find the number halfway between {a} and {b}: add them and divide by 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-reading": "{w_first_reading} is the temperature at 10 o’clock, but you need 11 o’clock. It is halfway between {a} and {b}: ({a} + {b}) : {=2} = {r}.",
+      "second-reading": "{w_second_reading} is the temperature at 12 o’clock, but you need 11 o’clock. It is halfway between {a} and {b}: ({a} + {b}) : {=2} = {r}.",
+      "sum-not-halved": "{w_sum_not_halved} is the sum of the two temperatures, but you need the number halfway between them. Halve the sum: {=a+b} : {=2} = {r}."
+    }
+  },
+  "S5.global.05": {
+    "text": "The water level rises by {a} cm every hour. Now it is {b} cm. What will it be in {c|hour|hours|hours}?",
+    "solution": [
+      "Every hour the level rises by {a} cm, and {c} hours will pass.",
+      "The rise in that time: {a} × {c} = {=a*c} cm.",
+      "Add the rise to the present level: {b} + {=a*c} = {r} cm."
+    ],
+    "hints": [
+      "First find how many centimetres the level rises in {c|hour|hours|hours}: it rises {a} cm every hour.",
+      "Multiply {a} by {c}, then add the result to the present level {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rise-only": "{w_rise_only} is only the rise in {c|hour|hours|hours}, but you need the level of the water: {b} + {a} × {c} = {r}.",
+      "one-hour": "{w_one_hour} is the level after one hour, but {c|hour|hours|hours} will pass: {b} + {a} × {c} = {r}.",
+      "all-multiplied": "{w_all_multiplied} comes from multiplying both the hourly rise and the present level by {c}. Only the rise is multiplied: {b} + {a} × {c} = {r}."
+    }
+  },
+  "S5.global.06": {
+    "text": "The water level rises by {a} cm every hour. Now it is {b} cm. After how many hours will it be {x} cm?",
+    "solution": [
+      "The level has to rise from {b} to {x} cm, that is by {x} − {b} = {=x-b} cm.",
+      "Every hour it rises by {a} cm.",
+      "See how many times {a} fits into {=x-b}: {=x-b} : {a} = {r|hour|hours|hours}."
+    ],
+    "hints": [
+      "First find how many centimetres the level still has to rise: now it is {b} cm and it must reach {x} cm.",
+      "The rise of {=x-b} cm comes in steps of {a} cm per hour. Divide {=x-b} by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rise": "{w_rise} is how much the level must rise, but you need how many hours that takes: {=x-b} : {a} = {r}.",
+      "level": "{w_level} is the level to reach, but you need after how many hours it is reached: {=x-b} : {a} = {r}.",
+      "level-not-reduced": "{w_level_not_reduced} comes from dividing the whole level {x} by the hourly rise. The level is already {b} cm, so only the rise that is still needed is divided: {=x-b} : {a} = {r}."
+    }
+  },
+  "S5.global.07": {
+    "text": "The temperature was measured four times: {a}, {b}, {c} and {d|degree|degrees|degrees}. The norm is {e|degree|degrees|degrees}. By how many degrees is the highest reading above the norm?",
+    "solution": [
+      "The highest reading is the largest of {a}, {b}, {c} and {d}: that is {=max(a,b,c,d)}.",
+      "The norm is {e}.",
+      "The difference: {=max(a,b,c,d)} − {e} = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Find the highest reading among {a}, {b}, {c} and {d}.",
+      "Subtract the norm {e} from the highest reading.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "highest": "{w_highest} is the highest reading, but the question asks how far it is above the norm {e}: {=max(a,b,c,d)} − {e} = {r}.",
+      "norm": "{w_norm} is the norm itself, but you need the difference between the highest reading and the norm: {=max(a,b,c,d)} − {e} = {r}.",
+      "count": "{w_count} is how many readings are above the norm, but the question asks by how many degrees the highest one is above it: {=max(a,b,c,d)} − {e} = {r}.",
+      "last-reading": "{w_last_reading} is the last reading less the norm, but you need the highest reading: {=max(a,b,c,d)} − {e} = {r}."
+    }
+  },
+  "S5.global.08": {
+    "text": "The temperature falls by the same number of degrees every hour. Which graph shows this? Answer with the number of the graph.",
+    "solution": [
+      "The temperature falls, so the line on the graph goes down.",
+      "The same fall in the same time means the line is straight and does not get steeper.",
+      "That is graph {r}."
+    ],
+    "hints": [
+      "Decide whether the line goes up or down, and whether it is straight or bends.",
+      "Rule out the graphs where the line goes up, stays flat or falls more and more steeply.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "upward": "Graph {w_upward} goes up, but the temperature is falling. A steady fall is a straight line going down: graph {r}.",
+      "horizontal": "Graph {w_horizontal} is flat, and a flat line means the temperature does not change. A steady fall is a straight line going down: graph {r}.",
+      "steeper-and-steeper": "Graph {w_steeper_and_steeper} falls more and more steeply, but the temperature falls by the same number of degrees every hour. That gives a straight line: graph {r}."
+    }
+  },
+  "S5.global.09": {
+    "text": "A bus is standing at a bus stop. Which graph shows the distance from home to the bus over time? Answer with the number of the graph.",
+    "solution": [
+      "The bus is standing, so the distance from home does not change.",
+      "When the number does not change, the line neither rises nor falls but runs flat.",
+      "That is graph {r}."
+    ],
+    "hints": [
+      "What happens to the distance while the bus is standing?",
+      "If the distance does not change, the line runs flat.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "upward": "Graph {w_upward} goes up, but while the bus stands the distance does not grow. A flat line is needed: graph {r}.",
+      "downward": "Graph {w_downward} goes down, but while the bus stands the distance does not get smaller. A flat line is needed: graph {r}.",
+      "up-then-down": "Graph {w_up_then_down} first rises and then falls, but the bus is not going anywhere. A flat line is needed: graph {r}."
+    }
+  },
+  "S5.global.10": {
+    "text": "A cyclist rode away from home and then came back the same way. Which graph shows the distance from home over time? Answer with the number of the graph.",
+    "solution": [
+      "First the cyclist rides away, the distance from home grows and the line goes up.",
+      "Then the cyclist comes back, the distance gets smaller and the line goes down.",
+      "That is graph {r}."
+    ],
+    "hints": [
+      "How does the distance from home change while the cyclist rides away, and then while the cyclist comes back?",
+      "You need a line that first rises and then falls.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "upward": "Graph {w_upward} only rises, but the cyclist came back home. The distance must get smaller later: graph {r}.",
+      "downward": "Graph {w_downward} only falls, but the cyclist first rode away from home. The distance must grow first: graph {r}.",
+      "horizontal": "Graph {w_horizontal} runs flat, but the cyclist was riding and the distance was changing. You need a line up and then down: graph {r}."
+    }
+  },
+  "S5.global.11": {
+    "text": "In the first hour a cyclist rode {a} km, in the second {b} km, in the third {c} km. In which hour did the cyclist ride fastest?",
+    "solution": [
+      "The more kilometres in an hour, the faster the cyclist rides.",
+      "Compare {a}, {b} and {c}: the largest number is {w_distance}.",
+      "It stands in place {r}, so the cyclist rode fastest in hour number {r}."
+    ],
+    "hints": [
+      "The more kilometres in an hour, the faster the cyclist rides. Compare {a}, {b} and {c}.",
+      "Find the largest of the three numbers and see in which hour it was ridden.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "distance": "{w_distance} is the distance in the fastest hour, but the question asks for the number of the hour: {r}.",
+      "last": "{w_last} is the number of the last hour, but the cyclist rode fastest in hour number {r}.",
+      "slowest": "{w_slowest} is the number of the hour with the slowest ride, but the question asks for the fastest: hour number {r}."
+    }
+  },
+  "S5.global.12": {
+    "text": "In the first hour a cyclist rode {a} km, in the second {b} km, in the third {c} km. How many kilometres did the cyclist ride in the three hours?",
+    "solution": [
+      "We need to add the kilometres of every hour.",
+      "The first two hours: {a} + {b} = {=a+b}.",
+      "Add the third hour: {=a+b} + {c} = {r}.",
+      "In three hours the cyclist rode {r} km."
+    ],
+    "hints": [
+      "All three hours count: the distances are {a}, {b} and {c} km.",
+      "Add {a} + {b} + {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "fastest": "{w_fastest} is the distance in the fastest hour, but you need all three hours: {a} + {b} + {c} = {r}.",
+      "two-hours": "{w_two_hours} leaves out the third hour: {a} + {b} + {c} = {r}."
+    }
+  },
+  "S5.global.13": {
+    "text": "Three cyclists set off at the same time from the same place. The line of each cyclist on the graph shows the distance from the start over time. Who rode fastest? Answer with the number of the line.",
+    "solution": [
+      "The faster the cyclist rides, the greater the distance in the same hour.",
+      "So the line of the fastest cyclist climbs higher than the others in the same time: it is the steepest.",
+      "That is line {r}."
+    ],
+    "hints": [
+      "Compare which line climbs higher in the same time.",
+      "The steeper the line, the faster the cyclist rides.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "slowest": "Line {w_slowest} is the flattest: in the same time it climbed least, so that cyclist rode slowest. The fastest cyclist has the steepest line: line {r}.",
+      "middle": "Line {w_middle} is steeper than the flattest one, but it is not the steepest. The fastest cyclist has the steepest line: line {r}."
+    }
+  },
+  "S5.global.14": {
+    "text": "The air temperature was measured every hour during the day. We want to show how the temperature changed over time. Which chart suits best? 1) pie chart; 2) pictogram, one picture stands for one number; 3) line graph. Answer with the number of the option.",
+    "solution": [
+      "We need to show change over time: hour by hour the temperature goes up and down.",
+      "A line graph joins the values in order, and you can see where the temperature rises and where it falls.",
+      "A pie chart shows parts of a whole and a pictogram shows numbers without an order. The best is option {r}."
+    ],
+    "hints": [
+      "Think about what each chart shows: parts of a whole, numbers, or change over time.",
+      "We need change over time: the order of the measurements matters.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "pie": "Option {w_pie} is a pie chart. It shows parts of one whole, and temperatures at different hours do not make a whole. For change over time a line graph fits: option {r}.",
+      "pictogram": "Option {w_pictogram} is the pictogram. It shows numbers, but not the order in time, nor rising or falling. For change over time a line graph fits: option {r}."
+    }
+  },
+  "S5.global.15": {
+    "text": "A person left home, walked to a shop, stood by the shop for a while and then went back home the same way. Which graph shows the distance from home over time? Answer with the number of the graph.",
+    "solution": [
+      "While the person walks to the shop, the distance from home grows and the line goes up.",
+      "By the shop the distance does not change, and the line runs flat.",
+      "On the way back the distance gets smaller down to zero. That line is graph {r}."
+    ],
+    "hints": [
+      "Split the walk into three parts: to the shop, by the shop, back home.",
+      "Pick a piece of line for each part: up, flat, down.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-stop": "Graph {w_no_stop} goes down right after rising, but the person stood by the shop and the distance did not change for a while. A flat part between going up and going down is needed: graph {r}.",
+      "stays": "Graph {w_stays} does not come back down, but the person went back home and the distance became zero. A drop at the end is needed: graph {r}.",
+      "stop-first": "Graph {w_stop_first} starts with a flat part, but the person first walked away from home. A rise at the start is needed: graph {r}."
+    }
+  },
+  "S5.global.16": {
+    "text": "Water was poured into a tank first in a strong stream and then in a weak one, until the tank was full. Which graph shows how the water level changed over time? Answer with the number of the graph.",
+    "solution": [
+      "The water level keeps rising, because water is only poured in.",
+      "At first the stream is strong, the level rises fast and the line is steep. Then the stream is weak and the line becomes flatter.",
+      "That line is graph {r}."
+    ],
+    "hints": [
+      "The level rises all the time. Think about where it rises faster and where more slowly.",
+      "A fast rise is a steep line, a slow rise is a flat one. Which line is first steep and then flat?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "straight": "Graph {w_straight} is a straight line, and the level rises like that if the water is poured the same way all the time. Here the stream is first strong and then weak: graph {r}.",
+      "slow-then-fast": "Graph {w_slow_then_fast} shows the opposite: the level first rises slowly and then fast. You need a line that is first steep and then flatter: graph {r}.",
+      "falling": "Graph {w_falling} goes down, but water is poured in and the level rises. You need a line going up, first steeper, then flatter: graph {r}."
+    }
+  },
+  "S5.global.17": {
+    "text": "The temperature graph is a straight line. At {a} o’clock the temperature is {c|degree|degrees|degrees}, and at {=a+b} o’clock it is {v|degree|degrees|degrees}. What will the temperature be at {=a+b+e} o’clock, if the line goes on in the same way?",
+    "solution": [
+      "In {b|hour|hours|hours} the temperature rose from {c} to {v}, that is by {v} − {c} = {=b*d}.",
+      "The rise is steady, so in one hour: {=b*d} : {b} = {d}.",
+      "Another {e|hour|hours|hours} will add {e} × {d} = {=e*d}, and the temperature becomes {v} + {=e*d} = {r|degree|degrees|degrees}."
+    ],
+    "hints": [
+      "Find how many degrees the temperature rises in one hour: in {b|hour|hours|hours} it rose from {c} to {v}.",
+      "Multiply the rise in one hour by the {e|hour|hours|hours} that still pass, and add it to {v}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "hours-added": "{w_hours_added} comes from adding the number of hours {e}. But every hour the temperature rises by {d}, so you add {e} × {d} = {=e*d}: {v} + {=e*d} = {r}.",
+      "same-rise": "{w_same_rise} comes from repeating the rise between the known points, {=b*d}. But only {e|hour|hours|hours} pass after that, not {b}: {v} + {=e*d} = {r}.",
+      "one-hour": "{w_one_hour} comes from adding the rise of only one hour. Another {e|hour|hours|hours} will pass: {v} + {=e*d} = {r}."
+    }
+  },
+  "S5.global-1S.01": {
+    "text": "The values for the years grow by the same number each time: {a}, {y}, {z}. What will the next value be?",
+    "solution": [
+      "Find the step of the rise: {y} − {a} = {b} and {z} − {y} = {b}.",
+      "The step is the same each time, so add it to the last value.",
+      "The next value: {z} + {b} = {r}."
+    ],
+    "hints": [
+      "Find by how much the value grows each year: compare {a} and {y}.",
+      "Add that step to the last value {z}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-value": "{w_last_value} is the last value, which is already known. The next one is larger by the step {b}: {z} + {b} = {r}.",
+      "double-step": "{w_double_step} comes from adding two steps, but the next value is found by adding one: {z} + {b} = {r}."
+    }
+  },
+  "S5.global-1S.02": {
+    "text": "A value grows by {b} every year. Now it is {a}. What will it be in {c|year|years|years}, if the trend continues?",
+    "solution": [
+      "Each year the value grows by {b}, and {c} years will pass.",
+      "The total rise: {b} × {c} = {=b*c}.",
+      "The value after {c|year|years|years}: {a} + {=b*c} = {r}."
+    ],
+    "hints": [
+      "First find how much the value grows in {c|year|years|years}: it grows by {b} every year.",
+      "Multiply {b} by {c} and add the result to {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rise-only": "{w_rise_only} is only the rise over {c|year|years|years}, but you need the value: {a} + {b} × {c} = {r}.",
+      "one-year": "{w_one_year} is the value after one year, but {c|year|years|years} will pass: {a} + {b} × {c} = {r}.",
+      "all-multiplied": "{w_all_multiplied} comes from multiplying both the yearly rise and the present value by {c}. Only the rise is multiplied: {a} + {b} × {c} = {r}."
+    }
+  },
+  "S5.global-1S.03": {
+    "text": "A value grows by {b} every year. Now it is {a}. In how many years will it reach {x}, if the trend continues?",
+    "solution": [
+      "The value has to grow from {a} to {x}, that is by {x} − {a} = {=x-a}.",
+      "Every year it grows by {b}.",
+      "See how many times {b} fits into {=x-a}: {=x-a} : {b} = {r|year|years|years}."
+    ],
+    "hints": [
+      "First find how much the value must grow: now it is {a} and it must reach {x}.",
+      "The growth of {=x-a} comes in steps of {b} a year. Divide {=x-a} by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rise": "{w_rise} is the growth that is needed, but the question asks for the number of years: {=x-a} : {b} = {r}.",
+      "target": "{w_target} is the value to reach, but the question asks after how many years it is reached: {=x-a} : {b} = {r}.",
+      "level-not-reduced": "{w_level_not_reduced} comes from dividing the whole value {x} by the yearly rise. The value is already {a}, so only the growth still needed is divided: {=x-a} : {b} = {r}."
+    }
+  },
+  "S5.global-1S.04": {
+    "text": "A value was {a}, and {c|year|years|years} later it was {x}. By how much did it grow per year on average?",
+    "solution": [
+      "The total growth: {x} − {a} = {=x-a}.",
+      "It came about over {c|year|years|years}, and the average per year is the total growth shared by the number of years.",
+      "Per year the value grew on average by {=x-a} : {c} = {r}."
+    ],
+    "hints": [
+      "First find by how much the value grew in all: it was {a} and became {x}.",
+      "That growth came over {c|year|years|years}. Divide {=x-a} by {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "total": "{w_total} is the total growth, but you need the growth in one year: {=x-a} : {c} = {r}.",
+      "years": "{w_years} is the number of years, not the growth per year. Divide the total growth {=x-a} by the number of years {c}: {=x-a} : {c} = {r}."
+    }
+  },
+  "S5.global-1S.05": {
+    "text": "The values for the years: {a}, {b}, {c}, {d}. By how much did the value change in the biggest jump between two neighbouring years?",
+    "solution": [
+      "A jump is the difference of neighbouring values without the minus: between {a} and {b} it is {=max(b-a,a-b)}, between {b} and {c} it is {=max(c-b,b-c)}, between {c} and {d} it is {=max(d-c,c-d)}.",
+      "A minus shows only a fall, and the size of the jump does not depend on it.",
+      "The largest of {=max(b-a,a-b)}, {=max(c-b,b-c)} and {=max(d-c,c-d)} is {r}.",
+      "So the biggest jump is {r}."
+    ],
+    "hints": [
+      "Find by how much the value changed between neighbouring years. A fall counts as a jump too, and you do not need the minus.",
+      "Work out the three changes: between {a} and {b}, between {b} and {c}, between {c} and {d}. Pick the largest.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-jump": "{w_first_jump} is only the first change, but you need the largest of the three: {r}.",
+      "spread": "{w_spread} is the difference between the largest and the smallest value, but you need the jump between neighbouring years, the largest of the three: {r}."
+    }
+  },
+  "S5.global-1S.06": {
+    "text": "The values for the years: {a}, {=a+b}, {=a+b+c}, {=a+b+c+d}. Which phrase describes the trend best? 1) the values fall; 2) the values stay the same; 3) the values first rise and then fall; 4) the values rise. Answer with the number of the option.",
+    "solution": [
+      "Compare neighbouring values: {=a+b} − {a} = {b}, {=a+b+c} − {=a+b} = {c}, {=a+b+c+d} − {=a+b+c} = {d}.",
+      "Each time the value gets larger; it never fell and never stayed the same.",
+      "So the values rise, which is option {r}."
+    ],
+    "hints": [
+      "Compare each value with the one before it.",
+      "See whether the values grow every year, or whether there is a year when they fall or stay the same.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "falling": "Option {w_falling} does not fit: each value is larger than the one before. The values rise: option {r}.",
+      "constant": "Option {w_constant} does not fit: the values change, and each one is larger than the one before. The values rise: option {r}.",
+      "up-then-down": "Option {w_up_then_down} does not fit: there is no fall, each value is larger than the one before. The values rise: option {r}."
+    }
+  },
+  "S5.global-1S.07": {
+    "text": "The values for the years: {a}, {=a-b}, {=a-b-c}, {=a-b-c-d}. Which phrase describes the trend best? 1) the values fall; 2) the values rise; 3) the values stay the same; 4) the values first fall and then rise. Answer with the number of the option.",
+    "solution": [
+      "Compare neighbouring values: {a} − {=a-b} = {b}, {=a-b} − {=a-b-c} = {c}, {=a-b-c} − {=a-b-c-d} = {d}.",
+      "Each time the value gets smaller; it never rose and never stayed the same.",
+      "So the values fall, which is option {r}."
+    ],
+    "hints": [
+      "Compare each value with the one before it.",
+      "See whether the values fall every year, or whether there is a year when they rise or stay the same.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rising": "Option {w_rising} does not fit: each value is smaller than the one before. The values fall: option {r}.",
+      "constant": "Option {w_constant} does not fit: the values change, and each one is smaller than the one before. The values fall: option {r}.",
+      "down-then-up": "Option {w_down_then_up} does not fit: there is no rise, each value is smaller than the one before. The values fall: option {r}."
+    }
+  },
+  "S5.global-1S.08": {
+    "text": "The values for the years: {a}, {=a+b}, {=a+b+c}, {=a+b+c-d}, {=a+b+c-d-e}. Which phrase describes the trend best? 1) the values only rise; 2) the values first rise and then fall; 3) the values only fall; 4) the values stay the same. Answer with the number of the option.",
+    "solution": [
+      "At first the values rise: {=a+b} − {a} = {b}, {=a+b+c} − {=a+b} = {c}.",
+      "After {=a+b+c} they fall: {=a+b+c} − {=a+b+c-d} = {d}, {=a+b+c-d} − {=a+b+c-d-e} = {e}.",
+      "So the values first rise and then fall, which is option {r}."
+    ],
+    "hints": [
+      "Compare each value with the one before it and find where the direction changes.",
+      "See whether the row has both a rise and a fall.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-rising": "Option {w_only_rising} does not fit: after {=a+b+c} the values fall. The values first rise and then fall: option {r}.",
+      "only-falling": "Option {w_only_falling} does not fit: at first the values rise up to {=a+b+c}. The values first rise and then fall: option {r}.",
+      "constant": "Option {w_constant} does not fit: neighbouring values are different, they rise and then fall. The right one is option {r}."
+    }
+  },
+  "S5.global-1S.09": {
+    "text": "A value grew from {a} to {x}. By how many percent did it grow?",
+    "solution": [
+      "The growth is {x} − {a} = {=x-a}.",
+      "Compare the growth with the starting value: {=x-a} : {a} = {=(x-a)/a}.",
+      "To get percent, multiply by {=100}: {=(x-a)/a} × {=100} = {=(x-a)/a*100}.",
+      "So the value grew by {r} percent."
+    ],
+    "hints": [
+      "Find the growth: it was {a} and became {x}.",
+      "Divide the growth {=x-a} by the starting value {a} and multiply by 100.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "increase": "{w_increase} is the growth in units, but you need percent of the starting value: {=x-a} : {a} × {=100} = {r}.",
+      "new-value": "{w_new_value} comes from adding, but percent is the growth divided by the starting value: {=x-a} : {a} × {=100} = {r}.",
+      "of-new-value": "{w_of_new_value} comes from comparing the growth {=x-a} with the new value {x}. It has to be compared with the starting value {a}: {=x-a} : {a} × {=100} = {r}.",
+      "whole-ratio": "{w_whole_ratio} comes from dividing the new value {x} by {a} and multiplying by 100. That is the new value as a percent of the old one, and the growth is only what is above {=100}: {=x-a} : {a} × {=100} = {r}."
+    }
+  },
+  "S5.global-1S.10": {
+    "text": "A value grows steadily over three years: {a} in the first year and {x} in the third. What was it in the second year?",
+    "solution": [
+      "The growth is steady, so each year the value goes up by the same number.",
+      "In two years it grew by {x} − {a} = {=x-a}, so in one year by {=x-a} : 2 = {=(x-a)/2}.",
+      "In the second year the value was {a} + {=(x-a)/2} = {r}."
+    ],
+    "hints": [
+      "Steady growth means the value in the second year is exactly halfway between the first and the third.",
+      "Find the number halfway between {a} and {x}: add them and divide by 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first": "{w_first} is the value in the first year, but you need the second. It is larger than the first by one step: {a} + {=(x-a)/2} = {r}.",
+      "third": "{w_third} is the value in the third year, but you need the second. It is smaller than the third by one step: {x} − {=(x-a)/2} = {r}.",
+      "step-only": "{w_step_only} is the growth in one year. It has to be added to the first value: {a} + {=(x-a)/2} = {r}."
+    }
+  },
+  "S5.global-1S.11": {
+    "text": "The values for the years: {a}, {=a+b}, {=a+b+c}, {=a+b+c+d}. What will the value be next year, if it grows by as much as it grew on average per year?",
+    "solution": [
+      "The total growth over three years: {=a+b+c+d} − {a} = {=b+c+d}.",
+      "On average per year: {=b+c+d} : {=3} = {=(b+c+d)/3}.",
+      "The next value: {=a+b+c+d} + {=(b+c+d)/3} = {r}."
+    ],
+    "hints": [
+      "First find by how much the value grew in all, from the first year to the fourth: it was {a} and became {=a+b+c+d}. Divide the growth by 3.",
+      "Add the average growth per year to the last value {=a+b+c+d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-rise": "{w_last_rise} comes from adding only the last rise {d}. But you need the average rise: {=(b+c+d)/3}, and {=a+b+c+d} + {=(b+c+d)/3} = {r}.",
+      "total-rise": "{w_total_rise} comes from adding the whole growth of three years. Next year the value grows by the average rise of one year: {=a+b+c+d} + {=(b+c+d)/3} = {r}.",
+      "last-value": "{w_last_value} is the last value, and next year it grows by the average rise {=(b+c+d)/3}: {=a+b+c+d} + {=(b+c+d)/3} = {r}."
+    }
+  },
+  "S5.global-1S.12": {
+    "text": "Value A is {a} now and grows by {b} every year. Value B is {x} now and grows by {c} every year. In how many years will A catch up with B?",
+    "solution": [
+      "Now B is larger than A by {x} − {a} = {=x-a}.",
+      "Each year A grows faster than B by {b} − {c} = {=b-c}, and the gap gets smaller by that much.",
+      "The gap closes in {=x-a} : {=b-c} = {r|year|years|years}."
+    ],
+    "hints": [
+      "Find by how much A is smaller than B now: compare {a} and {x}.",
+      "Each year A catches up with B by {b} − {c}. How many times does {=b-c} fit into the gap {=x-a}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "gap-only": "{w_gap_only} is the gap between the values now, but you need the number of years: {=x-a} : {=b-c} = {r}.",
+      "rate-gap": "{w_rate_gap} is by how much the gap gets smaller in one year, but you need the number of years: {=x-a} : {=b-c} = {r}.",
+      "faster-only": "{w_faster_only} comes from dividing the gap by the growth of A alone. But B grows too, and the gap gets smaller by {=b-c} a year: {=x-a} : {=b-c} = {r}."
+    }
+  },
+  "S5.global-1S.13": {
+    "text": "The values for the years: {a}, {=a+b}, {=a+b+b-c}, {=a+3*b-3*c}. Each year the growth gets smaller by the same number. What will the next value be?",
+    "solution": [
+      "The growth in each year: {b}, {=b-c}, {=b-2*c}.",
+      "Each next growth is smaller by {c}, so the next one is {=b-2*c} − {c} = {=b-3*c}.",
+      "The next value: {=a+3*b-3*c} + {=b-3*c} = {r}."
+    ],
+    "hints": [
+      "Find the growth in each year: {b}, {=b-c}, {=b-2*c}. They get smaller by the same number.",
+      "The next growth is {c} smaller than the last one. Find it and add it to {=a+3*b-3*c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-rise-again": "{w_last_rise_again} comes from repeating the last growth {=b-2*c}. But the growth keeps getting smaller, and the next one is {=b-3*c}: {=a+3*b-3*c} + {=b-3*c} = {r}.",
+      "first-rise": "{w_first_rise} comes from adding the first growth {b}. The growth gets smaller, and the next one is {=b-3*c}: {=a+3*b-3*c} + {=b-3*c} = {r}."
+    }
+  },
+  "S5.global-1S.14": {
+    "text": "The values for the years: {a}, {b}, {c}, {d}. Which graph matches these values? Answer with the number of the graph.",
+    "solution": [
+      "Find the changes from year to year: {b} − {a} = {=b-a}, {c} − {b} = {=c-b}, {d} − {c} = {=d-c}.",
+      "The sign of a change shows whether the line goes up or down between neighbouring points.",
+      "The graph where the line goes from left to right in exactly this way is graph {r}."
+    ],
+    "hints": [
+      "For each pair of neighbouring values decide whether the line goes up or down.",
+      "Rule out the graphs where the line only goes up, only goes down, or runs in the opposite order.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reversed-order": "Graph {w_reversed_order} is drawn from the same values but in the reverse order: from left to right the line does not go this way. The right one is graph {r}.",
+      "only-rising": "Graph {w_only_rising} only rises, but the values both rise and fall. The right one is graph {r}.",
+      "only-falling": "Graph {w_only_falling} only falls, but the values both rise and fall. The right one is graph {r}."
+    }
+  },
+  "S6.patterns.01": {
+    "text": "Continue the row of numbers: {row}. Which number comes next?",
+    "solution": [
+      "The step of the row is how much larger a number is than its left neighbour: {=a+b} − {a} = {b}.",
+      "The last number of the row is {=a+3*b}; add the step: {=a+3*b} + {b} = {r}.",
+      "So the next number is {r}."
+    ],
+    "hints": [
+      "Find by how much each number is larger than the one before it.",
+      "The step is {b}. Add it to the last number of the row, {=a+3*b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is the last number of the row, which is already written. The next one is a step larger: {=a+3*b} + {b} = {r}.",
+      "double-step": "{w_double_step} comes from adding two steps of {b}, but only one is needed: {=a+3*b} + {b} = {r}.",
+      "n-times-step": "{w_n_times_step} is the step {b} times {=5}, but the row does not start from zero. The next number is the last number plus the step: {=a+3*b} + {b} = {r}."
+    }
+  },
+  "S6.patterns.02": {
+    "text": "Continue the row of numbers: {row}. Which number comes next?",
+    "solution": [
+      "The step of the row is how much smaller a number is than its left neighbour: {a} − {=a-b} = {b}.",
+      "The last number of the row is {=a-3*b}; subtract the step: {=a-3*b} − {b} = {r}.",
+      "So the next number is {r}."
+    ],
+    "hints": [
+      "Find by how much each number is smaller than the one before it.",
+      "The step is {b}. Subtract it from the last number of the row, {=a-3*b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is the last number of the row, which is already written. The next one is a step smaller: {=a-3*b} − {b} = {r}.",
+      "double-step": "{w_double_step} comes from subtracting two steps of {b}, but only one is needed: {=a-3*b} − {b} = {r}.",
+      "adds-step": "{w_adds_step} comes from adding the step, but the row goes down, so the step is subtracted: {=a-3*b} − {b} = {r}."
+    }
+  },
+  "S6.patterns.03": {
+    "text": "The first number of a row is {a}, and each next number is larger than the one before by {b}. What is the tenth number of the row?",
+    "solution": [
+      "From the first number to the tenth there are nine steps: the first number is already in place.",
+      "Each step adds {b}, so nine steps add {=9} × {b} = {=9*b}.",
+      "The tenth number: {a} + {=9*b} = {r}."
+    ],
+    "hints": [
+      "Between the first and the tenth number there are nine steps, not ten.",
+      "Nine steps of {b} make {=9*b}. Add that to the first number {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "ten-steps": "{w_ten_steps} comes from ten steps, but between the first and the tenth number there are nine: {a} + {=9} × {b} = {r}.",
+      "eight-steps": "{w_eight_steps} comes from eight steps, but between the first and the tenth number there are nine: {a} + {=9} × {b} = {r}.",
+      "step-times-ten": "{w_step_times_ten} is ten steps without the first number of the row. You need nine steps and the first number: {a} + {=9*b} = {r}."
+    }
+  },
+  "S6.patterns.04": {
+    "text": "Continue the row of numbers: {row}. Which number comes next?",
+    "solution": [
+      "Each number is twice the one before it: {a} × 2 = {=2*a}, {=2*a} × 2 = {=4*a}.",
+      "The last number of the row is {=8*a}; double it: {=8*a} × 2 = {r}.",
+      "So the next number is {r}."
+    ],
+    "hints": [
+      "Compare neighbouring numbers: how many times larger is each than the one before?",
+      "Each number is twice the one before. Multiply the last number {=8*a} by 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "added": "{w_added} comes from adding, but the numbers of the row double: {=8*a} × 2 = {r}.",
+      "last": "{w_last} is the last number of the row, which is already written. The next one doubles it: {=8*a} × 2 = {r}.",
+      "same-difference": "{w_same_difference} comes from adding the same difference again. Here the numbers double instead of growing by the same amount: {=8*a} × 2 = {r}."
+    }
+  },
+  "S6.patterns.05": {
+    "text": "Beads are strung so that a pattern of {a} colours repeats in order. Which colour of the pattern, by number, does bead number {b} have?",
+    "solution": [
+      "The pattern of {a} colours repeats, so divide the bead number by {a}: in {b} beads there are {=floor(b/a)} whole patterns and a remainder of {=mod(b,a)}.",
+      "If the remainder is {=0}, the bead is the last one of its pattern, and its colour is number {a}. Otherwise the colour is the number equal to the remainder.",
+      "Bead number {b} has colour number {r}."
+    ],
+    "hints": [
+      "Find how many whole patterns of {a} beads fit before bead number {b} and how many beads are left over.",
+      "The remainder shows the colour. If there is no remainder, the bead is the last of its pattern: its colour is number {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "position": "{w_position} is the number of the bead itself, but you need the number of its colour in a pattern of {a} colours: {r}.",
+      "remainder": "{w_remainder} is the remainder after dividing the bead number by {a}. If there is no remainder, the bead has the last colour of the pattern, not colour zero. The colour of the bead is number {r}."
+    }
+  },
+  "S6.patterns.06": {
+    "text": "One number is missing in the row of numbers: {row}. Find the missing number.",
+    "solution": [
+      "The step of the row: {=a+b} − {a} = {b}, the numbers grow by {b}.",
+      "The missing number comes after {=a+b}: {=a+b} + {b} = {=a+2*b}.",
+      "Check: {=a+2*b} + {b} = {=a+3*b}, as written further on. So the missing number is {r}."
+    ],
+    "hints": [
+      "Find the step from two neighbouring numbers.",
+      "The step is {b}. Add it to the number before the gap, {=a+b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "before": "{w_before} is already in the row before the gap, and the missing number comes right after it: {=a+b} + {b} = {r}.",
+      "after": "{w_after} is already in the row after the gap, and the missing number is a step smaller than it: {=a+3*b} − {b} = {r}."
+    }
+  },
+  "S6.patterns.07": {
+    "text": "A row of numbers starts like this: 1, 4, 9, … and goes on up to {a} × {a}. What is the next number of the row?",
+    "solution": [
+      "The numbers of the row come from multiplying a number by itself: 1 × 1 = 1, 2 × 2 = 4, 3 × 3 = 9.",
+      "The last number of the row: {a} × {a} = {=a*a}.",
+      "The next number multiplies {=a+1} by itself: {=a+1} × {=a+1} = {r}."
+    ],
+    "hints": [
+      "Find the rule of the row: 1 × 1, 2 × 2, 3 × 3.",
+      "Take the next number and multiply it by itself.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is the last square, which is already written. The next number is the square of {=a+1}: {=a+1} × {=a+1} = {r}.",
+      "doubled": "{w_doubled} is twice the last number {=a*a}, but the numbers of the row are squares: {=a+1} × {=a+1} = {r}.",
+      "twice-the-base": "{w_twice_the_base} comes from doubling {=a+1}, but the numbers of the row come from multiplying a number by itself: {=a+1} × {=a+1} = {r}."
+    }
+  },
+  "S6.patterns.08": {
+    "text": "One triangle needs 3 matchsticks, a row of 2 triangles needs 5, a row of 3 needs 7. How many matchsticks does a row of {a} triangles need?",
+    "solution": [
+      "Neighbouring triangles share one matchstick, so each new triangle adds only 2.",
+      "The first triangle is 3 matchsticks, and the other {=a-1} add 2 each: 3 + {=a-1} × 2 = {r}.",
+      "So a row of {a} triangles needs {r|matchstick|matchsticks|matchsticks}."
+    ],
+    "hints": [
+      "Find how many matchsticks each new triangle adds.",
+      "The first triangle is 3 matchsticks, and each of the other {=a-1} adds 2.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "separate": "{w_separate} is the matchsticks for {a} separate triangles with 3 each, but neighbouring triangles share a matchstick: 3 + {=a-1} × 2 = {r}.",
+      "two-per-triangle": "{w_two_per_triangle} does not count the extra matchstick of the first triangle: it takes 3 matchsticks, not 2: 3 + {=a-1} × 2 = {r}."
+    }
+  },
+  "S6.patterns.09": {
+    "text": "Find the sum of all the numbers from 1 to {a}.",
+    "solution": [
+      "Write the numbers from 1 to {a}, and under them the same numbers in reverse order.",
+      "In every column the sum is 1 + {a} = {=a+1}, and there are {a} columns: {a} × {=a+1} = {=a*(a+1)}.",
+      "That counted the sum twice, so take half: {=a*(a+1)} : 2 = {r}."
+    ],
+    "hints": [
+      "Add the first number to the last: 1 + {a}.",
+      "Such pairs all give {=a+1}, and there are half as many pairs as numbers.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is the last number, but you need the sum of all of them: {a} × {=a+1} : 2 = {r}.",
+      "square": "{w_square} is {a} times {a}, but the sum is half of {a} times {=a+1}: {a} × {=a+1} : 2 = {r}.",
+      "not-halved": "{w_not_halved} comes without halving. The numbers were added twice, so take half: {=a*(a+1)} : 2 = {r}."
+    }
+  },
+  "S6.patterns.10": {
+    "text": "A row of numbers grows steadily: {row}. By how much is each number larger than the one before?",
+    "solution": [
+      "The step of the row is how much larger a number is than its left neighbour.",
+      "Take the first two numbers and subtract the smaller from the larger: {=a+b} − {a} = {r}.",
+      "So each number is larger than the one before by {r}."
+    ],
+    "hints": [
+      "Compare two neighbouring numbers of the row: {a} and the one after it.",
+      "Subtract the smaller from the larger: {=a+b} − {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first": "{w_first} is the first number of the row, but you need the step between neighbours: {=a+b} − {a} = {r}.",
+      "two-steps": "{w_two_steps} is two steps, but you need one: {=a+b} − {a} = {r}."
+    }
+  },
+  "S6.patterns.11": {
+    "text": "Start with the number {a}. First add {b}, then subtract {c}. Repeat this pair of actions {d|time|times|times} in a row. What is the number at the end?",
+    "solution": [
+      "In one pair of actions the number first grows by {b}, then falls by {c}: {b} − {c} = {=b-c}.",
+      "There are {d} pairs, so the number changes by {d} × {=b-c} = {=d*(b-c)}.",
+      "At the end it is {a} + {=d*(b-c)} = {r}."
+    ],
+    "hints": [
+      "Find how the number changes in one pair of actions: add {b}, subtract {c}.",
+      "One pair changes the number by {=b-c}. Multiply that by {d} and add it to {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-additions": "{w_only_additions} leaves out the subtractions: {a} + {d} × {=b-c} = {r}.",
+      "one-pair": "{w_one_pair} counts only one pair of actions, but there are {d}: {a} + {d} × {=b-c} = {r}.",
+      "change-only": "{w_change_only} is only the change, but you need the number at the end, which includes the start {a}: {a} + {d} × {=b-c} = {r}."
+    }
+  },
+  "S6.patterns.12": {
+    "text": "How many numbers are there in the row {row}, if it goes with a step of {b} from {a} to {y}?",
+    "solution": [
+      "From {a} to {y} the numbers grew by {y} − {a} = {=y-a}.",
+      "One step is {b}, so there are {=y-a} : {b} = {c} steps.",
+      "The first number stands without a step, so there is one more number than steps: {c} + 1 = {r}.",
+      "So the row has {r|number|numbers|numbers}."
+    ],
+    "hints": [
+      "Count the steps between the first and the last number: from {a} to {y} with a step of {b}.",
+      "Divide {y} − {a} by {b} to get the number of steps. There is one more number than steps.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "steps": "{w_steps} is the number of steps, but there is one more number than steps, because the first number stands without a step: {c} + 1 = {r}.",
+      "next": "{w_next} is one more than needed. The first number stands without a step: {c} + 1 = {r}.",
+      "difference": "{w_difference} is how much the numbers grew from {a} to {y}, but you need how many numbers there are: {c} + 1 = {r}."
+    }
+  },
+  "S6.patterns.13": {
+    "text": "Beads are strung so that a pattern of {a} colours repeats in order. How many beads of the first colour are there among the first {b} beads?",
+    "solution": [
+      "Every whole pattern has one bead of the first colour. In {b} beads there are {=floor(b/a)} whole patterns and a remainder of {=mod(b,a)}.",
+      "If the remainder is not zero, it starts one more pattern, and that one has a bead of the first colour too.",
+      "Beads of the first colour: {=floor(b/a)} + {=min(1,mod(b,a))} = {r}."
+    ],
+    "hints": [
+      "Count how many whole patterns fit into the given beads.",
+      "Do not forget the incomplete pattern at the end: its first bead is of the first colour too.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "whole-only": "{w_whole_only} is the number of whole patterns. But the remainder of {=mod(b,a)} beads starts one more pattern, and its first bead has the first colour: {=floor(b/a)} + {=min(1,mod(b,a))} = {r}.",
+      "plus-one": "{w_plus_one} comes from counting an incomplete pattern when there is none, or from adding an extra one. Among {b} beads the number of beads of the first colour is {=floor(b/a)} + {=min(1,mod(b,a))} = {r}.",
+      "remainder": "{w_remainder} is the remainder after dividing {b} by {a}, but you need the number of beads of the first colour: {=floor(b/a)} + {=min(1,mod(b,a))} = {r}."
+    }
+  },
+  "S6.patterns.14": {
+    "text": "A row starts with the number {a}, and each next number is larger than the one before by {b}. What is the first number of the row that is greater than {c}?",
+    "solution": [
+      "From {a} to {c} the difference is {c} − {a} = {=c-a}, and it holds {=floor((c-a)/b)} whole steps of {b}.",
+      "After those steps the number {a} + {=floor((c-a)/b)} × {b} = {=a+floor((c-a)/b)*b} is still not greater than {c}, so one more step is needed.",
+      "The first number greater than {c}: {=a+floor((c-a)/b)*b} + {b} = {r}."
+    ],
+    "hints": [
+      "Find how many whole steps you can make without going past {c}.",
+      "The number you reach is still not greater than {c}. Make one more step.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-not-above": "{w_last_not_above} is the last number of the row that is not greater than {c}, but you need the first one that is greater: {w_last_not_above} + {b} = {r}.",
+      "limit-itself": "{w_limit_itself} is the number {c} itself, but it may not be in the row, and you need the first number of the row greater than it: {=a+floor((c-a)/b)*b} + {b} = {r}.",
+      "ceil-step": "{w_ceil_step} is the first number of the row that is not less than {c}. It may equal {c}, but you need one strictly greater: {=a+floor((c-a)/b)*b} + {b} = {r}."
+    }
+  },
+  "S6.patterns.15": {
+    "text": "The numbers from {=1} to {a} are written one after another in one line without spaces or commas: after {=9} comes {=10}, then {=11} and so on. How many digits are there in this line?",
+    "solution": [
+      "The numbers from {=1} to {=9} have one digit, there are {=9} of them, and they have {=9} digits.",
+      "The numbers from {=10} to {a} have two digits, there are {a} − {=9} = {=a-9} of them, and they have {=a-9} × {=2} = {=2*(a-9)} digits.",
+      "All digits: {=9} + {=2*(a-9)} = {r}."
+    ],
+    "hints": [
+      "Split the numbers into one-digit and two-digit ones.",
+      "There are nine one-digit numbers. How many two-digit ones are there, and how many digits does each have?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-two": "{w_all_two} comes from counting two digits for every number. But the numbers from {=1} to {=9} have one digit: {=9} + {=2*(a-9)} = {r}.",
+      "count": "{w_count} is how many numbers there are, but the two-digit ones have two digits each: {=9} + {=2*(a-9)} = {r}.",
+      "off-by-one": "{w_off_by_one} comes from starting the two-digit numbers at {=11}. But {=10} is a two-digit number too: {=9} + {=2*(a-9)} = {r}."
+    }
+  },
+  "S6.patterns.16": {
+    "text": "Matchsticks are laid out in a row of triangles, where neighbouring triangles share one matchstick. One triangle needs {=3} matchsticks, a row of {=2} triangles needs {=5}, a row of {=3} needs {=7}. How many triangles are in the row that took {s|matchstick|matchsticks|matchsticks}?",
+    "solution": [
+      "The first triangle is {=3} matchsticks, and each next one adds {=2}.",
+      "The other triangles took {s} − {=3} = {=s-3} matchsticks, that is {=s-3} : {=2} = {=(s-3)/2} triangles.",
+      "All triangles: {=(s-3)/2} + {=1} = {r}."
+    ],
+    "hints": [
+      "The first triangle takes three matchsticks, and each next one adds two.",
+      "Subtract the matchsticks of the first triangle and divide the rest by what each next triangle adds.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "without-first": "{w_without_first} is the number of triangles without the first one, but the first is in the row too: {=(s-3)/2} + {=1} = {r}.",
+      "one-more": "{w_one_more} is one more than needed. The first triangle takes {=3} matchsticks, not {=2}: {=(s-3)/2} + {=1} = {r}.",
+      "separate": "{w_separate} comes from dividing by {=3}, as if the triangles did not share matchsticks. Neighbours share: {=(s-3)/2} + {=1} = {r}."
+    }
+  },
+  "S6.patterns-1S.01": {
+    "text": "A row of numbers: {row}. The steps between neighbouring numbers keep growing: 1, 2, 3 and so on. Which number comes next?",
+    "solution": [
+      "The steps between neighbouring numbers are 1, 2, 3, 4, and each one is 1 larger than the one before.",
+      "The next step is 5, and the last number of the row is {=a+10}.",
+      "We get {=a+10} + 5 = {r}."
+    ],
+    "hints": [
+      "Find the differences between neighbouring numbers: they are 1, 2, 3, 4.",
+      "The next difference is one larger than the last, that is 5. Add it to the last number {=a+10}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is the last number of the row, which is already written. The next one is larger by the step 5: {=a+10} + 5 = {r}.",
+      "constant-step": "{w_constant_step} comes from the same step of 4 as before, but the steps keep growing: {=a+10} + 5 = {r}."
+    }
+  },
+  "S6.patterns-1S.02": {
+    "text": "A row of numbers is built like this: each number is the sum of the two before it. The first numbers: {row}. Which number comes next?",
+    "solution": [
+      "In this row each number is the sum of the two numbers before it: {a} + {b} = {=a+b}.",
+      "The last two numbers of the row are {=a+b} and {=a+2*b}.",
+      "The next one is their sum: {=a+b} + {=a+2*b} = {r}."
+    ],
+    "hints": [
+      "The rule: each number is the sum of the two before it. Check: {a} + {b} = {=a+b}.",
+      "Add the last two numbers of the row: {=a+b} and {=a+2*b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is the last number of the row, which is already written. The next one is the sum of the last two: {=a+b} + {=a+2*b} = {r}.",
+      "doubled": "{w_doubled} is twice the last number {=a+2*b}, but you need the sum of the last two: {=a+b} + {=a+2*b} = {r}."
+    }
+  },
+  "S6.patterns-1S.03": {
+    "text": "Find the sum of the first {a} odd numbers: 1 + 3 + 5 + …",
+    "solution": [
+      "Check on the first numbers: 1 = 1 × 1, 1 + 3 = {=1+3} = 2 × 2, 1 + 3 + 5 = {=1+3+5} = 3 × 3.",
+      "The sum of the first few odd numbers is that many multiplied by itself.",
+      "For {a} numbers: {a} × {a} = {r}."
+    ],
+    "hints": [
+      "Check on small cases: 1, 1 + 3, 1 + 3 + 5.",
+      "The result is the number of terms multiplied by itself: {a} × {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "count": "{w_count} is the number of terms, but you need the sum: {a} × {a} = {r}.",
+      "double": "{w_double} comes from multiplying by 2, but the sum is {a} times {a}: {r}."
+    }
+  },
+  "S6.patterns-1S.04": {
+    "text": "A row of numbers: 2, 5, 10, 17, … Each number is the square of its place number plus 1. What is the number at place {a}?",
+    "solution": [
+      "The rule of the row: multiply the place number by itself and add 1.",
+      "Place {a} multiplied by itself: {a} × {a} = {=a*a}.",
+      "Add 1: {=a*a} + 1 = {r}."
+    ],
+    "hints": [
+      "Check the rule on the first numbers: 1 × 1 + 1 = 2.",
+      "Square the place number {a} and add 1.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "square": "{w_square} is the square of the place number {a}, but you still have to add 1: {a} × {a} + 1 = {r}.",
+      "number-plus-one": "{w_number_plus_one} comes from adding, but the place number {a} has to be multiplied by itself: {a} × {a} + 1 = {r}."
+    }
+  },
+  "S6.patterns-1S.05": {
+    "text": "One square needs 4 matchsticks, a row of 2 squares needs 7, a row of 3 needs 10. How many matchsticks does a row of {a} squares need?",
+    "solution": [
+      "Neighbouring squares share one matchstick, so each new square adds only 3.",
+      "The first square is 4 matchsticks, and the other {=a-1} add 3 each: 4 + {=a-1} × 3 = {r}.",
+      "So a row of {a} squares needs {r|matchstick|matchsticks|matchsticks}."
+    ],
+    "hints": [
+      "Find how many matchsticks each new square adds.",
+      "The first square is 4 matchsticks, and each of the other {=a-1} adds 3.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "separate": "{w_separate} is the matchsticks for {a} separate squares with 4 each, but neighbouring squares share a matchstick: 4 + {=a-1} × 3 = {r}.",
+      "three-per-square": "{w_three_per_square} does not count the fourth matchstick of the first square: 4 + {=a-1} × 3 = {r}."
+    }
+  },
+  "S6.patterns-1S.06": {
+    "text": "In the row {row} each number is larger than the one before by {b}. Which place in this row does the number {y} have?",
+    "solution": [
+      "From {a} to {y} the numbers grew by {y} − {a} = {=y-a}.",
+      "One step is {b}, so there are {=y-a} : {b} = {c} steps.",
+      "The number {a} has place 1, and each step adds 1 to the place: 1 + {c} = {r}.",
+      "So the number {y} stands at place {r}."
+    ],
+    "hints": [
+      "Find how many steps of {b} lead from {a} to {y}.",
+      "Divide {y} − {a} by {b} to get the number of steps. The place is one more than that.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "steps": "{w_steps} is the number of steps, but the place is one more, because the first number has place 1: {c} + 1 = {r}.",
+      "value-difference": "{w_value_difference} is the difference of the values, but you need the place: {c} + 1 = {r}."
+    }
+  },
+  "S6.patterns-1S.07": {
+    "text": "A row of numbers: {row}. The steps alternate: first add {b}, then {c}, then {b} again and so on. Which number stands at the seventh place?",
+    "solution": [
+      "The steps go in turn: {b}, {c}, {b}, {c}. The fifth number of the row is {=a+2*(b+c)}.",
+      "Two more steps lead to the seventh number: first {b}, then {c}.",
+      "We get {=a+2*(b+c)} + {b} + {c} = {r}."
+    ],
+    "hints": [
+      "The steps come in pairs: {b} and {c}. One pair adds {=b+c}.",
+      "Six steps lead to the seventh number: that is three such pairs. Add three pairs to {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-shown": "{w_last_shown} stands at the fifth place, but you need the seventh: two more steps, {b} and {c}.",
+      "single-step": "{w_single_step} comes from using the same step {b} every time, but the steps alternate: {b}, {c}, {b}, {c}, {b}, {c}."
+    }
+  },
+  "S6.patterns-1S.08": {
+    "text": "A row of numbers starts like this: 1, 8, 27, … and goes on to {a} × {a} × {a}. What is the next number of the row?",
+    "solution": [
+      "The numbers of the row are a number multiplied by itself twice: 1 × 1 × 1 = 1, 2 × 2 × 2 = 8.",
+      "The last number of the row: {a} × {a} × {a} = {=a*a*a}.",
+      "The next number uses {=a+1}: {=a+1} × {=a+1} × {=a+1} = {r}."
+    ],
+    "hints": [
+      "Find the rule of the row: 1 × 1 × 1, 2 × 2 × 2.",
+      "Take the next number, {=a+1}, and multiply it by itself twice over.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last": "{w_last} is the last cube, which is already written. The next cube: {=a+1} × {=a+1} × {=a+1} = {r}.",
+      "square": "{w_square} is the square of {=a+1}, but the row has cubes: {=a+1} × {=a+1} × {=a+1} = {r}."
+    }
+  },
+  "S6.patterns-1S.09": {
+    "text": "How many numbers from 1 to {x} are divisible by {a}?",
+    "solution": [
+      "The numbers divisible by {a} are {a}, {=2*a}, {=3*a} and so on, each {a} larger than the one before.",
+      "They go up to {x}, and their number is {x} : {a} = {r}.",
+      "So from 1 to {x} there are {r|number|numbers|numbers} divisible by {a}."
+    ],
+    "hints": [
+      "Numbers divisible by {a} come every {a}: {a}, {=2*a}, {=3*a} and so on.",
+      "How many times does {a} fit into {x}? Divide {x} by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "limit": "{w_limit} is the limit, but you need the number of multiples: {x} : {a} = {r}.",
+      "one-more": "{w_one_more} is one too many: there are no more multiples after {x}, and zero does not count: {x} : {a} = {r}."
+    }
+  },
+  "S6.patterns-1S.10": {
+    "text": "Three numbers {a}, {b} and {c} repeat in a circle: {a}, {b}, {c}, {a}, {b}, {c} and so on. What is the sum of the first {x} numbers of this row?",
+    "solution": [
+      "The first {x} numbers are {d|triple|triples|triples} of {a}, {b}, {c}.",
+      "One triple gives {a} + {b} + {c} = {=a+b+c}.",
+      "All the triples together: {d} × {=a+b+c} = {r}."
+    ],
+    "hints": [
+      "Find the sum of one triple: {a} + {b} + {c}.",
+      "The first {x} numbers make {d|triple|triples|triples}. Multiply the sum of one triple by {d}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-triple": "{w_one_triple} is the sum of one triple, but there are {d} triples: {d} × {=a+b+c} = {r}.",
+      "terms": "{w_terms} is the number of terms of the row, but you need their sum: {d} × {=a+b+c} = {r}."
+    }
+  },
+  "S6.patterns-1S.11": {
+    "text": "The first number of a row is {a}. Each next number is twice the one before it, plus {b}. What is the fourth number of the row?",
+    "solution": [
+      "The second number: 2 × {a} + {b} = {=2*a+b}.",
+      "The third number: 2 × {=2*a+b} + {b} = {=2*(2*a+b)+b}.",
+      "The fourth number: 2 × {=2*(2*a+b)+b} + {b} = {r}."
+    ],
+    "hints": [
+      "Work out the numbers one by one, starting from the first: 2 × {a} + {b}.",
+      "Each time double the last number and add {b}: do this three times.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "third": "{w_third} is the third number, but you need the fourth: double once more and add {b}.",
+      "doubling-only": "{w_doubling_only} leaves out the adding of {b}: at every step you double and add."
+    }
+  },
+  "S6.patterns-1S.12": {
+    "text": "Find the sum of {a} numbers: {=1} + {=2} + {=4} + {=8} + …, where each next number is twice the one before it.",
+    "solution": [
+      "Add one to the sums: {=1} + {=1} = {=2}, {=1} + {=2} + {=1} = {=4}, {=1} + {=2} + {=4} + {=1} = {=8}.",
+      "Each time we get the next number of the row, so for {a} numbers we get {=pow(2,a)}.",
+      "The sum itself is one less: {=pow(2,a)} − {=1} = {r}."
+    ],
+    "hints": [
+      "Add one to the first few sums and see what you get.",
+      "The sum and the one together make the next number of the row.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-term": "{w_last_term} is the last number of the row, but you need the sum of all the numbers: {=pow(2,a)} − {=1} = {r}.",
+      "power": "{w_power} is the next number of the row, and the sum is one less: {=pow(2,a)} − {=1} = {r}."
+    }
+  },
+  "S6.patterns-1S.13": {
+    "text": "In a row, each number from the third on is the sum of the two before it. The third number is {=a+b} and the fourth is {=a+2*b}. What is the first number?",
+    "solution": [
+      "The fourth number is the sum of the second and the third, so the second is {=a+2*b} − {=a+b} = {b}.",
+      "The third number is the sum of the first and the second, so the first is {=a+b} − {b} = {r}."
+    ],
+    "hints": [
+      "First find the second number: the fourth is the sum of the second and the third.",
+      "Then find the first: the third is the sum of the first and the second.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second": "{w_second} is the second number of the row, but the question asks for the first: {=a+b} − {b} = {r}.",
+      "third": "{w_third} is the third number, but the first is smaller than it by the second number {b}: {=a+b} − {b} = {r}."
+    }
+  },
+  "S6.patterns-1S.14": {
+    "text": "Diamonds are made of cells: the first diamond is {=1} cell, the second is {=5} cells, the third is {=13} cells. The diamond with number n is made of a square n × n and a square (n − {=1}) × (n − {=1}) cells, one lying on the other. How many cells are in the diamond with number {a}?",
+    "solution": [
+      "The first square: {a} × {a} = {=a*a}, the second: {=a-1} × {=a-1} = {=(a-1)*(a-1)}.",
+      "Together: {=a*a} + {=(a-1)*(a-1)} = {r}."
+    ],
+    "hints": [
+      "Find how many cells are in each of the two squares.",
+      "Add the cells of the two squares.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-square": "{w_one_square} is the cells of the big square only, but the diamond has a smaller square too: {=a*a} + {=(a-1)*(a-1)} = {r}.",
+      "double": "{w_double} comes from taking two big squares. The second square is smaller, its side is {=a-1}: {=a*a} + {=(a-1)*(a-1)} = {r}.",
+      "plus-side": "{w_plus_side} comes from adding the big square and its side. The second square is {=a-1} × {=a-1} = {=(a-1)*(a-1)}: {=a*a} + {=(a-1)*(a-1)} = {r}."
+    }
+  },
+  "S6.patterns-1S.15": {
+    "text": "A row starts with the number {a}. Each next number is larger than the one before, first by {=1}, then by {=2}, then by {=3} and so on: {a}, {=a+1}, {=a+3}, {=a+6}, … What is the number at place {b}?",
+    "solution": [
+      "To reach the number at place {b} you need {=b-1} steps, and they are {=1}, {=2}, … , {=b-1}.",
+      "The sum of the steps: {=b-1} × {b} : {=2} = {=(b-1)*b/2}.",
+      "The number at place {b}: {a} + {=(b-1)*b/2} = {r}."
+    ],
+    "hints": [
+      "How many steps lead from the first number to the number at place {b}?",
+      "The steps grow by one. Add them in pairs: first with last, second with second to last.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-steps-one": "{w_all_steps_one} comes from counting every step as 1. But the steps grow, and their sum is {=(b-1)*b/2}: {a} + {=(b-1)*b/2} = {r}.",
+      "one-more-step": "{w_one_more_step} comes from adding one step too many. There are {=b-1} steps to the number at place {b}: {a} + {=(b-1)*b/2} = {r}."
+    }
+  },
+  "S6.patterns-1S.16": {
+    "text": "How many of the numbers from {=1} to {a} are divisible by neither {=2} nor {=3}?",
+    "solution": [
+      "{a} : {=2} = {=a/2} numbers are divisible by {=2}, and {a} : {=3} = {=a/3} numbers are divisible by {=3}.",
+      "Numbers divisible by {=6} were in both groups; there are {a} : {=6} = {=a/6} of them.",
+      "Divisible by neither {=2} nor {=3}: {a} − {=a/2} − {=a/3} + {=a/6} = {r}."
+    ],
+    "hints": [
+      "Subtract the numbers divisible by 2 and the numbers divisible by 3.",
+      "Some numbers are divisible by both 2 and 3: they were subtracted twice.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "forgot-overlap": "{w_forgot_overlap} comes from subtracting both groups without giving back the numbers divisible by {=6}. They were subtracted twice, and there are {=a/6} of them: {a} − {=a/2} − {=a/3} + {=a/6} = {r}.",
+      "only-odd": "{w_only_odd} counts the odd numbers, but some of them are divisible by {=3}. Those must go too: {a} − {=a/2} − {=a/3} + {=a/6} = {r}.",
+      "only-three": "{w_only_three} counts the numbers not divisible by {=3}, but some of them are even. Those must go too: {a} − {=a/2} − {=a/3} + {=a/6} = {r}."
+    }
+  },
+  "S7.median-mode.01": {
+    "text": "A set of numbers: {a}, {b}, {c}, {d}, {e}. Find the median of the set, that is the number in the middle when the numbers are written in ascending order.",
+    "solution": [
+      "Put the numbers in ascending order: {=nth(1,a,b,c,d,e)}, {=nth(2,a,b,c,d,e)}, {=nth(3,a,b,c,d,e)}, {=nth(4,a,b,c,d,e)}, {=nth(5,a,b,c,d,e)}.",
+      "There are five numbers, so the median stands third: two numbers are to its left and two to its right.",
+      "The third number in the row is {r}, so the median is {r}."
+    ],
+    "hints": [
+      "Put the numbers {a}, {b}, {c}, {d}, {e} in ascending order.",
+      "There are five numbers, so the median stands third. Find the third number in the row.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} is the first number as written, but the median is the middle number after putting them in order: {r}.",
+      "middle-written": "{w_middle_written} stands in the middle as written, but the numbers are not in order. Put them in ascending order first, then the median is {r}.",
+      "mean": "{w_mean} is the mean of all the numbers, but you need the median. The median is the middle number of the row in ascending order: {r}."
+    }
+  },
+  "S7.median-mode.02": {
+    "text": "A set of numbers: {a}, {b}, {c}. Find the median of the set.",
+    "solution": [
+      "Put the numbers in ascending order: {=nth(1,a,b,c)}, {=nth(2,a,b,c)}, {=nth(3,a,b,c)}.",
+      "There are three numbers, so the median stands second: one number is smaller than it and one is larger.",
+      "The second number in the row is {r}, so the median is {r}."
+    ],
+    "hints": [
+      "Put the numbers {a}, {b} and {c} in ascending order.",
+      "There are three numbers, so the median stands second, in the middle.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is the largest number, but the median is the number in the middle: {r}.",
+      "smallest": "{w_smallest} is the smallest number, but the median is the number in the middle: {r}.",
+      "middle-written": "{w_middle_written} stands in the middle as written, but the numbers are not in order. Put them in ascending order first, then the median is {r}."
+    }
+  },
+  "S7.median-mode.03": {
+    "text": "A set of four numbers: {a}, {b}, {c}, {d}. Find the median of the set, that is the mean of the two numbers in the middle.",
+    "solution": [
+      "Put the numbers in ascending order. There are four, so two numbers stand in the middle: the second and the third.",
+      "The median is the number exactly halfway between them, that is their mean.",
+      "The two middle numbers add up to {=2*r}; halve it: {=2*r} : {=2} = {r}."
+    ],
+    "hints": [
+      "Put the numbers {a}, {b}, {c}, {d} in ascending order.",
+      "There are four numbers, so two stand in the middle: the second and the third. The median is their mean.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second-number": "{w_second_number} is one of the two middle numbers. The median is the number exactly between them: ({=nth(2,a,b,c,d)} + {=nth(3,a,b,c,d)}) : {=2} = {r}.",
+      "mean": "{w_mean} is the mean of all the numbers. The median is the mean of the two numbers in the middle: ({=nth(2,a,b,c,d)} + {=nth(3,a,b,c,d)}) : {=2} = {r}.",
+      "unordered-middle": "{w_unordered_middle} is the mean of the two numbers that stand in the middle as written. First put the numbers in ascending order, and then two other numbers are in the middle."
+    }
+  },
+  "S7.median-mode.04": {
+    "text": "A set of numbers: {row}. Find the mode of the set, that is the number that occurs most often.",
+    "solution": [
+      "Count how many times each number occurs: {a} occurs three times, and the others once each.",
+      "The mode is the number that occurs most often, that is {a}.",
+      "So the mode of the set is {r}."
+    ],
+    "hints": [
+      "Count how many times each of the numbers occurs: {row}.",
+      "Pick the number that occurs most often.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} occurs once, but the mode is the number that occurs most often: {r}.",
+      "last-number": "{w_last_number} occurs once, but the mode is the number that occurs most often: {r}.",
+      "largest": "{w_largest} is the largest number, but the mode is the number that occurs most often: {r}.",
+      "count": "{w_count} is how many times the mode occurs, but the question asks which number it is: {r}."
+    }
+  },
+  "S7.median-mode.05": {
+    "text": "A set of numbers: {a}, {b}, {c}, {d}. Find the range of the set, that is the difference between the largest and the smallest number.",
+    "solution": [
+      "Among {a}, {b}, {c}, {d} the largest number is {=max(a,b,c,d)} and the smallest is {=min(a,b,c,d)}.",
+      "The range is the difference between the largest and the smallest number: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "So the range of the set is {r}."
+    ],
+    "hints": [
+      "Find the largest and the smallest number.",
+      "Subtract the smaller from the larger.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "largest": "{w_largest} is the largest number, but the range is its difference from the smallest: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}.",
+      "sum-of-extremes": "{w_sum_of_extremes} is the sum of the largest and the smallest, but the range is their difference: {=max(a,b,c,d)} − {=min(a,b,c,d)} = {r}."
+    }
+  },
+  "S7.median-mode.06": {
+    "text": "In a set, the number {a} occurs more often than the others, and the other numbers are all different and occur once each. There are {x} numbers in the set. How many times does the number {a} occur, if there are {y} other numbers?",
+    "solution": [
+      "There are {x} numbers in all, and {y} others that occur once each.",
+      "All the numbers except {a} do not repeat, so {x} − {y} = {r} remain for the number {a}.",
+      "So the number {a} occurs {r} times."
+    ],
+    "hints": [
+      "There are {x} numbers in all, and {y} of them are the others. The others occur once each.",
+      "Subtract the number of the others, {y}, from the total, {x}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all": "{w_all} is the number of all the numbers in the set, but you need how many times the mode occurs: {x} − {y} = {r}.",
+      "others": "{w_others} is the number of the other numbers, but you need how many times the mode occurs: {x} − {y} = {r}."
+    }
+  },
+  "S7.median-mode.07": {
+    "text": "A set of numbers: {a}, {b}, {c}. Put a sign between the median and the mean of the set.",
+    "solution": [
+      "The mean: add the numbers and divide by 3: ({a} + {b} + {c}) : 3 = {=(a+b+c)/3}.",
+      "The median is the middle number when {a}, {b}, {c} are put in ascending order.",
+      "Compare the median with the mean {=(a+b+c)/3}: between them goes the sign {r}."
+    ],
+    "hints": [
+      "Put {a}, {b} and {c} in ascending order: the median stands in the middle.",
+      "The mean is the sum divided by 3: ({a} + {b} + {c}) : 3.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reversed": "The sign {w_reversed} points the other way: the open side of the sign must face the larger number.",
+      "unordered-middle": "The sign {w_unordered_middle} came from comparing the mean with the number {b}, which stands in the middle as written. The median is the middle number in ascending order, and that is {=nth(2,a,b,c)}."
+    }
+  },
+  "S7.median-mode.08": {
+    "text": "An ordered set in ascending order has {a} numbers. At which place does the median stand?",
+    "solution": [
+      "The median stands in the middle, with equally many numbers on both sides.",
+      "Besides the median there are {a} − 1 = {=a-1} numbers, shared equally: {=a-1} : 2 = {=(a-1)/2} on each side.",
+      "The median comes right after them: {=(a-1)/2} + 1 = {r}."
+    ],
+    "hints": [
+      "Find how many numbers stand to the left of the median: of the {a} numbers one is the median itself, and the rest are shared equally.",
+      "Add one to the number on the left: the median itself takes a place too.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "half": "{w_half} is how many numbers stand to the left of the median, and the median itself comes next: {w_half} + {=1} = {r}.",
+      "last": "{w_last} is the number of all the numbers in the set, but the median stands in the middle: ({a} + {=1}) : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.09": {
+    "text": "A set of numbers: {a}, {b}, {c}, {d}. What is the sum of the largest and the smallest number?",
+    "solution": [
+      "Among {a}, {b}, {c}, {d} the largest number is {=max(a,b,c,d)} and the smallest is {=min(a,b,c,d)}.",
+      "We need the sum, so add: {=max(a,b,c,d)} + {=min(a,b,c,d)} = {r}.",
+      "So the sum of the largest and the smallest number is {r}."
+    ],
+    "hints": [
+      "Find the largest and the smallest number.",
+      "Add them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "range": "{w_range} is the difference of the largest and the smallest, but you need the sum: {=max(a,b,c,d)} + {=min(a,b,c,d)} = {r}.",
+      "largest": "{w_largest} is only the largest number, but you need the sum of the largest and the smallest: {=max(a,b,c,d)} + {=min(a,b,c,d)} = {r}."
+    }
+  },
+  "S7.median-mode.10": {
+    "text": "An ordered set of three numbers: {a}, {b}, {c}. The number {d}, which is larger than all of them, is added. What is the median of the set of four numbers?",
+    "solution": [
+      "The number {d} is the largest, so in ascending order the set is {a}, {b}, {c}, {d}.",
+      "Now there are four numbers, and the middle ones are the second and the third: {b} and {c}.",
+      "The median is their mean: ({b} + {c}) : {=2} = {r}."
+    ],
+    "hints": [
+      "The new number {d} is the largest, so it stands at the end of the set.",
+      "Now there are four numbers: find the mean of the two in the middle, {b} and {c}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "old-median": "{w_old_median} is the old median, but after adding the number the set has four numbers: ({b} + {c}) : {=2} = {r}.",
+      "new-number": "{w_new_number} is the number that was added, but the median is a number in the middle: ({b} + {c}) : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.11": {
+    "text": "A set of numbers: {row}. Find the mode of the set.",
+    "solution": [
+      "Count how many times each number occurs: {a} occurs three times, {b} twice, {c} twice.",
+      "The mode is the number that occurs most often, that is {a}.",
+      "So the mode of the set is {r}."
+    ],
+    "hints": [
+      "Count how many times each of the numbers occurs: {row}.",
+      "Pick the number that occurs most often.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} occurs twice, but the mode is the number that occurs three times: {r}.",
+      "last-number": "{w_last_number} occurs twice, but the mode is the number that occurs three times: {r}.",
+      "largest": "{w_largest} is the largest number, but the mode is the number that occurs most often, three times: {r}.",
+      "count": "{w_count} is how many times the mode occurs, but the question asks which number it is: {r}."
+    }
+  },
+  "S7.median-mode.12": {
+    "text": "A set of seven numbers: {a}, {b}, {c}, {d}, {e}, {f} and {g}. Find the median of the set.",
+    "solution": [
+      "Put the numbers in ascending order: {=nth(1,a,b,c,d,e,f,g)}, {=nth(2,a,b,c,d,e,f,g)}, {=nth(3,a,b,c,d,e,f,g)}, {=nth(4,a,b,c,d,e,f,g)}, {=nth(5,a,b,c,d,e,f,g)}, {=nth(6,a,b,c,d,e,f,g)}, {=nth(7,a,b,c,d,e,f,g)}.",
+      "There are seven numbers, so the median stands fourth: three numbers are to its left and three to its right.",
+      "The fourth number in the row is {r}, so the median is {r}."
+    ],
+    "hints": [
+      "Put the numbers in ascending order.",
+      "The median stands at the fourth place out of seven.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "first-number": "{w_first_number} is the first number as written, but the median is the middle number after putting them in order: {r}.",
+      "middle-written": "{w_middle_written} stands in the middle as written, but the numbers are not in order. Put them in ascending order first, then the median is {r}.",
+      "mean": "{w_mean} is the mean of all the numbers, but you need the median. The median is the middle number of the row in ascending order: {r}."
+    }
+  },
+  "S7.median-mode.13": {
+    "text": "Shoe sizes in a class: size {a} is worn by {b|child|children|children}, size {=a+1} by {c|child|children|children}, size {=a+2} by {d|child|children|children}. What is the mode of this set, that is, which size occurs most often?",
+    "solution": [
+      "The mode is the value that occurs most often. The size that occurs most often is the one worn by the most children: {=max(b,c,d)}.",
+      "That size stands {k|step|steps|steps} to the right of size {a}.",
+      "The mode: {a} + {k} = {r}."
+    ],
+    "hints": [
+      "Find which number of children is the largest.",
+      "You need the size, not the number of children. Which size goes with the largest number?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "count": "{w_count} is how many children wear the most common size, but the mode is the size itself: {a} + {k} = {r}.",
+      "middle-size": "{w_middle_size} is the middle one of the three sizes, but the mode is the size worn most often: {a} + {k} = {r}.",
+      "largest-size": "{w_largest_size} is the largest size, but the most common one is another: {a} + {k} = {r}."
+    }
+  },
+  "S7.median-mode.14": {
+    "text": "A set of four numbers: {a}, {b}, {c}, {d}. Find the median of the set, that is the mean of the two numbers in the middle. The answer may be a decimal with a comma.",
+    "solution": [
+      "Put the numbers in ascending order: {=nth(1,a,b,c,d)}, {=nth(2,a,b,c,d)}, {=nth(3,a,b,c,d)}, {=nth(4,a,b,c,d)}.",
+      "The two in the middle are {=nth(2,a,b,c,d)} and {=nth(3,a,b,c,d)}, and their sum is {=nth(2,a,b,c,d)+nth(3,a,b,c,d)}.",
+      "The median: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}."
+    ],
+    "hints": [
+      "First put the numbers in ascending order.",
+      "Take the two numbers in the middle and find the number exactly between them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second-number": "{w_second_number} is one of the two middle numbers, but the median is the number exactly between them: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}.",
+      "unordered-middle": "{w_unordered_middle} was taken from the middle of the numbers as written, but they are not in order. First put them in ascending order: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}.",
+      "mean": "{w_mean} is the mean of all the numbers, but the median is the mean of the two numbers in the middle: {=nth(2,a,b,c,d)+nth(3,a,b,c,d)} : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.15": {
+    "text": "A set of six numbers: {a}, {b}, {c}, {d}, {e}, {f}. The smallest number was replaced by the number {=100}, which is larger than all of them. What is the median of the new set?",
+    "solution": [
+      "Without the smallest number these remain: {=nth(2,a,b,c,d,e,f)}, {=nth(3,a,b,c,d,e,f)}, {=nth(4,a,b,c,d,e,f)}, {=nth(5,a,b,c,d,e,f)}, {=nth(6,a,b,c,d,e,f)}, and the number {=100} went to the end.",
+      "Now the third and the fourth numbers are in the middle: {=nth(4,a,b,c,d,e,f)} and {=nth(5,a,b,c,d,e,f)}.",
+      "The median: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}."
+    ],
+    "hints": [
+      "The new number stands at the end of the ordered set, and the smallest number is no longer in it.",
+      "Find the two numbers in the middle of the new set and the number exactly between them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "old-median": "{w_old_median} is the old median. But the set has changed: the smallest number left and the largest one came, so the middle moved: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}.",
+      "with-new-number": "{w_with_new_number} comes from using the new number {=100} in the middle. But it stands at the end, and the third and the fourth numbers are in the middle: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}.",
+      "five-numbers": "{w_five_numbers} is the median of the five remaining numbers, but the new number {=100} belongs to the set too, so there are six numbers again: ({=nth(4,a,b,c,d,e,f)} + {=nth(5,a,b,c,d,e,f)}) : {=2} = {r}."
+    }
+  },
+  "S7.median-mode.16": {
+    "text": "Three numbers are written like this: the mean is {a}, the median is {b}, and the smallest number is {c}. What is the largest number?",
+    "solution": [
+      "The three numbers together make {a} × {=3} = {=3*a}.",
+      "The median of three numbers is the middle one, it is {b}, and the smallest is {c}.",
+      "The largest: {=3*a} − {b} − {c} = {r}."
+    ],
+    "hints": [
+      "Find the sum of the three numbers from the mean.",
+      "The median of three numbers is the second largest. Subtract the two known numbers from the sum.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "mean-itself": "{w_mean_itself} is the mean, but you need the largest number: {=3*a} − {b} − {c} = {r}.",
+      "no-median": "{w_no_median} comes from subtracting only the smallest number. The median is one of the three numbers too: {=3*a} − {b} − {c} = {r}.",
+      "sum": "{w_sum} is the sum of the three numbers, but the largest is only a part of it: {=3*a} − {b} − {c} = {r}."
+    }
+  },
+  "S7.median-mode.17": {
+    "text": "A set has {a} numbers. The mode occurs {b|time|times|times}, and any other number occurs less often. At most how many different numbers can the set have?",
+    "solution": [
+      "To have as many different numbers as possible, the other numbers must occur once each.",
+      "Besides the mode there are {a} − {b} = {=a-b} numbers, and they are all different.",
+      "Different numbers: {=a-b} + {=1} = {r}."
+    ],
+    "hints": [
+      "How should the other numbers be placed to have the most different ones?",
+      "Do not forget to count the mode itself as one of the different numbers.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "without-mode": "{w_without_mode} does not count the mode itself, and it is one of the different numbers too: {=a-b} + {=1} = {r}.",
+      "count": "{w_count} is the number of all the numbers in the set, but the mode repeats {b|time|times|times}, so there are fewer different numbers: {=a-b} + {=1} = {r}."
+    }
+  },
+  "S7.median-mode.18": {
+    "text": "Five different natural numbers are written in ascending order, and the median is {a}. What is the smallest possible sum of these five numbers?",
+    "solution": [
+      "The two numbers to the left are smaller than {a} and different; the smallest of them are {=1} and {=2}, which make {=3} together.",
+      "The two numbers to the right are larger than {a} and different; the smallest of them are {=a+1} and {=a+2}.",
+      "The sum: {=3} + {a} + {=a+1} + {=a+2} = {r}."
+    ],
+    "hints": [
+      "Where does the median stand among five numbers, and how many numbers stand to its left and right?",
+      "To make the sum as small as possible, take the smallest possible different numbers on the left and on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "all-equal": "{w_all_equal} comes from taking all the numbers equal to the median. But the numbers are different, and on the left you can take {=1} and {=2}: {=3} + {a} + {=a+1} + {=a+2} = {r}.",
+      "zero-allowed": "{w_zero_allowed} comes from taking zero on the left. But zero is not a natural number, and the smallest are {=1} and {=2}: {=3} + {a} + {=a+1} + {=a+2} = {r}.",
+      "equal-right": "{w_equal_right} comes from taking two equal numbers on the right. But the numbers are different: on the right the smallest are {=a+1} and {=a+2}: {=3} + {a} + {=a+1} + {=a+2} = {r}."
+    }
+  }
+}

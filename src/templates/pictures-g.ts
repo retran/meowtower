@@ -20,6 +20,7 @@ import {
   plan,
   compass,
   scaleBar,
+  rectangle,
 } from "./svg.js";
 
 const COLOURS = [
@@ -407,6 +408,7 @@ export const PICTURES_G: Readonly<Record<string, Draw>> = {
   "G7.plan-1S.11": (v) => scaleBar(n(v, 1)),
   "G7.plan-1S.12": (v) => scaleBar(n(v, 2)),
   "G7.plan-1S.13": (v) => scaleBar(n(v, 1)),
+  "G7.plan-1S.07": (v) => rectangle(n(v, 1), n(v, 2)),
   // G6: views and blocks
   "G6.views.11": (v) => columns([n(v, 0), n(v, 1), n(v, 2)]),
   "G6.views.12": (v) =>

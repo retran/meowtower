@@ -120,6 +120,14 @@ const T3_three_step_specs: readonly Spec<never>[] = [
       new Set([a * b, c * d, e * f]).size === 3 &&
       a + c + e !== a * b + c * d + e * f,
     f: (a, b, c, d, e, f) => q(a * b + c * d + e * f),
+    alt: (a, b, c, d, e, f) =>
+      q(
+        [
+          ...Array.from({ length: a }, () => b),
+          ...Array.from({ length: c }, () => d),
+          ...Array.from({ length: e }, () => f),
+        ].reduce((s, n) => s + n, 0),
+      ),
     t: {
       "two-kinds": (a, b, c, d) => q(a * b + c * d),
       "count-of-groups": (a, b, c, d, e) => q(a + c + e),
@@ -148,7 +156,14 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(60, 99), rg(2, 5), rg(3, 9), rg(2, 5), rg(3, 9)],
     ok: (a, b, c, d, e) => a - b * c - d * e > 0 && b * c !== d * e && c !== e,
     f: (a, b, c, d, e) => q(a - b * c - d * e),
+    alt: (a, b, c, d, e) => {
+      let left = a;
+      for (let i = 0; i < b; i += 1) left -= c;
+      for (let i = 0; i < d; i += 1) left -= e;
+      return q(left);
+    },
     t: {
+      "prices-once": (a, b, c, d, e) => q(a - c - e),
       "first-purchase": (a, b, c) => q(a - b * c),
       costs: (a, b, c, d, e) => q(b * c + d * e),
       "add-all": (a, b, c, d, e) => {
@@ -172,6 +187,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(10, 30), rg(10, 30), rg(2, 6), rg(2, 6)],
     ok: (a, b, c, d) => (a + b) % c === 0 && c !== d,
     f: (a, b, c, d) => q(((a + b) / c) * d),
+    alt: (a, b, c, d) => q((a + b) * d).div(q(c)),
     t: {
       "one-part": (a, b, c) => q((a + b) / c),
       "no-share": (a, b, c, d) => q((a + b) * d),
@@ -190,7 +206,9 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(10, 30), rg(3, 12), rg(3, 12)],
     ok: (a, b, c) => b !== c,
     f: (a, b, c) => q(3 * a + 2 * b + c),
+    alt: (a, b, c) => q(3 * (a + b) + c - b),
     t: {
+      "third-forgets-the-second": (a, b, c) => q(3 * a + b + c),
       "two-numbers": (a, b) => q(2 * a + b),
       "three-firsts": (a) => q(3 * a),
       "add-all": (a, b, c) => q(a + b + c),
@@ -205,7 +223,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(3, 9), rg(2, 5), rg(3, 12)],
     ok: (a, b, c) => a + 2 * a * b - c > 0 && b !== c,
     f: (a, b, c) => q(a + a * b + a * b - c),
+    alt: (a, b, c) => q(a * (1 + 2 * b) - c),
     t: {
+      "without-the-third": (a, b, c) =>
+        a + a * b - c > 0 ? q(a + a * b - c) : null,
       "no-subtraction": (a, b) => q(a + 2 * a * b),
       "first-only": (a, b, c) => (a - c > 0 ? q(a - c) : null),
       "add-all": (a, b, c) => {
@@ -224,6 +245,15 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(40, 70), rg(5, 9), rg(2, 6)],
     ok: (a, b, c) => a % b !== 0 && Math.floor(a / b) !== c,
     f: (a, b, c) => q(Math.floor(a / b) * c),
+    alt: (a, b, c) => {
+      let left = a;
+      let paid = 0;
+      while (left >= b) {
+        left -= b;
+        paid += c;
+      }
+      return q(paid);
+    },
     t: {
       "with-remainder": (a, b, c) => q((Math.floor(a / b) + 1) * c),
       "groups-only": (a, b) => q(Math.floor(a / b)),
@@ -239,7 +269,9 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(40, 80), rg(10, 25), rg(3, 6), rg(2, 9)],
     ok: (a, b, c, d) => (a - b) % c === 0 && a > b && c !== d,
     f: (a, b, c, d) => q((a - b) / c + d),
+    alt: (a, b, c, d) => q(a - b + c * d).div(q(c)),
     t: {
+      "added-before-sharing": (a, b, c, d) => q(a - b + d),
       remainder: (a, b) => q(a - b),
       "before-add": (a, b, c) => q((a - b) / c),
       "add-all": (a, b, c, d) => {
@@ -257,7 +289,9 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(35, 45), rg(5, 9), rg(2, 4)],
     ok: (a, b, c) => (a - b) % c === 0 && b !== c,
     f: (a, b, c) => q(a + (a - b) + (a - b) / c),
+    alt: (a, b, c) => q(a).add(q((a - b) * (c + 1)).div(q(c))),
     t: {
+      "years-not-times": (a, b, c) => q(a + (a - b) + (a - b - c)),
       "two-ages": (a, b) => q(a + (a - b)),
       "first-times-three": (a) => q(3 * a),
       "add-all": (a, b, c) => q(a + b + c),
@@ -272,7 +306,15 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(100, 200), rg(30, 50), rg(2, 3), rg(40, 60), rg(1, 2)],
     ok: (a, b, c, d, e) => a - b * c - d * e > 0 && b !== d,
     f: (a, b, c, d, e) => q(a - b * c - d * e),
+    alt: (a, b, c, d, e) => {
+      let left = a;
+      for (let i = 0; i < c; i += 1) left -= b;
+      for (let i = 0; i < e; i += 1) left -= d;
+      return q(left);
+    },
     t: {
+      "speeds-as-distances": (a, b, c, d) =>
+        a - b - d > 0 ? q(a - b - d) : null,
       "first-leg": (a, b, c) => q(a - b * c),
       travelled: (a, b, c, d, e) => q(b * c + d * e),
       "add-all": (a, b, c, d, e) => {
@@ -299,6 +341,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(5, 9), rg(2, 4), rg(2, 5)],
     ok: (a, b, c) => (a * b - c) % 2 === 0 && (a * b) % 2 === 0 && a * b > c,
     f: (a, b, c) => q((a * b - c) / 2),
+    alt: (a, b, c) => q((a * b) / 2 - c / 2),
     t: {
       "total-after-discount": (a, b, c) => q(a * b - c),
       "no-discount": (a, b) => q((a * b) / 2),
@@ -347,6 +390,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     alt: (s) => q(Math.min(s, 19 - s)),
     t: {
       "no-zero-ending": (s) => (s <= 9 ? q(s - 1) : null),
+      "nine-numbers": (s) => (s > 10 ? q(9) : null),
       "unordered-pairs": (s) => {
         let pairs = 0;
         for (let x = 1; x <= 9; x += 1)
@@ -362,7 +406,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     form: "the-handshakes-of-friends",
     g: [5, 7],
     kind: "integer",
-    p: [rg(4, 9)],
+    p: [rg(4, 12)],
     f: (n) => q((n * (n - 1)) / 2),
     alt: (n) =>
       q(
@@ -387,7 +431,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     p: [rg(2, 9), rg(2, 9), rg(2, 9)],
     ok: (a, b, c) => new Set([a, b, c]).size === 3,
     f: (a, b, c) => q(a + b + c),
-    alt: (a, b, c) => q(a + b + (b + c) + (a + c)).div(q(2)),
+    alt: (a, b, c) => q(a + b + (b + c + (a + c) - (a + b)) / 2),
     t: {
       "not-halved": (a, b, c) => q(2 * (a + b + c)),
       "two-pairs": (a, b, c) => q(a + 2 * b + c),
@@ -403,7 +447,7 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     form: "the-most-pieces-from-two-sizes-of-pack",
     g: [5, 7],
     kind: "integer",
-    p: [rg(2, 4), rg(3, 6), rg(6, 10), rg(8, 14), rg(30, 60)],
+    p: [rg(3, 5), rg(4, 6), rg(8, 12), rg(10, 14), rg(30, 60)],
     ok: (a, b, c, d, e) => {
       if (c <= a || d <= b || a * d >= c * b) return false;
       const best = bestBuy(a, b, c, d, e).pieces;
@@ -451,8 +495,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 9), rg(2, 6), rg(2, 5)],
     f: (a, b, c) => q((a - 1) * c),
-    alt: (a, b, c) => q(a * c - c),
+    alt: (a, b, c) =>
+      q(Array.from({ length: a - 1 }, () => c).reduce((s, n) => s + n, 0)),
     t: {
+      "length-not-time": (a, b, c) => (b === c ? null : q((a - 1) * b)),
       "pieces-as-cuts": (a, b, c) => q(a * c),
       "cuts-only": (a) => q(a - 1),
     },
@@ -488,6 +534,10 @@ const T3_three_step_specs: readonly Spec<never>[] = [
       },
       "only-the-stop": (a, b, c, d, e) => {
         const t = a * 60 + b + e;
+        return [q(Math.floor(t / 60)), q(t % 60)];
+      },
+      "distance-as-minutes": (a, b, c, d, e) => {
+        const t = a * 60 + b + (c * d) / 4 + e;
         return [q(Math.floor(t / 60)), q(t % 60)];
       },
     },
@@ -538,7 +588,14 @@ const T4_four_step_specs: readonly Spec<never>[] = [
       a + (a * b) / 100 - c > 0 &&
       (a - c) % d === 0,
     f: (a, b, c, d) => q((a + (a * b) / 100 - c) / d),
+    alt: (a, b, c, d) => q(a - c, d).add(q(a * b, 100 * d)),
     t: {
+      "percent-of-the-rest": (a, b, c, d) => {
+        const w = ((a - c) * (100 + b)) / 100 / d;
+        return Number.isInteger(w) && w !== (a + (a * b) / 100 - c) / d
+          ? q(w)
+          : null;
+      },
       "before-share": (a, b, c) => q(a + (a * b) / 100 - c),
       "no-percent": (a, b, c, d) => q((a - c) / d),
       "percent-as-number": (a, b, c, d) => {
@@ -557,6 +614,11 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     p: [rg(100, 200), rg(20, 40), rg(20, 40), rg(2, 3)],
     ok: (a, b, c, d) => a - (b + c) * d > 0 && b !== c,
     f: (a, b, c, d) => q(a - (b + c) * d),
+    alt: (a, b, c, d) => {
+      let left = a;
+      for (let hour = 0; hour < d; hour += 1) left = left - b - c;
+      return q(left);
+    },
     t: {
       "closing-distance": (a, b, c, d) => q((b + c) * d),
       "one-train": (a, b, c, d) => q(a - b * d),
@@ -579,6 +641,12 @@ const T4_four_step_specs: readonly Spec<never>[] = [
       b !== d &&
       (a * b + c) / d - e !== a,
     f: (a) => q(a),
+    alt: (a, b, c, d, e) => {
+      const x = (a * b + c) / d - e;
+      let n = 1;
+      while ((n * b + c) / d - e !== x) n += 1;
+      return q(n);
+    },
     t: {
       result: (a, b, c, d, e) => q((a * b + c) / d - e),
       "forward-order": (a, b, c) => q(a * b + c),
@@ -616,6 +684,10 @@ const T4_four_step_specs: readonly Spec<never>[] = [
         (((a * (100 - b)) / 100) * (100 - c)) / 100 &&
       (a * c) % 100 === 0,
     f: (a, b, c) => q((((a * (100 - b)) / 100) * (100 - c)) / 100),
+    alt: (a, b, c) =>
+      q(a)
+        .mul(q(100 - b, 100))
+        .mul(q(100 - c, 100)),
     t: {
       "after-first": (a, b) => q((a * (100 - b)) / 100),
       "of-the-whole": (a, b, c) => q(a - (a * b) / 100 - (a * c) / 100),
@@ -632,6 +704,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     p: [of(6, 10, 15, 20), of(12, 15, 30, 60), rg(2, 4)],
     ok: (a, b, c) => a < b && (a * b) % (a + b) === 0 && a !== c && b !== c,
     f: (a, b, c) => q((c * a * b) / (a + b)),
+    alt: (a, b, c) => q(c).div(q(1, a).add(q(1, b))),
     t: {
       "sum-of-times": (a, b, c) => q(c * (a + b)),
       "one-pool": (a, b) => q((a * b) / (a + b)),
@@ -653,6 +726,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
       d - c * a > 0 &&
       c !== b,
     f: (a, b, c, d) => q(d - c * (a - (a * b) / 100)),
+    alt: (a, b, c, d) => q(d - (c * a - (c * a * b) / 100)),
     t: {
       "full-price": (a, b, c, d) => q(d - c * a),
       "discounted-cost": (a, b, c) => q(c * (a - (a * b) / 100)),
@@ -675,7 +749,9 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     p: [rg(80, 100), rg(10, 20), rg(10, 20), rg(3, 8)],
     ok: (a, b, c, d) => a - b - c > 0 && b !== c && a - b - c !== d,
     f: (a, b, c, d) => q(a - b - c + d),
+    alt: (a, b, c, d) => q(a + 3 * d - (b + d) - (c + d)),
     t: {
+      "all-three-grow": (a, b, c, d) => q(a - b - c + 3 * d),
       now: (a, b, c) => q(a - b - c),
       "no-wait": (a, b, c, d) => q(b + c + d),
       "add-all": (a, b, c, d) => q(a + b + c + d),
@@ -718,18 +794,16 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     form: "the-time-of-a-trip-there-and-back",
     g: [7, 8],
     kind: "integer",
-    p: [of(60, 120, 180, 240), of(20, 30, 40, 60), of(30, 40, 60, 120)],
-    ok: (a, b, c) =>
-      a % b === 0 &&
-      a % c === 0 &&
-      b !== c &&
-      (2 * a) % ((b + c) / 2) === 0 &&
-      (b + c) % 2 === 0 &&
-      (2 * a) / ((b + c) / 2) !== a / b + a / c,
+    p: [of(60, 90, 120, 180, 240), of(20, 30, 40, 60), of(30, 40, 60, 90, 120)],
+    ok: (a, b, c) => a % b === 0 && a % c === 0 && b !== c,
     f: (a, b, c) => q(a / b + a / c),
+    alt: (a, b, c) => q(2 * a).div(q(2 * b * c, b + c)),
     t: {
       "there-only": (a, b) => q(a / b),
-      "distance-over-mean": (a, b, c) => q((2 * a) / ((b + c) / 2)),
+      "distance-over-mean": (a, b, c) => {
+        const w = (4 * a) / (b + c);
+        return Number.isInteger(w) && w !== a / b + a / c ? q(w) : null;
+      },
       "back-only": (a, b, c) => {
         const w = a / c;
         return w === (2 * a) / ((b + c) / 2) ? null : q(w);
@@ -753,7 +827,9 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     ok: (a, b, c, d) =>
       a % b === 0 && a % c === 0 && a / b > a / c && d !== a / b - a / c,
     f: (a, b, c, d) => q(a / b - a / c + d),
+    alt: (a, b, c, d) => q(a * (c - b), b * c).add(q(d)),
     t: {
+      "shares-added": (a, b, c) => q(a / b + a / c),
       "first-share": (a, b) => q(a / b),
       difference: (a, b, c) => q(a / b - a / c),
       "second-share": (a, b, c) => q(a / c),
@@ -796,7 +872,11 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     p: [rg(1, 4), rg(1, 4), rg(2, 8)],
     ok: (a, b) => a !== b,
     f: (a, b, c) => q(2 * (2 * (c + b) + a)),
-    alt: (a, b, c) => q(4 * c + 4 * b + 2 * a),
+    alt: (a, b, c) => {
+      let n = 2;
+      while (n / 4 - a / 2 - b !== c) n += 2;
+      return q(n);
+    },
     t: {
       "ignored-extras": (a, b, c) => q(4 * c),
       "extras-subtracted": (a, b, c) =>
@@ -888,6 +968,10 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "counted-twice": (a, b, c) => q(Math.floor(c / a) + Math.floor(c / b)),
       "only-the-first": (a, b, c) => q(Math.floor(c / a)),
+      "only-both": (a, b, c) => {
+        const both = Math.floor(c / ((a * b) / gcd(a, b)));
+        return both > 0 ? q(both) : null;
+      },
     },
     origin: {
       olympiad:
@@ -997,6 +1081,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "back-to-the-start": (a, k) => q((UNIT[a] ?? 0) * k),
       "only-the-rise": (a, k) => q(((UNIT[a] ?? 0) * k * (100 + a)) / 100),
+      "only-the-fall": (a, k) => q(((UNIT[a] ?? 0) * k * (100 - a)) / 100),
     },
     x: (a, k) => ({ x: String((UNIT[a] ?? 0) * k) }),
     c: [100],
@@ -1024,6 +1109,7 @@ const T4_four_step_specs: readonly Spec<never>[] = [
     t: {
       "percent-only": (a, b, c) => q(100 - b - c),
       "percent-as-votes": (a, b, c) => q(a - b - c),
+      "the-second-candidate": (a, b, c) => q((a * c) / 100),
     },
     c: [100],
     roles: {

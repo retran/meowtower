@@ -27,9 +27,9 @@ const mapScale = [
     form: "what-one-centimetre-on-the-map-stands-for",
     groups: [7, 7],
     kind: "integer",
-    draw: (r) => [pick(r, [50, 100, 200, 500, 1000])],
+    draw: (r) => [pick(r, [20, 25, 40, 50, 100, 200, 250, 500, 1000, 2000])],
     solve: ([a = 0]) => q(a),
-    ref: ([a = 0]) => q(1).div(q(1, a)),
+    ref: ([a = 0]) => q(10 * a).div(q(10)),
     traps: [
       ["one", "conceptual", () => q(1)],
       [
@@ -69,7 +69,8 @@ const mapScale = [
     kind: "integer",
     draw: (r) => [pick(r, [1, 2, 5, 10, 20]), between(r, 3, 12)],
     solve: ([k = 0, b = 0]) => q(k * b),
-    ref: ([k = 0, b = 0]) => q(100 * k * b).div(q(100)),
+    ref: ([k = 0, b = 0]) =>
+      Array.from({ length: b }, () => q(k)).reduce((x, y) => x.add(y), q(0)),
     traps: [
       ["centimetres", "procedural", ([k = 0, b = 0]) => q(100 * k * b)],
       [
@@ -91,7 +92,7 @@ const mapScale = [
     draw: (r) => [between(r, 3, 19)],
     valid: ([c = 0]) => c % 2 === 1,
     solve: ([c = 0]) => qd(5 * c, 1),
-    ref: ([c = 0]) => q(50_000 * c).div(q(100_000)),
+    ref: ([c = 0]) => q(c, 2),
     traps: [
       ["comma-in-the-wrong-place", "procedural", ([c = 0]) => qd(5 * c, 2)],
       ["comma-one-place-short", "procedural", ([c = 0]) => q(5 * c)],
@@ -106,7 +107,7 @@ const mapScale = [
     kind: "integer",
     draw: (r) => [between(r, 3, 15)],
     solve: ([k = 0]) => q(k),
-    ref: ([k = 0]) => q(k * 100_000).div(q(100_000)),
+    ref: ([k = 0]) => q(1000 * k).div(q(1000)),
     traps: [
       ["ten-times", "procedural", ([k = 0]) => q(10 * k)],
       ["metres", "procedural", ([k = 0]) => q(1000 * k)],
@@ -121,9 +122,10 @@ const mapScale = [
     kind: "integer",
     draw: (r) => [between(r, 2, 15)],
     solve: ([m = 0]) => q(2 * m),
-    ref: ([m = 0]) => q(100 * m).div(q(50)),
+    ref: ([m = 0]) => q(1000 * m, 50).div(q(10)),
     traps: [
       ["metres-as-centimetres", "conceptual", ([m = 0]) => q(m)],
+      ["metres-times-scale", "procedural", ([m = 0]) => q(50 * m)],
       ["centimetres-not-divided", "procedural", ([m = 0]) => q(100 * m)],
       ["scale-multiplied", "procedural", ([m = 0]) => q(5000 * m)],
     ],
@@ -164,8 +166,9 @@ const mapScale = [
     draw: (r) => [between(r, 5, 19)],
     valid: ([c = 0]) => c % 5 !== 0,
     solve: ([c = 0]) => qd(2 * c, 1),
-    ref: ([c = 0]) => q(20 * c).div(q(100)),
+    ref: ([c = 0]) => q(c).div(q(5)),
     traps: [
+      ["scale-forgotten", "conceptual", ([c = 0]) => qd(c, 2)],
       ["centimetres", "procedural", ([c = 0]) => q(20 * c)],
       ["comma-one-place-off", "procedural", ([c = 0]) => q(2 * c)],
       ["divided", "procedural", ([c = 0]) => q(c, 20)],
@@ -180,8 +183,9 @@ const mapScale = [
     draw: (r) => [between(r, 3, 19)],
     valid: ([c = 0]) => c % 2 === 1,
     solve: ([c = 0]) => qd(5 * c, 1),
-    ref: ([c = 0]) => q(50 * c).div(q(100)),
+    ref: ([c = 0]) => q(c, 2),
     traps: [
+      ["scale-forgotten", "conceptual", ([c = 0]) => qd(c, 2)],
       ["centimetres", "procedural", ([c = 0]) => q(50 * c)],
       ["comma-one-place-off", "procedural", ([c = 0]) => q(5 * c)],
       ["divided", "procedural", ([c = 0]) => q(c, 50)],
@@ -193,24 +197,37 @@ const mapScale = [
     form: "the-scale-from-a-map-length-and-a-real-length",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [4, 5, 8, 10]), pick(r, [25, 50, 100])],
-    valid: ([c = 0, d = 0]) => (c * d) % 100 === 0,
-    solve: ([, d = 0]) => q(1000 * d),
-    ref: ([c = 0, d = 0]) => q(((c * d) / 100) * 100_000).div(q(c)),
+    draw: (r) => [
+      pick(r, [2, 4, 5, 8, 10, 20]),
+      pick(r, [20_000, 25_000, 40_000, 50_000, 100_000, 200_000, 250_000]),
+    ],
+    valid: ([c = 0, s = 0]) =>
+      (c * s) % 100_000 === 0 && (c * s) / 100_000 !== c,
+    solve: ([, s = 0]) => q(s),
+    ref: ([c = 0, s = 0]) => q((c * s) / 100_000, c).mul(q(100_000)),
     traps: [
-      ["kilometres-as-metres", "procedural", ([, d = 0]) => q(10 * d)],
+      [
+        "kilometres-as-metres",
+        "procedural",
+        ([c = 0, s = 0]) => whole(q(((c * s) / 100_000) * 1000, c)),
+      ],
       [
         "kilometre-as-ten-thousand-centimetres",
         "procedural",
-        ([, d = 0]) => q(100 * d),
+        ([c = 0, s = 0]) => whole(q(((c * s) / 100_000) * 10_000, c)),
       ],
       [
         "kilometre-as-a-million-centimetres",
         "procedural",
-        ([, d = 0]) => q(10_000 * d),
+        ([c = 0, s = 0]) => whole(q(((c * s) / 100_000) * 1_000_000, c)),
+      ],
+      [
+        "map-length-not-divided",
+        "conceptual",
+        ([c = 0, s = 0]) => q((c * s) / 100_000).mul(q(100_000)),
       ],
     ],
-    extra: ([c = 0, d = 0]) => ({ km: String((c * d) / 100) }),
+    extra: ([c = 0, s = 0]) => ({ km: String((c * s) / 100_000) }),
     consts: [1, 100000],
   }),
   p5({
@@ -220,7 +237,7 @@ const mapScale = [
     kind: "integer",
     draw: (r) => [5 * between(r, 2, 14)],
     solve: ([m = 0]) => q(m / 5),
-    ref: ([m = 0]) => q(100 * m).div(q(500)),
+    ref: ([m = 0]) => q(m, 10).mul(q(2)),
     traps: [
       ["multiplied", "procedural", ([m = 0]) => q(5 * m)],
       ["centimetres-not-divided", "procedural", ([m = 0]) => q(100 * m)],
@@ -241,7 +258,7 @@ const mapScaleMore = [
       between(r, 3, 10),
     ],
     solve: ([a = 0, b = 0]) => q(a * b, 100_000),
-    ref: ([a = 0, b = 0]) => q(b).mul(q(a)).div(q(100_000)),
+    ref: ([a = 0, b = 0]) => q(a * b, 100).div(q(1000)),
     traps: [
       ["centimetres", "procedural", ([a = 0, b = 0]) => q(a * b)],
       [
@@ -253,6 +270,11 @@ const mapScaleMore = [
         "map-length-itself",
         "conceptual",
         ([a = 0, b = 0]) => (a === 100_000 ? null : q(b)),
+      ],
+      [
+        "kilometre-as-ten-thousand-centimetres",
+        "procedural",
+        ([a = 0, b = 0]) => q(a * b, 10_000),
       ],
     ],
     extra: ([a = 0]) => ({ a: digits(a) }),
@@ -270,7 +292,7 @@ const mapScaleMore = [
     ],
     valid: ([a = 0, b = 0, c = 0]) => a !== c && (a * b) % c === 0,
     solve: ([a = 0, b = 0, c = 0]) => q((a * b) / c),
-    ref: ([a = 0, b = 0, c = 0]) => q(a).mul(q(b)).div(q(c)),
+    ref: ([a = 0, b = 0, c = 0]) => q(b).mul(q(a, c)),
     traps: [
       [
         "real-distance-in-centimetres",
@@ -315,6 +337,11 @@ const mapScaleMore = [
         "conceptual",
         ([a = 0, b = 0, c = 0]) => q(a * b * c, 10_000),
       ],
+      [
+        "centimetres-squared-divided-by-a-hundred",
+        "procedural",
+        ([a = 0, b = 0, c = 0]) => q(a * a * b * c, 100),
+      ],
     ],
     consts: [1, 10000, 100],
   }),
@@ -329,7 +356,7 @@ const mapScaleS = [
     kind: "integer",
     draw: (r) => [between(r, 2, 16)],
     solve: ([c = 0]) => q(5 * c),
-    ref: ([c = 0]) => q(500_000 * c).div(q(100_000)),
+    ref: ([c = 0]) => q(500_000 * c, 100).div(q(1000)),
     traps: [
       ["metres", "procedural", ([c = 0]) => q(50 * c)],
       ["centimetres", "procedural", ([c = 0]) => q(500_000 * c)],
@@ -344,7 +371,7 @@ const mapScaleS = [
     kind: "integer",
     draw: (r) => [2 * between(r, 2, 19) + 1],
     solve: ([k = 0]) => q(2 * k),
-    ref: ([k = 0]) => q(k, 2).mul(q(400_000)).div(q(100_000)),
+    ref: ([k = 0]) => q((4 * (k - 1)) / 2).add(q(2)),
     traps: [
       ["ten-times", "procedural", ([k = 0]) => q(20 * k)],
       ["centimetres", "procedural", ([k = 0]) => q(200_000 * k)],
@@ -360,9 +387,10 @@ const mapScaleS = [
     kind: "integer",
     draw: (r) => [between(r, 3, 20)],
     solve: ([c = 0]) => q(c),
-    ref: ([c = 0]) => q(4 * c * 100_000).div(q(400_000)),
+    ref: ([c = 0]) => q(4 * c).div(q(4)),
     traps: [
       ["scale-multiplied", "procedural", ([c = 0]) => q(4 * c)],
+      ["multiplied-by-four", "procedural", ([c = 0]) => q(16 * c)],
       ["centimetres-not-divided", "procedural", ([c = 0]) => q(400_000 * c)],
       [
         "kilometre-as-a-million-centimetres",
@@ -381,7 +409,7 @@ const mapScaleS = [
     draw: (r) => [pick(r, [2, 4, 5, 10]), pick(r, [1, 2, 5, 10])],
     valid: ([c = 0, km = 0]) => c !== km && (km * 100_000) % c === 0,
     solve: ([c = 0, km = 0]) => q((km * 100_000) / c),
-    ref: ([c = 0, km = 0]) => q(km).mul(q(100_000)).div(q(c)),
+    ref: ([c = 0, km = 0]) => q(100_000).div(q(c, km)),
     traps: [
       [
         "kilometres-as-metres",
@@ -394,6 +422,7 @@ const mapScaleS = [
         ([c = 0, km = 0]) => q((km * 10_000) / c),
       ],
       ["not-converted", "procedural", ([c = 0, km = 0]) => whole(q(km, c))],
+      ["map-length-not-divided", "conceptual", ([, km = 0]) => q(km * 100_000)],
     ],
     consts: [1, 1000, 100000],
   }),
@@ -429,13 +458,10 @@ const mapScaleS = [
     form: "travel-time-from-a-map-length",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [10, 20, 30, 40, 50, 60, 80]), pick(r, [50, 100])],
+    draw: (r) => [between(r, 4, 40), pick(r, [40, 50, 60, 80, 100])],
     valid: ([c = 0, s = 0]) => (5 * c) % s === 0 && c * 5 !== s,
     solve: ([c = 0, s = 0]) => q((5 * c) / s),
-    ref: ([c = 0, s = 0]) =>
-      q(500_000 * c)
-        .div(q(100_000))
-        .div(q(s)),
+    ref: ([c = 0, s = 0]) => q(c).div(q(s, 5)),
     traps: [
       [
         "map-length-as-kilometres",
@@ -443,6 +469,11 @@ const mapScaleS = [
         ([c = 0, s = 0]) => whole(q(c, s)),
       ],
       ["speed-multiplied", "procedural", ([c = 0, s = 0]) => q(5 * c * s)],
+      [
+        "distance-in-centimetres",
+        "procedural",
+        ([c = 0, s = 0]) => whole(q(500_000 * c, s)),
+      ],
       [
         "distance-ten-times-too-big",
         "procedural",
@@ -456,15 +487,20 @@ const mapScaleS = [
     form: "metres-for-one-centimetre-of-the-map",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [between(r, 1, 8)],
-    solve: ([k = 0]) => q(100 * k),
-    ref: ([k = 0]) => q(10_000 * k).div(q(100)),
-    traps: [
-      ["centimetres", "procedural", ([k = 0]) => q(10_000 * k)],
-      ["divided-by-ten", "procedural", ([k = 0]) => q(1000 * k)],
-      ["divided-by-a-thousand", "procedural", ([k = 0]) => q(10 * k)],
+    draw: (r) => [
+      pick(
+        r,
+        [5000, 10_000, 20_000, 25_000, 40_000, 50_000, 60_000, 75_000, 80_000],
+      ),
     ],
-    extra: ([k = 0]) => ({ s: digits(10_000 * k) }),
+    solve: ([s = 0]) => q(s, 100),
+    ref: ([s = 0]) => q(s, 100_000).mul(q(1000)),
+    traps: [
+      ["centimetres", "procedural", ([s = 0]) => q(s)],
+      ["divided-by-ten", "procedural", ([s = 0]) => q(s, 10)],
+      ["divided-by-a-thousand", "procedural", ([s = 0]) => q(s, 1000)],
+    ],
+    extra: ([s = 0]) => ({ s: digits(s) }),
     consts: [1, 100],
   }),
   p5s({
@@ -474,7 +510,7 @@ const mapScaleS = [
     kind: "integer",
     draw: (r) => [between(r, 3, 19)],
     solve: ([c = 0]) => q(200 * c),
-    ref: ([c = 0]) => q(20_000 * c).div(q(100)),
+    ref: ([c = 0]) => q(20_000 * c, 100_000).mul(q(1000)),
     traps: [
       ["ten-times-too-small", "procedural", ([c = 0]) => q(20 * c)],
       ["centimetres", "procedural", ([c = 0]) => q(20_000 * c)],
@@ -490,7 +526,8 @@ const mapScaleS = [
     draw: (r) => [pick(r, [2, 4, 5]), pick(r, [1, 2, 3]), between(r, 3, 15)],
     valid: ([a = 0, b = 0, c = 0]) => (c * b) % a !== 0 && a !== c,
     solve: ([a = 0, b = 0, c = 0]) => q(b * c, a),
-    ref: ([a = 0, b = 0, c = 0]) => q(b, a).mul(q(c)),
+    ref: ([a = 0, b = 0, c = 0]) =>
+      q(Math.floor(c / a) * b).add(q((c % a) * b, a)),
     traps: [
       ["segments-added", "procedural", ([a = 0, b = 0, c = 0]) => q(b + c, a)],
       ["bar-ignored", "procedural", ([, b = 0, c = 0]) => q(b * c)],
@@ -501,21 +538,27 @@ const mapScaleS = [
         ([a = 0, b = 0, c = 0]) => (b === 3 ? null : q(a * c, b)),
       ],
     ],
+    consts: [1],
   }),
   p5s({
     id: "P5.map-scale-1S.10",
     form: "an-enlarged-drawing-of-a-small-animal",
     groups: [8, 8],
     kind: "decimal",
-    draw: (r) => [between(r, 2, 9)],
-    solve: ([c = 0]) => qd(c, 1),
-    ref: ([c = 0]) => q(c).div(q(10)),
+    draw: (r) => [between(r, 3, 45), pick(r, [10, 20, 50, 100])],
+    valid: ([a = 0, b = 0]) => a % b !== 0 && a !== b,
+    solve: ([a = 0, b = 0]) => q(a, b),
+    ref: ([a = 0, b = 0]) => q(a * (100 / b), 100),
     traps: [
-      ["ten-times-too-big", "procedural", ([c = 0]) => q(10 * c)],
-      ["drawing-length", "conceptual", ([c = 0]) => q(c)],
-      ["divided-by-a-hundred", "procedural", ([c = 0]) => qd(c, 2)],
+      ["ten-times-too-big", "procedural", ([a = 0, b = 0]) => q(a * b)],
+      ["drawing-length", "conceptual", ([a = 0]) => q(a)],
+      [
+        "divided-by-a-hundred",
+        "procedural",
+        ([a = 0, b = 0]) => (b === 100 ? null : q(a, 100)),
+      ],
     ],
-    consts: [10, 1],
+    consts: [1],
   }),
   p5s({
     id: "P5.map-scale-1S.11",
@@ -524,7 +567,7 @@ const mapScaleS = [
     kind: "integer",
     draw: (r) => [between(r, 2, 14)],
     solve: ([c = 0]) => q(10 * c),
-    ref: ([c = 0]) => q(1_000_000 * c).div(q(100_000)),
+    ref: ([c = 0]) => q(1_000_000 * c, 100).div(q(1000)),
     traps: [
       ["map-length-itself", "conceptual", ([c = 0]) => q(c)],
       [
@@ -547,10 +590,7 @@ const mapScaleSMore = [
     draw: (r) => [between(r, 3, 20), pick(r, [10, 12, 15, 18, 20, 30])],
     valid: ([a = 0, b = 0]) => (30 * a) % b === 0,
     solve: ([a = 0, b = 0]) => q((30 * a) / b),
-    ref: ([a = 0, b = 0]) =>
-      q(a * 50_000, 100_000)
-        .mul(q(60))
-        .div(q(b)),
+    ref: ([a = 0, b = 0]) => q(a, 2).div(q(b, 60)),
     traps: [
       [
         "hours-instead-of-minutes",
@@ -563,6 +603,11 @@ const mapScaleSMore = [
         ([a = 0, b = 0]) => exactOrNull(60 * a, b),
       ],
       ["the-distance-itself", "conceptual", ([a = 0]) => exactOrNull(a, 2)],
+      [
+        "speed-multiplied",
+        "procedural",
+        ([a = 0, b = 0]) => exactOrNull(a * b, 2),
+      ],
     ],
     extra: ([a = 0]) => ({ km: dec(5 * a, 1, true) }),
     consts: [1, 50000, 100000],
@@ -592,7 +637,7 @@ const mapScaleSMore = [
       return [(b + c) * between(r, 1, 6), b, c];
     },
     solve: ([a = 0, b = 0, c = 0]) => q((2 * a * b) / (b + c)),
-    ref: ([a = 0, b = 0, c = 0]) => q(a * 200_000, 100_000).mul(q(b, b + c)),
+    ref: ([a = 0, b = 0, c = 0]) => q(2 * a).sub(q(2 * a * c, b + c)),
     traps: [
       [
         "second-car-distance",
@@ -617,7 +662,7 @@ const mapScaleSMore = [
     draw: (r) => [between(r, 3, 14), between(r, 3, 14)],
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => qd(25 * (a + b), 1),
-    ref: ([a = 0, b = 0]) => q((a + b) * 250_000, 100_000),
+    ref: ([a = 0, b = 0]) => q(5 * a, 2).add(q(5 * b, 2)),
     traps: [
       ["one-leg-only", "conceptual", ([a = 0]) => qd(25 * a, 1)],
       ["centimetres", "procedural", ([a = 0, b = 0]) => q((a + b) * 250_000)],
@@ -647,16 +692,14 @@ const offers = [
     form: "four-for-the-price-of-three-against-a-percentage-off",
     groups: [8, 8],
     kind: "compare",
-    draw: (r) => [pick(r, [10, 20, 30, 40]), pick(r, [20, 30, 40])],
+    draw: (r) => [
+      5 * between(r, 2, 20),
+      pick(r, [10, 15, 20, 30, 35, 40, 45, 50]),
+    ],
     valid: ([u = 0, p = 0]) =>
       sign(q(3 * u), q((4 * u * (100 - p)) / 100)) !== "=",
     solve: ([u = 0, p = 0]) => sign(q(3 * u), q((4 * u * (100 - p)) / 100)),
-    ref: ([u = 0, p = 0]) =>
-      300 * u < 4 * u * (100 - p)
-        ? "<"
-        : 300 * u > 4 * u * (100 - p)
-          ? ">"
-          : "=",
+    ref: ([, p = 0]) => (p < 25 ? "<" : p > 25 ? ">" : "="),
     traps: [
       ["free-item-always-better", "conceptual", () => "<"],
       ["one-item-against-the-total", "conceptual", () => ">"],
@@ -673,14 +716,12 @@ const offers = [
     form: "two-for-the-price-of-one-against-half-price",
     groups: [8, 8],
     kind: "compare",
-    draw: (r) => [between(r, 5, 30), pick(r, [30, 40, 50, 60, 70])],
+    draw: (r) => [
+      between(r, 5, 40),
+      pick(r, [20, 25, 30, 40, 45, 50, 55, 60, 70, 75]),
+    ],
     solve: ([u = 0, p = 0]) => sign(q(u), q(2 * u * (100 - p), 100)),
-    ref: ([u = 0, p = 0]) =>
-      100 * u < 2 * u * (100 - p)
-        ? "<"
-        : 100 * u > 2 * u * (100 - p)
-          ? ">"
-          : "=",
+    ref: ([, p = 0]) => (p < 50 ? "<" : p > 50 ? ">" : "="),
     traps: [
       [
         "first-is-cheaper",
@@ -717,11 +758,7 @@ const offers = [
       sign(q((u * (100 - p)) / 100), q(u - e)) !== "=",
     solve: ([u = 0, p = 0, e = 0]) => sign(q((u * (100 - p)) / 100), q(u - e)),
     ref: ([u = 0, p = 0, e = 0]) =>
-      (u * (100 - p)) / 100 < u - e
-        ? "<"
-        : (u * (100 - p)) / 100 > u - e
-          ? ">"
-          : "=",
+      (u * p) / 100 > e ? "<" : (u * p) / 100 < e ? ">" : "=",
     traps: [
       [
         "percentage-compared-with-euros",
@@ -754,7 +791,7 @@ const offers = [
     kind: "integer",
     draw: (r) => [between(r, 4, 25)],
     solve: ([u = 0]) => q(u),
-    ref: ([u = 0]) => q(3 * u).sub(q(2 * u)),
+    ref: ([u = 0]) => q(3 * u, 3),
     traps: [
       ["two-prices", "procedural", ([u = 0]) => q(2 * u)],
       ["three-prices", "conceptual", ([u = 0]) => q(3 * u)],
@@ -766,9 +803,9 @@ const offers = [
     form: "one-free-item-as-a-percentage-discount",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [2, 4, 5, 10])],
+    draw: (r) => [pick(r, [2, 4, 5, 10, 20, 25])],
     solve: ([n = 0]) => q(100 / n),
-    ref: ([n = 0]) => q(1, n).mul(q(100)),
+    ref: ([n = 0]) => q(100 * n - 100 * (n - 1), 100 * n).mul(q(100)),
     traps: [
       ["items-in-the-pack", "conceptual", ([n = 0]) => q(n)],
       ["one-item-one-percent", "conceptual", () => q(1)],
@@ -784,7 +821,7 @@ const offers = [
     draw: (r) => [between(r, 10, 60)],
     valid: ([u = 0]) => u % 2 === 1,
     solve: ([u = 0]) => qd(15 * u, 1),
-    ref: ([u = 0]) => q(u).add(q(u, 2)),
+    ref: ([u = 0]) => q(2 * u).sub(q(u, 2)),
     traps: [
       ["both-at-half-price", "conceptual", ([u = 0]) => q(u)],
       ["no-discount", "conceptual", ([u = 0]) => q(2 * u)],
@@ -799,7 +836,7 @@ const offers = [
     kind: "integer",
     draw: (r) => [pick(r, [10, 15, 20, 25]), 5 * between(r, 2, 10)],
     solve: ([p = 0, u = 0]) => q((12 * u * p) / 100),
-    ref: ([p = 0, u = 0]) => q(u * 12).mul(qd(p, 2)),
+    ref: ([p = 0, u = 0]) => q(u * p, 100).mul(q(12)),
     traps: [
       [
         "price-after-the-discount",
@@ -859,7 +896,10 @@ const offers = [
       between(r, 3, 9),
     ],
     solve: ([p = 0, u = 0, f = 0]) => q((u * (100 - p)) / 100 + f),
-    ref: ([p = 0, u = 0, f = 0]) => q(f).add(q(u).mul(q(100 - p, 100))),
+    ref: ([p = 0, u = 0, f = 0]) =>
+      q(u)
+        .sub(q(u * p, 100))
+        .add(q(f)),
     traps: [
       [
         "fee-also-discounted",
@@ -876,6 +916,11 @@ const offers = [
         "procedural",
         ([p = 0, u = 0, f = 0]) => q(u + (u * p) / 100 + f),
       ],
+      [
+        "percent-as-euros",
+        "procedural",
+        ([p = 0, u = 0, f = 0]) => q(u - p + f),
+      ],
     ],
   }),
   p6({
@@ -883,9 +928,9 @@ const offers = [
     form: "the-price-of-one-item-in-a-four-for-three-offer",
     groups: [8, 8],
     kind: "decimal",
-    draw: (r) => [pick(r, [10, 20, 30, 40])],
+    draw: (r) => [2 * between(r, 4, 25)],
     solve: ([u = 0]) => q(3 * u, 4),
-    ref: ([u = 0]) => q(3 * u).div(q(4)),
+    ref: ([u = 0]) => q(u).sub(q(u, 4)),
     traps: [
       ["full-price", "conceptual", ([u = 0]) => q(u)],
       ["total-for-four", "conceptual", ([u = 0]) => q(3 * u)],
@@ -898,10 +943,18 @@ const offers = [
     form: "one-free-in-a-pack-against-a-percentage",
     groups: [8, 8],
     kind: "compare",
-    draw: (r) => [pick(r, [2, 4, 5, 10]), pick(r, [10, 15, 20, 30, 40])],
+    draw: (r) => [
+      pick(r, [2, 4, 5, 8, 10, 20]),
+      pick(r, [5, 10, 15, 20, 30, 40, 45, 60]),
+    ],
     valid: ([n = 0, p = 0]) => sign(q(100, n), q(p)) !== "=",
     solve: ([n = 0, p = 0]) => sign(q(100, n), q(p)),
-    ref: ([n = 0, p = 0]) => (100 < p * n ? "<" : 100 > p * n ? ">" : "="),
+    ref: ([n = 0, p = 0]) =>
+      100 * (n - 1) > n * (100 - p)
+        ? "<"
+        : 100 * (n - 1) < n * (100 - p)
+          ? ">"
+          : "=",
     traps: [
       [
         "flipped",
@@ -930,10 +983,10 @@ const offersMore = [
     },
     options: () => ["1", "2", "3"],
     solve: (v) => String(best(totals(v)) + 1),
-    ref: (v) => {
-      const t = totals(v);
-      const least = t.reduce((m, x) => (x < m ? x : m));
-      return String(t.findIndex((x) => x === least) + 1);
+    ref: ([u = 0, p = 0, d = 0]) => {
+      const perItem = [3 * u * (100 - p), 200 * u, 300 * (u - d)];
+      const least = perItem.reduce((m, x) => (x < m ? x : m));
+      return String(perItem.findIndex((x) => x === least) + 1);
     },
     traps: [
       [
@@ -968,7 +1021,7 @@ const offersMore = [
     draw: (r) => [between(r, 4, 20), between(r, 7, 20)],
     valid: ([, n = 0]) => n % 3 !== 0,
     solve: ([u = 0, n = 0]) => q(u * (n - Math.floor(n / 3))),
-    ref: ([u = 0, n = 0]) => q(u).mul(q(n - Math.floor(n / 3))),
+    ref: ([u = 0, n = 0]) => q(u).mul(q(2 * Math.floor(n / 3) + (n % 3))),
     traps: [
       [
         "one-third-free",
@@ -1080,11 +1133,7 @@ const relative = [
     solve: ([g1 = 0, n1 = 0, g2 = 0, n2 = 0]) =>
       q(Math.abs((100 * g1) / n1 - (100 * g2) / n2)),
     ref: ([g1 = 0, n1 = 0, g2 = 0, n2 = 0]) =>
-      q(g1, n1)
-        .sub(q(g2, n2))
-        .mul(q(100))
-        .div(q(1))
-        .mul(q(sign(q(g1, n1), q(g2, n2)) === "<" ? -1 : 1)),
+      q(Math.abs(g1 * n2 - g2 * n1) * 100, n1 * n2),
     traps: [
       [
         "counts-subtracted",
@@ -1111,14 +1160,14 @@ const relative = [
     form: "relative-growth",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [40, 50, 80, 200]), pick(r, [10, 20, 25, 50])],
+    draw: (r) => [
+      pick(r, [20, 40, 50, 60, 80, 120, 150, 200, 250, 400]),
+      pick(r, [10, 20, 25, 30, 40, 50]),
+    ],
     valid: ([o = 0, p = 0]) =>
       (o * p) % 100 === 0 && p !== o && p !== o + (o * p) / 100,
     solve: ([, p = 0]) => q(p),
-    ref: ([o = 0, p = 0]) =>
-      q((o * p) / 100)
-        .div(q(o))
-        .mul(q(100)),
+    ref: ([o = 0, p = 0]) => q(100).div(q(o, (o * p) / 100)),
     traps: [
       ["absolute-growth", "conceptual", ([o = 0, p = 0]) => q((o * p) / 100)],
       ["new-as-percent", "conceptual", ([, p = 0]) => q(100 + p)],
@@ -1136,14 +1185,14 @@ const relative = [
     form: "relative-decline",
     groups: [8, 8],
     kind: "integer",
-    draw: (r) => [pick(r, [40, 50, 80, 200]), pick(r, [10, 20, 25, 50])],
+    draw: (r) => [
+      pick(r, [20, 40, 50, 60, 80, 120, 150, 200, 250, 400]),
+      pick(r, [10, 20, 25, 30, 40, 50, 60, 75]),
+    ],
     valid: ([o = 0, p = 0]) =>
       (o * p) % 100 === 0 && p !== o && p !== o - (o * p) / 100,
     solve: ([, p = 0]) => q(p),
-    ref: ([o = 0, p = 0]) =>
-      q((o * p) / 100)
-        .div(q(o))
-        .mul(q(100)),
+    ref: ([o = 0, p = 0]) => q(o - (o - (o * p) / 100)).div(q(o, 100)),
     traps: [
       ["absolute-decline", "conceptual", ([o = 0, p = 0]) => q((o * p) / 100)],
       ["remaining-percent", "conceptual", ([, p = 0]) => q(100 - p)],
@@ -1161,15 +1210,21 @@ const relative = [
     form: "which-grew-more-in-percent",
     groups: [8, 8],
     kind: "compare",
-    draw: (r) => [
-      pick(r, [20, 40]),
-      pick(r, [30, 50]),
-      pick(r, [50, 100]),
-      pick(r, [60, 120]),
-    ],
+    draw: (r) => {
+      const first = [pick(r, [20, 25, 40, 50]), pick(r, [30, 40, 50, 60, 75])];
+      const second = [
+        pick(r, [50, 80, 100, 200]),
+        pick(r, [60, 100, 120, 160, 250, 300]),
+      ];
+      return pick(r, [true, false])
+        ? [...first, ...second]
+        : [...second, ...first];
+    },
     valid: ([a1 = 0, b1 = 0, a2 = 0, b2 = 0]) =>
       b1 > a1 &&
       b2 > a2 &&
+      (100 * (b1 - a1)) % a1 === 0 &&
+      (100 * (b2 - a2)) % a2 === 0 &&
       (b1 - a1) * a2 !== (b2 - a2) * a1 &&
       sign(q(b1 - a1, a1), q(b2 - a2, a2)) !== sign(q(b1 - a1), q(b2 - a2)),
     solve: ([a1 = 0, b1 = 0, a2 = 0, b2 = 0]) =>
@@ -1211,7 +1266,7 @@ const relative = [
     draw: (r) => [between(r, 5, 36), pick(r, [20, 25, 40, 50])],
     valid: ([n = 0, t = 0]) => n < t && (100 * n) % t === 0,
     solve: ([n = 0, t = 0]) => q((100 * n) / t),
-    ref: ([n = 0, t = 0]) => q(n, t).mul(q(100)),
+    ref: ([n = 0, t = 0]) => q(100, t).mul(q(n)),
     traps: [
       ["count-itself", "conceptual", ([n = 0]) => q(n)],
       [
@@ -1237,7 +1292,15 @@ const relative = [
     kind: "integer",
     draw: (r) => [between(r, 3, 12), between(r, 3, 9)],
     solve: ([, k = 0]) => q(k),
-    ref: ([a = 0, k = 0]) => q(a * k).div(q(a)),
+    ref: ([a = 0, k = 0]) => {
+      let rest = a * k;
+      let times = 0;
+      while (rest > 0) {
+        rest -= a;
+        times += 1;
+      }
+      return q(times);
+    },
     traps: [
       ["difference", "procedural", ([a = 0, k = 0]) => q(a * k - a)],
       ["extra-copies", "conceptual", ([, k = 0]) => q(k - 1)],
@@ -1260,7 +1323,7 @@ const relative = [
       return x !== a && x !== b;
     },
     solve: ([a = 0, b = 0]) => q((100 * (a - b)) / a),
-    ref: ([a = 0, b = 0]) => q(a - b, a).mul(q(100)),
+    ref: ([a = 0, b = 0]) => q(100).sub(q(100 * b, a)),
     traps: [
       [
         "measured-from-the-smaller",
@@ -1324,7 +1387,7 @@ const relative = [
     draw: (r) => [between(r, 1, 9), pick(r, [200, 250, 400, 500, 1000])],
     valid: ([n = 0, t = 0]) => (100 * n) / t !== n,
     solve: ([n = 0, t = 0]) => q(100 * n, t),
-    ref: ([n = 0, t = 0]) => q(n, t).mul(q(100)),
+    ref: ([n = 0, t = 0]) => q(n).mul(q(1000, t)).div(q(10)),
     traps: [
       ["count-itself", "conceptual", ([n = 0]) => q(n)],
       [
@@ -1341,27 +1404,38 @@ const relative = [
     form: "which-test-score-is-better",
     groups: [8, 8],
     kind: "compare",
-    draw: (r) => [between(r, 15, 19), 20, between(r, 19, 24), 25],
-    valid: ([a = 0, , b = 0]) =>
-      a * 25 !== b * 20 && sign(q(a, 20), q(b, 25)) !== sign(q(a), q(b)),
-    solve: ([a = 0, , b = 0]) => sign(q(a, 20), q(b, 25)),
-    ref: ([a = 0, , b = 0]) =>
-      a * 25 < b * 20 ? "<" : a * 25 > b * 20 ? ">" : "=",
+    draw: (r) => {
+      const big = pick(r, [20, 25]);
+      const other = 45 - big;
+      return [
+        between(r, Math.ceil(0.7 * big), big - 1),
+        big,
+        between(r, Math.ceil(0.7 * other), other - 1),
+        other,
+      ];
+    },
+    valid: ([a = 0, A = 0, c = 0, B = 0]) =>
+      a * B !== c * A && sign(q(a, A), q(c, B)) !== sign(q(a), q(c)),
+    solve: ([a = 0, A = 0, c = 0, B = 0]) => sign(q(a, A), q(c, B)),
+    ref: ([a = 0, A = 0, c = 0, B = 0]) =>
+      a * B < c * A ? "<" : a * B > c * A ? ">" : "=",
     traps: [
-      ["points-compared", "conceptual", ([a = 0, , b = 0]) => sign(q(a), q(b))],
+      ["points-compared", "conceptual", ([a = 0, , c = 0]) => sign(q(a), q(c))],
       [
         "bigger-maximum-wins",
         "conceptual",
-        ([a = 0, , b = 0]) => unless("<", sign(q(a), q(b))),
+        ([a = 0, A = 0, c = 0, B = 0]) =>
+          unless(sign(q(A), q(B)), sign(q(a), q(c))),
       ],
       [
         "results-look-equal",
         "conceptual",
-        ([a = 0, , b = 0]) => (a === b ? null : "="),
+        ([a = 0, , c = 0]) => (a === c ? null : "="),
       ],
     ],
-    extra: ([a = 0, , b = 0]) => ({ sign: sign(q(a, 20), q(b, 25)) }),
-    consts: [20, 25],
+    extra: ([a = 0, A = 0, c = 0, B = 0]) => ({
+      sign: sign(q(a, A), q(c, B)),
+    }),
   }),
 ];
 
@@ -1383,6 +1457,7 @@ const relativeMore = [
     traps: [
       ["the-sum", "procedural", ([a = 0, b = 0]) => q(a + b)],
       ["the-difference", "procedural", ([a = 0, b = 0]) => q(Math.abs(a - b))],
+      ["average", "conceptual", ([a = 0, b = 0]) => whole(q(a + b, 2))],
     ],
     consts: [100],
   }),
@@ -1440,10 +1515,11 @@ const relativeMore = [
       return Number.isInteger(total) && total > n && h >= 1 && total - n !== m;
     },
     solve: ([n = 0, h = 0, p = 0]) => q((100 * (n - h)) / (100 - p) - n),
-    ref: ([n = 0, h = 0, p = 0]) =>
-      q(n - h)
-        .div(q(100 - p, 100))
-        .sub(q(n)),
+    ref: ([n = 0, h = 0, p = 0]) => {
+      let x = 0;
+      while (100 * (h + x) !== p * (n + x) && x < 1000) x += 1;
+      return q(x);
+    },
     traps: [
       [
         "the-total-shots",
@@ -1470,12 +1546,9 @@ const successive = [
     groups: [8, 8],
     origin: EXT,
     kind: "decimal",
-    draw: (r) => [pick(r, [10, 20, 25, 30, 40])],
+    draw: (r) => [pick(r, [10, 15, 20, 25, 30, 35, 40, 45, 50, 60])],
     solve: ([p = 0]) => q(10_000 - p * p, 100),
-    ref: ([p = 0]) =>
-      q(100)
-        .mul(q(100 + p, 100))
-        .mul(q(100 - p, 100)),
+    ref: ([p = 0]) => q(100 + p).sub(q((100 + p) * p, 100)),
     traps: [
       ["back-to-the-start", "conceptual", () => q(100)],
       ["rise-only", "conceptual", ([p = 0]) => q(100 + p)],
@@ -1489,13 +1562,13 @@ const successive = [
     groups: [8, 8],
     origin: EXT,
     kind: "decimal",
-    draw: (r) => [pick(r, [10, 20, 25, 30]), pick(r, [10, 20, 40, 50])],
+    draw: (r) => [
+      pick(r, [10, 15, 20, 25, 30, 40, 50]),
+      pick(r, [10, 20, 25, 30, 40, 50, 60]),
+    ],
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([a = 0, b = 0]) => q((100 - a) * (100 - b), 100),
-    ref: ([a = 0, b = 0]) =>
-      q(100)
-        .mul(q(100 - a, 100))
-        .mul(q(100 - b, 100)),
+    ref: ([a = 0, b = 0]) => q(100 - a).sub(q((100 - a) * b, 100)),
     traps: [
       ["discounts-added", "procedural", ([a = 0, b = 0]) => q(100 - a - b)],
       ["first-discount-only", "conceptual", ([a = 0]) => q(100 - a)],
@@ -1513,12 +1586,9 @@ const successive = [
     groups: [8, 8],
     origin: EXT,
     kind: "decimal",
-    draw: (r) => [pick(r, [10, 20, 25, 50])],
+    draw: (r) => [pick(r, [10, 15, 20, 25, 30, 40, 50, 60])],
     solve: ([p = 0]) => q((100 + p) * (100 + p), 100),
-    ref: ([p = 0]) =>
-      q(100)
-        .mul(q(100 + p, 100))
-        .mul(q(100 + p, 100)),
+    ref: ([p = 0]) => q(100 + p).add(q((100 + p) * p, 100)),
     traps: [
       ["rises-added", "procedural", ([p = 0]) => q(100 + 2 * p)],
       ["first-rise-only", "conceptual", ([p = 0]) => q(100 + p)],
@@ -1538,7 +1608,7 @@ const successive = [
     kind: "integer",
     draw: (r) => [2 * between(r, 10, 60)],
     solve: ([b = 0]) => q(b),
-    ref: ([b = 0]) => q(b).mul(q(1, 2)).mul(q(2)),
+    ref: ([b = 0]) => q(b).sub(q(b, 2)).add(q(b, 2)),
     traps: [
       ["doubled", "conceptual", ([b = 0]) => q(2 * b)],
       ["halved-only", "conceptual", ([b = 0]) => q(b / 2)],
@@ -1555,7 +1625,7 @@ const successive = [
     draw: (r) => [
       pick(r, [10, 20, 25, 50]),
       pick(r, [10, 20, 50]),
-      between(r, 1, 5),
+      between(r, 1, 9),
     ],
     valid: ([a = 0, b = 0]) => a !== b,
     solve: ([, , k = 0]) => q(400 * k),
@@ -1631,7 +1701,7 @@ const successive = [
     draw: (r) => [pick(r, [50, 20, 10, 25]), pick(r, [20, 40, 60, 80])],
     valid: ([a = 0, b = 0]) => (a * b) % 100 === 0,
     solve: ([a = 0, b = 0]) => q((a * b) / 100),
-    ref: ([a = 0, b = 0]) => q(a, 100).mul(q(b)),
+    ref: ([a = 0, b = 0]) => q(a, 100).mul(q(b, 100)).mul(q(100)),
     traps: [
       ["percentages-added", "procedural", ([a = 0, b = 0]) => q(a + b)],
       ["not-divided-by-a-hundred", "procedural", ([a = 0, b = 0]) => q(a * b)],
@@ -1647,7 +1717,10 @@ const successive = [
     kind: "integer",
     draw: (r) => [20 * between(r, 2, 12)],
     solve: ([u = 0]) => q(u),
-    ref: ([u = 0]) => q(u).mul(q(5, 4)).mul(q(4, 5)),
+    ref: ([u = 0]) =>
+      q(u)
+        .add(q(u, 4))
+        .sub(q(u).add(q(u, 4)).div(q(5))),
     traps: [
       ["net-five-percent", "conceptual", ([u = 0]) => whole(q(u * 105, 100))],
       ["rise-only", "conceptual", ([u = 0]) => whole(q(u * 125, 100))],
@@ -1663,7 +1736,10 @@ const successive = [
     kind: "decimal",
     draw: (r) => [10 * between(r, 4, 30)],
     solve: ([u = 0]) => q(99 * u, 100),
-    ref: ([u = 0]) => q(u).mul(qd(90, 2)).mul(qd(110, 2)),
+    ref: ([u = 0]) =>
+      q(u)
+        .sub(q(u, 10))
+        .add(q(u).sub(q(u, 10)).div(q(10))),
     traps: [
       ["back-to-the-start", "conceptual", ([u = 0]) => q(u)],
       ["fall-only", "conceptual", ([u = 0]) => q((u * 90) / 100)],
@@ -1677,7 +1753,7 @@ const successive = [
     groups: [8, 8],
     origin: EXT,
     kind: "integer",
-    draw: (r) => [pick(r, [10, 20, 30, 40, 50])],
+    draw: (r) => [pick(r, [10, 20, 30, 40, 50, 60, 70, 80])],
     solve: ([p = 0]) => q(100 - ((100 - p) * (100 - p)) / 100),
     ref: ([p = 0]) => q(2 * p - (p * p) / 100),
     traps: [
@@ -1740,6 +1816,11 @@ const successiveMore = [
     traps: [
       ["percentages-added", "procedural", ([a = 0, b = 0]) => q(a + b)],
       ["first-rise-only", "conceptual", ([a = 0]) => q(a)],
+      [
+        "total-as-percent-of-the-start",
+        "conceptual",
+        ([a = 0, b = 0]) => q(((100 + a) * (100 + b)) / 100),
+      ],
     ],
     consts: [100],
   }),
@@ -1749,13 +1830,13 @@ const successiveMore = [
     groups: [8, 8],
     origin: EXT,
     kind: "integer",
-    draw: (r) => [1000 * between(r, 1, 4), pick(r, [10, 20, 50, 100])],
+    draw: (r) => [1000 * between(r, 1, 4), pick(r, [10, 20, 30, 40, 50, 100])],
     solve: ([a = 0, b = 0]) => q((a * (100 + b) ** 3) / 1_000_000),
-    ref: ([a = 0, b = 0]) =>
-      q(a)
-        .mul(q(100 + b, 100))
-        .mul(q(100 + b, 100))
-        .mul(q(100 + b, 100)),
+    ref: ([a = 0, b = 0]) => {
+      let sum = q(a);
+      for (let year = 0; year < 3; year += 1) sum = sum.add(sum.mul(q(b, 100)));
+      return sum;
+    },
     traps: [
       [
         "simple-interest",
@@ -1766,6 +1847,11 @@ const successiveMore = [
         "only-two-years",
         "conceptual",
         ([a = 0, b = 0]) => q((a * (100 + b) ** 2) / 10_000),
+      ],
+      [
+        "interest-only",
+        "conceptual",
+        ([a = 0, b = 0]) => q((a * (100 + b) ** 3) / 1_000_000 - a),
       ],
     ],
     extra: ([a = 0, b = 0]) => ({
@@ -1783,7 +1869,7 @@ const successiveMore = [
     draw: (r) => [
       pick(r, [10, 20, 25, 50]),
       pick(r, [10, 20, 25, 40, 50]),
-      between(r, 1, 5),
+      between(r, 1, 9),
     ],
     solve: ([, , k = 0]) => q(400 * k),
     ref: ([a = 0, b = 0, k = 0]) =>
@@ -1838,7 +1924,7 @@ const successiveMore = [
       );
     },
     solve: ([a = 0, , c = 0]) => q((100 * (a - c)) / a),
-    ref: ([a = 0, , c = 0]) => q(a - c, a).mul(q(100)),
+    ref: ([a = 0, , c = 0]) => q(100).sub(q(100 * c, a)),
     traps: [
       [
         "the-last-fall-only",

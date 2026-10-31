@@ -20,6 +20,11 @@ export const RATIOS: readonly (readonly [number, number, number])[] = [
   [1, 2, 6],
   [2, 2, 5],
   [3, 3, 4],
+  [3, 2, 1],
+  [2, 5, 3],
+  [4, 3, 2],
+  [1, 6, 2],
+  [5, 2, 3],
 ];
 const ratio = (i: number): readonly [number, number, number] =>
   RATIOS[i] ?? [1, 2, 3];
@@ -41,6 +46,11 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(3, 8)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(a * b),
+    alt: (a, b) => {
+      let total = 0;
+      for (let i = 0; i < a; i += 1) total += b;
+      return q(total);
+    },
     t: { "figures-added": (a, b) => q(a + b), "one-polygon": (a, b) => q(b) },
   }),
   G1_shapes({
@@ -51,9 +61,17 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(2, 6)],
     ok: (a, b) => a !== b,
     f: (a) => q(4 * a),
+    alt: (a, b) => {
+      const corners = [
+        ...Array<number>(a).fill(4),
+        ...Array<number>(b).fill(0),
+      ];
+      return q(corners.reduce((s, x) => s + x, 0));
+    },
     t: {
       "circles-counted": (a, b) => q(4 * a + b),
       "figures-added": (a, b) => q(a + b),
+      "all-as-squares": (a, b) => q(4 * (a + b)),
     },
     c: [4],
   }),
@@ -65,6 +83,10 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     p: [rg(2, 6), rg(2, 6)],
     ok: (a, b) => a !== b,
     f: (a, b) => q(3 * a + 4 * b),
+    alt: (a, b) => {
+      const sides = [...Array<number>(a).fill(3), ...Array<number>(b).fill(4)];
+      return q(sides.reduce((s, x) => s + x, 0));
+    },
     t: {
       "figures-counted": (a, b) => q(a + b),
       "all-as-triangles": (a, b) => q(3 * (a + b)),
@@ -78,7 +100,12 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 12)],
     f: (a) => q(2 * a),
-    t: { "one-side": (a) => q(a), area: (a) => q(2 * a * a) },
+    alt: (a) => q((6 * a) / 2 - a),
+    t: {
+      "one-side": (a) => q(a),
+      area: (a) => q(2 * a * a),
+      perimeter: (a) => (a === 3 ? null : q(6 * a)),
+    },
     c: [2],
   }),
   G1_shapes({
@@ -86,8 +113,9 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     form: "a-square-cut-into-four-equal-squares",
     g: [2, 3],
     kind: "integer",
-    p: [of(4, 8, 12, 16, 20)],
+    p: [of(4, 8, 12, 16, 20, 24, 28, 32, 36, 40)],
     f: (a) => q(a / 2),
+    alt: (a) => q(Math.round(Math.sqrt((a * a) / 4))),
     t: { quarter: (a) => q(a / 4), "whole-side": (a) => q(a) },
     c: [2, 4],
   }),
@@ -98,11 +126,17 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9), rg(10, 19), rg(2, 5)],
     f: (a, b, c) => q(2 * c),
+    alt: (a, b, c) => {
+      let found = 0;
+      for (let i = 0; i < c; i += 1)
+        for (const side of [a, b, a, b]) if (side === a) found += 1;
+      return q(found);
+    },
     t: {
       "all-sides": (a, b, c) => q(4 * c),
       "one-side": (a, b, c) => q(c),
     },
-    c: [2],
+    c: [2, 4],
     roles: {
       a: "length of the first side",
       b: "length of the second side",
@@ -116,7 +150,16 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(4, 12)],
     f: (a) => q(a - 2),
-    t: { sides: (a) => q(a), "one-less": (a) => q(a - 1) },
+    alt: (a) => {
+      let triangles = 1;
+      for (let sides = 4; sides <= a; sides += 1) triangles += 1;
+      return q(triangles);
+    },
+    t: {
+      sides: (a) => q(a),
+      "one-less": (a) => q(a - 1),
+      diagonals: (a) => q(a - 3),
+    },
     c: [2, 3],
   }),
   G1_shapes({
@@ -124,10 +167,20 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     form: "the-squares-of-all-sizes",
     g: [4, 6],
     kind: "integer",
-    p: [rg(2, 5)],
+    p: [rg(2, 7)],
     f: (a) => q((a * (a + 1) * (2 * a + 1)) / 6),
+    alt: (a) => {
+      let total = 0;
+      for (let size = 1; size <= a; size += 1)
+        total += (a - size + 1) * (a - size + 1);
+      return q(total);
+    },
+    x: (a) => ({
+      sizes: Array.from({ length: a }, (_, i) => (a - i) * (a - i)).join(" + "),
+    }),
     t: {
       "unit-squares-only": (a) => q(a * a),
+      "cells-and-the-whole": (a) => q(a * a + 1),
       "without-the-big-one": (a) =>
         a === 2 ? null : q((a * (a + 1) * (2 * a + 1)) / 6 - 1),
       "two-sizes-only": (a) =>
@@ -142,7 +195,12 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 10)],
     f: (a) => q(a + 1),
-    t: { same: (a) => q(a), "one-less": (a) => q(a - 1) },
+    alt: (a) => q(a - 1 + 2),
+    t: {
+      same: (a) => q(a),
+      "one-less": (a) => q(a - 1),
+      "two-new": (a) => q(a + 2),
+    },
     c: [1],
   }),
   G1_shapes({
@@ -200,7 +258,7 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     form: "the-triangles-in-a-fan-of-segments",
     g: [5, 8],
     kind: "integer",
-    p: [rg(2, 6)],
+    p: [rg(2, 8)],
     f: (a) => q(((a + 2) * (a + 1)) / 2),
     alt: (a) => {
       let total = 0;
@@ -224,7 +282,7 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     form: "the-rectangles-on-a-chequered-board",
     g: [6, 8],
     kind: "integer",
-    p: [rg(2, 3), rg(3, 5)],
+    p: [rg(2, 3), rg(3, 6)],
     f: (a, b) => q((((a + 1) * a) / 2) * (((b + 1) * b) / 2)),
     alt: (a, b) => {
       let total = 0;
@@ -249,7 +307,7 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     form: "the-diagonals-of-a-convex-polygon",
     g: [5, 8],
     kind: "integer",
-    p: [rg(5, 10)],
+    p: [rg(5, 12)],
     f: (a) => q((a * (a - 3)) / 2),
     alt: (a) => q((a * (a - 1)) / 2 - a),
     t: {
@@ -275,6 +333,7 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     t: {
       "the-square-perimeter": (a) => q(4 * a),
       "cut-counted-once": (a) => q(5 * a),
+      "perimeter-doubled": (a) => q(8 * a),
     },
     c: [2, 4],
     roles: { a: "side of the square" },
@@ -290,9 +349,24 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(1, 3), rg(1, 3), rg(1, 3), rg(1, 3)],
     f: (a, b, c) => q(a + b + c),
+    alt: (a, b, c, d) => {
+      const figures: readonly (readonly [number, number])[] = [
+        [a, 4],
+        [b, 4],
+        [c, 3],
+        [d, 0],
+      ];
+      return q(
+        figures.reduce(
+          (s, [count, corners]) => s + (corners > 0 ? count : 0),
+          0,
+        ),
+      );
+    },
     t: {
       "all-figures": (a, b, c, d) => q(a + b + c + d),
       "quadrilaterals-only": (a, b) => q(a + b),
+      "circles-only": (a, b, c, d) => q(d),
     },
     roles: {
       a: "count of squares",
@@ -306,14 +380,16 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     form: "the-name-by-the-number-of-sides",
     g: [3, 4],
     kind: "choice",
-    p: [rg(3, 6)],
+    p: [rg(3, 8)],
     f: (a) => String(a - 2),
+    alt: (a) => String(["3", "4", "5", "6", "7", "8"].indexOf(String(a)) + 1),
     t: {
       "the-fewer-sides": (a) => (a === 3 ? null : String(a - 3)),
-      "the-more-sides": (a) => (a === 6 ? null : String(a - 1)),
+      "the-more-sides": (a) => (a === 8 ? null : String(a - 1)),
+      "number-as-sides": (a) => (a > 6 ? null : String(a)),
     },
-    options: () => ["1", "2", "3", "4"],
-    c: [1, 2, 3, 4],
+    options: () => ["1", "2", "3", "4", "5", "6"],
+    c: [1, 2, 3, 4, 5, 6],
     roles: { a: "count of sides" },
   }),
 ];
@@ -327,6 +403,11 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(30, 80), rg(30, 80)],
     f: (a, b) => q(180 - a - b),
+    alt: (a, b) => {
+      let third = 0;
+      while (a + b + third < 180) third += 1;
+      return q(third);
+    },
     t: {
       "sum-of-two": (a, b) => q(a + b),
       "from-360": (a, b) => q(360 - a - b),
@@ -343,6 +424,11 @@ const G2_angles_specs: readonly Spec<never>[] = [
     p: [rg(20, 160)],
     ok: (a) => a !== 90,
     f: (a) => q(180 - a),
+    alt: (a) => {
+      let next = 0;
+      while (a + next < 180) next += 1;
+      return q(next);
+    },
     t: {
       "same-angle": (a) => q(a),
       "from-90": (a) => {
@@ -362,6 +448,11 @@ const G2_angles_specs: readonly Spec<never>[] = [
     p: [rg(10, 80)],
     ok: (a) => a !== 45,
     f: (a) => q(90 - a),
+    alt: (a) => {
+      let rest = 0;
+      while (a + rest < 90) rest += 1;
+      return q(rest);
+    },
     t: { "from-180": (a) => q(180 - a), sum: (a) => q(90 + a) },
     c: [90, 180],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
@@ -373,8 +464,17 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(20, 30, 40, 50, 70, 80, 100, 110, 120)],
     f: (a) => q((180 - a) / 2),
-    t: { "not-halved": (a) => q(180 - a), "half-of-the-top": (a) => q(a / 2) },
-    c: [180],
+    alt: (a) => {
+      let base = 1;
+      while (2 * base + a < 180) base += 1;
+      return q(base);
+    },
+    t: {
+      "not-halved": (a) => q(180 - a),
+      "half-of-the-top": (a) => (a === 120 ? null : q(a / 2)),
+      "equal-to-the-top": (a) => q(a),
+    },
+    c: [2, 180],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
   G2_angles({
@@ -382,13 +482,15 @@ const G2_angles_specs: readonly Spec<never>[] = [
     form: "the-angle-between-clock-hands",
     g: [7, 8],
     kind: "integer",
-    p: [rg(1, 5)],
-    f: (a) => q(30 * a),
+    p: [rg(1, 11)],
+    ok: (a) => a !== 6,
+    f: (a) => q(30 * Math.min(a, 12 - a)),
+    alt: (a) => q(Math.min(a, 12 - a) * 5 * 6),
     t: {
       "five-per-hour": (a) => q(5 * a),
-      "other-way": (a) => q(360 - 30 * a),
+      "other-way": (a) => q(30 * Math.max(a, 12 - a)),
     },
-    c: [5, 12, 30, 360],
+    c: [5, 6, 12, 30, 360],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
   G2_angles({
@@ -398,8 +500,13 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(2, 4, 6, 8, 10, 12, 14, 16, 18, 20)],
     f: (a) => q(6 * a),
-    t: { "one-per-minute": (a) => q(a), "hour-hand": (a) => q(a / 2) },
-    c: [6, 60, 360],
+    alt: (a) => q(30 * a, 5),
+    t: {
+      "one-per-minute": (a) => q(a),
+      "hour-hand": (a) => q(a / 2),
+      "hour-step": (a) => q(30 * a),
+    },
+    c: [5, 6, 30, 60, 360],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
   G2_angles({
@@ -409,6 +516,7 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(3, 5, 6, 8, 9, 10, 12)],
     f: (a) => q((180 * (a - 2)) / a),
+    alt: (a) => q(180 - 360 / a),
     t: {
       "sum-of-angles": (a) => q(180 * (a - 2)),
       "central-angle": (a) => q(360 / a),
@@ -423,9 +531,15 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(3, 10)],
     f: (a) => q(180 * (a - 2)),
+    alt: (a) => {
+      let total = 180;
+      for (let sides = 4; sides <= a; sides += 1) total += 180;
+      return q(total);
+    },
     t: {
       "times-sides": (a) => q(180 * a),
       "minus-one": (a) => q(180 * (a - 1)),
+      "always-360": (a) => (a <= 4 ? null : q(360)),
     },
     c: [2, 180],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
@@ -437,6 +551,7 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 8)],
     f: (a) => q(90 * a),
+    alt: (a) => q((360 * a) / 4),
     t: { "one-turn": () => q(90), "full-turns": (a) => q(360 * a) },
     c: [90, 360],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
@@ -448,7 +563,16 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 8)],
     f: (a) => q(2 * a - 1),
-    t: { twice: (a) => q(2 * a), steps: (a) => q(a) },
+    alt: (a) => {
+      let turns = 0;
+      for (let k = 1; k < 2 * a; k += 1) turns += 1;
+      return q(turns);
+    },
+    t: {
+      twice: (a) => q(2 * a),
+      steps: (a) => q(a),
+      "between-steps": (a) => q(a - 1),
+    },
     c: [1, 2],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
@@ -459,6 +583,11 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(2, 9)],
     f: (a) => q(4 * a),
+    alt: (a) => {
+      let total = 0;
+      for (let i = 0; i < a; i += 1) total += 4;
+      return q(total);
+    },
     t: { "rectangles-only": (a) => q(a), "two-per-rectangle": (a) => q(2 * a) },
     c: [2, 4],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
@@ -470,7 +599,16 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [of(20, 30, 40, 50, 60, 80, 100, 120, 140)],
     f: (a) => q(a / 2),
-    t: { doubled: (a) => q(2 * a), whole: (a) => q(a) },
+    alt: (a) => {
+      let half = 0;
+      while (half + half < a) half += 1;
+      return q(half);
+    },
+    t: {
+      doubled: (a) => q(2 * a),
+      whole: (a) => q(a),
+      "minus-two": (a) => q(a - 2),
+    },
     c: [2],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
@@ -481,6 +619,11 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "integer",
     p: [rg(10, 70), rg(80, 170)],
     f: (a, b) => q(b - a),
+    alt: (a, b) => {
+      let gap = 0;
+      while (a + gap < b) gap += 1;
+      return q(gap);
+    },
     t: {
       "far-mark": (a, b) => q(b),
       "marks-added": (a, b) => q(a + b),
@@ -496,8 +639,14 @@ const G2_angles_specs: readonly Spec<never>[] = [
     form: "an-angle-does-not-grow-with-its-arms",
     g: [7, 8],
     kind: "compare",
-    p: [rg(30, 120), rg(30, 120), rg(2, 5)],
+    p: [
+      of(40, 50, 60, 70, 80, 90, 100, 110),
+      of(40, 50, 60, 70, 80, 90, 100, 110),
+      rg(2, 5),
+    ],
+    ok: (a, b) => a >= b,
     f: (a, b) => sign(q(a), q(b)),
+    alt: (a, b) => SIGNS[Math.sign(a - b) + 1] ?? "=",
     t: { "longer-arms-bigger": () => "<" },
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
@@ -508,6 +657,8 @@ const G2_angles_specs: readonly Spec<never>[] = [
     kind: "choice",
     p: [of(25, 40, 60, 75, 85, 90, 100, 120, 150, 170, 180)],
     f: (a) => String(kindOf(a)),
+    alt: (a) =>
+      String(1 + (a >= 90 ? 1 : 0) + (a > 90 ? 1 : 0) + (a >= 180 ? 1 : 0)),
     t: {
       "the-opposite-kind": (a) => String(OPPOSITE[kindOf(a)] ?? 1),
       "the-neighbour-kind": (a) => String(NEIGHBOUR[kindOf(a)] ?? 1),
@@ -531,6 +682,8 @@ const G2_angles_specs: readonly Spec<never>[] = [
     t: {
       "other-scale": (a) => q(180 - a),
       "nearest-label": (a) => q(Math.round(a / 30) * 30),
+      "divisions-as-ones": (a) =>
+        q(Math.floor(a / 30) * 30 + (a - Math.floor(a / 30) * 30) / 10),
     },
     c: [10, 30],
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
@@ -549,6 +702,7 @@ const G2_angles_specs: readonly Spec<never>[] = [
     t: {
       "hour-hand-not-moved": (a) => q(Math.abs(30 * a - 180)),
       "bigger-angle": (a) => q(360 - Math.abs(30 * a - 165)),
+      "minute-hand-on-twelve": (a) => q(Math.min(30 * a + 15, 345 - 30 * a)),
     },
     c: [6, 12, 15, 30, 180, 360],
     roles: { a: "hours shown" },
@@ -563,7 +717,9 @@ const G2_angles_specs: readonly Spec<never>[] = [
     f: (i) => q((Math.max(...ratio(i)) * 180) / sumOf(ratio(i))),
     alt: (i) => {
       const r = ratio(i);
-      return q((180 / sumOf(r)) * Math.max(...r));
+      let angle = 1;
+      while (angle * sumOf(r) < 180 * Math.max(...r)) angle += 1;
+      return q(angle);
     },
     t: {
       "one-part": (i) => q(180 / sumOf(ratio(i))),
@@ -596,8 +752,9 @@ const G2_angles_specs: readonly Spec<never>[] = [
       "the-vertical-angle": (a) => q(a / 2),
       "from-180-the-sum": (a) =>
         Math.abs(180 - a) === a / 2 ? null : q(Math.abs(180 - a)),
+      "both-others": (a) => q(360 - a),
     },
-    c: [2, 180],
+    c: [2, 180, 360],
     roles: { a: "sum of two vertical angles" },
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
@@ -606,12 +763,17 @@ const G2_angles_specs: readonly Spec<never>[] = [
     form: "the-two-angles-of-a-straight-angle-by-their-difference",
     g: [7, 8],
     kind: "integer",
-    p: [of(10, 20, 30, 40, 60, 80)],
+    p: [of(10, 20, 30, 40, 50, 60, 70, 80, 100, 120)],
     f: (a) => q((180 + a) / 2),
-    alt: (a) => q(90 + a / 2),
+    alt: (a) => {
+      let smaller = 0;
+      while (smaller + (smaller + a) < 180) smaller += 1;
+      return q(smaller + a);
+    },
     t: {
       "the-smaller-angle": (a) => q((180 - a) / 2),
       "half-plus-difference": (a) => q(90 + a),
+      "just-the-rest": (a) => q(180 - a),
     },
     c: [2, 180],
     roles: { a: "difference of the two angles" },
@@ -631,9 +793,11 @@ const G2_angles_specs: readonly Spec<never>[] = [
       of(30, 40, 50, 60, 70, 80),
     ],
     f: (a, b, c) => q(a - b + c),
+    alt: (a, b, c) => q(a + c - b),
     t: {
       "all-added": (a, b, c) => q(a + b + c),
       "wrong-sign": (a, b, c) => (a + b - c > 0 ? q(a + b - c) : null),
+      "all-subtracted": (a, b, c) => (a - b - c > 0 ? q(a - b - c) : null),
     },
     roles: { a: "first turn", b: "second turn", c: "third turn" },
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },

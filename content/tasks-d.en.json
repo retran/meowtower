@@ -1,0 +1,2770 @@
+{
+  "D1.place-value.01": {
+    "text": "How many cents are there in {m} euros?",
+    "solution": [
+      "There are {=100} cents in one euro.",
+      "{m} euros is {a|euro|euros|euros} and {b|cent|cents|cents}. {a|euro|euros|euros} is {a} × {=100} = {=a*100} cents.",
+      "Now add the cents: {=a*100} + {b} = {r}.",
+      "So {m} euros is {r|cent|cents|cents} altogether."
+    ],
+    "hints": [
+      "Work with the euros and the cents separately. One euro is {=100} cents.",
+      "{a|euro|euros|euros} is {=a*100} cents. Now add the {b|cent|cents|cents} that are left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cents-part-only": "You wrote {w_cents_part_only}. That is only the cents. The {a|euro|euros|euros} must be turned into cents too: {a} × {=100} = {=a*100}. Then add the {b|cent|cents|cents}.",
+      "cents-forgotten": "You wrote {w_cents_forgotten}. That is only the euros turned into cents. The {b|cent|cents|cents} still have to be added: {=a*100} + {b} = {r}.",
+      "euros-added-to-cents": "You wrote {w_euros_added_to_cents}. That is {a} + {b}, euros added to cents. One euro is {=100} cents, so first multiply the euros by {=100}, then add the cents: {r}."
+    }
+  },
+  "D1.place-value.02": {
+    "text": "Which digit is in the tenths place of {n}?",
+    "solution": [
+      "In {n} the digit {a} is in front of the comma. It counts the whole numbers.",
+      "The first digit after the comma is the tenths digit: {b}. The second is the hundredths digit: {c}.",
+      "So the digit in the tenths place is {r}."
+    ],
+    "hints": [
+      "Tenths are the first place right after the comma.",
+      "Read {n} from the left: {a} is in front of the comma, then come {b} and {c}. Which of these is in the first place after the comma?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "hundredths-digit": "You wrote {w_hundredths_digit}. That digit is in the second place after the comma, so it counts hundredths. Tenths are the first place after the comma: {r}.",
+      "whole-digit": "You wrote {w_whole_digit}. That digit is in front of the comma, so it counts whole numbers. Tenths are the first place after the comma: {r}."
+    }
+  },
+  "D1.place-value.03": {
+    "text": "Which digit is in the hundredths place of {n}?",
+    "solution": [
+      "In {n} the digit {a} is in front of the comma. It counts the whole numbers.",
+      "The first digit after the comma is the tenths digit: {b}. The second is the hundredths digit: {c}.",
+      "So the digit in the hundredths place is {r}."
+    ],
+    "hints": [
+      "Hundredths are the second place after the comma.",
+      "Count two places after the comma in {n}: the first is tenths, the second is hundredths. Which digit is in the second place?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths-digit": "You wrote {w_tenths_digit}. That digit is in the first place after the comma, so it counts tenths. Hundredths are the second place after the comma: {r}.",
+      "whole-digit": "You wrote {w_whole_digit}. That digit is in front of the comma, so it counts whole numbers. Hundredths are the second place after the comma: {r}."
+    }
+  },
+  "D1.place-value.04": {
+    "text": "How many tenths are there in {n}?",
+    "solution": [
+      "One whole is {=10} tenths.",
+      "{a|whole is|wholes are|wholes are} {a} × {=10} = {=a*10} tenths.",
+      "Add the other {b} tenths: {=a*10} + {b} = {r}.",
+      "So {n} holds {r} tenths altogether."
+    ],
+    "hints": [
+      "One whole is {=10} tenths. First turn the whole numbers of {n} into tenths.",
+      "The whole numbers of {n} make {a} × {=10} = {=a*10} tenths. What must you add next?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "wholes-only": "You wrote {w_wholes_only}. That is only the number of wholes. Every whole holds {=10} tenths, so count those too: {a} × {=10} = {=a*10}, and then add {b}.",
+      "tenths-digit-only": "You wrote {w_tenths_digit_only}. That is only the tenths behind the comma. The {a|whole|wholes|wholes} hold tenths as well: every whole holds {=10} of them. Add them: {=a*10} + {b} = {r}.",
+      "hundredths-counted": "You wrote {w_hundredths_counted}. That counts hundredths. There are {=10} times fewer tenths, because one tenth is {=10} hundredths. The answer is {r}."
+    }
+  },
+  "D1.place-value.05": {
+    "text": "How many hundredths are there in {n}?",
+    "solution": [
+      "One whole is {=100} hundredths, and one tenth is {=10} hundredths.",
+      "{a|whole is|wholes are|wholes are} {a} × {=100} = {=a*100} hundredths. {b|tenth is|tenths are|tenths are} {b} × {=10} = {=b*10} hundredths.",
+      "There are also {c} hundredths. Add them: {=a*100} + {=b*10} + {c} = {r}.",
+      "So {n} holds {r} hundredths altogether."
+    ],
+    "hints": [
+      "One whole is {=100} hundredths, and one tenth is {=10} hundredths.",
+      "In {n}: {a} × {=100} = {=a*100} hundredths and {b} × {=10} = {=b*10} hundredths. What is left to add?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "decimal-part-only": "You wrote {w_decimal_part_only}. That counts only the hundredths behind the comma. The {a|whole|wholes|wholes} hold hundredths too: every whole holds {=100} of them.",
+      "tenths-counted": "You wrote {w_tenths_counted}. That counts tenths. There are {=10} times more hundredths, because one tenth is {=10} hundredths. The answer is {r}.",
+      "hundredths-digit-only": "You wrote {w_hundredths_digit_only}. That is just the digit in the hundredths place. The wholes and the tenths of {n} can be counted in hundredths too, so there are many more: {r}."
+    }
+  },
+  "D1.place-value.06": {
+    "text": "Write this as a decimal number: {a|whole|wholes|wholes}, {b|tenth|tenths|tenths} and {c|hundredth|hundredths|hundredths}.",
+    "solution": [
+      "The wholes go in front of the comma: {a}.",
+      "Tenths are the first digit after the comma: {b}. Hundredths are the second: {c}.",
+      "{a} + {=b/10} + {=c/100} = {r}."
+    ],
+    "hints": [
+      "The wholes go in front of the comma. After the comma come the tenths first and the hundredths second.",
+      "Write it place by place: {a} in front of the comma, {b|tenth|tenths|tenths} in the first place after it. Where do the {c|hundredth|hundredths|hundredths} go?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths-and-hundredths-swapped": "You wrote {w_tenths_and_hundredths_swapped}. There the tenths and the hundredths have changed places. The tenths, {b}, come first after the comma, then the hundredths, {c}.",
+      "hundredths-forgotten": "You wrote {w_hundredths_forgotten}. The hundredths are missing. After the tenths you still have to write the hundredths digit, {c}.",
+      "tenths-skipped": "You wrote {w_tenths_skipped}. The tenths are skipped. Right after the comma come the tenths, {b}, and after them the hundredths, {c}."
+    }
+  },
+  "D1.place-value.07": {
+    "text": "Write as a decimal number: {a} euros and {b|cent|cents|cents}.",
+    "solution": [
+      "One cent is a hundredth of a euro, so {b|cent|cents|cents} is {b|hundredth|hundredths|hundredths}.",
+      "Hundredths are the second place after the comma. There are no tenths, so a zero goes in the first place.",
+      "{a} + {=b/100} = {r}.",
+      "So {a} euros and {b|cent|cents|cents} is {r} euros."
+    ],
+    "hints": [
+      "Cents are hundredths of a euro, so you need two digits after the comma.",
+      "You have {b|cent|cents|cents}, which is one digit. What goes in the first place after the comma so that {b} ends up in the second?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cents-as-tenths": "You wrote {w_cents_as_tenths}. That reads as {a} euros and {=10*b} cents. Cents are hundredths of a euro, so a zero must stand in front of the {b}.",
+      "places-swapped": "You wrote {w_places_swapped}. There the places have changed. The euros, {a}, go in front of the comma and the cents, {b}, behind it."
+    }
+  },
+  "D1.place-value.08": {
+    "text": "Compare {f} and {g}. Which sign goes between them?",
+    "solution": [
+      "The whole numbers are the same, both are {a}. So compare what comes after the comma.",
+      "Add a zero to the end of the short number, its value stays the same: {sh} = {sh0}. Now both numbers have two digits after the comma.",
+      "Compare the hundredths: on the left {p}, on the right {q}, and {p} {r} {q}.",
+      "So the sign between {f} and {g} is {r}."
+    ],
+    "hints": [
+      "Compare the whole numbers first, then what comes after the comma. For that, both numbers need the same number of digits after the comma.",
+      "Add a zero: {sh} = {sh0}. Now compare {p} and {q} hundredths.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "longer-is-bigger": "You chose {w_longer_is_bigger}, as if the number with more digits were the bigger one. The length of the writing does not matter. Add a zero to the short number and compare {p} and {q} hundredths.",
+      "wholes-only-compared": "You chose {w_wholes_only_compared}. That only compares the whole numbers, and both are {a}. After that you must compare what comes after the comma: {p} and {q} hundredths."
+    }
+  },
+  "D1.place-value.09": {
+    "text": "Put these numbers in order, the smallest first: {list}.",
+    "solution": [
+      "Add zeros on the right so that every number has two digits after the comma: {list0}. These are {a}, {b} and {c} hundredths.",
+      "The more hundredths, the bigger the number. Put the numbers in order from the smallest to the biggest.",
+      "From small to big: {sorted}.",
+      "So the numbers, by their position in the list, go in the order {r}."
+    ],
+    "hints": [
+      "Add zeros on the right so that every number has two digits after the comma.",
+      "Now {list0} are {a}, {b} and {c} hundredths. Which of them is the smallest?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "largest-first": "You wrote {w_largest_first}. That goes from the biggest number to the smallest, but the order has to start with the smallest.",
+      "hundredths-digit-first": "You wrote {w_hundredths_digit_first}. That order comes from comparing the last digits. Compare the tenths first, and only when the tenths are equal the hundredths.",
+      "digits-as-whole-numbers": "You wrote {w_digits_as_whole_numbers}. There the digits behind the comma were read like an ordinary number, so a number with one digit behind the comma looked smaller than it is. A zero at the end changes nothing: {list0} are {a}, {b} and {c} hundredths."
+    }
+  },
+  "D1.place-value.10": {
+    "text": "Write as a number: {a|hundredth|hundredths|hundredths}.",
+    "solution": [
+      "One hundredth is {=1/100}: hundredths are in the second place after the comma.",
+      "Take {a} of them: {a} × {=1/100} = {=a/100}.",
+      "So {a|hundredth|hundredths|hundredths} is written {r}."
+    ],
+    "hints": [
+      "Hundredths take two places after the comma: the first is for tenths, the second for hundredths.",
+      "{a|hundredth|hundredths|hundredths} is {=floor(a/10)|tenth|tenths|tenths} and {=mod(a,10)|hundredth|hundredths|hundredths} left over. Put those digits in their places after the comma.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths": "You wrote {w_tenths}. That is tenths, which have one digit after the comma. Hundredths have two digits after the comma: {r}.",
+      "whole-number": "You wrote {w_whole_number}. There is no comma in it. {a|hundredth|hundredths|hundredths} is less than one whole, so the answer is {r}.",
+      "thousandths": "You wrote {w_thousandths}. That has one zero too many, so it is thousandths. Hundredths have two digits after the comma: {r}."
+    }
+  },
+  "D1.place-value.11": {
+    "text": "What is the value of the digit {b} in {n}?",
+    "solution": [
+      "In {n} the digit {b} is in the first place after the comma, so it counts tenths.",
+      "One tenth is {=1/10}, and there are {b} of them.",
+      "{b} × {=1/10} = {=b/10}. So the value of the digit {b} is {r}."
+    ],
+    "hints": [
+      "The value of a digit depends on the place where it stands.",
+      "In {n} the digit {b} is in the first place after the comma, where tenths are counted. What is {b|tenth|tenths|tenths} written as a number?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "face-value": "You wrote {w_face_value}. That is the digit itself. It stands in the tenths place, so its value is {r}.",
+      "hundredths-value": "You wrote {w_hundredths_value}. That would be the value of a digit in the second place after the comma. The digit {b} is in the first place, so it counts tenths: {r}."
+    }
+  },
+  "D1.place-value.12": {
+    "text": "Round {m} euros to whole euros.",
+    "solution": [
+      "{m} euros is {a|euro|euros|euros} and {b|cent|cents|cents}. Half a euro is {=50} cents.",
+      "With more than {=50} cents we go up to {=a+1}. With fewer, it stays {a}.",
+      "Here there are {b|cent|cents|cents}, so the amount rounds to {r} euros."
+    ],
+    "hints": [
+      "Look at the cents: half a euro is {=50} cents.",
+      "You have {b|cent|cents|cents}. Is that more or less than {=50}? That decides whether it stays {a} or becomes {=a+1}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cut-off": "You wrote {w_cut_off}. That just drops the cents. There are {b|cent|cents|cents}, which is more than {=50}, so we round up: {r}.",
+      "always-up": "You wrote {w_always_up}. That rounds up. There are {b|cent|cents|cents}, which is less than {=50}, so the euros stay the same: {r}."
+    }
+  },
+  "D1.place-value.13": {
+    "text": "Find the number exactly halfway between {f} and {g}.",
+    "solution": [
+      "{f} and {g} are one tenth apart, which is {=10} hundredths.",
+      "The middle is half of that distance: {=10} : {=2} = {=5} hundredths, that is {=5/100}.",
+      "Count on from the left number: {f} + {=5/100} = {r}.",
+      "So the number halfway between {f} and {g} is {r}."
+    ],
+    "hints": [
+      "Between {f} and {g} lies one tenth, and one tenth is {=10} hundredths. The middle is halfway along.",
+      "Half of {=10} hundredths is {=5} hundredths. Add them to {f}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "right-tenth": "You wrote {w_right_tenth}. That is the right-hand end, not the middle. The middle is five hundredths after the left number {f}: {r}.",
+      "left-tenth": "You wrote {w_left_tenth}. That is the left-hand end, {f}. The middle lies five hundredths further on: {r}.",
+      "half-added": "You wrote {w_half_added}. That adds five tenths. Between {f} and {g} the step is one tenth, so half a step is five hundredths: {r}."
+    }
+  },
+  "D1.place-value.14": {
+    "text": "On the number line the numbers {a} and {n} are marked, with {=10} equal parts between them. Which number does the dot show?",
+    "solution": [
+      "There are ten equal parts between {a} and {n}, so one part is one tenth, that is {=1/10}.",
+      "The dot is {b|part|parts|parts} away from {a}.",
+      "{a} + {b} × {=1/10} = {r}."
+    ],
+    "hints": [
+      "One part is one tenth, because there are ten equal parts from {a} to {n}.",
+      "Count {b|part|parts|parts} to the right from {a}. Each part adds {=1/10}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "hundredths-instead-of-tenths": "You wrote {w_hundredths_instead_of_tenths}. There the parts were taken as hundredths. Between {a} and {n} there are ten parts, so each part is a tenth, not a hundredth.",
+      "digits-swapped": "You wrote {w_digits_swapped}. There the digits have changed places. The whole part is {a}, and the number of parts, {b}, goes behind the comma.",
+      "counted-from-the-right": "You wrote {w_counted_from_the_right}. That counts the parts from the right-hand end. Count from the left-hand number {a}."
+    }
+  },
+  "D1.place-value.15": {
+    "text": "On the number line the numbers {f} and {g} are marked, with {=10} equal parts between them. Which number does the dot show?",
+    "solution": [
+      "There are ten equal parts between {f} and {g}. The distance between them is one tenth, so one part is one hundredth, that is {=1/100}.",
+      "The dot is {c|part|parts|parts} away from {f}.",
+      "{f} + {c} × {=1/100} = {r}."
+    ],
+    "hints": [
+      "Between {f} and {g} lies one tenth, cut into {=10} equal parts.",
+      "Each part is one hundredth. The dot is {c|part|parts|parts} from {f}: what must you add to {f}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "counted-from-the-right": "You wrote {w_counted_from_the_right}. That counts the parts from the right-hand end. Count from the left-hand number {f}.",
+      "steps-as-tenths": "You wrote {w_steps_as_tenths}. That takes the parts for tenths. Between {f} and {g} there is only one tenth, so each part is a hundredth."
+    }
+  },
+  "D1.place-value.16": {
+    "text": "Which of these numbers is the largest? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Answer with the number of the option.",
+    "solution": [
+      "The whole numbers are the same in all of them: {a}. So compare what comes after the comma.",
+      "Add zeros on the right so that every number has two digits after the comma: {list0}.",
+      "The biggest number of hundredths is {mx}. That is {big}, option {r}."
+    ],
+    "hints": [
+      "The whole numbers are the same in all of them ({a}), so look at what comes after the comma.",
+      "Add zeros so that each number has two digits after the comma: {list0}. Which one has the most hundredths?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-as-whole-numbers": "You chose option {w_digits_as_whole_numbers}. There the digits behind the comma were read like an ordinary number. A zero at the end changes nothing, so compare after adding zeros: {list0}.",
+      "shortest-wins": "You chose option {w_shortest_wins}, because it has a big digit in the tenths place and a short writing. Compare all the numbers after adding zeros on the right: {list0}.",
+      "tenths-tie": "You chose option {w_tenths_tie}. It has the biggest tenths digit, but another number has the same tenths. Then you must compare the hundredths too: {list0}."
+    }
+  },
+  "D1.place-value.17": {
+    "text": "Which of these numbers are less than {bound}? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Answer with the numbers of the fitting options, separated by commas.",
+    "solution": [
+      "Add zeros on the right so that every number has two digits after the comma: {bound0}; {list0}.",
+      "Compare the whole numbers first, then the tenths, then the hundredths.",
+      "The numbers less than {bound} are the options {r}."
+    ],
+    "hints": [
+      "Compare each number with {bound}: the whole numbers first, then the tenths.",
+      "Add a zero: {bound} = {bound0}. Now compare each of {list0} with {bound0}, the tenths first and then the hundredths.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-as-whole-numbers": "You chose {w_digits_as_whole_numbers}. That comes from reading the digits behind the comma like an ordinary number, without adding zeros. A zero at the end changes nothing: {bound} is {bound0}.",
+      "the-greater-ones": "You chose {w_the_greater_ones}. Those are the numbers that are bigger than {bound}, but the question asks for the smaller ones."
+    }
+  },
+  "D1.place-value.18": {
+    "text": "Round {n} to tenths.",
+    "solution": [
+      "Look at the hundredths digit: it is {c}. If it is {=5} or more, the tenths go up by {=1/10}. Otherwise they stay.",
+      "The number with only the tenths: {t}.",
+      "{t} + {up} = {r}."
+    ],
+    "hints": [
+      "Rounding to tenths leaves one digit after the comma. Look at the digit just to the right of it.",
+      "In {n} the hundredths digit is {c}. Is that {=5} or more?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cut-off": "You wrote {w_cut_off}. That just drops the hundredths. The hundredths digit is {c}, which is {=5} or more, so the tenths go up: {r}.",
+      "always-up": "You wrote {w_always_up}. That rounds up. The hundredths digit is {c}, which is less than {=5}, so the tenths stay the same: {r}.",
+      "rounded-to-whole": "You wrote {w_rounded_to_whole}. That rounds to wholes. The question asks for tenths, so one digit must stay behind the comma.",
+      "carry-lost": "You wrote {w_carry_lost}. It looks as if the tenths became ten and a one was written behind the comma. But ten tenths make one whole, which goes to the wholes: {t} + {up} = {r}."
+    }
+  },
+  "D1.place-value.19": {
+    "text": "How many numbers with two digits after the comma lie strictly between {f} and {g}? A zero at the end counts too.",
+    "solution": [
+      "{f} is {lo} hundredths, and {g} is {hi} hundredths.",
+      "Between them lie the numbers from {=lo+1} to {=hi-1} hundredths, both included.",
+      "{=hi-1} − {=lo+1} + 1 = {r}."
+    ],
+    "hints": [
+      "Turn both numbers into hundredths. That makes it easy to count the numbers between them.",
+      "{f} is {lo} hundredths and {g} is {hi}. How many numbers are there from {=lo+1} to {=hi-1}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "count-of-steps": "You wrote {w_count_of_steps}. That is the number of steps of one hundredth from {f} to {g}. But {f} and {g} themselves are not counted, so there is one number fewer between them: {r}.",
+      "ends-included": "You wrote {w_ends_included}. That counts the two ends, {f} and {g}, as well. They are not strictly between, so leave them out.",
+      "tenths-only": "You wrote {w_tenths_only}. That is the number of tenths between them. The question is about numbers with two digits after the comma, and there are many more of those."
+    }
+  },
+  "D1.place-value.20": {
+    "text": "Numbers of the form _,__ are made from the digits {a}, {b} and {c}, using each digit once. By how much is the biggest of them bigger than the smallest?",
+    "solution": [
+      "Biggest number: the biggest digit goes before the comma, then the other digits from big to small: {hi}. Smallest number: the smallest digit goes before the comma, then the other digits from small to big: {lo}.",
+      "{hi} − {lo} = {r}.",
+      "The digit {b} is in the same place in both numbers, so it makes no difference to the answer."
+    ],
+    "hints": [
+      "The biggest number starts with the biggest digit, the smallest number with the smallest digit.",
+      "Of {a}, {b} and {c}, the biggest number starts with {c} and the smallest with {a}. Put the other two digits in order for each number.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tails-both-descending": "You wrote {w_tails_both_descending}. For that, the digits behind the comma of the smallest number were also put from big to small. In the smallest number they go from small to big: {lo}.",
+      "wholes-only": "You wrote {w_wholes_only}. That is the difference of the whole parts only. The digits behind the comma differ too: the biggest number {hi} minus the smallest {lo} is {r}.",
+      "smaller-from-larger-column": "You wrote {w_smaller_from_larger_column}. That takes the smaller digit from the larger one in every place. But {hi} − {lo} needs borrowing: in the hundredths place the top digit is smaller than the bottom one. The answer is {r}."
+    }
+  },
+  "D2.add-sub.01": {
+    "text": "Find the sum {x} + {y} euros.",
+    "solution": [
+      "It is easiest to work in cents: {x} euros is {a|cent|cents|cents} and {y} euros is {b|cent|cents|cents}.",
+      "Add: {a} + {b} = {=a+b|cent|cents|cents}.",
+      "{=100} cents make one euro, so {=a+b|cent|cents|cents} is {r} euros.",
+      "So {x} + {y} = {r}."
+    ],
+    "hints": [
+      "Think of the amounts in cents, then you can add them like whole numbers.",
+      "{x} euros is {a|cent|cents|cents} and {y} euros is {b|cent|cents|cents}. Add these two numbers, then turn the total back into euros.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-ignored": "You wrote {w_comma_ignored}. The numbers were added as whole numbers, so the comma got lost. The comma separates the euros from the cents: {r}.",
+      "carry-forgotten": "You wrote {w_carry_forgotten}. The carry is missing. When a place adds up to ten or more, the extra one goes to the next place on the left.",
+      "cents-written-whole": "You wrote {w_cents_written_whole}. It looks as if the cents were added on their own and the whole total was written behind the comma. But {=100} cents is another euro, and that goes in front of the comma: {r}."
+    }
+  },
+  "D2.add-sub.02": {
+    "text": "Find the difference {x} − {y} euros.",
+    "solution": [
+      "It is easiest to work in cents: {x} euros is {a|cent|cents|cents} and {y} euros is {b|cent|cents|cents}.",
+      "Subtract: {a} − {b} = {=a-b|cent|cents|cents}.",
+      "{=100} cents make one euro, so {=a-b|cent|cents|cents} is {r} euros.",
+      "So {x} − {y} = {r}."
+    ],
+    "hints": [
+      "Think of the amounts in cents, then you can subtract them like whole numbers.",
+      "{x} euros is {a|cent|cents|cents} and {y} euros is {b|cent|cents|cents}. Subtract {b} from {a}, then turn the difference back into euros.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "added": "You wrote {w_added}. That adds the two amounts, but the question asks for the difference, so subtract: {x} − {y}.",
+      "column-smaller-from-larger": "You wrote {w_column_smaller_from_larger}. In every place the smaller digit was taken from the larger one. When the top digit is too small, borrow one from the next place on the left.",
+      "comma-ignored": "You wrote {w_comma_ignored}. The subtraction was done without the comma. The comma stays between the euros and the cents: {r}."
+    }
+  },
+  "D2.add-sub.03": {
+    "text": "Find the sum of the three receipts: {x}, {y} and {z} euros.",
+    "solution": [
+      "It is easiest to work in cents: {x} euros is {a|cent|cents|cents}, {y} euros is {b} and {z} euros is {c}.",
+      "Add: {a} + {b} + {c} = {=a+b+c|cent|cents|cents}.",
+      "{=100} cents make one euro, so divide by {=100}: {=a+b+c} : {=100} = {r}.",
+      "So the three receipts add up to {r} euros."
+    ],
+    "hints": [
+      "Turn each amount into cents, then you can add whole numbers.",
+      "In cents it is {a} + {b} + {c}. Add all three numbers, then turn the total back into euros.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-amounts-only": "You wrote {w_two_amounts_only}. That is the sum of just two amounts, but all three must be added.",
+      "comma-ignored": "You wrote {w_comma_ignored}. The numbers were added without commas. The comma separates the euros from the cents, so keep it: {r}.",
+      "carry-forgotten": "You wrote {w_carry_forgotten}. The carry is missing. When a place adds up to ten or more, the extra one goes to the next place on the left."
+    }
+  },
+  "D2.add-sub.04": {
+    "text": "A {a}-euro note pays for something that costs {x} euros. How many euros of change are given?",
+    "solution": [
+      "Work in cents: {a} euros is {=a*100} cents, and the purchase of {x} euros is {b|cent|cents|cents}.",
+      "The change is the difference: {=a*100} − {b} = {=a*100-b|cent|cents|cents}.",
+      "{=100} cents make one euro, so divide by {=100}: {=a*100-b} : {=100} = {r}.",
+      "So the change is {r} euros."
+    ],
+    "hints": [
+      "Change is what is left of the note after paying: the note minus the price.",
+      "In cents it is {=a*100} − {b}. Subtract, then turn the change back into euros.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-price-itself": "You wrote {w_the_price_itself}. That is the price of the purchase. The change is found by subtracting the price from the {a} euros.",
+      "no-borrowing": "You wrote {w_no_borrowing}. The euros were subtracted on their own and the cents were just copied. But {a} euros has no cents, so one euro has to be changed into {=100} cents first.",
+      "added": "You wrote {w_added}. That adds the price to the {a} euros. The change is what is left, so subtract: {a} − {x}."
+    }
+  },
+  "D2.add-sub.05": {
+    "text": "Find the sum {a} + {y}.",
+    "solution": [
+      "It is easiest to add equal parts, so work in hundredths: {a} is {=a*100} hundredths and {y} is {b} hundredths.",
+      "Add: {=a*100} + {b} = {=a*100+b} hundredths.",
+      "So {a} + {y} = {r}."
+    ],
+    "hints": [
+      "Only equal parts can be added, so turn both numbers into hundredths.",
+      "{a} is {=a*100} hundredths and {y} is {b} hundredths. Add these two numbers and write the result with a comma.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "wholes-added-to-hundredths": "You wrote {w_wholes_added_to_hundredths}. The whole number {a} was added to the hundredths. It must be added to the whole part of {y}.",
+      "wholes-added-to-tenths": "You wrote {w_wholes_added_to_tenths}. Here {a} was added to the tenths. A whole number is added to the whole part of {y}.",
+      "whole-forgotten": "You wrote {w_whole_forgotten}. The whole number {a} is missing. It has to be added to the whole part of {y}."
+    }
+  },
+  "D2.add-sub.06": {
+    "text": "Find the difference {a} − {y}.",
+    "solution": [
+      "It is easiest to subtract equal parts, so work in hundredths: {a} is {=a*100} hundredths and {y} is {b} hundredths.",
+      "Subtract: {=a*100} − {b} = {=a*100-b} hundredths.",
+      "So {a} − {y} = {r}."
+    ],
+    "hints": [
+      "Only equal parts can be subtracted, so turn both numbers into hundredths.",
+      "{a} is {=a*100} hundredths and {y} is {b} hundredths. Subtract {b} from {=a*100} and write the result with a comma.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-borrowing": "You wrote {w_no_borrowing}. The wholes were subtracted on their own and the hundredths were just copied. But {a} has no hundredths, so one whole has to be changed into hundredths first.",
+      "borrow-not-taken-off": "You wrote {w_borrow_not_taken_off}. A whole was borrowed, but the wholes were not made one smaller. After borrowing there is one whole less.",
+      "added": "You wrote {w_added}. That adds {a} and {y}. The sign is minus: {y} is subtracted from {a}."
+    }
+  },
+  "D2.add-sub.07": {
+    "text": "Find the sum {w} + {x} + {y} + {z} euros.",
+    "solution": [
+      "Add in pairs. In {w} and {x} the cents make {c} + {=100-c} = {=100}, which is exactly one euro.",
+      "Wholes: {a} + {b} = {=a+b}, and one more euro from the cents, so {=a+b+1}.",
+      "The same for {y} and {z}: {f} + {=100-f} = {=100}, wholes {d} + {e} = {=d+e}, and one more euro, so {=d+e+1}.",
+      "Add: {=a+b+1} + {=d+e+1} = {r}. So the sum is {r} euros."
+    ],
+    "hints": [
+      "Look for pairs of amounts whose cents together make a whole euro.",
+      "In {w} and {x} the cents are {c} and {=100-c}. Together they make {=100} cents, one euro. Group {y} and {z} in the same way, then add the pairs.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cents-dropped": "You wrote {w_cents_dropped}. That adds only the euros. The cents of each pair make exactly one euro together, so {=2} euros more must be added.",
+      "one-carry-forgotten": "You wrote {w_one_carry_forgotten}. Here only one pair gave an extra euro from its cents. Every pair does.",
+      "comma-ignored": "You wrote {w_comma_ignored}. The numbers were added without commas, which gives cents and not euros. Keep the comma; the answer is in euros: {r}."
+    }
+  },
+  "D2.add-sub.08": {
+    "text": "Find the sum {x} + {y}.",
+    "solution": [
+      "Add the tenths: {a} + {b} = {=a+b} tenths.",
+      "{=10} tenths make one whole, so {=a+b} tenths is one whole and {=a+b-10} tenths.",
+      "So {x} + {y} = {r}."
+    ],
+    "hints": [
+      "Add the tenths first, like ordinary numbers.",
+      "{a} + {b} = {=a+b} tenths. Ten tenths make one whole: how many wholes and how many tenths are there in {=a+b} tenths?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "You wrote {w_digits_side_by_side}. There the digits were just written next to each other behind the comma. Tenths are added: {a} + {b} = {=a+b} tenths.",
+      "carry-lost": "You wrote {w_carry_lost}. The carry is missing. {a} + {b} = {=a+b} tenths, and {=10} tenths make one whole, which goes in front of the comma.",
+      "sum-as-hundredths": "You wrote {w_sum_as_hundredths}. That shows {=a+b} hundredths, but tenths were added. {a} tenths and {b} tenths make {=a+b} tenths."
+    }
+  },
+  "D2.add-sub.09": {
+    "text": "Find the sum {x} + {y}.",
+    "solution": [
+      "Add a zero to {x} so that both numbers have the same number of digits after the comma: {x}{=0}.",
+      "Now both are in hundredths: {x}{=0} is {=a*10} hundredths and {y} is {b} hundredths.",
+      "Add: {=a*10} + {b} = {=a*10+b} hundredths.",
+      "So {x} + {y} = {r}."
+    ],
+    "hints": [
+      "Write a zero at the end of the number with one digit after the comma, so that both have the same number of digits.",
+      "{x}{=0} is {=a*10} hundredths and {y} is {b} hundredths. Add these two numbers and write the result with a comma.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "places-not-aligned": "You wrote {w_places_not_aligned}. That is {a} + {b} added as whole numbers. Hundredths go with hundredths and tenths with tenths: write a zero at the end of {x}.",
+      "zero-inserted": "You wrote {w_zero_inserted}. There the zero was put in front of the last digit of {x}. A zero is written at the end, and then the number does not change.",
+      "hundredths-ignored": "You wrote {w_hundredths_ignored}. The hundredths of {y} are missing. They have to be added too."
+    }
+  },
+  "D2.add-sub.10": {
+    "text": "{x} + ? = {s}. Find the missing number.",
+    "solution": [
+      "The missing addend is the sum minus the known addend: {s} − {x}.",
+      "Work in hundredths: {s} is {=a+b} hundredths and {x} is {a} hundredths.",
+      "Subtract: {=a+b} − {a} = {b} hundredths, so {s} − {x} = {r}."
+    ],
+    "hints": [
+      "The missing addend is what is left of the sum when you take away the known addend.",
+      "Work in hundredths: {s} is {=a+b} and {x} is {a}. Subtract {a} from {=a+b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "added": "You wrote {w_added}. That is the sum, and it is already given. The missing addend is found by subtracting: {s} − {x}.",
+      "both-numbers-added": "You wrote {w_both_numbers_added}. That adds {x} and {s}. The missing addend is found by subtracting: {s} − {x}.",
+      "column-smaller-from-larger": "You wrote {w_column_smaller_from_larger}. In every place the smaller digit was taken from the larger one. When the top digit is too small, borrow one from the next place on the left."
+    }
+  },
+  "D2.add-sub.11": {
+    "text": "Three things cost {x}, {y} and {z} euros. How many euros more does the dearest cost than the cheapest?",
+    "solution": [
+      "The biggest price is {big} euros and the smallest is {small} euros.",
+      "In cents: {bc} − {sc} = {=bc-sc|cent|cents|cents}.",
+      "{=100} cents make one euro, so divide by {=100}: {=bc-sc} : {=100} = {r}.",
+      "So the dearest thing costs {r} euros more than the cheapest."
+    ],
+    "hints": [
+      "First find the biggest and the smallest of the three prices.",
+      "The biggest price is {big} and the smallest is {small}. To find out how much more one number is than another, subtract: in cents {bc} − {sc}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-first-two-only": "You wrote {w_the_first_two_only}. That is the difference between the first two prices. You need the biggest and the smallest of the three: {big} and {small}.",
+      "dearest-plus-cheapest": "You wrote {w_dearest_plus_cheapest}. That adds the two prices. The question is how much more one costs than the other, so subtract {small} from {big}.",
+      "the-middle-price-used": "You wrote {w_the_middle_price_used}. That is the biggest price minus the middle one. The smallest price, {small}, must be subtracted."
+    }
+  },
+  "D2.add-sub.12": {
+    "text": "Three parcels weigh {x} kg, {y} kg and {z} kg. What is the total weight in kilograms?",
+    "solution": [
+      "Write all the weights with two digits after the comma: {x0}, {y}, {z0}.",
+      "In hundredths that is {=a*100}, {b} and {=c*10}. Add: {=a*100} + {b} + {=c*10} = {=a*100+b+c*10} hundredths.",
+      "{=100} hundredths make one kilogram, so divide by {=100}: {=a*100+b+c*10} : {=100} = {r}.",
+      "So the total weight is {r} kg."
+    ],
+    "hints": [
+      "Write all the weights with the same number of digits after the comma, so that hundredths go with hundredths.",
+      "In hundredths the weights are {=a*100}, {b} and {=c*10}. Add these three numbers and write the result with a comma.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-parcels-only": "You wrote {w_two_parcels_only}. That is the weight of two parcels, but all three must be added.",
+      "tenths-as-hundredths": "You wrote {w_tenths_as_hundredths}. The tenths of {z} were added as hundredths. The digit behind the comma in {z} is in the tenths place: {z} is {z0}.",
+      "comma-ignored": "You wrote {w_comma_ignored}. The weights were added without commas. Keep the comma: {y} kg is not {b} kg. The answer is {r}."
+    }
+  },
+  "D2.add-sub.13": {
+    "text": "Prices: {x}, {y} and {z} euros. Round each price to whole euros and add the rounded numbers.",
+    "solution": [
+      "Round each price: with more than {=50} cents take the next whole euro, otherwise keep the whole euros.",
+      "{x} ≈ {x1}, {y} ≈ {y1}, {z} ≈ {z1}.",
+      "{x1} + {y1} + {z1} = {r}."
+    ],
+    "hints": [
+      "Look at the cents of each price: are there more than half a euro or fewer?",
+      "The cents are {b}, {d} and {f}. More than {=50} means rounding up, fewer means rounding down. Which prices round up? Then add the rounded numbers.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cut-each": "You wrote {w_cut_each}. That drops the cents of every price. With more than {=50} cents a price rounds up to the next euro.",
+      "rounded-up-each": "You wrote {w_rounded_up_each}. That rounds every price up. A price only rounds up when it has more than {=50} cents.",
+      "rounded-the-total": "You wrote {w_rounded_the_total}. That rounds the exact total. The question was to round each price first and then add: {r}."
+    }
+  },
+  "D2.add-sub.14": {
+    "text": "There are {a} euros in the account. {x} euros are spent, and then {y} euros more. How many euros are left?",
+    "solution": [
+      "First find how much was spent in all: {x} + {y} = {s}.",
+      "Take what was spent from the money in the account: {a} − {s} = {r}.",
+      "So {r} euros are left."
+    ],
+    "hints": [
+      "First find how much money was spent on both purchases together.",
+      "The spending is {x} + {y} = {s}. Now take {s} away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second-purchase-forgotten": "You wrote {w_second_purchase_forgotten}. That subtracts only one purchase. Money was spent twice: {x} euros and {y} euros.",
+      "spent-only": "You wrote {w_spent_only}. That is how much was spent in all, but the question asks how much is left. Subtract the {s} spent from {a}.",
+      "added": "You wrote {w_added}. That adds the purchases to the money in the account. Purchases take money away, so they are subtracted.",
+      "no-borrowing": "You wrote {w_no_borrowing}. The euros were subtracted on their own and the cents were just copied. But {a} euros has no cents, so one euro has to be changed into {=100} cents first: {a} − {s} = {r}."
+    }
+  },
+  "D2.add-sub.15": {
+    "text": "{x} + {y} = {s}. Which digit is hidden under the question mark?",
+    "solution": [
+      "The first addend is the sum minus the second addend: {s} − {y} = {full}.",
+      "In {full} the digit in the place of the question mark is {r}.",
+      "Check: {full} + {y} = {s}."
+    ],
+    "hints": [
+      "The first addend is the sum without the second addend: take {y} away from {s}.",
+      "Subtract in columns: {s} − {y}. Then look at which digit lands in the place of the question mark.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths-of-the-sum": "You wrote {w_tenths_of_the_sum}. That is the tenths digit of the sum {s}. But the addend {full} is smaller than the sum, so its tenths are different.",
+      "borrow-forgotten": "You wrote {w_borrow_forgotten}. The borrowing is missing: {s} has fewer hundredths than {y}, so one tenth has to be borrowed from the next place.",
+      "tenths-of-the-other-addend": "You wrote {w_tenths_of_the_other_addend}. That is the tenths digit of the second addend {y}. The hidden digit is the tenths digit of the first addend."
+    }
+  },
+  "D2.add-sub.16": {
+    "text": "Find the sum {f1} + {f2} + {f3} + … + {last}. Each number is {f1} more than the one before.",
+    "solution": [
+      "Add the first number to the last: {f1} + {last} = {pair}. The second with the one before the last gives the same, and so on.",
+      "There are {k} numbers. Add them twice, once forwards and once backwards, and you get {k} pairs of {pair} each.",
+      "Every number was counted twice, so halve it: {k} × {pair} : {=2} = {r}."
+    ],
+    "hints": [
+      "Add the first number to the last, then the second to the one before the last.",
+      "{f1} + {last} = {pair}, and the next pair gives the same. There are {k} numbers. What do you get from {k} times {pair}, and what must you do next?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "forgot-to-halve": "You wrote {w_forgot_to_halve}. That is not halved. In {k} pairs every number has been counted twice, so divide by {=2}.",
+      "count-times-last": "You wrote {w_count_times_last}. That is {k} × {last}, the sum if all the numbers were as big as the last one. The first numbers are smaller, so use the middle value, {=pair/2}."
+    }
+  },
+  "D2.add-sub.17": {
+    "text": "Which two prices together make {s} euros? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Answer with the numbers of the two prices, separated by a comma.",
+    "solution": [
+      "Add the prices two at a time and compare the sum with {s} euros. It helps to start with the cents.",
+      "The prices {fi} and {fj} fit: {fi} + {fj} = {s}.",
+      "These are the prices numbered {r}."
+    ],
+    "hints": [
+      "First add the cents of two prices: do they give the right number of cents?",
+      "Check the pairs one by one. For example the first and the second price: {a} + {b} = {=a+b} cents. Is that {s} euros?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-two-largest": "You chose {w_the_two_largest}. Those are the two biggest prices, but together they do not make {s} euros.",
+      "euros-only-match": "You chose {w_euros_only_match}. Those fit in the euros, but the cents give a different sum. Add the euros and the cents."
+    }
+  },
+  "D3.shift-10.01": {
+    "text": "Find the product {x} × {=10}.",
+    "solution": [
+      "{x} is {a|tenth|tenths|tenths}.",
+      "Multiply by {=10}: every tenth becomes a whole. There were {a|tenth|tenths|tenths}, now there are {a|whole|wholes|wholes}.",
+      "The comma moves one place to the right, because {=10} has one zero: {x} × {=10} = {r}."
+    ],
+    "hints": [
+      "Multiplying by {=10} makes the number ten times bigger: every digit moves up one place.",
+      "Move the comma in {x} one place to the right. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the old number. Multiplying by {=10} moves the comma one place to the right: {r}.",
+      "moved-the-wrong-way": "You wrote {w_moved_the_wrong_way}. The comma was moved to the left, but when you multiply it moves to the right: {r}.",
+      "moved-two-places": "You wrote {w_moved_two_places}. The comma was moved two places. {=10} has one zero, so the comma moves one place.",
+      "ten-added": "You wrote {w_ten_added}. That adds {=10}. The sign is a times sign: the comma moves one place to the right, and the answer is {r}."
+    }
+  },
+  "D3.shift-10.02": {
+    "text": "Find the product {x} × {=100}.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}.",
+      "Multiply by {=100}: every hundredth becomes a whole. There were {a|hundredth|hundredths|hundredths}, now there are {a|whole|wholes|wholes}.",
+      "The comma moves two places to the right, because {=100} has two zeros: {x} × {=100} = {r}."
+    ],
+    "hints": [
+      "Multiplying by {=100} makes the number a hundred times bigger: every digit moves up two places.",
+      "Move the comma in {x} two places to the right. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-one-place": "You wrote {w_moved_one_place}. The comma was moved one place. {=100} has two zeros, so the comma moves two places: {r}.",
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the old number. Multiplying by {=100} moves the comma two places to the right: {r}.",
+      "moved-three-places": "You wrote {w_moved_three_places}. The comma was moved three places. {=100} has two zeros, so the comma moves two places."
+    }
+  },
+  "D3.shift-10.03": {
+    "text": "Find the product {x} × {=1000}.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}.",
+      "Multiply by {=100}: we get {a|whole|wholes|wholes}. Multiply by {=10} as well: {a} × {=10} = {=a*10}.",
+      "The comma moves three places to the right, because {=1000} has three zeros: {x} × {=1000} = {r}."
+    ],
+    "hints": [
+      "Multiplying by {=1000} makes the number a thousand times bigger: every digit moves up three places.",
+      "Move the comma in {x} three places to the right. If there are not enough digits, write a zero on the right. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-two-places": "You wrote {w_moved_two_places}. The comma was moved two places, as for {=100}. {=1000} has three zeros: the comma moves three places and a zero is written, {r}.",
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the old number. Multiplying by {=1000} moves the comma three places to the right: {r}.",
+      "moved-one-place": "You wrote {w_moved_one_place}. The comma was moved one place. {=1000} has three zeros, so the comma moves three places."
+    }
+  },
+  "D3.shift-10.04": {
+    "text": "Find the quotient {a} : {=10}.",
+    "solution": [
+      "Dividing by {=10} makes the number ten times smaller: every digit moves one place to the right.",
+      "Tens become ones, and ones become tenths.",
+      "The comma moves one place to the left: {a} : {=10} = {r}."
+    ],
+    "hints": [
+      "Dividing by {=10} makes the number ten times smaller: every digit moves down one place.",
+      "In {a} put the comma so that the last digit becomes the tenths. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-the-wrong-way": "You wrote {w_moved_the_wrong_way}. The comma was moved to the right, but when you divide it moves to the left: {r}.",
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the old number {a}. Dividing by {=10} moves the comma one place to the left: {r}.",
+      "moved-two-places": "You wrote {w_moved_two_places}. The comma was moved two places. {=10} has one zero, so the comma moves one place."
+    }
+  },
+  "D3.shift-10.05": {
+    "text": "Find the quotient {a} : {=100}.",
+    "solution": [
+      "Dividing by {=100} makes the number a hundred times smaller: every digit moves two places to the right.",
+      "Hundreds become ones, tens become tenths and ones become hundredths.",
+      "The comma moves two places to the left, because {=100} has two zeros: {a} : {=100} = {r}."
+    ],
+    "hints": [
+      "Dividing by {=100} makes the number a hundred times smaller: every digit moves down two places.",
+      "In {a} put the comma so that the last two digits come after it. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-one-place": "You wrote {w_moved_one_place}. The comma was moved only one place. {=100} has two zeros, so the comma moves two places to the left: {r}.",
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the old number {a}. Dividing by {=100} moves the comma two places to the left: {r}.",
+      "moved-three-places": "You wrote {w_moved_three_places}. The comma was moved three places. {=100} has two zeros, so the comma moves two places."
+    }
+  },
+  "D3.shift-10.06": {
+    "text": "Find the product {x} × {=10}.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}.",
+      "Multiply by {=10}: every hundredth becomes a tenth. There were {a|hundredth|hundredths|hundredths}, now there are {a|tenth|tenths|tenths}.",
+      "The comma moves one place to the right: {x} × {=10} = {r}."
+    ],
+    "hints": [
+      "Multiplying by {=10} makes the number ten times bigger: every digit moves up one place.",
+      "Move the comma in {x} one place to the right. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-two-places": "You wrote {w_moved_two_places}. The comma was moved two places, but it must move one.",
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the old number. Multiplying by {=10} moves the comma one place to the right: {r}.",
+      "moved-the-wrong-way": "You wrote {w_moved_the_wrong_way}. The comma was moved to the left. When you multiply, the comma moves to the right: {r}."
+    }
+  },
+  "D3.shift-10.07": {
+    "text": "A length is {a} cm. How many metres is that?",
+    "solution": [
+      "There are {=100} cm in a metre, so we change centimetres to metres by dividing by {=100}.",
+      "Dividing by {=100} means moving the comma two places to the left: {a} : {=100} = {r}.",
+      "So {a} cm = {r} m."
+    ],
+    "hints": [
+      "There are {=100} centimetres in one metre, so there are fewer metres than centimetres.",
+      "Divide {a} by {=100}: move the comma in {a} two places to the left. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-one-place": "You wrote {w_moved_one_place}. The comma was moved only one place. A metre has a hundred centimetres, so the comma moves two places to the left: {r}.",
+      "moved-three-places": "You wrote {w_moved_three_places}. The comma was moved three places. A metre has a hundred centimetres, not a thousand, so the comma moves two places.",
+      "multiplied": "You wrote {w_multiplied}. That multiplies by {=100}. A metre is bigger than a centimetre, so there are fewer metres: divide by {=100} and you get {r}."
+    }
+  },
+  "D3.shift-10.08": {
+    "text": "A distance is {x} km. How many metres is that?",
+    "solution": [
+      "There are {=1000} metres in a kilometre, so we change kilometres to metres by multiplying by {=1000}.",
+      "{x} km is {a|hundredth|hundredths|hundredths} of a kilometre. Multiply by {=100}: we get {a}. Multiply by {=10} as well: {a} × {=10} = {=a*10}.",
+      "So {x} km = {r} m."
+    ],
+    "hints": [
+      "There are {=1000} metres in one kilometre, so there are more metres than kilometres.",
+      "Multiply {x} by {=1000}: move the comma three places to the right, and if there are not enough digits, write a zero on the right. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-two-places": "You wrote {w_moved_two_places}. The comma was moved two places. A kilometre has a thousand metres, so the comma moves three places to the right: {r}.",
+      "comma-ignored": "You wrote {w_comma_ignored}. There the comma of {x} was left out and the number was multiplied by {=1000}. The comma counts too: it moves three places to the right.",
+      "moved-four-places": "You wrote {w_moved_four_places}. The comma was moved four places. A kilometre has a thousand metres, which has three zeros, so the comma moves three places."
+    }
+  },
+  "D3.shift-10.09": {
+    "text": "Find the quotient {x} : {=10}.",
+    "solution": [
+      "{x} is {a|tenth|tenths|tenths}.",
+      "Divide by {=10}: every tenth becomes a hundredth. There were {a|tenth|tenths|tenths}, now there are {a|hundredth|hundredths|hundredths}.",
+      "The comma moves one place to the left: {x} : {=10} = {r}."
+    ],
+    "hints": [
+      "Dividing by {=10} makes the number ten times smaller: every digit moves down one place.",
+      "Move the comma in {x} one place to the left. If no digit is left in front of the comma, write a zero there. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the old number. Dividing by {=10} moves the comma one place to the left: {r}.",
+      "moved-the-wrong-way": "You wrote {w_moved_the_wrong_way}. The comma was moved to the right. When you divide, the comma moves to the left: {r}.",
+      "moved-two-places": "You wrote {w_moved_two_places}. The comma was moved two places. {=10} has one zero, so the comma moves one place."
+    }
+  },
+  "D3.shift-10.10": {
+    "text": "The number {x} was multiplied by {=10}, {=100} or {=1000} and the result is {y}. How many times bigger did the number become?",
+    "solution": [
+      "To find out how many times bigger the number became, divide the new number by the old one.",
+      "{y} : {x} = {=y/x}.",
+      "So the number became {r} times bigger."
+    ],
+    "hints": [
+      "Compare how {x} and {y} are written: how many places did the comma move?",
+      "One place means times {=10}, two places times {=100}, three places times {=1000}. Count the places between the comma in {x} and the comma in {y}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-zero-too-few": "You wrote {w_one_zero_too_few}. That counts one place less than the comma really moved.",
+      "one-zero-too-many": "You wrote {w_one_zero_too_many}. That counts one zero too many. The comma moved {b|place|places|places}: that makes {r}.",
+      "number-of-places": "You wrote {w_number_of_places}. That is the number of places the comma moved. The question is how many times bigger the number became: one place is ten times, two places a hundred times, three places a thousand times."
+    }
+  },
+  "D3.shift-10.11": {
+    "text": "{x} × ? = {y}. Find the missing factor.",
+    "solution": [
+      "To get {y} from {x}, the comma must move {c|place|places|places} to the right.",
+      "Moving the comma {c|place|places|places} to the right is multiplying by {r}, because {r} has that many zeros.",
+      "Check by dividing: {y} : {x} = {r}."
+    ],
+    "hints": [
+      "Look at how many places the comma moved from {x} to {y}.",
+      "One place is times {=10}, two places times {=100}, three places times {=1000}. How many places are there between the comma in {x} and the comma in {y}?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-zero-too-few": "You wrote {w_one_zero_too_few}. That moves the comma fewer places than needed. From {x} to {y} the comma moves {c|place|places|places}, so the factor has that many zeros.",
+      "one-zero-too-many": "You wrote {w_one_zero_too_many}. That moves the comma more places than needed. From {x} to {y} the comma moves {c|place|places|places}.",
+      "number-of-places": "You wrote {w_number_of_places}. That is the number of places the comma moved. The factor is {=10}, {=100} or {=1000}: one place is {=10}, two places {=100}, three places {=1000}. Here the factor is {r}."
+    }
+  },
+  "D3.shift-10.12": {
+    "text": "Multiply {x} by {=10}, then divide the result by {=100}.",
+    "solution": [
+      "Multiply by {=10}: the comma moves one place to the right, {x} × {=10} = {a}.",
+      "Divide by {=100}: the comma moves two places to the left, {a} : {=100} = {r}.",
+      "In all the comma went one place to the right and two places to the left, which is one place to the left. So the result is {r}."
+    ],
+    "hints": [
+      "Go in order: first multiply by {=10}, then divide by {=100}.",
+      "{x} × {=10} = {a}. Now divide {a} by {=100}: move the comma two places to the left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-the-last-step": "You wrote {w_only_the_last_step}. There the comma was moved only for the division. The multiplication by {=10} moves it too.",
+      "only-the-first-step": "You wrote {w_only_the_first_step}. That is only the multiplication by {=10}. The result must then be divided by {=100}.",
+      "shifted-the-same-way": "You wrote {w_shifted_the_same_way}. There the comma moved to the right both times. Dividing by {=100} moves it two places to the left."
+    }
+  },
+  "D3.shift-10.13": {
+    "text": "The comma in a number was moved {b|place|places|places} to the right, and the result is {y}. What was the number at the start?",
+    "solution": [
+      "The comma moved {b|place|places|places} to the right, so the number was made {=pow(10,b)} times bigger.",
+      "To get the number back, move the comma {b|place|places|places} to the left, that is divide by {=pow(10,b)}.",
+      "{y} : {=pow(10,b)} = {r}."
+    ],
+    "hints": [
+      "The comma moved to the right, so to get the number back it has to move the other way.",
+      "Move the comma in {y} {b|place|places|places} to the left. What does the number look like now?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the number after the move. To find the starting number, move the comma back.",
+      "moved-the-wrong-way": "You wrote {w_moved_the_wrong_way}. There the comma was moved to the right once more. The number comes back by moving the comma to the left.",
+      "one-place-too-many": "You wrote {w_one_place_too_many}. The comma was moved one place too far to the left. It has to move exactly {b|place|places|places}.",
+      "one-place-too-few": "You wrote {w_one_place_too_few}. The comma was moved too few places to the left. It has to move {b|place|places|places}."
+    }
+  },
+  "D3.shift-10.14": {
+    "text": "Compare {f} and {g}. Which sign goes between them?",
+    "solution": [
+      "Move the comma to the right: {f} = {u}.",
+      "{g} = {w}.",
+      "Compare {u} and {w}: the sign between {f} and {g} is {r}."
+    ],
+    "hints": [
+      "Find the value of each product.",
+      "Move the comma to the right as many places as there are zeros in the second factor: in the first product {c|place|places|places}, in the second {e|place|places|places}. Then compare the two numbers.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "multipliers-only": "You chose {w_multipliers_only}. That compares only the numbers {=10}, {=100} or {=1000}. But the first factors have their commas in different places, and that changes the value.",
+      "numbers-only": "You chose {w_numbers_only}. That compares only the first factors. But the multipliers {=10}, {=100} or {=1000} differ too, and they also change the result."
+    }
+  },
+  "D3.shift-10.15": {
+    "text": "{=100} g of a product cost {x} euros. How many euros does {=1} kg cost?",
+    "solution": [
+      "{=1} kg is {=1000} g, which is {=10} times as much as {=100} g.",
+      "So the price must be multiplied by {=10}: the comma moves one place to the right.",
+      "{x} × {=10} = {r}."
+    ],
+    "hints": [
+      "How many times does {=100} g fit into one kilogram?",
+      "One kilogram holds {=10} portions of {=100} g. Multiply {x} by {=10}: move the comma one place to the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "moved-the-wrong-way": "You wrote {w_moved_the_wrong_way}. The comma was moved to the left. A kilogram is more grams than {=100} g, so it costs more.",
+      "moved-two-places": "You wrote {w_moved_two_places}. The comma was moved two places. A kilogram holds {=10} times {=100} g, not {=100} times.",
+      "comma-not-moved": "You wrote {w_comma_not_moved}. That is the price of {=100} g. A kilogram is {=10} times {=100} g, so the price must be multiplied by {=10}."
+    }
+  },
+  "D3.shift-10.16": {
+    "text": "If the comma in a number is moved one place to the right, the number grows by {y}. Find the number.",
+    "solution": [
+      "If the comma moves one place to the right, the number becomes {=10} times bigger: there was one number, now there are {=10} of them.",
+      "So the number grew by {=10} − {=1} = {=9} of those numbers, and that is {y}.",
+      "{y} : {=9} = {r}."
+    ],
+    "hints": [
+      "How many times bigger does the number become when the comma moves one place to the right?",
+      "The number became {=10} times bigger, so {=9} copies of it were added, and that is {y}. How do you find one copy?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "divided-by-ten": "You wrote {w_divided_by_ten}. That divides by {=10}. The new number is {=10} times the old one, but only {=9} copies were added, so divide by {=9}.",
+      "the-increase-itself": "You wrote {w_the_increase_itself}. That is how much the number grew. The number itself is {=9} times smaller."
+    }
+  },
+  "D3.shift-10.17": {
+    "text": "The comma in a number was moved one place to the left. The sum of the old and the new number is {y}. Find the old number.",
+    "solution": [
+      "The new number is {=10} times smaller than the old one: the old one is {=10} parts, the new one is {=1} part.",
+      "Together that is {=11} parts, and it is {y}. One part: {y} : {=11} = {u}.",
+      "The old number is {=10} parts: {u} × {=10} = {r}."
+    ],
+    "hints": [
+      "How many times smaller is the new number than the old one?",
+      "The sum {y} is made of {=11} equal parts: the new number is one part, the old number is {=10} parts. Divide {y} by {=11}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "half-of-the-sum": "You wrote {w_half_of_the_sum}. That is half of the sum. The old and the new number are not equal: the old one is {=10} times bigger.",
+      "the-new-number": "You wrote {w_the_new_number}. That is the new number, which is {=10} times smaller than the old one. The old number is {=10} times bigger: {r}."
+    }
+  },
+  "D4.multiply.01": {
+    "text": "Find the product {x} × {b}.",
+    "solution": [
+      "{x} is {a} tenths.",
+      "Multiply as whole numbers: {a} × {b} = {=a*b} tenths.",
+      "Tenths have one digit after the decimal point, so {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} tenths. You can take the decimal point away for a moment and put it back later.",
+      "Work out {a} × {b} as whole numbers. {x} has one digit after the decimal point, so the answer needs one digit there too.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting two digits after the decimal point. {x} has one digit after the point, so the product has one too: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. {x} has one digit after the point, so the answer needs one: {r}.",
+      "added": "{w_added} comes from adding {x} and {b}. Here we multiply: {x} × {b} = {r}.",
+      "parts-multiplied-separately": "{w_parts_multiplied_separately} comes from multiplying the whole part and the tenths separately and writing them side by side. Whole part: {=floor(a/10)} × {b} = {=floor(a/10)*b}. Tenths: {=mod(a,10)} × {b} = {=mod(a,10)*b} tenths, which is more than one whole, so it moves over to the whole part. Correct: {r}."
+    }
+  },
+  "D4.multiply.02": {
+    "text": "Find the product {a} × {x}.",
+    "solution": [
+      "{x} is {b} hundredths.",
+      "Multiply as whole numbers: {a} × {b} = {=a*b} hundredths.",
+      "Hundredths have two digits after the decimal point, so {a} × {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {b} hundredths. You can take the decimal point away for a moment and put it back later.",
+      "Work out {a} × {b} as whole numbers, then cut off two digits on the right: {x} has two digits after the decimal point.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point. {x} has two digits after the point, so the product has two: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. {x} has two digits after the point, so the answer needs two.",
+      "added": "{w_added} comes from adding {a} and {x}. Here we multiply: {a} × {x} = {r}."
+    }
+  },
+  "D4.multiply.03": {
+    "text": "Find the product {a} × {p}.",
+    "solution": [
+      "{p} is one hundredth less than {n}.",
+      "With the price {n}, we would get {a} × {b} = {=a*b}.",
+      "But every price is one hundredth less, and there are {a} of them, so we take away {a|hundredth|hundredths|hundredths}: {=a*b} − {=a/100} = {r}."
+    ],
+    "hints": [
+      "{p} is {n} with one hundredth missing. A round number is easier to work with.",
+      "Work out {a} × {n}, then take away {a|hundredth|hundredths|hundredths}: each of the {a} prices is one hundredth short.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rounded-price": "{w_rounded_price} is what you get when {a} is multiplied by {n} instead of {p}. The price {p} is a hundredth less, so the product is a little less too: {r}.",
+      "cent-subtracted-once": "{w_cent_subtracted_once} comes from taking only one hundredth away from {=a*b}. One hundredth is missing from each of the {a} prices, so we take away {a|hundredth|hundredths|hundredths}: {r}.",
+      "added": "{w_added} comes from adding {a} and {p}. Here we multiply: {a} × {p} = {r}."
+    }
+  },
+  "D4.multiply.04": {
+    "text": "One item costs {x} euros. How many euros do {b|such item|such items|such items} cost?",
+    "solution": [
+      "{x} euros is {a|hundredth|hundredths|hundredths}.",
+      "Multiply by the number of items: {a} × {b} = {=a*b|hundredth|hundredths|hundredths}.",
+      "Write it with a decimal point: {x} × {b} = {r}, so {b|item|items|items} cost {r} euros."
+    ],
+    "hints": [
+      "The price of several equal items is the price of one, multiplied by how many there are.",
+      "The price {x} euros is {a} hundredths. Work out {a} × {b} and cut off two digits on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point. The price {x} has two digits after the point, so the answer has two: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The price {x} has two digits after the point, so the answer needs two.",
+      "added": "{w_added} comes from adding the price {x} and the number of items {b}. The price is multiplied by the number of items: {r}."
+    }
+  },
+  "D4.multiply.05": {
+    "text": "Find the product {x} × {a}.",
+    "solution": [
+      "Multiplying by {x} means taking half of the number.",
+      "Half means dividing by {=2}: {a} : {=2} = {r}.",
+      "So {x} × {a} = {r}."
+    ],
+    "hints": [
+      "Multiplying by {x} means taking half of the number.",
+      "Find half of {a}: divide it by {=2}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is what you get when the decimal point is forgotten. {x} has one digit after the point, so the answer has one too: {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting two digits after the decimal point. {x} has one digit after the point, so the answer has one: {r}.",
+      "added": "{w_added} comes from adding {x} and {a}. Multiplying by {x} means taking half of {a}: {r}."
+    }
+  },
+  "D4.multiply.06": {
+    "text": "Find the product {x} × {b}.",
+    "solution": [
+      "Multiply without looking at the decimal point: {a} × {b} = {=a*b}.",
+      "{x} has one digit after the point, so {=a*b} is in tenths.",
+      "So {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{x} is more than one whole, so the answer will be more than {b}.",
+      "Work out {a} × {b} without the decimal point, then put it back so that one digit is after it, as in {x}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. {x} has one digit after the point, so the answer needs one.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting two digits after the decimal point. {x} has one digit after the point, so the product has one too: {r}.",
+      "added": "{w_added} comes from adding {x} and {b}. Here we multiply: {x} × {b} = {r}.",
+      "parts-multiplied-separately": "{w_parts_multiplied_separately} comes from multiplying the whole part and the tenths separately and writing them side by side. Whole part: {=floor(a/10)} × {b} = {=floor(a/10)*b}. Tenths: {=mod(a,10)} × {b} = {=mod(a,10)*b} tenths, which is more than one whole, so it moves over to the whole part. Correct: {r}."
+    }
+  },
+  "D4.multiply.07": {
+    "text": "Find the product {x} × {b}.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}.",
+      "Multiply: {a} × {b} = {=a*b|hundredth|hundredths|hundredths}.",
+      "Write {=a*b|hundredth|hundredths|hundredths} with a decimal point: {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} hundredths. You can take the decimal point away for a moment and put it back later.",
+      "Work out {a} × {b} as whole numbers, then cut off two digits on the right: {x} has two digits after the decimal point.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point. {x} has two digits after the point, so the product has two: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. {x} has two digits after the point, so the answer needs two.",
+      "added": "{w_added} comes from adding {x} and {b}. Here we multiply: {x} × {b} = {r}."
+    }
+  },
+  "D4.multiply.08": {
+    "text": "Find the product {x} × {b}.",
+    "solution": [
+      "Take the point away: {x} is {=x*10|tenth|tenths|tenths}.",
+      "Multiply: {=x*10} × {b} = {=x*10*b|tenth|tenths|tenths}.",
+      "Write it with a decimal point: {x} × {b} = {r}."
+    ],
+    "hints": [
+      "You can write {x} as {=x*10} tenths, with no decimal point.",
+      "Work out {=x*10} × {b}, then put the decimal point back so that one digit is after it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting two digits after the decimal point. {x} has one digit after the point, so the product has one too: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {=x*10} × {b} is worked out as whole numbers and the decimal point is left out. {x} has one digit after the point, so the answer needs one.",
+      "parts-multiplied-separately": "{w_parts_multiplied_separately} comes from multiplying the whole part and the tenths separately and writing them side by side. After multiplying there are more than ten tenths, and they have to move over to the whole part: {r}."
+    }
+  },
+  "D4.multiply.09": {
+    "text": "A kilogram of apples costs {x} euros. How many euros do {b} kg cost?",
+    "solution": [
+      "One kg costs {x} euros and we buy {b} kg, so we multiply the price by {b}.",
+      "{x} euros is {a|hundredth|hundredths|hundredths}, and {a} × {b} = {=a*b|hundredth|hundredths|hundredths}.",
+      "Write it with a decimal point: {x} × {b} = {r}, so {b} kg cost {r} euros."
+    ],
+    "hints": [
+      "The cost of several kilograms is the price of one kilogram taken as many times as there are kilograms.",
+      "The price {x} euros is {a} hundredths. Work out {a} × {b} and cut off two digits on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "added": "{w_added} comes from adding {x} and {b}. The cost of {b} kg is found by multiplying: {x} × {b} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point. The price {x} has two digits after the point, so the answer has two: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The price {x} has two digits after the point, so the answer needs two."
+    }
+  },
+  "D4.multiply.10": {
+    "text": "Find the product {a} × {x}.",
+    "solution": [
+      "{x} is {b|tenth|tenths|tenths}.",
+      "Multiply: {a} × {b} = {=a*b|tenth|tenths|tenths}.",
+      "Write {=a*b|tenth|tenths|tenths} with a decimal point: {a} × {x} = {r}."
+    ],
+    "hints": [
+      "Multiplying by {x} means taking {b|tenth|tenths|tenths}, {a|time|times|times} over.",
+      "Work out {a} × {b}: that gives a number of tenths. There must be one digit after the decimal point.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting two digits after the decimal point. {x} has one digit after the point, so the product has one too: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. {x} has one digit after the point, so the answer needs one.",
+      "added": "{w_added} comes from adding {a} and {x}. Here we multiply: {a} × {x} = {r}."
+    }
+  },
+  "D4.multiply.11": {
+    "text": "Double the number {x}.",
+    "solution": [
+      "Doubling means multiplying by {=2}.",
+      "{x} is {a|hundredth|hundredths|hundredths}, and {a} × {=2} = {=a*2|hundredth|hundredths|hundredths}.",
+      "Write it with a decimal point: {x} × {=2} = {r}."
+    ],
+    "hints": [
+      "Doubling means multiplying by {=2}, or adding the number to itself.",
+      "{x} is {a} hundredths. Double {a}, then put the decimal point back so that two digits are after it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point. {x} has two digits after the point, so the answer has two: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when the decimal point is forgotten. {x} has two digits after the point, and the doubled number has two as well: {r}.",
+      "decimal-part-not-doubled": "{w_decimal_part_not_doubled} comes from doubling only the whole part of {x}. Both the whole part and the hundredths have to be doubled: {r}."
+    }
+  },
+  "D4.multiply.12": {
+    "text": "One ticket costs {x} euros. How many euros do {b|ticket|tickets|tickets} cost?",
+    "solution": [
+      "{x} euros is {a|hundredth|hundredths|hundredths}.",
+      "Multiply by the number of tickets: {a} × {b} = {=a*b|hundredth|hundredths|hundredths}.",
+      "Write it with a decimal point: {x} × {b} = {r}, so {b|ticket|tickets|tickets} cost {r} euros."
+    ],
+    "hints": [
+      "The price of several equal tickets is the price of one, multiplied by how many there are.",
+      "The price {x} euros is {a} hundredths. Work out {a} × {b} and cut off two digits on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is what you get when the decimal point is forgotten. The price {x} has two digits after the point, so the answer needs two. Correct: {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point. The price {x} has two digits after the point, so the answer has two: {r}.",
+      "added": "{w_added} comes from adding the price {x} and the number of tickets {b}. The price is multiplied by the number of tickets: {r}."
+    }
+  },
+  "D4.multiply.13": {
+    "text": "You know that {a} × {b} = {m}. Find {x} × {b}.",
+    "solution": [
+      "{x} comes from {a} by moving the decimal point {c|place|places|places} to the left: {a} : {=pow(10,c)} = {x}.",
+      "If one factor becomes {=pow(10,c)} times smaller, the product becomes {=pow(10,c)} times smaller too.",
+      "{m} : {=pow(10,c)} = {r}."
+    ],
+    "hints": [
+      "How many times smaller is {x} than {a}?",
+      "{a} became {x}: the decimal point moved {c|place|places|places}. What happens to the product {m}, if the other factor {b} stays the same?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is the known product {m}. The factor {x} is smaller than {a}, so the product is smaller too.",
+      "one-place-too-many": "{w_one_place_too_many} comes from moving the decimal point one place too far. The factor became {=pow(10,c)} times smaller, so the product becomes {=pow(10,c)} times smaller, no more.",
+      "one-place-too-few": "{w_one_place_too_few} comes from moving the decimal point fewer places than needed. The factor became {=pow(10,c)} times smaller, so the product does too."
+    }
+  },
+  "D4.multiply.14": {
+    "text": "Estimate the product {x} × {b}: round {x} to a whole number and multiply.",
+    "solution": [
+      "Round {x} to a whole number: if the part after the point is more than a half, take the next whole number, otherwise keep the whole part. So {x} ≈ {x1}.",
+      "{x1} × {b} = {r}.",
+      "So {x} × {b} is about {r}."
+    ],
+    "hints": [
+      "Look at what comes after the decimal point in {x}: is it more than a half or less?",
+      "Round {x} to {x1} and multiply {x1} by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cut-off": "{w_cut_off} comes from dropping the part after the decimal point of {x}. When that part is more than a half, we round up.",
+      "rounded-up": "{w_rounded_up} comes from rounding {x} up. We round up only when the part after the point is more than a half.",
+      "exact-product-rounded": "{w_exact_product_rounded} is the exact product rounded. The task asks to round {x} first and then multiply by {b}: {r}."
+    }
+  },
+  "D4.multiply.15": {
+    "text": "Compare {f} and {g}. Which sign goes between them?",
+    "solution": [
+      "The first product: {f} = {u}.",
+      "The second product: {g} = {w}.",
+      "Compare {u} and {w}: the sign between {f} and {g} is {r}."
+    ],
+    "hints": [
+      "Both products have different factors, so compare the whole values, not single factors.",
+      "Work out {f} and {g} one by one, cutting off two digits on the right in each, then compare the results.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "prices-only": "The sign {w_prices_only} comes from comparing only the second factors. But the first factors are different too, and they change the products.",
+      "counts-only": "The sign {w_counts_only} comes from comparing only the first factors. But the second factors are different too, and they change the products."
+    }
+  },
+  "D4.multiply.16": {
+    "text": "Someone bought {a|notebook|notebooks|notebooks} at {x} euros each and {c|pen|pens|pens} at {y} euros each. How many euros does the whole purchase cost?",
+    "solution": [
+      "The notebooks cost {a} × {x} = {s1} euros.",
+      "The pens cost {c} × {y} = {s2} euros.",
+      "The whole purchase: {s1} + {s2} = {r} euros."
+    ],
+    "hints": [
+      "First find what the {a|notebook|notebooks|notebooks} cost, then what the {c|pen|pens|pens} cost.",
+      "Work out {a} × {x} and {c} × {y} separately, then add the two costs.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "second-kind-forgotten": "{w_second_kind_forgotten} is the cost of the notebooks alone. The pens were bought too, so their cost {s2} has to be added.",
+      "all-at-the-first-price": "{w_all_at_the_first_price} comes from pricing all the items at the notebook price {x}. The pens cost {y}, so they are worked out separately.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from cutting off a different number of digits in the cost. The prices have two digits after the decimal point, and so does the answer: {r}."
+    }
+  },
+  "D4.multiply.17": {
+    "text": "If a number is multiplied by {a}, the result is {y} more than if it is multiplied by {b}. Find the number.",
+    "solution": [
+      "The multipliers differ by {a} − {b} = {c}. So the number, taken {c|time|times|times}, is {y}.",
+      "To find the number, divide {y} by {c}.",
+      "{y} : {c} = {r}."
+    ],
+    "hints": [
+      "In the first case the number is taken {a|time|times|times}, in the second {b|time|times|times}. How many more times is it taken in the first?",
+      "Those extra times together make {y}. Divide {y} by how many they are.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-difference-itself": "{w_the_difference_itself} is the difference of the products, not the number itself. It is the number taken {c|time|times|times}, so the number is {c} times smaller.",
+      "multiplied-by-the-gap": "{w_multiplied_by_the_gap} comes from multiplying by {c}. The difference of the products has to be divided by {c}: the number is taken {c|time|times|times} and that makes {y}."
+    }
+  },
+  "D4.multiply-1S.01": {
+    "text": "Find the product {x} × {y}.",
+    "solution": [
+      "Multiply without decimal points: {a} × {b} = {=a*b}.",
+      "Tenths times tenths give hundredths, so this is {=a*b|hundredth|hundredths|hundredths}.",
+      "So {x} × {y} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} tenths and {y} is {b} tenths. First multiply the numbers without decimal points.",
+      "Work out {a} × {b}. {x} has one digit after the point and {y} has one too: how many digits will the answer have?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. Each factor has one digit after the point, so the product has two: {r}.",
+      "whole-product": "{w_whole_product} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The product has as many digits after the point as both factors together, that is two.",
+      "added": "{w_added} comes from adding {x} and {y}. Here we multiply: {a} × {b} = {=a*b|hundredth|hundredths|hundredths}, that is {r}."
+    }
+  },
+  "D4.multiply-1S.02": {
+    "text": "Find the product {x} × {y}.",
+    "solution": [
+      "Take the decimal points away: {x} is {a|tenth|tenths|tenths}, {y} is {b|tenth|tenths|tenths}, and {a} × {b} = {=a*b}.",
+      "Tenths times tenths give hundredths, so this is {=a*b|hundredth|hundredths|hundredths}.",
+      "Write it with a decimal point: {x} × {y} = {r}."
+    ],
+    "hints": [
+      "Write {x} and {y} without decimal points: they are {a|tenth|tenths|tenths} and {b|tenth|tenths|tenths}.",
+      "Work out {a} × {b}. Add up the digits after the point in {x} and {y}, and cut off that many digits on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. Each factor has one digit after the point, so the product has two: {r}.",
+      "added": "{w_added} comes from adding {x} and {y}. Here we multiply: {x} × {y} = {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The decimal point has to come back: the product has two digits after it."
+    }
+  },
+  "D4.multiply-1S.03": {
+    "text": "Find the product {x} × {y}.",
+    "solution": [
+      "Multiply without decimal points: {a} × {b} = {=a*b}.",
+      "Hundredths times tenths give thousandths, so this is {=a*b|thousandth|thousandths|thousandths}.",
+      "So {x} × {y} = {r}."
+    ],
+    "hints": [
+      "{x} has two digits after the decimal point and {y} has one. First multiply {a} × {b} without decimal points.",
+      "Add up the digits after the point in {x} and {y}: that many digits must be on the right in the answer. If there are too few, put zeros on the left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "two-places": "{w_two_places} has two digits after the decimal point. {x} has two and {y} has one, three together: {r}.",
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. The answer needs as many digits as both factors together: two and one, that is three: {r}.",
+      "added": "{w_added} comes from adding {x} and {y}. Here we multiply: {x} × {y} = {r}."
+    }
+  },
+  "D4.multiply-1S.04": {
+    "text": "The sides of a rectangle are {x} m and {y} m. Find its area.",
+    "solution": [
+      "The area of a rectangle is length times width.",
+      "Without decimal points {a} × {b} = {=a*b}, and tenths times tenths give hundredths: {=a*b|hundredth|hundredths|hundredths}.",
+      "{x} × {y} = {r}, so the area is {r|square metre|square metres|square metres}."
+    ],
+    "hints": [
+      "The area of a rectangle is its length times its width.",
+      "Work out {a} × {b} without decimal points, then add up the digits after the point in {x} and {y} and cut off that many digits on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. Each side has one digit after the point, so the area has two: {x} × {y} = {r}.",
+      "perimeter": "{w_perimeter} is the perimeter, the sum of all the sides. The area is length times width: {x} × {y} = {r}.",
+      "sides-added": "{w_sides_added} comes from adding the length {x} and the width {y}. The area is found by multiplying: {r}."
+    }
+  },
+  "D4.multiply-1S.05": {
+    "text": "Find the product {x} × {x}.",
+    "solution": [
+      "Multiply the number by itself: {a} × {a} = {=a*a} without decimal points.",
+      "Tenths times tenths give hundredths, so this is {=a*a|hundredth|hundredths|hundredths}.",
+      "So {x} × {x} = {r}."
+    ],
+    "hints": [
+      "The number {x} is multiplied by itself. Without the decimal point it is {a|tenth|tenths|tenths}.",
+      "Work out {a} × {a}. Add up the digits after the point in both factors: that many digits must be on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. The number is multiplied by itself, so there are two digits: {x} × {x} = {r}.",
+      "doubled": "{w_doubled} comes from doubling {x}. Multiplying a number by itself is not the same: {a} × {a} = {=a*a|hundredth|hundredths|hundredths}, that is {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {a} is worked out as whole numbers and the decimal point is left out. The answer has two digits after the decimal point."
+    }
+  },
+  "D4.multiply-1S.06": {
+    "text": "Find the product {x} × {x}.",
+    "solution": [
+      "{x} is {a|tenth|tenths|tenths}, and we take the number twice: {a} × {a} = {=a*a}.",
+      "Tenths times tenths give hundredths, so this is {=a*a|hundredth|hundredths|hundredths}.",
+      "Write it with a decimal point: {x} × {x} = {r}."
+    ],
+    "hints": [
+      "The number {x} is multiplied by itself. It is more than one, so the answer is more than {x}.",
+      "Work out {a} × {a} without decimal points. Add up the digits after the point in both factors: that many digits must be on the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. The number is multiplied by itself, so there are two digits: {x} × {x} = {r}.",
+      "doubled": "{w_doubled} comes from doubling {x}. Multiplying a number by itself is not the same: {a} × {a} = {=a*a|hundredth|hundredths|hundredths}, that is {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {a} is worked out as whole numbers and the decimal point is left out. The answer has two digits after the decimal point."
+    }
+  },
+  "D4.multiply-1S.07": {
+    "text": "A kilogram costs {y} euros. How many euros do {x} kg cost?",
+    "solution": [
+      "The cost is the price of one kilogram times the number of kilograms: {y} × {x}.",
+      "Without decimal points {a} × {b} = {=a*b}, and tenths times tenths give hundredths: {=a*b|hundredth|hundredths|hundredths}.",
+      "So {x} × {y} = {r}: {x} kg cost {r} euros."
+    ],
+    "hints": [
+      "The cost is the price of one kilogram times the number of kilograms.",
+      "Work out {a} × {b} without decimal points and cut off as many digits on the right as {x} and {y} have after the point together.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "added": "{w_added} comes from adding {x} and {y}. The cost is found by multiplying: {x} × {y} = {r}.",
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. Each factor has one digit after the point, so the cost has two: {x} × {y} = {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The answer has two digits after the point."
+    }
+  },
+  "D4.multiply-1S.08": {
+    "text": "Find {x} of {y}.",
+    "solution": [
+      "Finding a part of a number means multiplying: {x} × {y}.",
+      "Without decimal points {a} × {b} = {=a*b}, and tenths times tenths give hundredths: {=a*b|hundredth|hundredths|hundredths}.",
+      "So {x} × {y} = {r}, that is, {x} of {y} is {r}."
+    ],
+    "hints": [
+      "A part of a number is found by multiplying: {x} of {y} is {x} × {y}.",
+      "Work out {a} × {b} without decimal points and cut off as many digits on the right as {x} and {y} have after the point together.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. Each factor has one digit after the point, so the answer has two: {x} × {y} = {r}.",
+      "added": "{w_added} comes from adding {x} and {y}. Finding a part of a number means multiplying: {x} × {y} = {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The answer has two digits after the point."
+    }
+  },
+  "D4.multiply-1S.09": {
+    "text": "Find the product {x} × {a}.",
+    "solution": [
+      "{x} is {=5|hundredth|hundredths|hundredths}.",
+      "Multiply: {=5} × {a} = {=5*a|hundredth|hundredths|hundredths}.",
+      "Write {=5*a|hundredth|hundredths|hundredths} with a decimal point: {x} × {a} = {r}."
+    ],
+    "hints": [
+      "{x} is {=5|hundredth|hundredths|hundredths}: you can take the decimal point and the zero away for a moment.",
+      "Work out {=5} × {a}, then put the decimal point back so that two digits are on the right: the zero in {x} matters.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. The zero in {x} was lost, and there must be two digits: {r}.",
+      "added": "{w_added} comes from adding {x} and {a}. Here we multiply: {x} × {a} = {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when the decimal point is forgotten. {x} has two digits after the point, so the answer has two: {r}."
+    }
+  },
+  "D4.multiply-1S.10": {
+    "text": "Find the product {x} × {b}.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}.",
+      "Multiply: {a} × {b} = {=a*b|hundredth|hundredths|hundredths}.",
+      "One hundred hundredths make a whole, so {=a*b|hundredth|hundredths|hundredths} is {=a*b/100}.",
+      "So {x} × {b} = {r}."
+    ],
+    "hints": [
+      "{b} is {=b/10|ten|tens|tens}. You can multiply by {=b/10} and then by ten.",
+      "Work out {a} × {=b/10} in hundredths, then move the decimal point one place to the right.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "zero-dropped": "{w_zero_dropped} comes from using {=b/10} instead of {b}: the zero of the round number was lost. Correct: {x} × {b} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point. {x} has two digits after the point, and the zero in {b} does not remove any: {r}.",
+      "added": "{w_added} comes from adding {x} and {b}. Here we multiply: {x} × {b} = {r}."
+    }
+  },
+  "D4.multiply-1S.11": {
+    "text": "Find the product {x} × {y}.",
+    "solution": [
+      "{x} is {a|tenth|tenths|tenths}, and {y} is one tenth.",
+      "A tenth of {a|tenth|tenths|tenths} is {a|hundredth|hundredths|hundredths}.",
+      "So {x} × {y} = {r}."
+    ],
+    "hints": [
+      "Multiplying by {y} means taking a tenth of the number.",
+      "Find a tenth of {x}: the decimal point moves one place to the left, and a zero is needed in front.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. Multiplying by {y} adds a digit too, so the answer has two: {r}.",
+      "times-ten": "{w_times_ten} comes from multiplying {x} by ten. Multiplying by {y} means taking a tenth of the number, and the number gets smaller: {r}.",
+      "added": "{w_added} comes from adding {y} to {x}. Here we multiply: {x} × {y} = {r}."
+    }
+  },
+  "D4.multiply-1S.12": {
+    "text": "Find the product {x} × {y}.",
+    "solution": [
+      "Multiply without decimal points: {a} × {b} = {=a*b}.",
+      "Tenths times tenths give hundredths: {=a*b|hundredth|hundredths|hundredths} is the same as {=a*b/10|tenth|tenths|tenths}.",
+      "So {x} × {y} = {r}."
+    ],
+    "hints": [
+      "Write {x} and {y} without decimal points: they are {a} and {b} tenths. Multiply those numbers.",
+      "The product {a} × {b} ends in a zero. Cut off two digits on the right, then drop the unneeded zero at the end of the answer.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-place": "{w_one_place} comes from putting one digit after the decimal point. Each factor has one digit after the point, so the product has two: {a} × {b} = {=a*b|hundredth|hundredths|hundredths}, that is {r}.",
+      "added": "{w_added} comes from adding {x} and {y}. Here we multiply: {x} × {y} = {r}.",
+      "whole-product": "{w_whole_product} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The answer has two digits after the point."
+    }
+  },
+  "D4.multiply-1S.13": {
+    "text": "You know that {a} × {b} = {m}. Find {x} × {y}.",
+    "solution": [
+      "{x} is {=pow(10,c)} times smaller than {a}, and {y} is {=pow(10,d)} times smaller than {b}.",
+      "So the product becomes {=pow(10,c)} × {=pow(10,d)} = {=pow(10,c+d)} times smaller.",
+      "{m} : {=pow(10,c+d)} = {r}."
+    ],
+    "hints": [
+      "How many times smaller is {x} than {a}, and how many times smaller is {y} than {b}?",
+      "{x} has {c|digit|digits|digits} after the point, {y} has {d|digit|digits|digits}, {=c+d|digit|digits|digits} in all. Move the decimal point in the product {m} that many places.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is the product you already know, {m}. The factors {x} and {y} are smaller than {a} and {b}, so the product is smaller too.",
+      "one-factor-places-only": "{w_one_factor_places_only} comes from moving the decimal point by the digits of one factor only. The product has as many digits after the point as both factors together: {=c+d|digit|digits|digits}.",
+      "one-place-too-few": "{w_one_place_too_few} comes from moving the decimal point fewer places than needed. The answer must have {=c+d|digit|digits|digits} after the point, as many as both factors together.",
+      "one-place-too-many": "{w_one_place_too_many} comes from moving the decimal point one place too far. The answer must have {=c+d|digit|digits|digits} after the point, as many as both factors together. Correct: {r}."
+    }
+  },
+  "D4.multiply-1S.14": {
+    "text": "Which of the products are less than {a}? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Answer with the numbers of the correct options, separated by commas.",
+    "solution": [
+      "A number {a} multiplied by another number gives less than {a} if the other factor is less than {=1}.",
+      "The factors less than {=1} are: {less}.",
+      "So the options are {r}."
+    ],
+    "hints": [
+      "What happens to the number {a} if you multiply it by a number less than one?",
+      "Compare the second factor of each option with one: {f1}; {f2}; {f3}; {f4}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-larger-multipliers": "The options {w_the_larger_multipliers} are the products that are bigger than {a}. Multiplying by a number bigger than {=1} makes the result grow, but the question was about smaller ones.",
+      "only-the-smallest": "Only option {w_only_the_smallest} was chosen, the one with the smallest multiplier. Every product whose second factor is less than {=1} is needed."
+    }
+  },
+  "D4.multiply-1S.15": {
+    "text": "The number {x} is multiplied by itself: {x} × {x} × … × {x}, with {b|factor|factors|factors} in all. How many zeros stand between the decimal point and the first digit of the result that is not zero?",
+    "solution": [
+      "Multiply without decimal points: {a} taken {b|time|times|times} gives {=pow(a,b)}.",
+      "Each factor has one digit after the decimal point, so the result has {b|digit|digits|digits} after the point.",
+      "The number {=pow(a,b)} takes up {m|place|places|places}, so the zeros in front of it are {b} − {m} = {r}."
+    ],
+    "hints": [
+      "Each of the {b|factor|factors|factors} has one digit after the decimal point. How many digits are after the point in the result altogether?",
+      "Without the decimal point the result is {=pow(a,b)}, which has {m|digit|digits|digits}. How many of the places after the point are left for zeros?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "places-counted": "{w_places_counted} is the number of digits after the decimal point, not the number of zeros. Some of those places are taken by the digits that are not zero: {=pow(a,b)}.",
+      "one-less-than-places": "{w_one_less_than_places} would fit only if the number without a decimal point had one digit. Here it has {m|digit|digits|digits}, so the zeros in front of it are {b} − {m} = {r}."
+    }
+  },
+  "D4.multiply-1S.16": {
+    "text": "Find the product {x} × {y}.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}, {y} is {b|tenth|tenths|tenths}.",
+      "Multiply without decimal points: {a} × {b} = {=a*b}. Hundredths times tenths give thousandths, so there are three digits after the decimal point.",
+      "If {=a*b} has fewer than three digits, we put zeros in front: {x} × {y} = {r}."
+    ],
+    "hints": [
+      "{x} has two digits after the decimal point and {y} has one. How many digits will there be after the point in the answer?",
+      "Work out {a} × {b} = {=a*b}. Write it so that it has as many digits after the point as you counted; if it has too few, put zeros on the left.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "one-zero-lost": "{w_one_zero_lost} comes from writing one zero fewer after the decimal point. Hundredths and tenths together have three digits after the point.",
+      "comma-lost": "{w_comma_lost} is what you get when {a} × {b} is worked out as whole numbers and the decimal point is left out. The answer has three digits after the decimal point.",
+      "added": "{w_added} comes from adding. Here we multiply: {x} × {y} = {r}."
+    }
+  },
+  "D4.multiply-1S.17": {
+    "text": "Find the value of the product {u} × {m} × {v}.",
+    "solution": [
+      "Two of the factors have a round product: {u} × {v} = {pr}.",
+      "Multiply those two first: {u} × {v} = {pr}, and then multiply the result by {m}.",
+      "{pr} × {m} = {r}."
+    ],
+    "hints": [
+      "Among the numbers {u}, {m} and {v}, find two that together give a round number.",
+      "Multiply that pair first, and multiply by the remaining number afterwards.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "last-factor-forgotten": "{w_last_factor_forgotten} comes from leaving out the last factor {v}. All three numbers have to be multiplied.",
+      "comma-lost": "{w_comma_lost} is what you get when the decimal point is left out. {u} has digits after the point and the answer has to show them: first {u} × {v} = {pr}."
+    }
+  },
+  "D5.divide.01": {
+    "text": "Find the quotient {n} : {x}.",
+    "solution": [
+      "Multiply the dividend and the divisor by {=10}, so that the divisor becomes a whole number: {n} → {=n*10}, {x} → {=x*10}.",
+      "The quotient does not change.",
+      "Now {=n*10} : {=x*10} = {r}, so {n} : {x} = {r}."
+    ],
+    "hints": [
+      "The divisor {x} is not a whole number. What can you do to make it whole?",
+      "Multiply both numbers by {=10}: you get {=n*10} : {=x*10}. Work out that quotient.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-ignored": "{w_comma_ignored} comes from dividing {n} by {a} as if {x} had no decimal point. Move the point in both numbers: {=n*10} : {a} = {r}.",
+      "multiplied": "{w_multiplied} comes from multiplying {n} by {x}. Here we divide: {n} : {x} = {r}.",
+      "dividend-only-multiplied": "{w_dividend_only_multiplied} comes from multiplying only the dividend by {=10}. Both numbers have to be multiplied, otherwise the quotient becomes ten times too big: {=n*10} : {=x*10} = {r}."
+    }
+  },
+  "D5.divide.02": {
+    "text": "Find the quotient {x} : {a}.",
+    "solution": [
+      "{x} is {=x*10|tenth|tenths|tenths}.",
+      "Divide the tenths: {=x*10} : {a} = {b}, that is {b|tenth|tenths|tenths}.",
+      "{b|tenth|tenths|tenths} is {r}, so {x} : {a} = {r}."
+    ],
+    "hints": [
+      "{x} is {=x*10|tenth|tenths|tenths}. Divide those tenths by {a}.",
+      "Work out {=x*10} : {a}: the result is a number of tenths, so one digit must stay after the decimal point.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-moved": "{w_comma_moved} comes from putting two digits after the decimal point in the quotient. {x} has one digit after the point, so the quotient has one: {x} : {a} = {r}.",
+      "whole-answer": "{w_whole_answer} is what you get when the decimal point is left out: {=x*10} : {a} = {b}. {x} has one digit after the point, so the quotient has one: {r}.",
+      "multiplied": "{w_multiplied} comes from multiplying {x} by {a}. Here we divide: {x} : {a} = {r}."
+    }
+  },
+  "D5.divide.03": {
+    "text": "Find the quotient {a} : {x}.",
+    "solution": [
+      "Dividing by {x} means finding how many halves fit into {a}.",
+      "Every whole has two halves, so we take {a} × {=2} = {r}.",
+      "So {a} : {x} = {r}."
+    ],
+    "hints": [
+      "How many times does {x} fit into one whole? And how many times into {a}?",
+      "Each of the {a} wholes holds the same number of halves: multiply {a} by that number.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "halved": "{w_halved} comes from cutting {a} in half. Every whole holds two halves, so dividing by {x} means multiplying by two: {a} × {=2} = {r}.",
+      "times-five": "{w_times_five} comes from multiplying {a} by five. But {x} is a half, not five: a whole holds two of them, so {a} × {=2} = {r}.",
+      "comma-ignored": "{w_comma_ignored} comes from dividing by five, as if {x} had no decimal point. {x} is a half, and a whole holds two of them: {a} × {=2} = {r}."
+    }
+  },
+  "D5.divide.04": {
+    "text": "Find the quotient {a} : {x}.",
+    "solution": [
+      "Dividing by {x} means finding how many quarters fit into {a}.",
+      "Every whole has four quarters, so we take {a} × {=4} = {r}.",
+      "So {a} : {x} = {r}."
+    ],
+    "hints": [
+      "How many times does {x} fit into one whole?",
+      "Each of the {a} wholes holds the same number of quarters: multiply {a} by that number.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "quartered": "{w_quartered} comes from dividing {a} into four parts. Every whole holds four quarters, so dividing by {x} means multiplying by four: {a} × {=4} = {r}.",
+      "doubled": "{w_doubled} comes from the rule for a half: {a} was multiplied by two. A whole holds four quarters, so {a} × {=4} = {r}."
+    }
+  },
+  "D5.divide.05": {
+    "text": "Find the quotient {x} : {a}.",
+    "solution": [
+      "Divide without looking at the decimal point: {=x*100} : {a} = {b}.",
+      "{x} has two digits after the decimal point, so the quotient needs two as well.",
+      "So {x} : {a} = {r}."
+    ],
+    "hints": [
+      "{x} is {=x*100|hundredth|hundredths|hundredths}. Divide those hundredths by {a}.",
+      "Work out {=x*100} : {a}: the result is a number of hundredths, so two digits must stay after the decimal point.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "whole-answer": "{w_whole_answer} is what you get when the decimal point is left out: {=x*100} : {a} = {b}. {x} has two digits after the point, so the quotient has two: {r}.",
+      "comma-moved": "{w_comma_moved} comes from putting three digits after the decimal point in the quotient. {x} has two digits after the point, so the quotient has two: {x} : {a} = {r}.",
+      "multiplied": "{w_multiplied} comes from multiplying {x} by {a}. Here we divide: {x} : {a} = {r}."
+    }
+  },
+  "D5.divide.06": {
+    "text": "How many glasses of {x} litres can be filled from {a} litres?",
+    "solution": [
+      "To find how many times {x} litres fits into {a} litres, we divide {a} : {x}.",
+      "Multiply both numbers by {=10} so that the divisor becomes whole: {=a*10} : {b} = {r}.",
+      "So {r|glass|glasses|glasses} can be filled."
+    ],
+    "hints": [
+      "How many glasses of {x} litres can be filled from one litre?",
+      "The same number of glasses can be filled from each of the {a} litres: multiply that number by {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "multiplied": "{w_multiplied} comes from multiplying {a} by {b}. How many glasses fit is found by dividing: {a} : {x} = {r}.",
+      "comma-ignored": "{w_comma_ignored} comes from dividing {a} by {b} as if {x} had no decimal point. Litres have to be turned into tenths: {a|litre|litres|litres} is {=a*10|tenth|tenths|tenths}.",
+      "comma-moved-twice": "{w_comma_moved_twice} is ten times too big: the decimal point was moved two places, but {x} has one digit after the point. Correct: {=a*10} : {b} = {r}."
+    }
+  },
+  "D5.divide.07": {
+    "text": "Find the quotient 1 : {x}.",
+    "solution": [
+      "One is {=100|hundredth|hundredths|hundredths}, and {x} is {=x*100|hundredth|hundredths|hundredths}.",
+      "We find how many times {=x*100|hundredth|hundredths|hundredths} fits into {=100|hundredth|hundredths|hundredths}: {=100} : {=x*100} = {r}.",
+      "So {=1} : {x} = {r}."
+    ],
+    "hints": [
+      "How many times does {x} fit into one?",
+      "One is {=100} hundredths, and {x} is {=x*100|hundredth|hundredths|hundredths}. How many times does the smaller number fit into the bigger one?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-moved": "{w_comma_moved} comes from moving the decimal point one place. {x} has two digits after the point, so it has to move two: {=100} : {=x*100} = {r}.",
+      "comma-ignored": "{w_comma_ignored} comes from dividing one by {nn}, as if {x} had no decimal point. One is {=100|hundredth|hundredths|hundredths}, and {x} is {=x*100|hundredth|hundredths|hundredths}: {r}.",
+      "multiplied": "{w_multiplied} comes from multiplying: one times {x} gives {x}. Here we divide: how many times {x} fits into one is {r}."
+    }
+  },
+  "D5.divide.08": {
+    "text": "Find the quotient {a} : {b} and round the result to hundredths.",
+    "solution": [
+      "Divide {a} by {b} by long division to the thousandths and look at the third digit after the decimal point.",
+      "If the third digit is {=5} or more, we increase the hundredths by one; otherwise we leave them as they are.",
+      "Check: {r} × {b} = {=r*b}, which is almost {a}.",
+      "So {a} : {b} ≈ {r}."
+    ],
+    "hints": [
+      "Divide {a} by {b} with some digits to spare: down to the thousandths.",
+      "Look at the third digit after the decimal point: if it is {=5} or more, make the hundredths one bigger.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cut-off": "{w_cut_off} comes from simply dropping the extra digits. The digit after the hundredths is five or more, so the hundredths go up by one: {r}.",
+      "tenths": "{w_tenths} is rounded to tenths. The task asks for hundredths, so there are two digits after the decimal point: {r}.",
+      "swapped": "{w_swapped} comes from dividing {b} by {a}. The dividend is {a} and the divisor is {b}: {a} : {b}, rounded to hundredths, is {r}."
+    }
+  },
+  "D5.divide.09": {
+    "text": "Some equal items were bought, {b} in all, and {x} euros were paid. How many euros does one item cost?",
+    "solution": [
+      "We find the price of one item by dividing: {x} euros divided by {b}.",
+      "{x} euros is {a|hundredth|hundredths|hundredths}, and {a} : {b} = {=a/b|hundredth|hundredths|hundredths}.",
+      "{=a/b|hundredth|hundredths|hundredths} is {r}, so {x} : {b} = {r}: one item costs {r} euros."
+    ],
+    "hints": [
+      "The price of one item is the total divided by how many there are.",
+      "{x} euros is {a} hundredths. Divide {a} by {b} and put the decimal point in: the price has two digits after it.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "multiplied": "{w_multiplied} comes from multiplying {x} by {b}. The price of one item is found by dividing: {x} : {b} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from putting one digit after the decimal point in the quotient. {x} has two digits after the point, so the price has two: {r}.",
+      "comma-lost": "{w_comma_lost} is what you get when the decimal point is left out: {a} : {b} = {=a/b}. {x} has two digits after the decimal point, so the price of an item has two: {r}."
+    }
+  },
+  "D5.divide.10": {
+    "text": "There are {n|litre|litres|litres} of juice. How many portions of {x} litres can be made?",
+    "solution": [
+      "Convert to hundredths: {n|litre|litres|litres} is {=n*100|hundredth|hundredths|hundredths}, and a portion of {x} litres is {=x*100|hundredth|hundredths|hundredths}.",
+      "Find how many times a portion fits into the whole amount: {=n*100} : {=x*100} = {r}.",
+      "So we get {r|portion|portions|portions}."
+    ],
+    "hints": [
+      "A portion of {x} litres is three quarters of a litre. How many quarters are there in {n|litre|litres|litres}?",
+      "A litre holds four quarters. Find the number of quarters in {n} litres and split them into groups of three.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "divided-by-three": "{w_divided_by_three} comes from dividing {n} by {=3}: the portion was taken to be three litres. A portion of {x} litres is really three quarters, and a litre holds four quarters: {r}.",
+      "quarters-not-grouped": "{w_quarters_not_grouped} is the number of quarters in {n} litres. A portion is three quarters, so the quarters have to be counted in threes: {r}.",
+      "multiplied": "{w_multiplied} comes from multiplying {n} by {x}. The number of portions is found by dividing: {n} : {x} = {r}."
+    }
+  },
+  "D5.divide.11": {
+    "text": "Find the quotient {x} : {y}.",
+    "solution": [
+      "Move the decimal point one place to the right in both numbers, so that the divisor becomes whole.",
+      "{x} becomes {=x*10}, and {y} becomes {=y*10}.",
+      "Now {=x*10} : {=y*10} = {r}, so {x} : {y} = {r}."
+    ],
+    "hints": [
+      "The divisor {y} is not a whole number. Move the decimal point so that it becomes whole.",
+      "Move the decimal point one place to the right in both numbers: you get {=x*10} : {=y*10}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-ignored": "{w_comma_ignored} comes from dividing {x} by {a} as if {y} had no decimal point. Move the point one place in both numbers: {=x*10} : {=y*10} = {r}.",
+      "multiplied": "{w_multiplied} comes from multiplying {x} by {y}. Here we divide: {x} : {y} = {r}.",
+      "dividend-only-moved": "{w_dividend_only_moved} comes from moving the decimal point in the dividend only. It has to be moved in both numbers, otherwise the quotient is ten times too big: {=x*10} : {=y*10} = {r}."
+    }
+  },
+  "D5.divide.12": {
+    "text": "You know that {a} : {b} = {c}. Find {x} : {b}.",
+    "solution": [
+      "{x} comes from {a} by moving the decimal point {d|place|places|places} to the left: {a} : {=pow(10,d)} = {x}.",
+      "The dividend became {=pow(10,d)} times smaller, so the quotient becomes {=pow(10,d)} times smaller too.",
+      "{c} : {=pow(10,d)} = {r}."
+    ],
+    "hints": [
+      "How many times smaller is {x} than {a}?",
+      "{a} became {x}: the decimal point moved {d|place|places|places}. What happens to the quotient {c}, if the divisor {b} stays the same?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-lost": "{w_comma_lost} is the quotient you already know, {c}. The dividend {x} is smaller than {a}, so the quotient is smaller too.",
+      "one-place-too-many": "{w_one_place_too_many} comes from moving the decimal point one place too far. The dividend became {=pow(10,d)} times smaller, so the quotient becomes {=pow(10,d)} times smaller, no more.",
+      "one-place-too-few": "{w_one_place_too_few} comes from moving the decimal point fewer places than needed. The dividend became {=pow(10,d)} times smaller, so the quotient does too."
+    }
+  },
+  "D5.divide.13": {
+    "text": "You know that {a} : {b} = {c}. Find {a} : {y}.",
+    "solution": [
+      "{y} is {=pow(10,d)} times smaller than {b}: {b} : {=pow(10,d)} = {y}.",
+      "The divisor became {=pow(10,d)} times smaller, so the quotient becomes {=pow(10,d)} times bigger.",
+      "{c} × {=pow(10,d)} = {r}."
+    ],
+    "hints": [
+      "How many times smaller is {y} than {b}?",
+      "{b} became {y}: the divisor got smaller. Will the quotient {c} get bigger or smaller, and by how many times?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "comma-not-moved": "{w_comma_not_moved} is the quotient you already know, {c}. The divisor {y} is smaller than {b}, so the quotient has to get bigger.",
+      "moved-the-wrong-way": "{w_moved_the_wrong_way} comes from moving the decimal point to the left, but with a smaller divisor the quotient grows: {c} × {=pow(10,d)} = {r}.",
+      "one-place-too-few": "{w_one_place_too_few} comes from moving the decimal point fewer places than needed. The divisor became {=pow(10,d)} times smaller, so the quotient becomes {=pow(10,d)} times bigger."
+    }
+  },
+  "D5.divide.14": {
+    "text": "Which quotient is the largest? 1) {f1}; 2) {f2}; 3) {f3}; 4) {f4}. Answer with the number of the option.",
+    "solution": [
+      "All the quotients have the same dividend, {a}. The smaller the divisor, the bigger the quotient.",
+      "The smallest divisor among {list} is {mn}, so the largest quotient is option {r}.",
+      "Check: {a} : {mn} = {big}."
+    ],
+    "hints": [
+      "All the quotients have the same dividend, {a}. What happens to the quotient when the divisor gets smaller?",
+      "Compare the divisors {list} and find the smallest one.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "the-largest-divisor": "Option {w_the_largest_divisor} was chosen because of the largest divisor. But the bigger the divisor, the smaller the quotient: the largest quotient comes from the smallest divisor.",
+      "the-divisor-nearest-to-one": "Option {w_the_divisor_nearest_to_one} was chosen because its divisor is nearest to one. Dividing by a number less than one makes the number bigger, and the smaller that number is, the bigger the result."
+    }
+  },
+  "D5.divide.15": {
+    "text": "A ribbon {x} m long was cut into pieces of {y} m. How many whole pieces were there?",
+    "solution": [
+      "Divide the length of the ribbon by the length of a piece: {x} : {y}. Multiply both numbers by {=10}: {X} : {Y}.",
+      "{r} × {Y} = {=r*Y}, and one more piece would need {=r*Y+Y}, which is more than {X}.",
+      "What is left of the ribbon is less than one piece, so no whole piece can be cut from it. So there are {r} whole pieces."
+    ],
+    "hints": [
+      "How many times does {y} fit into {x}? Move the decimal point in both numbers.",
+      "Divide {X} by {Y} with a remainder. What is left of the ribbon does not count as a piece.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rounded-up": "{w_rounded_up} comes from rounding up. What is left of the ribbon is less than one piece, so no whole piece can be cut from it.",
+      "remainder-counted": "{w_remainder_counted} is the remainder in tenths of a metre, not the number of pieces. The number of pieces is {r}."
+    }
+  },
+  "D5.divide.16": {
+    "text": "{x} kg of sweets must be packed in boxes, and each box holds {y} kg. How many boxes are needed to pack all the sweets?",
+    "solution": [
+      "Divide the weight of the sweets by the weight in one box: {x} : {y}. Multiply both numbers by {=10}: {X} : {Y}.",
+      "{n} × {Y} = {=n*Y}, which is less than {X}, so {n|box|boxes|boxes} are not enough: some sweets are left.",
+      "One more box is needed, so {r} in all."
+    ],
+    "hints": [
+      "How many boxes can be filled completely?",
+      "Divide {X} by {Y} with a remainder. The sweets that are left over have to go somewhere too.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "rounded-down": "{w_rounded_down} comes from dropping the remainder. The leftover sweets need one more box, so the number of boxes is {r}.",
+      "remainder-counted": "{w_remainder_counted} is the remainder in tenths of a kilogram, not the number of boxes. The number of boxes needed is {r}."
+    }
+  },
+  "D5.divide.17": {
+    "text": "Find the smallest natural number n for which 1 : n is less than {t}.",
+    "solution": [
+      "{t} is {a|hundredth|hundredths|hundredths}, and one is {=100|hundredth|hundredths|hundredths}. The fraction 1 : n is less than {t} when n is bigger than {=100} : {a}.",
+      "{a} × {fl} = {=a*fl}: that is not more than {=100}, so for this n the fraction is not less than {t}.",
+      "{a} × {=fl+1} = {=a*(fl+1)}: that is more than {=100}. So the smallest n that works is {r}."
+    ],
+    "hints": [
+      "When does 1 : n become less than {t}: for big n or for small n?",
+      "Check the number {fl}: is 1 : {fl} less than {t}? And for the next number?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "boundary-itself": "{w_boundary_itself} gives 1 : n equal to {t}, but we need less. Take the next number: {r}.",
+      "cut-off": "{w_cut_off} comes from dropping the remainder of {=100} : {a}. For n = {w_cut_off} the fraction 1 : n is still not less than {t}; we need a bigger number: {r}.",
+      "rounded": "{w_rounded} comes from rounding to the nearest number. We need an n for which 1 : n is already less than {t}, that is, n is bigger than {=100} : {a}."
+    }
+  },
+  "D5.divide.18": {
+    "text": "Which number has to be divided by {x} to get {a}?",
+    "solution": [
+      "The dividend equals the quotient times the divisor: {a} × {x} = {r}.",
+      "Check: {r} : {x} = {a}.",
+      "So the number to divide is {r}."
+    ],
+    "hints": [
+      "Which operation is the opposite of dividing? What must be done with the quotient {a} and the divisor {x}?",
+      "Multiply {a} by {x}. How many digits will there be after the decimal point in the product?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "divided-instead": "{w_divided_instead} comes from dividing {a} by {x}. The dividend is found by multiplying the quotient by the divisor: {a} × {x} = {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} comes from multiplying, but with the decimal point in a different place. {x} has {c|digit|digits|digits} after the point, and the whole number {a} has none, so the answer has as many: {r}."
+    }
+  },
+  "D6.convert.01": {
+    "text": "Write the fraction {f} as a decimal.",
+    "solution": [
+      "Multiply the numerator and the denominator by {=100/b}, so that the denominator becomes {=100}.",
+      "{f} = {=a*100/b}⁄{=100}.",
+      "Write {=a*100/b|hundredth|hundredths|hundredths} with a decimal point. Check by dividing: {a} : {b} = {r}."
+    ],
+    "hints": [
+      "A fraction bar means division: {f} is {a} : {b}.",
+      "Make the denominator {=100}: what must you multiply {b} by? Multiply the numerator by the same number.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {a} and the denominator {b} side by side after the decimal point. A fraction is a division {a} : {b}: {f} = {r}.",
+      "numerator-tenths": "{w_numerator_tenths} comes from writing the numerator {a} as tenths. The denominator of the fraction is {b}, not ten: {f} = {r}.",
+      "denominator-as-decimal": "{w_denominator_as_decimal} comes from the denominator {b}, and the numerator {a} got lost. Both numbers count: {f} = {r}."
+    }
+  },
+  "D6.convert.02": {
+    "text": "Write the fraction {f} as a decimal.",
+    "solution": [
+      "The denominator {=100} means these are {a|hundredth|hundredths|hundredths}.",
+      "Hundredths are the second digit after the decimal point, so a zero stands in the place of the tenths.",
+      "Check by dividing: {a} : {=100} = {r}."
+    ],
+    "hints": [
+      "The denominator {=100} means {a|hundredth|hundredths|hundredths}: two digits after the decimal point.",
+      "There are no tenths, so a zero stands in the tenths place. Where does {a} go?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} is written in tenths, but hundredths are needed. The denominator {=100} needs two digits: {f} = {r}.",
+      "whole": "{w_whole} comes from taking the numerator {a} and forgetting the denominator {=100}. The fraction is less than one: {f} = {r}.",
+      "thousandths": "{w_thousandths} is written in thousandths, but hundredths are needed. The denominator {=100} gives two digits: {f} = {r}."
+    }
+  },
+  "D6.convert.03": {
+    "text": "Write the number {x} as a common fraction.",
+    "solution": [
+      "{x} has one digit after the decimal point, so the denominator is {=10}.",
+      "{x} is {a|tenth|tenths|tenths}, that is {a}⁄{=10}.",
+      "If the fraction can be reduced, the same number gets a simpler form. So {x} = {r}."
+    ],
+    "hints": [
+      "{x} has one digit after the decimal point. What denominator do tenths have?",
+      "The numerator is the number after the decimal point: {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} comes from writing the digit {a} in the denominator. {x} is {a|tenth|tenths|tenths}, that is {a}⁄{=10}.",
+      "hundredths-denominator": "{w_hundredths_denominator} has the denominator {=100}. {x} has one digit after the decimal point, so the denominator is {=10}: {r}.",
+      "inverted": "{w_inverted} comes from swapping the numerator and the denominator. {x} is {a}⁄{=10}, not {=10}⁄{a}."
+    }
+  },
+  "D6.convert.04": {
+    "text": "Write the number {x} as a common fraction in lowest terms.",
+    "solution": [
+      "{x} is {a} hundredths, that is {a}⁄{=100}.",
+      "The greatest number that divides both {a} and {=100} is {=gcd(a,100)}: {a} : {=gcd(a,100)} = {=a/gcd(a,100)}, {=100} : {=gcd(a,100)} = {=100/gcd(a,100)}.",
+      "So {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a} hundredths. Write it as a fraction with the denominator {=100}.",
+      "Now reduce the fraction {a}⁄{=100}: find the greatest number that divides both {a} and {=100}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} comes from writing the number {a} in the denominator. {x} is {a|hundredth|hundredths|hundredths}, that is {a}⁄{=100}, and after reducing {r}.",
+      "tenths-denominator": "{w_tenths_denominator} has the denominator {=10}. {x} has two digits after the decimal point, so the denominator is {=100}: {a}⁄{=100} = {r}.",
+      "inverted": "{w_inverted} comes from swapping the numerator and the denominator. Hundredths are {a}⁄{=100}, not {=100}⁄{a}; after reducing {r}."
+    }
+  },
+  "D6.convert.05": {
+    "text": "Write the number {x} as a mixed number.",
+    "solution": [
+      "The whole part {a} stays as it is.",
+      "{b|tenth|tenths|tenths} after the decimal point is the fraction {b}⁄{=10}.",
+      "{x} = {a} + {b}⁄{=10} = {r}."
+    ],
+    "hints": [
+      "The whole part of {x} is {a}. It stays whole.",
+      "After the decimal point we have {b|tenth|tenths|tenths}: write that as a fraction with the denominator {=10}, next to the whole part.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "sum-over-ten": "{w_sum_over_ten} comes from adding the whole part {a} to the numerator {b}. The whole part stays whole, and {b}⁄{=10} stands next to it: {r}.",
+      "digit-as-denominator": "{w_digit_as_denominator} comes from writing the digit {b} in the denominator. In {x} the digit {b} is in the tenths place, so it is {b}⁄{=10}: {r}.",
+      "wrong-denominator": "{w_wrong_denominator} has the denominator {=100}. {x} has one digit after the decimal point, so the denominator is {=10}: {r}."
+    }
+  },
+  "D6.convert.06": {
+    "text": "How many cents is {f} of a euro?",
+    "solution": [
+      "There are {=100} cents in one euro.",
+      "The denominator {b} says: divide {=100} into {b|equal part|equal parts|equal parts}: {=100} : {b} = {=100/b}.",
+      "The numerator {a} says how many parts we take: {=100/b} × {a} = {r}.",
+      "So {f} of a euro is {r|cent|cents|cents}."
+    ],
+    "hints": [
+      "There are {=100} cents in a euro. Find {f} of that number.",
+      "Divide {=100} into {b|equal part|equal parts|equal parts}, then take {a|part|parts|parts}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "numerator-itself": "{w_numerator_itself} is only the numerator {a}. A euro is {=100} cents; we take {f} of them, which gives {r}.",
+      "denominator-itself": "{w_denominator_itself} is only the denominator {b}. Cents are found like this: {=100} : {b} = {=100/b}, and we take {a|such part|such parts|such parts}: {r}.",
+      "one-part": "{w_one_part} is one part out of {b}. {f} has {a|part|parts|parts}, so we multiply {=100/b} by {a}: {r}."
+    }
+  },
+  "D6.convert.07": {
+    "text": "Write the number {x} as a common fraction in lowest terms.",
+    "solution": [
+      "{x} is {a} tenths, that is {a}⁄{=10}.",
+      "The greatest number that divides both {a} and {=10} is {=gcd(a,10)}: {a} : {=gcd(a,10)} = {=a/gcd(a,10)}, {=10} : {=gcd(a,10)} = {=10/gcd(a,10)}.",
+      "So {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|tenth|tenths|tenths}. Write it as a fraction with the denominator {=10}.",
+      "Reduce the fraction {a}⁄{=10}: find the greatest number that divides both {a} and {=10}. If there is none other than one, the fraction cannot be reduced.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} comes from writing the digit {a} in the denominator. {x} is {a|tenth|tenths|tenths}, that is {a}⁄{=10}, and after reducing {r}.",
+      "hundredths-denominator": "{w_hundredths_denominator} has the denominator {=100}. {x} has one digit after the decimal point, so the denominator is {=10}: {a}⁄{=10} = {r}.",
+      "inverted": "{w_inverted} comes from swapping the numerator and the denominator. Tenths are {a}⁄{=10}, and after reducing {r}."
+    }
+  },
+  "D6.convert.08": {
+    "text": "Write the fraction {f} as a decimal.",
+    "solution": [
+      "The denominator is {=100}, so these are {a|hundredth|hundredths|hundredths}.",
+      "Hundredths are the second digit after the decimal point, so the digits of the numerator go after the decimal point.",
+      "Check by dividing: {a} : {=100} = {r}."
+    ],
+    "hints": [
+      "The denominator is {=100}: that means {a|hundredth|hundredths|hundredths}, two digits after the decimal point.",
+      "The digits of the numerator {a} go after the decimal point, in the tenths and hundredths places.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} is written in tenths, but hundredths are needed. The denominator {=100} needs two digits: {f} = {r}.",
+      "whole": "{w_whole} comes from taking the numerator {a} and forgetting the denominator {=100}. The fraction is less than one: {f} = {r}.",
+      "thousandths": "{w_thousandths} is written in thousandths, but hundredths are needed. The denominator {=100} gives two digits: {f} = {r}."
+    }
+  },
+  "D6.convert.09": {
+    "text": "Compare {f} and {x}. Which sign goes between them?",
+    "solution": [
+      "Turn the fraction into a decimal: {a} : {b} = {=a/b}.",
+      "Compare in hundredths: {=a/b} is {=a/b*100|hundredth|hundredths|hundredths}, and {x} is {=x*100|hundredth|hundredths|hundredths}.",
+      "So the sign between {f} and {x} is {r}."
+    ],
+    "hints": [
+      "Write the fraction {f} as a decimal: {a} : {b}.",
+      "Compare the number you get with {x} place by place, starting with the tenths.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "flipped": "The sign {w_flipped} is the other way round. Turn {f} into a decimal, {=a/b}, and compare it with {x} place by place: the answer is {r}.",
+      "digits-side-by-side": "The sign {w_digits_side_by_side} comes from writing the numerator and the denominator of {f} side by side after the decimal point. But {f} is {=a/b}, and that is what to compare with {x}: the answer is {r}."
+    }
+  },
+  "D6.convert.10": {
+    "text": "Write the mixed number {m} as a decimal.",
+    "solution": [
+      "Turn the fraction part into a decimal: {b} : {c} = {=b/c}.",
+      "Add the whole part and the decimal part: {a} + {=b/c} = {r}.",
+      "So {m} = {r}."
+    ],
+    "hints": [
+      "Divide the numerator of the fraction part by its denominator: {b} : {c}.",
+      "Add the decimal you get to the whole part {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {b} and the denominator {c} side by side after the decimal point. Turn the fraction part into a decimal: {b}⁄{c} = {=b/c}, so the whole number is {r}.",
+      "numerator-only": "{w_numerator_only} comes from writing the numerator {b} after the decimal point and leaving out the denominator. {b}⁄{c} is {=b/c}, so the whole number is {r}.",
+      "denominator-only": "{w_denominator_only} comes from writing the denominator {c} after the decimal point and leaving out the numerator. {b}⁄{c} is {=b/c}, so the whole number is {r}."
+    }
+  },
+  "D6.convert.11": {
+    "text": "Write the number {x} as a common fraction with the denominator {=100}.",
+    "solution": [
+      "{x} has two digits after the decimal point, so the denominator is {=100}.",
+      "{x} is {a|hundredth|hundredths|hundredths}, that is {a}⁄{=100}.",
+      "{x} = {r}."
+    ],
+    "hints": [
+      "{x} has two digits after the decimal point. What denominator do hundredths have?",
+      "The numerator is the number after the decimal point: {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} has the denominator {=10}. {x} has two digits after the decimal point, so the denominator is {=100}: {r}.",
+      "reciprocal": "{w_reciprocal} comes from writing the number {a} in the denominator. {x} is {a|hundredth|hundredths|hundredths}, that is {a}⁄{=100}.",
+      "thousandths": "{w_thousandths} has the denominator {=1000}. {x} has two digits after the decimal point, so the denominator is {=100}: {r}."
+    }
+  },
+  "D6.convert.12": {
+    "text": "Which number is equal to {f}? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Answer with the number of the option.",
+    "solution": [
+      "Turn the fraction into a decimal: {a} : {b} = {x}.",
+      "Among the options there is the number {x}: that is option {r}.",
+      "The other numbers come from writing the numerator and the denominator side by side, or from using a single digit as tenths."
+    ],
+    "hints": [
+      "A fraction bar means division: {f} is {a} : {b}.",
+      "Divide {a} by {b} and find the result among the options.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "Option {w_digits_side_by_side} comes from writing the numerator and the denominator side by side after the decimal point. The fraction {f} is the division {a} : {b} = {x}.",
+      "numerator-as-tenths": "Option {w_numerator_as_tenths} comes from writing only the numerator as tenths. The denominator {b} matters too: {f} = {x}.",
+      "denominator-as-tenths": "Option {w_denominator_as_tenths} comes from the denominator, and the numerator got lost. We have to divide {a} by {b}: {x}.",
+      "comma-instead-of-the-slash": "Option {w_comma_instead_of_the_slash} comes from replacing the fraction bar by a decimal point. The fraction {f} is less than one, and it equals {x}."
+    }
+  },
+  "D6.convert.13": {
+    "text": "Which fractions are equal to {x}? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Answer with the numbers of the correct options, separated by commas.",
+    "solution": [
+      "{x} is {h|hundredth|hundredths|hundredths}, that is {h}⁄{=100}. Reduced, this fraction is {red}.",
+      "The fractions {red} and {h}⁄{=100} are equal to {x}: in the others the numerator and the denominator are swapped, or the denominator is {=10}.",
+      "These are the options {r}."
+    ],
+    "hints": [
+      "Write {x} as a fraction with the denominator {=100}: {h}⁄{=100}.",
+      "Reduce it and find all the equal fractions. A fraction with the numerator and denominator swapped is bigger than one, but {x} is less than one.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "only-the-reduced-one": "Only one fraction, {red}, was chosen. The fraction with the denominator {=100}, that is {h}⁄{=100}, is equal to {x} too.",
+      "also-the-inverse": "The set {w_also_the_inverse} includes a fraction with the numerator and denominator swapped. It is bigger than one, but {x} is less than one."
+    }
+  },
+  "D6.convert.14": {
+    "text": "The segment from 0 to 1 is divided into {b|equal part|equal parts|equal parts}. Which decimal number is marked by the point?",
+    "solution": [
+      "One part is {=1}⁄{b} of the segment. From zero to the point we count {a|part|parts|parts}, so the point is at {a}⁄{b} of the segment.",
+      "Turn the fraction into a decimal: {a} : {b} = {r}.",
+      "So the point marks the number {r}."
+    ],
+    "hints": [
+      "The segment is divided into {b|equal part|equal parts|equal parts}: one division is {=1}⁄{b} of it.",
+      "On the picture, count the divisions from zero to the point: there are {a}. Divide {a} by {b}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {a} and the denominator {b} side by side after the decimal point. The point is at {a}⁄{b} of the segment, that is {a} : {b} = {r}.",
+      "numerator-tenths": "{w_numerator_tenths} comes from writing the number of parts {a} as tenths. There are {b} parts in all, so one part is not a tenth: {a} : {b} = {r}.",
+      "counted-from-the-right": "{w_counted_from_the_right} comes from counting the parts from the right end. From zero to the point we count {a|part|parts|parts}: {a} : {b} = {r}."
+    }
+  },
+  "D6.convert.15": {
+    "text": "The sum of the numerator and the denominator of a fraction is {s}, and the fraction itself equals {x}. Find the numerator.",
+    "solution": [
+      "{x} = {n}⁄{m}: the numerator and the denominator are in the ratio {n} to {m}.",
+      "Together they make {=n+m|part|parts|parts}, and the sum is {s}: {s} : {=n+m} = {c}, that is the size of one part.",
+      "The numerator is {n|part|parts|parts}: {n} × {c} = {r}."
+    ],
+    "hints": [
+      "Write {x} as a common fraction: {n}⁄{m}.",
+      "The numerator and the denominator are in the ratio {n} to {m}, so together they make {=n+m|part|parts|parts}. Divide {s} by that number.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reduced-numerator": "{w_reduced_numerator} is the numerator of the reduced fraction {n}⁄{m}. The numerator and the denominator of the fraction we want are {c|time|times|times} bigger.",
+      "the-denominator": "{w_the_denominator} is the denominator. The question asked for the numerator: {n|part|parts|parts} of {c} make {r}."
+    }
+  },
+  "D6.convert-1S.01": {
+    "text": "Write the fraction {f} as a decimal.",
+    "solution": [
+      "Make the denominator {=1000}: {=1000} : {=8} = {=125}, so we multiply the numerator and the denominator by {=125}.",
+      "{f} = {=a*125}⁄{=1000}, and {=a*125|thousandth|thousandths|thousandths} is written with a decimal point.",
+      "Check by dividing: {a} : {=8} = {r}."
+    ],
+    "hints": [
+      "A fraction bar means division: {f} is {a} : {=8}.",
+      "Dividing by {=8} is awkward, so make the denominator {=1000}: multiply {=8} by {=125}, and multiply the numerator by {=125} too.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {a} and the denominator {=8} side by side after the decimal point. A fraction is a division; we make the denominator {=1000}: {f} = {r}.",
+      "numerator-tenths": "{w_numerator_tenths} comes from writing the numerator {a} as tenths. The denominator is {=8}, not ten, so we make it {=1000}: {f} = {r}.",
+      "denominator-as-decimal": "{w_denominator_as_decimal} comes from the denominator {=8}, and the numerator {a} got lost. Both numbers count: {f} = {r}."
+    }
+  },
+  "D6.convert-1S.02": {
+    "text": "Write the number {x} as a common fraction in lowest terms.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}, that is {a}⁄{=100}.",
+      "The numerator and the denominator are even: divide both by {=2} and get {=a/2}⁄{=50}.",
+      "It cannot be reduced further, so {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|hundredth|hundredths|hundredths}, that is the fraction {a}⁄{=100}.",
+      "Both {a} and {=100} are even. Divide both by the same number and stop when the fraction cannot be reduced any more.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} comes from writing the number {a} in the denominator. {x} is {a|hundredth|hundredths|hundredths}, that is {a}⁄{=100}, and after reducing {r}.",
+      "denominator-halved": "{w_denominator_halved} comes from dividing the denominator {=100} by {=2} but leaving the numerator {a} as it is. Both numbers must be divided: {r}.",
+      "numerator-halved-only": "{w_numerator_halved_only} comes from dividing only the numerator by {=2}. Both the numerator and the denominator must be divided: {r}."
+    }
+  },
+  "D6.convert-1S.03": {
+    "text": "Write the fraction {f} as a decimal, rounded to hundredths.",
+    "solution": [
+      "Divide {a} by {b} by long division to the thousandths and look at the third digit after the decimal point.",
+      "If the third digit is {=5} or more, we increase the hundredths by one; otherwise we leave them as they are.",
+      "Check: {r} × {b} = {=r*b}, which is almost {a}.",
+      "So {f} ≈ {r}."
+    ],
+    "hints": [
+      "Divide {a} by {b} and carry on for a few more digits after the decimal point.",
+      "The third digit after the decimal point decides whether the hundredths go up.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "cut-off": "{w_cut_off} comes from simply dropping the extra digits. The digit after the hundredths is five or more, so the hundredths go up by one: {r}.",
+      "tenths": "{w_tenths} is rounded to tenths. The task asks for hundredths, so there are two digits after the decimal point: {r}.",
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {a} and the denominator {b} side by side after the decimal point. A fraction is a division {a} : {b}: {r}."
+    }
+  },
+  "D6.convert-1S.04": {
+    "text": "Put the numbers in order, from the smallest to the largest: {list}.",
+    "solution": [
+      "The fraction {a}⁄{b} as a decimal is {=a/b}.",
+      "Compare in hundredths: {=a/b*100}, {=c*10} and {=d*10}.",
+      "In increasing order: {sorted}, that is the items {r}."
+    ],
+    "hints": [
+      "Write the fraction {a}⁄{b} as a decimal: {a} : {b}.",
+      "Now you have three decimals. Compare them place by place and put them in order from the smallest to the largest.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "largest-first": "The order {w_largest_first} goes from the largest to the smallest, but the order we need goes up: from the smallest to the largest.",
+      "fraction-last": "The order {w_fraction_last} comes from writing the numerator and the denominator of the fraction {a}⁄{b} side by side with a comma: such a number looks bigger than any of the decimals. But {a}⁄{b} equals {=a/b}."
+    }
+  },
+  "D6.convert-1S.05": {
+    "text": "Compare {f} and {x}. Which sign goes between them?",
+    "solution": [
+      "Turn {f} into a decimal: {a} : {=8} = {=a/8}.",
+      "Compare in thousandths: {=a/8*1000} and {=x*1000}.",
+      "So the sign between {f} and {x} is {r}."
+    ],
+    "hints": [
+      "Write {f} as a decimal: {a} : {=8}.",
+      "Compare the number you get with {x}, place by place, starting with the tenths.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "flipped": "The sign {w_flipped} is the other way round. Turn {f} into a decimal, {=a/8}, and compare it with {x} place by place: the answer is {r}.",
+      "digits-side-by-side": "The sign {w_digits_side_by_side} comes from writing the numerator and the denominator of {f} side by side after the decimal point. But {f} is {=a/8}, less than one, and that is what to compare with {x}: the answer is {r}."
+    }
+  },
+  "D6.convert-1S.06": {
+    "text": "Find the sum {f} + {x}. Write the result as a decimal.",
+    "solution": [
+      "{f} is {a} × {=25} = {=a*25|hundredth|hundredths|hundredths}.",
+      "Add in hundredths: {=a*25} + {=x*100} = {=a*25+x*100}.",
+      "So {f} + {x} = {r}."
+    ],
+    "hints": [
+      "First write {f} as a decimal: {f} is {a} : {=4}.",
+      "Then add the two decimals place by place: {x} is {=x*100|hundredth|hundredths|hundredths}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {a} and the tenths {b} side by side after the decimal point. First convert the fraction: {f} = {=a/4}, then add: {r}.",
+      "numerator-tenths": "{w_numerator_tenths} comes from taking {f} as {a|tenth|tenths|tenths}. But these are quarters: {f} = {=a/4}, and the answer is {r}.",
+      "denominator-tenths": "{w_denominator_tenths} comes from taking the denominator {=4} as tenths instead of {f}. The fraction {f} equals {=a/4}, and the answer is {r}."
+    }
+  },
+  "D6.convert-1S.07": {
+    "text": "Write the mixed number {m} as a decimal.",
+    "solution": [
+      "Make the denominator of the fraction part {=1000}: multiply the numerator and the denominator by {=125}.",
+      "{b}⁄{=8} = {=b*125}⁄{=1000} = {=b/8}.",
+      "Add the whole part: {a} + {=b/8} = {r}."
+    ],
+    "hints": [
+      "Divide the numerator of the fraction part by its denominator: {b} : {=8}.",
+      "Add the decimal you get to the whole part {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {b} and the denominator {=8} side by side after the decimal point. Make the denominator of the fraction part {=1000}: {b}⁄{=8} = {=b/8}, so the whole number is {r}.",
+      "numerator-only": "{w_numerator_only} comes from writing the numerator {b} after the decimal point and leaving out the denominator. {b}⁄{=8} is {=b/8}, so the whole number is {r}.",
+      "denominator-only": "{w_denominator_only} comes from writing the denominator {=8} after the decimal point and leaving out the numerator. {b}⁄{=8} is {=b/8}, so the whole number is {r}."
+    }
+  },
+  "D6.convert-1S.08": {
+    "text": "Write the number {x} as a common fraction in lowest terms.",
+    "solution": [
+      "{x} is {a|thousandth|thousandths|thousandths}, that is {a}⁄{=1000}.",
+      "The greatest number that divides both {a} and {=1000} is {=gcd(a,1000)}: {a} : {=gcd(a,1000)} = {=a/gcd(a,1000)}, {=1000} : {=gcd(a,1000)} = {=1000/gcd(a,1000)}.",
+      "So {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|thousandth|thousandths|thousandths}. Write it as a fraction with the denominator {=1000}.",
+      "Reduce the fraction {a}⁄{=1000}: find the greatest number that divides both {a} and {=1000}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "reciprocal": "{w_reciprocal} comes from writing the number {a} in the denominator. {x} is {a|thousandth|thousandths|thousandths}, that is {a}⁄{=1000}, and after reducing {r}.",
+      "hundredths-denominator": "{w_hundredths_denominator} has the denominator {=100}. {x} has three digits after the decimal point, so the denominator is {=1000}; after reducing {r}.",
+      "inverted": "{w_inverted} comes from swapping the numerator and the denominator. Thousandths are {a}⁄{=1000}, and after reducing {r}."
+    }
+  },
+  "D6.convert-1S.09": {
+    "text": "Write the number {x} as a common fraction in lowest terms.",
+    "solution": [
+      "{x} is {a|hundredth|hundredths|hundredths}, that is {a}⁄{=100}.",
+      "The numerator and the denominator can both be divided by {=4}: {a} : {=4} = {=a/4}, {=100} : {=4} = {=25}.",
+      "So {x} = {r}."
+    ],
+    "hints": [
+      "{x} is {a|hundredth|hundredths|hundredths}. Write the fraction {a}⁄{=100}.",
+      "Both {a} and {=100} divide by {=4}. Divide both and check whether the fraction can be reduced further.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "tenths": "{w_tenths} has the denominator {=10}. {x} has two digits after the decimal point, so the denominator is {=100}: {a}⁄{=100} = {r}.",
+      "reciprocal": "{w_reciprocal} comes from writing the number {a} in the denominator. {x} is {a|hundredth|hundredths|hundredths}, that is {a}⁄{=100}, and after reducing {r}.",
+      "inverted": "{w_inverted} comes from swapping the numerator and the denominator. Hundredths are {a}⁄{=100}, and after reducing {r}."
+    }
+  },
+  "D6.convert-1S.10": {
+    "text": "Compare {f} and {x}. Which sign goes between them?",
+    "solution": [
+      "Make the denominator of {f} equal to {=100}: multiply the numerator and the denominator by {=5}.",
+      "{f} = {=a*5}⁄{=100}, that is {=a*5|hundredth|hundredths|hundredths}, and {x} is {b|hundredth|hundredths|hundredths}.",
+      "Compare {=a*5} and {b}: the sign between {f} and {x} is {r}."
+    ],
+    "hints": [
+      "Make the denominator of {f} equal to {=100}: what must you multiply {=20} by? Multiply the numerator by the same number.",
+      "Now compare the hundredths: {x} is {b|hundredth|hundredths|hundredths}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "flipped": "The sign {w_flipped} is the other way round. Make the denominator of {f} equal to {=100}: that is {=a*5|hundredth|hundredths|hundredths}. Compare with {x}: the answer is {r}.",
+      "digits-side-by-side": "The sign {w_digits_side_by_side} comes from writing the numerator and the denominator of {f} side by side after the decimal point. But {f} is {=a*5|hundredth|hundredths|hundredths}, less than one, and that is what to compare with {x}: the answer is {r}."
+    }
+  },
+  "D6.convert-1S.11": {
+    "text": "Find the sum {f} + {x}. Write the result as a decimal.",
+    "solution": [
+      "{f} is {a} × {=20} = {=a*20|hundredth|hundredths|hundredths}.",
+      "Add in hundredths: {=a*20} + {b} = {=a*20+b}.",
+      "So {f} + {x} = {r}."
+    ],
+    "hints": [
+      "Write {f} as a decimal: make the denominator {=100}, or divide {a} by {=5}.",
+      "Add the two decimals place by place: {x} is {b|hundredth|hundredths|hundredths}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "digits-side-by-side": "{w_digits_side_by_side} comes from adding the numerator {a} to {x} as {a|hundredth|hundredths|hundredths}. The fraction {f} is {=a*20|hundredth|hundredths|hundredths}, and the answer is {r}.",
+      "numerator-tenths": "{w_numerator_tenths} comes from taking {f} as {a|tenth|tenths|tenths}. But the denominator is {=5}: {f} = {=a/5}, and the answer is {r}.",
+      "denominator-tenths": "{w_denominator_tenths} comes from taking the denominator {=5} as tenths instead of {f}. The fraction {f} equals {=a/5}, and the answer is {r}."
+    }
+  },
+  "D6.convert-1S.12": {
+    "text": "How many cents is {f} of a euro?",
+    "solution": [
+      "There are {=100} cents in one euro.",
+      "One eighth is {=100} : {=8} = {=100/8} cents.",
+      "The numerator {a} shows how many such parts we take: {=100/8} × {a} = {r}.",
+      "So {f} of a euro is {r|cent|cents|cents}."
+    ],
+    "hints": [
+      "A euro is {=100} cents. Find {f} of that number.",
+      "One eighth of {=100} is {=100/8}. Take {a|such part|such parts|such parts}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "numerator-itself": "{w_numerator_itself} is only the numerator {a}. One eighth of a euro is {=100/8} cents, and we take {a|such part|such parts|such parts}: {r}.",
+      "denominator-itself": "{w_denominator_itself} is only the denominator {=8}. Cents are found like this: {=100} : {=8} = {=100/8}, and we take {a|such part|such parts|such parts}: {r}.",
+      "one-part": "{w_one_part} is one eighth of a euro. {f} has {a|such part|such parts|such parts}, so we multiply {=100/8} by {a}: {r}.",
+      "comma-in-the-wrong-place": "{w_comma_in_the_wrong_place} is ten times too big: the decimal point was put in a different place. {=100} : {=8} = {=100/8}, and we take {a|such part|such parts|such parts}: {r}."
+    }
+  },
+  "D6.convert-1S.13": {
+    "text": "Which of these fractions can be written as a finite decimal? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Answer with the numbers of the correct options, separated by commas.",
+    "solution": [
+      "A fraction can be written as a finite decimal if the denominator of the reduced fraction has no prime factors other than {=2} and {=5}.",
+      "These work: {ok}. These do not: {bad}.",
+      "So the options are {r}."
+    ],
+    "hints": [
+      "Split the denominator of each reduced fraction into prime factors.",
+      "If there is a prime factor other than {=2} and {=5}, the decimal never ends. Check {o1}; {o2}; {o3}; {o4}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "even-denominators": "The set {w_even_denominators} consists of fractions with an even denominator. But a fraction with the denominator {=6} has the factor {=3} as well, and a fraction with the denominator {=5} has an odd denominator and its decimal still ends.",
+      "only-two-five-ten": "The set {w_only_two_five_ten} was chosen by the denominators {=2}, {=5} and {=10} only. The denominators {=4}, {=8}, {=20} and {=25} work too: they have only the factors {=2} and {=5}."
+    }
+  },
+  "D6.convert-1S.14": {
+    "text": "The fraction {f} was written as a decimal: {s}… Which digit is in place number {b} after the decimal point?",
+    "solution": [
+      "The digits repeat: after the decimal point comes the period {period}, which has {p|digit|digits|digits}.",
+      "{b} = {q} × {p} + {rem}.",
+      "So place {b} holds the same digit as place {pos} of the period: that is {r}."
+    ],
+    "hints": [
+      "Find the group of digits that repeats: {period}.",
+      "Divide the place number {b} by the length of the group, {p}, and look at the remainder.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "next-place": "The digit {w_next_place} is at the next place. We need place {b}: the remainder when dividing by the length of the period shows which digit of the period it is.",
+      "previous-place": "The digit {w_previous_place} is at the previous place. The place we need is {b}, which is digit {pos} of the period.",
+      "first-digit": "The digit {w_first_digit} is the first one after the decimal point. At place {b} stands digit {pos} of the period."
+    }
+  },
+  "D6.convert-1S.15": {
+    "text": "How many of the fractions {f1}, {f2}, {f3}, …, {last} can be written as a finite decimal?",
+    "solution": [
+      "The fraction {f1} is a finite decimal when the denominator has only the factors {=2} and {=5}.",
+      "The denominators from {=2} to {a} like that are: {list}.",
+      "In all there are {r} such denominators."
+    ],
+    "hints": [
+      "Which prime factors can the denominator have, for the decimal to end?",
+      "List the numbers from {=2} to {a} that have no prime factors other than {=2} and {=5}, and count them.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "even-denominators": "{w_even_denominators} is the number of even denominators. But the denominator {=5} is odd and its decimal ends, and the denominator {=6} is even and its decimal does not.",
+      "only-two-and-five": "{w_only_two_and_five} is the number of the denominators {=2} and {=5}. Other denominators with only the factors {=2} and {=5} work too: {list}."
+    }
+  },
+  "D6.convert-1S.16": {
+    "text": "Find the number halfway between {f} and {x}. Write the result as a decimal.",
+    "solution": [
+      "Turn the fraction into a decimal: {a} : {b} = {y}.",
+      "The middle is half the sum: ({y} + {x}) : {=2}.",
+      "({y} + {x}) : {=2} = {r}."
+    ],
+    "hints": [
+      "Write {f} as a decimal: {a} : {b}.",
+      "To find the middle of {y} and {x}, add them and halve the sum.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "not-halved": "{w_not_halved} is the sum of {y} and {x}. The middle is halfway, so the sum is halved: {r}.",
+      "digits-side-by-side": "{w_digits_side_by_side} comes from writing the numerator {a} and the denominator {b} side by side after the decimal point. The fraction {f} equals {y}, and the middle of {y} and {x} is {r}."
+    }
+  },
+  "D6.convert-1S.17": {
+    "text": "Which number is the largest? 1) {o1}; 2) {o2}; 3) {o3}; 4) {o4}. Answer with the number of the option.",
+    "solution": [
+      "Turn all the numbers into decimals: {list}.",
+      "Add zeros on the right so that every number has three digits after the decimal point: {list0}.",
+      "The largest is {big}, that is option {r}."
+    ],
+    "hints": [
+      "To compare fractions and decimals, write them all as decimals: {o1}; {o2}; {o3}; {o4}.",
+      "Add zeros on the right so that every number has three digits after the decimal point, and compare place by place.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "fractions-as-digits": "Option {w_fractions_as_digits} was chosen after writing the numerator and the denominator of a fraction side by side after the decimal point. Turn the fractions into decimals by dividing: {list}.",
+      "numerator-as-tenths": "Option {w_numerator_as_tenths} was chosen after writing the numerator of a fraction as tenths. The denominator matters too: {list}."
+    }
+  },
+  "D7.order-mixed.01": {
+    "text": "Find the value of the expression {x} + {f} × {kk}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Multiplication comes before addition: {fd} × {kk} = {=fd*kk}.",
+      "Now add: {x} + {=fd*kk} = {r}."
+    ],
+    "hints": [
+      "The expression has addition and multiplication: multiplication is done first.",
+      "The fraction {f} is {fd}. First work out {fd} × {kk}, then add {x}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first adding {x} and {f} and then multiplying by {kk}. Multiplication comes before addition: {fd} × {kk} = {=fd*kk}, then {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} comes from not multiplying the fraction {f} by {kk}. First {fd} × {kk} = {=fd*kk}, then we add {x}: {r}."
+    }
+  },
+  "D7.order-mixed.02": {
+    "text": "Find the value of the expression {f} + {x} × {kk}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Multiplication comes before addition: {x} × {kk} = {=x*kk}.",
+      "Now add: {fd} + {=x*kk} = {r}."
+    ],
+    "hints": [
+      "The expression has addition and multiplication: multiplication is done first.",
+      "First work out {x} × {kk}. The fraction {f} is {fd}: add it to the product.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first adding {f} and {x} and then multiplying by {kk}. Multiplication comes before addition: {x} × {kk} = {=x*kk}, then {r}.",
+      "first-term-multiplied": "{w_first_term_multiplied} comes from multiplying {f} by {kk} instead of {x}. We multiply the neighbouring number: {x} × {kk} = {=x*kk}, then we add {fd}: {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} comes from not multiplying {x} by {kk}. First {x} × {kk} = {=x*kk}, then we add {fd}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}."
+    }
+  },
+  "D7.order-mixed.03": {
+    "text": "Find the value of the expression {a} − {x} × {c}.",
+    "solution": [
+      "Multiplication comes before subtraction: {x} × {c} = {=x*c}.",
+      "Now subtract: {a} − {=x*c} = {r}."
+    ],
+    "hints": [
+      "Multiplication is done before subtraction.",
+      "First work out {x} × {c}, then take the result away from {a}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first taking {x} away from {a} and then multiplying by {c}. Multiplication comes before subtraction: {x} × {c} = {=x*c}, then {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} comes from not multiplying {x} by {c}. From {a} we take away {x} × {c} = {=x*c}: {r}.",
+      "wrong-term-multiplied": "{w_wrong_term_multiplied} comes from multiplying {a} by {c} instead of {x}. We multiply the neighbouring number: {x} × {c} = {=x*c}, and take it away from {a}: {r}."
+    }
+  },
+  "D7.order-mixed.04": {
+    "text": "Find the value of the expression ({x} + {f}) × {kk}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Brackets come first: {x} + {fd} = {=x+fd}.",
+      "Now multiply: {=x+fd} × {kk} = {r}."
+    ],
+    "hints": [
+      "The brackets show that the sum has to be worked out first.",
+      "The fraction {f} is {fd}. Add {x} and {fd}, and only then multiply by {kk}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} comes from ignoring the brackets: only {f} was multiplied by {kk}. The brackets say we add first: {x} + {fd} = {=x+fd}, and the sum is multiplied by {kk}: {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} is only the sum in the brackets: {x} + {fd} = {=x+fd}. It still has to be multiplied by {kk}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}."
+    }
+  },
+  "D7.order-mixed.05": {
+    "text": "Find the value of the expression {y} − {x} : {f}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Division comes before subtraction: {x} : {fd} = {=x/fd}.",
+      "Now subtract: {y} − {=x/fd} = {r}."
+    ],
+    "hints": [
+      "Division is done before subtraction.",
+      "The fraction {f} is {fd}. Divide {x} by {fd}, then take the result away from {y}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first taking {x} away from {y} and then dividing by {f}. Division comes before subtraction: {x} : {fd} = {=x/fd}, then {r}.",
+      "multiplied-by-the-fraction": "{w_multiplied_by_the_fraction} comes from multiplying {x} by {f} instead of dividing. Dividing by {f} shows how many such parts there are in {x}: {x} : {fd} = {=x/fd}, then {r}."
+    }
+  },
+  "D7.order-mixed.06": {
+    "text": "Find the value of the expression {x} : {f} + {kk}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Division comes before addition: {x} : {fd} = {=x/fd}.",
+      "Now add: {=x/fd} + {kk} = {r}."
+    ],
+    "hints": [
+      "Division is done before addition.",
+      "The fraction {f} is {fd}. Divide {x} by {fd}, then add {kk}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} comes from dividing {x} by the sum of {f} and {kk}. The division belongs only to {f}: {x} : {fd} = {=x/fd}, then we add {kk}: {r}.",
+      "multiplied-by-the-fraction": "{w_multiplied_by_the_fraction} comes from multiplying {x} by {f} instead of dividing. Dividing by {f} shows how many such parts there are in {x}: {x} : {fd} = {=x/fd}, then {r}."
+    }
+  },
+  "D7.order-mixed.07": {
+    "text": "Find the value of the expression {kk} − {f} : {x}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Division comes before subtraction: {fd} : {x} = {=fd/x}.",
+      "Now subtract: {kk} − {=fd/x} = {r}."
+    ],
+    "hints": [
+      "Division is done before subtraction, and here a fraction is divided by a decimal.",
+      "The fraction {f} is {fd}. Divide {fd} by {x}, then take the result away from {kk}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first taking {f} away from {kk} and then dividing by {x}. Division comes before subtraction: {fd} : {x} = {=fd/x}, then {r}.",
+      "division-reversed": "{w_division_reversed} comes from dividing {x} by {f}, when {f} has to be divided by {x}: {fd} : {x} = {=fd/x}, then we take it away from {kk}: {r}.",
+      "multiplied": "{w_multiplied} comes from multiplying {f} by {x}. Here we divide: {fd} : {x} = {=fd/x}, then we take it away from {kk}: {r}."
+    }
+  },
+  "D7.order-mixed.08": {
+    "text": "Find the value of the expression {x} × {kk} + {f}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Multiplication comes before addition: {x} × {kk} = {=x*kk}.",
+      "Now add: {=x*kk} + {fd} = {r}."
+    ],
+    "hints": [
+      "Multiplication is done before addition.",
+      "First work out {x} × {kk}, then add {fd}: that is the fraction {f}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first adding {kk} and {f} and then multiplying by {x}. Multiplication comes before addition: {x} × {kk} = {=x*kk}, then we add {fd}: {r}.",
+      "wrong-term-multiplied": "{w_wrong_term_multiplied} comes from multiplying {f} by {kk} instead of {x}. We multiply the neighbouring number: {x} × {kk} = {=x*kk}, then we add {fd}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}."
+    }
+  },
+  "D7.order-mixed.09": {
+    "text": "Find the value of the expression (1 − {x}) × {f}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Brackets come first: {=1} − {x} = {=1-x}.",
+      "Now multiply: {=1-x} × {fd} = {r}."
+    ],
+    "hints": [
+      "Brackets are worked out first: the subtraction comes first.",
+      "Take {x} away from one, then multiply by {f}, that is, by {fd}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} comes from ignoring the brackets: {x} was multiplied by {f} and taken away from one. The brackets say we subtract first: {=1} − {x} = {=1-x}, and the difference is multiplied by {f}: {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} is only the difference in the brackets: {=1} − {x} = {=1-x}. It still has to be multiplied by {f}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}."
+    }
+  },
+  "D7.order-mixed.10": {
+    "text": "Find the value of the expression {x} − {f} × {kk}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Multiplication comes before subtraction: {fd} × {kk} = {=fd*kk}.",
+      "Now subtract: {x} − {=fd*kk} = {r}."
+    ],
+    "hints": [
+      "Multiplication is done before subtraction.",
+      "The fraction {f} is {fd}. Work out {fd} × {kk} and take the result away from {x}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first taking {f} away from {x} and then multiplying by {kk}. Multiplication comes before subtraction: {fd} × {kk} = {=fd*kk}, then {r}.",
+      "multiplier-forgotten": "{w_multiplier_forgotten} comes from not multiplying {f} by {kk}. From {x} we take away {fd} × {kk} = {=fd*kk}: {r}.",
+      "wrong-term-multiplied": "{w_wrong_term_multiplied} comes from multiplying {x} by {kk} instead of {f}. We multiply the neighbouring number: {fd} × {kk} = {=fd*kk}, and take it away from {x}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}."
+    }
+  },
+  "D7.order-mixed.11": {
+    "text": "Find the value of the expression {f} + {x} × {y}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Multiplication comes before addition: {x} × {y} = {=x*y}.",
+      "Now add: {fd} + {=x*y} = {r}."
+    ],
+    "hints": [
+      "Multiplication is done before addition.",
+      "Work out {x} × {y}: both factors have one digit after the decimal point, so the product has two. Then add {fd}: that is the fraction {f}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "left-to-right": "{w_left_to_right} comes from first adding {f} and {x} and then multiplying by {y}. Multiplication comes before addition: {x} × {y} = {=x*y}, then we add {fd}: {r}.",
+      "one-place": "{w_one_place} comes from writing the product {x} × {y} with one digit after the decimal point. Each factor has one digit after the point, so the product has two: {=x*y}, then we add {fd}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}."
+    }
+  },
+  "D7.order-mixed.12": {
+    "text": "Find the value of the expression ({x} − {f}) : {kk}.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Brackets come first: {x} − {fd} = {=x-fd}.",
+      "Now divide: {=x-fd} : {kk} = {r}."
+    ],
+    "hints": [
+      "Brackets are worked out first: the difference comes first.",
+      "The fraction {f} is {fd}. Take {fd} away from {x} and divide the result by {kk}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "brackets-ignored": "{w_brackets_ignored} comes from ignoring the brackets: only {f} was divided by {kk}. The brackets say we subtract first: {x} − {fd} = {=x-fd}, and the difference is divided by {kk}: {r}.",
+      "division-forgotten": "{w_division_forgotten} is only the difference in the brackets: {x} − {fd} = {=x-fd}. It still has to be divided by {kk}: {r}.",
+      "fraction-as-digits": "{w_fraction_as_digits} comes from writing the fraction {f} as a decimal with the numerator and the denominator side by side after the decimal point. The fraction {f} equals {fd}, and the answer is {r}."
+    }
+  },
+  "D7.order-mixed.13": {
+    "text": "Place brackets in the expression {e} so that its value is as large as possible. What is that value?",
+    "solution": [
+      "Without brackets: {e} = {v0}.",
+      "Brackets change the order of operations. Of all the placings, the largest value comes from {best}.",
+      "{best} = {r}."
+    ],
+    "hints": [
+      "Without brackets the value of {e} is {v0}. Brackets change the order of operations.",
+      "Put brackets round an addition or a subtraction, so that it is done before the multiplication. Work out the values of different placings and pick the largest.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "no-brackets": "{w_no_brackets} is the value of the expression without brackets. Brackets can be placed so that the value gets bigger: {best} = {r}.",
+      "left-to-right": "{w_left_to_right} comes from doing the operations in order from left to right. The placing {best} gives more: {r}.",
+      "the-smallest": "{w_the_smallest} is the smallest of the values. We need the placing with the largest value: {best} = {r}."
+    }
+  },
+  "D7.order-mixed.14": {
+    "text": "{x} ? {f} = {cc}. Which operation sign stands in place of the question mark? 1) +; 2) −; 3) ×; 4) :. Answer with the number of the option.",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Check the signs one by one: {tests}.",
+      "Only {sym} gives {cc}: {x} {sym} {fd} = {cc}. That is option {r}."
+    ],
+    "hints": [
+      "Write the fraction {f} as a decimal: {fd}.",
+      "Check the signs one by one: work out {x} + {fd}, {x} − {fd}, {x} × {fd}, {x} : {fd} and find the result {cc}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "opposite-operation": "Option {w_opposite_operation} is the opposite operation, and it gives a different number. Only option {r} fits: {x} {sym} {fd} = {cc}.",
+      "neighbouring-operation": "Option {w_neighbouring_operation} gives a different number. Check the signs one by one: {tests}."
+    }
+  },
+  "D7.order-mixed.15": {
+    "text": "Divide {x} by {f}, then reduce the quotient by {y}. What do you get?",
+    "solution": [
+      "Turn the fraction into a decimal: {f} = {fd}.",
+      "Find the quotient: {x} : {fd} = {=x/fd}.",
+      "Reduce it by {y}: {=x/fd} − {y} = {r}."
+    ],
+    "hints": [
+      "The quotient of {x} divided by {f} is {x} : {f}.",
+      "The fraction {f} is {fd}. Divide {x} by {fd}, then reduce the result by {y}.",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "product-instead": "{w_product_instead} comes from multiplying {x} by {f} instead of dividing. The quotient is {x} : {fd} = {=x/fd}, then {=x/fd} − {y} = {r}.",
+      "reversed-subtraction": "{w_reversed_subtraction} comes from taking the quotient away from {y}. The quotient has to be reduced by {y}: {=x/fd} − {y} = {r}.",
+      "dividend-and-divisor-swapped": "{w_dividend_and_divisor_swapped} comes from dividing {f} by {x}. The dividend is {x} and the divisor is {f}: {x} : {fd} = {=x/fd}.",
+      "reduction-forgotten": "{w_reduction_forgotten} is only the quotient {x} : {fd} = {=x/fd}. It still has to be reduced by {y}: {r}.",
+      "increased-instead": "{w_increased_instead} comes from increasing the quotient {=x/fd} by {y}. The task says to reduce it: {=x/fd} − {y} = {r}."
+    }
+  },
+  "D7.order-mixed.16": {
+    "text": "The numbers {n1}, {n2} and {n3} are to be put once each into the expression (_ − _) × _. What is the largest value that can be obtained?",
+    "solution": [
+      "The difference is the biggest when the smallest number {mn} is taken away from the biggest number {mx}: {mx} − {mn} = {df}.",
+      "The middle number {md} is left for the multiplier.",
+      "The largest value: {df} × {md} = {r}."
+    ],
+    "hints": [
+      "The bigger the difference, the bigger the product. How can the numbers {n1}, {n2} and {n3} give the biggest difference?",
+      "For the biggest difference, {mn} is taken away from {mx}. Which number is left for the multiplier?",
+      "Answer: {r}."
+    ],
+    "explain": {
+      "given-order": "{w_given_order} comes from putting the numbers in the order they are given in the task. They can be arranged differently: take {mn} away from {mx} and multiply by {md}.",
+      "multiplier-is-the-largest": "{w_multiplier_is_the_largest} comes from putting the largest number as the multiplier. Then the difference is small: ({md} − {mn}) × {mx}. The largest value: {df} × {md} = {r}.",
+      "numbers-in-order": "{w_numbers_in_order} comes from putting the numbers in order from the largest to the smallest: ({mx} − {md}) × {mn}. The difference is small then. {mn} has to be taken away from {mx}: {r}."
+    }
+  }
+}

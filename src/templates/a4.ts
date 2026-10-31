@@ -34,6 +34,10 @@ const columns = (
   return Number([...s].map((c, i) => f(Number(c), Number(t[i]))).join(""));
 };
 
+/** The first whole number from 0 whose substitution satisfies `test`: guess and check. */
+const search = (test: (k: number) => boolean, max = 700): number =>
+  Array.from({ length: max + 1 }, (_, k) => k).find(test) ?? -1;
+
 const keep = (x: number, ...not: number[]): number | null =>
   Number.isInteger(x) && x >= 0 && !not.includes(x) ? x : null;
 
@@ -88,6 +92,7 @@ const divisible = [
     form: "the-smallest-digit-that-makes-a-number-divisible-by-3",
     groups: [8, 8],
     draw: (r) => [between(r, 1, 9), between(r, 1, 9)],
+    valid: ([a = 0, b = 0]) => (a + b) % 3 !== 0,
     solve: ([a = 0, b = 0]) => (3 - ((a + b) % 3)) % 3,
     ref: ([a = 0, b = 0]) =>
       Array.from({ length: 10 }, (_, x) => x).find(
@@ -359,10 +364,13 @@ const divisible = [
     origin: {
       olympiad: "common multiples in a range, a clever count (RES-4283, F15)",
     },
-    draw: (r) => [pick(r, [4, 6, 8, 9, 10]), pick(r, [3, 5, 6, 7, 12, 15])],
+    draw: (r) => [
+      pick(r, [2, 3, 4, 6, 8, 9, 10]),
+      pick(r, [3, 4, 5, 6, 7, 12, 15]),
+    ],
     valid: ([a = 0, b = 0]) => {
       const l = (a * b) / gcd(a, b);
-      return a !== b && l >= 12 && l <= 45 && a % b !== 0 && b % a !== 0;
+      return a !== b && l >= 6 && l <= 45 && a % b !== 0 && b % a !== 0;
     },
     solve: ([a = 0, b = 0]) => {
       const l = (a * b) / gcd(a, b);
@@ -402,6 +410,15 @@ const divisible = [
             Math.floor(99 / ((a * b) / gcd(a, b))) -
               Math.floor(9 / ((a * b) / gcd(a, b))),
           ),
+      ],
+      [
+        "counts-added",
+        "conceptual",
+        ([a = 0, b = 0]) =>
+          Math.floor(99 / a) -
+          Math.floor(9 / a) +
+          Math.floor(99 / b) -
+          Math.floor(9 / b),
       ],
     ],
     extra: ([a = 0, b = 0]) => {
@@ -507,6 +524,11 @@ const divisible = [
         "conceptual",
         ([n = 0]) => n - Math.floor(n / 2),
       ],
+      [
+        "only-the-multiples-of-six",
+        "conceptual",
+        ([n = 0]) => n - Math.floor(n / 6),
+      ],
     ],
     consts: [1, 2, 3, 6],
   }),
@@ -520,7 +542,7 @@ const efficient = [
     groups: [6, 7],
     draw: (r) => [between(r, 3, 19)],
     solve: ([a = 0]) => 100 * a,
-    ref: ([a = 0]) => 25 * 4 * a,
+    ref: ([a = 0]) => 25 * a + 25 * a + 25 * a + 25 * a,
     traps: [
       ["partial-product", "procedural", ([a = 0]) => 25 * a],
       ["only-four", "procedural", ([a = 0]) => 4 * a],
@@ -532,9 +554,9 @@ const efficient = [
     id: "A13.efficient.02",
     form: "multiplying-by-99",
     groups: [6, 7],
-    draw: (r) => [between(r, 3, 9)],
+    draw: (r) => [between(r, 3, 19)],
     solve: ([a = 0]) => 99 * a,
-    ref: ([a = 0]) => 100 * a - a,
+    ref: ([a = 0]) => 90 * a + 9 * a,
     traps: [
       ["hundred-only", "conceptual", ([a = 0]) => 100 * a],
       ["minus-one", "procedural", ([a = 0]) => 100 * a - 1],
@@ -549,7 +571,7 @@ const efficient = [
     draw: (r) => [between(r, 12, 49)],
     valid: ([a = 0]) => ones(a) > 0,
     solve: ([a = 0]) => 10 * a,
-    ref: ([a = 0]) => 5 * a * 2,
+    ref: ([a = 0]) => 5 * a + 5 * a,
     traps: [
       ["five-only", "procedural", ([a = 0]) => 5 * a],
       ["two-only", "procedural", ([a = 0]) => 2 * a],
@@ -579,7 +601,8 @@ const efficient = [
       return [a, between(r, 13, 39), 10 - (a % 10)];
     },
     solve: ([a = 0, b = 0, c = 0]) => a + b + c,
-    ref: ([a = 0, b = 0, c = 0]) => a + c + b,
+    ref: ([a = 0, b = 0, c = 0]) =>
+      10 * (tens(a) + tens(b) + tens(c)) + ones(a) + ones(b) + ones(c),
     traps: [
       ["two-addends", "procedural", ([a = 0, b = 0]) => a + b],
       ["pair-only", "procedural", ([a = 0, , c = 0]) => a + c],
@@ -595,9 +618,9 @@ const efficient = [
     id: "A13.efficient.06",
     form: "multiplying-by-98",
     groups: [6, 7],
-    draw: (r) => [between(r, 3, 9)],
+    draw: (r) => [between(r, 3, 19)],
     solve: ([a = 0]) => 98 * a,
-    ref: ([a = 0]) => 100 * a - 2 * a,
+    ref: ([a = 0]) => 90 * a + 8 * a,
     traps: [
       ["two-only", "procedural", ([a = 0]) => 100 * a - 2],
       ["hundred-only", "procedural", ([a = 0]) => 100 * a],
@@ -625,7 +648,7 @@ const efficient = [
     groups: [6, 7],
     draw: (r) => [between(r, 120, 480)],
     solve: ([a = 0]) => a - 99,
-    ref: ([a = 0]) => a - 100 + 1,
+    ref: ([a = 0]) => a - 90 - 9,
     traps: [
       ["hundred-only", "procedural", ([a = 0]) => a - 100],
       ["wrong-direction", "conceptual", ([a = 0]) => a - 101],
@@ -637,7 +660,7 @@ const efficient = [
     form: "the-sum-of-the-first-numbers-by-pairing",
     groups: [7, 8],
     origin: { olympiad: "Gauss pairing, Kangaroo style (RES-4283)" },
-    draw: (r) => [pick(r, [10, 12, 14, 16, 18, 20])],
+    draw: (r) => [2 * between(r, 5, 15)],
     solve: ([n = 0]) => (n * (n + 1)) / 2,
     ref: ([n = 0]) =>
       Array.from({ length: n }, (_, i) => i + 1).reduce((p, q) => p + q, 0),
@@ -670,7 +693,7 @@ const efficient = [
     groups: [7, 8],
     draw: (r) => [between(r, 11, 29)],
     solve: ([a = 0]) => 16 * a,
-    ref: ([a = 0]) => a * 2 * 2 * 2 * 2,
+    ref: ([a = 0]) => 10 * a + 6 * a,
     traps: [
       ["three-doublings", "procedural", ([a = 0]) => 8 * a],
       ["five-doublings", "procedural", ([a = 0]) => 32 * a],
@@ -683,7 +706,7 @@ const efficient = [
     form: "the-sum-of-the-even-numbers-by-pairing",
     groups: [7, 8],
     origin: { olympiad: "Gauss pairing for even numbers (RES-4283, F14)" },
-    draw: (r) => [4 * between(r, 3, 10)],
+    draw: (r) => [4 * between(r, 3, 15)],
     solve: ([n = 0]) => (n / 2) * (n / 2 + 1),
     ref: ([n = 0]) =>
       Array.from({ length: n / 2 }, (_, i) => 2 * (i + 1)).reduce(
@@ -756,6 +779,7 @@ const properties = [
         ([a = 0, b = 0, c = 0]) => (a * c === b + c ? null : a * c),
       ],
       ["whole-product", "conceptual", ([a = 0, b = 0, c = 0]) => a * (b + c)],
+      ["repeated-term", "conceptual", ([, b = 0]) => b],
     ],
     extra: ([a = 0, b = 0, c = 0]) => ({
       s: String(b + c),
@@ -1124,7 +1148,11 @@ const calc = [
       between(r, 1200, 8999),
     ],
     solve: ([a = 0, b = 0, c = 0]) => a + b + c,
-    ref: ([a = 0, b = 0, c = 0]) => c + b + a,
+    ref: ([a = 0, b = 0, c = 0]) =>
+      10 * (Math.floor(a / 10) + Math.floor(b / 10) + Math.floor(c / 10)) +
+      ones(a) +
+      ones(b) +
+      ones(c),
     traps: [
       ["one-addend-missing", "procedural", ([a = 0, b = 0]) => a + b],
       [
@@ -1150,7 +1178,7 @@ const calc = [
     groups: [8, 8],
     draw: (r) => [between(r, 52_000, 98_999), between(r, 12_000, 49_999)],
     solve: ([a = 0, b = 0]) => a - b,
-    ref: ([a = 0, b = 0]) => -(b - a),
+    ref: ([a = 0, b = 0]) => a - 1000 * Math.floor(b / 1000) - (b % 1000),
     traps: [
       ["added", "procedural", ([a = 0, b = 0]) => a + b],
       [
@@ -1167,7 +1195,10 @@ const calc = [
     draw: (r) => [between(r, 12, 89), between(r, 40, 199)],
     valid: ([d = 0, q = 0]) => d * q >= 1000 && d !== q && ones(q) > 0,
     solve: ([, q = 0]) => q,
-    ref: ([d = 0, q = 0]) => (d * q) / d,
+    ref: ([d = 0, q = 0]) =>
+      Array.from({ length: d * q }, (_, i) => i + 1).find(
+        (x) => x * d === d * q,
+      ) ?? -1,
     traps: [
       ["product-minus-divisor", "procedural", ([d = 0, q = 0]) => d * q - d],
       ["multiplied", "procedural", ([d = 0, q = 0]) => d * q * d],
@@ -1309,7 +1340,16 @@ const calc = [
     ],
     valid: ([a = 0, b = 0, c = 0, d = 0]) => new Set([a, b, c, d]).size === 4,
     solve: ([a = 0, b = 0, c = 0, d = 0]) => a + b + c + d,
-    ref: ([a = 0, b = 0, c = 0, d = 0]) => d + c + b + a,
+    ref: ([a = 0, b = 0, c = 0, d = 0]) =>
+      10 *
+        (Math.floor(a / 10) +
+          Math.floor(b / 10) +
+          Math.floor(c / 10) +
+          Math.floor(d / 10)) +
+      ones(a) +
+      ones(b) +
+      ones(c) +
+      ones(d),
     traps: [
       ["one-price-missing", "procedural", ([a = 0, b = 0, c = 0]) => a + b + c],
       [
@@ -1495,6 +1535,11 @@ const calcS = [
         },
       ],
     ],
+    extra: ([n = 0, d = 0]) => ({
+      shown: `${Math.floor(n / d)},${String(frac3(n, d)).padStart(3, "0")}`,
+      fd: String(Math.floor(frac3(n, d) / 100)),
+    }),
+    consts: [5],
   }),
   a14s({
     id: "A14.calculator-1S.02",
@@ -1631,7 +1676,9 @@ const calcS = [
     ],
     valid: (v) => new Set(v).size === v.length,
     solve: (v) => v.reduce((p, q) => p + q, 0),
-    ref: (v) => [...v].reverse().reduce((p, q) => p + q, 0),
+    ref: (v) =>
+      10 * v.reduce((p, x) => p + Math.floor(x / 10), 0) +
+      v.reduce((p, x) => p + ones(x), 0),
     traps: [
       [
         "four-addends",
@@ -1676,7 +1723,7 @@ const calcS = [
     groups: [8, 8],
     draw: (r) => [between(r, 120, 480), between(r, 500, 900)],
     solve: ([a = 0, b = 0]) => a - b,
-    ref: ([a = 0, b = 0]) => -(b - a),
+    ref: ([a = 0, b = 0]) => a - 1000 + (1000 - b),
     traps: [
       ["sign-lost", "conceptual", ([a = 0, b = 0]) => b - a],
       ["zero", "conceptual", ([]) => 0],
@@ -1892,6 +1939,7 @@ const oneStep = [
         "procedural",
         ([a = 0, b = 0]) => columns(a, b, (x, y) => (x + y) % 10),
       ],
+      ["right-side", "conceptual", ([, b = 0]) => b],
     ],
   }),
   a15({
@@ -1921,7 +1969,7 @@ const oneStep = [
     draw: (r) => [between(r, 3, 12), between(r, 5, 19)],
     valid: ([a = 0, x = 0]) => a !== x,
     solve: ([, x = 0]) => x,
-    ref: ([a = 0, x = 0]) => (a * x) / a,
+    ref: ([a = 0, x = 0]) => search((k) => a * k === a * x),
     traps: [
       ["product-minus-factor", "procedural", ([a = 0, x = 0]) => a * x - a],
       ["product-itself", "conceptual", ([a = 0, x = 0]) => a * x],
@@ -1963,6 +2011,7 @@ const oneStep = [
     traps: [
       ["quotient", "conceptual", ([, q = 0]) => q],
       ["multiplied", "procedural", ([d = 0, q = 0]) => d * q * q],
+      ["dividend-minus-quotient", "procedural", ([d = 0, q = 0]) => d * q - q],
     ],
     extra: ([d = 0, q = 0]) => ({ n: String(d * q) }),
   }),
@@ -1993,7 +2042,7 @@ const oneStep = [
     origin: EQ,
     draw: (r) => [between(r, 6, 49)],
     solve: ([x = 0]) => x,
-    ref: ([x = 0]) => (2 * x) / 2,
+    ref: ([x = 0]) => search((k) => k + k === x + x),
     traps: [
       ["not-halved", "procedural", ([x = 0]) => 2 * x],
       ["doubled", "procedural", ([x = 0]) => 4 * x],
@@ -2030,7 +2079,8 @@ const oneStep = [
       pick(r, [3, 5, 7, 9]),
       pick(r, [2, 3, 4, 6]),
     ],
-    valid: ([a = 0, b = 0, c = 0]) => (a * b) % c === 0 && (a * b) / c !== a,
+    valid: ([a = 0, b = 0, c = 0]) =>
+      (a * b) % c === 0 && (a * b) / c !== a && c !== a,
     solve: ([a = 0, b = 0, c = 0]) => (a * b) / c,
     ref: ([a = 0, b = 0, c = 0]) =>
       Array.from({ length: 200 }, (_, x) => x).find((x) => x * c === a * b) ??
@@ -2070,9 +2120,9 @@ const oneStep = [
     traps: [
       ["added", "procedural", ([t = 0, c = 0]) => q(10 * c + t, 10)],
       [
-        "the-tenths-taken-as-ones",
+        "the-tenths-copied",
         "procedural",
-        ([t = 0, c = 0]) => (10 * c - t > 0 ? q(c - t, 1) : null),
+        ([t = 0, c = 0]) => q(10 * (c - Math.floor(t / 10)) + (t % 10), 10),
       ],
       [
         "the-whole-parts-only",
@@ -2162,7 +2212,7 @@ const twoStep = [
     draw: (r) => [between(r, 2, 9), between(r, 3, 19), between(r, 3, 19)],
     valid: ([a = 0, b = 0, x = 0]) => a !== x && b !== x,
     solve: ([, , x = 0]) => x,
-    ref: ([a = 0, b = 0, x = 0]) => (a * x + b - b) / a,
+    ref: ([a = 0, b = 0, x = 0]) => search((k) => a * k + b === a * x + b),
     traps: [
       ["not-divided", "procedural", ([a = 0, , x = 0]) => a * x],
       [
@@ -2192,7 +2242,7 @@ const twoStep = [
     draw: (r) => [between(r, 2, 9), between(r, 3, 19), between(r, 5, 19)],
     valid: ([a = 0, b = 0, x = 0]) => a !== x && a * x > b && b !== x,
     solve: ([, , x = 0]) => x,
-    ref: ([a = 0, b = 0, x = 0]) => (a * x - b + b) / a,
+    ref: ([a = 0, b = 0, x = 0]) => search((k) => a * k - b === a * x - b),
     traps: [
       ["not-divided", "procedural", ([a = 0, , x = 0]) => a * x],
       [
@@ -2252,7 +2302,7 @@ const twoStep = [
     draw: (r) => [between(r, 2, 9), between(r, 3, 19), between(r, 3, 19)],
     valid: ([a = 0, b = 0, q = 0]) => a !== q && b !== q,
     solve: ([a = 0, , q = 0]) => a * q,
-    ref: ([a = 0, b = 0, q = 0]) => (q + b - b) * a,
+    ref: ([a = 0, b = 0, q = 0]) => search((k) => k / a + b === q + b),
     traps: [
       [
         "second-step-skipped",
@@ -2272,7 +2322,7 @@ const twoStep = [
     draw: (r) => [between(r, 2, 9), between(r, 60, 150), between(r, 3, 15)],
     valid: ([a = 0, b = 0, x = 0]) => b > a * x && a !== x,
     solve: ([, , x = 0]) => x,
-    ref: ([a = 0, b = 0, x = 0]) => (b - (b - a * x)) / a,
+    ref: ([a = 0, b = 0, x = 0]) => search((k) => b - a * k === b - a * x),
     traps: [
       ["difference-not-divided", "procedural", ([a = 0, , x = 0]) => a * x],
       ["multiplied", "procedural", ([a = 0, , x = 0]) => a * (a * x)],
@@ -2295,7 +2345,7 @@ const twoStep = [
     draw: (r) => [between(r, 3, 19), between(r, 2, 9), between(r, 4, 19)],
     valid: ([a = 0, b = 0, q = 0]) => b !== q && a !== q,
     solve: ([a = 0, b = 0, q = 0]) => a + b * q,
-    ref: ([a = 0, b = 0, q = 0]) => q * b + a,
+    ref: ([a = 0, b = 0, q = 0]) => search((k) => (k - a) / b === q),
     traps: [
       ["bracket-skipped", "procedural", ([, b = 0, q = 0]) => b * q],
       [
@@ -2322,7 +2372,7 @@ const twoStep = [
     draw: (r) => [between(r, 3, 9), between(r, 5, 19), between(r, 3, 12)],
     valid: ([a = 0, b = 0, x = 0]) => a !== x && b !== x,
     solve: ([, , x = 0]) => x,
-    ref: ([a = 0, b = 0, x = 0]) => (a * x + b - b) / a,
+    ref: ([a = 0, b = 0, x = 0]) => search((k) => a * k + b === a * x + b),
     traps: [
       ["not-divided", "procedural", ([a = 0, , x = 0]) => a * x],
       [
@@ -2352,7 +2402,7 @@ const twoStep = [
     draw: (r) => [between(r, 3, 19), between(r, 12, 49)],
     valid: ([a = 0, x = 0]) => a !== x,
     solve: ([, x = 0]) => x,
-    ref: ([a = 0, x = 0]) => (2 * x + a - a) / 2,
+    ref: ([a = 0, x = 0]) => search((k) => k + k + a === x + x + a),
     traps: [
       ["not-halved", "procedural", ([, x = 0]) => 2 * x],
       [
@@ -2383,7 +2433,7 @@ const twoStep = [
     draw: (r) => [between(r, 2, 9), between(r, 12, 39), between(r, 3, 19)],
     valid: ([a = 0, b = 0, q = 0]) => b > q && a !== q,
     solve: ([a = 0, b = 0, q = 0]) => a * (b - q),
-    ref: ([a = 0, b = 0, q = 0]) => (b - q) * a,
+    ref: ([a = 0, b = 0, q = 0]) => search((k) => q + k / a === b),
     traps: [
       [
         "added-not-subtracted",

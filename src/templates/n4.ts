@@ -247,7 +247,7 @@ const roundSpecs = [
     id: "N4.round.05",
     form: "a-half-rounds-up",
     groups: [5, 6],
-    draw: (r) => 100 * between(r, 1, 9) + 50,
+    draw: (r) => 100 * between(r, 1, 39) + 50,
     solve: (n) => n + 50,
     reference: (n) => Math.floor(n / 100) * 100 + 100,
     traps: [
@@ -280,7 +280,7 @@ const roundSpecs = [
       },
     ],
     vars: (n) => ({
-      t: s(n % 10_000),
+      t: digits(n % 10_000),
       th: s(Math.floor(n / 1000) % 10),
       lo: digits(down(n, 10_000)),
       hi: digits(up(n, 10_000)),
@@ -406,7 +406,7 @@ const roundSpecs = [
       olympiad:
         "rounding twice does not round once; the rounding-boundary reasoning of RES-4281",
     },
-    draw: (r) => 100 * between(r, 1, 9) + between(r, 45, 49),
+    draw: (r) => 100 * between(r, 1, 99) + between(r, 45, 49),
     solve: (n) => down(n, 100) + 100,
     reference: (n) => nearest(nearest(n, 10), 100),
     traps: [
@@ -432,6 +432,11 @@ const roundSpecs = [
     traps: [
       { id: "cut-off", kind: "procedural", wrong: (n) => down(n, 1000) / 1000 },
       { id: "metres-kept", kind: "conceptual", wrong: (n) => nearest(n, 1000) },
+      {
+        id: "divided-by-hundred",
+        kind: "conceptual",
+        wrong: (n) => nearest(n, 1000) / 100,
+      },
     ],
     vars: (n) => ({ m: digits(nearest(n, 1000)) }),
     constants: [500, 1000],
@@ -493,6 +498,11 @@ const roundSpecs = [
         kind: "conceptual",
         wrong: (p) => digits(p.n + 50),
       },
+      {
+        id: "next-hundred",
+        kind: "conceptual",
+        wrong: (p) => digits(p.n + 100 + p.off),
+      },
     ],
     vars: (p) => ({
       n: digits(p.n),
@@ -501,6 +511,7 @@ const roundSpecs = [
       r: digits(p.n + p.off),
       w_just_below: digits(p.n - 51),
       w_half_above: digits(p.n + 50),
+      w_next_hundred: digits(p.n + 100 + p.off),
     }),
     constants: [49, 50],
   }),
@@ -589,7 +600,7 @@ const estimateSpecs = [
     draw: (r) => ({ a: between(r, 21, 98), b: between(r, 21, 98), c: 0 }),
     valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
     exact: (p) => q(p.a + p.b),
-    second: (p) => q(p.b + p.a),
+    second: (p) => q(down(p.a, 10) + down(p.b, 10) + (p.a % 10) + (p.b % 10)),
     slack: () => 10,
     traps: [
       { id: "one-addend", wrong: (p) => q(Math.max(p.a, p.b)) },
@@ -610,7 +621,7 @@ const estimateSpecs = [
     draw: (r) => ({ a: between(r, 301, 999), b: between(r, 101, 299), c: 0 }),
     valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
     exact: (p) => q(p.a - p.b),
-    second: (p) => q(p.a + -p.b),
+    second: (p) => q(p.a - down(p.b, 100) - (p.b % 100)),
     slack: () => 10,
     traps: [
       { id: "sum-instead", wrong: (p) => q(p.a + p.b) },
@@ -656,7 +667,7 @@ const estimateSpecs = [
     draw: (r) => ({ a: between(r, 21, 79), b: between(r, 21, 79), c: 0 }),
     valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0,
     exact: (p) => q(p.a * p.b),
-    second: (p) => q(p.b * p.a),
+    second: (p) => q(p.a * down(p.b, 10) + p.a * (p.b % 10)),
     slack: (p) => 5 * (p.a + p.b) + 25,
     traps: [
       { id: "ten-times-off", wrong: (p) => q(10 * p.a * p.b) },
@@ -681,7 +692,15 @@ const estimateSpecs = [
       return { a: b * between(r, 30, 99) + between(r, 1, b - 1), b, c: 0 };
     },
     exact: (p) => q(Math.floor(p.a / p.b)),
-    second: (p) => q((p.a - (p.a % p.b)) / p.b),
+    second: (p) => {
+      let left = p.a;
+      let count = 0;
+      while (left >= p.b) {
+        left -= p.b;
+        count += 1;
+      }
+      return q(count);
+    },
     slack: (p) => Math.floor(p.a / p.b / 10) + 2,
     traps: [
       { id: "product-instead", wrong: (p) => q(p.a * p.b) },
@@ -703,7 +722,8 @@ const estimateSpecs = [
     draw: (r) => ({ a: between(r, 12, 98), b: between(r, 3, 9), c: 0 }),
     valid: (p) => p.a % 10 !== 0,
     exact: (p) => q(p.a * p.b),
-    second: (p) => q(p.b * p.a),
+    second: (p) =>
+      q(Array.from({ length: p.b }, () => p.a).reduce((x, y) => x + y, 0)),
     slack: (p) => 5 * p.b,
     traps: [
       { id: "one-item", wrong: (p) => q(p.a) },
@@ -727,7 +747,15 @@ const estimateSpecs = [
     }),
     valid: (p) => p.a % 10 !== 0 && p.b % 10 !== 0 && p.c % 10 !== 0,
     exact: (p) => q(p.a + p.b + p.c),
-    second: (p) => q(p.c + p.b + p.a),
+    second: (p) =>
+      q(
+        down(p.a, 10) +
+          down(p.b, 10) +
+          down(p.c, 10) +
+          (p.a % 10) +
+          (p.b % 10) +
+          (p.c % 10),
+      ),
     slack: () => 15,
     traps: [
       { id: "two-addends", wrong: (p) => q(p.a + p.b) },
@@ -767,7 +795,15 @@ const estimateSpecs = [
     }),
     valid: (p) => p.a % 100 !== 0 && p.b % 100 !== 0 && p.c % 100 !== 0,
     exact: (p) => q(p.a + p.b + p.c),
-    second: (p) => q(p.b + p.c + p.a),
+    second: (p) =>
+      q(
+        down(p.a, 100) +
+          down(p.b, 100) +
+          down(p.c, 100) +
+          (p.a % 100) +
+          (p.b % 100) +
+          (p.c % 100),
+      ),
     slack: () => 150,
     traps: [
       { id: "forgot-a-leg", wrong: (p) => q(p.a + p.b) },
@@ -798,7 +834,7 @@ const estimateSpecs = [
     groups: [6, 7],
     draw: (r) => ({ a: between(r, 101, 999), b: 50, c: 0 }),
     exact: (p) => Q.of(BigInt(p.a), 50n),
-    second: (p) => Q.fromDecimal((p.a / 50).toFixed(2)),
+    second: (p) => Q.of(BigInt(2 * p.a), 100n),
     slack: () => 1,
     traps: [
       { id: "ten-times-more", wrong: (p) => Q.of(BigInt(p.a), 5n) },
@@ -815,10 +851,15 @@ const estimateSpecs = [
     id: "N4.estimate.10",
     form: "estimate-the-price-of-several-items-costing-just-under-a-round-price",
     groups: [6, 7],
-    draw: (r) => ({ a: between(r, 2, 9) * 100 - 1, b: between(r, 3, 9), c: 0 }),
+    draw: (r) => ({
+      a: between(r, 2, 9) * 100 - between(r, 1, 5),
+      b: between(r, 3, 9),
+      c: 0,
+    }),
     valid: (p) => Math.abs(p.a * p.b - p.a - 100 * p.b) > 100,
     exact: (p) => Q.of(BigInt(p.a * p.b), 100n),
-    second: (p) => Q.fromDecimal(((p.a * p.b) / 100).toFixed(2)),
+    second: (p) =>
+      q(Math.floor(p.a / 100) * p.b).add(Q.of(BigInt((p.a % 100) * p.b), 100n)),
     slack: () => 1,
     traps: [
       {
@@ -957,6 +998,11 @@ const estimateSpecs = [
         kind: "conceptual",
         wrong: (p) => qi(String(p.a).length),
       },
+      {
+        id: "digits-added-less-one",
+        kind: "conceptual",
+        wrong: (p) => qi(String(p.a).length + String(p.b).length - 1),
+      },
     ],
     vars: (p) => {
       const la = Math.floor(p.a / 100) * 100;
@@ -973,6 +1019,7 @@ const estimateSpecs = [
         r: s(String(p.a * p.b).length),
         w_digits_added: s(String(p.a).length + String(p.b).length),
         w_larger_factor_digits: s(String(p.a).length),
+        w_digits_added_less_one: s(String(p.a).length + String(p.b).length - 1),
       };
     },
     constants: [10, 100],
@@ -988,6 +1035,7 @@ const estimateSpecs = [
     traps: [
       { id: "one-part", wrong: (p) => q(p.a) },
       { id: "three-parts", wrong: (p) => q(3 * p.a) },
+      { id: "plus-four", wrong: (p) => q(p.a + 4) },
     ],
     vars: (p) => ({ m: s(p.a) }),
     constants: [4],

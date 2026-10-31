@@ -132,3 +132,27 @@ describe("domain N and A templates", () => {
     });
   }
 });
+
+describe("REQ-7548: every task reads in the parent's language", () => {
+  it("renders English and Dutch with nothing left in Russian or unfilled", () => {
+    const left: string[] = [];
+    for (const c of compiled)
+      for (const lang of ["en", "nl"] as const) {
+        const made = c.make(seedOf(1), lang);
+        for (const text of [made.text, ...made.solution, ...made.hints])
+          if (/[\u0400-\u04FF{}]/.test(text))
+            left.push(`${c.id} ${lang}: ${text}`);
+      }
+    expect(left).toEqual([]);
+  });
+
+  it("takes an English decimal with a point and a Dutch one with a comma", () => {
+    const c = compiled.find((t) => t.id === "D1.place-value.10");
+    if (!c) throw new Error("no such template");
+    const entry = c.make(seedOf(1), "en").entry.replace(",", ".");
+    expect(c.make(seedOf(1), "en").checker(entry).verdict).toBe("correct");
+    expect(
+      c.make(seedOf(1), "nl").checker(entry.replace(".", ",")).verdict,
+    ).toBe("correct");
+  });
+});

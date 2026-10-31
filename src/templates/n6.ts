@@ -199,9 +199,16 @@ const million = [
         kind: "procedural",
         wrong: (p) => qi(p.n + 100_000),
       },
+      {
+        id: "no-carry",
+        kind: "procedural",
+        wrong: (p) =>
+          Math.floor(p.n / 1000) % 10 === 9 ? qi(p.n - 9000) : null,
+      },
     ],
     vars: (p) => ({
       n: digits(p.n),
+      t: s(Math.floor(p.n / 1000) % 10),
       r: digits(p.n + 1000),
       a: digits(p.n + 10_000),
       b: digits(p.n + 100),
@@ -309,6 +316,8 @@ const million = [
       return {
         a: p.swap ? hundredths : tenths,
         b: p.swap ? tenths : hundredths,
+        short0: `${tenths}0`,
+        long: hundredths,
         sign: p.swap ? "<" : ">",
       };
     },
@@ -417,7 +426,7 @@ const million = [
     roles: { m: "whole metres", c: "centimetres" },
     groups: [6, 6],
     answer: "decimal",
-    draw: (r) => ({ m: between(r, 1, 9), c: between(r, 1, 9) }),
+    draw: (r) => ({ m: between(r, 1, 49), c: between(r, 1, 9) }),
     solve: (p) => qHundredths(100 * p.m + p.c),
     reference: (p) => Q.fromDecimal(`${p.m},0${p.c}`),
     traps: [
@@ -452,8 +461,8 @@ const million = [
     form: "one-tenth-more-than-a-decimal",
     groups: [6, 6],
     answer: "decimal",
-    draw: (r) => ({ t: between(r, 11, 98) }),
-    valid: (p) => p.t % 10 !== 9,
+    draw: (r) => ({ t: between(r, 11, 298) }),
+    valid: (p) => p.t % 10 !== 9 && p.t % 10 !== 0,
     solve: (p) => qTenths(p.t + 1),
     reference: (p) => qHundredths(10 * p.t + 10),
     traps: [
@@ -498,6 +507,12 @@ const million = [
         kind: "conceptual",
         wrong: (p) => qi(1_000_000 * p.t),
       },
+      {
+        id: "tenths-as-hundredths",
+        kind: "conceptual",
+        wrong: (p) =>
+          qi(1_000_000 * Math.floor(p.t / 10) + 10_000 * (p.t % 10)),
+      },
     ],
     vars: (p) => ({
       x: tenthsText(p.t),
@@ -528,6 +543,11 @@ const million = [
         kind: "conceptual",
         wrong: (p) => qi(1_000_000 * p.m + p.t),
       },
+      {
+        id: "no-last-zeros",
+        kind: "procedural",
+        wrong: (p) => qi(Number(`${p.m}${s(p.t).padStart(3, "0")}`)),
+      },
     ],
     vars: (p) => ({
       m: s(p.m),
@@ -557,6 +577,11 @@ const million = [
         id: "zeros-lost",
         kind: "conceptual",
         wrong: (p) => qi(Number(`${p.b}${p.m}000000`)),
+      },
+      {
+        id: "three-zeros",
+        kind: "procedural",
+        wrong: (p) => qi(Number(`${p.b}${s(p.m).padStart(3, "0")}000`)),
       },
     ],
     vars: (p) => ({
@@ -984,7 +1009,7 @@ const roundSpecs = [
     id: "N6.round-million.08",
     form: "a-half-in-a-decimal-rounds-up",
     groups: [7, 7],
-    draw: (r) => ({ w: between(r, 1, 99) }),
+    draw: (r) => ({ w: between(r, 1, 999) }),
     solve: (p) => qi(p.w + 1),
     reference: (p) => qi(Math.round((10 * p.w + 5) / 10 + 1e-9)),
     traps: [
@@ -1050,7 +1075,7 @@ const roundSpecs = [
     form: "largest-whole-number-that-rounds-to-a-round-number-of-thousands",
     groups: [7, 8],
     origin: { olympiad: "rounding-boundary reasoning, RES-4281" },
-    draw: (r) => ({ m: pick(r, [2, 3, 5, 7, 12, 25, 40, 99, 250, 999]) }),
+    draw: (r) => ({ m: between(r, 2, 999) }),
     solve: (p) => qi(1000 * p.m + 499),
     reference: (p) => {
       let best = 1000 * p.m;
@@ -1107,6 +1132,11 @@ const roundSpecs = [
         id: "to-whole",
         kind: "conceptual",
         wrong: (p) => qi(Math.round(p.n / 1_000_000)),
+      },
+      {
+        id: "always-up",
+        kind: "conceptual",
+        wrong: (p) => qTenths(Math.floor(p.n / 100_000) + 1),
       },
     ],
     vars: (p) => {

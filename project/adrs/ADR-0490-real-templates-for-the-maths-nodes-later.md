@@ -3,7 +3,7 @@ id: ADR-0490
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-1232, REQ-7520, REQ-7522, REQ-7530, REQ-7532, REQ-7534, REQ-7542, REQ-7516, REQ-7518, REQ-7524, REQ-7526, REQ-7528, REQ-7536, REQ-7538, REQ-7540, REQ-7546]
+addresses: [REQ-7548, REQ-1232, REQ-7520, REQ-7522, REQ-7530, REQ-7532, REQ-7534, REQ-7542, REQ-7516, REQ-7518, REQ-7524, REQ-7526, REQ-7528, REQ-7536, REQ-7538, REQ-7540, REQ-7546]
 supersedes: []
 ---
 
@@ -50,3 +50,5 @@ The checks that read real templates stay unrun until the later epic, and the pla
 
 - The order in which the nodes get templates.
 - What makes two templates different forms of one subtype; the epic fixes it with the first domain.
+
+Amended on 2026-10-31: the tasks and the interface also ship in English and Dutch, with the parent choosing the language (REQ-7548). Each template reads its strings from `content/tasks-<domain>.<language>.json`, and the numbers and pictures stay language-free.

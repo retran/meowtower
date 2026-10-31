@@ -60,6 +60,7 @@ function reaches(line: string, answer: Q): boolean {
 
 /** The kit tasks whose answer is chosen or read and not computed: the largest, a median, a place in a row. */
 const NOT_COMPUTED = new Set([
+  "M13.instruments.13",
   "G1.shapes.06",
   "G1.shapes.08",
   "G3.symmetry.01",

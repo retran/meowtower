@@ -216,7 +216,8 @@ const wordsDigits = [
     draw: (r): N => ({ n: between(r, 21, 99) }),
     valid: (p: N) => p.n % 10 !== 0 && Math.floor(p.n / 10) !== p.n % 10,
     solve: (p: N) => qi(p.n),
-    reference: (p: N) => qi(10 * Math.floor(p.n / 10) + (p.n % 10)),
+    // The second route joins the two digits as text, not as tens and ones.
+    reference: (p: N) => qi(Number(`${Math.floor(p.n / 10)}${p.n % 10}`)),
     traps: numberTraps<N>([
       ["reversed", "conceptual", (p) => 10 * (p.n % 10) + Math.floor(p.n / 10)],
       [
@@ -346,7 +347,9 @@ const wordsDigits = [
     answer: "integer",
     draw: (r): N => ({ n: thousands(r, 10, 999) }),
     solve: (p: N) => qi(p.n),
-    reference: (p: N) => qi(Math.floor(p.n / 1000) * 1000 + (p.n % 1000)),
+    // The second route joins the thousands and the three last digits as text.
+    reference: (p: N) =>
+      qi(Number(`${Math.floor(p.n / 1000)}${s(p.n % 1000).padStart(3, "0")}`)),
     traps: numberTraps<N>([
       ["joined-without-zeros", "conceptual", (p) => joined(p.n)],
       ["each-part-in-full", "conceptual", (p) => partsInFull(p.n)],
@@ -622,6 +625,15 @@ const wordsDigits = [
         (p) => Math.floor(p.n / 10) + (p.n % 10 >= p.d ? 1 : 0),
       ],
       [
+        "only-the-tens-place",
+        "conceptual",
+        (p) => {
+          const tens = Math.floor(p.n / 10);
+          const asTens = tens > p.d ? 10 : tens === p.d ? (p.n % 10) + 1 : 0;
+          return asTens === 0 ? null : asTens;
+        },
+      ],
+      [
         "numbers-containing",
         "conceptual",
         (p) =>
@@ -646,8 +658,6 @@ const wordsDigits = [
   } satisfies Spec<{ n: number; d: number }>,
 ] as const;
 
-type Cmp = (a: number, b: number) => (typeof SIGNS)[number];
-
 const pairSpec = (
   id: string,
   form: string,
@@ -657,7 +667,7 @@ const pairSpec = (
     traps: readonly (readonly [string, Kind, (p: Pair) => Sign | null])[];
     vars?: (p: Pair) => Record<string, string>;
     groups?: readonly [number, number];
-    reference?: Cmp;
+    reference?: (p: Pair) => Sign;
     roles?: Readonly<Record<string, string>>;
   },
 ): Spec<Pair> => ({
@@ -671,7 +681,8 @@ const pairSpec = (
   draw,
   ...(extra.valid ? { valid: extra.valid } : {}),
   solve: (p) => signOf(p.a, p.b),
-  reference: (p) => (extra.reference ?? bySubtraction)(p.a, p.b),
+  reference: (p) =>
+    extra.reference ? extra.reference(p) : bySubtraction(p.a, p.b),
   traps: signTraps<Pair>(extra.traps),
   vars: (p) => ({
     a: digits(p.a),
@@ -734,8 +745,8 @@ const compareSix = [
       ],
       vars: (p) => ({
         head: s(Math.floor(p.a / 1000)),
-        ta: s(p.a % 1000),
-        tb: s(p.b % 1000),
+        ta: s(p.a % 1000).padStart(3, "0"),
+        tb: s(p.b % 1000).padStart(3, "0"),
       }),
     },
   ),
@@ -864,6 +875,8 @@ const compareSix = [
       return { a: x + y, b: six(r), x, y };
     },
     {
+      // The second route sets the first addend against what the number leaves for it.
+      reference: (p) => bySubtraction(p.x ?? 0, p.b - (p.y ?? 0)),
       traps: [
         ["first-addend", "procedural", (p) => signOf(p.x ?? 0, p.b)],
         [
@@ -985,6 +998,20 @@ const compareSix = [
               i >= 6 - extra ? base + 1 : base,
             ).join(""),
           );
+        },
+      ],
+      [
+        "right-digits-spread-evenly",
+        "conceptual",
+        (p) => {
+          const rest = p.sum - 1;
+          const m = Math.ceil(rest / 9);
+          const base = Math.floor(rest / m);
+          const extra = rest % m;
+          const tail = Array.from({ length: m }, (_, i) =>
+            i >= m - extra ? base + 1 : base,
+          ).join("");
+          return Number(`1${"0".repeat(5 - m)}${tail}`);
         },
       ],
       [

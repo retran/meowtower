@@ -124,7 +124,11 @@ const pointSpecs = [
     answer: "integer",
     draw: (r) => ({ k: between(r, 2, 9) }),
     solve: (p) => qi(1000 - 100 * p.k),
-    reference: (p) => qi(100 * (10 - p.k)),
+    reference: (p) => {
+      let at = 1000;
+      for (let j = 0; j < p.k; j += 1) at -= 100;
+      return qi(at);
+    },
     traps: [
       { id: "from-zero", kind: "conceptual", wrong: (p) => qi(100 * p.k) },
       {
@@ -164,12 +168,12 @@ const pointSpecs = [
       },
     ],
     vars: (p) => ({
-      b: s(p.b),
-      e: s(p.b + 100),
+      b: digits(p.b),
+      e: digits(p.b + 100),
       k: s(p.k),
-      r: s(p.b + 10 * p.k),
-      z: s(10 * p.k),
-      m: s(p.b + p.k),
+      r: digits(p.b + 10 * p.k),
+      z: digits(10 * p.k),
+      m: digits(p.b + p.k),
     }),
     constants: [10],
   }),
@@ -214,7 +218,11 @@ const pointSpecs = [
       };
     },
     solve: (p) => qi((p.t / p.parts) * p.k),
-    reference: (p) => qi((p.t * p.k) / p.parts),
+    reference: (p) => {
+      let at = 0;
+      for (let j = 0; j < p.k; j += 1) at += p.t / p.parts;
+      return qi(at);
+    },
     traps: [
       { id: "one-part", kind: "conceptual", wrong: (p) => qi(p.t / p.parts) },
       { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.k) },
@@ -238,7 +246,7 @@ const pointSpecs = [
     }),
     constants: [0],
   }),
-  defineSpec<{ a: number; b: number; q: number }>({
+  defineSpec<{ a: number; b: number; q: number; step: number }>({
     id: "N5.point.06",
     node: "N5",
     subtype: "point",
@@ -246,34 +254,36 @@ const pointSpecs = [
     groups: [6, 6],
     answer: "line",
     draw: (r) => {
-      const a = 100 * between(r, 1, 6);
-      return { a, b: a + 400, q: pick(r, [1, 3]) };
+      const step = pick(r, [50, 100, 200, 250]);
+      const a = step * between(r, 1, 6);
+      return { a, b: a + 4 * step, q: pick(r, [1, 3]), step };
     },
-    solve: (p) => qi(p.a + 100 * p.q),
+    solve: (p) => qi(p.a + p.step * p.q),
     reference: (p) => qi(p.a + ((p.b - p.a) * p.q) / 4),
-    within: () => qi(40),
+    within: (p) => qi(Math.round(0.4 * p.step)),
     traps: [
       {
         id: "mirrored",
         kind: "conceptual",
-        wrong: (p) => qi(p.a + 100 * (4 - p.q)),
+        wrong: (p) => qi(p.a + p.step * (4 - p.q)),
       },
       { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.a + p.q) },
-      { id: "from-zero", kind: "conceptual", wrong: (p) => qi(100 * p.q) },
+      { id: "from-zero", kind: "conceptual", wrong: (p) => qi(p.step * p.q) },
       {
         id: "zero-counted",
         kind: "conceptual",
-        wrong: (p) => qi(p.a + 100 * (p.q - 1)),
+        wrong: (p) => qi(p.a + p.step * (p.q - 1)),
       },
     ],
     vars: (p) => ({
-      a: s(p.a),
-      b: s(p.b),
+      a: digits(p.a),
+      b: digits(p.b),
       q: s(p.q),
-      r: s(p.a + 100 * p.q),
-      w: s(p.a + 100 * (4 - p.q)),
+      step: digits(p.step),
+      r: digits(p.a + p.step * p.q),
+      w: digits(p.a + p.step * (4 - p.q)),
     }),
-    constants: [4, 40, 100],
+    constants: [4],
   }),
   defineSpec<{ n: number }>({
     id: "N5.point.07",
@@ -285,7 +295,7 @@ const pointSpecs = [
     draw: (r) => ({ n: between(r, 1001, 9999) }),
     valid: (p) => p.n % 1000 !== 0,
     solve: (p) => qi(Math.floor(p.n / 1000) * 1000),
-    reference: (p) => qi(p.n - (p.n % 1000)),
+    reference: (p) => qi(Number(`${String(p.n).slice(0, -3)}000`)),
     traps: [
       {
         id: "upper-mark",
@@ -334,7 +344,12 @@ const pointSpecs = [
       { id: "right-mark", kind: "conceptual", wrong: (p) => qi(p.b) },
       { id: "left-mark", kind: "conceptual", wrong: (p) => qi(p.a) },
     ],
-    vars: (p) => ({ a: s(p.a), b: s(p.b), r: s(p.b - p.a), sum: s(p.a + p.b) }),
+    vars: (p) => ({
+      a: digits(p.a),
+      b: digits(p.b),
+      r: digits(p.b - p.a),
+      sum: digits(p.a + p.b),
+    }),
   }),
   defineSpec<K>({
     id: "N5.point.09",
@@ -428,7 +443,15 @@ const pointSpecs = [
       return { step, a: step * between(r, 0, 10), n: between(r, 3, 12) };
     },
     solve: (p) => qi(p.n),
-    reference: (p) => qi((p.a + p.n * p.step - p.a) / p.step),
+    reference: (p) => {
+      let at = p.a;
+      let count = 0;
+      while (at < p.a + p.n * p.step) {
+        at += p.step;
+        count += 1;
+      }
+      return qi(count);
+    },
     traps: [
       { id: "marks-counted", kind: "conceptual", wrong: (p) => qi(p.n + 1) },
       { id: "inner-marks", kind: "conceptual", wrong: (p) => qi(p.n - 1) },
@@ -444,8 +467,8 @@ const pointSpecs = [
       },
     ],
     vars: (p) => ({
-      a: s(p.a),
-      b: s(p.a + p.n * p.step),
+      a: digits(p.a),
+      b: digits(p.a + p.n * p.step),
       step: s(p.step),
       r: s(p.n),
       m: s(p.n + 1),
@@ -667,6 +690,11 @@ const pointSpecs = [
         kind: "conceptual",
         wrong: (p) => qi(p.n * p.a),
       },
+      {
+        id: "last-pair-complete",
+        kind: "conceptual",
+        wrong: (p) => qi(((p.n + 1) / 2) * (p.a - p.b)),
+      },
     ],
     vars: (p) => ({
       a: s(p.a),
@@ -728,7 +756,11 @@ const scaleSpecs = [
     answer: "integer",
     draw: (r) => ({ c: between(r, 2, 30), m: between(r, 1, 9) }),
     solve: (p) => qi(10 * p.c + p.m),
-    reference: (p) => qi(p.c * 10 + p.m),
+    reference: (p) => {
+      let mm = p.m;
+      for (let j = 0; j < p.c; j += 1) mm += 10;
+      return qi(mm);
+    },
     traps: [
       { id: "added-units", kind: "procedural", wrong: (p) => qi(p.c + p.m) },
       {
@@ -816,7 +848,11 @@ const scaleSpecs = [
         wrong: (p) => qi((p.lo + 100) / 2),
       },
     ],
-    vars: (p) => ({ lo: s(p.lo), hi: s(p.lo + 100), r: s(p.lo + 50) }),
+    vars: (p) => ({
+      lo: digits(p.lo),
+      hi: digits(p.lo + 100),
+      r: digits(p.lo + 50),
+    }),
     constants: [50, 100],
   }),
   defineSpec<{ step: number; k: number }>({
@@ -832,7 +868,15 @@ const scaleSpecs = [
     answer: "integer",
     draw: (r) => ({ step: pick(r, [10, 20]), k: between(r, 2, 9) }),
     solve: (p) => qi(p.k),
-    reference: (p) => qi((p.step * p.k) / p.step),
+    reference: (p) => {
+      let at = 0;
+      let marks = 0;
+      while (at < p.step * p.k) {
+        at += p.step;
+        marks += 1;
+      }
+      return qi(marks);
+    },
     traps: [
       {
         id: "speed-as-mark",
@@ -869,7 +913,11 @@ const scaleSpecs = [
       };
     },
     solve: (p) => qi(p.g / p.p),
-    reference: (p) => qi((p.a + p.g - p.a) / p.p),
+    reference: (p) => {
+      let one = 1;
+      while (one * p.p < p.g) one += 1;
+      return qi(one);
+    },
     traps: [
       { id: "whole-gap", kind: "conceptual", wrong: (p) => qi(p.g) },
       { id: "multiplied", kind: "procedural", wrong: (p) => qi(p.g * p.p) },
@@ -906,7 +954,11 @@ const scaleSpecs = [
     },
     valid: (p) => p.g % p.p === 0,
     solve: (p) => qi(p.a + (p.g / p.p) * p.k),
-    reference: (p) => qi(p.a + (p.g * p.k) / p.p),
+    reference: (p) => {
+      let at = p.a;
+      for (let j = 0; j < p.k; j += 1) at += p.g / p.p;
+      return qi(at);
+    },
     traps: [
       { id: "mark-number", kind: "conceptual", wrong: (p) => qi(p.a + p.k) },
       {
@@ -926,12 +978,12 @@ const scaleSpecs = [
       },
     ],
     vars: (p) => ({
-      a: s(p.a),
-      b: s(p.a + p.g),
+      a: digits(p.a),
+      b: digits(p.a + p.g),
       p: s(p.p),
       k: s(p.k),
-      r: s(p.a + (p.g / p.p) * p.k),
-      w: s(p.a + p.k),
+      r: digits(p.a + (p.g / p.p) * p.k),
+      w: digits(p.a + p.k),
     }),
     constants: [100],
   }),
@@ -1062,13 +1114,26 @@ const scaleSpecs = [
       return { a, b: a + between(r, 50, 700) };
     },
     solve: (p) => qi(p.b - p.a),
-    reference: (p) => qi(p.b + -p.a),
+    reference: (p) => {
+      let at = p.a;
+      let steps = 0;
+      while (at < p.b) {
+        at += 1;
+        steps += 1;
+      }
+      return qi(steps);
+    },
     traps: [
       { id: "sum", kind: "procedural", wrong: (p) => qi(p.a + p.b) },
       { id: "later-reading", kind: "conceptual", wrong: (p) => qi(p.b) },
       { id: "first-reading", kind: "conceptual", wrong: (p) => qi(p.a) },
     ],
-    vars: (p) => ({ a: s(p.a), b: s(p.b), r: s(p.b - p.a), sum: s(p.a + p.b) }),
+    vars: (p) => ({
+      a: digits(p.a),
+      b: digits(p.b),
+      r: digits(p.b - p.a),
+      sum: digits(p.a + p.b),
+    }),
   }),
   defineSpec<{ m: number; c: number }>({
     id: "N5.scale.11",
@@ -1120,7 +1185,11 @@ const scaleSpecs = [
       ![p.a, p.a + p.len].includes(p.len) &&
       p.a + p.len <= 17,
     solve: (p) => qi(p.len),
-    reference: (p) => qi(p.a + p.len - p.a),
+    reference: (p) => {
+      let cm = 0;
+      for (let at = p.a; at < p.a + p.len; at += 1) cm += 1;
+      return qi(cm);
+    },
     traps: [
       { id: "right-end", kind: "conceptual", wrong: (p) => qi(p.a + p.len) },
       { id: "left-end", kind: "conceptual", wrong: (p) => qi(p.a) },
@@ -1159,6 +1228,7 @@ const scaleSpecs = [
         kind: "conceptual",
         wrong: (p) => qi((p.m + 1) * p.d),
       },
+      { id: "gaps-only", kind: "conceptual", wrong: (p) => qi(p.m - 1) },
     ],
     vars: (p) => ({
       m: s(p.m),
@@ -1181,7 +1251,11 @@ const scaleSpecs = [
       return { lo: unit * parts * between(r, 0, 3), g: parts * unit, p: parts };
     },
     solve: (p) => qi(p.g / p.p),
-    reference: (p) => qi((p.lo + p.g - p.lo) / p.p),
+    reference: (p) => {
+      let one = 1;
+      while (one * p.p < p.g) one += 1;
+      return qi(one);
+    },
     traps: [
       { id: "whole-gap", kind: "conceptual", wrong: (p) => qi(p.g) },
       { id: "division-count", kind: "conceptual", wrong: (p) => qi(p.p) },
@@ -1192,9 +1266,9 @@ const scaleSpecs = [
       },
     ],
     vars: (p) => ({
-      lo: s(p.lo),
-      hi: s(p.lo + p.g),
-      g: s(p.g),
+      lo: digits(p.lo),
+      hi: digits(p.lo + p.g),
+      g: digits(p.g),
       p: s(p.p),
       r: s(p.g / p.p),
     }),

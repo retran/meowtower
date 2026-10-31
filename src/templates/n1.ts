@@ -366,12 +366,9 @@ const compare: readonly Spec<never>[] = [
     }),
     valid: (p: { a: number; b: number; c: number }) => p.a + p.b <= 100,
     solve: (p: { a: number; b: number; c: number }) => signOf(p.a + p.b, p.c),
+    // The second route moves the second addend to the other side: a against c − b.
     reference: (p: { a: number; b: number; c: number }) =>
-      bySubtraction(p.c, p.a + p.b) === "<"
-        ? ">"
-        : bySubtraction(p.c, p.a + p.b) === ">"
-          ? "<"
-          : "=",
+      bySubtraction(p.a, p.c - p.b),
     traps: signTraps<Abc>([
       ["first-addend", "procedural", (p) => signOf(p.a, p.c)],
       [
@@ -467,7 +464,10 @@ const compare: readonly Spec<never>[] = [
     draw: (r): Pair => ({ a: between(r, 1, 9), b: between(r, 1, 9) }),
     valid: (p: Pair) => p.a !== p.b,
     solve: (p: Pair) => signOf(p.a, p.b),
-    reference: (p: Pair) => bySubtraction(p.a * 10, p.b * 10),
+    // The second route compares the two digits as characters, not as numbers.
+    reference: (p: Pair) =>
+      REFERENCE_SIGNS[Math.sign(String(p.a).localeCompare(String(p.b))) + 1] ??
+      "=",
     traps: signTraps<Pair>([
       ["stars-equal", "conceptual", () => "="],
       ["swapped-sign", "fact", swapped],
@@ -704,7 +704,12 @@ const beforeAfter: readonly Spec<never>[] = [
     answer: "integer",
     draw: (r): One => ({ a: between(r, 1, 19) }),
     solve: (p: One) => qi(p.a + 1),
-    reference: (p: One) => qi([...Array(p.a + 2).keys()][p.a + 1] ?? -1),
+    // The second route looks for the smallest number that is greater than `a`.
+    reference: (p: One) => {
+      let n = 0;
+      while (n <= p.a) n += 1;
+      return qi(n);
+    },
     traps: numberTraps<One>([
       ["same-number", "conceptual", (p) => p.a],
       ["before-instead", "conceptual", (p) => p.a - 1],
@@ -722,7 +727,12 @@ const beforeAfter: readonly Spec<never>[] = [
     answer: "integer",
     draw: (r): One => ({ a: between(r, 2, 20) }),
     solve: (p: One) => qi(p.a - 1),
-    reference: (p: One) => qi([...Array(p.a).keys()][p.a - 1] ?? -1),
+    // The second route looks for the greatest number that is smaller than `a`.
+    reference: (p: One) => {
+      let n = p.a;
+      while (n >= p.a) n -= 1;
+      return qi(n);
+    },
     traps: numberTraps<One>([
       ["after-instead", "conceptual", (p) => p.a + 1],
       ["same-number", "conceptual", (p) => p.a],
@@ -918,7 +928,8 @@ const beforeAfter: readonly Spec<never>[] = [
     answer: "integer",
     draw: (r): One => ({ a: between(r, 10, 97) }),
     solve: (p: One) => qi(p.a + 2),
-    reference: (p: One) => qi(p.a + 11 - 9),
+    reference: (p: One) =>
+      qi(Array.from({ length: 3 }, (_, i) => p.a + i).at(-1) ?? -1),
     traps: numberTraps<One>([
       ["one-step", "procedural", (p) => p.a + 1],
       ["back-and-forth", "conceptual", (p) => p.a],
@@ -935,7 +946,8 @@ const beforeAfter: readonly Spec<never>[] = [
     answer: "integer",
     draw: (r): One => ({ a: between(r, 12, 99) }),
     solve: (p: One) => qi(p.a - 2),
-    reference: (p: One) => qi(p.a - 11 + 9),
+    reference: (p: One) =>
+      qi(Array.from({ length: 3 }, (_, i) => p.a - i).at(-1) ?? -1),
     traps: numberTraps<One>([
       ["one-step", "procedural", (p) => p.a - 1],
       ["back-and-forth", "conceptual", (p) => p.a],
@@ -1175,7 +1187,13 @@ const beforeAfter: readonly Spec<never>[] = [
     answer: "pair",
     draw: (r): One => ({ a: between(r, 11, 98) }),
     solve: (p: One) => [qi(p.a - 1), qi(p.a + 1)] as const,
-    reference: (p: One) => [qi(p.a + 1 - 2), qi(p.a - 1 + 2)] as const,
+    reference: (p: One) => {
+      const row = Array.from({ length: 101 }, (_, n) => n);
+      return [
+        qi(row.find((n) => n + 1 === p.a) ?? -1),
+        qi(row.find((n) => n - 1 === p.a) ?? -1),
+      ] as const;
+    },
     traps: [
       {
         id: "order-swapped",

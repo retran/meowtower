@@ -17,11 +17,24 @@ const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
 const w = (v: number, ...no: number[]): Q | null =>
   Number.isInteger(v) && v > 0 && !no.includes(v) ? q(v) : null;
 const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+/** `v` added `n` times, one addition at a time. */
+const sumTimes = (n: number, v: number): number => {
+  let s = 0;
+  for (let i = 0; i < n; i++) s += v;
+  return s;
+};
+/** The whole number of times `step` can be taken away from `total`, found by taking it away again and again. */
+const takeAway = (total: number, step: number): number => {
+  let n = 0;
+  for (let left = total; left >= step; left -= step) n++;
+  return n;
+};
 
 const M5_grid = calc("M5", "grid");
 const M5_grid_specs: readonly Spec<never>[] = [
   M5_grid({
     id: "M5.grid.01",
+    alt: (a, b) => q((2 * a + b) / 2),
     form: "whole-and-half-cells",
     g: [6, 6],
     kind: "integer",
@@ -30,11 +43,13 @@ const M5_grid_specs: readonly Spec<never>[] = [
     t: {
       "halves-as-wholes": (a, b) => q(a + b),
       "halves-ignored": (a) => q(a),
+      "everything-halved": (a, b) => w((a + b) / 2, a + b / 2, a + b, a),
     },
     c: [1, 2],
   }),
   M5_grid({
     id: "M5.grid.02",
+    alt: (a, b) => q((a / 2) * b),
     form: "a-right-triangle-on-a-grid",
     g: [6, 6],
     kind: "integer",
@@ -48,6 +63,7 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.03",
+    alt: (a, b) => q(sumTimes(a, b)),
     form: "a-rectangle-counted-by-rows",
     g: [6, 6],
     kind: "integer",
@@ -63,6 +79,7 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.04",
+    alt: (a, b, c, d) => q(a * (b - d) + (a + c) * d),
     form: "an-l-shape-counted-by-rows",
     g: [6, 6],
     kind: "integer",
@@ -78,6 +95,7 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.05",
+    alt: (a, b, c) => q((a - 1) * b + (b - c)),
     form: "a-figure-with-holes",
     g: [6, 6],
     kind: "integer",
@@ -93,6 +111,7 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.06",
+    alt: (a) => q(sumTimes(a, sumTimes(2, 2))),
     form: "cells-with-a-side-of-two-centimetres",
     g: [6, 6],
     kind: "integer",
@@ -101,11 +120,13 @@ const M5_grid_specs: readonly Spec<never>[] = [
     t: {
       cells: (a) => q(a),
       "side-not-squared": (a) => q(2 * a),
+      "perimeter-of-a-cell": (a) => q(8 * a),
     },
     c: [1, 2, 4],
   }),
   M5_grid({
     id: "M5.grid.07",
+    alt: (a, b) => q(2 * (a + b) - 4),
     form: "cells-on-the-border-of-a-rectangle",
     g: [6, 6],
     kind: "integer",
@@ -121,6 +142,7 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.08",
+    alt: (a, b, c, d) => q(sumTimes(b, a) + sumTimes(d, c)),
     form: "two-rectangles-on-a-grid",
     g: [6, 6],
     kind: "integer",
@@ -135,10 +157,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.09",
+    alt: (a) => q((a * (a + 1) * (2 * a + 1)) / 6),
     form: "squares-of-all-sizes-in-a-grid",
     g: [6, 6],
     kind: "integer",
-    p: [rg(2, 5)],
+    p: [rg(2, 7)],
     x: (a) => ({
       terms: Array.from({ length: a }, (_, i) => (a - i) ** 2).join(" + "),
     }),
@@ -159,6 +182,7 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.10",
+    alt: (a, b) => q(sumTimes(b, a)),
     form: "a-parallelogram-on-a-grid",
     g: [6, 6],
     kind: "integer",
@@ -174,10 +198,15 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.11",
+    alt: (a) => {
+      let total = 0;
+      for (let row = 1; row <= a; row++) total += row;
+      return q(total);
+    },
     form: "a-staircase-counted-by-rows",
     g: [6, 6],
     kind: "integer",
-    p: [rg(4, 9)],
+    p: [rg(4, 12)],
     f: (a) => q((a * (a + 1)) / 2),
     t: {
       square: (a) => q(a * a),
@@ -188,6 +217,7 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.12",
+    alt: (a) => q(25 * a, 100),
     form: "cells-with-a-side-of-five-millimetres",
     g: [6, 7],
     kind: "decimal",
@@ -196,11 +226,13 @@ const M5_grid_specs: readonly Spec<never>[] = [
     t: {
       "side-not-squared": (a) => q(a, 2),
       "square-millimetres": (a) => q(25 * a),
+      "comma-misplaced": (a) => q(25 * a, 10),
     },
     c: [5],
   }),
   M5_grid({
     id: "M5.grid.13",
+    alt: (a, b, c, d, e, f) => q(a * b + (c * d - e * f)),
     form: "two-overlapping-rectangles-on-a-grid",
     g: [6, 6],
     kind: "integer",
@@ -223,6 +255,11 @@ const M5_grid_specs: readonly Spec<never>[] = [
   }),
   M5_grid({
     id: "M5.grid.14",
+    alt: (a, b) =>
+      q(
+        Math.ceil(a / 2) * Math.ceil(b / 2) +
+          Math.floor(a / 2) * Math.floor(b / 2),
+      ),
     form: "black-cells-of-a-chessboard",
     g: [6, 7],
     kind: "integer",
@@ -250,6 +287,7 @@ const M5_sides = calc("M5", "sides");
 const M5_sides_specs: readonly Spec<never>[] = [
   M5_sides({
     id: "M5.sides.01",
+    alt: (a, b) => q(sumTimes(b, a)),
     form: "area-of-a-rectangle-in-square-centimetres",
     g: [6, 7],
     kind: "integer",
@@ -264,6 +302,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.02",
+    alt: (a, b) => q(sumTimes(a, b)),
     form: "area-of-a-room-in-square-metres",
     g: [6, 7],
     kind: "integer",
@@ -278,6 +317,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.03",
+    alt: (a) => q(sumTimes(a, a)),
     form: "area-of-a-square-from-its-side",
     g: [6, 7],
     kind: "integer",
@@ -292,6 +332,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.04",
+    alt: (a, b) => q(takeAway(a * b, a)),
     form: "the-missing-side-from-the-area-and-a-side",
     g: [6, 7],
     kind: "integer",
@@ -307,6 +348,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.05",
+    alt: (a, b, c, d) => sign(q(sumTimes(b, a)), q(sumTimes(d, c))),
     form: "which-rectangle-has-the-larger-area",
     g: [6, 7],
     kind: "compare",
@@ -328,6 +370,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.06",
+    alt: (a, b, c, d) => q(sumTimes(b, a) - sumTimes(d, c)),
     form: "a-wall-without-a-window",
     g: [6, 7],
     kind: "integer",
@@ -342,6 +385,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.07",
+    alt: (a, b) => q(sumTimes(b, a)),
     form: "square-tiles-for-a-floor",
     g: [6, 7],
     kind: "integer",
@@ -357,6 +401,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.08",
+    alt: (a, b, c, d) => q(sumTimes(a, b) - sumTimes(c, d)),
     form: "how-much-larger-one-room-is",
     g: [6, 7],
     kind: "integer",
@@ -371,6 +416,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.09",
+    alt: (a, b) => q(2 * a * b + 2 * a),
     form: "one-side-doubled",
     g: [6, 7],
     kind: "integer",
@@ -380,11 +426,13 @@ const M5_sides_specs: readonly Spec<never>[] = [
     t: {
       "doubled-only": (a, b) => q(2 * a * b),
       "one-added-to-area": (a, b) => q(2 * a * b + 1),
+      "both-doubled": (a, b) => q(4 * a * b),
     },
     c: [1, 2],
   }),
   M5_sides({
     id: "M5.sides.10",
+    alt: (a) => q(((4 * a * 10) / 4) ** 2),
     form: "a-square-from-its-perimeter",
     g: [6, 7],
     kind: "integer",
@@ -393,12 +441,14 @@ const M5_sides_specs: readonly Spec<never>[] = [
     t: {
       "square-decimetres": (a) => q(a * a),
       "ten-not-squared": (a) => q(10 * a * a),
+      "side-in-cm": (a) => q(10 * a),
     },
     x: (a) => ({ x: String(4 * a) }),
     c: [4, 10],
   }),
   M5_sides({
     id: "M5.sides.11",
+    alt: (a, b, c) => q(sumTimes(c, a * b)),
     form: "the-cost-of-covering-a-floor",
     g: [6, 7],
     kind: "integer",
@@ -413,6 +463,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.12",
+    alt: (a, b, c) => q((a * b * c) / a),
     form: "the-length-of-a-roll-of-carpet",
     g: [6, 7],
     kind: "integer",
@@ -431,6 +482,11 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.13",
+    alt: (a, b, c, d) => {
+      let cans = 0;
+      for (let covered = 0; covered < a * b; covered += c * d) cans++;
+      return q(cans);
+    },
     form: "cans-of-paint-for-a-wall",
     g: [6, 7],
     kind: "integer",
@@ -451,6 +507,7 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.14",
+    alt: (a, b, c) => q((100 * a * (100 * b)) / (c * c)),
     form: "tiles-with-a-side-in-centimetres",
     g: [6, 7],
     kind: "integer",
@@ -470,6 +527,12 @@ const M5_sides_specs: readonly Spec<never>[] = [
   }),
   M5_sides({
     id: "M5.sides.15",
+    alt: (a, b, c) => {
+      const x = a * b;
+      const y = a * c;
+      const tile = gcd(x, y);
+      return q((x * y) / (tile * tile));
+    },
     form: "the-fewest-equal-square-tiles",
     g: [6, 8],
     kind: "integer",
@@ -492,11 +555,12 @@ const M5_formula = calc("M5", "formula");
 const M5_formula_specs: readonly Spec<never>[] = [
   M5_formula({
     id: "M5.formula.01",
+    alt: (a, b) => q(a, 10).mul(q(b, 10)),
     form: "area-with-decimal-sides",
     g: [6, 8],
     kind: "decimal",
     p: [rg(11, 49), rg(11, 49)],
-    ok: (a, b) => a % 10 !== 0 && b % 10 !== 0 && a !== b,
+    ok: (a, b) => a % 10 !== 0 && b % 10 !== 0 && a !== b && (a * b) % 10 !== 0,
     f: (a, b) => qd(a * b, 2),
     t: {
       "one-place": (a, b) => qd(a * b, 1),
@@ -507,6 +571,7 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.02",
+    alt: (a, b) => q(100 * a * b, 10000),
     form: "sides-in-different-units",
     g: [6, 8],
     kind: "decimal",
@@ -520,6 +585,7 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.03",
+    alt: (a, b) => q(a, 100).mul(q(b, 100)),
     form: "a-field-in-hectares",
     g: [6, 8],
     kind: "integer",
@@ -535,6 +601,7 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.04",
+    alt: (a) => q(sumTimes(9, a)),
     form: "the-area-after-tripling-both-sides",
     g: [6, 8],
     kind: "integer",
@@ -548,6 +615,7 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.05",
+    alt: (a, b) => q(sumTimes(b, a)),
     form: "the-area-of-a-parallelogram",
     g: [6, 8],
     kind: "integer",
@@ -563,6 +631,7 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.06",
+    alt: (a, b) => q(a, 2).mul(q(b)),
     form: "the-area-of-a-rhombus-from-its-diagonals",
     g: [6, 8],
     kind: "integer",
@@ -578,11 +647,12 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.07",
+    alt: (a, b) => q(takeAway(a * b, b), 10),
     form: "a-side-from-an-area-with-a-decimal",
     g: [6, 8],
     kind: "decimal",
     p: [rg(11, 29), rg(2, 6)],
-    ok: (a) => a % 10 !== 0,
+    ok: (a, b) => a % 10 !== 0 && (a * b) % 10 !== 0,
     f: (a) => qd(a, 1),
     t: {
       "area-minus-side": (a, b) => qd(a * b - 10 * b, 1),
@@ -593,6 +663,7 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.08",
+    alt: (a, b, c) => q(a * b - c * b),
     form: "a-plot-without-a-strip",
     g: [6, 8],
     kind: "integer",
@@ -607,6 +678,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.09",
+    alt: (a) => {
+      let best = 0;
+      for (let s = 1; s < a; s++) best = Math.max(best, s * (a - s));
+      return q(best);
+    },
     form: "the-largest-area-for-a-given-wire",
     g: [6, 8],
     kind: "integer",
@@ -615,6 +691,8 @@ const M5_formula_specs: readonly Spec<never>[] = [
     t: {
       "long-thin": (a) => q(a - 1),
       "square-side-rounded-down": (a) => q(Math.floor(a / 2) ** 2),
+      "half-wire-squared": (a) =>
+        w(a * a, Math.floor(a / 2) * Math.ceil(a / 2), a - 1),
     },
     x: (a) => ({
       x: String(2 * a),
@@ -627,10 +705,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.10",
+    alt: (a) => q((4 * ((a / 2) * (a / 2))) / 2),
     form: "the-area-of-a-square-from-its-diagonal",
     g: [6, 8],
     kind: "integer",
-    p: [of(4, 6, 8, 10, 12)],
+    p: [of(4, 6, 8, 10, 12, 14, 16)],
     f: (a) => q((a * a) / 2),
     t: {
       "diagonal-squared": (a) => q(a * a),
@@ -641,10 +720,11 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.11",
+    alt: (a, b) => q((a * b * (a * b)) / (a * a)),
     form: "how-many-times-larger-the-area-of-a-bigger-square-is",
     g: [6, 8],
     kind: "integer",
-    p: [rg(2, 4), rg(2, 3)],
+    p: [rg(2, 5), rg(2, 4)],
     f: (a, b) => q(b * b),
     t: {
       "side-ratio": (a, b) => q(b),
@@ -655,6 +735,12 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.12",
+    alt: (a) => {
+      const perimeter = 3 * a;
+      let side = 1;
+      while (2 * (side + side / 2) !== perimeter && side < 1000) side++;
+      return q(2 * (side * (side / 2)));
+    },
     form: "the-area-of-a-square-cut-into-two-rectangles",
     g: [6, 8],
     kind: "integer",
@@ -674,6 +760,12 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.13",
+    alt: (a, b, c) => {
+      const area = a * b * c * c;
+      let part = 1;
+      while (a * b * part * part < area && part < 1000) part++;
+      return q(a * part);
+    },
     form: "the-shorter-side-from-the-ratio-and-the-area",
     g: [6, 8],
     kind: "integer",
@@ -698,6 +790,7 @@ const M5_formula_specs: readonly Spec<never>[] = [
   }),
   M5_formula({
     id: "M5.formula.14",
+    alt: (a, b) => q(takeAway(a * b, a)),
     form: "the-other-side-from-the-growth-of-the-area",
     g: [6, 8],
     kind: "integer",
@@ -716,6 +809,7 @@ const M6_triangle = calc("M6", "triangle");
 const M6_triangle_specs: readonly Spec<never>[] = [
   M6_triangle({
     id: "M6.triangle.01",
+    alt: (a, b) => q((a / 2) * b),
     form: "a-right-triangle-by-its-legs",
     g: [7, 8],
     kind: "integer",
@@ -730,6 +824,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.02",
+    alt: (a, b) => q((a / 2) * b),
     form: "a-triangle-by-a-base-and-a-height",
     g: [7, 8],
     kind: "integer",
@@ -744,6 +839,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.03",
+    alt: (a, b) => q(a).mul(q(2, b)),
     form: "the-height-from-the-area-and-the-base",
     g: [7, 8],
     kind: "decimal",
@@ -759,6 +855,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.04",
+    alt: (a, b) => q(a).mul(q(b, 2)),
     form: "half-of-a-rectangle-cut-by-a-diagonal",
     g: [7, 8],
     kind: "integer",
@@ -772,6 +869,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.05",
+    alt: (a, b, c) => q((a * (2 * b + c)) / 2),
     form: "a-house-made-of-a-rectangle-and-a-triangle",
     g: [7, 8],
     kind: "integer",
@@ -787,10 +885,11 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.06",
+    alt: (a, b, c) => q((a / 2) * b + (a / 2) * c),
     form: "two-triangles-with-a-common-base",
     g: [7, 8],
     kind: "integer",
-    p: [of(4, 6, 8), rg(2, 5), rg(2, 5)],
+    p: [of(4, 6, 8, 10), rg(2, 7), rg(2, 7)],
     ok: (a, b, c) => b !== c,
     f: (a, b, c) => q((a * (b + c)) / 2),
     t: {
@@ -802,6 +901,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.07",
+    alt: (a, b, c) => q(a + (b + c)),
     form: "the-perimeter-of-a-triangle",
     g: [7, 8],
     kind: "integer",
@@ -816,6 +916,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.08",
+    alt: (a, b) => q(takeAway(a * b, b)),
     form: "the-base-from-the-area-and-the-height",
     g: [7, 8],
     kind: "integer",
@@ -832,6 +933,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.09",
+    alt: (a, b) => q(2 * ((a * b) / 2)),
     form: "the-area-when-the-base-doubles",
     g: [7, 8],
     kind: "integer",
@@ -846,6 +948,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.10",
+    alt: (a, b) => q((a / 2) * b),
     form: "a-triangle-on-the-coordinate-plane",
     g: [7, 8],
     kind: "integer",
@@ -860,6 +963,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.11",
+    alt: (a, b) => q(a).mul(q(b, 2)),
     form: "a-triangle-as-half-of-a-parallelogram",
     g: [7, 8],
     kind: "integer",
@@ -873,6 +977,7 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.12",
+    alt: (a, b) => q(a).mul(q(b, 2)),
     form: "a-triangle-in-a-rectangle-with-its-apex-on-a-side",
     g: [7, 8],
     kind: "integer",
@@ -891,20 +996,23 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.13",
+    alt: (a, b) => q(a * (a - 2 * b) + 2 * (a - b) * b),
     form: "an-octagon-from-a-square-with-cut-corners",
     g: [7, 8],
     kind: "integer",
-    p: [rg(8, 14), rg(2, 3)],
+    p: [rg(8, 16), rg(2, 4)],
     f: (a, b) => q(a * a - 2 * b * b),
     t: {
       "squares-instead-of-triangles": (a, b) => q(a * a - 4 * b * b),
       "one-triangle-cut": (a, b) =>
         (b * b) % 2 === 0 ? q(a * a - (b * b) / 2) : null,
+      "leg-instead-of-area": (a, b) => q(a * a - 4 * b),
     },
     c: [4],
   }),
   M6_triangle({
     id: "M6.triangle.14",
+    alt: (a, b, c) => q((a + b) * c * a, a + b),
     form: "a-part-of-a-triangle-cut-by-a-line-to-the-base",
     g: [7, 8],
     kind: "integer",
@@ -929,10 +1037,14 @@ const M6_triangle_specs: readonly Spec<never>[] = [
   }),
   M6_triangle({
     id: "M6.triangle.15",
+    alt: (a) => {
+      const twice = Math.abs(a * (0 - a / 2) + (a / 2) * (a / 2 - a));
+      return q(twice, 2);
+    },
     form: "a-triangle-from-a-corner-to-two-midpoints-of-a-square",
     g: [7, 8],
     kind: "integer",
-    p: [of(4, 8, 12, 16, 20)],
+    p: [of(4, 8, 12, 16, 20, 24, 28, 32)],
     f: (a) => q((3 * a * a) / 8),
     t: {
       "half-of-the-square": (a) => q((a * a) / 2),
