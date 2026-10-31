@@ -155,6 +155,15 @@ const itemShownV2 = itemShownBase
       .describe(
         "the candidate k the task was drawn at, or null for a fallback",
       ),
+    frameSource: z
+      .enum(["live", "template"])
+      .optional()
+      .describe("whether a live frame or the template's text was shown"),
+    frameId: z
+      .number()
+      .int()
+      .optional()
+      .describe("the frames row of a live frame"),
   })
   .strict()
   .superRefine(requireParentForSecond);

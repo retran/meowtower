@@ -435,6 +435,8 @@ Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes p
 
 Amended on 2026-10-10: this record no longer addresses 6 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-2646 (superseded by REQ-5042, which ADR-0210 addresses); REQ-2636 (superseded by REQ-5044, which ADR-0210 addresses); REQ-2640 (superseded by REQ-5212, which ADR-0230 addresses); REQ-2642 (superseded by REQ-2648, which ADR-0350, ADR-0370 addresses); REQ-2724 (superseded by REQ-2732, which ADR-0350 addresses); REQ-2730 (superseded by REQ-6412, which ADR-0360, ADR-0460 addresses).
 
+Amended by ADR-3100, approved on 2026-10-31, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
 ## Plan
 
 The upgrade folded these open tasks in (ADR-3090). Read each one before its step.

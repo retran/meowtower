@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { LogWriteFailed } from "../engine/events/append.js";
 import { isOpen, type Db } from "./database.js";
+import type { FrameQueue } from "./frames/queue.js";
 import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
 import { createOutgoing } from "./outgoing.js";
@@ -17,6 +18,7 @@ export function createApp({
   onSessionEnded,
   sweepLeasesMs,
   tasks,
+  frames,
 }: {
   db: Db;
   now?: () => number;
@@ -27,6 +29,8 @@ export function createApp({
   sweepLeasesMs?: number;
   /** Where the tasks come from; the stand-in tasks unless the server says the registry. */
   tasks?: "standin" | "registry";
+  /** The live story frames (ADR-3100); absent while no model is configured. */
+  frames?: FrameQueue;
 }): Hono {
   const app = new Hono();
   // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
@@ -65,6 +69,7 @@ export function createApp({
     ...(onSessionEnded ? { onSessionEnded } : {}),
     ...(sweepLeasesMs ? { sweepLeasesMs } : {}),
     ...(tasks ? { tasks } : {}),
+    ...(frames ? { frames } : {}),
   });
   return app;
 }

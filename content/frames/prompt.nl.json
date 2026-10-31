@@ -1,0 +1,14 @@
+{
+  "setting": "De wereld: in het bos achter het stadje Nevelwade, waar de mist volgens dienstregeling aankomt, groeide in één nacht een Toren. Hij is gebreid uit de draden die de wereld bijeenhouden. De draden raakten in de war, en op de verdiepingen verspreidden zich Warboelen: grappige storingswezens die tellen, maat en de vorm van dingen tot knopen leggen. Elke nacht breit de Toren zichzelf opnieuw. Een Systeemvenster spreekt de heldin toe in droge officiële zinnen. Naast haar lopen familiars, en Wachters bewaken de verdiepingen. De burgemeester van het stadje is een zeer wantrouwige kat.\n\nDe toon: de wereld is absurd en neemt zichzelf volkomen serieus. Het mysterie is schattig en nooit eng. Wiskunde is de natuurkunde van deze wereld: een brug rust op Maat, en een knoop wordt losgeteld. Niemand in de wereld heeft het over school, sommen, lessen of cijfers.\n\nWoorden van de wereld: Toren, verdieping, Warboel, knoop, draad, de heldin, familiar, Wachter, Nevelwade. Schrijf \"de heldin\" als rol in het verhaal, zonder eigen naam.",
+  "intro": "Je schrijft de tekst van één rekenopgave als een moment in het verhaal van een spel voor een kind op de basisschool.",
+  "rules": [
+    "Verpak de opgave in een klein tafereel uit deze wereld dat past bij wat de opgave vraagt, en laat de vraag zelf ongewijzigd.",
+    "Neem elke {plaatshouder} precies over zoals hij geschreven staat, even vaak als in de opgave, en voeg er geen toe.",
+    "Schrijf geen cijfers en geen telwoorden. Elk getal komt alleen uit een plaatshouder.",
+    "Hoogstens {sentences} zinnen van hoogstens {words} woorden per zin, met de vraag in de laatste zin.",
+    "Eenvoudige, duidelijke tekst zonder grappen."
+  ],
+  "variants": "Schrijf {count} verschillende varianten in het Nederlands.",
+  "safety": "Je controleert een tekst voor een rekenspel voor een kind op de basisschool. `safe` is false als de tekst eng, beschamend, wreed of ongeschikt voor een kind is. `joke` is true als de tekst een grap bevat.",
+  "solve": "Los de opgave op. Antwoord alleen met het eindantwoord: een getal of een breuk zoals 3/4, zonder woorden en zonder eenheden."
+}

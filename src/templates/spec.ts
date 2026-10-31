@@ -193,7 +193,11 @@ export interface Compiled {
   readonly origin: Origin | undefined;
   readonly answer: AnswerKind;
   /** Builds the task for a base seed; the same seed always builds the same task. */
-  readonly make: (seed: Uint8Array, lang?: Lang) => Made;
+  readonly make: (seed: Uint8Array, lang?: Lang, frame?: string) => Made;
+  /** The template's text with its placeholders, which a story frame rewrites (ADR-3100). */
+  readonly blank: (lang: Lang) => string;
+  /** The role of each number placeholder. */
+  readonly roles: Readonly<Record<string, string>>;
 }
 
 /** How an answer is entered, as the checker of its kind reads it. */
@@ -346,7 +350,11 @@ export function compile<P>(
     groups: spec.groups,
     origin: spec.origin,
     answer: spec.answer,
-    make(seed, lang = "ru") {
+    roles: spec.roles ?? {},
+    blank: (lang) =>
+      (lang === "ru" ? source : (taskStrings(domain, lang)[spec.id] ?? source))
+        .text,
+    make(seed, lang = "ru", frame) {
       const text =
         lang === "ru" ? source : (taskStrings(domain, lang)[spec.id] ?? source);
       setWordsLang(lang);
@@ -378,7 +386,7 @@ export function compile<P>(
           spec.face ?? "digital",
         );
         const made: Made = {
-          text: stringsOf(text.text),
+          text: stringsOf(frame ?? text.text),
           svg: spec.picture ? spec.picture(p, pictureLabels(lang)) : null,
           options,
           answer,

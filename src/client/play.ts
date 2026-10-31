@@ -142,7 +142,9 @@ export const playScreen: Screen = {
       document.addEventListener(type, onActivity, true);
 
     const draw = (...children: Node[]): void => {
-      section.replaceChildren(heading("ui.play.title"), ...children);
+      const step = el("div", { className: "step" });
+      step.append(...children);
+      section.replaceChildren(heading("ui.play.title"), step);
       delete section.dataset["busy"];
       focusField(section);
     };

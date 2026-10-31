@@ -75,6 +75,7 @@ import {
   SessionStartOut,
   StopOffer,
 } from "../shared/api.js";
+import type { FrameQueue } from "./frames/queue.js";
 import { keyFor, lang, t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
@@ -129,6 +130,8 @@ export interface PlayOptions {
   sweepLeasesMs?: number;
   /** Where the tasks come from: the three fixed stand-in tasks, or the template registry (EPC-0480). */
   tasks?: "standin" | "registry";
+  /** The live story frames (ADR-3100); without it every task shows its template text. */
+  frames?: FrameQueue;
 }
 
 /** The candidate a task was drawn at, read from its effective seed `base/k`. */
@@ -301,9 +304,26 @@ interface Lease {
 export function mountPlay(
   app: Hono,
   db: Db,
-  { now, stream, explainer, onSessionEnded, sweepLeasesMs, tasks }: PlayOptions,
+  {
+    now,
+    stream,
+    explainer,
+    onSessionEnded,
+    sweepLeasesMs,
+    tasks,
+    frames,
+  }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
+  /** Prepares the frames of the tasks after `index`, so the next rooms are ready before she arrives. */
+  const prepareAhead = (sessionId: string, index: number): void => {
+    if (!frames || tasks !== "registry") return;
+    for (const at of [index, index + 1]) {
+      if (at >= STANDIN_ADVENTURE_TASKS) break;
+      const { template, base } = pick(sessionId, at, STANDIN_ADVENTURE_TASKS);
+      void frames.prepare({ template, base, bucket: sessionId, lang });
+    }
+  };
 
   // One device holds the adventure at a time. The lease is kept in memory and
   // taken only by a tap (`session/start`); every change to it is in the log
@@ -513,6 +533,7 @@ export function mountPlay(
     const taken = written[written.length - 1];
     if (left && taken)
       stream.publish(left.sessionId, { type: "lease_moved", seq: taken.seq });
+    prepareAhead(sessionId, 0);
     return sessionId;
   }
 
@@ -811,7 +832,10 @@ export function mountPlay(
     }
     if (tasks === "registry") {
       const chosen = pick(sessionId, index, STANDIN_ADVENTURE_TASKS);
-      const made = chosen.template.make(chosen.base, lang);
+      const frame =
+        frames?.take({ template: chosen.template, base: chosen.base, lang }) ??
+        null;
+      const made = chosen.template.make(chosen.base, lang, frame?.text);
       const seed = hexOf(chosen.base);
       const shape = present({ template: chosen.template, made });
       const shown: ItemShown = {
@@ -843,11 +867,14 @@ export function mountPlay(
             purpose: "ladder",
             effectiveSeed: `${seed}/0`,
             candidate: 0,
+            frameSource: frame ? "live" : "template",
+            ...(frame ? { frameId: frame.id } : {}),
           },
           origin,
           ...within(sessionId),
         },
       ]);
+      prepareAhead(sessionId, index + 1);
       return send(
         c,
         Room,
