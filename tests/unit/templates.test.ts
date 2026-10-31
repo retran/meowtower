@@ -37,6 +37,17 @@ describe("domain N and A templates", () => {
     expect(drawn.length).toBeGreaterThan(100);
   });
 
+  it("labels a picture in the language asked for", () => {
+    const rose = compiled.find((c) => c.id === "G7.plan.01");
+    expect(rose).toBeDefined();
+    const svgOf = (lang: "ru" | "en" | "nl"): string =>
+      rose?.make(seedOf(1), lang).svg ?? "";
+    expect(svgOf("ru")).toContain(">С<");
+    expect(svgOf("en")).toContain(">E<");
+    expect(svgOf("nl")).toContain(">O<");
+    expect(svgOf("nl")).toContain(">Z<");
+  });
+
   it("keeps the groups inside 1 to 8", () => {
     for (const c of compiled) {
       expect(c.groups[0]).toBeGreaterThanOrEqual(1);

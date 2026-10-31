@@ -1,7 +1,23 @@
 // The picture of each template that has one, by template id (RES-1200). A picture is drawn by code from the
 // numbers the template drew, in the order of its `p` list, so it never differs from the text.
+import type { PictureLabels } from "./spec.js";
 import {
   angle,
+  beads,
+  box,
+  cube,
+  dice,
+  figures,
+  foldedSheet,
+  layers,
+  matchsticks,
+  numberLine,
+  numberRow,
+  pictogram,
+  polygons,
+  solid,
+  stackRows,
+  staircase,
   bars,
   block,
   clock,
@@ -22,7 +38,7 @@ import {
   triangle,
 } from "./svg.js";
 
-type Draw = (v: number[]) => string;
+type Draw = (v: number[], labels: PictureLabels) => string;
 const n = (v: number[], i: number): number => v[i] ?? 0;
 const pts = (...xy: [number, number][]) => xy.map(([x, y]) => ({ x, y }));
 const dims = (xy: [number, number][]): [number, number] => [
@@ -211,12 +227,12 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
       ),
     ),
   // G7: compass, routes and scale
-  "G7.plan.01": () => compass(),
-  "G7.plan.02": () => compass(),
-  "G7.plan.03": () => compass(),
-  "G7.plan.04": () => compass(),
-  "G7.plan.05": () => compass(),
-  "G7.plan.06": () => compass(),
+  "G7.plan.01": (_v, l) => compass(l.compass),
+  "G7.plan.02": (_v, l) => compass(l.compass),
+  "G7.plan.03": (_v, l) => compass(l.compass),
+  "G7.plan.04": (_v, l) => compass(l.compass),
+  "G7.plan.05": (_v, l) => compass(l.compass),
+  "G7.plan.06": (_v, l) => compass(l.compass),
   "G7.plan.07": (v) =>
     path([
       [0, 0],
@@ -246,6 +262,180 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
       [n(v, 0), n(v, 1)],
       [n(v, 2), n(v, 3)],
     ]),
+
+  // G1 to G7: the figures and solids the texts name
+  "G1.shapes.01": (v) => polygons(n(v, 0), n(v, 1)),
+  "G1.shapes.02": (v) =>
+    figures([
+      ...Array<"square">(n(v, 0)).fill("square"),
+      ...Array<"circle">(n(v, 1)).fill("circle"),
+    ]),
+  "G1.shapes.03": (v) =>
+    figures([
+      ...Array<"triangle">(n(v, 0)).fill("triangle"),
+      ...Array<"rectangle">(n(v, 1)).fill("rectangle"),
+    ]),
+  "G1.shapes.06": (v) => rectangle(n(v, 0), n(v, 1)),
+  "G1.shapes.12": () =>
+    figures(["square", "triangle", "rectangle", "circle"], true),
+  "G2.angles.10": (v) => staircase(n(v, 0)),
+  "G2.angles.11": (v) => figures(Array<"rectangle">(n(v, 0)).fill("rectangle")),
+  "G3.symmetry.02": (v) =>
+    numberLine(
+      n(v, 1) * 2 - n(v, 0) + 1,
+      [n(v, 0), 2 * n(v, 1) - n(v, 0)].slice(0, 1),
+      n(v, 1),
+    ),
+  "G3.symmetry.10": (v) => foldedSheet(n(v, 0)),
+  "G4.coordinates.11": (v) =>
+    grid(4, Math.max(n(v, 0), n(v, 1)) + 1, pts([1, n(v, 0)], [3, n(v, 1)])),
+  "G5.solids-nets.01": (v) => cube(Math.min(3, n(v, 0))),
+  "G5.solids-nets.02": () => box(3, 2, 2),
+  "G5.solids-nets.03": (v) => solid("pyramid", n(v, 0)),
+  "G5.solids-nets.04": (v) => solid("pyramid", n(v, 0)),
+  "G5.solids-nets.05": (v) => solid("prism", n(v, 0)),
+  "G5.solids-nets.06": (v) => solid("prism", n(v, 0)),
+  "G5.solids-nets.08": (v) => dice([n(v, 0), n(v, 1), n(v, 2)]),
+  "G5.solids-nets.10": (v) => cube(n(v, 0)),
+  "G6.views.04": (v) => box(n(v, 0), n(v, 1), n(v, 2)),
+  "G6.views.07": (_v, l) => compass(l.compass),
+  "G6.views.10": (v) => box(n(v, 0), n(v, 1), n(v, 2)),
+  "G6.blocks.06": (v) => cube(n(v, 0)),
+  "G6.blocks.10": (v) => layers(n(v, 0)),
+  "G7.plan.08": (v) =>
+    path([
+      [0, 0],
+      [0, n(v, 0)],
+      [0, n(v, 0) - n(v, 1)],
+    ]),
+  "G7.plan.10": (v) =>
+    path([
+      [n(v, 1), n(v, 0)],
+      [n(v, 1), 0],
+      [0, 0],
+    ]),
+  "G7.plan-1S.04": (v) => pictogram(n(v, 1)),
+  "G7.plan-1S.06": (v) => scaleBar(Math.min(12, n(v, 1))),
+  "G7.plan-1S.08": (v) => block(n(v, 1), 1),
+  "G7.plan-1S.10": (v) => scaleBar(Math.min(12, n(v, 1))),
+  // S1 and S2: more tables, pictograms and bars
+  "S1.tables.04": (v) => table([[n(v, 1), n(v, 2), "?"]]),
+  "S1.tables.05": (v) => table([[n(v, 0), n(v, 1)]]),
+  "S1.tables.10": (v) =>
+    table([
+      [n(v, 0), n(v, 1), n(v, 2)],
+      ["?", "?", "?"],
+    ]),
+  "S1.tables.11": (v) => table([[n(v, 0), n(v, 1)]]),
+  "S1.tables.12": (v) => table([[n(v, 0), n(v, 1)]]),
+  "S2.bar-line.01": (v) => pictogram(n(v, 1)),
+  "S2.bar-line.04": (v) => bars([n(v, 0) + 5]),
+  "S2.bar-line.10": (v) => bars([n(v, 0)]),
+  // S3 and S7: the numbers of a set
+  "S3.mean.01": (v) => numberRow([n(v, 0), n(v, 1)]),
+  "S3.mean.02": (v) => numberRow([n(v, 0), n(v, 1), n(v, 2)]),
+  "S3.mean.03": (v) => numberRow([n(v, 0), n(v, 1), n(v, 2), n(v, 3)]),
+  "S3.mean.04": (v) =>
+    bars([
+      ...Array<number>(n(v, 2)).fill(n(v, 0)),
+      ...Array<number>(n(v, 3)).fill(n(v, 1)),
+    ]),
+  "S3.mean.07": (v) =>
+    numberRow([n(v, 0), n(v, 0) + 1, n(v, 0) + 2, n(v, 0) + 3, n(v, 0) + 4]),
+  "S3.mean.08": (v) => bars([n(v, 0), n(v, 1), 0]),
+  "S3.mean.09": (v) => bars([n(v, 0), n(v, 1), n(v, 2)]),
+  "S3.missing.01": (v) => numberRow([n(v, 1), n(v, 2), "?"]),
+  "S3.missing.02": (v) => numberRow([n(v, 1), "?"]),
+  "S3.missing.03": (v) => numberRow([n(v, 1), n(v, 2), n(v, 3), "?"]),
+  "S3.missing.04": (v) => numberRow([n(v, 0), n(v, 1), n(v, 2), "?"]),
+  "S3.missing.06": (v) => numberRow([n(v, 0), n(v, 1), "?"]),
+  "S3.missing.07": (v) =>
+    stackRows([[n(v, 0), n(v, 1), n(v, 2)], ["?", "?"], ["?"]]),
+  "S4.pie.09": (v) => pie([100 / n(v, 1)]),
+  "S5.global.05": (v) =>
+    lineGraph(
+      Array.from({ length: n(v, 2) + 1 }, (_, i) => n(v, 1) + n(v, 0) * i),
+    ),
+  "S5.global.06": (v) => lineGraph([n(v, 1), n(v, 1) + n(v, 0) * n(v, 2)]),
+  "S5.global-1S.02": (v) => lineGraph([n(v, 0), n(v, 0) + n(v, 1)]),
+  "S5.global-1S.03": (v) => lineGraph([n(v, 0), n(v, 0) + n(v, 1)]),
+  "S5.global-1S.04": (v) => lineGraph([n(v, 0), n(v, 0) + n(v, 1) * n(v, 2)]),
+  "S5.global-1S.09": (v) =>
+    bars([n(v, 0), n(v, 0) + (n(v, 0) * n(v, 1)) / 100]),
+  "S5.global-1S.10": (v) => lineGraph([n(v, 0), n(v, 0) + 2 * n(v, 1)]),
+  // S6: rows, beads and matchsticks
+  "S6.patterns.01": (v) =>
+    numberRow([
+      n(v, 0),
+      n(v, 0) + n(v, 1),
+      n(v, 0) + 2 * n(v, 1),
+      n(v, 0) + 3 * n(v, 1),
+      "?",
+    ]),
+  "S6.patterns.02": (v) =>
+    numberRow([
+      n(v, 0),
+      n(v, 0) - n(v, 1),
+      n(v, 0) - 2 * n(v, 1),
+      n(v, 0) - 3 * n(v, 1),
+      "?",
+    ]),
+  "S6.patterns.03": (v) =>
+    numberRow([n(v, 0), n(v, 0) + n(v, 1), n(v, 0) + 2 * n(v, 1), "…"]),
+  "S6.patterns.04": (v) =>
+    numberRow([n(v, 0), 2 * n(v, 0), 4 * n(v, 0), 8 * n(v, 0), "?"]),
+  "S6.patterns.05": (v) => beads(n(v, 0), n(v, 1)),
+  "S6.patterns.06": (v) =>
+    numberRow([
+      n(v, 0),
+      n(v, 0) + n(v, 1),
+      "?",
+      n(v, 0) + 3 * n(v, 1),
+      n(v, 0) + 4 * n(v, 1),
+    ]),
+  "S6.patterns.07": () => numberRow([1, 4, 9, "?"]),
+  "S6.patterns.08": (v) => matchsticks(Math.min(5, n(v, 0)), 3),
+  "S6.patterns.10": (v) =>
+    numberRow([
+      n(v, 0),
+      n(v, 0) + n(v, 1),
+      n(v, 0) + 2 * n(v, 1),
+      n(v, 0) + 3 * n(v, 1),
+    ]),
+  "S6.patterns-1S.01": (v) =>
+    numberRow([
+      n(v, 0),
+      n(v, 0) + 1,
+      n(v, 0) + 3,
+      n(v, 0) + 6,
+      n(v, 0) + 10,
+      "?",
+    ]),
+  "S6.patterns-1S.02": (v) =>
+    numberRow([
+      n(v, 0),
+      n(v, 1),
+      n(v, 0) + n(v, 1),
+      n(v, 0) + 2 * n(v, 1),
+      "?",
+    ]),
+  "S6.patterns-1S.04": () => numberRow([2, 5, 10, 17, "?"]),
+  "S6.patterns-1S.05": (v) => matchsticks(Math.min(5, n(v, 0)), 4),
+  "S6.patterns-1S.06": (v) =>
+    numberRow([n(v, 0), n(v, 0) + n(v, 1), n(v, 0) + 2 * n(v, 1), "…"]),
+  "S6.patterns-1S.08": () => numberRow([1, 8, 27, "?"]),
+  "S7.median-mode.01": (v) => numberRow(v.slice(0, 5)),
+  "S7.median-mode.02": (v) => numberRow(v.slice(0, 3)),
+  "S7.median-mode.03": (v) => numberRow(v.slice(0, 4)),
+  "S7.median-mode.04": (v) =>
+    numberRow([n(v, 1), n(v, 0), n(v, 2), n(v, 0), n(v, 3), n(v, 0)]),
+  "S7.median-mode.05": (v) => numberRow(v.slice(0, 4)),
+  "S7.median-mode.07": (v) => numberRow(v.slice(0, 3)),
+  "S7.median-mode.09": (v) => numberRow(v.slice(0, 4)),
+  "S7.median-mode.10": (v) => numberRow([n(v, 0), n(v, 1), n(v, 2), n(v, 3)]),
+  "S7.median-mode.11": (v) =>
+    numberRow([n(v, 0), n(v, 1), n(v, 2), n(v, 1), n(v, 0), n(v, 1), n(v, 2)]),
+  "S7.median-mode.12": (v) => numberRow(v.slice(0, 7)),
   // M: clocks and instruments
   "M2.clock.01": (v) => clock(n(v, 0), n(v, 1)),
   "M2.clock.02": (v) => clock(n(v, 0), n(v, 1)),

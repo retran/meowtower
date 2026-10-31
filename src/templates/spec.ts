@@ -75,7 +75,7 @@ export interface Spec<P> {
   /** The role of each number placeholder, such as a price or a count: the structure ADR-0130 sends the story writer. */
   readonly roles?: Readonly<Record<string, string>>;
   /** The picture of the task, drawn by code from the drawn numbers alone (RES-1200). */
-  readonly picture?: (p: P) => string;
+  readonly picture?: (p: P, labels: PictureLabels) => string;
   /** The values the strings may name; every `{name}` in a string is filled from here. */
   readonly vars: (p: P) => Record<string, string>;
   /** How a fraction or mixed answer is judged: any equal fraction, or only the simplest form. Default: simplest. */
@@ -118,6 +118,34 @@ export function taskStrings(domain: string): Record<string, TaskStrings> {
   return parsed;
 }
 
+/** The languages a picture can be labelled in. */
+export type Lang = "ru" | "en" | "nl";
+
+/** The words and letters a picture carries, from `content/pictures.<language>.json`. */
+export interface PictureLabels {
+  readonly compass: { n: string; e: string; s: string; w: string };
+}
+
+const PictureFile = z.object({
+  compass: z.object({
+    n: z.string(),
+    e: z.string(),
+    s: z.string(),
+    w: z.string(),
+  }),
+});
+
+const labelCache = new Map<Lang, PictureLabels>();
+
+export function pictureLabels(lang: Lang): PictureLabels {
+  const hit = labelCache.get(lang);
+  if (hit) return hit;
+  const file = new URL(`../../content/pictures.${lang}.json`, import.meta.url);
+  const parsed = PictureFile.parse(JSON.parse(readFileSync(file, "utf8")));
+  labelCache.set(lang, parsed);
+  return parsed;
+}
+
 /** What a compiled template builds for one seed. */
 export interface Made {
   readonly text: string;
@@ -154,7 +182,7 @@ export interface Compiled {
   readonly origin: Origin | undefined;
   readonly answer: AnswerKind;
   /** Builds the task for a base seed; the same seed always builds the same task. */
-  readonly make: (seed: Uint8Array) => Made;
+  readonly make: (seed: Uint8Array, lang?: Lang) => Made;
 }
 
 /** How an answer is entered, as the checker of its kind reads it. */
@@ -289,7 +317,7 @@ export function compile<P>(
     groups: spec.groups,
     origin: spec.origin,
     answer: spec.answer,
-    make(seed) {
+    make(seed, lang = "ru") {
       for (let k = 0; k < MAX_CANDIDATES; k += 1) {
         const rng = Xoshiro128.fromSeed(candidateSeed(seed, k));
         const p = spec.draw(rng);
@@ -309,7 +337,7 @@ export function compile<P>(
         const stringsOf = (s: string): string => fill(s, vars, spec.id);
         const made: Made = {
           text: stringsOf(text.text),
-          svg: spec.picture ? spec.picture(p) : null,
+          svg: spec.picture ? spec.picture(p, pictureLabels(lang)) : null,
           options,
           answer,
           entry: entryOf(spec.answer, answer),
