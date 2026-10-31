@@ -135,6 +135,9 @@ const M5_grid_specs: readonly Spec<never>[] = [
     g: [6, 6],
     kind: "integer",
     p: [rg(2, 5)],
+    x: (a) => ({
+      terms: Array.from({ length: a }, (_, i) => (a - i) ** 2).join(" + "),
+    }),
     f: (a) =>
       q(
         Array.from({ length: a }, (_, i) => (i + 1) ** 2).reduce(

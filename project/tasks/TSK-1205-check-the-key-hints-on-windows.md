@@ -18,6 +18,14 @@ After this task the hints of the answer field are right on Windows, where the la
 
 1. Given a Windows machine with the Russian and the English layout, when the player types a decimal, a fraction, a pair and a time, then each hint names the key that types its symbol. Closed by: a run on that machine.
 
+## What to do
+
+Run the answer field on Windows with each layout, compare each hint with the key that types its symbol, and correct the language file where they differ.
+
+## Depends on
+
+- TSK-1204 (blocking): the hints this task checks.
+
 ## Evidence
 
 Not yet.

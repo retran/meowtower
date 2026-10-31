@@ -808,6 +808,8 @@ export const PICTURES: Readonly<Record<string, Draw>> = {
   "M5.formula.09": () => sized(3, 2, ["?", "?"]),
   "M7.formula.06": () => cuboid(1, 1, 1),
   "M7.formula.07": () => cuboid(1, 1, 1),
+  "G1.shapes.13": () => polygon(4, false),
+  "G2.angles.14": (v) => gallery([angle(n(v, 0)), angle(n(v, 1))]),
   // M: clocks and instruments
   "M2.clock.01": (v) => clock(n(v, 0), n(v, 1)),
   "M2.clock.02": (v) => clock(n(v, 0), n(v, 1)),

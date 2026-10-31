@@ -800,6 +800,12 @@ const M4_same_area_specs: readonly Spec<never>[] = [
     g: [6, 8],
     kind: "integer",
     p: [of(12, 18, 20, 24, 30, 36)],
+    x: (a) => ({
+      pairs: Array.from({ length: a }, (_, i) => i + 1)
+        .filter((k) => a % k === 0 && k * k <= a)
+        .map((k) => `${k} \u00d7 ${a / k}`)
+        .join(", "),
+    }),
     f: (a) =>
       q(
         Math.floor(

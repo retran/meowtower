@@ -147,10 +147,11 @@ describe("the registry as the source of tasks", () => {
       const shown = shownOf(room.itemId);
       const item = rebuild(shown.templateId, shown.seed);
       const trap = item?.made.traps[0];
-      const raw = trap?.entry ?? "";
+      // A draw can leave a task without a trap: a sign has few wrong values.
+      const raw = trap?.entry ?? item?.made.entry ?? "";
       const res = await answer(sessionId, room.itemId, raw);
       const out = AnswerOut.parse(await res.json());
-      expect(out.note, shown.templateId).toBe(trap?.explanation);
+      if (trap) expect(out.note, shown.templateId).toBe(trap.explanation);
     }
   });
 });

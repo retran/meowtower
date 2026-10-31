@@ -351,27 +351,34 @@ export function compile<P>(
         const computed: Q[] = [];
         const stringsOf = (s: string): string =>
           fill(s, vars, spec.id, computed);
+        const checker = checkerOf(
+          spec.answer,
+          answer,
+          options,
+          spec.within ? spec.within(p) : Q.of(0n),
+          spec.rule ?? "simplest",
+          spec.face ?? "digital",
+        );
         const made: Made = {
           text: stringsOf(text.text),
           svg: spec.picture ? spec.picture(p, pictureLabels(lang)) : null,
           options,
           answer,
           entry: entryOf(spec.answer, answer),
-          checker: checkerOf(
-            spec.answer,
-            answer,
-            options,
-            spec.within ? spec.within(p) : Q.of(0n),
-            spec.rule ?? "simplest",
-            spec.face ?? "digital",
-          ),
-          traps: traps.map((t) => ({
-            id: t.spec.id,
-            kind: t.spec.kind,
-            wrong: t.wrong,
-            entry: entryOf(spec.answer, t.wrong),
-            explanation: stringsOf(text.explain[t.spec.id] ?? ""),
-          })),
+          checker,
+          // An entry the checker can't parse never reaches a verdict, so it can't be a mistake to explain.
+          traps: traps
+            .filter(
+              (t) =>
+                checker(entryOf(spec.answer, t.wrong)).verdict !== "unparsed",
+            )
+            .map((t) => ({
+              id: t.spec.id,
+              kind: t.spec.kind,
+              wrong: t.wrong,
+              entry: entryOf(spec.answer, t.wrong),
+              explanation: stringsOf(text.explain[t.spec.id] ?? ""),
+            })),
           solution: text.solution.map(stringsOf),
           hints: [
             stringsOf(text.hints[0]),

@@ -32,6 +32,7 @@ main { margin: 0 auto; }
 .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.15; margin: 0 0.15em; }
 .frac > span { padding: 0 0.2em; }
 .frac > span:first-child { border-bottom: 2px solid currentColor; }
+.badge { font-size: 1.6rem; font-weight: 700; }
 .options { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .option { font-size: 1.3rem; min-width: var(--touch-min); }
 .option[aria-pressed="true"] { background: var(--accent); color: var(--card); }

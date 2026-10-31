@@ -186,6 +186,12 @@ const divisible = [
     draw: (r) => [
       pick(r, [12, 18, 20, 24, 28, 30, 36, 40, 42, 45, 48, 50, 60]),
     ],
+    extra: ([n = 0]) => ({
+      pairs: divisors(n)
+        .filter((d) => d * d <= n)
+        .map((d) => `${d} \u00d7 ${n / d}`)
+        .join(", "),
+    }),
     solve: ([n = 0]) => divisors(n).length,
     ref: ([n = 0]) =>
       Array.from({ length: n }, (_, i) => i + 1).reduce(

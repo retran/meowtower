@@ -162,6 +162,20 @@ const T1_one_step_specs: readonly Spec<never>[] = [
     t: { difference: (a, b) => q(Math.abs(a - b)), removed: (a) => q(a) },
     roles: { a: "removed", b: "left" },
   }),
+  T1_one_step({
+    id: "T1.one-step.15",
+    form: "a-number-the-question-does-not-need",
+    g: [3, 4],
+    kind: "integer",
+    p: [rg(2, 9), rg(2, 9), rg(60, 99)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a * b),
+    t: {
+      "extra-number-used": (a, b, c) => q(c - a * b),
+      "all-numbers-added": (a, b, c) => q(a + b + c),
+    },
+    roles: { a: "price", b: "count", c: "money in the purse, not needed" },
+  }),
 ];
 
 const T2_two_step = calc("T2", "two-step");

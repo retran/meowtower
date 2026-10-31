@@ -326,6 +326,29 @@ const S2_bar_line_specs: readonly Spec<never>[] = [
     f: (a, b, c) => q(a - b - c),
     t: { "one-removed": (a, b) => q(a - b), known: (a, b, c) => q(b + c) },
   }),
+  S2_bar_line({
+    id: "S2.bar-line.13",
+    form: "the-steepest-stretch-of-a-line",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(5, 15), rg(9, 15), rg(1, 4), rg(1, 4), rg(1, 2)],
+    f: (_a, _b, _c, _d, e) => q(e),
+    t: {
+      "highest-point": () => q(3),
+      "value-of-the-rise": (_a, b) => q(b),
+    },
+    x: (a, b, c, d, e) => {
+      const first = e === 1 ? b : c;
+      const second = e === 2 ? b : c;
+      return {
+        p: String(a),
+        s: String(a + first),
+        u: String(a + first + second),
+        v: String(a + first + second + d),
+      };
+    },
+    c: [1, 2, 3],
+  }),
 ];
 
 const S3_mean = calc("S3", "mean");

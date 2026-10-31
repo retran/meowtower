@@ -3,7 +3,7 @@ id: ADR-0520
 artifact: adr
 status: done
 revised: 2026-10-31
-addresses: [REQ-1232, REQ-7524, REQ-7526, REQ-7528, REQ-7536]
+addresses: [REQ-1232]
 supersedes: []
 ---
 

@@ -1,9 +1,12 @@
 // Domain G, part 1: shapes and angles (RES-4285). The Dutch goals name the shapes at the end of group 2 and the
 // angle words at group 4; measuring angles is a Russian extension of grade 5. There are no pictures: each task
 // describes its figure in words. Texts are plain blanks in `content/tasks-g.ru.json`. Generated from one table with the strings.
+import type { Q } from "../math/q.js";
 import { calc, of, rg } from "./kitc.js";
 import { q } from "./kitf.js";
-import { type Spec } from "./spec.js";
+import { SIGNS, type Spec } from "./spec.js";
+
+const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
 
 const G1_shapes = calc("G1", "shapes");
 const G1_shapes_specs: readonly Spec<never>[] = [
@@ -120,6 +123,20 @@ const G1_shapes_specs: readonly Spec<never>[] = [
     t: { triangle: () => "2", circle: () => "3", pentagon: () => "4" },
     options: () => ["1", "2", "3", "4"],
     c: [1, 2, 3, 4],
+  }),
+  G1_shapes({
+    id: "G1.shapes.13",
+    form: "a-square-standing-on-its-corner",
+    g: [3, 4],
+    kind: "choice",
+    p: [rg(0, 19)],
+    f: () => "1",
+    t: {
+      "rotated-square-is-not-a-square": () => "2",
+      "a-triangle-on-top": () => "3",
+    },
+    options: () => ["1", "2", "3"],
+    c: [1, 2, 3],
   }),
   G1_shapes({
     id: "G1.shapes.11",
@@ -319,6 +336,16 @@ const G2_angles_specs: readonly Spec<never>[] = [
         return w === b - a ? null : q(w);
       },
     },
+    origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
+  }),
+  G2_angles({
+    id: "G2.angles.14",
+    form: "an-angle-does-not-grow-with-its-arms",
+    g: [7, 8],
+    kind: "compare",
+    p: [rg(50, 120), rg(20, 45), rg(2, 5)],
+    f: (a, b) => sign(q(a), q(b)),
+    t: { "longer-arms-bigger": (a, b) => sign(q(b), q(a)) },
     origin: { extension: "the angle measure, Russian grade 5 (RES-4285)" },
   }),
 ];
