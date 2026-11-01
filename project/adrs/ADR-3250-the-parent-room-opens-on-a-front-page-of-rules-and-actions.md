@@ -62,6 +62,8 @@ A rule table and three languages of lines to write and keep true. The parent see
 - Parent mark storage, which ADR-3240 owns.
 - Premortem: the parent reads a fall and presses her anyway. Words help, and nothing prevents it.
 
+Amended by ADR-3280, approved on 2026-11-01: the owner's line also counts scenarios waiting, and the page notifies when none is approved.
+
 ## Plan
 
 1. The page's frame, tab move and seen marker (REQ-8116, REQ-8122, REQ-8148, REQ-8146).

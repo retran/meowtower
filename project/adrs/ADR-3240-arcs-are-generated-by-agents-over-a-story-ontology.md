@@ -3,7 +3,7 @@ id: ADR-3240
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8102, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114]
+addresses: [REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114]
 supersedes: []
 concerns: [privacy, cost]
 ---
@@ -18,7 +18,7 @@ The spine stays fixed in the canon: the overall plot, the checkpoints and the en
 
 Story memory has five levels: spine, season, arc, episode and situation. Each summary is an event, so memory rebuilds with no model call. Beside it, a story ontology holds typed records in SQLite projected from the log. Canon records load read-only.
 
-The pipeline is: showrunner picks the arc; arc writer plans it; episode writer outlines it to fit the Director's plan; beat writer writes beats; script doctor critiques them; beat writer revises, at most twice; code checks continuity, canon and secrets; the Master writes scenes as now; story editor writes the summary and the ontology diff. New roles are `SHOWRUNNER_MODEL`, `EPISODE_MODEL`, `CRITIC_MODEL` and `STORY_EDITOR_MODEL`, in the player tier, each with its own route. Craft rules from RES-4312 run as code checks where a field proves them, and otherwise as the critic's rubric. Levels reach requests only as world facts, through a code table, such as "the boiler belt slips". The Director still owns every task, slot and floor. `TASK_TEXT_MODEL` and `FRAME_JUDGE_MODEL` move to the player tier, so the task prompt's `arc`, `adventure` and `situation` slots fill.
+The pipeline is: showrunner picks the arc; arc writer plans it; episode writer outlines it to fit the Director's plan; beat writer writes beats; script doctor critiques them; beat writer revises, at most twice; code checks continuity, canon and secrets; the Master writes scenes as now; story editor writes the summary and the ontology diff. New roles are `SHOWRUNNER_MODEL`, `EPISODE_MODEL`, `CRITIC_MODEL` and `STORY_EDITOR_MODEL`, all on Claude Sonnet 5.5, in the player tier, each with its own route. Craft rules from RES-4312 run as code checks where a field proves them, and otherwise as the critic's rubric. Levels reach requests only as world facts, through a code table, such as "the boiler belt slips". The Director still owns every task, slot and floor. `TASK_TEXT_MODEL` and `FRAME_JUDGE_MODEL` move to the player tier, so the task prompt's `arc`, `adventure` and `situation` slots fill.
 
 When a step fails twice, the last accepted plan runs, then an authored library arc. Authored arcs exist for each floor.
 
@@ -70,12 +70,14 @@ About $0.56 an adventure by estimate, near $17 a month, within ADR-3200's limits
 
 Amended by ADR-3270, approved on 2026-11-01: the pipeline writes a branching scenario for each adventure, and the Master leads her through it turn by turn.
 
+Amended by ADR-3290, approved on 2026-11-01: one writing agent and one critic replace the named roles, on `SHOWRUNNER_MODEL`.
+
 ## Plan
 
 1. Canon's spine and library arcs (REQ-8186, REQ-8108).
 2. Memory levels and rebuild (REQ-8084, REQ-8086, REQ-8088).
 3. The ontology, read-only canon, world facts and the secret (REQ-8092, REQ-8094, REQ-8096, REQ-8098).
 4. Arcs and episodes on the pipeline, inside the Director's boundary (REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8168, REQ-8082, REQ-8198).
-5. The critic, continuity checks and the revise limit (REQ-8102, REQ-8104, REQ-8106).
+5. The critic, continuity checks and the revise limit (REQ-8254, REQ-8104, REQ-8106).
 6. Fallbacks, task slots and spend (REQ-8090, REQ-8110, REQ-8112).
 7. The parent's marks (REQ-8114).

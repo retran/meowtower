@@ -3,7 +3,7 @@ id: SPC-0130
 artifact: spec
 status: live
 revised: 2026-11-01
-states: [REQ-7950, REQ-7940, REQ-7900, REQ-7890, REQ-7860, REQ-7760, REQ-7800, REQ-7780, REQ-7640, REQ-1236, REQ-1238, REQ-3600, REQ-3624, REQ-3642, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-7550, REQ-7570, REQ-7580, REQ-8166, REQ-8208, REQ-8210]
+states: [REQ-7950, REQ-7940, REQ-7900, REQ-7890, REQ-7860, REQ-7760, REQ-7800, REQ-7780, REQ-7640, REQ-1236, REQ-1238, REQ-3600, REQ-3624, REQ-3642, REQ-3646, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-3660, REQ-7550, REQ-7570, REQ-7580, REQ-8166, REQ-8208, REQ-8242]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -48,7 +48,7 @@ It leaves out what other parts define. The task's steps, numbers, answer, word-p
 | State | Next step | Audience |
 | --- | --- | --- |
 | `frame_rejected` with the failing step | the variant is dropped; a live one counts towards the day's share | the owner, as a daily count by step in the status report |
-| `live_frames_paused` | the task's prepared setting (REQ-8210) until the game day ends | the owner, in the status report |
+| `live_frames_paused` | its template text (REQ-8242) until the game day ends | the owner, in the status report |
 | `science_unapproved` | the question isn't served | the parent, as a count on the science review screen |
 | `science_repeat` | the question shown longest ago is used and marked | the parent, on the science review screen |
 | `science_topic_empty` | the Director takes another topic | the parent, on the science review screen |
@@ -75,7 +75,7 @@ Every frame passes these steps, offline and live alike:
 4. `FRAME_JUDGE_MODEL` solves the story from itself and scores it in one request, with the task, a description of how the player answers and the answer options beside it (REQ-3600, REQ-7750, REQ-7760). The engine checks that answer (REQ-7950). A story is out at `unsafe` 0.7.
 5. The code scores the rest as 0.3 `fits` + 0.2 `flows` + 0.2 `clear` + 0.2 `sense` + 0.1 `alive` - `changed` - `numbers` - `unsafe`, with 0.15 off for a length fault, and below 0.1 the author writes again, up to 3 times; the highest score is shown (REQ-7800), and a lower story turns `unused`.
 
-When the judge fails on every variant, nothing is kept and the task shows the task's prepared setting (REQ-8210) (REQ-7780).
+When the judge fails on every variant, nothing is kept and the task shows its template text (REQ-8242) (REQ-7780).
 
 A task's story may carry a joke, and no check lowers its score for one (REQ-8166).
 
@@ -93,9 +93,9 @@ Every task a frame can carry takes a live frame, and no frame library exists (RE
 
 A frame replaces only a task's question, so every template takes one, and buttons, input and answer come from the template. A second attempt is a task of its own: its frame is written when it is requested and continues the first attempt's story, and the second attempt waits for it like any task. When a task is requested, the frame queue runs steps 1 to 5 for it, and nothing is prepared ahead (REQ-7900). The chosen variant turns `ready`. When the server shows a task, it takes that task's `ready` frame, which turns `used`, and fills it with the engine's numbers.
 
-A task waits up to 90 seconds for its frame behind a loading animation, and then shows the task's prepared setting (REQ-8210) (REQ-7890). The `item_shown` event carries `frameSource`, `live` or `template`, and `frameId` on a live one.
+A task waits up to 90 seconds for its frame behind a loading animation, and then shows its template text (REQ-8242) (REQ-7890). The `item_shown` event carries `frameSource`, `live` or `template`, and `frameId` on a live one.
 
-The `frames` table keeps every live frame with its status and never deletes one (REQ-3642). At 50,000 rows it reports once to the owner. A frame counts as checked when it has finished the pipeline or failed a step, and as rejected when it failed a step. A reply discarded whole at step 2 counts as 3 checked frames, all rejected. From the tenth checked frame of a game day, when more than 30% of that day's checked frames are rejected, the server writes `live_frames_paused` and shows the task's prepared setting (REQ-8210) until the game day ends (REQ-8210).
+The `frames` table keeps every live frame with its status and never deletes one (REQ-3642). At 50,000 rows it reports once to the owner. A frame counts as checked when it has finished the pipeline or failed a step, and as rejected when it failed a step. A reply discarded whole at step 2 counts as 3 checked frames, all rejected. From the tenth checked frame of a game day, when more than 30% of that day's checked frames are rejected, the server writes `live_frames_paused` and shows its template text (REQ-8242) until the game day ends (REQ-8242).
 
 The request holds the places `arc`, `adventure` and `situation` for the summaries of the story arc, the adventure and the current game situation. They stay empty until a decision moves `TASK_TEXT_MODEL` to the player tier (REQ-7580).
 
@@ -115,7 +115,7 @@ The creepiness level in force sets the author's tone and what the judge counts a
 
 Frames follow the parent's language: Russian, English or Dutch, each with its own `content/numerals.<language>.json`. Science questions exist in Russian only, in `content/science.ru.json`.
 
-Every task's text is set in the story (REQ-8208). When a live story can't be written, the task takes text prepared in the scenario, or in the language's content file before scenarios exist (REQ-8210).
+The game asks for a story for every task (REQ-8208), and when one can't be written, the task shows its template text (REQ-8242).
 
 ## Failure paths
 
@@ -124,9 +124,9 @@ Every task's text is set in the story (REQ-8208). When a live story can't be wri
 | The author model's reply is outside the schema | The server discards the whole reply; a live one counts as 3 checked live frames, all rejected. |
 | A variant holds a forbidden word | Step 3 rejects it. |
 | A variant is plainly unsafe | Step 4 rejects the variant. |
-| The judge errs or times out | The task shows the task's prepared setting (REQ-8210). |
-| More than 30% of a game day's checked live frames are rejected, from the tenth on | `live_frames_paused`; the task's prepared setting (REQ-8210) until 04:00. |
-| `TASK_TEXT_MODEL` is unset, the adventure budget is spent, no model is reachable or no `ready` frame waits | The task shows the task's prepared setting (REQ-8210). |
+| The judge errs or times out | The task shows its template text (REQ-8242). |
+| More than 30% of a game day's checked live frames are rejected, from the tenth on | `live_frames_paused`; its template text (REQ-8242) until 04:00. |
+| `TASK_TEXT_MODEL` is unset, the adventure budget is spent, no model is reachable or no `ready` frame waits | The task shows its template text (REQ-8242). |
 | A science question has no approval of its current hash | `science_unapproved`; it isn't served. |
 | A topic has no approved question outside its window | `science_repeat`; the question shown longest ago is served with `repeat: true`. |
 | A topic has no approved question at all | `science_topic_empty`; the Director takes another topic. |

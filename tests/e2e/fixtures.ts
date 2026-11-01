@@ -7,6 +7,8 @@ import { forbiddenFields } from "../helpers/packets.js";
 
 const KEY = "sk-or-v1-e2e-fake-key-0000";
 
+const SETTLE_MS = 5000;
+
 export const test = base.extend<{ leaks: string[] }>({
   leaks: [
     async ({ page }, use) => {
@@ -15,7 +17,10 @@ export const test = base.extend<{ leaks: string[] }>({
       page.on("response", (res) => {
         pending.push(
           (async () => {
-            const headers = JSON.stringify(await res.allHeaders());
+            // A response still arriving as the test closes its page has no headers to read.
+            const headers = JSON.stringify(
+              await res.allHeaders().catch(() => ({})),
+            );
             // An event stream never ends, so its body can't be read whole:
             // only its headers are checked. It carries the two messages of
             // SPC-0030, which hold no key.
@@ -45,7 +50,11 @@ export const test = base.extend<{ leaks: string[] }>({
         );
       });
       await use(leaks);
-      await Promise.all(pending);
+      // A body still open as the page closes never settles, and it must not hang the teardown.
+      await Promise.race([
+        Promise.all(pending),
+        new Promise((resolve) => setTimeout(resolve, SETTLE_MS)),
+      ]);
       expect(
         leaks,
         "responses carrying the model key, the design or an early answer",
