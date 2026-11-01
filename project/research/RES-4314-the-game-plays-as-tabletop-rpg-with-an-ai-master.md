@@ -71,7 +71,7 @@ A check is needed only when the attempt can fail and failing is interesting. If 
 
 ### Typing is a limit for a young player
 
-[Inference] A young child types slowly, and spring oral reading norms in English run at about 112 words a minute at grade 3 and 133 at grade 4 ([Snippet] Hasbrouck and Tindal), so a story costs real time. Timing must stay free of reading: on an expression task, the story shows first and the clock starts when the numbers appear, so the catalogue's thresholds keep their meaning with no recalibration. Starters, speech input from ADR-0150 and short answers keep the turn quick, and a long free input is never required.
+[Inference] A young child types slowly, and spring oral reading norms in English run at about 112 words a minute at grade 3 and 133 at grade 4 ([Snippet] Hasbrouck and Tindal), so a story costs real time. Task time therefore holds reading time, and thresholds change by data if they prove wrong. Starters, speech input from ADR-0150 and short answers keep the turn quick, and a long free input is never required.
 
 ## Conclusions
 
@@ -89,11 +89,10 @@ A check is needed only when the attempt can fail and failing is interesting. If 
 12. Ability levels let her do some things with no check.
 13. Every reply passes the code's forbidden-word check, and a blocked turn reads as story. Safety rests on the model's own safeguards, the prompt's guardrails and the parent's full audit, as the owner decided.
 14. Starters and speech keep a turn possible with no typing.
-15. The clock of an expression task starts when its numbers appear, so reading stays out of timed fluency.
-16. The judge scores whether a check's story follows what she tried.
-17. The Master may improvise details, minor people and side moments, recorded in the ontology, and can't contradict the canon or the scenario, change an outcome or skip the way forward.
-18. Scenario branches rejoin, so a scenario stays within 15 to 30 scenes.
-19. Spend per adventure is measured, with an expected figure near $1.7.
+15. The judge scores whether a check's story follows what she tried.
+16. The Master may improvise details, minor people and side moments, recorded in the ontology, and can't contradict the canon or the scenario, change an outcome or skip the way forward.
+17. Scenario branches rejoin, so a scenario stays within 15 to 30 scenes.
+18. Spend per adventure is measured, with an expected figure near $1.7.
 
 ## Sources
 
