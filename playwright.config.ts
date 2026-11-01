@@ -25,7 +25,9 @@ export default defineConfig({
   ],
   // The client is compiled, so the server serves dist/client.
   webServer: {
-    command: "npm run build && node --import tsx src/server/main.ts",
+    // A fresh log each run: the model recomputes the whole log, and old runs would slow and steer it.
+    command:
+      "rm -f /tmp/meowtower-e2e.sqlite*; npm run build && node --import tsx src/server/main.ts",
     url: `http://127.0.0.1:${PORT}/health`,
     reuseExistingServer: false,
     env: {
