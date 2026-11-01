@@ -17,7 +17,7 @@ const config = readConfig(process.env);
 if (!config) throw new Error("model_config_invalid: a role is unset");
 if (!config.roles.SHOWRUNNER_MODEL)
   throw new Error("SHOWRUNNER_MODEL is unset in .env");
-const budget = Number(process.env["SCENARIO_BUDGET_USD"] ?? 1);
+const budget = Number(process.env["SCENARIO_BUDGET_USD"] ?? 2);
 const db = openDatabase(
   join(mkdtempSync(join(tmpdir(), "meowtower-scenario-")), "scenario.sqlite"),
 );
@@ -61,5 +61,6 @@ for (const encounter of done.scenario.encounters) {
 for (const ending of done.scenario.endings)
   console.log(`\n[${ending.id}] ${ending.outcome}`);
 console.log(`\nrevisions: ${String(done.revisions)}`);
-console.log(`left by the critic: ${done.unresolved.join("; ") || "nothing"}`);
+console.log(`major left: ${done.unresolved.join("; ") || "nothing"}`);
+console.log(`minor: ${done.minor.join("; ") || "nothing"}`);
 console.log(`saved: ${file}`);

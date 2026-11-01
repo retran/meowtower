@@ -1,5 +1,5 @@
 // The scenario loop (ADR-3270, REQ-8100): an agent plans, writes, gets code's check and a critic's
-// reading, and revises at most twice (REQ-8102). Every step is a structured reply (REQ-8236).
+// reading, and revises until no major fault is left (REQ-8254). Every step is a structured reply (REQ-8236).
 import { readFileSync } from "node:fs";
 import { z } from "zod";
 import type { Gateway } from "../server/gateway/gateway.js";
@@ -55,11 +55,12 @@ const Plan = z.object({
   endings: z.array(z.string()),
 });
 const Critique = z.object({
-  pass: z.boolean(),
-  faults: z.array(z.string()),
+  major: z.array(z.string()),
+  minor: z.array(z.string()),
 });
 
-const MAX_REVISIONS = 2;
+/** A ceiling so a critic that never settles can't spend the budget. */
+const MAX_REVISIONS = 6;
 
 export interface ScenarioAsk {
   readonly bucket: string;
@@ -71,8 +72,9 @@ export interface ScenarioAsk {
 export interface WrittenScenario {
   readonly scenario: Scenario;
   readonly revisions: number;
-  /** What the critic still found in the version kept, for the parent's report. */
+  /** Major faults the critic still found in the version kept, for the parent's report. */
   readonly unresolved: readonly string[];
+  readonly minor: readonly string[];
 }
 
 /** A playable scenario, or null when no version passed code's check (REQ-8198, REQ-8204). */
@@ -130,10 +132,11 @@ export async function writeScenario(
         `${prompt.critic}\n\n${worldOf(lang)}`,
         prompt.review.replace("{scenario}", draft.text),
       );
-      kept = { scenario: draft.value, revisions, unresolved: [] };
-      if (!review?.value || review.value.pass) return kept;
-      unresolved = review.value.faults;
-      kept = { ...kept, unresolved };
+      kept = { scenario: draft.value, revisions, unresolved: [], minor: [] };
+      if (!review?.value) return kept;
+      unresolved = review.value.major;
+      kept = { ...kept, unresolved, minor: review.value.minor };
+      if (unresolved.length === 0) return kept;
     }
     user = `${task}\n${prompt.revise
       .replace("{scenario}", draft.text)
