@@ -570,6 +570,8 @@ const breakDefs: EventDef[] = [
   // The parent ended the day's play from the Parent Room (REQ-2444); the
   // envelope's time says which game day it closes.
   { type: "finish_today", v: 1, schema: obj({}) },
+  // The parent reset the statistics (REQ-8386); the knowledge model reads nothing before the last one.
+  { type: "stats_reset", v: 1, schema: obj({}) },
 ];
 
 const tag = obj({
@@ -911,6 +913,7 @@ export const EVENT_CATALOGUE: readonly string[] = [
   "extension",
   "save_accepted",
   "finish_today",
+  "stats_reset",
   "avoidance_signal",
   "anxiety_signal",
   "zone_changed",

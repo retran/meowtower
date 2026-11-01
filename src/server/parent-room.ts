@@ -3,6 +3,7 @@
 // pairing code, and the settings. Every route needs a paired device, which the
 // /api middleware checks, and all but the login need a parent session opened
 // on that device and used within the last 30 minutes (REQ-2440).
+import { refreshKnowledge } from "../engine/projections/knowledge.js";
 import type { Context, Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
@@ -196,6 +197,27 @@ export function mountParentRoom(
         origin: { deviceId, clientMs: now() },
       },
     ]);
+    return c.json({ status: "ok" });
+  });
+
+  // The reset of the statistics (REQ-8386): the log stays append-only, so a reset is an event,
+  // and it needs a second press, which the body's `confirm` carries.
+  app.post("/api/parent/reset-stats", async (c) => {
+    const deviceId = parent(c);
+    if (deviceId instanceof Response) return deviceId;
+    const body = (await c.req.json().catch(() => ({}))) as {
+      confirm?: unknown;
+    };
+    if (body.confirm !== true) return c.json({ error: "confirm_needed" }, 400);
+    appendEvents(db, [
+      {
+        type: "stats_reset",
+        v: 1,
+        payload: {},
+        origin: { deviceId, clientMs: now() },
+      },
+    ]);
+    refreshKnowledge(db, new Date(now()).toISOString());
     return c.json({ status: "ok" });
   });
 

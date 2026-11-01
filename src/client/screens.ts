@@ -6,6 +6,7 @@ import {
   parentDevices,
   parentLogin,
   parentSettings,
+  resetStats,
   revoke,
   saveParentSettings,
   storeInterface,
@@ -410,6 +411,7 @@ const parentSettingsScreen: Screen = {
     const languages = el("fieldset", {});
     const creepiness = el("fieldset", {});
     const gender = el("fieldset", {});
+    const resetBox = el("fieldset", {});
     const nav = el("nav", { className: "actions" });
     const section = el(
       "section",
@@ -419,6 +421,7 @@ const parentSettingsScreen: Screen = {
       creepiness,
       gender,
       limits,
+      resetBox,
       note,
       nav,
     );
@@ -510,6 +513,27 @@ const parentSettingsScreen: Screen = {
             },
           );
         }),
+      );
+      // The first press asks again; the second one resets (REQ-8386).
+      const reset = button(
+        "ui.parentSettings.reset",
+        "reset-stats",
+        async () => {
+          if (reset.dataset["asked"] !== "1") {
+            reset.dataset["asked"] = "1";
+            note.textContent = t("ui.parentSettings.resetAsk");
+            return;
+          }
+          reset.dataset["asked"] = "0";
+          const done = await asParent(section, note, resetStats);
+          note.textContent = t(
+            done ? "ui.parentSettings.resetDone" : "ui.devices.failed",
+          );
+        },
+      );
+      resetBox.append(
+        el("legend", {}, t("ui.parentSettings.resetTitle")),
+        reset,
       );
       nav.append(
         link("ui.devices.title", "open-parent-devices", "/parent/devices"),

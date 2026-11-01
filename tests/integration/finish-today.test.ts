@@ -112,6 +112,7 @@ async function world() {
       }[]
     ).map((r) => r.type);
   return {
+    app,
     db,
     post,
     start,
@@ -205,5 +206,34 @@ describe("REQ-2444: extend gets 409 day_finished until 04:00", () => {
     const res = await w.extend(s);
     expect(res.status).toBe(200);
     expect(w.types().slice(before)).toEqual(["extension"]);
+  });
+});
+
+describe("REQ-8386: the parent resets the statistics", () => {
+  it("asks for a confirmation and logs one event when it has one", async () => {
+    const w = await world();
+    const cookie = await w.parentCookie();
+    const reset = (body: object) =>
+      w.app.request("/api/parent/reset-stats", {
+        method: "POST",
+        headers: { "content-type": "application/json", cookie },
+        body: JSON.stringify(body),
+      });
+    const refused = await reset({});
+    expect(refused.status).toBe(400);
+    expect(w.types()).not.toContain("stats_reset");
+    expect((await reset({ confirm: true })).status).toBe(200);
+    expect(w.types().filter((t) => t === "stats_reset")).toHaveLength(1);
+  });
+
+  it("refuses a device that is not in the Parent Room", async () => {
+    const w = await world();
+    const res = await w.app.request("/api/parent/reset-stats", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ confirm: true }),
+    });
+    expect(res.status).toBeGreaterThanOrEqual(401);
+    expect(w.types()).not.toContain("stats_reset");
   });
 });

@@ -212,5 +212,9 @@
   "ui.parentSettings.language": "Taal van het spel",
   "ui.parentSettings.language.ru": "Русский",
   "ui.parentSettings.language.en": "English",
-  "ui.parentSettings.language.nl": "Nederlands"
+  "ui.parentSettings.language.nl": "Nederlands",
+  "ui.parentSettings.resetTitle": "Statistieken",
+  "ui.parentSettings.reset": "Begin de statistieken opnieuw",
+  "ui.parentSettings.resetAsk": "Druk nog eens: kennis en niveaus worden gewist, de antwoorden blijven in het logboek.",
+  "ui.parentSettings.resetDone": "Statistieken gewist."
 }

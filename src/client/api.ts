@@ -138,6 +138,15 @@ export async function saveParentSettings(
   return parentReply(status, body, () => body as unknown as ParentSettings);
 }
 
+/** The statistics reset; the server wants `confirm` and refuses without it (REQ-8386). */
+export async function resetStats(): Promise<ParentReply<null>> {
+  const { status, body } = await call("/api/parent/reset-stats", {
+    method: "POST",
+    body: JSON.stringify({ confirm: true }),
+  });
+  return parentReply(status, body, () => null);
+}
+
 export async function revoke(id: string): Promise<boolean> {
   const { status } = await call(
     `/api/parent/devices/${encodeURIComponent(id)}/revoke`,

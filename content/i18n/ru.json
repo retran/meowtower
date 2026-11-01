@@ -212,5 +212,9 @@
   "ui.parentSettings.language": "Язык игры",
   "ui.parentSettings.language.ru": "Русский",
   "ui.parentSettings.language.en": "English",
-  "ui.parentSettings.language.nl": "Nederlands"
+  "ui.parentSettings.language.nl": "Nederlands",
+  "ui.parentSettings.resetTitle": "Статистика",
+  "ui.parentSettings.reset": "Начать статистику заново",
+  "ui.parentSettings.resetAsk": "Нажмите ещё раз: знания и уровни обнулятся, ответы остаются в журнале.",
+  "ui.parentSettings.resetDone": "Статистика обнулена."
 }
