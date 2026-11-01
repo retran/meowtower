@@ -1,4 +1,4 @@
-// REQ-8100, REQ-8102, REQ-8198, REQ-8236: the scenario comes from an agentic loop that plans, writes,
+// REQ-8100, REQ-8254, REQ-8198, REQ-8236: the scenario comes from an agentic loop that plans, writes,
 // checks by code, critiques and revises, each step a structured reply.
 import { describe, expect, it } from "vitest";
 import type { Gateway } from "../../src/server/gateway/gateway.js";
@@ -38,8 +38,8 @@ const PLAN = JSON.stringify({
   twist: "the Tangle hides",
   endings: ["free", "lost"],
 });
-const GOOD = JSON.stringify({ pass: true, faults: [] });
-const BAD = JSON.stringify({ pass: false, faults: ["no turn in encounter 3"] });
+const GOOD = JSON.stringify({ major: [], minor: ["a small thing"] });
+const BAD = JSON.stringify({ major: ["no turn in encounter 3"], minor: [] });
 
 const replies = (...texts: (string | undefined)[]) => {
   const users: string[] = [];
@@ -95,7 +95,7 @@ describe("the scenario loop", () => {
     expect(users[3]).toContain("no turn in encounter 3");
   });
 
-  it("revises at most twice and keeps the last playable scenario", async () => {
+  it("keeps revising until no major fault is left", async () => {
     const { gateway, users } = replies(
       PLAN,
       scenario(10),
@@ -104,12 +104,31 @@ describe("the scenario loop", () => {
       BAD,
       scenario(12),
       BAD,
+      scenario(13),
+      GOOD,
     );
     const done = await writeScenario(gateway, ask);
-    expect(done?.scenario.encounters).toHaveLength(12);
-    expect(done?.revisions).toBe(2);
+    expect(done?.scenario.encounters).toHaveLength(13);
+    expect(done?.revisions).toBe(3);
+    expect(done?.unresolved).toEqual([]);
+    expect(done?.minor).toEqual(["a small thing"]);
+    expect(users).toHaveLength(9);
+  });
+
+  it("stops at its ceiling and names what is left", async () => {
+    const texts = [PLAN, scenario(10)];
+    for (let i = 0; i < 12; i += 1) texts.push(BAD, scenario(10));
+    const { gateway, users } = replies(...texts);
+    const done = await writeScenario(gateway, ask);
+    expect(done?.revisions).toBe(6);
     expect(done?.unresolved).toEqual(["no turn in encounter 3"]);
-    expect(users).toHaveLength(7);
+    expect(users).toHaveLength(2 + 6 * 2 + 1);
+  });
+
+  it("does not revise for minor faults alone", async () => {
+    const { gateway, users } = replies(PLAN, scenario(10), GOOD);
+    expect((await writeScenario(gateway, ask))?.revisions).toBe(0);
+    expect(users).toHaveLength(3);
   });
 
   it("gives up when no version is playable", async () => {
