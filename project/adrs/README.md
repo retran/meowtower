@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-63 decisions in all: 51 approved, 12 done.
+64 decisions in all: 52 approved, 12 done.
 
 | Identifier                                                                                    | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -69,5 +69,6 @@
 | [ADR-3260](ADR-3260-decisions-now-agree-with-each-other.md)                                   | The decisions in force state the newest rule in their own text, and seven requirements change to match                                                                                                                                                                                                                                            | approved |
 | [ADR-3270](ADR-3270-the-game-plays-in-turns-with-an-ai-master-and-tasks-as-checks.md)         | The game plays as D&D with an AI Master: a prepared branching scenario, her words as actions, a maths task as the dice, and code deciding the outcome                                                                                                                                                                                             | approved |
 | [ADR-3280](ADR-3280-the-parent-designs-the-campaign-in-a-studio-of-nested-graphs.md)          | The parent designs, approves and tests the whole game in a studio of nested graphs and a sandbox, and the Master plays approved scenarios freely                                                                                                                                                                                                  | approved |
+| [ADR-3290](ADR-3290-the-story-is-built-like-a-modern-serial.md)                               | The story is built like a modern serial, from mythology to scene, and code checks what a field can prove                                                                                                                                                                                                                                          | approved |
 
 <!-- /meow-flow index -->
