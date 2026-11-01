@@ -48,11 +48,10 @@ const worldOf = (lang: Lang): string => {
 const World = z.object({ setting: z.string(), never: z.string() });
 
 const Plan = z.object({
-  premise: z.string(),
-  want: z.string(),
-  stakes: z.string(),
-  twist: z.string(),
-  endings: z.array(z.string()),
+  logline: z.string(),
+  synopsis: z.string(),
+  treatment: z.string(),
+  beats: z.array(z.string()),
 });
 const Critique = z.object({
   major: z.array(z.string()),
@@ -115,8 +114,23 @@ export async function writeScenario(
     }
   }
 
-  const plan = await step(Plan, system, `${task}\n${prompt.plan}`);
+  // A hole found in the treatment costs far less than one found in a finished graph.
+  let planAsk = `${task}\n${prompt.plan}`;
+  let plan = await step(Plan, system, planAsk);
   if (!plan?.value) return null;
+  const read = await step(
+    Critique,
+    `${prompt.critic}\n\n${worldOf(lang)}`,
+    prompt.review.replace("{scenario}", plan.text),
+  );
+  if (!read) return null;
+  if (read.value && read.value.major.length > 0) {
+    planAsk = `${planAsk}\n${prompt.revise
+      .replace("{scenario}", plan.text)
+      .replace("{faults}", read.value.major.join("; "))}`;
+    plan = await step(Plan, system, planAsk);
+    if (!plan?.value) return null;
+  }
   let user = `${task}\n${prompt.write.replace("{plan}", plan.text)}`;
   let kept: WrittenScenario | null = null;
   for (let revisions = 0; revisions <= MAX_REVISIONS; revisions += 1) {

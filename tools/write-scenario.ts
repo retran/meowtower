@@ -52,6 +52,16 @@ console.log(
   `conflict: ${done.scenario.conflict.wants} / ${done.scenario.conflict.against} / ${done.scenario.conflict.stakes}`,
 );
 console.log(`question: ${done.scenario.question}`);
+console.log(`logline: ${done.scenario.logline}`);
+console.log(`kind: ${done.scenario.kind}`);
+console.log(
+  `lines: A ${done.scenario.lines.a} / B ${done.scenario.lines.b} / C ${done.scenario.lines.c}`,
+);
+console.log(`clock: ${done.scenario.clock?.what ?? "none"}`);
+console.log(
+  `opposition: ${done.scenario.opposition.who}: ${done.scenario.opposition.why}`,
+);
+console.log(`cliffhanger: ${done.scenario.cliffhanger.question}`);
 for (const encounter of done.scenario.encounters) {
   console.log(`\n[${encounter.id}] ${encounter.place}: ${encounter.situation}`);
   console.log(

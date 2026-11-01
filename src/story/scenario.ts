@@ -4,18 +4,27 @@ import { z } from "zod";
 
 const Id = z.string().min(1);
 
-/** The turning points of the three-act shape; `rising` and `pause` fill the space between them. */
+/** Snyder's 15 beats; an encounter holds one, and several may share an encounter's span. */
 export const BEATS = [
-  "inciting",
-  "first_turn",
-  "rising",
+  "opening_image",
+  "theme_stated",
+  "set_up",
+  "catalyst",
+  "debate",
+  "break_into_two",
+  "b_story",
+  "fun_and_games",
   "midpoint",
-  "low_point",
-  "pause",
-  "climax",
-  "resolution",
+  "bad_guys_close_in",
+  "all_is_lost",
+  "dark_night",
+  "break_into_three",
+  "finale",
+  "final_image",
 ] as const;
 export type Beat = (typeof BEATS)[number];
+
+export const KINDS = ["mythology", "case", "character", "filler"] as const;
 
 export const Scenario = z.object({
   id: Id,
@@ -28,6 +37,19 @@ export const Scenario = z.object({
   }),
   /** The dramatic question the climax answers. */
   question: z.string().min(1),
+  logline: z.string().min(1),
+  kind: z.enum(KINDS),
+  /** A closes in the episode, B carries relationships, C moves the mythology. */
+  lines: z.object({ a: z.string(), b: z.string(), c: z.string() }),
+  clock: z.object({ what: z.string(), shortens: z.string() }).optional(),
+  opposition: z.object({ who: z.string(), why: z.string() }),
+  setups: z.array(z.object({ id: Id, plant: Id, pays: Id, what: z.string() })),
+  cliffhanger: z.object({
+    kind: z.string().min(1),
+    question: z.string().min(1),
+    prepared: z.string().min(1),
+    exit: z.string().min(1),
+  }),
   start: Id,
   encounters: z.array(
     z.object({
@@ -44,6 +66,9 @@ export const Scenario = z.object({
       tension: z.number().int().min(1).max(5),
       /** The value the encounter turns: a scene with no turn is no scene. */
       value: z.object({ from: z.string().min(1), to: z.string().min(1) }),
+      line: z.enum(["a", "b", "c"]),
+      /** What someone in the scene hides, for the Master to keep readable. */
+      subtext: z.string(),
       /** Exits are what passing the encounter led to, and never the player's choices. */
       exits: z.array(z.object({ when: z.string().min(1), next: Id })),
       /** Library entries that reach the Master by default in this encounter (REQ-8336). */
@@ -63,11 +88,11 @@ const MIN_ENDINGS = 2;
 /** At least this share of encounters must lead to different places by how they went. */
 const MIN_BRANCHING = 0.5;
 const NEEDED_BEATS: readonly Beat[] = [
-  "inciting",
-  "first_turn",
+  "catalyst",
+  "break_into_two",
   "midpoint",
-  "low_point",
-  "climax",
+  "all_is_lost",
+  "finale",
 ];
 
 const targetsOf = (encounter: Encounter): string[] =>
@@ -110,10 +135,7 @@ function shapeFaults(
   for (const beat of NEEDED_BEATS)
     if (!all.some((e) => e.beat === beat)) faults.push(`missing_beat:${beat}`);
   for (const encounter of all) {
-    if (
-      encounter.beat !== "pause" &&
-      encounter.value.from === encounter.value.to
-    )
+    if (encounter.value.from === encounter.value.to)
       faults.push(`no_turn:${encounter.id}`);
     for (const next of targetsOf(encounter)) {
       const after = encounters.get(next);
@@ -122,31 +144,59 @@ function shapeFaults(
     }
   }
   const peak = Math.max(...all.map((e) => e.tension));
-  const climaxes = all.filter((e) => e.beat === "climax");
-  if (climaxes.length > 0 && climaxes.every((e) => e.tension < peak))
-    faults.push("climax_not_peak");
+  const finales = all.filter((e) => e.beat === "finale");
+  if (finales.length > 0 && finales.every((e) => e.tension < peak))
+    faults.push("finale_not_peak");
+  if (!scenario.clock && scenario.kind !== "filler") faults.push("no_clock");
   return faults;
 }
 
-/** Whether a path from `id` reaches an ending with no climax on it. */
-function skipsClimax(
+/** Whether `to` can be reached from `from`. */
+function reaches(
+  from: string,
+  to: string,
+  encounters: ReadonlyMap<string, Encounter>,
+  seen = new Set<string>(),
+): boolean {
+  if (from === to) return true;
+  const encounter = encounters.get(from);
+  if (!encounter || seen.has(from)) return false;
+  seen.add(from);
+  return targetsOf(encounter).some((n) => reaches(n, to, encounters, seen));
+}
+
+function setupFaults(
+  scenario: Scenario,
+  encounters: ReadonlyMap<string, Encounter>,
+): string[] {
+  return scenario.setups.flatMap((s) => {
+    if (!encounters.has(s.plant) || !encounters.has(s.pays))
+      return [`setup_unknown:${s.id}`];
+    return s.plant !== s.pays && reaches(s.plant, s.pays, encounters)
+      ? []
+      : [`setup_order:${s.id}`];
+  });
+}
+
+/** Whether a path from `id` reaches an ending with no finale on it. */
+function skipsFinale(
   id: string,
   encounters: ReadonlyMap<string, Encounter>,
   seen: Set<string>,
 ): boolean {
   const encounter = encounters.get(id);
   if (!encounter) return true;
-  if (encounter.beat === "climax" || seen.has(id)) return false;
+  if (encounter.beat === "finale" || seen.has(id)) return false;
   seen.add(id);
   return targetsOf(encounter).some((next) =>
-    skipsClimax(next, encounters, seen),
+    skipsFinale(next, encounters, seen),
   );
 }
 
 /** The faults that stop a scenario from being played; an empty list means it can run (REQ-8204). */
 export function checkScenario(
   scenario: Scenario,
-  plan: { readonly minChecks: number },
+  plan: { readonly minChecks: number; readonly names?: readonly string[] },
 ): string[] {
   const faults: string[] = [];
   const encounters = new Map(scenario.encounters.map((e) => [e.id, e]));
@@ -167,6 +217,9 @@ export function checkScenario(
   ).length;
   if (branching < length * MIN_BRANCHING) faults.push("few_branches");
   faults.push(...shapeFaults(scenario, encounters));
+  faults.push(...setupFaults(scenario, encounters));
+  for (const name of plan.names ?? [])
+    if (scenario.logline.includes(name)) faults.push(`logline_names:${name}`);
   if (!encounters.has(scenario.start)) return [...faults, "unknown_start"];
   const reached = new Set<string>();
   const walk = (id: string): void => {
@@ -182,8 +235,8 @@ export function checkScenario(
   if (least === null) faults.push("loop");
   else {
     if (least < plan.minChecks) faults.push("too_few_checks");
-    if (skipsClimax(scenario.start, encounters, new Set()))
-      faults.push("path_without_climax");
+    if (skipsFinale(scenario.start, encounters, new Set()))
+      faults.push("path_without_finale");
   }
   return faults;
 }

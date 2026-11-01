@@ -222,7 +222,8 @@ describe("a scenario", () => {
   });
 
   it("needs a clock unless the adventure is filler", () => {
-    const { clock: _, ...none } = chain(10);
+    const none: Scenario = chain(10);
+    delete none.clock;
     expect(checkScenario(none, { minChecks: 0 })).toContain("no_clock");
     expect(
       checkScenario({ ...none, kind: "filler" }, { minChecks: 0 }),
