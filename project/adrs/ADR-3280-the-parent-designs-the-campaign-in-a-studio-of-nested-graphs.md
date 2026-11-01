@@ -3,7 +3,7 @@ id: ADR-3280
 artifact: adr
 status: approved
 revised: 2026-11-01
-addresses: [REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282, REQ-8284, REQ-8286, REQ-8288, REQ-8290, REQ-8292, REQ-8294, REQ-8296, REQ-8298, REQ-8300, REQ-8302, REQ-8304, REQ-8306, REQ-8308, REQ-8310, REQ-8312, REQ-8314, REQ-8316, REQ-8318, REQ-8320, REQ-8322, REQ-8324, REQ-8326, REQ-8336]
+addresses: [REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282, REQ-8284, REQ-8286, REQ-8288, REQ-8290, REQ-8292, REQ-8294, REQ-8296, REQ-8298, REQ-8300, REQ-8302, REQ-8304, REQ-8306, REQ-8308, REQ-8310, REQ-8312, REQ-8314, REQ-8316, REQ-8318, REQ-8320, REQ-8322, REQ-8324, REQ-8326, REQ-8336, REQ-8424, REQ-8426, REQ-8428]
 supersedes: []
 concerns: [privacy, cost]
 ---
@@ -20,7 +20,9 @@ At each level a generator writes that level through the loop of ADR-3270. The pa
 
 An adventure plays only from a scenario version the parent approved. Inside that scenario the Master plays and adapts with no approval, as ADR-3270 states, and the parent reads the report afterwards. With no approved scenario, the game plays tasks with no scenario and notifies the parent.
 
-Each arc and adventure shows `draft`, `approved`, `playing` or `played`. A played adventure has its log, beside the general log. Libraries of characters, places, factions, items, facts, events and adventure summaries are editors over the ontology of ADR-3240, so every agent reads the parent's edits. The Master records facts and events as play goes, through `record_fact` and `record_event`, with no action from the parent, and each played adventure leaves a summary. The parent can attach entries to a scenario or an encounter, and those reach the Master by default. Each turn's request carries those and the other entries that touch the scene, the Master searches the rest with `query_world`, and the parent can correct or remove any entry. A campaign-wide profile of the child and her interests reaches every story agent, on the player tier, through the egress guard, and holds no real name or school. The owner's budget limits hold.
+Each arc and adventure shows `draft`, `approved`, `playing` or `played`. A played adventure has its log, beside the general log. An encounter can carry a picture, generated on the parent's request through an image role or uploaded. The picture belongs to the scenario version, is shown in the studio beside the encounter and reaches the player only after the parent approves that version, and nothing is generated during play. A generated picture keeps the one style of the game's art, and both kinds pass the checks ADR-0170 sets for art.
+
+Libraries of characters, places, factions, items, facts, events and adventure summaries are editors over the ontology of ADR-3240, so every agent reads the parent's edits. The Master records facts and events as play goes, through `record_fact` and `record_event`, with no action from the parent, and each played adventure leaves a summary. The parent can attach entries to a scenario or an encounter, and those reach the Master by default. Each turn's request carries those and the other entries that touch the scene, the Master searches the rest with `query_world`, and the parent can correct or remove any entry. A campaign-wide profile of the child and her interests reaches every story agent, on the player tier, through the egress guard, and holds no real name or school. The owner's budget limits hold.
 
 The studio has screens for design, world, review, test and logs, and RES-4315's Design section states them. A prompt reworks a node's level by default and everything inside it when asked, shows beside the old version with changes marked, and the parent keeps or discards it. A plain edit passes code's check. Generators and edits run as background jobs, and each spending action shows an estimate first.
 
@@ -75,6 +77,7 @@ A large interface. The parent's time: a scenario can't play until it is read. Sp
 
 ## Plan
 
+0. Encounter pictures: upload, generation on request, storage with the scenario version and the art checks (REQ-8424, REQ-8426, REQ-8428).
 1. The sandbox of ADR-0340, its budget and the checklist page (REQ-8284, REQ-8304, REQ-8314).
 2. Storage: versions, statuses, libraries, with background jobs (REQ-8264, REQ-8274, REQ-8278, REQ-8316, REQ-8318).
 3. The graph page with nested levels, reads and logs (REQ-8258, REQ-8276).
