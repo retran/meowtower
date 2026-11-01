@@ -9,19 +9,21 @@ import {
 } from "../../src/story/scenario.js";
 
 const beatOf = (i: number, n: number): Beat => {
-  if (i === 0) return "inciting";
-  if (i === 1) return "first_turn";
+  if (i === 0) return "catalyst";
+  if (i === 1) return "break_into_two";
   if (i === Math.floor(n / 2)) return "midpoint";
-  if (i === n - 3) return "low_point";
-  if (i === n - 2) return "climax";
-  if (i === n - 1) return "resolution";
-  return "rising";
+  if (i === n - 3) return "all_is_lost";
+  if (i === n - 2) return "finale";
+  if (i === n - 1) return "final_image";
+  return "fun_and_games";
 };
 const craft = (i: number, n: number) => ({
   act: (i < 2 ? 1 : i < n - 3 ? 2 : 3) as 1 | 2 | 3,
   beat: beatOf(i, n),
   tension: i === n - 2 ? 5 : Math.min(4, 1 + Math.floor((i * 4) / n)),
   value: { from: "safe", to: "at risk" },
+  line: "a" as const,
+  subtext: "Tobias hides what he saw",
 });
 
 const chain = (n: number): Scenario => ({
@@ -33,6 +35,23 @@ const chain = (n: number): Scenario => ({
     stakes: "the Fair",
   },
   question: "Will the boats reach the Fair?",
+  logline:
+    "When the boats tie together, a young hunter must free them, or the Fair starves.",
+  kind: "case",
+  lines: {
+    a: "free the boats",
+    b: "trust the boatman",
+    c: "a clue to the knitter",
+  },
+  clock: { what: "the Fair opens at noon", shortens: "the fog comes early" },
+  opposition: { who: "the Tangle", why: "it thinks the boats are safer tied" },
+  setups: [{ id: "bell", plant: "n1", pays: "n5", what: "the ferry bell" }],
+  cliffhanger: {
+    kind: "close_a_open_c",
+    question: "Who tied the first knot?",
+    prepared: "the clue in n5",
+    exit: "she reads the thread she saved",
+  },
   start: "n0",
   encounters: Array.from({ length: n }, (_, i) => {
     const next = i === n - 1 ? "e0" : `n${String(i + 1)}`;
@@ -135,7 +154,7 @@ describe("a scenario", () => {
     const noMidpoint = {
       ...s,
       encounters: s.encounters.map((e) =>
-        e.beat === "midpoint" ? { ...e, beat: "rising" as const } : e,
+        e.beat === "midpoint" ? { ...e, beat: "fun_and_games" as const } : e,
       ),
     };
     expect(checkScenario(noMidpoint, { minChecks: 0 })).toContain(
@@ -177,10 +196,10 @@ describe("a scenario", () => {
     const low = {
       ...s,
       encounters: s.encounters.map((e) =>
-        e.beat === "climax" ? { ...e, tension: 1 } : e,
+        e.beat === "finale" ? { ...e, tension: 1 } : e,
       ),
     };
-    expect(checkScenario(low, { minChecks: 0 })).toContain("climax_not_peak");
+    expect(checkScenario(low, { minChecks: 0 })).toContain("finale_not_peak");
     const first = s.encounters[0];
     if (!first) throw new Error("no encounter");
     const skip = {
@@ -191,7 +210,7 @@ describe("a scenario", () => {
       ],
     };
     expect(checkScenario(skip, { minChecks: 0 })).toContain(
-      "path_without_climax",
+      "path_without_finale",
     );
   });
 
@@ -200,6 +219,39 @@ describe("a scenario", () => {
     const parsed = Schema.parse(s);
     expect(parsed.attached).toEqual(["place:canal", "fact:tide"]);
     expect(parsed.encounters[0]?.attached).toEqual(["character:tobias"]);
+  });
+
+  it("needs a clock unless the adventure is filler", () => {
+    const { clock: _, ...none } = chain(10);
+    expect(checkScenario(none, { minChecks: 0 })).toContain("no_clock");
+    expect(
+      checkScenario({ ...none, kind: "filler" }, { minChecks: 0 }),
+    ).not.toContain("no_clock");
+  });
+
+  it("needs each setup planted before it pays", () => {
+    const s = chain(10);
+    expect(
+      checkScenario(
+        { ...s, setups: [{ id: "x", plant: "n5", pays: "n1", what: "w" }] },
+        { minChecks: 0 },
+      ),
+    ).toContain("setup_order:x");
+    expect(
+      checkScenario(
+        { ...s, setups: [{ id: "x", plant: "gone", pays: "n1", what: "w" }] },
+        { minChecks: 0 },
+      ),
+    ).toContain("setup_unknown:x");
+  });
+
+  it("refuses a logline that names a known name", () => {
+    expect(
+      checkScenario(
+        { ...chain(10), logline: "Tobias frees the boats" },
+        { minChecks: 0, names: ["Tobias"] },
+      ),
+    ).toContain("logline_names:Tobias");
   });
 
   it("refuses a graph where outcomes rarely change anything", () => {
