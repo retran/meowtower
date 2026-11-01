@@ -243,8 +243,8 @@ Continuity then is a query. Examples: a character can't speak of a secret they d
 
 | Step | Agent | Model | Tools | Check |
 | --- | --- | --- | --- | --- |
-| 1. Choose | Showrunner: arc kind and premise from open threads, her levels, her choices and the season | Opus | Query threads, levels as world facts, recent kinds | Variety rule, spine anchors |
-| 2. Plan the arc | Arc writer | Opus | Query cast, canon | Structure rules, exit state |
+| 1. Choose | Showrunner: arc kind and premise from open threads, her levels, her choices and the season | Sonnet | Query threads, levels as world facts, recent kinds | Variety rule, spine anchors |
+| 2. Plan the arc | Arc writer | Sonnet | Query cast, canon | Structure rules, exit state |
 | 3. Outline the episode | Episode writer, given the Director's plan | Sonnet | Query arc, threads | Fits slots, beats 7 to 12 |
 | 4. Write beats | Beat writer | Sonnet | Query characters | Value change on each beat |
 | 5. Critique | Script doctor, a separate agent with the craft rules | Sonnet | Query ontology | Scored list of faults |
@@ -286,19 +286,19 @@ The target is one reader: the critic's rubric also scores whether a child would 
 
 ### 13. Cost fits the limit by a wide margin
 
-[Count] Prices per million tokens: Sonnet 5.5 $2 in, $10 out; Haiku 5.5 $0.1 and $0.5; Opus 5.5 $4 and $20. [Proposal] Assumed tokens, not measured:
+[Count] Prices per million tokens: Sonnet 5.5 $2 in, $10 out; Haiku 5.5 $0.1 and $0.5. The owner chose Sonnet for every story role on 2026-11-01. [Proposal] Assumed tokens, not measured:
 
 | Step | Model | In and out, thousands | Cost |
 | --- | --- | --- | --- |
-| Arc choice and plan, per arc (7 episodes) | Opus | 12 and 5, twice | $0.296, so $0.04 an episode |
+| Arc choice and plan, per arc (7 episodes) | Sonnet | 12 and 5, twice | $0.148, so $0.02 an episode |
 | Outline | Sonnet | 6 and 1.5 | $0.027 |
 | Beats, critique and 2 revisions | Sonnet | 6 and 2, four times | $0.128 |
 | 12 scenes | Sonnet | 4 and 0.5 each | $0.156 |
 | Summary and ontology diff | Sonnet | 8 and 1 | $0.026 |
 | Task stories, 30 tasks, measured at $0.006 | Sonnet, Haiku | | $0.18 |
-| An adventure | | | about $0.56 |
+| An adventure | | | about $0.54 |
 
-Daily play for 31 days costs about $17. The limits of ADR-3200 are $5 an adventure and $200 a month, so the full pipeline fits with a wide margin, and the model choices could rise. Older records name $1.5 and $60, which ADR-3200 replaced.
+Daily play for 31 days costs about $17, rounded. The limits of ADR-3200 are $5 an adventure and $200 a month, so the full pipeline fits with a wide margin, and the model choices could rise. Older records name $1.5 and $60, which ADR-3200 replaced.
 
 ### 14. The build goes by a sequence, and nothing is cut
 
