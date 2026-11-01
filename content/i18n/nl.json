@@ -212,11 +212,5 @@
   "ui.parentSettings.language": "Taal van het spel",
   "ui.parentSettings.language.ru": "Русский",
   "ui.parentSettings.language.en": "English",
-  "ui.parentSettings.language.nl": "Nederlands",
-  "story.setting.1": "In het Archief geeft de bewaarder je een briefje met een vraag:",
-  "story.setting.2": "Op de trap roept een baas uit de Werkplaats je:",
-  "story.setting.3": "De banketbakker leunt uit de deur en vraagt:",
-  "story.setting.4": "Op het Kanaal laat de schipper zijn riem rusten en vraagt om hulp:",
-  "story.setting.5": "Op de Kermis kijkt een koopman je sluw aan:",
-  "story.setting.6": "Op het bord bij de trap heeft iemand een vraag achtergelaten:"
+  "ui.parentSettings.language.nl": "Nederlands"
 }

@@ -219,12 +219,6 @@ export interface StringParams {
   "ui.parentSettings.language.ru": NoParams;
   "ui.parentSettings.language.en": NoParams;
   "ui.parentSettings.language.nl": NoParams;
-  "story.setting.1": NoParams;
-  "story.setting.2": NoParams;
-  "story.setting.3": NoParams;
-  "story.setting.4": NoParams;
-  "story.setting.5": NoParams;
-  "story.setting.6": NoParams;
 }
 
 export type Key = keyof StringParams;

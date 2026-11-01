@@ -13,6 +13,6 @@ verification: behavioural
 
 # REQ-8208
 
-The text of every task MUST be set in the story.
+The game MUST ask for a story for every task, so a task's text is set in the story whenever generation works.
 
-The owner decided this on 2026-11-01, so a task never shows bare template text to the player.
+The owner decided this on 2026-11-01, and a failure falls back to the template.

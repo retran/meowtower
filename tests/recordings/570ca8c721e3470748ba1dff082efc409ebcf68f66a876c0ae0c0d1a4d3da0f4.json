@@ -1,0 +1,7 @@
+{
+  "text": "{\"unsafe\":0.06,\"joke\":0.19,\"changed\":0.08,\"fits\":0.62,\"flows\":0.97,\"clear\":0.71,\"alive\":0.82,\"sense\":0.93,\"numbers\":0.07}",
+  "stopReason": "end_turn",
+  "inputTokens": 1155,
+  "outputTokens": 149,
+  "costUsd": 0.00004851
+}

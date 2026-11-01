@@ -1,0 +1,7 @@
+{
+  "text": "{\"unsafe_1\":0.05,\"joke_1\":0.14,\"changed_1\":0.12,\"unsafe_2\":0.08,\"joke_2\":0.1,\"changed_2\":0.11,\"best\":{\"choice\":\"variant_1\",\"probabilities\":{\"variant_1\":0.91,\"variant_2\":0.09}}}",
+  "stopReason": "end_turn",
+  "inputTokens": 717,
+  "outputTokens": 147,
+  "costUsd": 0.000030114
+}

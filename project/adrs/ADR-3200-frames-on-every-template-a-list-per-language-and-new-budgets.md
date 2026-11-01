@@ -39,7 +39,7 @@ RES-4300 finds the buttons and the words can come apart, and that the budgets ho
 
 ## What it costs
 
-A log kept for good grows without bound: each row repeats its prompt, so `llm_log` adds several kilobytes a call. At $200 a month the worst case is 20 times the daily spend the earlier figures planned. Picture tasks may fail their blind solve often, because reading SVG is harder than reading text; such a task shows its prepared setting (ADR-3270) and counts as rejected, which can trip the 30% pause. An agent wrote the two new lists, so they are thinner than the Russian one, which holds every word form.
+A log kept for good grows without bound: each row repeats its prompt, so `llm_log` adds several kilobytes a call. At $200 a month the worst case is 20 times the daily spend the earlier figures planned. Picture tasks may fail their blind solve often, because reading SVG is harder than reading text; such a task shows its template text and counts as rejected, which can trip the 30% pause. An agent wrote the two new lists, so they are thinner than the Russian one, which holds every word form.
 
 ## What would reverse it
 

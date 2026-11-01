@@ -16,7 +16,7 @@ concerns: []
 
 Text in an approved decision now states the rule in force, because the owner asked on 2026-11-01 that decisions be free of contradictions, and a reader of an older decision shouldn't need its later amendments. Every amendment that quoted its old sentence is applied in place. Newer decisions win: budgets of $5 and $200, live stories with no frame library, three languages, the title of ADR-3210, a storyteller in place of the System, the pipeline of ADR-3240 in place of the planner, and the front page of ADR-3250.
 
-Seven requirements are replaced, because each contradicted a decision: the player's screens may show levels and rank; the story pipeline writes after each adventure; daily budgets sum below $200; the rank comes from node levels; text follows the parent's language; a pause shows the prepared setting; the front page may name a lesson the parent chooses.
+Seven requirements are replaced, because each contradicted a decision: the player's screens may show levels and rank; the story pipeline writes after each adventure; daily budgets sum below $200; the rank comes from node levels; text follows the parent's language; a pause shows template text; the front page may name a lesson the parent chooses.
 
 The owner decided on 2026-11-01 that every template takes a story, so the half of bare tasks goes, and that jokes are allowed, so the judge's joke question goes. Task time now holds reading time as well, so thresholds change by data if they prove wrong.
 

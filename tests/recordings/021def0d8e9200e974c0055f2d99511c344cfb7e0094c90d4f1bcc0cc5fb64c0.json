@@ -1,0 +1,7 @@
+{
+  "text": "{\"unsafe_1\":0.06,\"joke_1\":0.2,\"changed_1\":0.07,\"unsafe_2\":0.05,\"joke_2\":0.59,\"changed_2\":0.08,\"unsafe_3\":0.06,\"joke_3\":0.11,\"changed_3\":0.08,\"unsafe_4\":0.05,\"joke_4\":0.41,\"changed_4\":0.08,\"unsafe_5\":0.21,\"joke_5\":0.59,\"changed_5\":0.08,\"best\":{\"choice\":\"variant_5\",\"probabilities\":{\"variant_1\":0.08,\"variant_2\":0.04,\"variant_3\":0.21,\"variant_4\":0.25,\"variant_5\":0.42}}}",
+  "stopReason": "end_turn",
+  "inputTokens": 2213,
+  "outputTokens": 339,
+  "costUsd": 0.000092946
+}

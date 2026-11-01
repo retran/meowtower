@@ -19,11 +19,11 @@ The judge answers eight yes-or-no questions, each with `criteria` that state wha
 
 The review screen offers the second attempt ADR-0220 gives, after `alt` or after a first attempt on which she saw rung 2 or 3, and the client now calls the route that was already built. The Parent Room's creepiness level sets the author's tone and what the judge counts as safe, and the list of what never appears holds at every level. The level defaults to 2, by the owner's decision, and the task window follows it. The author and the judge get a task's answer options, so the story's question leads to its buttons.
 
-A variant the judge doesn't answer isn't counted. When the judge fails on every variant, nothing is kept and the task shows its prepared setting (ADR-3270).
+A variant the judge doesn't answer isn't counted. When the judge fails on every variant, nothing is kept and the task shows its template text.
 
 The code fills a template once and gives that task to the author on every attempt, and the story carries its real numbers, so placeholders stay with templates. Code checks only the forbidden list and the length. A second attempt by the player is a task of its own, and its text is written when it is requested. It continues the first story and takes the failure into account, as an event of the world, with no reproach. The player's gender, a Parent Room setting that defaults to female, goes to the author too (REQ-7880). The request shows that one fact on the content tier, and no answer, name or time, by the owner's decision (REQ-7870). The gateway logs each call its budget refuses, because live runs stopped with no row to say why.
 
-The game writes a story only when its task is requested, and nothing is prepared ahead. A task waits up to 90 seconds for its story behind a loading animation, then shows its prepared setting (ADR-3270), because a live run showed template text before the frame was ready.
+The game writes a story only when its task is requested, and nothing is prepared ahead. A task waits up to 90 seconds for its story behind a loading animation, then shows its template text, because a live run showed template text before the frame was ready.
 
 The task screen has no heading, and the answer field reads «Ответ», because beside a story «Приключение» and «Твоё заклинание» only confuse the player.
 
@@ -65,7 +65,7 @@ One model solves a story while the original task sits beside it, so the solve is
 
 1. A test shows one judge request per variant, and the highest score shown.
 2. A test shows the best of a weak round, and removes only a plainly unsafe variant.
-3. A test shows the prepared setting when the judge fails.
+3. A test shows template text when the judge fails.
 
 ## What this does not settle
 

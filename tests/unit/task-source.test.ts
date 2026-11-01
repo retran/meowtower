@@ -1,7 +1,7 @@
 // REQ-7536, REQ-7524: every task can be answered as it is shown. A chosen answer has its buttons, each button
 // sends what the checker takes, and a typed answer names its format.
 import { describe, expect, it } from "vitest";
-import { present, presentSet } from "../../src/server/task-source.js";
+import { present } from "../../src/server/task-source.js";
 import { templates } from "../../src/templates/index.js";
 
 const seedOf = (i: number): Uint8Array =>
@@ -46,30 +46,5 @@ describe("how each task is put before the player", () => {
       if (shape.input.kind === "text")
         expect(shape.input.format, template.id).toBeDefined();
     }
-  });
-});
-
-describe("REQ-8208, REQ-8210: a task with no live story", () => {
-  it("is set in the story by prepared text in the game's language", () => {
-    const template = templates[0];
-    if (!template) throw new Error("no templates");
-    const made = template.make(seedOf(1), "ru");
-    for (const lang of ["ru", "en", "nl"] as const) {
-      const shape = presentSet({ template, made }, lang, seedOf(1));
-      expect(shape.text.endsWith(present({ template, made }).text)).toBe(true);
-      expect(shape.text.length).toBeGreaterThan(made.text.length + 10);
-    }
-  });
-
-  it("keeps the same setting for the same seed and varies it across seeds", () => {
-    const template = templates[0];
-    if (!template) throw new Error("no templates");
-    const made = template.make(seedOf(1), "ru");
-    const of = (i: number) =>
-      presentSet({ template, made }, "ru", seedOf(i)).text;
-    expect(of(1)).toBe(of(1));
-    expect(
-      new Set(Array.from({ length: 30 }, (_, i) => of(i))).size,
-    ).toBeGreaterThan(1);
   });
 });
