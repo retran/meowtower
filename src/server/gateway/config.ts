@@ -2,7 +2,8 @@
 // each role's tier, bucket, timeout and `max_tokens`, so configuration changes a model and never a tier.
 export type RouteName = "openrouter" | "anthropic";
 export type Tier = "player" | "content";
-export type RoleName = "TASK_TEXT_MODEL" | "FRAME_JUDGE_MODEL";
+export type RoleName =
+  "TASK_TEXT_MODEL" | "FRAME_JUDGE_MODEL" | "SHOWRUNNER_MODEL";
 
 export interface RoleSpec {
   readonly tier: Tier;
@@ -13,7 +14,12 @@ export interface RoleSpec {
 export const ROLES: Readonly<Record<RoleName, RoleSpec>> = {
   TASK_TEXT_MODEL: { tier: "content", timeoutMs: 90_000, maxTokens: 12_000 },
   FRAME_JUDGE_MODEL: { tier: "content", timeoutMs: 30_000, maxTokens: 4000 },
+  // Content tier while a brief holds no story material; ADR-3240 moves it once story memory enters.
+  SHOWRUNNER_MODEL: { tier: "content", timeoutMs: 180_000, maxTokens: 16_000 },
 };
+
+/** Roles a game can run without, because nothing in play depends on them yet. */
+const OPTIONAL: readonly RoleName[] = ["SHOWRUNNER_MODEL"];
 
 /** The roles that draw a picture have no direct route, because Claude models give text only (REQ-7630). */
 export const IMAGE_ROLES: readonly string[] = [
@@ -33,7 +39,7 @@ export type GatewayMode = "play" | "verify" | "replay";
 
 export interface GatewayConfig {
   readonly mode: GatewayMode;
-  readonly roles: Readonly<Record<RoleName, RoleRoute>>;
+  readonly roles: Readonly<Partial<Record<RoleName, RoleRoute>>>;
   readonly playerProviders: readonly string[];
   readonly contentProviders: readonly string[];
   readonly openrouterKey: string | undefined;
@@ -87,15 +93,16 @@ export function readConfig(
       ? env["OPENROUTER_OFFLINE_KEY"]
       : env["OPENROUTER_PLAY_KEY"];
   const names = Object.keys(ROLES) as RoleName[];
-  if (names.some((name) => !env[name])) return null;
+  if (names.some((name) => !env[name] && !OPTIONAL.includes(name))) return null;
+  const set = names.filter((name) => env[name]);
   const roles = Object.fromEntries(
-    names.map((name) => [
+    set.map((name) => [
       name,
       parseRole(name, env[name] ?? "", ROLES[name].tier, attested),
     ]),
-  ) as Record<RoleName, RoleRoute>;
-  for (const name of names) {
-    const route = roles[name].route;
+  ) as Partial<Record<RoleName, RoleRoute>>;
+  for (const name of set) {
+    const route = roles[name]?.route;
     const key =
       route === "anthropic" ? env["ANTHROPIC_API_KEY"] : openrouterKey;
     if (!key && mode !== "replay")

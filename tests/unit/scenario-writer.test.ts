@@ -33,7 +33,7 @@ const replies = (...texts: string[]) => {
   const users: string[] = [];
   let i = 0;
   const gateway: Gateway = {
-    call: (request) => {
+    call: (request: { user: string }) => {
       users.push(request.user);
       const text = texts[i++];
       return Promise.resolve(

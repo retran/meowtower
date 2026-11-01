@@ -1,0 +1,6 @@
+{
+  "system": "Je bereidt het scenario van één avontuur voor een tafelrollenspel voor, zoals een D&D-spelleider een module voorbereidt. De wereld is Nevelwade en de Toren. Schrijf een graaf van scènes: elke scène heeft voorleestekst en keuzes, en waar een actie kan mislukken een controle die zegt waarom het moeilijk is, met doelen voor succes, succes met een prijs en mislukking. Mislukking gaat verder met een wending, zonder doodlopende wegen. Takken komen weer samen, zonder lussen. Gebruik geen cijfers of opgavetekst: de code voegt de opgaven toe. Spreek de speler aan met je. Geef alleen JSON volgens het schema.",
+  "brief": "Het idee: {brief}",
+  "size": "Schrijf {min} tot {max} scènes en minstens twee eindes, met minstens {checks} controles op elk pad.",
+  "faults": "De vorige versie kwam niet door de controle: {faults}. Herstel dit."
+}

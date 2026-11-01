@@ -81,7 +81,9 @@ export function createGateway({
     async call({ role, bucket, system, user: raw, schema }) {
       const spec = ROLES[role];
       const user = cleanEgress(raw, names);
-      const { route: name, model } = config.roles[role];
+      const assigned = config.roles[role];
+      if (!assigned) return { ok: false, reason: "provider_failed" };
+      const { route: name, model } = assigned;
       const route = routes[name];
       const request = {
         model,
