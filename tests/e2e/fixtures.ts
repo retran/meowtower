@@ -7,6 +7,8 @@ import { forbiddenFields } from "../helpers/packets.js";
 
 const KEY = "sk-or-v1-e2e-fake-key-0000";
 
+const SETTLE_MS = 5000;
+
 export const test = base.extend<{ leaks: string[] }>({
   leaks: [
     async ({ page }, use) => {
@@ -48,7 +50,11 @@ export const test = base.extend<{ leaks: string[] }>({
         );
       });
       await use(leaks);
-      await Promise.all(pending);
+      // A body still open as the page closes never settles, and it must not hang the teardown.
+      await Promise.race([
+        Promise.all(pending),
+        new Promise((resolve) => setTimeout(resolve, SETTLE_MS)),
+      ]);
       expect(
         leaks,
         "responses carrying the model key, the design or an early answer",
