@@ -70,6 +70,8 @@ About $0.56 an adventure by estimate, near $17 a month, within ADR-3200's limits
 
 Amended by ADR-3270, approved on 2026-11-01: the pipeline writes a branching scenario for each adventure, and the Master leads her through it turn by turn.
 
+Amended by ADR-3290, approved on 2026-11-01: one writing agent and one critic replace the named roles, on `SHOWRUNNER_MODEL`.
+
 ## Plan
 
 1. Canon's spine and library arcs (REQ-8186, REQ-8108).

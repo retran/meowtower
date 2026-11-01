@@ -68,9 +68,9 @@ A bible fixes each person's want against their need, a ghost from the past that 
 
 A pitch bible states a logline, format and references, a setting that generates problems, the franchise engine (what the heroes do in an ordinary episode of the second season), the cast's dynamics, a pilot synopsis, and a roadmap of the first season with a plan for years ahead.
 
-### Dialogue and the writers' room
+### Dialogue
 
-In a dialogue, a dominant speaker uses long lines and a defender short ones, and a change of pattern marks a change of control. A pause marks a change of mind and is used rarely, and strong aims cut each other off. In a writers' room, a showrunner approves all, senior writers run the arcs and lead the rewrites, story editors break stories into beat sheets and divide lines A, B and C, staff writers draft, and an assistant keeps the bible and tracks continuity.
+In a dialogue, a dominant speaker uses long lines and a defender short ones, and a change of pattern marks a change of control. A pause marks a change of mind and is used rarely, and strong aims cut each other off.
 
 ### What changes for this game
 
@@ -142,18 +142,9 @@ The library's character card holds `want`, `need`, `wound`, `falseBelief`, `voic
 
 An arc plans its twist in `reveals`, with the setups that prepare it and a false trail where it fits. The loop writes logline, synopsis, treatment and beat sheet in turn, and the critic reads the treatment before encounters are written, because a hole found there costs far less than one found in a finished graph. The Master is the storyteller's voice, and it may add a layer the scene can't show, such as what the heroine will remember later.
 
-### The writers' room
+### One writer and one critic
 
-| Room | Here | Does |
-| --- | --- | --- |
-| Showrunner | The parent | Approves |
-| Arc lead | `SHOWRUNNER_MODEL` agent | Bible, seasons and reveals |
-| Story editor | Agent | Breaks an adventure into beats and lines |
-| Staff writer | Agent | Drafts encounters |
-| Script doctor | Critic | Reads and sends back for rewrites |
-| Keeper | Agent | Keeps library, ledger and timeline |
-
-All of them run on Sonnet, by the owner's decision.
+The pipeline stays simple: one agent writes, a critic reads and sends it back, and the parent approves. A room of agents adds cost and no proven gain, so the owner kept it simple on 2026-11-01.
 
 ### The Master's rules
 
@@ -202,7 +193,7 @@ Structure moves into the scenario schema first, then arcs and campaign when thei
 17. An arc's ending states whether it closes its question or leaves it open.
 18. A character's library entry holds a want, a need, a wound, a false belief, a voice, skills, weak spots, relations and an arc.
 19. A campaign opens from a bible holding its logline, format, setting, engine, cast dynamics, pilot synopsis and roadmap.
-20. The pipeline runs as a writers' room, with the parent as showrunner.
+20. One writing agent and one critic make the pipeline, and the parent approves.
 21. The Master's prompt states the rules of dialogue rhythm.
 22. The pipeline writes logline, synopsis, treatment and beat sheet before encounters, and the critic reads the treatment first.
 
