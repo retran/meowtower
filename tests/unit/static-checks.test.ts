@@ -9,6 +9,7 @@ import {
   checkExplainCacheConfined,
   checkGameProjectionImports,
   type ProjectionEntry,
+  checkNoExperience,
   checkNoKeyInClient,
   checkNoPush,
   checkNoVerdictWords,
@@ -307,5 +308,45 @@ describe("REQ-6506: a device keeps only its event queue", () => {
     expect(checkClientStorage(repo({ [file]: text }))).toEqual([
       { check: "client_storage", file, match },
     ]);
+  });
+});
+
+describe("REQ-7980: the game accumulates no experience", () => {
+  it("passes this repository", () => {
+    expect(checkNoExperience(process.cwd())).toEqual([]);
+  });
+
+  it("names code that holds experience points", () => {
+    const root = repo({ "src/server/game.ts": "export const xp = 0;" });
+    expect(checkNoExperience(root)).toEqual([
+      { check: "experience", file: "src/server/game.ts", match: "xp" },
+    ]);
+  });
+
+  it("names a content file and a component that name experience", () => {
+    const root = repo({
+      "content/economy.json": '{ "experience": { "scene": 10 } }',
+      "src/client/bar.ts": "class XpBar {}",
+    });
+    expect(
+      checkNoExperience(root)
+        .map((f) => f.file)
+        .sort(),
+    ).toEqual(["content/economy.json", "src/client/bar.ts"]);
+  });
+
+  it("names a reader of the old level_up event outside the event list", () => {
+    const root = repo({
+      "src/shared/events.ts": 'type: "level_up"',
+      "src/server/play.ts": 'if (e.type === "level_up") bump();',
+    });
+    expect(checkNoExperience(root)).toEqual([
+      { check: "experience", file: "src/server/play.ts", match: "level_up" },
+    ]);
+  });
+
+  it("lets the event list keep level_up, because old logs hold it", () => {
+    const root = repo({ "src/shared/events.ts": 'type: "level_up"' });
+    expect(checkNoExperience(root)).toEqual([]);
   });
 });
