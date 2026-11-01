@@ -63,7 +63,7 @@ A check is needed only when the attempt can fail and failing is interesting. If 
 
 ### How decisions change the plot
 
-[Proposal] Before each adventure, the pipeline of RES-4312 writes a detailed scenario: a graph of 15 to 30 scenes with read-aloud text, options, checks, what each outcome leads to, people and their aims, variants, and at least two endings that feed the arc. The code checks that every path ends and fits the Director's plan. Fixed: the world's truths, its people, the Tower's secret, the safety rules, the calendar. Open: who lives, who trusts her, what she finds and in what order, which Guardians side with her, and how it all ends. CAN-0080's checkpoints become pressures: events that will happen unless she changes them. The four endings stay as the far points, and the showrunner may reach any or a new one in keeping with the canon. After each adventure and at a major event, the showrunner replans open arcs from the ontology. A major decision is marked in the ontology, and the world remembers it for good.
+[Proposal] Before each adventure, the pipeline of RES-4312 writes a detailed scenario: a graph of 10 to 20 encounters, each a situation with a goal, people and pressure, whose exits are consequences of how it went, and at least two endings that feed the arc. The Master unfolds each encounter into a scene, with her choices, in play. The code checks that every path ends and fits the Director's plan. Fixed: the world's truths, its people, the Tower's secret, the safety rules, the calendar. Open: who lives, who trusts her, what she finds and in what order, which Guardians side with her, and how it all ends. CAN-0080's checkpoints become pressures: events that will happen unless she changes them. The four endings stay as the far points, and the showrunner may reach any or a new one in keeping with the canon. After each adventure and at a major event, the showrunner replans open arcs from the ontology. A major decision is marked in the ontology, and the world remembers it for good.
 
 ### Cost and pace
 
@@ -83,7 +83,7 @@ A check is needed only when the attempt can fail and failing is interesting. If 
 6. A clean answer succeeds, a partial one succeeds at a cost, and a failed one moves the story on with a twist.
 7. The Master changes the world only through tools that write the ontology.
 8. Her decisions can change the plot and its ending, and only the world's truths stay fixed.
-9. Each adventure's scenario is prepared in detail beforehand as a graph of scenes with branches and variants, and the Master leads her through it.
+9. Each adventure's scenario is prepared in detail beforehand as a graph of encounters, and the Master leads her through it.
 10. The Master keeps her inside the scenario, and an action outside it gets a short answer that leads back.
 11. The ending of each adventure feeds its arc, and arcs feed the overall plot, so the showrunner replans from what she did.
 12. Ability levels let her do some things with no check.
@@ -91,7 +91,7 @@ A check is needed only when the attempt can fail and failing is interesting. If 
 14. Starters and speech keep a turn possible with no typing.
 15. The judge scores whether a check's story follows what she tried.
 16. The Master may improvise details, minor people and side moments, recorded in the ontology, and can't contradict the canon or the scenario, change an outcome or skip the way forward.
-17. Scenario branches rejoin, so a scenario stays within 15 to 30 scenes.
+17. Scenario branches rejoin, so a scenario stays within 10 to 20 encounters.
 18. Spend per adventure is measured, with an expected figure near $1.7.
 
 ## Sources

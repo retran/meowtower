@@ -4,7 +4,12 @@ import { readFileSync } from "node:fs";
 import { z } from "zod";
 import type { Gateway } from "../server/gateway/gateway.js";
 import type { Lang } from "../shared/i18n.js";
-import { checkScenario, MAX_SCENES, MIN_SCENES, Scenario } from "./scenario.js";
+import {
+  checkScenario,
+  MAX_ENCOUNTERS,
+  MIN_ENCOUNTERS,
+  Scenario,
+} from "./scenario.js";
 
 const Prompt = z.object({
   system: z.string(),
@@ -26,6 +31,21 @@ const promptOf = (lang: Lang): z.infer<typeof Prompt> =>
       ),
     ),
   );
+
+/** The world and its limits, which every story request of the game shares. */
+const worldOf = (lang: Lang): string => {
+  const { setting, never } = World.parse(
+    JSON.parse(
+      readFileSync(
+        new URL(`../../content/frames/prompt.${lang}.json`, import.meta.url),
+        "utf8",
+      ),
+    ),
+  );
+  return `${setting}\n\n${never}`;
+};
+
+const World = z.object({ setting: z.string(), never: z.string() });
 
 const Plan = z.object({
   premise: z.string(),
@@ -61,11 +81,12 @@ export async function writeScenario(
   { bucket, lang, brief, minChecks }: ScenarioAsk,
 ): Promise<WrittenScenario | null> {
   const prompt = promptOf(lang);
+  const system = `${prompt.system}\n\n${worldOf(lang)}`;
   const task = [
     prompt.brief.replace("{brief}", brief),
     prompt.size
-      .replace("{min}", String(MIN_SCENES))
-      .replace("{max}", String(MAX_SCENES))
+      .replace("{min}", String(MIN_ENCOUNTERS))
+      .replace("{max}", String(MAX_ENCOUNTERS))
       .replace("{checks}", String(minChecks)),
   ].join("\n");
 
@@ -92,12 +113,12 @@ export async function writeScenario(
     }
   }
 
-  const plan = await step(Plan, prompt.system, `${task}\n${prompt.plan}`);
+  const plan = await step(Plan, system, `${task}\n${prompt.plan}`);
   if (!plan?.value) return null;
   let user = `${task}\n${prompt.write.replace("{plan}", plan.text)}`;
   let kept: WrittenScenario | null = null;
   for (let revisions = 0; revisions <= MAX_REVISIONS; revisions += 1) {
-    const draft = await step(Scenario, prompt.system, user);
+    const draft = await step(Scenario, system, user);
     if (!draft) return kept;
     const faults = draft.value
       ? checkScenario(draft.value, { minChecks })
@@ -106,7 +127,7 @@ export async function writeScenario(
     if (draft.value && faults.length === 0) {
       const review = await step(
         Critique,
-        prompt.critic,
+        `${prompt.critic}\n\n${worldOf(lang)}`,
         prompt.review.replace("{scenario}", draft.text),
       );
       kept = { scenario: draft.value, revisions, unresolved: [] };
