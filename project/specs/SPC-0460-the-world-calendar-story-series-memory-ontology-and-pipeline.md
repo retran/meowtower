@@ -3,7 +3,7 @@ id: SPC-0460
 artifact: spec
 status: live
 revised: 2026-11-01
-states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114, REQ-8168, REQ-8170, REQ-8172, REQ-8174, REQ-8176, REQ-8178, REQ-8180, REQ-8182, REQ-8184, REQ-8186, REQ-8188, REQ-8190, REQ-8192, REQ-8194, REQ-8196, REQ-8198, REQ-8244, REQ-8250, REQ-8204, REQ-8206, REQ-8246, REQ-8248, REQ-8214, REQ-8256, REQ-8218, REQ-8220, REQ-8222, REQ-8224, REQ-8228, REQ-8234, REQ-8236, REQ-8238, REQ-8240, REQ-8252, REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282, REQ-8284, REQ-8286, REQ-8288, REQ-8290, REQ-8292, REQ-8294, REQ-8296, REQ-8298, REQ-8300, REQ-8302, REQ-8304, REQ-8306, REQ-8308, REQ-8310, REQ-8312, REQ-8314, REQ-8316, REQ-8318, REQ-8320, REQ-8322, REQ-8324, REQ-8326, REQ-8328, REQ-8330, REQ-8332, REQ-8334, REQ-8336, REQ-8338, REQ-8340, REQ-8342, REQ-8344, REQ-8346, REQ-8348, REQ-8350, REQ-8352, REQ-8354, REQ-8356, REQ-8358, REQ-8360, REQ-8362, REQ-8364, REQ-8366, REQ-8368, REQ-8370, REQ-8372, REQ-8374, REQ-8376, REQ-8378, REQ-8382, REQ-8404, REQ-8406, REQ-8402, REQ-8408, REQ-8410, REQ-8412, REQ-8414, REQ-8416, REQ-8418, REQ-8420, REQ-8422, REQ-8424, REQ-8426, REQ-8428]
+states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114, REQ-8168, REQ-8170, REQ-8172, REQ-8174, REQ-8176, REQ-8178, REQ-8180, REQ-8182, REQ-8184, REQ-8186, REQ-8188, REQ-8190, REQ-8192, REQ-8194, REQ-8196, REQ-8198, REQ-8244, REQ-8250, REQ-8204, REQ-8206, REQ-8246, REQ-8248, REQ-8214, REQ-8256, REQ-8218, REQ-8220, REQ-8222, REQ-8224, REQ-8228, REQ-8234, REQ-8236, REQ-8238, REQ-8240, REQ-8252, REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282, REQ-8284, REQ-8286, REQ-8288, REQ-8290, REQ-8292, REQ-8294, REQ-8296, REQ-8298, REQ-8300, REQ-8302, REQ-8304, REQ-8306, REQ-8308, REQ-8310, REQ-8312, REQ-8314, REQ-8316, REQ-8318, REQ-8320, REQ-8322, REQ-8324, REQ-8326, REQ-8328, REQ-8330, REQ-8332, REQ-8334, REQ-8336, REQ-8338, REQ-8340, REQ-8342, REQ-8344, REQ-8346, REQ-8348, REQ-8350, REQ-8352, REQ-8354, REQ-8356, REQ-8358, REQ-8360, REQ-8362, REQ-8364, REQ-8366, REQ-8368, REQ-8370, REQ-8372, REQ-8374, REQ-8376, REQ-8378, REQ-8382, REQ-8404, REQ-8406, REQ-8402, REQ-8408, REQ-8410, REQ-8412, REQ-8414, REQ-8416, REQ-8418, REQ-8420, REQ-8422, REQ-8424, REQ-8426, REQ-8428, REQ-8430, REQ-8432, REQ-8434]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -63,6 +63,10 @@ The Master records facts and events by `record_fact` and `record_event` as play 
 ### Pictures
 
 The parent can give an encounter a picture, either generated on request through an image model or uploaded (REQ-8424). A picture belongs to a scenario version and reaches the player only once the parent has approved that version, and none is generated during play (REQ-8426). A picture is of an allowed type and size, a generated one is in the one style of the game's art, and both pass the forbidden-content checks for art (REQ-8428).
+
+### Library pictures
+
+A parent can attach pictures to a character, a place, an item or a fact, and an encounter can use one (REQ-8430). The Master has a tool `show_picture` that shows one picture attached to a library entry or to the current encounter, and the game refuses any other (REQ-8432). Each picture shown is logged with its entry and the turn, and the parent's report lists it (REQ-8434).
 
 ### Testing from the Parent Room
 
