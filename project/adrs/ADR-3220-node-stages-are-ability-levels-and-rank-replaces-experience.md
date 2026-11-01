@@ -84,7 +84,7 @@ The parent reads two views of a node, a state and a level, which will sometimes 
 0. A statistics reset: the event `stats_reset`, a confirmed route and a button in the Parent Room, so the player starts from nothing once testing is over (REQ-8386).
 1. Turn the knowledge model on, by naming its version in `content/versions.json`, so the estimates exist. Levels from the log: rule `level.v1`, the simulation and a replay tool over the player's log, in `src/engine/` and `tools/` (REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7978).
 2. Task candidates by level in `src/server/task-source.ts` through a function the Director can read (REQ-7972, REQ-7974, REQ-7976).
-3. Rank from levels with its simulation, given through a story event (REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-8034).
+3. Rank from levels with its simulation (REQ-8158, REQ-7986, REQ-7988, REQ-7990). The rank is computed and stored in `rank_state`; the story event that gives it to the player (REQ-8034) comes with the Master.
 4. Remove experience from content, code and client, with a static check (REQ-7980, REQ-8020, REQ-8024, REQ-8026, REQ-8028, REQ-8018).
 5. The character sheet (REQ-8010, REQ-8012, REQ-8014, REQ-8000).
 6. Warning, fall event and the end of the row in three languages, with the canon's changes (REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8016, REQ-8022).

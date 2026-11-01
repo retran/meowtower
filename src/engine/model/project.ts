@@ -8,6 +8,7 @@ import { rowsOf, type Row } from "./aggregate.js";
 import { estimatePairs } from "./bkt.js";
 import { fluencyOf, type Beta, withHelpOf } from "./beta.js";
 import { levelOf, type LevelResult } from "./levels.js";
+import { rankOver, type RankResult } from "./rank.js";
 import { type LogEvent, observationsOf } from "./observations.js";
 import { type ModelParamsT } from "./params.js";
 import { priorOf, rowOf } from "./priors.js";
@@ -177,6 +178,35 @@ export function levelsOf(
     );
     return { node: n.id, ...result };
   });
+}
+
+/** The rank of one log (ADR-3220, rule rank.v1), from each node's level at the end of each played day. */
+export function rankOf(
+  graph: KnowledgeGraph & { typicalGroup(id: string): number },
+  log: readonly LogEvent[],
+  params: ModelParamsT,
+  olympiad: OlympiadFacts,
+  zone: string,
+): RankResult {
+  const levels = levelsOf(graph, log, params, olympiad);
+  const { own, help } = observationsOf(log);
+  const playedDays = [
+    ...new Set([...own, ...help].map((o) => gameDayOf(o.at, zone))),
+  ].sort((a, b) => a - b);
+  const nodes = levels.map((l) => ({
+    node: l.node,
+    group: graph.typicalGroup(l.node),
+  }));
+  const days = playedDays.map((day) => ({
+    day,
+    levels: Object.fromEntries(
+      levels.map((l) => {
+        const reached = l.changes.filter((c) => gameDayOf(c.at, zone) <= day);
+        return [l.node, reached.at(-1)?.to ?? l.start];
+      }),
+    ),
+  }));
+  return rankOver(nodes, days);
 }
 
 export interface SnapshotRow {
