@@ -3,7 +3,7 @@ id: ADR-3220
 artifact: adr
 status: approved
 revised: 2026-11-01
-addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8010, REQ-8012, REQ-8014, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034, REQ-8386, REQ-8388]
+addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8390, REQ-8392, REQ-8012, REQ-8014, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034, REQ-8386, REQ-8388]
 supersedes: []
 concerns: []
 ---
@@ -21,7 +21,7 @@ A node of the skill graph is an ability to the player. Its stage is the ability'
 - A level picks the node's candidate tasks: the node's templates, ordered by highest group and then steps, split into five equal bands, with band 5 led by olympiad templates. An empty band takes the nearest lower band. The Director's corridor keeps its shares.
 - Rule `rank.v1` computes the rank. A rank's nodes are those with a typical group up to its own (ADR-3230), word-problem nodes included, each by its weight. The rank rises when 80 % of that weight stands at level 4 or higher, and falls when the share has stayed below 65 % on 14 played game days in a row. Rank S takes the same shares at level 5 over all nodes. The levels only qualify her: a higher rank reaches her through a story event within 3 adventures (ADR-3230), and that event writes `rank_changed`.
 - After a second observation in a row below the line, the game shows a warning in the setting. A fall shows a story event that says what happened to the threads and how to mend them. Neither says anything about the player herself. A rise plays a ceremony and pays no item or currency. Nothing else is taken by a fall.
-- The player's character sheet shows each ability with its level number, a bar to the next level and her rank letter. The raw estimate stays with the parent. The Parent Room lists falls and holds a setting that hides falls of rank.
+- The player's character sheet shows an ability for each domain in game terms, with its level number, a bar to the next level and her rank letter, and the nodes stay in the Parent Room. A domain's level is the rounded mean of its nodes that have answers, and a domain without any shows as not yet shown. The raw estimate stays with the parent. The Parent Room lists falls and holds a setting that hides falls of rank.
 - A content table ties ability levels to what they open, in the manner of a metroidvania: a place, a passage or a move in the Tower that an ability of a stated level opens. What a level opened stays open after a fall. An opening adds to the game and never blocks the campaign, because the story never waits for a rank or a level.
 - The game accumulates no experience. Experience, `L`, its curve and the experience bar go, and the second attempt, the riddle's ending, a puzzle and a quest keep every other effect they have.
 
@@ -86,7 +86,7 @@ The parent reads two views of a node, a state and a level, which will sometimes 
 2. Task candidates by level in `src/server/task-source.ts` through a function the Director can read (REQ-7972, REQ-7974, REQ-7976).
 3. Rank from levels with its simulation (REQ-8158, REQ-7986, REQ-7988, REQ-7990). The rank is computed and stored in `rank_state`; the story event that gives it to the player (REQ-8034) comes with the Master.
 4. The game holds no experience: the code never built any, so a static check keeps it that way, and the `level_up` event stays in the list because old logs hold it (REQ-7980, REQ-8020, REQ-8024, REQ-8026, REQ-8028, REQ-8018).
-5. The character sheet (REQ-8010, REQ-8012, REQ-8014, REQ-8000).
+5. The character sheet in game terms (REQ-8390, REQ-8392, REQ-8012, REQ-8014, REQ-8000).
 6. Warning, fall event and the end of the row in three languages, with the canon's changes (REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8016, REQ-8022).
 7. The openings table, with a first set of openings on existing hatches and portals, and the rule that they stay open (REQ-8030, REQ-8032).
 8. The Parent Room's list of falls and the hide setting (REQ-8004, REQ-8006, REQ-8008).
