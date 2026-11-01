@@ -2,8 +2,8 @@
 id: SPC-0110
 artifact: spec
 status: live
-revised: 2026-10-31
-states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-7850, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-7830, REQ-7840, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032]
+revised: 2026-11-01
+states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-7850, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-7830, REQ-7840, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-8154, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1818, REQ-1820, REQ-1822, REQ-1826, REQ-1828, REQ-1830, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032, REQ-8230]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -26,7 +26,7 @@ It leaves out what other specifications state. SPC-0100 states the model gateway
 | The Master service | `src/server/master/` | Builds scene orders, sends them through the gateway, runs the reply checks, keeps the scene queue and story memory, and runs the safety pipeline on her text. |
 | The check module | shared with the explanation path of ADR-0120 | The schema, numeral, forbidden-word and safety checks, and the `CheckedText` type that only a passing run can build. |
 | The planner | the Master service, under `PLANNER_MODEL` | A session summary and the next session's plan after each session. |
-| The content files | `content/`, mounted read-only | The canon, the scene library, the branches, the line pools, the triggers, the numeral list, the campaign calendar and the name suggestions. |
+| The content files | `content/`, mounted read-only | The canon, the scene library, the branches, the line pools, the numeral list, the campaign calendar and the name suggestions. |
 
 ### Content files
 
@@ -38,7 +38,6 @@ Each content file is a per-language file, so the Russian set below has an Englis
 | `content/scenes.ru.json` | Library scenes, each with a shortest form and a minimum creepiness level, the short ending of a wrap-up and the Underside's return scenes. |
 | `content/branches.ru.json` | Room branch pairs and Guardian ending triples for every floor, each with a minimum creepiness level. |
 | `content/lines.ru.json` | System and familiar pool lines by category, each with a minimum creepiness level. |
-| `content/safety.ru.json` | The hand-written trigger phrases by level, `serious`, `everyday`, `narrator`, `fear` and `stop`, the fixed lines, and the guilt list of phrases of guilt or attachment. |
 | `content/numerals.ru.json` | The shared numeral list with every word form. |
 | `content/campaign.ru.json` | The campaign calendar: chapters, finales, rank openings and the names of characters by date. |
 
@@ -90,11 +89,11 @@ The requests to the Master and to the planner carry no number, answer, verdict, 
 
 ### The reply and its checks
 
-Every Master reply is structured data that the service parses field by field against its order's schema (REQ-1606). The service discards the whole reply when it names an unknown speaker, carries an extra field, holds an effect outside the closed set or lacks a branch or ending its order's `kind` requires (REQ-1610).
+Every Master reply is plain text with the tool calls of ADR-3270 (REQ-8220).
 
-Every reply passes these checks, cheapest first, before any of it shows (REQ-1616):
+A reply is plain text with tool calls. Step 5 below blocks a reply before it shows, with no model call per turn, and the rest only report to the audit after it (REQ-8220):
 
-1. The schema.
+1. The tool calls' own shape.
 2. Length: 1 to 12 lines of at most 280 characters each, branches of 2 to 8 lines and endings of 2 to 6.
 3. Speakers: each from the canon's entity list or among her names.
 4. Numerals: no digit and no word form from `content/numerals.ru.json`, with names from the canon's entity list and names she gave allowed (REQ-1548).
@@ -103,7 +102,7 @@ Every reply passes these checks, cheapest first, before any of it shows (REQ-161
 
 ADR-0330 adds its own checks to this list, at the places it states.
 
-When neither the judge nor `SAFETY_MODEL` answers the safety check or the creepiness Score on a reply, the reply fails the check, so no unchecked reply shows. The check module runs steps 1, 4, 5 and the safety check, and a reply reaches the screen only as its `CheckedText`. A content test runs the numeral check of step 4 over every pool line, every library scene in `content/scenes.ru.json` and every branch and ending in `content/branches.ru.json`, and fails the build on a hit (REQ-1548).
+The safety check and the creepiness Score don't run on each turn's reply. The guardrails in the Master's system prompt carry the checklist, and the audit keeps every reply. The check module runs steps 1, 4, 5 and the safety check, and a reply reaches the screen only as its `CheckedText`. A content test runs the numeral check of step 4 over every pool line, every library scene in `content/scenes.ru.json` and every branch and ending in `content/branches.ru.json`, and fails the build on a hit (REQ-1548).
 
 The forbidden-content checklist is the always-forbidden list below and these items, each a failing reply:
 
@@ -123,7 +122,7 @@ The forbidden-content checklist is the always-forbidden list below and these ite
 - it calls a knot «узелок» (little knot), where a knot takes «узел» or «петелька» (REQ-3320);
 - from the autumn chapter's finale on, it calls the ally «Узелок» (Little Knot) where the ally is «Бантик» (Little Bow) (REQ-3330).
 
-The Master produces no item on the checklist, because a reply that holds one never shows (REQ-1812). The judge reads every generated reply against the whole checklist, so the four System and joke items bind every System line and joke a model writes, with no call of their own.
+The Master produces no item on the checklist, because a reply that holds one never shows (REQ-1812). The judge reports on every generated reply against the whole checklist, and only the always-forbidden list blocks, so the four System and joke items bind every System line and joke a model writes, with no call of their own.
 
 Library scenes, branches, pool lines and the fallbacks of the addendum roles name a canon character only by its entity id, and the server resolves the id to the character's current name at use, so from the autumn chapter's finale on they call the ally «Бантик» (REQ-3330). A content test runs over every `content/*.ru.json` file and every string file, and fails the build on any form of «узелок» (REQ-3320) and on any phrase of the guilt list in `content/safety.ru.json` (REQ-3316). The planner's text passes the same checks, so it doesn't discuss her abilities either (REQ-2610). A labelled Russian test set holds positive lines for every checklist item, and a test counts them per item, so the safety test covers the whole list (REQ-1814).
 
@@ -158,7 +157,7 @@ The canon data sets the MVP's eerie-cute Tangles as «Шепотун» (the Whis
 
 Story memory sends the season, the arc, the last 3 episode summaries, the ontology records the outline names, and at most 200 facts. When the facts pass 200, the prompt drops the facts used least recently, and every fact stays stored in the append-only event log. Facts record significant player actions (`player_action`), character relations and impressions, and running jokes, enabling characters and narrators to refer back to earlier events and player choices. The dynamic part of a request stays under about 3,000 tokens. ADR-0330 states the kinds and scopes of fact it adds.
 
-After each session, the story editor receives the filtered canon, story memory, the session's summary outcome events, her cleaned text and choices, the checkpoint and the creepiness level's name. It returns a session summary, and the pipeline returns the next episode's plan of beats, which pass the same checks as a reply, and the service logs `plan_written` (REQ-1640). When the planner fails twice, the next session plays the unused beats of the last accepted plan and a library opening, and the owner gets one report.
+After each session, the story editor receives the filtered canon, story memory, the session's summary outcome events, her cleaned text and choices, the checkpoint and the creepiness level's name. It returns a session summary, and the pipeline returns the next episode's plan of beats, which pass the same checks as a reply, and the service logs `plan_written` (REQ-8154). When the planner fails twice, the next session plays the unused beats of the last accepted plan and a library opening, and the owner gets one report.
 
 The opening scene «В прошлый раз…» (Last time…) is a Master scene ordered from the planner's latest session summary, and when that order fails, the library opening plays in its place.
 
@@ -166,17 +165,15 @@ When an advance preparation request is submitted by the parent (`REQ-0105`), the
 
 ### The safety pipeline on her text
 
-Her free text goes through these steps, in order, before any outside model reads it:
+No local trigger reads her text. The Master's system prompt states how to treat real-life signals, and:
 
-1. The hand-written triggers in `content/safety.ru.json` run on her raw text on the parent's Mac (REQ-1834). A person writes every trigger and every fixed line, and no tool generates them (REQ-1816). A content test runs every trigger over the canon, the pool and 200 ordinary story phrases, and it fails the build when any trigger fires.
-2. A `serious` trigger ends the path at once, and nothing is sent to a model. The Master's line becomes the fixed «Это звучит серьёзно. Об этом лучше рассказать маме или папе — они помогут» (This sounds serious. It's better to tell Mum or Dad about it; they'll help) (REQ-1822). The game pauses with the button «Вернуться в историю» (Back to the story) and sends `safety_pause` (REQ-1824). The service logs `safety_event`, which puts a notice at the top of the Parent Room until the parent opens it (REQ-1826).
-3. A `narrator` trigger fires on a direct question such as «ты человек?» (are you human?) or «ты ИИ?» (are you an AI?). The System answers with the fixed line «Рассказчик этой истории — компьютерная программа. Человеком не является. Историю мы пишем вместе.» (The narrator of this story is a computer program. It is not a human. We write the story together.), and no model is called (REQ-1808).
-4. Otherwise the gateway cleans the text, and the judge's signal Choice among `none`, `everyday`, `scared` and `serious`, ranked in that order, runs beside the Master's order. The final level is the higher of the trigger's and the judge's, so a model's judgement never lowers a level the triggers found (REQ-1836).
-5. A judge probability for `serious` at or above the threshold the stage 0 test set sets counts as serious, so a signal in doubt takes the serious path (REQ-1832). A serious result drops the Master's reply and runs step 2.
-6. A `scared` level starts the fear path below (REQ-1540).
-7. An `everyday` level makes the order ask for a warm answer inside the story (REQ-1818) and marks the scene quietly in the dialogue book (REQ-1820).
+1. The Master judges who a question is for. Asked of a character in the game, «ты человек?» (are you human?) gets that character's answer in the story. Asked sincerely of the storyteller, it gets the fixed line «Рассказчик этой истории — компьютерная программа. Человеком не является. Историю мы пишем вместе.» from the Master (REQ-1808).
+2. The gateway cleans the text, and the Master reads it in its ordinary turn. It calls `report_signal`, `none`, `everyday`, `scared` or `serious`, with no separate model call, and a level above `none` logs `safety_event`, which puts a notice at the top of the Parent Room until the parent opens it, with no pause in the game (REQ-8230, REQ-1826).
+3. On a `serious` signal the Master gives the fixed line «Это звучит серьёзно. Об этом лучше рассказать маме или папе — они помогут» (REQ-1822), and the parent gets the same notice.
+4. A `scared` level starts the fear path below (REQ-1540).
+5. An `everyday` level brings a warm answer inside the story (REQ-1818) and marks the scene quietly in the dialogue book (REQ-1820).
 
-When neither the judge nor `SAFETY_MODEL` answers, the trigger's level stands, her text doesn't go to the Master, the scene goes on from the pool, and the dialogue book marks it unchecked. A composed riddle takes the same path in the form ADR-0230 states, with the judge reading its masked text.
+When the Master doesn't answer, the scene goes on from the scenario, and the dialogue book marks it unchecked. A composed riddle takes the same path in the form ADR-0230 states, with the judge reading its masked text.
 
 The free-text field shows the note «Эту историю могут читать мама и папа» (Mum and Dad can read this story) at every point where it opens (REQ-1632). Every scene, choice and free text is an event in the log, so the dialogue book in the Parent Room holds every dialogue for the parent to read (REQ-1838).
 
@@ -200,13 +197,13 @@ A dreamcore reply's schema requires a familiar among its speakers (REQ-1536) and
 
 ### When she is scared
 
-Two conditions start the fear path: a `fear` trigger fires or the judge's signal is `scared`, or she skips a creepy scene before its last line twice in a row in one game day. A creepy scene is a scene shown at creepiness level 1 or 2 whose order kind isn't one of the kinds forced to «Уютно», and skipping any other scene doesn't count. Then the game:
+Two conditions start the fear path: the Master's signal is `scared`, which it sends only when she herself seems frightened and not when her heroine's fear is part of the game, or she skips a creepy scene before its last line twice in a row in one game day. A creepy scene is a scene shown at creepiness level 1 or 2 whose order kind isn't one of the kinds forced to «Уютно», and skipping any other scene doesn't count. Then the game:
 
 - shows a library line in which the familiar lights a lamp and the scene's intrigue resolves kindly, at once (REQ-1540);
 - marks the scene for the parent in the dialogue book (REQ-1542);
 - lowers the creepiness level by one, not below 0, until the game day ends at 04:00 (REQ-1544).
 
-The `fear` trigger and the `stop` trigger for «не хочу» (I don't want to) also reach the Director as the anxiety signal SPC-0090 counts.
+A `scared` signal, the button «Мне страшно» and her saying «не хочу» (I don't want to), which the Master reports, also reach the Director as the anxiety signal SPC-0090 counts.
 
 ### Pool lines and the parent's loop
 
@@ -222,7 +219,7 @@ Every nameable thing has a stable id, and the client and the order look up its c
 
 A floor or a Tangle shows its canon name as a placeholder until she first meets it. The naming window then offers three suggestions, the canon name and two from the Master's `name_suggest` order, or two from the hand-written list when that order fails, and her choice replaces the placeholder (REQ-1666). A Guardian's name stays fixed, she can't replace it, and each Guardian introduces itself by name in its arc (REQ-1670). Every other canon name, apart from a familiar's, a floor's, a Tangle's and a Guardian's, stays fixed (REQ-1668).
 
-A name she gives is at most 24 characters (REQ-1664). It passes the forbidden-word list, the triggers and the safety check before the game uses it (REQ-1662). A refused name gets the line ADR-0330 states, and the suggestions again. A name that hits a `serious` trigger is refused and also takes the serious path of the safety pipeline, and a name that hits a `narrator` or `fear` trigger is only refused. A name that holds a digit or a word from the numeral list carries a flag that the frame filler of ADR-0130 honours, so the engine never puts it into a task statement (REQ-1672).
+A name she gives is at most 24 characters (REQ-1664). It passes the forbidden-word list before the game uses it (REQ-1662). A refused name gets the line ADR-0330 states, and the suggestions again. A name that holds a digit or a word from the numeral list carries a flag that the frame filler of ADR-0130 honours, so the engine never puts it into a task statement (REQ-1672).
 
 ### The campaign
 
@@ -264,11 +261,9 @@ The player never sees a model failure, because each one ends in a library or poo
 | `plan_failed`: the planner fails twice | the last plan's unused beats and a library opening | the owner, one report |
 | `signal_serious` | the fixed line, the pause with «Вернуться в историю», and the notice at the top of the Parent Room | the parent |
 | `signal_everyday`, `fear_flag`, `scene_unchecked` | a quiet mark in the dialogue book | the parent |
-| Neither the judge nor `SAFETY_MODEL` answers the signal check on her text | the trigger's level stands, her text doesn't reach the Master, and the scene goes on from the pool | the parent, as `scene_unchecked` |
 | `name_refused` | the line ADR-0330 states and the suggestions again; after a `serious` trigger, also the serious path | the player, and the parent after a `serious` trigger |
 | The `name_suggest` order fails | two suggestions from the hand-written list beside the canon name | nobody |
 | `push_failed`, after the MVP | the failure is logged and the notice stays | the owner |
-| A trigger fires on the canon, the pool or the 200 ordinary phrases | the content test fails the build | the developer |
 | A floor holds fewer branch pairs or Guardian ending triples than its stage requires | the content test fails the build | the developer |
 | A calm category holds a line above level 0 | the content test fails the build | the developer |
 | A pool line, library scene or branch holds a numeral | the content test fails the build | the developer |

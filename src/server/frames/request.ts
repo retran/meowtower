@@ -57,7 +57,7 @@ export interface JudgeQuestion {
 }
 
 export type JudgeKey =
-  "unsafe" | "joke" | "changed" | "fits" | "flows" | "clear" | "alive";
+  "unsafe" | "changed" | "fits" | "flows" | "clear" | "alive";
 
 export interface FramePrompt {
   readonly setting: string;

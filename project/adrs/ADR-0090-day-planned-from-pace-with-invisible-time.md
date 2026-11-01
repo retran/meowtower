@@ -20,7 +20,7 @@ The server builds the adventure of the day as a seeded plan and sizes it from he
 
 ### The day plan
 
-When a game day opens with no adventure in progress, the server builds a plan from the adventure's seed, in the order REQ-0102 fixes: «В прошлый раз…» (Last time…) with the daily quests, 3 maths floors, or 4 when the forecast fits, and a finale that ends on a cliffhanger. Each floor runs as REQ-0104 fixes: an entry scene, an unscored warm-up, 2 mental arithmetic tasks, 1 or 2 rooms of trials, sometimes a Guardian, then the floor chest. ADR-0070 chooses the floors, the rooms per floor and every task in them.
+When a game day opens with no adventure in progress, the server builds a plan from the adventure's seed, in the order REQ-0102 fixes: «В прошлый раз…» (Last time…) with the daily quests, 3 maths floors, or 4 when the forecast fits, and a finale that ends on a cliffhanger. Each floor runs as REQ-5856 fixes, with either 2 mental arithmetic tasks or one Volley, then the Sources track's tasks on a floor that carries them, then 1 or 2 rooms of trials, sometimes a Guardian, then the floor chest. ADR-0070 chooses the floors, the rooms per floor and every task in them.
 
 The forecast sizes the plan to about 60 minutes of active time (REQ-0100, imposed by the owner's decision of 2026-09-26). It uses her pace, the median over her last 5 adventure days (RES-0100 conclusion 1) of three durations: a first attempt with its review, a second attempt, and a scene. The forecast adds story, at most 10 minutes (REQ-1042), and the expected eye exercises, 3 of 35 seconds in an hour. A fourth floor joins the plan only when the forecast with it stays within 60 minutes. With fewer than 5 adventure days of history, the median covers the days there are, and with none it assumes 75 seconds per first attempt with its review; I chose 75 seconds, because 50 minutes of task time over the draft's 36 to 44 tasks with a first attempt comes to about that (RES-1000). ADR-0070 recomputes the forecast before each floor and trims in its fixed order (REQ-1048, REQ-1050).
 
@@ -38,7 +38,7 @@ When ADR-0180's projection marks the monthly motor check due on the device she p
 
 ### The scene around a task
 
-Before each task the System announces the knot in a System window (REQ-0144), and after each first attempt it speaks the outcome line (REQ-0146); the task itself opens between the two in the task window, which ADR-0080 governs. A change of node or floor shows as the next story transition from a cycle shuffled by the adventure seed: a hidden hatch, a portal, a braided staircase or a door. The cycle never reads which node ADR-0070 chose, so a step down and a step up look the same (REQ-0130).
+Before each task the storyteller announces the knot in a story window (REQ-0144), and after each first attempt it speaks the outcome line (REQ-0146); the task itself opens between the two in the task window, which ADR-0080 governs. A change of node or floor shows as the next story transition from a cycle shuffled by the adventure seed: a hidden hatch, a portal, a braided staircase or a door. The cycle never reads which node ADR-0070 chose, so a step down and a step up look the same (REQ-0130).
 
 The battle model has no health for the heroine: no field, event or line can damage her, whatever she answers (REQ-0126). A Tangle's lines come from content that ADR-0110's frames and ADR-0160's forbidden-word list check, and an agent reads every battle line and scene where a Tangle acts to judge that none attacks or mocks her (REQ-0128).
 
@@ -48,7 +48,7 @@ The end of the row names in words the growth she made in the adventure: ability 
 
 The first time the game runs, Session 0 takes the place of an adventure and runs its eight steps in order (REQ-0136). I chose a budget for each step so the whole fits 20 to 25 minutes (REQ-0132). The transparency talk takes 2 minutes, creating the heroine 2, the starting familiar 2, the first chest 1, training on trivial numbers 4, motor calibration of 10 plain-input tasks 3, the vocabulary probe 5 (RES-0100) and the first scene with the end of the row 3, which sums to 22. Creating the heroine lets her choose the name, the cloak colour and the focus (REQ-0138) and offers no choice of look, because the family picks the look from four character sheets before art is made (REQ-0140).
 
-Every event of Session 0 carries `session0: true`, and ADR-0060's projection skips those events, so Session 0 updates no skill estimate (REQ-0134). Its outputs are the input-speed correction for ADR-0070's rapid-guess threshold and the list of risky terms. Session 0 counts as that game day's adventure, so after it only screens without tasks open until 04:00; I chose this, because a first day of Session 0 and then a full adventure would pass 80 minutes.
+Every event of Session 0 carries `session0: true`, and ADR-0060's projection skips those events, so Session 0 updates no skill estimate (REQ-0134). Its outputs are the input-speed correction for ADR-0070's rapid-guess threshold and the list of risky terms. Session 0 counts as that game day's adventure, so no new adventure starts that game day, and the screens without tasks stay open whenever the task window is closed; I chose this, because a first day of Session 0 and then a full adventure would pass 80 minutes.
 
 ### How the server counts time
 
@@ -75,23 +75,23 @@ Each condition fires once. A due event is a flag, not a queue, so a long task ca
 
 ### Eye exercises
 
-When the eye count reaches 20 minutes, an eye exercise plays at the next boundary (REQ-0304). It lasts 35 seconds, which I chose inside REQ-0306's 30 to 40, and ends by itself. The four exercises take turns, looking far out of the window, blinking, tracing a figure eight and covering the eyes with the palms, and the log's last exercise sets the next (REQ-0308). The exercise has no skip unless the parent switched on «Пропустить» (Skip) in the Parent Room, where the setting is off by default (REQ-0314, REQ-0316). On the screens without tasks after the finale every moment is a boundary, so a due exercise plays at once there.
+When the eye count reaches 20 minutes, an eye exercise plays at the next boundary (REQ-0304). Blinking and the figure eight last 35 seconds and end by themselves; looking far away and palming end at her tap on «Готово», active from 30 seconds (ADR-0320). The four exercises take turns, looking far out of the window, blinking, tracing a figure eight and covering the eyes with the palms, and the log's last exercise sets the next (REQ-0308). The exercise has no skip unless the parent switched on «Пропустить» (Skip) in the Parent Room, where the setting is off by default (REQ-0314, REQ-0316). On the screens without tasks after the finale every moment is a boundary, so a due exercise plays at once there.
 
 ### The soft stop and extensions
 
-When the day's active time reaches the soft-stop point on an unfinished adventure, the soft stop plays at the next boundary as a story scene that offers to save the adventure and continue tomorrow (REQ-0320), beside «Ещё один ряд», each time it comes (REQ-0326). Choosing «Ещё один ряд» continues the adventure with tasks (REQ-0328) and moves the soft-stop point 20 minutes on (REQ-0330); when those run out on an unfinished adventure, the soft stop comes again at the next boundary (REQ-0332). Accepting the offer ends the day's play through a story scene straight away, since the soft stop already stands at a boundary (REQ-0340), and ADR-0030's resume snapshot keeps the open task, scene and rewards. If she comes back on the same game day, the adventure reopens and the soft stop plays at the first boundary, the entry scene, with «Ещё один ряд» offered again.
+on an unfinished adventure, or after the finale while she is on a puzzle, where it offers to put the puzzle away beside «Ещё один ряд» as a story scene that offers to save the adventure and continue tomorrow (REQ-0320), beside «Ещё один ряд», each time it comes (REQ-0326). Choosing «Ещё один ряд» continues the adventure with tasks (REQ-0328) and moves the soft-stop point 20 minutes on (REQ-0330); when those run out on an unfinished adventure, the soft stop comes again at the next boundary (REQ-0332). Accepting the offer ends the day's play through a story scene straight away, since the soft stop already stands at a boundary (REQ-0340), and ADR-0030's resume snapshot keeps the open task, scene and rewards. If she comes back on the same game day, the adventure reopens and the soft stop plays at the first boundary, the entry scene, with «Ещё один ряд» offered again.
 
 The game has no daily maximum (REQ-0322, imposed by the owner's decision of 2026-09-27): no rule ends play or withholds a task because of the day's total, and the Parent Room has no setting for one (REQ-0324). The parent settings schema has no field that could hold one.
 
 The Parent Room offers «Закончить на сегодня» (Finish for today) (REQ-0360), behind the PIN of ADR-0180. It writes a `finish_today` event, and the soft stop plays at the next boundary with no «Ещё один ряд» (REQ-0362, REQ-0364). For the rest of that game day the adventure stays closed and only screens without tasks open, which meets REQ-2444 and goes one step further; I chose this, because a parent who ends the day expects it to stay ended.
 
-After the day's finale, and until 04:00, the server sends no task and opens only screens without tasks: the room, the Diary, the forge, the shop and the familiars (REQ-0336).
+Whenever the task window is closed, the client offers the screens without tasks, and after the day's finale the server sends no task until the next game day: the room, the Diary, the forge, the shop and the familiars (REQ-0336).
 
 ### Rest stops
 
-The «Привал» (Rest stop) button is on screen throughout play (REQ-0342). A rest stop is a campfire scene with the familiars of 2 to 5 minutes (RES-0300); it ends when she taps on, or by itself after 5 minutes. For 10 minutes of wall-clock time after a rest stop ends, the button stays inactive, with no countdown (REQ-0344); I chose wall-clock time, because a button still grey after an hour away would look broken.
+The «Привал» (Rest stop) button is on screen throughout play (REQ-0342). A rest stop is a campfire scene with the familiars of 2 to 5 minutes (RES-0300); it ends at her tap at any moment, or by itself after 5 minutes. For 10 minutes of wall-clock time after a rest stop ends, the button stays inactive, with no countdown (REQ-0344); I chose wall-clock time, because a button still grey after an hour away would look broken.
 
-When she answers «Не знаю» (I don't know) three times in a row, the game offers a rest stop through her familiar (REQ-0346) and logs an avoidance signal, with no penalty (REQ-0348). ADR-0070's fatigue signal also offers one (REQ-1106). An offer respects the button's 10-minute wait, which caps offers at one in 10 minutes.
+When she answers «Не знаю» (I don't know) three times in a row, the game offers a rest stop through her familiar (REQ-0346) and logs an avoidance signal, with no penalty (REQ-0348). ADR-0070's fatigue signal also offers one (REQ-1106). A fatigue offer comes at most once in 10 minutes from the last offer, taken or declined, and the offer after three «Не знаю» comes on every such run.
 
 ### Anxiety signals
 
@@ -217,7 +217,7 @@ The upgrade folded these open tasks in (ADR-3090). Read each one before its step
 1. The server projects the day's active time, the eye count and the soft-stop point from the event log (`archive/tasks/TSK-0564-time-projections-from-the-log.md`)
 2. The server plans the day's adventure from a seeded plan sized to about 60 minutes at her pace (`archive/tasks/TSK-0565-day-plan-sized-from-her-pace.md`)
 3. The plan places warm-ups and easy tasks where her answers can't move them (`archive/tasks/TSK-0566-warm-ups-and-easy-tasks-placed-in-advance.md`)
-4. A task opens between the System's announcement and its outcome line, transitions ignore the chosen node, and the end of the row names her growth in words (`archive/tasks/TSK-0567-transitions-announcements-and-end-of-row.md`)
+4. A task opens between the storyteller's announcement and its outcome line, transitions ignore the chosen node, and the end of the row names her growth in words (`archive/tasks/TSK-0567-transitions-announcements-and-end-of-row.md`)
 5. The battle model holds no health for the heroine, and an agent reads every Tangle line (`archive/tasks/TSK-0568-no-damage-and-no-mocking-tangles.md`)
 6. A due eye exercise plays at the next boundary, the four exercises take turns, and two due events play in a fixed order (`archive/tasks/TSK-0569-boundary-scheduler-and-eye-exercise.md`)
 7. The Parent Room holds the eye-skip switch, no field for a daily maximum and the memo on how to talk about the game (`archive/tasks/TSK-0570-parent-room-eye-skip-no-maximum-and-memo.md`)

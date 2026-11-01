@@ -3,8 +3,8 @@ id: REQ-6202
 artifact: requirement
 topic: master
 class: functional
-status: approved
-revised: 2026-09-28
+status: withdrawn
+revised: 2026-11-01
 elaborates: RES-4120
 verification: judgement
 verifier: person
@@ -13,6 +13,8 @@ verifier: person
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
 # REQ-6202
+
+Withdrawn by ADR-3270 and replaced by REQ-8168: the game now plays as a tabletop RPG, where the world answers at once and decisions can change the plot.
 
 When the player sends a free action that isn't an unchanged starter, a later scene of the same adventure or the next one MUST show her a consequence of it.
 

@@ -16,9 +16,9 @@ concerns: []
 
 The Tower stays open, and 36 gates of seven kinds sit on hatches, passages, secrets, shortcuts and trials. `content/gates.json` lists each gate's kind, place, key and what it opens. A key is an ability level, two abilities of two floors, a graph `stretchGate`, a word-problem level or a rank. Each domain gives a verb in the setting, so a key is a thing she does. What a gate opens she can use again. The map shows closed gates she has seen and each floor's mastery.
 
-The graph's 11 broken subtype edges are repaired. A rank now counts all groups up to its own, so rank D counts 12 nodes in place of 2. A node with no evidence of its own takes a level from nodes that build on it, one level below their lowest, and a tested level replaces it.
+The graph's 11 broken subtype edges are repaired. A rank now counts all groups up to its own, so rank D counts 12 nodes in place of 2. A node with no evidence of its own takes a level from nodes that build on it, one level below their lowest, and a tested level replaces it at once in either direction, and that replacement is no fall: it writes `ability_level_changed` and shows no warning or fall event.
 
-A world calendar counts played adventures. Each adventure is a day or a night: nights in the Tower and days in the town. A year has 4 seasons of 3 months of 28 days, 336 world days in all, with the canon's festivals on fixed dates. A skipped real day passes nothing. The parent keeps real dates. A rank scene plays within 3 adventures of qualifying.
+A world calendar counts played adventures. Each adventure is a day or a night, and the Director's floors run in both: at night in the Tower, by day by daylight with the town around them. A year has 4 seasons of 3 months of 28 days, 336 world days in all, with the canon's festivals on fixed dates. A skipped real day passes nothing. The parent keeps real dates. A rank scene plays within 3 adventures of qualifying.
 
 Once accepted, the record says this and nothing runs yet. After the plan, she walks a Tower with gates and a calendar on the existing Master. Generated arcs come from ADR-3240. The names of months and verbs in play are the owner's.
 

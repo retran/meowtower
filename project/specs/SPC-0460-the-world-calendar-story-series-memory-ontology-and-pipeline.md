@@ -2,8 +2,8 @@
 id: SPC-0460
 artifact: spec
 status: live
-revised: 2026-10-31
-states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8070, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8080, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8100, REQ-8102, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114]
+revised: 2026-11-01
+states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8102, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114, REQ-8168, REQ-8170, REQ-8172, REQ-8174, REQ-8176, REQ-8178, REQ-8180, REQ-8182, REQ-8184, REQ-8186, REQ-8188, REQ-8190, REQ-8192, REQ-8194, REQ-8196, REQ-8198, REQ-8200, REQ-8202, REQ-8204, REQ-8206, REQ-8212, REQ-8214, REQ-8216, REQ-8218, REQ-8220, REQ-8222, REQ-8224, REQ-8226, REQ-8228, REQ-8234, REQ-8236, REQ-8238, REQ-8240]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -24,9 +24,13 @@ The part lives in `src/story/`. It reads the event log and `canon/`, and it writ
 
 Each adventure is one day or one night of world time (REQ-8058). Nights are the Tower and days are the town. The calendar advances by played adventures alone (REQ-8060), and a skipped real day passes nothing (REQ-8062). A year has 4 seasons of 3 months of 28 days, with months, seasons and festivals named in the setting (REQ-8064). The Parent Room counts in real dates (REQ-8066).
 
+### Turns
+
+Each adventure's scenario is prepared before she plays it, as a graph of scenes with branches and variants (REQ-8200), and code checks that every path reaches an ending (REQ-8204). The Master leads her through it and keeps her inside it (REQ-8202). An adventure is a run of turns: the Master describes a scene, she acts in her own words, and the world answers at once (REQ-8168). She can act without typing, by starters or speech (REQ-8196). When an action can fail and failing matters, the Master calls `request_check` and a maths task resolves it (REQ-8170). The Director chooses the task, whatever the action (REQ-8176), and the frame author sets it in what she tried (REQ-8174). The engine's verdict is the outcome, and the Master can't change it (REQ-8172): `clean` succeeds, `partial` succeeds at a cost, and `alt` moves on with a twist (REQ-8180). The Master changes the world only through `change_world` (REQ-8182). The Director's note makes the next obstacle a check when checks fall behind, so an adventure keeps its graded attempts (REQ-8178). A level lets her act with no check in its domain: at level 3 the verb's ordinary use, at level 4 a shortcut, at level 5 helping someone else (REQ-8192). On an expression task the story shows first and the clock starts when the numbers appear (REQ-8212). The judge scores whether a check's story follows what she tried (REQ-8214). The Master may improvise details, minor people and small side moments, recorded through `change_world`, and can't contradict the canon or the scenario, change a check's outcome or skip the way forward (REQ-8216). The Parent Room shows every turn (REQ-8218). The Master's system prompt states the forbidden-content checklist and the canon's rules as guardrails (REQ-8222). A full audit keeps her words, the full request and reply, every check's result, each change to the world and each cost for each turn, and the Parent Room shows it (REQ-8224). Nothing waits for the parent before she plays (REQ-8226). After each adventure the Parent Room offers a detailed report in play order: every text she saw, her words, every task with its answer and result, and the branch taken (REQ-8228). Every reply passes the code's forbidden-word check, and a blocked turn reads as story (REQ-8194).
+
 ### Spine, arcs and episodes
 
-The overall plot, its checkpoints and endings stay fixed in the canon (REQ-8070). The game generates arcs as the plot and her actions develop (REQ-8072), of the kinds Guardian, Tangle, rival, training, mystery, tournament, filler and season finale (REQ-8074). Each adventure is one episode (REQ-8076), with a cold open, a recap, its own story and a hook (REQ-8078). A significant choice is echoed within 7 episodes (REQ-8080). An arc never chooses a task, a slot or a floor (REQ-8082).
+The world's truths, its people and the Tower's secret stay fixed in the canon (REQ-8186). Her decisions can change the plot and its ending (REQ-8184). Each adventure's ending feeds its arc, and arcs feed the overall plot (REQ-8206). An arc is replanned from what she did (REQ-8188), and a major decision stays in the ontology (REQ-8190). The game generates arcs as the plot and her actions develop (REQ-8072), of the kinds Guardian, Tangle, rival, training, mystery, tournament, filler and season finale (REQ-8074). Each adventure is one episode (REQ-8076), with a cold open, a recap, its own story and a hook (REQ-8078). A significant choice is echoed within 7 episodes (REQ-8168). An arc never chooses a task, a slot or a floor (REQ-8082).
 
 ### Story memory
 
@@ -38,7 +42,11 @@ Tables hold typed records of characters, relations, places, threads, setups, con
 
 ### The pipeline
 
-The showrunner picks an arc, the arc writer plans it, the episode writer outlines the episode to the Director's plan, the beat writer writes beats, the script doctor critiques them and the beat writer revises (REQ-8100), at most twice (REQ-8102). Code then checks continuity against the ontology (REQ-8104). Craft rules run as code checks or as the critic's rubric (REQ-8106). The Master writes scenes, and the story editor writes the summary and the ontology diff. The parent can mark an episode, and the critic reads the marks (REQ-8114). Spend is measured against the adventure and month limits (REQ-8112).
+Between adventures and at major events, the showrunner picks an arc, the arc writer plans it, the episode writer sets its situations, the beat writer suggests beats, the script doctor critiques them and the beat writer revises, at most twice (REQ-8102), so the scenario is ready before she plays (REQ-8198). Code then checks continuity against the ontology before she plays (REQ-8104), and in play a continuity fault only reports (REQ-8220). Craft rules run as code checks or as the critic's rubric (REQ-8106). The Master writes scenes, and the story editor writes the summary and the ontology diff. The parent can mark an episode, and the critic reads the marks (REQ-8114). Spend is measured against the adventure and month limits (REQ-8112).
+
+### Efficiency
+
+Every request with a stable prefix uses prompt caching (REQ-8234). Planning and checking agents return structured replies against a schema, and the Master's prose stays plain text (REQ-8236). Story text streams to her as it is written (REQ-8238). The Master sends signals and every technical act through tool calls and never in its prose (REQ-8240).
 
 ### Cost
 

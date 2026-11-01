@@ -15,15 +15,15 @@ supersedes: []
 
 Live frames use two roles. `TASK_TEXT_MODEL` writes 1 story at low effort, because reasoning took 85% of each reply. `FRAME_JUDGE_MODEL`, Claude Haiku 5.5, solves it from the story alone and scores it in one request, and the engine checks its answer (REQ-7950). A story that fails the solve loses 1 from its score. The owner replaced Jev on 2026-10-31, because Jev passed a story with no solvable conditions. Below a score of 0.1, a low bar from 112 live scores, the author writes again, up to 3 times, and the highest score is shown. The blind solves, `LIVE_CHECK_MODEL` and `SAFETY_MODEL` leave the frame path. The owner decided this on 2026-10-31.
 
-The judge answers nine yes-or-no questions, each with `criteria` that state what yes and no mean. The code scores a variant as 0.3 `fits` + 0.2 `flows` + 0.2 `clear` + 0.2 `sense` + 0.1 `alive` - `changed` - `numbers` - `unsafe` - 0.3 `joke`, with 0.15 off for a length fault. The highest score is shown, and a passing variant not chosen turns `unused`. The owner decided on 2026-10-31 that a task always shows its best variant, so quality rejects nothing. Two faults still remove a variant: `unsafe` at 0.7, which I kept because the text reaches a child, and a code fault that breaks the task or the forbidden list. The weights are my choice.
+The judge answers eight yes-or-no questions, each with `criteria` that state what yes and no mean. The code scores a variant as 0.3 `fits` + 0.2 `flows` + 0.2 `clear` + 0.2 `sense` + 0.1 `alive` - `changed` - `numbers` - `unsafe`, with 0.15 off for a length fault. The highest score is shown, and a passing variant not chosen turns `unused`. The owner decided on 2026-10-31 that a task always shows its best variant, so quality rejects nothing. Two faults still remove a variant: `unsafe` at 0.7, which I kept because the text reaches a child, and a code fault that breaks the task or the forbidden list. The weights are my choice.
 
-The review screen offers a second attempt after a first one that wasn't clean, and the client now calls the route that was already built. The Parent Room's creepiness level sets the author's tone and what the judge counts as safe, and the list of what never appears holds at every level. The level defaults to 2, by the owner's decision, and the task window follows it. The author and the judge get a task's answer options, so the story's question leads to its buttons.
+The review screen offers the second attempt ADR-0220 gives, after `alt` or after a first attempt on which she saw rung 2 or 3, and the client now calls the route that was already built. The Parent Room's creepiness level sets the author's tone and what the judge counts as safe, and the list of what never appears holds at every level. The level defaults to 2, by the owner's decision, and the task window follows it. The author and the judge get a task's answer options, so the story's question leads to its buttons.
 
-A variant the judge doesn't answer isn't counted. When the judge fails on every variant, nothing is kept and the task shows its template text.
+A variant the judge doesn't answer isn't counted. When the judge fails on every variant, nothing is kept and the task shows its prepared setting (ADR-3270).
 
 The code fills a template once and gives that task to the author on every attempt, and the story carries its real numbers, so placeholders stay with templates. Code checks only the forbidden list and the length. A second attempt by the player is a task of its own, and its text is written when it is requested. It continues the first story and takes the failure into account, as an event of the world, with no reproach. The player's gender, a Parent Room setting that defaults to female, goes to the author too (REQ-7880). The request shows that one fact on the content tier, and no answer, name or time, by the owner's decision (REQ-7870). The gateway logs each call its budget refuses, because live runs stopped with no row to say why.
 
-The game writes a story only when its task is requested, and nothing is prepared ahead. A task waits up to 90 seconds for its story behind a loading animation, then shows its template text, because a live run showed template text before the frame was ready.
+The game writes a story only when its task is requested, and nothing is prepared ahead. A task waits up to 90 seconds for its story behind a loading animation, then shows its prepared setting (ADR-3270), because a live run showed template text before the frame was ready.
 
 The task screen has no heading, and the answer field reads «Ответ», because beside a story «Приключение» and «Твоё заклинание» only confuse the player.
 
@@ -31,7 +31,7 @@ The title becomes «Туманный Брод», Misty Ford and Nevelwade, the q
 
 For now the registry's tasks have no end: the game shows no story scene, chest or ending between them, and walks the ladder again with other seeds, because the owner wants to test the tasks alone.
 
-The judge runs in the content tier, because a frame holds no player material. It takes no test set first, by the owner's decision.
+The judge runs in the player tier once ADR-3240 moves the author there, because a frame then carries story material, and in the content tier until then. It takes no test set first, by the owner's decision.
 
 Once this is accepted, a frame costs up to 4 calls, or more when a round has no variant that passes the code checks. Her own text isn't judged here: no code path sends it yet.
 
@@ -59,13 +59,13 @@ One model solves a story while the original task sits beside it, so the solve is
 ## Consequences
 
 - SPC-0100 and SPC-0130 state the two roles.
-- `.env` drops `LIVE_CHECK_MODEL` and `SAFETY_MODEL` and gains `FRAME_JUDGE_MODEL`.
+- `.env` gains `FRAME_JUDGE_MODEL`, and `LIVE_CHECK_MODEL` and `SAFETY_MODEL` stay unset until a caller outside the frame path exists and gains `FRAME_JUDGE_MODEL`.
 
 ## How I will know it was realised
 
 1. A test shows one judge request per variant, and the highest score shown.
 2. A test shows the best of a weak round, and removes only a plainly unsafe variant.
-3. A test leaves template text when the judge fails.
+3. A test shows the prepared setting when the judge fails.
 
 ## What this does not settle
 

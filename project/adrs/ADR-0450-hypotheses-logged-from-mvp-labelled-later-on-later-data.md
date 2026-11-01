@@ -78,7 +78,7 @@ A `criteria` change sets the shown label to «мало данных» until the 
 
 ### What the parent reads about each hypothesis after the MVP
 
-After the MVP the tab «Гипотезы» is the report's line «Гипотезы и их статус» (hypotheses and their status). It isn't a ninth screen of report v1, which keeps its eight screens. For each hypothesis it shows:
+After the MVP the tab «Гипотезы» is the report's line «Гипотезы и их статус» (hypotheses and their status). It isn't a ninth screen of report v1, which keeps its nine screens. For each hypothesis it shows:
 
 - the shown label with the four versions it was computed under (REQ-7348), and, for a closed hypothesis, the label and versions its `closed` event holds beside the current one;
 - each condition's state beside the label (REQ-7334), with each measure's right answers, attempts and 80 % interval in the window;
@@ -197,7 +197,7 @@ The premortem, written as though it had happened: a year after the label shipped
 ## Consequences
 
 - ADR-0020's catalogue and SPC-0020's list of parent actions gain `hypothesis_recorded` and `hypothesis_updated`, owned by this record, with the payloads above.
-- ADR-0180's Parent Room gains the tab «Гипотезы», which this record owns; report v1 keeps its eight screens.
+- ADR-0180's Parent Room gains the tab «Гипотезы», which this record owns; keeps its nine screens.
 - ADR-0190's scope guard reads ADR-0380's last trace, a projection that computes a hypothesis's label, as the `hypothesis_days` table, and gains two more traces of the post-MVP part: `content/hypothesis-measures.json` and a version 2 schema of either hypothesis event. Its group 1 gains `hypothesis_measures_versioned`, `hypothesis_reads_model`, `hypothesis_to_gateway` and `hypothesis_example_lock`, and its simulation group gains `tools/hypothesis-hold.ts` and the example run inside check 5, which ADR-0380 owns.
 - ADR-0060's recompute rewrites `hypothesis_days` beside `node_snapshots` on a version change.
 - `content/thresholds.json` gains `hypothesis.holdDays`, and `content/i18n/ru.json` gains the `parent.hypotheses.*` keys.
@@ -233,7 +233,7 @@ The premortem, written as though it had happened: a year after the label shipped
 
 - ADR-0020: the Event catalogue gains `hypothesis_recorded` and `hypothesis_updated`, owned by ADR-0450, with the payloads ADR-0450 sets.
 - SPC-0020: the row "Every parent action" gains `hypothesis_recorded` and `hypothesis_updated`, and the table of event types the addendum's decisions own gains a row for them, owned by ADR-0450.
-- ADR-0180: the Parent Room's list of panels gains the tab «Гипотезы», owned by ADR-0450; after the MVP that tab is the report's line «Гипотезы и их статус», and report v1 keeps its eight screens.
+- ADR-0180: the Parent Room's list of panels gains the tab «Гипотезы», owned by ADR-0450; after the MVP that tab is the report's line «Гипотезы и их статус», and keeps its nine screens.
 - ADR-0180: the list of what doesn't work yet gains the hypothesis label, its condition states and `hypothesis_days`, which come after the MVP as ADR-0450 defines them.
 - ADR-0190: the scope guard's trace "a projection that computes a hypothesis's label", as ADR-0380 adds it, becomes "a `hypothesis_days` table", and the traces gain `content/hypothesis-measures.json` and a version 2 schema of `hypothesis_recorded` or `hypothesis_updated`.
 - ADR-0190: the MVP contents list's entry for the hypothesis form, as ADR-0380 adds it, becomes "the tab «Гипотезы» with a form that records a hypothesis and what would confirm and refute it as text, its links to nodes and each hypothesis's history, with no status".

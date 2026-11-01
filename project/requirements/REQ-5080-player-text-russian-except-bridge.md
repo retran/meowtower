@@ -3,8 +3,8 @@ id: REQ-5080
 artifact: requirement
 topic: scope
 class: functional
-status: approved
-revised: 2026-09-28
+status: withdrawn
+revised: 2026-11-01
 elaborates: RES-4000
 verification: static
 supersedes: [REQ-3704]
@@ -13,6 +13,8 @@ supersedes: [REQ-3704]
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
 # REQ-5080
+
+Withdrawn by ADR-3260 and replaced by REQ-8160: it contradicted a later decision.
 
 Every text and task the player sees in the first version MUST be in Russian, apart from the Dutch keywords of the word bridge and the Dutch equivalent a term hint shows, each once the parent has approved it.
 

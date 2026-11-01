@@ -53,13 +53,11 @@ const WEIGHTS = {
   changed: -1,
   numbers: -1,
   unsafe: -1,
-  joke: -0.3,
 } as const;
 const SOFT_COST = 0.15;
 
 export const Answers = z.object({
   unsafe: z.number(),
-  joke: z.number(),
   changed: z.number(),
   fits: z.number(),
   flows: z.number(),

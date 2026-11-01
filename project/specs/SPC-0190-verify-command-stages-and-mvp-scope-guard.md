@@ -2,8 +2,8 @@
 id: SPC-0190
 artifact: spec
 status: live
-revised: 2026-10-31
-states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5078, REQ-5080, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500, REQ-8020]
+revised: 2026-11-01
+states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5078, REQ-8160, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500, REQ-8020]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -260,7 +260,7 @@ The scope guard in group 1 reads `verify/scope-guard.json` and fails as `scope_g
 
 Each trace in `verify/scope-guard.json` names the backlog item whose epic builds its part, and the first task of that epic removes the trace, so the guard loses a trace only in the change that starts building its part. The Dutch locale traces and the probe's traces leave only in a change that follows the owner's amendment of the Russian-only rule in `CLAUDE.md`. The weekly breakdown and trajectories, the transfer report and the extension of «Сплети загадку» leave no trace the guard reads, so the owner's judgement at the stage 0.3 acceptance alone keeps them out.
 
-Every text and task the player sees is in Russian, apart from the Dutch keywords of the word bridge and the Dutch equivalent a term hint shows, each once the parent has approved it (REQ-5080). Both Dutch words live as fields of `lexicon.ru.json` beside a Russian term, a bridge entry marked `bridge: true`, so the scope guard allows them and no Dutch locale file exists. The parent's Dutch memo is parent-facing and outside this rule. SPC-0160 states the string check that enforces it on player screens.
+Every text and task the player sees is in Russian, apart from the Dutch keywords of the word bridge and the Dutch equivalent a term hint shows, each once the parent has approved it (REQ-8160). Both Dutch words live as fields of `lexicon.ru.json` beside a Russian term, a bridge entry marked `bridge: true`, so the scope guard allows them and no Dutch locale file exists. The parent's Dutch memo is parent-facing and outside this rule. SPC-0160 states the string check that enforces it on player screens.
 
 ### The canon against the specification
 

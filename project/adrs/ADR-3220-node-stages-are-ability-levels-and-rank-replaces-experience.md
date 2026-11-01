@@ -2,8 +2,8 @@
 id: ADR-3220
 artifact: adr
 status: approved
-revised: 2026-10-31
-addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-7982, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8010, REQ-8012, REQ-8014, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034]
+revised: 2026-11-01
+addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8010, REQ-8012, REQ-8014, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034]
 supersedes: []
 concerns: []
 ---
@@ -16,10 +16,10 @@ concerns: []
 
 A node of the skill graph is an ability to the player. Its stage is the ability's level, from 1 to 5, and the record's word "stage" and the player's words "ability level" name one thing.
 
-- Rule `level.v1` sets the level from the node's estimate. Levels 2, 3, 4 and 5 start at lines 0.35, 0.6, 0.8 and 0.92. A node rises as soon as the estimate reaches the next line, and falls after three observations in a row with the estimate at least 0.1 below its level's line. A node with olympiad tasks reaches level 5 only with two clean first attempts on them.
-- A pure function reads the event log and gives each node's level, so one log gives one answer. Each change writes `ability_level_changed` with the node, both levels and the rule; this event replaces `level_up`.
+- Rule `level.v1` sets the level from the node's estimate, or, for a node with no evidence of its own, from ADR-3230's inference. Levels 2, 3, 4 and 5 start at lines 0.35, 0.6, 0.8 and 0.92. A node rises as soon as the estimate reaches the next line, and falls after three observations in a row with the estimate at least 0.1 below its level's line. A node with olympiad tasks reaches level 5 only with two clean first attempts on them.
+- A pure function of the event log and the active versions gives each node's level. Each change she is shown writes `ability_level_changed` with the node, both levels and the rule, and a recompute under new versions writes one such event per changed node with no warning or fall; this event replaces `level_up`.
 - A level picks the node's candidate tasks: the node's templates, ordered by highest group and then steps, split into five equal bands, with band 5 led by olympiad templates. An empty band takes the nearest lower band. The Director's corridor keeps its shares.
-- Rule `rank.v1` computes the rank. A rank's nodes are those with a typical group up to its own (ADR-3230), word-problem nodes included, each by its weight. The rank rises when 80 % of that weight stands at level 4 or higher, and falls when the share has stayed below 65 % for 14 days in a row. Rank S takes the same shares at level 5 over all nodes. The levels only qualify her: a higher rank reaches her through a story event within 3 adventures (ADR-3230), and that event writes `rank_changed`.
+- Rule `rank.v1` computes the rank. A rank's nodes are those with a typical group up to its own (ADR-3230), word-problem nodes included, each by its weight. The rank rises when 80 % of that weight stands at level 4 or higher, and falls when the share has stayed below 65 % on 14 played game days in a row. Rank S takes the same shares at level 5 over all nodes. The levels only qualify her: a higher rank reaches her through a story event within 3 adventures (ADR-3230), and that event writes `rank_changed`.
 - After a second observation in a row below the line, the game shows a warning in the setting. A fall shows a story event that says what happened to the threads and how to mend them. Neither says anything about the player herself. A rise plays a ceremony and pays no item or currency. Nothing else is taken by a fall.
 - The player's character sheet shows each ability with its level number, a bar to the next level and her rank letter. The raw estimate stays with the parent. The Parent Room lists falls and holds a setting that hides falls of rank.
 - A content table ties ability levels to what they open, in the manner of a metroidvania: a place, a passage or a move in the Tower that an ability of a stated level opens. What a level opened stays open after a fall. An opening adds to the game and never blocks the campaign, because the story never waits for a rank or a level.
@@ -83,7 +83,7 @@ The parent reads two views of a node, a state and a level, which will sometimes 
 
 1. Turn the knowledge model on, by naming its version in `content/versions.json`, so the estimates exist. Levels from the log: rule `level.v1`, the simulation and a replay tool over the player's log, in `src/engine/` and `tools/` (REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7978).
 2. Task candidates by level in `src/server/task-source.ts` through a function the Director can read (REQ-7972, REQ-7974, REQ-7976).
-3. Rank from levels with its simulation, given through a story event (REQ-7982, REQ-7986, REQ-7988, REQ-7990, REQ-8034).
+3. Rank from levels with its simulation, given through a story event (REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-8034).
 4. Remove experience from content, code and client, with a static check (REQ-7980, REQ-8020, REQ-8024, REQ-8026, REQ-8028, REQ-8018).
 5. The character sheet (REQ-8010, REQ-8012, REQ-8014, REQ-8000).
 6. Warning, fall event and the end of the row in three languages, with the canon's changes (REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8016, REQ-8022).

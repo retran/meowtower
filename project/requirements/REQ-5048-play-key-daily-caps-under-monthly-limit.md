@@ -3,8 +3,8 @@ id: REQ-5048
 artifact: requirement
 topic: cost
 class: non-functional
-status: approved
-revised: 2026-09-28
+status: withdrawn
+revised: 2026-11-01
 elaborates: RES-4000
 verification: static
 ---
@@ -12,6 +12,8 @@ verification: static
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
 # REQ-5048
+
+Withdrawn by ADR-3260 and replaced by REQ-8156: it contradicted a later decision.
 
 The daily budgets that spend from the play key MUST sum, over a 31-day month, to less than the play key's $60 monthly limit.
 
