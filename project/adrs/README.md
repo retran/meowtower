@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-64 decisions in all: 52 approved, 12 done.
+65 decisions in all: 53 approved, 12 done.
 
 | Identifier                                                                                    | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -70,5 +70,6 @@
 | [ADR-3270](ADR-3270-the-game-plays-in-turns-with-an-ai-master-and-tasks-as-checks.md)         | The game plays as D&D with an AI Master: a prepared branching scenario, her words as actions, a maths task as the dice, and code deciding the outcome                                                                                                                                                                                             | approved |
 | [ADR-3280](ADR-3280-the-parent-designs-the-campaign-in-a-studio-of-nested-graphs.md)          | The parent designs, approves and tests the whole game in a studio of nested graphs and a sandbox, and the Master plays approved scenarios freely                                                                                                                                                                                                  | approved |
 | [ADR-3290](ADR-3290-the-story-is-built-like-a-modern-serial.md)                               | The story is built like a modern serial, from mythology to scene, and code checks what a field can prove                                                                                                                                                                                                                                          | approved |
+| [ADR-3300](ADR-3300-the-player-has-nine-skills-with-five-steps-each.md)                       | The player has nine skills in game terms, each with five steps that open something new, and a score that shows a level and the percentage to the next                                                                                                                                                                                             | approved |
 
 <!-- /meow-flow index -->

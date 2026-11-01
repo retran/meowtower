@@ -125,6 +125,10 @@ Libraries: characters, places, factions, items, facts, events and adventure summ
 
 The Master writes to the library as play goes, by the tools `record_fact` and `record_event`, with no action from the parent. After an adventure, the story editor leaves a summary linked to its facts and events. Each turn's request carries the entries that touch the current scene, and the tool `query_world` searches the rest, so the Master keeps what happened without holding the whole history in its context. The parent can read, correct or remove any of it, and a correction reaches the next request. The parent can also attach any entry to a scenario or an encounter, and attached entries reach the Master by default.
 
+### Pictures
+
+An encounter can carry a picture. The parent either asks the studio to generate one through an image role, which has no direct Anthropic route and so goes through OpenRouter, or uploads a file. Either way the picture is stored with the scenario version, appears in the studio beside the encounter and reaches the player only after the parent has approved that version. Nothing is generated during play. A generated picture keeps the one style of the game's art, and both kinds pass the type, size and content checks that ADR-0170 sets for art.
+
 ### Review
 
 The queue lists what waits, oldest first, with a cost and the critic's report. A reader sees the graph, reads each encounter, and may approve, comment or ask for a change. An arc can be read whole. A comment stays on the version and feeds the critic.

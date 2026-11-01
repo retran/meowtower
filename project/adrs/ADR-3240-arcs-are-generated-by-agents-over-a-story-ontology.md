@@ -3,7 +3,7 @@ id: ADR-3240
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114]
+addresses: [REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114]
 supersedes: []
 concerns: [privacy, cost]
 ---
@@ -76,7 +76,7 @@ Amended by ADR-3290, approved on 2026-11-01: one writing agent and one critic re
 
 1. Canon's spine and library arcs (REQ-8186, REQ-8108).
 2. Memory levels and rebuild (REQ-8084, REQ-8086, REQ-8088).
-3. The ontology, read-only canon, world facts and the secret (REQ-8092, REQ-8094, REQ-8096, REQ-8098).
+3. The ontology, read-only canon, world facts and the secret (REQ-8092, REQ-8094, REQ-8402, REQ-8098).
 4. Arcs and episodes on the pipeline, inside the Director's boundary (REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8168, REQ-8082, REQ-8198).
 5. The critic, continuity checks and the revise limit (REQ-8254, REQ-8104, REQ-8106).
 6. Fallbacks, task slots and spend (REQ-8090, REQ-8110, REQ-8112).

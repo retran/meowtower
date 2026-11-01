@@ -3,7 +3,7 @@ id: ADR-3220
 artifact: adr
 status: approved
 revised: 2026-11-01
-addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8390, REQ-8392, REQ-8012, REQ-8014, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034, REQ-8386, REQ-8388]
+addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8390, REQ-8012, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034, REQ-8386, REQ-8388]
 supersedes: []
 concerns: []
 ---
@@ -79,6 +79,8 @@ The parent reads two views of a node, a state and a level, which will sometimes 
 - The Director's own build, which is ADR-0070.
 - Premortem: the player sees a level fall after a bad afternoon and stops playing. The warning, the three observations and the parent's setting all act before that, and none is proven.
 
+Amended by ADR-3300, approved on 2026-11-01: the sheet shows nine skills with a level and a percentage, and the score is continuous.
+
 ## Plan
 
 0. A statistics reset: the event `stats_reset`, a confirmed route and a button in the Parent Room, so the player starts from nothing once testing is over (REQ-8386).
@@ -86,7 +88,7 @@ The parent reads two views of a node, a state and a level, which will sometimes 
 2. Task candidates by level in `src/server/task-source.ts` through a function the Director can read (REQ-7972, REQ-7974, REQ-7976).
 3. Rank from levels with its simulation (REQ-8158, REQ-7986, REQ-7988, REQ-7990). The rank is computed and stored in `rank_state`; the story event that gives it to the player (REQ-8034) comes with the Master.
 4. The game holds no experience: the code never built any, so a static check keeps it that way, and the `level_up` event stays in the list because old logs hold it (REQ-7980, REQ-8020, REQ-8024, REQ-8026, REQ-8028, REQ-8018).
-5. The character sheet in game terms (REQ-8390, REQ-8392, REQ-8012, REQ-8014, REQ-8000).
+5. The character sheet in game terms (REQ-8390, REQ-8398, REQ-8012, REQ-8400, REQ-8000).
 6. Warning, fall event and the end of the row in three languages, with the canon's changes (REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8016, REQ-8022).
 7. The openings table, with a first set of openings on existing hatches and portals, and the rule that they stay open (REQ-8030, REQ-8032).
 8. The Parent Room's list of falls and the hide setting (REQ-8004, REQ-8006, REQ-8008).

@@ -3,7 +3,7 @@ id: SPC-0460
 artifact: spec
 status: live
 revised: 2026-11-01
-states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114, REQ-8168, REQ-8170, REQ-8172, REQ-8174, REQ-8176, REQ-8178, REQ-8180, REQ-8182, REQ-8184, REQ-8186, REQ-8188, REQ-8190, REQ-8192, REQ-8194, REQ-8196, REQ-8198, REQ-8244, REQ-8250, REQ-8204, REQ-8206, REQ-8246, REQ-8248, REQ-8214, REQ-8256, REQ-8218, REQ-8220, REQ-8222, REQ-8224, REQ-8228, REQ-8234, REQ-8236, REQ-8238, REQ-8240, REQ-8252, REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282, REQ-8284, REQ-8286, REQ-8288, REQ-8290, REQ-8292, REQ-8294, REQ-8296, REQ-8298, REQ-8300, REQ-8302, REQ-8304, REQ-8306, REQ-8308, REQ-8310, REQ-8312, REQ-8314, REQ-8316, REQ-8318, REQ-8320, REQ-8322, REQ-8324, REQ-8326, REQ-8328, REQ-8330, REQ-8332, REQ-8334, REQ-8336, REQ-8338, REQ-8340, REQ-8342, REQ-8344, REQ-8346, REQ-8348, REQ-8350, REQ-8352, REQ-8354, REQ-8356, REQ-8358, REQ-8360, REQ-8362, REQ-8364, REQ-8366, REQ-8368, REQ-8370, REQ-8372, REQ-8374, REQ-8376, REQ-8378, REQ-8382]
+states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114, REQ-8168, REQ-8170, REQ-8172, REQ-8174, REQ-8176, REQ-8178, REQ-8180, REQ-8182, REQ-8184, REQ-8186, REQ-8188, REQ-8190, REQ-8192, REQ-8194, REQ-8196, REQ-8198, REQ-8244, REQ-8250, REQ-8204, REQ-8206, REQ-8246, REQ-8248, REQ-8214, REQ-8256, REQ-8218, REQ-8220, REQ-8222, REQ-8224, REQ-8228, REQ-8234, REQ-8236, REQ-8238, REQ-8240, REQ-8252, REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282, REQ-8284, REQ-8286, REQ-8288, REQ-8290, REQ-8292, REQ-8294, REQ-8296, REQ-8298, REQ-8300, REQ-8302, REQ-8304, REQ-8306, REQ-8308, REQ-8310, REQ-8312, REQ-8314, REQ-8316, REQ-8318, REQ-8320, REQ-8322, REQ-8324, REQ-8326, REQ-8328, REQ-8330, REQ-8332, REQ-8334, REQ-8336, REQ-8338, REQ-8340, REQ-8342, REQ-8344, REQ-8346, REQ-8348, REQ-8350, REQ-8352, REQ-8354, REQ-8356, REQ-8358, REQ-8360, REQ-8362, REQ-8364, REQ-8366, REQ-8368, REQ-8370, REQ-8372, REQ-8374, REQ-8376, REQ-8378, REQ-8382, REQ-8404, REQ-8406, REQ-8402, REQ-8408, REQ-8410, REQ-8412, REQ-8414, REQ-8416, REQ-8418, REQ-8420, REQ-8422, REQ-8424, REQ-8426, REQ-8428, REQ-8430, REQ-8432, REQ-8434]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -38,7 +38,7 @@ Memory holds spine, season, arc and episode summaries and the live situation (RE
 
 ### The ontology
 
-Tables hold typed records of characters, relations, places, threads, setups, conflicts, secrets, beats, episodes and arcs (REQ-8092). A record from the canon is read-only (REQ-8094). A story request gets skill state only as a world fact naming no number, node or skill, from a code table (REQ-8096). Generated text never states the Tower's secret (REQ-8098).
+Tables hold typed records of characters, relations, places, threads, setups, conflicts, secrets, beats, episodes and arcs (REQ-8092). A record from the canon is read-only (REQ-8094). A story request gets skill state only as a world fact naming no number, node or skill, from a code table (REQ-8402). Generated text never states the Tower's secret (REQ-8098).
 
 ### The pipeline
 
@@ -60,11 +60,27 @@ The levels are a series, a season, an episode and a scene. Campaign, arc and adv
 
 The Master records facts and events by `record_fact` and `record_event` as play goes (REQ-8320). Each played adventure leaves a summary linked to them (REQ-8322). The parent can attach library entries to a scenario or an encounter, and those reach the Master by default (REQ-8336). Each turn's request carries them and the other entries that touch the scene, and `query_world` searches the rest (REQ-8324). The parent can read, correct or remove any of them (REQ-8326).
 
+### Pictures
+
+The parent can give an encounter a picture, either generated on request through an image model or uploaded (REQ-8424). A picture belongs to a scenario version and reaches the player only once the parent has approved that version, and none is generated during play (REQ-8426). A picture is of an allowed type and size, a generated one is in the one style of the game's art, and both pass the forbidden-content checks for art (REQ-8428).
+
+### Library pictures
+
+A parent can attach pictures to a character, a place, an item or a fact, and an encounter can use one (REQ-8430). The Master has a tool `show_picture` that shows one picture attached to a library entry or to the current encounter, and the game refuses any other (REQ-8432). Each picture shown is logged with its entry and the turn, and the parent's report lists it (REQ-8434).
+
 ### Testing from the Parent Room
 
 The parent's sandbox exists before any test feature, and nothing done in test reaches her game (REQ-8284). There the parent plays any adventure, drafts included, from any encounter, as the child sees it (REQ-8286), sets any game state (REQ-8288), and forces the next outcome, a fall, a rise or an open gate (REQ-8290). An inspector shows each turn's request, reply, tools, the Director's note, cost and time (REQ-8292). A simulated player runs a scenario under a persona and reports its paths (REQ-8294), and the graph marks what tests reached (REQ-8296). The task lab opens any template, node or level (REQ-8298), the screen lab any child's screen in any language (REQ-8300), and the prompt lab each prompt's version with a comparison of two runs (REQ-8302). A page names where each feature is tested, and a test fails when one has no place (REQ-8304). Testing has its own monthly limit (REQ-8314).
 
 A field can be edited by hand, and the edit passes code's check (REQ-8306). A prompted edit shows beside the old version with changes marked, until the parent keeps or discards it (REQ-8308). A prompt reworks a node's level by default, and everything inside it when asked (REQ-8310). Each spending action shows an estimate first (REQ-8312). A library entry shows where it is used (REQ-8316). Generators and edits run as background jobs with progress on the page (REQ-8318).
+
+An encounter lists the skills that fit its obstacle (REQ-8404), and where several fit the Director picks the check's domain among them by need (REQ-8406). The Master receives the steps the player has opened as things she can do and never a level, a node or an estimate (REQ-8402), and the scenario writer receives what she can do and what she is learning (REQ-8408).
+
+The Director draws the skills an adventure practises by weighted chance, so a less developed skill is likelier and no skill with a positive weight is certain or impossible (REQ-8420), from a seed that defaults to a function of the adventure and that the parent may set in the sandbox (REQ-8422).
+
+The scenario writer receives the Director's plan for the adventure, the skills it asks to practise and for what purpose, told without nodes, levels or estimates, and chooses obstacles that fit it (REQ-8416). Code refuses a scenario in which a planned skill is accepted by no encounter, or in which the encounters that accept it hold fewer checks than planned (REQ-8418).
+
+The player's first adventure is a tutorial scenario that explains and opens the skills one by one (REQ-8410). It introduces each skill with a scene and one check on a task of its domain, and the sheet shows a skill from the moment it is introduced (REQ-8412). It is authored once, approved by the parent and fixed, and is not generated for each player (REQ-8414).
 
 ### Efficiency
 
