@@ -97,6 +97,8 @@ describe("a scenario", () => {
   });
 
   it("refuses a path with too few checks for the Director's plan", () => {
-    expect(checkScenario(chain(15), { minChecks: 16 })).toContain("too_few_checks");
+    expect(checkScenario(chain(15), { minChecks: 16 })).toContain(
+      "too_few_checks",
+    );
   });
 });
