@@ -71,6 +71,7 @@ describe("REQ-2224: each registry entry declares its class", () => {
       attempts_view: "game",
       parent_settings: "game",
       node_estimates: "knowledge",
+      node_levels: "knowledge",
       node_obligations: "knowledge",
       node_snapshots: "knowledge",
     });

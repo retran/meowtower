@@ -1,3 +1,4 @@
+import { templates } from "../templates/index.js";
 import { serve } from "@hono/node-server";
 import { parentSettings } from "./parent-room.js";
 import { createFrameQueue, type FrameQueue } from "./frames/queue.js";
@@ -87,6 +88,18 @@ try {
       params: loadParams(readFileSync(modelFile, "utf8")),
       graph: started.graph,
       zone,
+      olympiad: {
+        templates: new Set(
+          templates
+            .filter((t) => t.origin && "olympiad" in t.origin)
+            .map((t) => t.id),
+        ),
+        nodes: new Set(
+          templates
+            .filter((t) => t.origin && "olympiad" in t.origin)
+            .map((t) => t.node),
+        ),
+      },
     });
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err));

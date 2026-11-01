@@ -7,6 +7,7 @@ import { gameDayOf } from "../../shared/game-day.js";
 import { rowsOf, type Row } from "./aggregate.js";
 import { estimatePairs } from "./bkt.js";
 import { fluencyOf, type Beta, withHelpOf } from "./beta.js";
+import { levelOf, type LevelResult } from "./levels.js";
 import { type LogEvent, observationsOf } from "./observations.js";
 import { type ModelParamsT } from "./params.js";
 import { priorOf, rowOf } from "./priors.js";
@@ -129,6 +130,53 @@ export function knowledgeOf(
     obligations: obligationsOf(graph, states, inferred, now),
     now,
   };
+}
+
+/** Which templates and nodes hold olympiad tasks (REQ-7978). */
+export interface OlympiadFacts {
+  readonly templates: ReadonlySet<string>;
+  readonly nodes: ReadonlySet<string>;
+}
+
+export interface NodeLevel extends LevelResult {
+  readonly node: string;
+}
+
+/** Each node's ability level from one log (ADR-3220). */
+export function levelsOf(
+  graph: KnowledgeGraph,
+  log: readonly LogEvent[],
+  params: ModelParamsT,
+  olympiad: OlympiadFacts,
+): NodeLevel[] {
+  const { own } = observationsOf(log);
+  const group = rowOf(log);
+  const templateOf = new Map<string, string>();
+  for (const e of log) {
+    if (e.type !== "item_shown") continue;
+    const shown = e.payload as { itemId?: string; templateId?: string };
+    if (shown.itemId && shown.templateId)
+      templateOf.set(shown.itemId, shown.templateId);
+  }
+  const byNode = groupByNode(own);
+  return graph.nodes().map((n) => {
+    const subtypes = graph.subtypes(n.id);
+    const seen = [...(byNode.get(n.id) ?? [])].sort((a, b) => a.at - b.at);
+    const first = subtypes[0]?.level as Level | undefined;
+    const result = levelOf(
+      seen.map((o) => ({
+        ...o,
+        olympiad: olympiad.templates.has(templateOf.get(o.itemId) ?? ""),
+      })),
+      {
+        weights: Object.fromEntries(subtypes.map((s) => [s.id, s.weight])),
+        prior: priorOf(params, group, first ?? "1F"),
+        hasOlympiad: olympiad.nodes.has(n.id),
+        params,
+      },
+    );
+    return { node: n.id, ...result };
+  });
 }
 
 export interface SnapshotRow {

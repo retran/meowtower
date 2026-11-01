@@ -1,5 +1,5 @@
 {
-  "model": "none",
-  "thresholds": "none",
+  "model": "v1",
+  "thresholds": "v1",
   "graph": "none"
 }
