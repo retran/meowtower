@@ -8,11 +8,15 @@ import {
   type RankDay,
 } from "../../src/engine/model/rank.js";
 
-// Ten nodes in each group 1 to 8, so a share is easy to set.
-const groups = Array.from({ length: 80 }, (_, i) => ({
-  node: `n${String(i)}`,
-  group: Math.floor(i / 10) + 1,
-}));
+// The graph's real sizes: 3, 1, 6, 2, 19, 22, 14 and 12 nodes in groups 1 to 8. Equal groups would
+// make every rank follow from the one before it.
+const SIZES = [3, 1, 6, 2, 19, 22, 14, 12];
+const groups = SIZES.flatMap((size, g) =>
+  Array.from({ length: size }, (_, i) => ({
+    node: `g${String(g + 1)}n${String(i)}`,
+    group: g + 1,
+  })),
+);
 const at = (levelOf: (group: number) => number): Record<string, number> =>
   Object.fromEntries(groups.map((g) => [g.node, levelOf(g.group)]));
 const day = (n: number, levels: Record<string, number>): RankDay => ({
@@ -42,8 +46,8 @@ describe("the rank", () => {
 
   it("does not rise at 79 %", () => {
     const levels = at(upTo(4, 4));
-    // 40 nodes in groups 1 to 4: 9 of them lowered makes 31 of 40, below 80 %.
-    for (const g of groups.filter((x) => x.group <= 4).slice(0, 9))
+    // 12 nodes in groups 1 to 4: 3 of them lowered makes 9 of 12, below 80 %.
+    for (const g of groups.filter((x) => x.group <= 4).slice(0, 3))
       levels[g.node] = 3;
     expect(rankOver(groups, [day(1, levels)]).rank).toBe("E");
   });
@@ -73,16 +77,13 @@ describe("the rank", () => {
   });
 
   it("counts the word-problem nodes among the others", () => {
-    const more = [
-      ...groups,
-      { node: "T1", group: 3 },
-      { node: "T2", group: 3 },
-    ];
-    const levels = { ...at(upTo(3, 4)), T1: 1, T2: 1 };
-    expect(rankOver(more, [day(1, levels)]).rank).toBe("E");
-    expect(rankOver(more, [day(1, { ...levels, T1: 4, T2: 4 })]).rank).toBe(
-      "E",
-    );
+    const words = ["T1", "T2", "T3", "T4"].map((node) => ({ node, group: 3 }));
+    const more = [...groups, ...words];
+    const base = at(upTo(4, 4));
+    const weak = { ...base, T1: 1, T2: 1, T3: 1, T4: 1 };
+    expect(rankOver(more, [day(1, weak)]).rank).toBe("E");
+    const strong = { ...base, T1: 4, T2: 4, T3: 4, T4: 4 };
+    expect(rankOver(more, [day(1, strong)]).rank).toBe("D");
   });
 
   it("holds its rank through a bad week and falls after 14 played days below 65 %", () => {
