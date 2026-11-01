@@ -33,7 +33,7 @@ const encounter = (i: number, n: number) => ({
     { when: "she wins", next: i === n - 1 ? "e0" : `n${String(i + 1)}` },
     {
       when: "she pays",
-      next: i === n - 1 ? "e1" : `n${String(Math.min(i + 2, n - 1))}`,
+      next: i >= n - 2 ? "e1" : `n${String(Math.min(i + 2, n - 2))}`,
     },
   ],
 });

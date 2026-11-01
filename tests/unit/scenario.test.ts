@@ -36,7 +36,7 @@ const chain = (n: number): Scenario => ({
   start: "n0",
   encounters: Array.from({ length: n }, (_, i) => {
     const next = i === n - 1 ? "e0" : `n${String(i + 1)}`;
-    const other = i === n - 1 ? "e1" : `n${String(Math.min(i + 2, n - 1))}`;
+    const other = i >= n - 2 ? "e1" : `n${String(Math.min(i + 2, n - 2))}`;
     return {
       id: `n${String(i)}`,
       place: "the Canal",
@@ -50,6 +50,7 @@ const chain = (n: number): Scenario => ({
         { when: "she frees it", next },
         { when: "the rope wins", next: other },
       ],
+      attached: ["character:tobias"],
     };
   }),
   endings: [
@@ -192,6 +193,13 @@ describe("a scenario", () => {
     expect(checkScenario(skip, { minChecks: 0 })).toContain(
       "path_without_climax",
     );
+  });
+
+  it("carries library entries attached to it", () => {
+    const s = { ...chain(10), attached: ["place:canal", "fact:tide"] };
+    const parsed = Schema.parse(s);
+    expect(parsed.attached).toEqual(["place:canal", "fact:tide"]);
+    expect(parsed.encounters[0]?.attached).toEqual(["character:tobias"]);
   });
 
   it("refuses a graph where outcomes rarely change anything", () => {

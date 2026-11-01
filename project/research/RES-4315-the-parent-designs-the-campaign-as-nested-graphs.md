@@ -123,7 +123,7 @@ Libraries: characters, places, factions, items, facts, events and adventure summ
 
 ### What the Master remembers
 
-The Master writes to the library as play goes, by the tools `record_fact` and `record_event`, with no action from the parent. After an adventure, the story editor leaves a summary linked to its facts and events. Each turn's request carries the entries that touch the current scene, and the tool `query_world` searches the rest, so the Master keeps what happened without holding the whole history in its context. The parent can read, correct or remove any of it, and a correction reaches the next request.
+The Master writes to the library as play goes, by the tools `record_fact` and `record_event`, with no action from the parent. After an adventure, the story editor leaves a summary linked to its facts and events. Each turn's request carries the entries that touch the current scene, and the tool `query_world` searches the rest, so the Master keeps what happened without holding the whole history in its context. The parent can read, correct or remove any of it, and a correction reaches the next request. The parent can also attach any entry to a scenario or an encounter, and attached entries reach the Master by default.
 
 ### Review
 

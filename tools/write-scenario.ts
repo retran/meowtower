@@ -48,8 +48,15 @@ if (!done) {
 mkdirSync("data/scenarios", { recursive: true });
 const file = `data/scenarios/${String(Date.now())}.json`;
 writeFileSync(file, JSON.stringify(done, null, 2));
+console.log(
+  `conflict: ${done.scenario.conflict.wants} / ${done.scenario.conflict.against} / ${done.scenario.conflict.stakes}`,
+);
+console.log(`question: ${done.scenario.question}`);
 for (const encounter of done.scenario.encounters) {
   console.log(`\n[${encounter.id}] ${encounter.place}: ${encounter.situation}`);
+  console.log(
+    `  act ${String(encounter.act)}, ${encounter.beat}, tension ${String(encounter.tension)}, ${encounter.value.from} -> ${encounter.value.to}`,
+  );
   console.log(`  goal: ${encounter.goal}`);
   console.log(`  pressure: ${encounter.pressure}`);
   for (const person of encounter.people)
