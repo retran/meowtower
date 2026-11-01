@@ -212,5 +212,11 @@
   "ui.parentSettings.language": "Game language",
   "ui.parentSettings.language.ru": "Русский",
   "ui.parentSettings.language.en": "English",
-  "ui.parentSettings.language.nl": "Nederlands"
+  "ui.parentSettings.language.nl": "Nederlands",
+  "story.setting.1": "In the Archive the keeper hands you a note with a question:",
+  "story.setting.2": "On the stairs a foreman from the Works calls out to you:",
+  "story.setting.3": "The confectioner leans out of the door and asks:",
+  "story.setting.4": "On the Canal the boatman rests his oar and asks for help:",
+  "story.setting.5": "At the Fair a trader gives you a sly look:",
+  "story.setting.6": "On the board by the stairs someone has left a question:"
 }

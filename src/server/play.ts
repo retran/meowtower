@@ -34,8 +34,8 @@ import {
   inputOf,
   judge,
   pick,
-  present,
   presentFramed,
+  presentSet,
   rebuild,
   trapOf,
   twinOf,
@@ -131,7 +131,7 @@ export interface PlayOptions {
   sweepLeasesMs?: number;
   /** Where the tasks come from: the three fixed stand-in tasks, or the template registry (EPC-0480). */
   tasks?: "standin" | "registry";
-  /** The live story frames (ADR-3100); without it every task shows its template text. */
+  /** The live story frames (ADR-3100); without it every task shows its prepared setting. */
   frames?: FrameQueue;
 }
 
@@ -172,7 +172,7 @@ interface ItemShown {
   frameId?: number;
 }
 
-/** How long a task waits for its story before it shows its template text (REQ-7890). */
+/** How long a task waits for its story before it shows its prepared setting (REQ-7890). */
 const FRAME_WAIT_MS = 90_000;
 
 const payloadOf = <T>(e: StoredEvent): T => e.payload as T;
@@ -209,7 +209,7 @@ function shownOf(event: StoredEvent): ItemShown {
     ? rebuild(shown.templateId, shown.seed, lang)
     : null;
   if (!item) return shown;
-  const shape = present(item);
+  const shape = presentSet(item, lang, Buffer.from(shown.seed, "hex"));
   return {
     ...shown,
     view: {
@@ -868,7 +868,7 @@ export function mountPlay(
       const seed = hexOf(chosen.base);
       const shape = frame
         ? presentFramed({ template: chosen.template, made }, frame.text)
-        : present({ template: chosen.template, made });
+        : presentSet({ template: chosen.template, made }, lang, chosen.base);
       const shown: ItemShown = {
         itemId: randomUUID(),
         view: {
@@ -1635,7 +1635,11 @@ export function mountPlay(
         }) ?? null;
       const shape = twinFrame
         ? presentFramed(other, twinFrame.text)
-        : present(other);
+        : presentSet(
+            other,
+            lang,
+            Uint8Array.from(Buffer.from(other.seed, "hex")),
+          );
       const twin: ItemShown = {
         itemId: randomUUID(),
         view: {

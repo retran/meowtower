@@ -4,6 +4,7 @@
 import { baseSeed } from "../math/rng.js";
 import { templates } from "../templates/index.js";
 import type { InputSpec } from "../shared/api.js";
+import { translator } from "../shared/i18n.js";
 import type { Compiled, Lang, Made } from "../templates/spec.js";
 
 const byId = new Map(templates.map((c) => [c.id, c]));
@@ -111,6 +112,26 @@ export function presentFramed(
   frame: string,
 ): Presented {
   return { ...present(item), text: frame };
+}
+
+const SETTINGS = [
+  "story.setting.1",
+  "story.setting.2",
+  "story.setting.3",
+  "story.setting.4",
+  "story.setting.5",
+  "story.setting.6",
+] as const;
+
+/** A task with no live story, set in the story by prepared text (REQ-8208, REQ-8210). */
+export function presentSet(
+  item: Pick<RegistryItem, "template" | "made">,
+  language: Lang,
+  seed: Uint8Array,
+): Presented {
+  const shape = present(item);
+  const key = SETTINGS[(seed[0] ?? 0) % SETTINGS.length] ?? SETTINGS[0];
+  return { ...shape, text: `${translator(language).t(key)} ${shape.text}` };
 }
 
 /** The buttons of a compare, choice, set or order task, or the field of any other. */

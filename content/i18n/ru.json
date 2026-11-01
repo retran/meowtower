@@ -212,5 +212,11 @@
   "ui.parentSettings.language": "Язык игры",
   "ui.parentSettings.language.ru": "Русский",
   "ui.parentSettings.language.en": "English",
-  "ui.parentSettings.language.nl": "Nederlands"
+  "ui.parentSettings.language.nl": "Nederlands",
+  "story.setting.1": "В Архиве смотритель протягивает тебе записку с вопросом:",
+  "story.setting.2": "На лестнице тебя окликает мастер из Мастерских:",
+  "story.setting.3": "Кондитер выглядывает из двери и спрашивает:",
+  "story.setting.4": "Лодочник на Канале придерживает весло и просит помочь:",
+  "story.setting.5": "На Ярмарке торговец хитро щурится:",
+  "story.setting.6": "На доске у лестницы кто-то оставил вопрос:"
 }
