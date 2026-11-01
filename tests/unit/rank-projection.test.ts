@@ -19,7 +19,7 @@ const answer = (
   day: number,
   verdict: string,
 ): LogEvent[] => {
-  const itemId = `${node}-${String(n)}-${String(day)}`;
+  const itemId = `${node}-${subtype}-${String(n)}-${String(day)}`;
   const ts = new Date(Date.UTC(2026, 0, 1 + day, 12)).toISOString();
   return [
     {

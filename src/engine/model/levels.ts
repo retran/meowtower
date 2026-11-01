@@ -33,11 +33,15 @@ export interface LevelChange {
   readonly to: number;
   readonly fell: boolean;
   readonly itemId: string;
+  /** The time of the answer that changed it, in milliseconds. */
+  readonly at: number;
 }
 
 export interface LevelResult {
   readonly level: number;
   readonly rule: string;
+  /** The level before any answer, from the prior. */
+  readonly start: number;
   /** True after a second observation in a row below the line (REQ-7996). */
   readonly warning: boolean;
   readonly changes: readonly LevelChange[];
@@ -74,6 +78,7 @@ export function levelOf(
       [...pairs].map(([s, pair]) => ({ weight: weights[s] ?? 0, p: pair.p })),
     );
   let level = reached(estimate(), TOP_LEVEL - 1);
+  const start = level;
   let below = 0;
   let clean = 0;
   const changes: LevelChange[] = [];
@@ -86,7 +91,13 @@ export function levelOf(
       !hasOlympiad || clean >= OLYMPIAD_CLEAN ? TOP_LEVEL : TOP_LEVEL - 1;
     const up = reached(p, cap);
     if (up > level) {
-      changes.push({ from: level, to: up, fell: false, itemId: o.itemId });
+      changes.push({
+        from: level,
+        to: up,
+        fell: false,
+        itemId: o.itemId,
+        at: o.at,
+      });
       level = up;
       below = 0;
     } else if (level > 1 && p < lineOf(level) - FALL_MARGIN) {
@@ -97,6 +108,7 @@ export function levelOf(
           to: level - 1,
           fell: true,
           itemId: o.itemId,
+          at: o.at,
         });
         level -= 1;
         below = 0;
@@ -106,6 +118,7 @@ export function levelOf(
   return {
     level,
     rule: LEVEL_RULE,
+    start,
     warning: below >= WARN_AFTER,
     changes,
   };

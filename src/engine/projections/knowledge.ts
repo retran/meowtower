@@ -12,6 +12,7 @@ import {
   knowledgeOf,
   levelsOf,
   type OlympiadFacts,
+  rankOf,
   snapshotsOf,
 } from "../model/project.js";
 import type { Projection } from "./registry.js";
@@ -22,7 +23,7 @@ type Db = Database.Database;
 /** What the knowledge model reads besides the log: its parameters, the graph and the game-day zone. */
 export interface KnowledgeSetup {
   readonly params: ModelParamsT;
-  readonly graph: KnowledgeGraph;
+  readonly graph: KnowledgeGraph & { typicalGroup(id: string): number };
   readonly zone: string;
   readonly olympiad?: OlympiadFacts;
 }
@@ -122,6 +123,40 @@ const nodeLevels: Projection = {
         JSON.stringify(l.changes),
         computedAt,
       );
+  },
+  apply: noFold,
+};
+
+const rankState: Projection = {
+  name: "rank_state",
+  class: "knowledge",
+  module: import.meta.url,
+  table: "rank_state",
+  create: `CREATE TABLE rank_state (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    rank TEXT NOT NULL,
+    rule TEXT NOT NULL,
+    warning INTEGER NOT NULL,
+    changes TEXT NOT NULL,
+    computed_at TEXT NOT NULL
+  ) STRICT`,
+  fullPass(db: Db, target: string, computedAt: string) {
+    if (!setup) return;
+    const got = rankOf(
+      setup.graph,
+      [...allEvents(db)],
+      setup.params,
+      setup.olympiad ?? NO_OLYMPIAD,
+      setup.zone,
+    );
+    db.prepare(`DELETE FROM ${target}`).run();
+    db.prepare(`INSERT INTO ${target} VALUES (1, ?, ?, ?, ?, ?)`).run(
+      got.rank,
+      got.rule,
+      got.warning ? 1 : 0,
+      JSON.stringify(got.changes),
+      computedAt,
+    );
   },
   apply: noFold,
 };
@@ -267,6 +302,7 @@ const nodeSnapshots: Projection = {
 export const knowledge: Projection[] = [
   nodeEstimates,
   nodeLevels,
+  rankState,
   nodeObligations,
   nodeSnapshots,
 ];
