@@ -1,5 +1,5 @@
-// The scenario writer (ADR-3270): one structured reply, checked by code, and one more try with its
-// faults named. A second failure gives up, so the adventure falls back to the current flow.
+// The scenario loop (ADR-3270, REQ-8100): an agent plans, writes, gets code's check and a critic's
+// reading, and revises at most twice (REQ-8102). Every step is a structured reply (REQ-8236).
 import { readFileSync } from "node:fs";
 import { z } from "zod";
 import type { Gateway } from "../server/gateway/gateway.js";
@@ -10,7 +10,11 @@ const Prompt = z.object({
   system: z.string(),
   brief: z.string(),
   size: z.string(),
-  faults: z.string(),
+  plan: z.string(),
+  write: z.string(),
+  revise: z.string(),
+  critic: z.string(),
+  review: z.string(),
 });
 
 const promptOf = (lang: Lang): z.infer<typeof Prompt> =>
@@ -23,8 +27,19 @@ const promptOf = (lang: Lang): z.infer<typeof Prompt> =>
     ),
   );
 
-const SCHEMA = z.toJSONSchema(Scenario);
-const TRIES = 2;
+const Plan = z.object({
+  premise: z.string(),
+  want: z.string(),
+  stakes: z.string(),
+  twist: z.string(),
+  endings: z.array(z.string()),
+});
+const Critique = z.object({
+  pass: z.boolean(),
+  faults: z.array(z.string()),
+});
+
+const MAX_REVISIONS = 2;
 
 export interface ScenarioAsk {
   readonly bucket: string;
@@ -33,41 +48,75 @@ export interface ScenarioAsk {
   readonly minChecks: number;
 }
 
-/** A scenario that passed its checks, or null after two failures (REQ-8198, REQ-8204). */
+export interface WrittenScenario {
+  readonly scenario: Scenario;
+  readonly revisions: number;
+  /** What the critic still found in the version kept, for the parent's report. */
+  readonly unresolved: readonly string[];
+}
+
+/** A playable scenario, or null when no version passed code's check (REQ-8198, REQ-8204). */
 export async function writeScenario(
   gateway: Gateway,
   { bucket, lang, brief, minChecks }: ScenarioAsk,
-): Promise<Scenario | null> {
+): Promise<WrittenScenario | null> {
   const prompt = promptOf(lang);
-  const ask = [
+  const task = [
     prompt.brief.replace("{brief}", brief),
     prompt.size
       .replace("{min}", String(MIN_SCENES))
       .replace("{max}", String(MAX_SCENES))
       .replace("{checks}", String(minChecks)),
   ].join("\n");
-  let faults: readonly string[] = [];
-  for (let attempt = 0; attempt < TRIES; attempt += 1) {
+
+  async function step<T>(
+    schema: z.ZodType<T>,
+    system: string,
+    user: string,
+  ): Promise<{ text: string; value: T | null } | null> {
     const reply = await gateway.call({
       role: "SHOWRUNNER_MODEL",
       bucket,
-      system: prompt.system,
-      user:
-        faults.length === 0
-          ? ask
-          : `${ask}\n${prompt.faults.replace("{faults}", faults.join(", "))}`,
-      schema: SCHEMA,
+      system,
+      user,
+      schema: z.toJSONSchema(schema),
     });
     if (!reply.ok) return null;
-    let parsed: Scenario;
     try {
-      parsed = Scenario.parse(JSON.parse(reply.text));
+      return {
+        text: reply.text,
+        value: schema.parse(JSON.parse(reply.text)),
+      };
     } catch {
-      faults = ["schema"];
-      continue;
+      return { text: reply.text, value: null };
     }
-    faults = checkScenario(parsed, { minChecks });
-    if (faults.length === 0) return parsed;
   }
-  return null;
+
+  const plan = await step(Plan, prompt.system, `${task}\n${prompt.plan}`);
+  if (!plan?.value) return null;
+  let user = `${task}\n${prompt.write.replace("{plan}", plan.text)}`;
+  let kept: WrittenScenario | null = null;
+  for (let revisions = 0; revisions <= MAX_REVISIONS; revisions += 1) {
+    const draft = await step(Scenario, prompt.system, user);
+    if (!draft) return kept;
+    const faults = draft.value
+      ? checkScenario(draft.value, { minChecks })
+      : ["schema"];
+    let unresolved: readonly string[] = [];
+    if (draft.value && faults.length === 0) {
+      const review = await step(
+        Critique,
+        prompt.critic,
+        prompt.review.replace("{scenario}", draft.text),
+      );
+      kept = { scenario: draft.value, revisions, unresolved: [] };
+      if (!review?.value || review.value.pass) return kept;
+      unresolved = review.value.faults;
+      kept = { ...kept, unresolved };
+    }
+    user = `${task}\n${prompt.revise
+      .replace("{scenario}", draft.text)
+      .replace("{faults}", [...faults, ...unresolved].join("; "))}`;
+  }
+  return kept;
 }

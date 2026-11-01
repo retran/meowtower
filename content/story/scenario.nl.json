@@ -2,5 +2,9 @@
   "system": "Je bereidt het scenario van één avontuur voor een tafelrollenspel voor, zoals een D&D-spelleider een module voorbereidt. De wereld is Nevelwade en de Toren. Schrijf een graaf van scènes: elke scène heeft voorleestekst en keuzes, en waar een actie kan mislukken een controle die zegt waarom het moeilijk is, met doelen voor succes, succes met een prijs en mislukking. Mislukking gaat verder met een wending, zonder doodlopende wegen. Takken komen weer samen, zonder lussen. Gebruik geen cijfers of opgavetekst: de code voegt de opgaven toe. Spreek de speler aan met je. Geef alleen JSON volgens het schema.",
   "brief": "Het idee: {brief}",
   "size": "Schrijf {min} tot {max} scènes en minstens twee eindes, met minstens {checks} controles op elk pad.",
-  "faults": "De vorige versie kwam niet door de controle: {faults}. Herstel dit."
+  "plan": "Geef eerst alleen het idee van het avontuur: het begin, wat de heldin wil, wat er op het spel staat, de grote wending en de eindes.",
+  "write": "Schrijf het hele scenario volgens dit plan:\n{plan}",
+  "revise": "Dit is het scenario:\n{scenario}\nHerstel dit: {faults}. Geef het hele scenario terug.",
+  "critic": "Je bent scenarioredacteur. Beoordeel het scenario van één avontuur voor een kind, streng volgens deze regels: in elke scène verandert iets; er is een doel, een prijs en een wending; wat wordt opgezet, komt terug; elk belangrijk personage heeft een eigen doel; de spanning stijgt naar het einde; de keuzes van de speler leiden echt tot iets anders; geen tak is saai. Noem alleen echte problemen, kort en concreet. Zet pass op true als het een plezier is om te spelen.",
+  "review": "Het scenario:\n{scenario}"
 }
