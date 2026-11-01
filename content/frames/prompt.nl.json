@@ -27,13 +27,6 @@
           "false": "Het verhaal is lief of een beetje griezelig, zoals een griezelverhaal voor kinderen: geritsel, schaduwen, raadselachtig verdwijnen, en er gebeurt niets ergs."
         }
       },
-      "joke": {
-        "instructions": "Bevat het verhaal een grap?",
-        "criteria": {
-          "true": "De schrijver maakt grappen en dat leidt af van de vraag.",
-          "false": "Het verhaal kan vreemd of grappig van situatie zijn, maar bevat geen grap."
-        }
-      },
       "changed": {
         "instructions": "Is de wiskunde veranderd, of wordt het antwoord verklapt?",
         "criteria": {

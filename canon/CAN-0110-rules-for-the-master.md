@@ -263,3 +263,10 @@ branches at once, and the code shows the right one.
 - Resolved on 2026-09-26: the Master's banned words are the one forbidden
   list in CAN-0010, which binds every text the heroine sees, and the Master
   calls a familiar «узелок». RES-3300 holds the reason.
+
+## Checks
+
+When the heroine tries something that can fail, and failing would be interesting,
+the trial decides. The Master never decides the result. A clean answer succeeds,
+a partial one succeeds at a cost, and a failed one moves the story on with a
+twist, so no trial ends the road. Whatever she decides changes the world for good.

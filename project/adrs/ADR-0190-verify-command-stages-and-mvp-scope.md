@@ -2,7 +2,7 @@
 id: ADR-0190
 artifact: adr
 status: approved
-revised: 2026-10-10
+revised: 2026-11-01
 addresses: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708]
 supersedes: []
 issue: 39
@@ -117,7 +117,7 @@ Stage 0.3 holds every part of the MVP contents list (REQ-8020): ability levels a
 
 It holds none of the deferred items (REQ-3702): Ascents and anchor forms, story battles and the ring of elements, AI-made items and familiars with live pictures, Diary ciphers, «Свободная прогулка» (Free Walk), characteristics, paths and ranks by the calendar, room decor, the Dutch layer, and the full roster with full dreamcore. A scope guard in group 1 reads `verify/scope-guard.json`, which names the traces a deferred item leaves in the tree. They are a Dutch locale string file, a template with `curriculum: "nl"`, the `checkpoints` or `generated_entities` table, an Ascent or Free Walk route, and a push subscription route. The guard fails when one appears. The glossary's Dutch words are one data field beside a Russian term (RES-1300), so the guard allows them.
 
-Every text and task the player sees is in Russian, because the scope guard allows only the `ru` locale of ADR-0160 (REQ-3704). The game offers no lesson that teaches a new topic: every task comes from a template tied to a node, the short solution and the second attempt stay tied to their task, and the parent judges it (REQ-3706). At each stage's review the agent reads the canon against the approved record on method, time, rewards and safety, and writes each contradiction as a defect against the canon, which is corrected (REQ-3708).
+Every text and task the player sees is in the language the parent chose, Russian by default (REQ-7548), apart from the approved Dutch keywords of the bridge and the Dutch word a term hint shows (REQ-8160) of ADR-0160 (REQ-3704). The game offers no lesson that teaches a new topic, apart from a puzzle's solution page in the Diary: every task comes from a template tied to a node, the short solution and the second attempt stay tied to their task, and the parent judges it (REQ-3706). At each stage's review the agent reads the canon against the approved record on method, time, rewards and safety, and writes each contradiction as a defect against the canon, which is corrected (REQ-3708).
 
 ### What works once this is accepted, and what doesn't yet
 
@@ -224,10 +224,10 @@ This table is the repository's one list of non-functional budgets. A budget mark
 | Report rebuild after an adventure | at most 5 s | ADR-0180 | chosen | the parent opens the report right after play |
 | `verify --fast` | at most 3 minutes | this record | chosen | a longer loop stops being run after each step |
 | Full verify on the Mac | at most 30 minutes | this record | chosen | a stage gate that takes longer is run less often |
-| Adventure model spend | $1.5 an adventure | ADR-0100 | imposed by REQ-2702 | the owner's cost line (RES-2700) |
+| Adventure model spend | $5 an adventure | ADR-3200 | imposed by REQ-7690 | the owner's cost line (RES-2700) |
 | Explanations | $0.3 and 20 live generations a game day | ADR-0100, ADR-0120 | imposed by REQ-2704 and REQ-2706 | the owner's cost line (RES-2700) |
 | Explanation reserve for reuse solves | no new variant below $0.03 left in the day | ADR-0120 | chosen | stored variants can still be checked when the day's money runs low |
-| Month of play | $60 on the play key | ADR-0100 | imposed by REQ-2718 and REQ-2720 | a cap above the daily caps that catches a runaway bug |
+| Month of play | $200 on the play key | ADR-3200 | imposed by REQ-7700 and REQ-7710 | a cap above the daily caps that catches a runaway bug |
 | Art run | $40 a run | ADR-0100, ADR-0170 | imposed by REQ-2708 | the owner's art budget (RES-2700) |
 | Bake-off | $25 | ADR-0100 | imposed by REQ-2710 | the owner's bake-off budget (RES-2700) |
 | Live art | $0.5 an adventure, off in the MVP | ADR-0100 | imposed by REQ-2712 | after the MVP only |
@@ -238,7 +238,7 @@ This table is the repository's one list of non-functional budgets. A budget mark
 | `events` table | notice at 1 GB | ADR-0020 | chosen | the log never drains, by design |
 | `node_snapshots` | notice at 2 million rows | ADR-0060 | chosen | earlier-version rows are kept on purpose |
 | `graph_versions` | notice at 1,000 versions | ADR-0050 | chosen | that many edits suggest a script rewrites the file |
-| `llm_log` bodies | kept 90 days; notice at 1 GB | ADR-0100 | chosen | the metadata row stays for the cost count |
+| `llm_log` bodies | kept for good | ADR-3200 | imposed by REQ-7740 | nothing is deleted from the logs |
 | `explain_cache` | notice at 10,000 rows; retired rows drain after 30 days | ADR-0120 | chosen | at most 20 new rows a day |
 | `frames` table | notice at 50,000 rows | ADR-0130 | chosen | every live frame is kept by requirement |
 | Frame candidates | expire after 60 days; at most 1.5 times a structure's shortfall | ADR-0130 | chosen | the queue never holds more than the parent needs |
@@ -287,7 +287,7 @@ Amended by ADR-0380, ADR-0390, ADR-0410, ADR-0420, ADR-0430, ADR-0440 and ADR-04
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
-Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3700 (superseded by REQ-5076, which ADR-0210 addresses); REQ-3702 (superseded by REQ-5078, which ADR-0210 addresses); REQ-3704 (superseded by REQ-5080, which ADR-0210, ADR-0370 addresses); REQ-3706 (superseded by REQ-5736, which ADR-0280 addresses).
+Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3700 (superseded by REQ-5076, which ADR-0210 addresses); REQ-3702 (superseded by REQ-5078, which ADR-0210 addresses); REQ-3704 (superseded by REQ-8160, which ADR-0210, ADR-0370 addresses); REQ-3706 (superseded by REQ-5736, which ADR-0280 addresses).
 
 ## Plan
 

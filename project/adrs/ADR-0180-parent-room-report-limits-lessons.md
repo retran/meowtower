@@ -2,8 +2,8 @@
 id: ADR-0180
 artifact: adr
 status: approved
-revised: 2026-10-10
-addresses: [REQ-0105, REQ-0107, REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364, REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-1426, REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378, REQ-3814, REQ-3710, REQ-3712]
+revised: 2026-11-01
+addresses: [REQ-0105, REQ-0107, REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364, REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-8152, REQ-2300, REQ-2302, REQ-8164, REQ-2306, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378, REQ-3814, REQ-3710, REQ-3712]
 supersedes: []
 issue: 38
 projected: 329bd7de353f
@@ -16,13 +16,13 @@ tracked: 0a13f2dad0e1
 
 ## Decision
 
-The parent's report is a set of pure functions over the event log of ADR-0020, cached in `report_cache` and served only to a parent session opened with the PIN. It has the eight screens of report v1, a limits table of twelve rows, lesson marks with two rechecks and four labels, and fluency thresholds kept per device type. The player's screens get none of it.
+The parent's report is a set of pure functions over the event log of ADR-0020, cached in `report_cache` and served only to a parent session opened with the PIN. Nine screens, with «Работа с источниками» as the ninth, a limits table of twelve rows, lesson marks with two rechecks and four labels, and fluency thresholds kept per device type. The player's screens get none of it.
 
 This record is written for the owner, who evaluates it, and for the building agent, who builds from it. Where I chose a default the research left open, the sentence says "I chose".
 
 ### Where the report lives and who can open it
 
-The Parent Room is the `/parent` area of the same Preact client (ADR-0150). Its data comes only from the `/api/parent/*` routes of ADR-0030, and each of them answers 401 to a request without a parent session. `POST /api/parent/login` opens that session from the PIN. ADR-0010 owns the lockout after 5 wrong PINs for 15 minutes (RES-2500), and ADR-0030 owns the session's expiry after 30 minutes without activity (RES-2400). The player's routes carry schemas with no field for a node state, an estimate, a percentage or a topic name, so a player screen can't show them (REQ-2352, REQ-1426). ADR-0190's end-to-end scan checks the player's screens for them.
+The Parent Room is the `/parent` area of the same Preact client (ADR-0150). Its data comes only from the `/api/parent/*` routes of ADR-0030, and each of them answers 401 to a request without a parent session. `POST /api/parent/login` opens that session from the PIN. ADR-0010 owns the lockout after 5 wrong PINs for 15 minutes (RES-2500), and ADR-0030 owns the session's expiry after 30 minutes without activity (RES-2400). The player's routes carry schemas with no field for a node state, a raw estimate or an estimate as a percentage, and ability names, level numbers and rank reach her as ADR-3220 states, so a player screen can't show them (REQ-2352, REQ-8152). ADR-0190's end-to-end scan checks the player's screens for them.
 
 The Parent Room also hosts the panels other decisions define, behind the same session and in the tabs of the design's screen 26 (RES-3500). They are the settings with «Закончить на сегодня», the memo on talking with the child, the review queues for frames, lines, scenes, art and explanation variants, the bake-off screen, the Master pick, the cost line and its notices, and the alarm notice. This record owns the report, the limits, the lesson marks, the calibration, the glossary approval and the test mode, and places the other panels. What each placed panel holds belongs to the decision that defines it: ADR-0090, ADR-0100, ADR-0110, ADR-0120, ADR-0130 and ADR-0170.
 
@@ -38,11 +38,11 @@ The functions live in `src/parent/`. They read the projections ADR-0020 rebuilds
 
 The skill map, the states and the «сама» (on her own) estimate come only from unassisted first attempts, because ADR-0060 feeds nothing else into them (REQ-2310). Assisted attempts reach the report only in the «с помощью» (with help) figures: the assisted estimate, «решает с подсказкой» (solves with a hint) and «почти готово» (nearly ready) (REQ-2312).
 
-Every label the parent reads comes from the Russian content file of ADR-0160, never from a model. ADR-0160's forbidden-word list exempts the Parent Room, as RES-3300 resolves, so a check of this record's own, run by ADR-0190's verify, rejects «плохо», «отстаёт» and «невнимательная» in every `parent.*` value of the string file, and the parent judges the rest of the wording (REQ-2306). The report builds no lesson plan: no screen orders topics or proposes dates or exercises (REQ-2304). The parent judges whether the report answers what is mastered, where the frontier is and what holds her back (REQ-2302).
+Every label the parent reads comes from the per-language content file of ADR-0160, never from a model. ADR-0160's forbidden-word list exempts the Parent Room, as RES-3300 resolves, so a check of this record's own, run by ADR-0190's verify, rejects «плохо», «отстаёт» and «невнимательная» in every `parent.*` value of the string file, and the parent judges the rest of the wording (REQ-2306). The report builds no lesson plan: no report screen orders topics or proposes dates or exercises (REQ-8164), and the front page of ADR-3250 may propose a lesson the parent chooses, with no date, exercise or order of topics. The parent judges whether the report answers what is mastered, where the frontier is and what holds her back (REQ-2302).
 
-### Report v1 has eight screens
+### Report v1 has nine screens
 
-The dynamics screen waits until after the MVP (REQ-2308). The eight screens and what each shows:
+The dynamics screen waits until after the MVP (REQ-6064). The nine screens and what each shows:
 
 | Screen | What it shows | Requirements |
 | --- | --- | --- |
@@ -58,7 +58,7 @@ The dynamics screen waits until after the MVP (REQ-2308). The eight screens and 
 
 The node card draws each task from the `shown` view of its `item_shown` event, so the parent sees exactly what the player saw. A node is «почти готово» when its state is below «бегло» (fluent) and its assisted estimate is at least 0.7 over at least 3 assisted attempts in the last 30 days (RES-2300). A node counts as not checked for a long time when its last unassisted first attempt is more than 30 days old (RES-2300, RES-0900). The misconceptions screen groups by the misconception identifier that ADR-0040 gives each trap, so «длиннее — больше» (longer means bigger) in D1 and P1 is one row. I chose the cap of 3 examples a row so a frequent trap doesn't push the rest off the screen; the node card holds every attempt.
 
-The word-problem matrix counts unassisted first attempts on T1 to T4 by the classical problem type each template declares (RES-0800) and by its number of steps. Where a problem asks her to choose a model before solving, a wrong model choice counts as a modelling error. A wrong answer after a right model counts as a calculation error, so the parent can tell "didn't understand the problem" from "understood it but miscalculated". Every figure in the report reads only the base graph layer, and a report that mixes layers appears only as a choice the parent makes once a second layer exists (REQ-3814); the MVP has one layer.
+It leaves out unanswerable problems, and four separate counts stand beside it by the classical problem type each template declares (RES-0800) and by its number of steps. The matrix shows model by answer on problems that opened with a model choice and plan by answer on problems that opened with a plan, sharing the answer axis; a wrong model choice counts as a modelling error, a plan labelled anything but `correct` as a planning error, and a wrong answer after a right model or a `correct` plan as a calculation error., so the parent can tell "didn't understand the problem" from "understood it but miscalculated". Every figure in the report reads only the base graph layer, and a report that mixes layers appears only as a choice the parent makes once a second layer exists (REQ-3814); the MVP has one layer.
 
 ### The VWO ladder counts verified states against thresholds kept as versioned data
 
@@ -110,15 +110,15 @@ For the labels I chose to count as a check only a state computed from a full blo
 
 A node with no check before the mark gets no improvement label, and its history shows the first checked state, because the report has nothing to compare it with.
 
-Until the dynamics screen arrives, the dynamics views are the node card's state history and the lesson labels. They use only unassisted first attempts from blocks, probes and review (REQ-1414), never show or add inferred states (REQ-1416), and carry «без контрольных прогонов: сравнимость ниже» until Ascents exist (REQ-1418). A time comparison uses tasks from one device type only (REQ-1420); an accuracy comparison may span both (REQ-1422). When the template versions behind a comparison differ, the comparison carries «контент изменён» (REQ-1424).
+Until the dynamics screen arrives, the dynamics views are the node card's state history and the lesson labels. They read first attempts as REQ-6796 sets, and the profile's dynamics reads the unassisted first attempts its own bars read and the fact states for basic facts, never show or add inferred states (REQ-1416), and carry «без контрольных прогонов: сравнимость ниже» until Ascents exist (REQ-1418). A time comparison uses tasks from one device type only (REQ-1420); an accuracy comparison may span both (REQ-1422). When the template versions behind a comparison differ, the comparison carries «контент изменён» (REQ-1424).
 
 ### Export and the PDF snapshot
 
-The Parent Room's tab «Выгрузка данных» (Data export) runs the export ADR-0020 defines, and shows it only when the Parent Room is open on the Mac. After the MVP the export adds a PDF snapshot made through the browser's print from a print stylesheet of the report screens, with no PDF library on the server (REQ-2354).
+The Parent Room's tab «Выгрузка данных» (Data export) runs the export ADR-0020 defines, and shows it only when the Parent Room is open on the Mac. After the MVP the export adds a PDF snapshot of every report screen and every node's card, or none, made through the browser's print, with no PDF library on the server (REQ-2354).
 
 ### What works once this is accepted, and what doesn't yet
 
-Once this is built on ADR-0010 to ADR-0170, the parent opens the Parent Room with the PIN after an adventure and reads eight screens that include that adventure. She marks a lesson and sees the rechecks land and the label appear. The twelve limits fill from the first session and show «мало данных» until the third. Thresholds follow each device's calibration.
+Once this is built on ADR-0010 to ADR-0170, the parent opens the Parent Room with the PIN after an adventure and opens on the front page, with the nine screens behind it that include that adventure. She marks a lesson and sees the rechecks land and the label appear. The twelve limits fill from the first session and show «мало данных» until the third. Thresholds follow each device's calibration.
 
 The dynamics screen, the full limits views, the anxiety signals from erasures, hesitation and phrases, and the PDF snapshot don't work yet. Neither does the web push for alarms, which RES-3000 moves after the MVP. The play loop doesn't depend on this record: without the Parent Room the game still plays and logs, and every screen here can be rebuilt from the log later.
 
@@ -144,7 +144,7 @@ The rechecks and labels follow RES-1400 and the defaults the requirements step c
 
 ## What it costs
 
-The building agent writes eight screens, twelve limit functions, a threshold projection with an adult calibration mode, the lesson projection and its labels, and the checks that go with them. That is most of stage 0.2 beside the domains (RES-3000).
+The building agent writes nine screens, twelve limit functions, a threshold projection with an adult calibration mode, the lesson projection and its labels, and the checks that go with them. That is most of stage 0.2 beside the domains (RES-3000).
 
 Report rebuilds cost server time on the Mac. I chose budgets of 5 seconds to rebuild `report_cache` after an adventure and 60 seconds for a full recompute of a year's log, which I estimate at about 150,000 events: 365 days, about 40 attempts a day and about 10 events per attempt. Both budgets are chosen, not imposed, and stand in the Baselines table of ADR-0190.
 
@@ -200,11 +200,11 @@ Premortem, written from 2027-03 as if it had happened. The parent stopped openin
 ## How I will know it was realised
 
 1. In ADR-0190's verify, after a simulated adventure ends, `report_cache.lastEventSeq` equals the sequence number of that adventure's last event.
-2. The Parent Room shows exactly the eight screens of REQ-2308 and no dynamics screen.
+2. The Parent Room shows exactly the nine screens of REQ-6064 and no dynamics screen.
 3. A property test on random logs changes the answers of assisted attempts, and the skill map, states and ladder stay equal while the «с помощью» figures change.
 4. Unit tests of the ladder at 89 % and 90 % coverage, 79 % and 80 % margin, and 2 and 3 stretch nodes give the steps of REQ-2338 to REQ-2344, and an unverified or cut-off node counts as not covered.
 5. A fixture with 2 sessions shows «мало данных» in all twelve rows, and the same fixture with 3 sessions shows values.
-6. Every `/api/parent/*` route answers 401 without a parent session, and ADR-0190's scan of the player's screens finds no node identifier, state label, percentage or topic name.
+6. Every `/api/parent/*` route answers 401 without a parent session, and ADR-0190's scan of the player's screens finds no node identifier, state label, raw estimate or estimate as a percentage.
 7. A day with 121 minutes of active time shows «долгий день» on the summary, and a day with 120 doesn't.
 8. Changing one catalogue value without a new entry in `content/thresholds.lock` fails verify.
 9. In the 30-day simulation, a lesson mark on day 5 gets a full block between days 6 and 8 and another between days 17 and 21, and the node's label matches the rule for its simulated states.

@@ -20,7 +20,7 @@ The owner's addendum 2 of 2026-09-28, item 3, enters the game in three increment
 
 ### Increment 1, in the MVP: every walkthrough names its task
 
-`solution_shown` and `hint_shown` carry the `itemId` of their task as a required field from their first payload version (REQ-6890, REQ-6892). No code writes either event yet, so the field needs no upcaster. If an event without it has been stored by the time this lands, the field goes into a new payload version with an upcaster that leaves it absent, and a reader marks the node of such an event unknown. `explanation_shown` already reaches its task through `explanation_bought` (SPC-0120), so it gains nothing. Nothing else in item 3 enters the MVP, which keeps report v1's nine screens unchanged (REQ-6682, ADR-0380).
+`solution_shown` and `hint_shown` carry the `itemId` of their task as a required field from their first payload version (REQ-6890, REQ-6892). The statement of entry 68, so the field needs no upcaster. If an event without it has been stored by the time this lands, the field goes into a new payload version with an upcaster that leaves it absent, and a reader marks the node of such an event unknown. `explanation_shown` already reaches its task through `explanation_bought` (SPC-0120), so it gains nothing. Nothing else in item 3 enters the MVP, which keeps report v1's nine screens unchanged (REQ-6682, ADR-0380).
 
 ### Increment 2, after the MVP: the breakdown and the trajectory
 

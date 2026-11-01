@@ -45,7 +45,6 @@ if (!template) throw new Error("no_framable_template");
 
 const clean = {
   unsafe: 0,
-  joke: 0,
   changed: 0,
   fits: 0.5,
   flows: 0.5,

@@ -3,8 +3,8 @@ id: REQ-5864
 artifact: requirement
 topic: selection
 class: functional
-status: approved
-revised: 2026-09-28
+status: withdrawn
+revised: 2026-11-01
 elaborates: RES-4080
 verification: evaluation
 ---
@@ -12,6 +12,8 @@ verification: evaluation
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
 # REQ-5864
+
+Withdrawn by ADR-3260: the owner decided on 2026-11-01 that every template takes a story, so no share of tasks stays without one.
 
 In a node with templates of both formats, at least half of the node's scored tasks in any 30 days MUST be bare.
 

@@ -27,13 +27,6 @@
           "false": "The story is kind or a little spooky, like a children's campfire story: rustles, shadows, mysterious vanishings, and nothing bad happens."
         }
       },
-      "joke": {
-        "instructions": "Does the story hold a joke?",
-        "criteria": {
-          "true": "The author jokes or quips, and it distracts from the question.",
-          "false": "The story may be odd or funny by situation, but holds no joke."
-        }
-      },
       "changed": {
         "instructions": "Has the maths changed, or is the answer given away?",
         "criteria": {

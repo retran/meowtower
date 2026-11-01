@@ -2,8 +2,8 @@
 id: ADR-0110
 artifact: adr
 status: approved
-revised: 2026-10-10
-addresses: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1684, REQ-1840, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-2610, REQ-2714, REQ-2726, REQ-3316, REQ-3320, REQ-3330, REQ-3712]
+revised: 2026-11-01
+addresses: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-8154, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1684, REQ-1840, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1818, REQ-1820, REQ-1822, REQ-1826, REQ-1828, REQ-1830, REQ-1838, REQ-2610, REQ-2714, REQ-2726, REQ-3316, REQ-3320, REQ-3330, REQ-3712]
 supersedes: []
 issue: 31
 projected: 88a32da0b578
@@ -50,7 +50,7 @@ waits and never shows unchecked text.
    estimate, a response time or a lesson tag (REQ-1604). The service discards
    a whole reply that names an unknown speaker, carries an extra field, holds
    an effect outside the closed set or lacks a branch or ending its kind
-   requires (REQ-1606, REQ-1610). The Director applies only these effects
+   requires (REQ-8220, REQ-1610). The Director applies only these effects
    (REQ-1608): `remember`, `relation`, `running_joke`, `diary_page` from the
    predefined list, `reward_hint`, which it can ignore, and `title`. I chose a
    limit of one title a session, because the draft gave no number. The reply
@@ -71,8 +71,9 @@ waits and never shows unchecked text.
      and on discussing the heroine's abilities;
    - the rule to tell every outcome as an event in the world (REQ-1802, REQ-1804, REQ-1806, REQ-2610).
 
-   Story memory sends the last 7 session summaries, one summary for each
-   earlier chapter and at most 200 facts. The prompt drops the facts used
+   Story memory holds spine, season, arc, episode and situation levels
+   beside the ontology (ADR-3240), and each request stays within its role's
+   token budget (REQ-8088). The prompt drops the facts used
    least recently, and every fact stays stored in the append-only event log.
    The session summary feeds the opening «В прошлый раз…» (Last time…) of the
    following adventure, and characters refer back to past interactions, choices,
@@ -89,7 +90,7 @@ waits and never shows unchecked text.
    REQ-1632). The Master drafts 2 to 3 scenes ahead and both room branches
    while she solves tasks. The consequence of an answer comes from the pool
    and the ready branch, and nothing on that path awaits a model (REQ-1614).
-   After free text, the wait has a p95 of at most 6 seconds, a limit REQ-1622
+   After free text, a reaction line shows first within ADR-0320's budget, and the Master's checked reply follows with a p95 of at most 6 seconds, a limit REQ-1622
    imposes. I split it as 100 ms for the local steps, 4,400 ms for the Master,
    1,000 ms for the reply checks, run in parallel, and 500 ms of slack; the
    split stands in the Baselines table of ADR-0190. When
@@ -110,7 +111,7 @@ waits and never shows unchecked text.
       shame words, the school words and praise of intelligence;
    6. in parallel, the safety check by `JUDGE_MODEL`, or `SAFETY_MODEL` as its
       fallback, against the forbidden-content checklist, and the creepiness
-      Score, which must not pass the order's level (REQ-1616).
+      Score, which must not pass the order's level (REQ-8220).
 
    Steps 1, 4, 5 and the safety check run in the shared check module of
    ADR-0120, and a reply reaches the screen only as its `CheckedText` type,
@@ -140,8 +141,8 @@ waits and never shows unchecked text.
    pace and with no live frames. It drops any reply not yet checked, because
    the checks can't be paid for (REQ-2714, REQ-2726).
 6. Her text, before a model reads it. The hand-written triggers in
-   `content/safety.ru.json` run first, on her raw text on the Mac (REQ-1816,
-   REQ-1834). They're phrase patterns. A content test runs them over the
+   `content/safety.ru.json` run first, on her raw text on the Mac (REQ-8230,
+   REQ-8230). They're phrase patterns. A content test runs them over the
    canon, the pool and 200 ordinary story phrases, and the test fails if any fires, because
    the Tower is full of secrets that a word list would read as a request to
    keep one. What follows depends on the level:
@@ -149,15 +150,15 @@ waits and never shows unchecked text.
      Master's line becomes the fixed «Это звучит серьёзно. Об этом лучше
      рассказать маме или папе — они помогут». The game pauses with
      «Вернуться в историю». A `safety_event` puts a notice at the top of the
-     Parent Room until the parent opens it (REQ-1822, REQ-1824, REQ-1826).
+     Parent Room until the parent opens it (REQ-1822, REQ-8230, REQ-1826).
    - A narrator trigger answers a direct «ты человек?» or «ты ИИ?» with the
-     fixed System line of REQ-1808, and no model is called.
+     fixed storyteller's line of REQ-1808, and no model is called.
    - Otherwise the gateway cleans the text. The judge's signal Choice among
      none, everyday and serious runs beside the Master's order. The final
      level is the higher of the trigger's and the judge's, so a model never
-     lowers what a trigger found (REQ-1836). A judge probability for serious
+     lowers what a trigger found (REQ-8230). A judge probability for serious
      at or above the threshold the stage 0 test set sets counts as serious,
-     and that's how doubt becomes serious (REQ-1832). A serious result drops
+     and that's how doubt becomes serious (REQ-8230). A serious result drops
      the Master's reply and takes the serious path.
    - An everyday level makes the order ask for a warm answer inside the
      story, and marks the scene quietly in the dialogue book (REQ-1818,
@@ -170,7 +171,7 @@ waits and never shows unchecked text.
    After the MVP, a serious signal also sends a web push with a fixed line and
    no details to each phone the parent subscribed. A failed push is logged,
    and the notice stays (REQ-1828, REQ-1830).
-7. Creepiness and dreamcore. The parent sets a level of 0, 1 or 2, default 1,
+7. Creepiness and dreamcore. The parent sets a level of 0, 1 or 2, default 2,
    named «Уютно», «Чуть жутковато» and «Загадочно» (REQ-1514, REQ-1516).
    Every order carries the level in force, and every pool line carries a
    minimum and a maximum level, so a line above the level never shows
@@ -235,8 +236,8 @@ waits and never shows unchecked text.
    это имя» and the suggestions again. A name with a digit or a word from the
    numeral list carries a flag that the frame filler of ADR-0130 honours, so
    it never reaches a task statement (REQ-1672).
-10. The campaign. The calendar in `content/campaign.ru.json` runs from the
-    start date the parent sets. `campaignId` lives only in the story tables,
+10. The campaign. The world calendar in `content/campaign.ru.json` counts
+    played adventures, and a skipped real day passes nothing (ADR-3230). `campaignId` lives only in the story tables,
     so a change of campaign leaves every diagnostic record as it was
     (REQ-1658). The MVP's stand-ins follow RES-1600 (REQ-1678, REQ-1680,
     REQ-1684):
@@ -249,11 +250,11 @@ waits and never shows unchecked text.
     ADR-0140 grants the rewards. When ciphers ship, a cipher answer is a
     `diary_cipher` event, which the input filter of the knowledge model
     (ADR-0060) excludes, so it's never scored as maths (REQ-1508).
-11. The planner. After each session, `PLANNER_MODEL` receives the filtered
+11. The planner. After each session, the story pipeline of ADR-3240 receives the filtered
     canon, story memory, the session's summary outcome events, her cleaned
     text and choices, the checkpoint and the level's name. It returns a
     summary and a plan of 5 to 7 beats, which pass the same checks as a reply
-    (REQ-1640). After a second failure, the next session plays the unused
+    (REQ-8154). After a second failure, the next session plays the unused
     beats of the last accepted plan and a library opening, and the owner gets
     one report.
 12. Ahead-of-time adventure preparation and parent preview. The parent can
@@ -359,7 +360,7 @@ checks before it plays.
 | Do nothing: no Master, a hand-written branching story from the library alone | no model risk, no cost, a person checks every line | a year of daily adventures can't be written by hand, and free text at the five points of REQ-1630 needs an answer; the library stays as the fallback |
 | The model as game master, with tools that choose tasks and grant rewards | the most reactive and surprising story | the model would decide what happens, which REQ-1600 forbids, and each tool call is a path from the story into the measurement |
 | A live Master for every beat, reactions to answers included | reactions made for each answer | about 70 calls a session, each with a wait (RES-2700), and REQ-1614 forbids waiting for the consequence |
-| Stream the text as it's generated and check it afterwards | the typewriter starts at once, the best latency | REQ-1616 requires the checks before a reply shows, and a child can't unread a line |
+| Stream the text as it's generated and check it afterwards | the typewriter starts at once, the best latency | REQ-8220 requires the checks before a reply shows, and a child can't unread a line |
 | Write the whole adventure overnight and check it in a batch | every text checked at leisure, the cheapest calls | nothing could react to her free text; the scenes between trials keep this idea, because the Master drafts them ahead |
 
 ## What it costs
@@ -396,7 +397,7 @@ about $0.005 (RES-2700), and more when a check falls back to `SAFETY_MODEL`.
 
 - After the checks are tuned, `fallback_rate_high` fires on more than a third
   of the first month's adventures. The checks then move from blocking to a
-  scored review, which needs the owner to amend REQ-1616.
+  scored review, which needs the owner to amend REQ-8220.
 - No approved candidate meets the 6-second p95 of REQ-1622 with the checks.
   Free-text replies then come from the drafted queue, and the live call feeds
   only the next scene.
@@ -454,7 +455,7 @@ about $0.005 (RES-2700), and more when a check falls back to `SAFETY_MODEL`.
 
 - How calls are routed, charged and logged, and which models play: ADR-0100.
 - REQ-1510, that art and art prompts reuse no other work: ADR-0170.
-- REQ-1546, that task statements carry no jokes: ADR-0130, which owns task
+- REQ-8166, that a task's story may carry a joke: ADR-3260, which owns task
   text.
 - The words on the forbidden list and the gate that checks every text source
   against it: ADR-0160.
@@ -488,6 +489,8 @@ Amended on 2026-10-31: this record no longer addresses REQ-1514 and REQ-1524, wh
 Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
 
 Amended by ADR-3240, approved on 2026-10-31: the single planner becomes the story pipeline's roles, and the Master still writes only inside checked scene orders.
+
+Amended by ADR-3270, approved on 2026-11-01: a scene order is a turn's order, and the Master gains tools.
 
 ## Plan
 

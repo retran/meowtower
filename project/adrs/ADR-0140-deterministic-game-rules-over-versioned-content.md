@@ -23,7 +23,7 @@ The module holds five rule sets, and each takes its numbers from one content fil
 | Rule set | Content file | What it decides |
 | --- | --- | --- |
 | Outcomes | `content/thresholds.json` | a spell's outcome, the badge, the streak, clean rows, the room branch, the floor state, the chapter finale variant, the reward queue |
-| Progression | `content/economy.json` | ability levels, rank, daily quests, the pattern row, the day count, the nearest goal |
+| Progression | `content/economy.json` | daily quests, the pattern row, the day count, the nearest goal |
 | Rewards | `content/economy.json` | buttons, shards, yarn, floor materials, chest contents and quality, shop prices and shelf, forge recipes |
 | Familiars | `content/familiars.yaml` | the roster, starters, friendship points and levels, evolution stages and thresholds, the bestiary |
 | Tricks and items | `content/economy.json` | the catalogue of outfits, accessories, foci, curiosities and tricks, each with a category and no power field |
@@ -62,7 +62,7 @@ The game accumulates no experience. Ability levels and rank are computed from th
 
 A rise of an ability level or rank fires a ceremony of light and motion and grants no item or currency. The heroine starts at rank E in Session 0 and her rank follows ADR-3220; Mirra holds rank D as a fixed content value in the MVP. The MVP ships no stats or paths, and no rank month appears in the canon. If stats arrive later, the module sends the Master each stat only as low, medium or high relative to the others, and no task rule reads a stat.
 
-Each game day the module picks 3 daily quests from a pool of templates by the day's seed. Every template counts an act of play, such as clearing floors or picking from a chest, and none counts a correct answer. A content check rejects a template whose counter reads a verdict. A quest met gives 10 buttons and 1 thread. An unmet quest disappears when the game day ends, with no event the player sees. The optional pattern row comes at most once in 3 days, from a success branch, and gives 2 star yarn and nothing else.
+Each game day from day 3 of play the module picks 3 daily quests from a pool of templates by the day's seed. Every template counts an act of play, such as clearing floors or picking from a chest, and none counts a correct answer. A content check rejects a template whose counter reads a verdict. A quest met gives 10 buttons and 1 thread. An unmet quest disappears when the game day ends, with no event the player sees. The optional pattern row comes at most once in 3 days, from a success branch, and gives 2 star yarn and nothing else.
 
 The day count is the number of game days on which the player answered at least one task, computed from the log. The module keeps no streak of days, and the player's side of the client has no notification code: no Web Push subscription, no Notification API call and no service-worker push handler. A static check fails the build if any of these appear outside the Parent Room's code, which keeps room for the parent's alarm that ADR-0110 leaves to a later stage.
 
@@ -104,9 +104,9 @@ A chest offers three rewards from three different categories out of cosmetics, s
 
 A Diary page has no quality tier and always counts as good, so when pages take the largest shortfall in a success chest, the sparkling slot moves to the next category. A cosmetic reward is an item she doesn't own, from the category its quality names: a curiosity when ordinary, an accessory when good and an outfit when sparkling. The floor chest on `triumph` adds the floor's special reward. The server logs the three offered rewards, so a resume before the pick shows the same three.
 
-The shop sells for buttons only, at the fixed prices REQ-2156 sets, shown before she buys. The shelf holds 1 focus, 2 outfits, 2 accessories and 1 curiosity. At the start of each game day the module replaces 2 slots with items of the same category, taking emptied slots first and then the longest-standing. It picks each item by a hash of the day's seed. The candidates are the items she doesn't own that aren't on the shelf and haven't left it unsold in the last 7 days. The catalogue holds at least 20 items outside the forge recipes. The shop opens on day one. The forge opens with the first recipe at the end of the first day on which she holds a floor material. The first room chest guarantees one on her first day, so the forge opens well before the seventh day REQ-2126 allows. Every recipe has three rows, shards, yarn and one floor material, at the tier amounts of REQ-2172, and the MVP ships the six recipes REQ-2176 names.
+The shop sells for buttons only, at the fixed prices REQ-2156 sets, shown before she buys. The shelf holds 1 focus, 2 outfits, 2 accessories and 1 curiosity. At the start of each game day the module replaces 2 slots with items of the same category, taking emptied slots first and then the longest-standing. It picks each item by a hash of the day's seed. The candidates are the items she doesn't own that aren't on the shelf and haven't left it unsold in the last 7 days. The catalogue holds at least 20 items outside the forge recipes. The shop opens on day 8 of play. The forge opens with the first recipe on day 6 of play. The first room chest guarantees one on her first day, so the forge opens well before the seventh day REQ-2126 allows. Every recipe has three rows, shards, yarn and one floor material, at the tier amounts of REQ-2172, and the MVP ships the six recipes REQ-2176 names.
 
-A trick's catalogue entry names an animation preset and a sound, and its schema has no field any other rule reads. The game offers no purchase with money, has one currency for the shop and shows no leaderboard. The API of ADR-0030 has no payment route and no route that ranks players, and a static check fails the build if a payment SDK or a ranking endpoint appears.
+A trick's catalogue entry names an animation preset that differs from its base spell's, and may name a sound event, and its schema has no field any other rule reads. The game offers no purchase with money, has one currency for the shop and shows no leaderboard. The API of ADR-0030 has no payment route and no route that ranks players, and a static check fails the build if a payment SDK or a ranking endpoint appears.
 
 ### Familiars
 
@@ -122,7 +122,7 @@ The bestiary is a projection. It shows a page for each creature met, the share o
 
 ### What works once this is accepted
 
-On top of ADR-0010 to ADR-0130, a played adventure ends rooms and floors on logged branches and states and fills chests. It grants currencies, levels up, tracks quests, grows friendship and evolves familiars, all testable through the API with no screen. What doesn't work yet: the screens and ceremonies wait for ADR-0150 and the Russian words for ADR-0160. The pictures wait for ADR-0170, the Parent Room's views for ADR-0180 and the calibration simulation for ADR-0190. Without this decision the game still asks and checks tasks; it shows no results and grants nothing.
+On top of ADR-0010 to ADR-0130, a played adventure ends rooms and floors on logged branches and states and fills chests. It grants currencies, tracks quests, grows friendship and evolves familiars, all testable through the API with no screen. What doesn't work yet: the screens and ceremonies wait for ADR-0150 and the Russian words for ADR-0160. The pictures wait for ADR-0170, the Parent Room's views for ADR-0180 and the calibration simulation for ADR-0190. Without this decision the game still asks and checks tasks; it shows no results and grants nothing.
 
 ## Why
 
@@ -172,7 +172,7 @@ The strongest objection is that the accuracy bonuses still pay for being right. 
 - The reward queue has a ceiling: it can't hold more than one entry a room over 6 sessions, about 30, because entries drain at 6 sessions old. If it passes 40 entries, the Parent Room reports it once, because that count means the drain has stopped; the ceiling stands in the Baselines table of ADR-0190.
 - A slot the shelf can't fill, because every item of its category is owned, on the shelf or resting, is the failure state `shelf_slot_empty`. The slot shows the shopkeeper's restocking line, and the Parent Room tells the owner once that the catalogue needs items.
 - A content file that fails its schema is the failure state `content_invalid`: the server keeps the last valid version and refuses the new one, and the verify command reports it to the owner, who fixes the file. The player sees nothing.
-- A Guardian without three endings at runtime is the failure state `guardian_endings_missing`, which the build check makes unreachable in a released build. If it happens anyway, the Director skips the Guardian problem, the floor ends with the System's state line, and the log tells the owner.
+- A Guardian without three endings at runtime is the failure state `guardian_endings_missing`, which the build check makes unreachable in a released build. If it happens anyway, the Director skips the Guardian problem, the floor ends with the storyteller's state line, and the log tells the owner.
 
 The security boundary is the server: the client holds no rule and no amount. A reload, a double tap or a replayed request can't grant twice or re-roll a chest, because ADR-0030 deduplicates answers and a chest is logged once offered. The likeliest attacker is the player herself, testing whether a refresh changes a chest; the deterministic chest answers her.
 

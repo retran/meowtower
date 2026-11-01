@@ -26,7 +26,7 @@ path to a model can't appear unnoticed.
 The gateway has six parts.
 
 1. Roles. The roles are `MASTER_MODEL`, `MASTER_FALLBACK_MODEL`,
-   `PLANNER_MODEL`, `EXPLAIN_MODEL`, `LIVE_GEN_MODEL`, `LIVE_CHECK_MODEL`,
+   `SHOWRUNNER_MODEL`, `EXPLAIN_MODEL`, `LIVE_GEN_MODEL`, `LIVE_CHECK_MODEL`,
    `SAFETY_MODEL`, `JUDGE_MODEL`, `ART_JUDGE_MODEL`, `GEN_MODEL`,
    `CHECK_MODEL`, `LIVE_ART_MODEL`, `ART_MODEL_CHAR`, `ART_MODEL_KEY` and
    `ART_MODEL_BG`. Each takes its model id from `.env`, with the defaults
@@ -125,9 +125,9 @@ the owner-approved figures of RES-2700:
 
 | Bucket | Limit | Counts | When it runs out |
 | --- | --- | --- | --- |
-| Adventure | $1.5 an adventure (REQ-2702) | the Master, the planner, live frames, blind checks, the judge and `SAFETY_MODEL` | live calls stop for that adventure; ADR-0110 plays the library and the pools at the usual pace, with no live frames (REQ-2714) |
+| Adventure | $5 an adventure (REQ-7690) | the Master, the planner, live frames, blind checks, the judge and `SAFETY_MODEL` | live calls stop for that adventure; ADR-0110 plays the library and the pools at the usual pace, with no live frames (REQ-2714) |
 | Explanations | $0.3 and 20 live generations a game day, which ends at 04:00 (REQ-2704, REQ-2706) | `EXPLAIN_MODEL` and its blind check | a spent thread still gets an explanation from the cache or a template, which ADR-0120 writes (REQ-2716) |
-| Month of play | $60 from 00:00 UTC on the 1st, by the game's own count and by the play key's `limit: 60` with `limit_reset: monthly` (REQ-2718, REQ-2720) | every call on the play key, the judge's included (REQ-2724) | every session to the month's end uses the fallbacks, also after an HTTP 402 from OpenRouter; one `budget_month_spent` event makes the Parent Room show a notice until the month ends (REQ-2722) |
+| Month of play | $200 from 00:00 UTC on the 1st, by the game's own count across routes (REQ-7700, REQ-7710) | every call on the play key and the direct route | every session to the month's end uses the fallbacks; one `budget_month_spent` event makes the Parent Room show a notice until the month ends |
 | Art run | $40 a run (REQ-2708) | offline art on the offline key | the run stops and reports what it made |
 | Bake-off | $25 (REQ-2710) | the bake-off on the offline key | the run stops and reports the candidates it finished |
 | Live art | $0.5 an adventure (REQ-2712) | `LIVE_ART_MODEL`, after the MVP | unset in the MVP, where the role is off and the gateway refuses any call to it |
@@ -157,7 +157,7 @@ checked offline shows then (REQ-2726).
 
 The judge and the Master's routes follow RES-1600:
 
-- A `JudgeRequest` goes only to `JUDGE_MODEL`, and the judge takes no other
+- A `JudgeRequest` goes to the route ADR-0350 resolves for its check: a local judge, `JUDGE_MODEL` or `SAFETY_MODEL`, and the judge takes no other
   class, so Jev never writes text, solves a task or judges a picture
   (REQ-1686).
 - The setting `JUDGE_CHECKS` names the checks moved to Jev. The server
@@ -223,7 +223,7 @@ the text she writes. The threats, most likely first:
    start-up check stop it.
 4. OpenRouter itself reads the traffic. It keeps metadata and no prompts
    while the account's logging stays off (RES-2600).
-5. Someone steals a key from `.env`. The key limits cap the loss at $60 a
+5. Someone steals a key from `.env`. The key limits cap the loss at $200 a
    month on play and at the run's budget offline.
 
 Voice input lies outside this boundary. The owner decided on 2026-09-27:
@@ -263,7 +263,7 @@ phone numbers, Dutch postcodes and e-mail addresses.
 
 The reservation answers the question of concurrency. The Master drafts
 scenes ahead in parallel, so a check after each call would let several calls
-pass the limit together. The monthly count of $60 sits above the $55.80 the
+pass the limit together. The monthly count of $200 sits above the $55.80 the
 daily caps allow in a 31-day month (RES-2700). It fires only when something
 bypasses the daily caps, such as a bug that repeats calls.
 
@@ -308,16 +308,12 @@ parent scores the bake-off blind: about 12 prompts for each candidate, once at
 stage 0 and again at each rerun.
 
 If nobody attends for a month, play goes on. The monthly count stops live
-calls at $60, the game runs on fallbacks, and the only table that grows is
+calls at $200, the game runs on fallbacks, and the only table that grows is
 `llm_log`.
 
 `llm_log` stores whole requests and responses, and each Master row would
 repeat a cached canon block of about 30,000 tokens (RES-2700). I chose to
-store the canon block once by its hash. A nightly job deletes request and
-response bodies after 90 days and keeps the metadata row, which the cost
-count needs. The deletion is safe, because the `scene_shown` events keep the
-text she saw. The body store reports once to the owner when it passes 1 GB, a
-ceiling I chose.
+store the canon block once by its hash. `llm_log` keeps every body for good (ADR-3200).
 
 The egress guard also refuses some harmless text, such as a topic word she
 used in a story sense. Each refusal costs one library scene where a live one
@@ -354,7 +350,7 @@ would have played.
   model and no evaluation spends from the play key.
 - The budgets in the table above stand in the Baselines table of ADR-0190
   with the judge's 1500 ms timeout, the 10-minute catalogue retry and the
-  1 GB ceiling on `llm_log` bodies.
+
 
 ## How I will know it was realised
 
@@ -370,8 +366,8 @@ would have played.
    names the role. With the catalogue unreachable, it starts with live calls
    off.
 4. A test fires 20 concurrent Master calls at a nearly spent adventure
-   bucket, and the settled spend stays at or under $1.5.
-5. A test replays a month of calls past $60 and a mocked HTTP 402. The
+   bucket, and the settled spend stays at or under $5.
+5. A test replays a month of calls past $200 and a mocked HTTP 402. The
    gateway refuses every later call, appends one `budget_month_spent` event,
    and the game plays on fallbacks.
 6. A test sends an `ExplainRequest` without a matching `thread_spent` event,
@@ -449,9 +445,9 @@ The upgrade folded these open tasks in (ADR-3090). Read each one before its step
 3. The egress guard replaces names and contact details, refuses topic names and digits, and keeps her text out of picture prompts (`archive/tasks/TSK-0582-egress-guard-cleans-and-refuses.md`)
 4. Each request goes under a privacy tier its role fixes, to a provider list the owner can change without a rebuild (`archive/tasks/TSK-0583-privacy-tiers-fixed-by-role.md`)
 5. The server refuses to start when a configured model is missing or a player-tier model has no zero-retention endpoint (`archive/tasks/TSK-0584-start-up-check-refuses-an-unsafe-model.md`)
-6. Each call reserves its worst-case cost first, and an adventure's spend stops at $1.5 (`archive/tasks/TSK-0585-reserve-before-each-call-adventure-budget.md`)
+6. Each call reserves its worst-case cost first, and an adventure's spend stops at $5 (`archive/tasks/TSK-0585-reserve-before-each-call-adventure-budget.md`)
 7. Live explanations stop at $0.3 and 20 a game day, and a spent thread still gets one from the cache or a template (`archive/tasks/TSK-0586-explanation-budget-and-cache-fallback.md`)
-8. The play key's month stops at $60, every later session uses the fallbacks, and the parent sees a notice (`archive/tasks/TSK-0587-month-limit-play-key-and-notice.md`)
+8. The play key's month stops at $200, every later session uses the fallbacks, and the parent sees a notice (`archive/tasks/TSK-0587-month-limit-play-key-and-notice.md`)
 9. Offline runs spend from their own key and stop at their own budgets: $40 for art, $25 for the bake-off, $0.5 for live art (`archive/tasks/TSK-0588-offline-key-and-run-buckets.md`)
 10. Every call to a model service is recorded with its cost (`archive/tasks/TSK-0589-every-call-is-logged-with-its-cost.md`)
 11. When a budget runs out or the service is down, the game plays checked library text at its usual pace (`archive/tasks/TSK-0590-play-continues-on-checked-library-text.md`)

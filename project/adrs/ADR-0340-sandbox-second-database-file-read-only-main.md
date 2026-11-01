@@ -58,7 +58,7 @@ A reset closes the sandbox handle, answers any sandbox request in flight with `4
 
 A sandbox model call goes through ADR-0100's gateway marked as a sandbox call, as ADR-0210 names the mark, and with the sandbox's handle. The gateway uses the role's own privacy tier, egress guard and schemas, exactly as in play (REQ-6330), spends from the offline key under ADR-0210's sandbox bucket of $20 a month, and writes its `llm_log` row and its `llm_call` event to the handle it was given, so they land in the sandbox's file (REQ-6328). The gateway reserves each call against that bucket by reading the month's sum from `sandbox-spend.sqlite` plus the reservations in flight, and settles each call there. A reset never touches that file, so the month's count survives every reset (REQ-6374). The play key's monthly count reads only the main file's `llm_log`, so no sandbox call enters it (REQ-6336). The Parent Room's cost line shows «Песочница» (Sandbox) on a line of its own with the month's spend against the $20, the command line's calls included (REQ-6340).
 
-The riddle parser run in the sandbox spends from the sandbox bucket as well, never from the play key's $0.1 parse bucket, because that bucket is part of the play key's $58.90 month (ADR-0210).
+The riddle parser run in the sandbox spends from the sandbox bucket as well, never from the play key's $0.1 parse bucket, because that bucket is part of the play key's $167.40 month (ADR-0210).
 
 Until the gateway and the PIN both exist, the sandbox's model routes answer ADR-0210's `409 sandbox_models_unavailable`, and on 2026-09-28 the gateway doesn't exist yet.
 
@@ -114,7 +114,7 @@ I chose an envelope column for the mark over a reserved `device_id` or a payload
 
 Snapshots are rebuilt rather than taken as a whole `VACUUM INTO` copy, because that copy holds the PIN hash, the lockouts and the device tokens (RES-4130), and because its events would carry `profile = 'main'` into a file whose trigger refuses them.
 
-The money rules follow RES-4130's finding that a sandbox budget inside the $60 limit lets the sandbox end the player's live story for the rest of a month, and the owner's decision of 2026-09-28 that moved the sandbox to the offline key. The spend ledger is a third file, because REQ-6374 needs the count where a reset doesn't reach and REQ-6370 keeps it out of her file.
+The money rules follow RES-4130's finding that a sandbox budget inside the $200 limit lets the sandbox end the player's live story for the rest of a month, and the owner's decision of 2026-09-28 that moved the sandbox to the offline key. The spend ledger is a third file, because REQ-6374 needs the count where a reset doesn't reach and REQ-6370 keeps it out of her file.
 
 The confirmed actions write their own event types with `source: "sandbox"`, as ADR-0210 decides, so each fact has one record in her log and the projections that already fold `item_excluded` and `puzzle_approved` need no second input. Acceptance test 18's second run can still count them, because every one carries `source: "sandbox"` and the `sandbox-action:` idempotency key. Serving them from the Parent Room's module keeps the main handle out of the sandbox module entirely.
 
@@ -231,7 +231,7 @@ The premortem, written as though it had happened: in February the parent found t
 15. A search of the routes finds no calibration route under `/api/parent/sandbox/`, and the import check fails on a planted import of the main handle in `src/server/sandbox/` and in a play handler.
 16. A test builds a context `{ mainDb, profile: 'main' }` inside a sandbox route and appends an event; the event carries the device identifier `sandbox`, and the next nightly run reports exactly one `sandbox_leak_found`.
 17. The full verify on the family Mac snapshots a synthetic 1 GB file and fails when the snapshot takes more than 180 seconds.
-18. Playwright finds «Отключено: 1» on the Parent Room's first screen after one confirmed disable, and no such line after the restore.
+18. Playwright finds «Отключено: 1» in the front page's owner's line after one confirmed disable, and no such line after the restore.
 
 ## What this does not settle
 

@@ -2,8 +2,8 @@
 id: ADR-0130
 artifact: adr
 status: approved
-revised: 2026-10-31
-addresses: [REQ-3600, REQ-3624, REQ-3640, REQ-3642, REQ-3646, REQ-3660, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-1236, REQ-1238, REQ-1546]
+revised: 2026-11-01
+addresses: [REQ-3600, REQ-3624, REQ-3642, REQ-3646, REQ-3660, REQ-3650, REQ-3652, REQ-3654, REQ-3656, REQ-3658, REQ-1236, REQ-1238]
 supersedes: []
 issue: 33
 projected: b309fdab92dd
@@ -12,41 +12,11 @@ tracked: 6fa05684d628
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
-# 0130. Model text reaches a task only as a placeholder frame that passed the checks, from a library the parent accepted or a live top-up queue, and science questions come only from a bank the parent approves
+# 0130. Model text reaches a task only as a placeholder frame, and a Diary puzzle only as approved bank text under ADR-0280 that passed the checks, from a library the parent accepted or a live top-up queue, and science questions come only from a bank the parent approves
 
 ## Decision
 
-A model writes story frames and nothing else that enters a task's text. A frame reaches the player only from the frame library, where every frame passed the automatic checks and the parent accepted it, or from the live queue, where every frame passed the same checks plus one more blind solve with the task's own numbers. Natural science questions never come from text generated during play: an agent or a person drafts them into a bank, and the parent approves each one before it reaches the player. The reader of this record is evaluating the design, so the rules come first and the mechanics after them.
-
-A frame is text with placeholders for every number, name and counted noun, for example «{hero} купила на Ярмарке Весов {a} {item:gen} по {b} монет…» ("{hero} bought {a} {item} at the Fair of Scales for {b} coins each…", RES-0700). The engine fixes the task's steps, numbers and answer first (REQ-0782, ADR-0040), then picks a frame for the task's structure, and code fills the placeholders (REQ-3602). When a name she gave carries ADR-0110's numeral flag, the filler puts the canon name of that familiar's kind in its place, so a name like a number never reaches a task statement (REQ-1672). Each frame records its structure, locale, floor, characters and the role of each number placeholder, and has a content hash.
-
-The pipeline a frame passes, offline and live alike:
-
-1. The request to the author model carries a structural specification: the solution graph's steps, the role of each number placeholder (`{a}` a price, `{b}` a quantity), the floor, the characters in the scene, and the limits on length and vocabulary (REQ-3620). The length limit is at most k+1 sentences of at most 14 words for a k-step problem, with the question as its own last sentence (RES-0700), and the vocabulary limits are ADR-0040's readability measures. Characters go to the model as canon names or as the placeholders `{hero}` and `{familiar}`, never as a name the player chose, so the request holds no player text.
-2. The request asks for 5 variants (REQ-3622), and the reply must match a fixed JSON schema, an array of 5 frame objects, or the server discards the whole reply (REQ-3624).
-3. Code checks each variant. Every placeholder the specification lists appears exactly once, and no other appears (REQ-3626). The text holds no digit and no number word from the numeral lexicon ADR-0120 defines, such as «два» (two), «половина» (half) or «дюжина» (dozen), matched by lemma (REQ-3628). The length limit and ADR-0040's readability measures, `frameMetrics`, hold, and the forbidden-word check ADR-0160 owns passes.
-4. The safety check runs on the text with its placeholders unfilled, on `JUDGE_MODEL` (Jev) as a yes-or-no question, and on `SAFETY_MODEL` when Jev errs or times out (RES-0720, RES-1600).
-5. Code fills the frame with three sets of numbers from the template's own generator under three seeds, and name placeholders with fixed stand-in names. A checking model solves each filled problem blind, stating an answer in free form, and the engine's answer checker compares it with the engine's answer for that set. The frame passes only if all three match (REQ-3630). The solver sees the problem text and nothing else: no answer and no list of candidate answers (REQ-3634). Offline the solver is `CHECK_MODEL`, and live it is `LIVE_CHECK_MODEL` (RES-0720).
-
-A task statement carries no joke (REQ-1546), because a joke in the text a measurement rests on distracts from the maths. The request in step 1 asks for plain text with no joke, the safety question in step 4 also asks whether the frame holds one, and the parent judges every frame for it at acceptance and every template's fixed text at stage acceptance (ADR-0190).
-
-The frame library holds only frames the parent accepted (REQ-3638). `npm run frames:generate` runs outside any session with `GEN_MODEL` and `CHECK_MODEL`, and puts each variant that passed steps 1 to 5 into a candidates file in the server's `data/` folder (ADR-0010). The Parent Room's frame review screen shows each candidate with its structure and floor, and offers «принять / отклонить / поправить» (accept / reject / edit) (REQ-3636). An edit reruns the code checks of step 3 at once, so the parent sees in words what an edited text failed; an edit that passes them waits for the three blind solves, which run at the next `frames:generate`, and joins the library only when they pass. Acceptance writes a `frame_accepted` event holding the frame's text and hash, marked `as_written` or `as_edited`.
-
-The library in play is the set of frames whose hash the log holds in a `frame_accepted` event and in no later `frame_removed` event. The server writes the library to `data/exports/frames.ru.json` after each change, and the owner commits that copy to `content/frames.ru.json`, as RES-0720 asks. The server serves a frame from the committed file only when the log holds its acceptance, so a frame added to the file by hand never reaches her. I chose the log over a flag inside the file, because the log is the only truth (ADR-0020), and only the Parent Room behind the PIN writes a parent's event.
-
-Probes, the Guardian ladder and every fallback take their frames only from the library (REQ-3604). Live frames serve one case only: a task the Director adds to complete a node's full block after a probe escalates (REQ-3616, ADR-0070).
-
-The frame for a task is the least recently shown frame of its structure and locale in the library, with never-shown frames first and ties broken by the task's seed. The least recently shown frame is always one not shown in the last 14 game days when the structure has one (REQ-3610), and otherwise it is the frame shown longest ago (REQ-3612). A game day ends at 04:00, as ADR-0090 sets it. The `item_shown` event carries `frameId`, `frameSource` (`library` or `live`, RES-2550) and `frameRepeat: true` when the frame was shown within 14 game days (REQ-3614).
-
-Live generation runs only while `LIVE_FRAMES` is on, the adventure budget has money left (ADR-0100) and the day's rejection share is under the limit. While it runs, the server looks at the block top-up slots the Director has placed in the next 2 to 3 rooms (ADR-0070, ADR-0090). For each slot's structure it asks `LIVE_GEN_MODEL` for 5 variants, puts them through steps 1 to 5, and keeps the passing ones in the `frames` table with status `ready`, so checked frames wait ahead of her (REQ-3618). When the server builds the task for a top-up slot, it fills the oldest `ready` frame of the structure with the task's numbers, and `LIVE_CHECK_MODEL` solves that exact problem blind once more (REQ-3632). If the solve passes, the frame becomes `used` and the task shows it; if it fails or the queue holds no ready frame, the task takes a library frame. The server builds tasks ahead of the room, so she never waits for a solve.
-
-The `frames` table keeps every live frame with its status, never deleting one (REQ-3642): `ready`, `rejected` with the failing step, `used`, `final_failed`, `expired` at the end of the game day it was made for, or `moved`. The Parent Room lists live frames with their status, and one action, «В библиотеку» (To the library), writes the frame's `frame_accepted` event and marks it `moved` (REQ-3644). Moving a frame counts as the parent accepting it as written, so REQ-3638 still holds.
-
-If more than 30% of the live frames checked on a game day are rejected, counting from the tenth checked frame, the server writes `live_frames_paused` and takes every frame from the library until the game day ends (REQ-3640). A frame counts as checked when it has finished the pipeline or failed a step, the final solve included. This is the requirements step's default, which I carry.
-
-Every request to a model goes through ADR-0100's gateway, which records the request and response in `llm_log` (REQ-3646). `npm run frames:generate` calls the same gateway module on the offline key, so offline calls are recorded too.
-
-Every model text passes the safety check before she sees it (REQ-3600). Frames and explanations pass it inside the check module ADR-0120 defines, whose `CheckedText` type is the only model text the server's player-facing messages accept. ADR-0110 puts the Master's text through the same gate.
+A model writes story frames and nothing else that enters a task's text. Every template takes a live story when its task is requested (ADR-3100, ADR-3200, ADR-3210). The code fills the template once, the author writes 1 story with its real numbers, `FRAME_JUDGE_MODEL` scores and solves it, and a task with no story shows its prepared setting (ADR-3270). If more than 30 % of the live frames checked on a game day are rejected, the server writes `live_frames_paused` and shows the prepared setting until the game day ends.
 
 The science bank, `content/science.ru.json`, holds natural science questions an agent or a person drafts offline, each a choice from four, for the five topics E1 to E5. Each wrong option names the misconception it tests (REQ-1238), and the verify command (ADR-0190) fails when a topic holds fewer than 40 questions (REQ-1236). The science module in the server imports nothing from the model gateway, and the verify command's import rule fails the build if it does, so no code path can put a question generated during play in front of her (REQ-3660). The owner decided on 2026-09-27 that an agent may draft the bank's questions, each approved by the parent before use; a drafted question enters the bank file like any other and waits for its `science_approved` event. Each question has a content hash. The Parent Room's science review screen shows each question with its correct option and each wrong option beside its misconception, and the parent approves or rejects it. Approval writes a `science_approved` event with the hash, and the server serves a question only when the log holds an approval of its current hash, so editing a question sends it back for approval (REQ-3650).
 
@@ -77,7 +47,7 @@ Where the research left a point open, I chose, and each choice has its reason:
 
 ## What it costs
 
-Money: the offline library costs a few dollars (RES-2700). Live frames and their blind solves cost about $0.05 to $0.15 an adventure inside the $1.5 adventure budget (RES-2700, REQ-2702). These are research estimates, and ADR-0100's budgets are limits imposed on this decision.
+Money: the offline library costs a few dollars (RES-2700). Live frames and their blind solves cost about $0.05 to $0.15 an adventure inside the $5 adventure budget (RES-2700, REQ-2702). These are research estimates, and ADR-0100's budgets are limits imposed on this decision.
 
 The parent's time is the largest cost. By stage 0.2 the parent accepts at least 35 frames, 5 for each of the seven structures, and by stage 0.4 at least 140; I estimate about a minute a frame, so about two and a half hours in all, spread over the stages. `frames:generate` fills a structure's candidates only up to one and a half times its shortfall against the stage's target, with at least 5, so the queue never holds more than the parent needs to reach the target. Science costs more: about 200 questions before stage 0.5 and 400 from it (RES-0720), each with three misconceptions, for an agent to draft and the parent to approve. At my estimate of 2 minutes a question to read and approve, the first bank is about 7 hours of the parent's time.
 
@@ -127,24 +97,16 @@ The security boundary protects five things, most likely damage first:
 1. The player from an unsolvable or misleading problem, defended by the engine's numbers, the numeral check and the blind solves.
 2. The player from a wrong fact in science, defended by the parent approving each question, and by no automatic check.
 3. The player from unsafe or shaming words, defended by the forbidden list and the safety check.
-4. The library from frames nobody accepted, defended by the acceptance events.
+4. The player from a story that fails its checks, defended by ADR-3210's judge.
 5. Her data, which frames never carry, because a frame request holds no name or text of hers.
 
 Premortem, written as though it already happened: at stage 0.4 the verify command failed REQ-3608, because three structures held 9, 11 and 12 accepted frames. The parent had reviewed 40 candidates in the first week and none after, the game had shown the same motion frames every fourth day with `frame_repeat` in the log, and nobody read the count. Separately, a science question on the phases of the moon was approved with a wrong option marked correct, and for a month the science screen told the parent that the player held a misconception she didn't. The first shows in the reversal condition on review time; the second has no automatic defence, which is the strongest objection above.
 
 ## How I will know it was realised
 
-1. A test gives the checks a frame with `{a}` missing, one with `{a}` twice, one holding «дюжина», one holding a digit, and a reply outside the schema, and each is rejected with its step, and the reply as a whole.
-2. A test replaces the checking model with one that returns the engine's answer for two sets and a different answer for the third, and the frame is rejected; a recording of every blind-solve request finds no answer and no list of options.
-3. A test puts a frame in `content/frames.ru.json` with no `frame_accepted` event, and no task shows it.
-4. A simulation of 60 game days on a structure with 5 frames never shows a frame within 14 game days while an unshown one exists, marks every repeat in `item_shown`, and picks the frame shown longest ago each time.
-5. A simulation with `LIVE_FRAMES` on shows live frames only on block top-up tasks, never on a probe, a Guardian ladder step or a warm-up, and every live frame shown has a passing final solve in `llm_log`.
-6. A test rejects 4 of the first 10 live frames of a game day, and the server writes `live_frames_paused` and takes library frames until 04:00.
-7. After a simulated day, every live frame the server asked for is in `frames` with a status, and «В библиотеку» on one adds a `frame_accepted` event and serves it from the library.
 8. The verify command fails a build whose science module imports the gateway, whose bank holds 39 questions in a topic, or whose `repeatWindowDays` doesn't match the stage.
 9. A test edits an approved science question, and it isn't served until a new `science_approved` event holds its new hash.
 10. A simulation of 90 game days of science before stage 0.5 never repeats a question within 45 game days while its topic has a fresh one, and marks each repeat.
-11. At stage 0.2 acceptance, the count of accepted frames per structure is at least 5, and the parent reads 20 accepted frames and confirms each reads as a problem the player can solve.
 
 ## What this does not settle
 

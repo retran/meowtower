@@ -37,7 +37,7 @@ After the style check, each character gets a character sheet first: front, side 
 
 ### Making a variant
 
-Each request carries the style block, the negative block, the floor's palette and 2 to 3 references. keyart-heroine or the chosen heroine sheet goes always, the character's sheet where one exists, and keyart-tower or keyart-archive only for world pictures. The role table of ADR-0100 picks the model: `ART_MODEL_CHAR` for sheets, characters and items, `ART_MODEL_KEY` for key scenes and `ART_MODEL_BG` for backgrounds. If Seed refuses `bytedance-seed/seedream-4.5` under the content tier at stage 0, `ART_MODEL_BG` takes `google/gemini-3.1-flash-image`, as ADR-0100 expects of this record.
+Each request carries the style block, the negative block, the floor's palette and 1 to 3. keyart-heroine or the chosen heroine sheet goes always, the character's sheet where one exists, and keyart-tower or keyart-archive only for world pictures. The role table of ADR-0100 picks the model: `ART_MODEL_CHAR` for sheets, characters and items, `ART_MODEL_KEY` for key scenes and `ART_MODEL_BG` for backgrounds. If Seed refuses `bytedance-seed/seedream-4.5` under the content tier at stage 0, `ART_MODEL_BG` takes `google/gemini-3.1-flash-image`, as ADR-0100 expects of this record.
 
 A transparent asset is generated on a flat key colour outside its palette, magenta `#FF00FF` by default and green for pink and lilac assets. sharp (0.35.4 on npm on 2026-09-27) cuts it out, removes the key colour's spill from the edge pixels and writes WebP with alpha and a preview. A post-process check rejects a variant when any semi-transparent edge pixel stays within a set distance of the key's hue, so no fringe of the key colour ships.
 

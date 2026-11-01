@@ -265,7 +265,7 @@ safety path. The threats, most likely first:
    stop it (REQ-3910).
 2. Her text carries an instruction that tries to flip the verdict. The
    grammar allows only the labels, the triggers run first on her raw text,
-   and a model never lowers a trigger's level (REQ-1836).
+   and a model never lowers a trigger's level (REQ-8230).
 3. A model file from a community conversion, such as Shieldstral's, is
    crafted to exploit the runtime's file parser. The owner downloads each file
    once from the repository the candidate list names, and the hash pins it

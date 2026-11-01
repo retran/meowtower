@@ -16,11 +16,11 @@ tracked: 37889c078d51
 
 ## Decision
 
-The game is Meowtower, «Мяубашня» in Russian, and the repository is `retran/meowtower`. Every technical name that carried "tower" now carries "meowtower", by this table, which is authoritative wherever an approved record still uses an old name:
+The game's title is «Туманный Брод» in Russian, Misty Ford in English and Nevelwade in Dutch, and every technical name is Meowtower, and the repository is `retran/meowtower`. Every technical name that carried "tower" now carries "meowtower", by this table, which is authoritative wherever an approved record still uses an old name:
 
 | Old name | New name |
 | --- | --- |
-| Tower Chronicles, «Хроники Башни» | Meowtower, «Мяубашня» |
+| Tower Chronicles, «Хроники Башни» | Meowtower, «Туманный Брод» |
 | repository `retran/tower` | `retran/meowtower` |
 | operator command `./tower` | `./meowtower` |
 | Compose project and server service `tower` | `meowtower` |
@@ -68,7 +68,6 @@ A reader of an approved record must translate old names through the table above,
 ## What this does not settle
 
 - The name of the Tower inside the story, which the canon keeps.
-- Whether «Мяубашня» is the final Russian title: it is the owner's direction to change the title, with this spelling chosen by the implementer and open to the owner's correction.
 
 Amended on 2026-10-31: the title is «Туманный Брод», Misty Ford and Nevelwade; this record addresses REQ-7930 in place of REQ-3714.
 

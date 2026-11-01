@@ -2,7 +2,7 @@
 id: ADR-0230
 artifact: adr
 status: approved
-revised: 2026-10-10
+revised: 2026-11-01
 addresses: [REQ-5036, REQ-5038, REQ-5040, REQ-5046, REQ-5096, REQ-5200, REQ-5204, REQ-5208, REQ-5210, REQ-5212, REQ-5214, REQ-5216, REQ-5220, REQ-5222, REQ-5224, REQ-5226, REQ-5228, REQ-5230, REQ-5232, REQ-5234, REQ-5238, REQ-5240, REQ-5242, REQ-5244, REQ-5246, REQ-5248, REQ-5250, REQ-5252, REQ-5254, REQ-5256, REQ-5258, REQ-5260, REQ-5262, REQ-5264, REQ-5266, REQ-5268, REQ-5270, REQ-5272, REQ-5274, REQ-5276, REQ-5278, REQ-5280, REQ-5282, REQ-5284, REQ-5286, REQ-5290, REQ-5292, REQ-5294, REQ-5296, REQ-5298]
 supersedes: []
 issue: 43
@@ -24,7 +24,7 @@ it into a graph. The card form ships first and is the only form until the
 masked parser passes acceptance test 3, because REQ-5096 requires cards
 until then and REQ-5090 builds composing last. This decision builds on
 ADR-0210, which owns the game day, what leaves the Mac, the separate streams
-of the addendum's new forms, the play key's $60 limit and the stage order,
+of the addendum's new forms, the play key's $200 limit and the stage order,
 and cites it without restating it.
 
 ### Offering a riddle
@@ -253,7 +253,7 @@ passes when agreement is at least 95% and at most 2% of the texts labelled
 labelled and judged verdicts (REQ-5280). It checks from `llm_log` that every
 request body hashes to the fixed prompt plus that text's masked form
 (REQ-5284), and it plants the distinctive target «7 · 13 − 29» in a fixture
-and finds it in no logged request (REQ-5286). A run spends at most $4, a
+and finds it in no logged request (REQ-5286). A run spends at most $9, a
 budget I chose at 200 worst-case parses of about $0.017 each plus their
 judge checks.
 
@@ -354,7 +354,7 @@ The play key pays up to $0.1 a game day, about $0.004 a parse by RES-4020's
 arithmetic, with a worst-case reservation of about $0.017, so the bucket
 reserves about five parses: 2 riddles with one correction each take four,
 and the fifth is headroom for a reservation not yet settled. The daily
-caps' sum stays inside the $60 limit as ADR-0210 keeps it (REQ-5048).
+caps' sum stays inside the $200 limit as ADR-0210 keeps it (REQ-8156).
 
 She pays a wait. After «Готово» on a text riddle she waits for the safety
 check and the parse. I chose a budget of p95 at most 6 seconds from

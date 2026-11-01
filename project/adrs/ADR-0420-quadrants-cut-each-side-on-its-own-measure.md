@@ -212,7 +212,7 @@ The owner checks the conditions above at the yearly review REQ-7030 names. The q
 - The requirements step writes a requirement that supersedes REQ-7034 with the text under "Small categories read on a floor scaled to their size".
 - `content/cito-categories.json` ships with the four domains confirmed and the four LOVS categories drafted and unconfirmed.
 - ADR-0160's `ru.json` gains the quadrant headings, the checks, the cause lines, the Cito line, the Cito section note and the reasons under `parent.school.*`, and, after the MVP, the memo's two new lines under `parent.cito.memo`.
-- ADR-0210's scope guard keeps `src/parent/school/quadrants.ts`, `cito_category_resolved` and the resolution panel out of the tree until the MVP ends, while the form's `categories` field ships in the MVP.
+- ADR-0190's scope guard keeps `src/parent/school/quadrants.ts`, `cito_category_resolved` and the resolution panel out of the tree until the MVP ends, while the form's `categories` field ships in the MVP.
 
 Failure states, each with its next step and one audience:
 

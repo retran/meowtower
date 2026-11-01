@@ -13,7 +13,7 @@ supersedes: []
 
 ## Decision
 
-A frame replaces only a task's question. Buttons, input and answer come from the template, so all 1851 templates take a frame. A blind solve shows the task as the player sees it: the options, unmarked, and a picture as its SVG source. A frame keeps any number its template writes itself and adds none. It may add up to 3 sentences to the template's own, each no longer than 22 words or the template's longest sentence. A second attempt keeps the first attempt's frame with its own numbers.
+A frame replaces only a task's question. Buttons, input and answer come from the template, so all 1851 templates take a frame. The judge of ADR-3210 reads the options, unmarked, and a picture as its SVG source. A frame should keep every number its template writes and add none, and the judge's `numbers` answer takes 1 from the score of a frame that doesn't. It may add up to 3 sentences to the template's own, each no longer than 22 words or the template's longest sentence. A second attempt takes a new story that continues the first (ADR-3210).
 
 `content/shaming.en.json` and `content/shaming.nl.json` join the Russian list, and the gate reads the list of the game's language for frames and for every line that leaves the server.
 
@@ -21,7 +21,7 @@ The adventure budget is $5 and the month's limit $200, by the game's count acros
 
 `llm_log` keeps every body for good, because the owner decided on 2026-10-31 that nothing is deleted from the logs.
 
-The gateway gains `GATEWAY_MODE`: `verify` spends from the offline key and records, `replay` answers from `tests/recordings/` and fails as `recording_missing`, and the server refuses to start in any mode but `play`. `npm run verify:live` runs real frames on its own budget. The egress guard cleans names and contact details from every request except a blind solve. `llm_call`, `budget_month_spent` and `live_frames_paused` join the log.
+The gateway gains `GATEWAY_MODE`: `verify` spends from the offline key and records, `replay` answers from `tests/recordings/` and fails as `recording_missing`, and the server refuses to start in any mode but `play`. `npm run verify:live` runs real frames on its own budget. The egress guard cleans names and contact details from every request. `llm_call`, `budget_month_spent` and `live_frames_paused` join the log.
 
 Once this is accepted, every template in all three languages takes a frame. What doesn't work yet: the rest of ADR-0100's plan needs callers that don't exist, listed below.
 
@@ -39,7 +39,7 @@ RES-4300 finds the buttons and the words can come apart, and that the budgets ho
 
 ## What it costs
 
-A log kept for good grows without bound: each row repeats its prompt, so `llm_log` adds several kilobytes a call. At $200 a month the worst case is 20 times the daily spend the earlier figures planned. Picture tasks may fail their blind solve often, because reading SVG is harder than reading text; such a task shows its template text and counts as rejected, which can trip the 30% pause. An agent wrote the two new lists, so they are thinner than the Russian one, which holds every word form.
+A log kept for good grows without bound: each row repeats its prompt, so `llm_log` adds several kilobytes a call. At $200 a month the worst case is 20 times the daily spend the earlier figures planned. Picture tasks may fail their blind solve often, because reading SVG is harder than reading text; such a task shows its prepared setting (ADR-3270) and counts as rejected, which can trip the 30% pause. An agent wrote the two new lists, so they are thinner than the Russian one, which holds every word form.
 
 ## What would reverse it
 

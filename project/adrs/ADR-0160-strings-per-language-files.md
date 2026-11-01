@@ -2,7 +2,7 @@
 id: ADR-0160
 artifact: adr
 status: approved
-revised: 2026-10-31
+revised: 2026-11-01
 addresses: [REQ-3810, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-3312, REQ-3314, REQ-3318, REQ-3320, REQ-3322, REQ-3324, REQ-3326, REQ-3328]
 supersedes: []
 issue: 36
@@ -18,30 +18,30 @@ tracked: f77703783521
 
 Every string the player or the parent reads comes from a per-language file under `content/`, and no string is written in the code. One function, `textGate`, checks every line the heroine sees against one forbidden-word list, at build time for fixed text and on the server at run time for generated text.
 
-1. The string file. `content/i18n/ru.json` holds every interface label, accessible name, fixed System line, the canon's names shown on screen (elements, floors, ranks, resources) and the Parent Room's text. It also holds the notation profile RES-2550 puts in the locale: the decimal sign, the thousands separator and the time format, which ADR-0040's renderer reads. Keys are English and dotted, grouped by who reads them (`ui.*`, `system.*`, `canon.*`, `parent.*`, `test.*`). A value is one of three shapes:
+1. The string file. `content/i18n/ru.json` holds every interface label, accessible name, fixed storyteller's line, the canon's names shown on screen (elements, floors, ranks, resources) and the Parent Room's text. It also holds the notation profile, except the multiplication sign, which the parent's setting gives; and the forbidden-word list gains «тест», «контрольная», «экзамен», «Cito» and «Цито» for the player's text and «промах» for the Volley's replies: the decimal sign, the thousands separator and the time format, which ADR-0040's renderer reads. Keys are English and dotted, grouped by who reads them (`ui.*`, `system.*`, `canon.*`, `parent.*`, `test.*`). A value is one of three shapes:
    - a string with named placeholders, as in `"ui.task.thread": "Путеводная нить · {n}"`;
    - a plural object with the `one`, `few`, `many` and `other` forms that `Intl.PluralRules("ru")` selects;
    - a System message, an array of lines in which `{"pause": "..."}` marks a self-correction that the `SystemWindow` of ADR-0150 shows as a line of its own after a pause (REQ-3304).
 2. The other content files. The per-language files RES-2500 already names keep their names and follow the same rule: `lines.ru.json`, `frames.ru.json`, `science.ru.json`, `lexicon.ru.json`, `recipes.ru.json`, `shop.ru.json`, `branches.ru.json` and `canon.ru.md`. A language-neutral file such as `graph.yaml` or `familiars.yaml` refers to text only by key. A second language adds `content/i18n/nl.json` or `en.json` and the matching `*.nl.*` or `*.en.*` files, with no change to code.
 3. One function. `src/shared/i18n.ts` exports `t(key, params)`, used by the client and the server alike. The build generates a TypeScript union of the keys in `ru.json` and a parameter type for each key's placeholders, so a missing key or a missing parameter is a type error. `ru.json` is the reference: a language file must hold exactly its keys, with the same placeholders, before the language can be offered.
-4. The language. The profile holds `lang`, and the server accepts only a shipped language. The shipped set in the MVP is `["ru"]`, so every text and task is Russian (REQ-3704) and the settings screen shows no language choice. The choice appears on its own once a second language passes the key check. The client renders the interface in the profile's language. The server renders every story line, System window and task in it too, because the log records each line as shown (RES-2550), so a line already in the story log stays in the language it was shown in after a switch.
+4. The language. The profile holds `lang`, and the server accepts only a shipped language. The shipped set is `["ru", "en", "nl"]`, and the parent chooses from it, with Russian as the default (REQ-7548). The choice appears on its own once a second language passes the key check. The client renders the interface in the profile's language. The server renders every story line, System window and task in it too, because the log records each line as shown (RES-2550), so a line already in the story log stays in the language it was shown in after a switch.
 5. The static checks, run by the verify command of ADR-0190:
    - `src/` holds no Cyrillic character outside test fixtures, a one-line grep that catches a Russian string written into a component;
    - the lint rule `no-literal-string` from `eslint-plugin-i18next` (6.1.5 on npm, checked 2026-09-27) rejects literal text in JSX and in `aria-label`, `title`, `placeholder` and `alt`, which catches an English or Dutch string the grep can't see;
    - every language file has the reference keys and placeholders;
    - tests pin the exact values of the world's labels in REQ-7544 and of `ui.task.thread` in REQ-3322;
    - no `ui.*` value equals a rejected label from REQ-3312, compared after trimming and folding case;
-   - no `system.*` value holds "!" or a digit, because numbers reach System windows only as code-filled fields (REQ-3302, REQ-3308);
+   - no `system.*` value holds "!" or a digit, because numbers reach story windows only as code-filled fields (REQ-3302, REQ-3308);
    - `textGate` passes every string in every per-language content file, and 200 rendered seeds of every task template, a sample size I chose.
-6. The forbidden list. `content/shaming.ru.json` is the one list, as RES-3300 and RES-1500 name it, and every check reads it (REQ-3328). It holds:
+6. The forbidden list. it is the one list and holds a section `nl` of Dutch forms written by a person; `textGate` with `lang: "nl"` splits Latin-script tokens without folding them to Cyrillic and checks them against that section, as RES-3300 and RES-1500 name it, and every check reads it (REQ-3328). It holds:
    - verdict and shame words, school words and praise of intelligence (REQ-3314), each entry a lemma with every inflected form written out, diminutives such as «задачка» and «ошибочка» included, generated once from the OpenCorpora dictionary by a tool script, reviewed by the owner and committed expanded, so the run-time check needs no morphology library;
    - phrases matched as runs of tokens, among them «не получилось», «ты не поняла», «это же просто» and the shortage phrases «нити закончились», «нитей не осталось», «нет нитей» and their forms (REQ-3324);
    - the rejected labels of REQ-3312;
    - the forms of «узелок», which the check rejects in the knot's own keys (`ui.task.*`, `ui.outcome.*`, `ui.scheme.*`, `system.knot.*`), because there a knot is meant (REQ-3320);
    - fixtures: forms that must match, such as «ошибкой» and «задачку», and words that must not, such as «примерно», «примерить» and «мимоза».
    The guilt and attachment phrases of RES-3300's group 4 have no fixed wording, so they aren't in the matched list; ADR-0110's safety check measures them.
-7. The gate. `textGate(text, { lang, kind, source })` in `src/shared/voice/` normalises the text: NFC, lower case, «ё» to «е», soft hyphens, zero-width characters and stress marks removed. It splits the text into Cyrillic word tokens and returns a pass, or the rule and the match that failed. Every kind is checked for the forbidden forms, the phrases and emoji. A `system` line is also checked for "!" and digits, and a `label` for the rejected labels. The server calls it on every line before the line leaves for the client, whichever source wrote it: the Master, the line pool, the Explainer, a task template or a fixed string (REQ-3326). The client receives no heroine-facing text the gate hasn't passed, since the interface strings passed at build. The heroine's own words, `source: "player"`, skip the gate, and so does any key under `parent.*`, as RES-3300 exempts both. A blocked line is never shown. The source's own fallback replaces it: ADR-0110 regenerates or takes a pool line, ADR-0120 falls back to its template, ADR-0040 draws another seed, and a pool line that fails is retired from the pool.
-8. The voice of fixed text. The `system.*` section of `ru.json` holds every fixed System line in one place, so the parent reads it in one sitting at stage acceptance and judges it short, formal, present-tense, about events and never about the heroine's mind, with no joke at her (REQ-3300, REQ-3306, REQ-3318). ADR-0110 carries the same rules into the Master's prompts for generated lines.
+7. The gate. `textGate(text, { lang, kind, source })` in `src/shared/voice/` normalises the text: NFC, lower case, «ё» to «е», soft hyphens, zero-width characters and stress marks removed. It splits the text into word tokens of the language's script and returns a pass, or the rule and the match that failed. Every kind is checked for the forbidden forms, the phrases and emoji. A `system` line is also checked for "!" and digits, and a `label` for the rejected labels. The server calls it on every line before the line leaves for the client, whichever source wrote it: the Master, the line pool, the Explainer, a task template or a fixed string (REQ-3326). The client receives no heroine-facing text the gate hasn't passed, since the interface strings passed at build. The heroine's own words, `source: "player"`, skip the gate, and so does any key under `parent.*`, as RES-3300 exempts both. A blocked line is never shown. The source's own fallback replaces it: ADR-0110 regenerates or takes a pool line, ADR-0120 falls back to its template, ADR-0040 draws another seed, and a pool line that fails is retired from the pool.
+8. The voice of fixed text. The `system.*` section of `ru.json` holds every fixed storyteller's line in one place, so the parent reads it in one sitting at stage acceptance and judges it short, formal, present-tense, about events and never about the heroine's mind, with no joke at her (REQ-3300, REQ-3306, REQ-3318). ADR-0110 carries the same rules into the Master's prompts for generated lines.
 
 What works once this is accepted and built: every screen of ADR-0150 renders its text from `ru.json`, a string hard-coded in `src/` fails the build, every fixed and template text has passed the forbidden list, and every generated line passes it on the server before the heroine sees it. What doesn't work yet: no second language exists, and adding one needs its string file, its content files and its own forbidden list, written by a person; the gate's fallbacks depend on ADR-0040, ADR-0110 and ADR-0120 being built, and until they are, a blocked line from their source is replaced by the neutral `system.fallback.line` string.
 
@@ -110,7 +110,7 @@ The premortem, written as though it already happened. The gate shipped and passe
 
 - REQ-3316, phrases of guilt and attachment: they have no fixed wording, so ADR-0110's safety check measures them on its test set.
 - REQ-3330, the ally's name «Бантик» from the autumn finale on: ADR-0110's canon memory names characters, and CAN-0080 carries the name. The string file holds the name under `canon.ally.name`, but the rule is about when the story uses it.
-- The voice rules for generated System lines, narration and jokes: ADR-0110 carries them into prompts and its safety pipeline. This decision covers fixed text and the word-level gate for all text.
+- The voice rules for generated storyteller's lines, narration and jokes: ADR-0110 carries them into prompts and its safety pipeline. This decision covers fixed text and the word-level gate for all text.
 - REQ-3320 in generated text: the gate can reject «узелок» only where the key says the subject is a knot. In the Master's and Explainer's text the word can mean a familiar, so ADR-0110 and ADR-0120 hold the rule there.
 - How task text is phrased and rendered per locale: ADR-0040, which reads the notation profile from `ru.json`.
 - The Dutch glossary word a term hint shows: it lives in `lexicon.ru.json` beside the Russian term, as REQ-3704 describes. ADR-0040 builds the term spans in the task view, ADR-0150 draws the marks and the tap explanation, and ADR-0180 holds the parent's approval of the Dutch word.
@@ -124,7 +124,7 @@ Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change p
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
-Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3704 (superseded by REQ-5080, which ADR-0210, ADR-0370 addresses).
+Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3704 (superseded by REQ-8160, which ADR-0210, ADR-0370 addresses).
 
 Amended by ADR-3200, approved on 2026-10-31, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
@@ -134,5 +134,5 @@ Amended on 2026-10-31: this record no longer addresses REQ-7544, which REQ-7920 
 
 The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
 1. The interface uses the world's labels, and a label that brings back the test, the clock or the streak fails the build (`archive/tasks/TSK-0678-world-labels-pinned-and-rejected-labels-fail.md`)
-2. Every fixed System line sits in one section the parent reads in one sitting (`archive/tasks/TSK-0679-system-lines-in-one-section-and-judged.md`)
+2. Every fixed storyteller's line sits in one section the parent reads in one sitting (`archive/tasks/TSK-0679-system-lines-in-one-section-and-judged.md`)
 

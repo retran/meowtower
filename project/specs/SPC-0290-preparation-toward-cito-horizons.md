@@ -2,8 +2,8 @@
 id: SPC-0290
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-6424, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-7148, REQ-5858, REQ-7510, REQ-5862, REQ-5864, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-7058, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898]
+revised: 2026-11-01
+states: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-6424, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-7148, REQ-5858, REQ-7510, REQ-5862, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-7058, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -217,9 +217,9 @@ Here `floors_so_far` and `volleys_so_far` count the earlier counted floors and l
 
 ### The bare-task share
 
-Every template declares `format: "bare"`, an expression with no story in the task window, or `format: "context"`, and the template schema refuses a template without it (REQ-5862). Mental arithmetic, the Volley and control facts are bare. `item_shown` records `format`.
+Every template declares `format: "bare"`, a template written as an expression, or `format: "context"`, and the template schema refuses a template without it (REQ-5862). Mental arithmetic, the Volley and control facts are bare. `item_shown` records `format`.
 
-A subtype under ADR-0410's format hold takes a bare template whatever the count. Otherwise, in a node with templates of both formats, while the node's bare scored tasks of the last 30 days number no more than its context ones, counting only tasks whose template the item builder chose by format and leaving out Volley rows, mental arithmetic and control facts, the Director chooses among the node's subtypes that have a bare template, and the item builder takes a bare template (REQ-5864). A chosen subtype with templates of one format takes that format, and the count spans the whole node. The 60-day simulation asserts at least half bare tasks on every node with both formats.
+Every template takes a story in play, so the item builder keeps no share of formats, and a format names the template's source form.
 
 ### The home skill scale
 

@@ -28,9 +28,11 @@ heroine lives through, so nothing happens without her. A year has four seasons
 of three months of 28 days. The months named in this record are the world's own
 months, and the owner gives them their names in the setting.
 
-The story runs like a long series. This record's plot, checkpoints and endings
-stay fixed. Inside them, arcs grow from what she does, and each adventure is one
-episode.
+The story runs like a long series, played as a tabletop game: each adventure is
+one episode, prepared beforehand with its branches, and the world answers what
+she does at once. Adventures build arcs, and arcs build the overall plot. This record's truths
+and people stay fixed. Its checkpoints are pressures that happen unless she
+changes them, and her decisions can change the plot and how it ends.
 
 ## The central mystery (for the Master only)
 
