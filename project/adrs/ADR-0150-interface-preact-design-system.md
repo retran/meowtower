@@ -3,8 +3,11 @@ id: ADR-0150
 artifact: adr
 status: approved
 revised: 2026-10-10
-addresses: [REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148, REQ-3200, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3218, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246, REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3514, REQ-3516, REQ-3522, REQ-3526, REQ-3528, REQ-3530, REQ-0712, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0738, REQ-0764, REQ-0840, REQ-0842]
+addresses: [REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148, REQ-3200, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246, REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3514, REQ-3516, REQ-3522, REQ-3526, REQ-3528, REQ-3530, REQ-0712, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0738, REQ-0764, REQ-0840, REQ-0842]
 supersedes: []
+issue: 35
+projected: 8eca1cdc5804
+tracked: c6dd9647e9fb
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -39,7 +42,7 @@ The decision has eight parts, each a rule a program checks.
    - no `getAnimations()` result inside the task window, with the PixiJS ticker stopped while the window is open (REQ-3508);
    - keypad keys of 64 by 64 px in fixed cells on the right half of the screen (REQ-3204, REQ-3206, REQ-3208);
    - options that keep their colours after an answer (REQ-3212);
-   - the rules for the badge, knot scheme, experience bar, elements, counters, chest, unmet creatures and quests (REQ-3214 to REQ-3228, REQ-3240).
+   - the rules for the badge, knot scheme, elements, counters, chest, unmet creatures and quests (REQ-3214 to REQ-3228, REQ-3240).
    The root holds one live region with `aria-live="polite"`, present from the first paint. A new System window writes its text there, and the story log's own `role="log"` region announces new lines, so a window appears in the accessibility tree once and nothing interrupts the reader (REQ-3202, REQ-3230). A System window inside the log drops `role="status"`, which the bundle gives it, so it isn't announced twice.
 6. Screens. Every story screen is one CSS grid: the top bar, the scene column 380 px wide on the left and the story column as the centre, with the log above the input line (REQ-3500). The scene column is a PixiJS canvas with no interactive element in it (REQ-3502). The top bar always holds «Привал», «Сохранить и уйти» and the paw (REQ-3504, REQ-3506). The task window, System windows and ceremonies are layers over a scrim. The task window's action row holds «Не знаю», the thread button and «Готово» side by side (REQ-3510). A Guardian's word problem opens a `ChoiceGrid` of the four short models that ADR-0040 supplies, and only then the step rows (REQ-3512). Every Underside screen renders «Мне страшно» and a lantern drawn by the interface layer, not by the scene art, so no generated picture can leave the screen without a light (REQ-3514, REQ-3516); ADR-0110 decides what the button does. A root attribute `data-mode="test"` draws the striped frame and the label «Проверка · не идёт в статистику игрока» on every screen of the parent's test mode (REQ-3520). The Awakening's closing System window shows the line from the string file with a `RankBadge` beside it at the rank ADR-0140's progression holds, which is E at that point (REQ-3528, REQ-3530). The Parent Room's creepiness setting takes its heading from the string file (REQ-3526). On a computer the same grid runs at CSS pixel sizes, centred, with no scaling transform, because a transform would shrink text below the sizes REQ-3124 to REQ-3132 set in CSS pixels.
 7. Fonts, motion and sound. The game serves Nunito, M PLUS Rounded 1c and Caveat itself, from the Fontsource packages with their Cyrillic subsets, preloaded, and the build strips the remote Google Fonts `@import` from its copy of `bundle.css`. Serving the fonts locally means a slow or blocked Google request never shows a fallback face inside a word (REQ-3134), and the iPad sends no request to Google. Digits use `font-variant-numeric: tabular-nums` (REQ-3136). Animations use only the duration and easing tokens, and a check rejects any repeating animation whose period is under 334 ms, so nothing can flash more than three times a second (REQ-3146). Every sound plays through one Web Audio gain node that ramps up over at least 50 ms. The build normalises each sound file to -20 LUFS integrated loudness and a -3 dBTP true peak, so no sound starts loud (REQ-3148); both figures are budgets I chose. The voice button starts the browser's speech recognition in `ru-RU` where Safari offers it. The owner decided on 2026-09-27: voice input may use Safari's speech recognition, which sends her voice to Apple; ADR-0100 records it at the privacy boundary. Where Safari offers none, the button focuses the field, so the system keyboard opens with its own dictation key (REQ-3234).
@@ -142,3 +145,26 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3236 (superseded by REQ-6212, which ADR-0330 addresses); REQ-3512 (superseded by REQ-5604, which ADR-0270 addresses); REQ-3520 (superseded by REQ-6346, which ADR-0340 addresses); REQ-3524 (superseded by REQ-6108, which ADR-0320 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The owner's 23 components are ported to typed Preact components, and a drift check compares the port with the owner's script (`archive/tasks/TSK-0660-ported-components-and-the-drift-check.md`)
+2. The root carries her theme, palette and text size, the dreamcore layer sits on the scene alone, and the Parent Room keeps the light theme (`archive/tasks/TSK-0661-theme-palette-and-text-size-follow-her-everywhere-but-the-parent-room.md`)
+3. The verify command fails on a contrast below its threshold, on a colour literal and on a grey shadow (`archive/tasks/TSK-0662-contrast-and-token-checks-fail-the-build.md`)
+4. She changes the look in her settings at any time, and every paired device opens in it (`archive/tasks/TSK-0663-settings-screen-and-looks-follow-her-to-every-device.md`)
+5. Text sizes, line length, local fonts and equal-width digits hold on the iPad and on a computer (`archive/tasks/TSK-0664-type-scale-line-length-fonts-and-equal-width-digits.md`)
+6. Nothing moves in the task window, nothing flashes more than three times a second, and no sound starts loud (`archive/tasks/TSK-0665-nothing-moves-in-the-task-window-and-no-sound-starts-loud.md`)
+7. A screen reader announces a System window and a new story line without interrupting, and every counter names its resource (`archive/tasks/TSK-0666-screen-readers-hear-new-lines-and-counters-without-interruption.md`)
+8. The maths keypad holds its keys in fixed cells on the right, and «Готово» and «Не знаю» sit apart from it (`archive/tasks/TSK-0667-keypad-with-fixed-cells-and-the-action-row.md`)
+9. Each answer kind has its own field, and an entry the engine can't parse is marked softly (`archive/tasks/TSK-0668-answer-fields-for-each-kind-and-a-soft-mark-for-an-unparsed-entry.md`)
+10. «Не знаю» is on every task kind, a choice keeps its colours after an answer, and keys 1 to 4 select an option (`archive/tasks/TSK-0669-dont-know-on-every-kind-uncoloured-options-and-number-keys.md`)
+11. A maths term with a glossary entry is marked, and a tap opens its explanation, picture and approved Dutch word (`archive/tasks/TSK-0670-term-hints-underline-the-glossary-terms-and-open-a-popover.md`)
+12. Every story screen is one grid with the story in the centre, a scene column with no button, and a top bar that always leaves (`archive/tasks/TSK-0671-story-screen-grid-top-bar-and-action-row.md`)
+13. Every Underside screen shows «Мне страшно» and a lantern, and the Awakening closes with rank E (`archive/tasks/TSK-0672-underside-lantern-awakening-closing-and-the-creepiness-heading.md`)
+14. Outcomes, the knot scheme, elements, chests, unmet creatures and quests show what the rules require (`archive/tasks/TSK-0673-outcome-scheme-elements-chest-and-creature-displays.md`)
+15. The story field has a voice button, and where Safari offers no speech recognition it opens the keyboard's dictation (`archive/tasks/TSK-0674-voice-button-beside-the-story-field.md`)
+16. The parent looks at every screen in both themes and all four presets and signs off the five rules a person must judge (`archive/tasks/TSK-0675-parent-looks-at-every-screen-in-both-themes-and-four-presets.md`)
+

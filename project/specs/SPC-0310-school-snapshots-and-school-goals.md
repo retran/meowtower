@@ -2,7 +2,7 @@
 id: SPC-0310
 artifact: spec
 status: live
-revised: 2026-09-29
+revised: 2026-10-31
 states: [REQ-5058, REQ-5060, REQ-6000, REQ-6002, REQ-6004, REQ-6006, REQ-6008, REQ-6010, REQ-6012, REQ-6014, REQ-6016, REQ-6018, REQ-6020, REQ-6022, REQ-6024, REQ-6026, REQ-6028, REQ-6030, REQ-6032, REQ-6034, REQ-6036, REQ-6038, REQ-6040, REQ-6044, REQ-6046, REQ-6048, REQ-6050, REQ-6052, REQ-6054, REQ-6056, REQ-6058, REQ-6060, REQ-6062, REQ-6066, REQ-6068, REQ-6070, REQ-6072, REQ-6074, REQ-6076, REQ-6078, REQ-6080, REQ-6082, REQ-6084, REQ-6086, REQ-6088, REQ-6090, REQ-6092, REQ-7000, REQ-7002, REQ-7004, REQ-7006, REQ-7008, REQ-7010, REQ-7012, REQ-7014, REQ-7016, REQ-7018, REQ-7020, REQ-7022, REQ-7024, REQ-7026, REQ-7028, REQ-7030, REQ-7032, REQ-7036, REQ-7038, REQ-7040, REQ-7042, REQ-7044, REQ-7046, REQ-7048, REQ-7050, REQ-7052, REQ-7054, REQ-7056, REQ-7060, REQ-7062, REQ-7064, REQ-7066, REQ-7068, REQ-7070, REQ-7072, REQ-7074, REQ-7076, REQ-7404]
 ---
 
@@ -248,7 +248,7 @@ The home side reads only tested states: a node's row in `node_snapshots` and the
 
 While `goalTasksTimed` in `content/school-goal-catalogue.json` is `true`, a goal row counts a node at `block-slow` as neither high nor low, and a Cito row still counts it high (REQ-7006).
 
-A goal is high at home when every linked node is high, low when every linked node is low, and neither otherwise (REQ-7008). A goal row reads the latest snapshot by document date that holds the goal's key and isn't withdrawn, and shows that snapshot's document date, so a goal the latest snapshot no longer reads keeps the values of its last snapshot. The goal row reads each linked node's state from the `node_snapshots` row of the last play day on or before that snapshot's document date (REQ-7010), and shows the node's current state beside it (REQ-7012). When a linked node has no unassisted first attempt on or before that date, or its last one lies more than 30 days before it, the goal lands in no quadrant under `home_stale` (REQ-7014).
+A goal is high at home when every linked node is high, low when every linked node is low, and neither otherwise (REQ-7008). A goal row reads the latest snapshot by document date that holds the goal's key and isn't withdrawn, and shows that snapshot's document date, so a goal the latest snapshot omits keeps the values of its last snapshot. The goal row reads each linked node's state from the `node_snapshots` row of the last play day on or before that snapshot's document date (REQ-7010), and shows the node's current state beside it (REQ-7012). When a linked node has no unassisted first attempt on or before that date, or its last one lies more than 30 days before it, the goal lands in no quadrant under `home_stale` (REQ-7014).
 
 A Cito row's date is the date of the horizon in force when the result was recorded that names the result's moment, or the date the result was recorded when no horizon names it. The row reads each node's state from the `node_snapshots` row of the last play day on or before that date (REQ-7026). A node is tested for a Cito row when its last unassisted first attempt lies within the 30 days before that date and its state then rests on a block rule (REQ-7032). The inside nodes are the category's mapped nodes. The outside nodes are the tested nodes of the four Leerling in beeld domains that the category doesn't map, so M8 and G4 count inside each category that maps them and outside the others, and T1 to T4 and the Sources track count on neither side.
 

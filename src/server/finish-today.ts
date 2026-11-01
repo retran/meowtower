@@ -1,4 +1,4 @@
-// «Закончить на сегодня» (SPC-0030, REQ-2444): once the parent has finished the
+// The finish-today action (SPC-0030, REQ-2444): once the parent has finished the
 // day, the rest of that game day gets no extension. The answer comes from the
 // log, so a restart changes nothing.
 import { latestEvent } from "../engine/events/read.js";

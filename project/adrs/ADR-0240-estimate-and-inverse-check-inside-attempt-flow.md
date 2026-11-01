@@ -5,6 +5,9 @@ status: approved
 revised: 2026-09-28
 addresses: [REQ-5300, REQ-5302, REQ-5304, REQ-5306, REQ-5308, REQ-5310, REQ-5312, REQ-5314, REQ-5316, REQ-5318, REQ-5320, REQ-5322, REQ-5324, REQ-5326, REQ-5328, REQ-5330, REQ-5332, REQ-5334, REQ-5336, REQ-5338, REQ-5340, REQ-5342, REQ-5344, REQ-5346, REQ-5348, REQ-5350, REQ-5352, REQ-5354, REQ-5356, REQ-5358, REQ-5360, REQ-5362, REQ-5364, REQ-5366, REQ-5368, REQ-5370, REQ-5072]
 supersedes: []
+issue: 44
+projected: dff59183c69a
+tracked: f4123f040f48
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -117,7 +120,7 @@ The strongest objection is that the estimate's options still hint at the exact a
 
 | Option | Better at | Why it lost |
 | --- | --- | --- |
-| Do nothing: build neither feature | No new step, control, route or stream; the flow and every measure stay as approved | The owner's addendum 1 imposes both, and REQ-5076 puts them in the first version; the report would never separate "feels the size but miscalculates" from "calculates but doesn't feel the size" |
+| Do nothing: build neither feature | No new step, control, route or stream; the flow and every measure stay as approved | The owner's addendum 1 imposes both, and REQ-8020 puts them in the first version; the report would never separate "feels the size but miscalculates" from "calculates but doesn't feel the size" |
 | The addendum as written: an estimate on scored tasks only, intervals on a number line, the check on one-step word problems, time counted as usual, the labels as error classes | Fewest rules to explain, and the words the owner wrote | Each part breaks an approved rule RES-4030 names: it reveals scored tasks, fails acceptance test 4, gives a hint on word problems, reads a checking player as slow, and overrides traps |
 | The estimate sent in a request of its own when she picks, logged as `estimate_submitted` | The pick survives a lost connection or a switch of device, so she never re-picks after seeing the answer field | ADR-0210 logs a fact that arrives with the answer as a field and names no `estimate_submitted` type; the route adds a reply that must look the same for a right and a wrong pick; and a re-pick on resume costs little, because the attempt's time already counts in no measure |
 | The client compares the check itself, since both numbers are on screen | No route and no wait, and the check works offline | ADR-0030 makes the server decide everything, and the log still needs each use (REQ-5356), so the client would have to queue an event the server can't verify |
@@ -212,3 +215,20 @@ The premortem, written as though it had happened: three months in, the node card
 - The check on fractions, on longer expressions and on word problems.
 - How the report words the matrix and the check line for the parent: the spec of ADR-0180's screens and ADR-0160's strings.
 - The other forms of the owner's addendum 1 and the rules every form shares: their own decisions and ADR-0210.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The option builder makes four rounded values of different orders as separate buttons, with the correct one spread over the four positions (`archive/tasks/TSK-0804-option-builder-makes-four-estimate-options-that-keep-the-three-errors-off-the-correct-one.md`)
+2. A catalogue flag and a seeded draw give an estimate to 10 % to 20 % of eligible tasks, one in a room, scored or not alike (`archive/tasks/TSK-0805-estimate-flag-and-the-seeded-draw-give-10-to-20-percent-and-one-a-room.md`)
+3. The estimate travels with the exact answer in one request, its verdict comes back beside the exact verdict, and the outcome reads the exact answer alone (`archive/tasks/TSK-0806-estimate-travels-with-the-exact-answer-and-its-verdict-comes-back-with-theirs.md`)
+4. The server labels an attempt `magnitude`, `magnitude_unaware` or `estimate_off_exact_ok` beside the class and trap, and never against the exact answer (`archive/tasks/TSK-0807-labels-sit-beside-the-class-and-trap-and-never-count-the-exact-answer-wrong.md`)
+5. The `estimate` stream is a number-sense estimate for each node and subtype with a guess rate of 0.25, and it feeds nothing else (`archive/tasks/TSK-0808-estimate-stream-is-a-number-sense-bkt-per-node-and-subtype-that-feeds-nothing-else.md`)
+6. An item with an estimate counts for accuracy and no speed measure reads its time, and the check's time is taken off every other attempt (`archive/tasks/TSK-0809-estimate-step-and-check-time-stay-out-of-the-speed-measures.md`)
+7. The `inverseCheck` flag passes the build only on a bare expression of one operation between two printed numbers (`archive/tasks/TSK-0810-inverse-check-flag-is-allowed-only-on-a-bare-one-operation-expression.md`)
+8. The check route compares her check only with the printed operand, costs nothing, and the field shows a match or a mismatch with no verdict (`archive/tasks/TSK-0811-check-route-compares-her-check-only-with-a-printed-operand-and-shows-a-bare-match.md`)
+9. Using the check doesn't make an attempt assisted, the checked answer isn't an attempt, and the first attempt after a check feeds "on her own" from the first day (`archive/tasks/TSK-0812-checking-leaves-the-attempt-unassisted-and-the-next-answer-is-her-first-attempt.md`)
+10. The estimate is a field of the attempt, each check is a `self_check_used` event, and each fact has one record (`archive/tasks/TSK-0813-estimate-field-and-check-event-keep-each-fact-in-one-place-on-the-new-versions.md`)
+11. The node card shows a matrix of estimate right or wrong by exact answer right or wrong, and «мало данных» under 5 answers a cell (`archive/tasks/TSK-0814-node-card-shows-the-estimate-matrix-and-too-little-data-under-five.md`)
+12. The summary shows each week the share of checks used and the numbers of answers saved and spoiled (`archive/tasks/TSK-0815-weekly-line-counts-checks-used-saved-and-spoiled-answers.md`)
+

@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-5900, REQ-5902, REQ-5904, REQ-5906, REQ-5908, REQ-5910, REQ-5912, REQ-5914, REQ-5916, REQ-5918, REQ-5920, REQ-5922, REQ-5924, REQ-5926, REQ-5928, REQ-5930, REQ-5932, REQ-5934, REQ-5936, REQ-5938, REQ-5940, REQ-5942, REQ-5944, REQ-5946, REQ-5948, REQ-5950, REQ-5952, REQ-5954, REQ-5956, REQ-5958, REQ-5960, REQ-5962, REQ-5964, REQ-5966, REQ-5970, REQ-5972, REQ-5974, REQ-5976, REQ-5978, REQ-5980, REQ-5982, REQ-5984, REQ-5986, REQ-5988, REQ-5990, REQ-5992, REQ-5996, REQ-6064, REQ-5120]
 supersedes: []
+issue: 50
+projected: 0d0ae247631e
+tracked: 3d5b9a9487cc
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -239,3 +242,24 @@ Amended by ADR-0400 and ADR-0430, approved on 2026-09-28, whose `## Amends` sect
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5968 (superseded by REQ-6428, which ADR-0360 addresses); REQ-5994 (superseded by REQ-6504, which ADR-0370 addresses); REQ-5856 (superseded by REQ-7148, which ADR-0430, ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The graph file holds the Sources track as five nodes outside the 79 maths nodes (`archive/tasks/TSK-0900-sources-track-in-the-graph-file-outside-the-79-nodes.md`)
+2. Track nodes keep an estimate and a state from unassisted first attempts on track tasks alone (`archive/tasks/TSK-0901-track-nodes-keep-states-from-track-first-attempts-alone.md`)
+3. A host floor carries 2 track tasks as a fixed part of the floor and never as a room slot (`archive/tasks/TSK-0902-two-track-tasks-on-the-first-host-floor-as-a-fixed-part.md`)
+4. The track window brings a host floor forward, the Director picks the node by rule, and I5 waits for two nodes at «понимает» (`archive/tasks/TSK-0903-track-window-node-choice-and-the-gate-on-i5.md`)
+5. Track first attempts are counted apart, and a 60-minute adventure with track tasks still yields 28 graph first attempts (`archive/tasks/TSK-0904-track-attempts-counted-apart-and-the-hour-still-yields-28.md`)
+6. A source template keeps its whole source in its parameters, holds no text and asks at one of four levels (`archive/tasks/TSK-0905-source-template-contract-and-rebuild-from-seed.md`)
+7. Every generated source holds unused data and a different neighbour, and the property test holds on 10,000 seeds (`archive/tasks/TSK-0906-unused-data-neighbours-and-the-property-test-on-10000-seeds.md`)
+8. The server draws every table, chart, timetable and map as SVG from the task's parameters, and the payload names no correct region (`archive/tasks/TSK-0907-server-draws-every-source-as-svg-from-its-parameters.md`)
+9. A track task takes a tap on one region, a choice of labels or a duration in minutes (`archive/tasks/TSK-0908-region-answer-choice-of-labels-and-duration-in-minutes.md`)
+10. Seven reading traps name every reading mistake, and the error-type limit classes each as conceptual or procedural (`archive/tasks/TSK-0909-seven-reading-traps-with-their-kinds.md`)
+11. SourceView shows the drawn source in the task window with 56 px touch zones and text at the task size (`archive/tasks/TSK-0910-sourceview-in-the-task-window-with-56-px-zones-and-task-size-text.md`)
+12. A pinch inside the source zooms it with no animation and moves nothing else in the task window (`archive/tasks/TSK-0911-pinch-zoom-inside-the-source-follows-the-fingers.md`)
+13. The report's ninth screen «Работа с источниками» shows states, accuracy by level and the traps that fired (`archive/tasks/TSK-0912-working-with-sources-screen-in-the-report.md`)
+14. A track task is snapshotted in WebKit and Chromium, and the adult tests it on a real iPad (`archive/tasks/TSK-0913-snapshots-in-two-engines-and-the-real-ipad-checklist.md`)
+15. Templates for I1 to I4 ask at four levels, each in a story scene with a frame the parent accepted (`archive/tasks/TSK-0914-templates-for-tables-charts-timetables-and-maps-with-frames.md`)
+16. Templates for I5 combine two sources, and the first version holds the whole track (`archive/tasks/TSK-0915-templates-for-two-sources-together-and-the-whole-track.md`)
+

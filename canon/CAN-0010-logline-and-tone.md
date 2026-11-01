@@ -2,7 +2,7 @@
 id: CAN-0010
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # Logline and tone
@@ -10,7 +10,7 @@ revised: 2026-09-27
 ## Summary
 
 This record holds the game's logline, the five rules of tone that every
-scene, System window and familiar line follows, and the one list of words
+scene and familiar line follows, and the one list of words
 the heroine never sees. The canon has two readers.
 The parent reads it to approve the world. The AI Master reads it as fact it
 can't change, and invents anything the canon leaves out by the Master's rules
@@ -18,11 +18,10 @@ can't change, and invents anything the canon leaves out by the Master's rules
 familiars, floors and Tangles are placeholders: the player names each one
 when she first meets it, and from then on only her name lives in the game.
 She also names the heroine, her room and every item she forges. Every other
-name is fixed: the town and the forest, the Tower, the System, the Diary, the
+name is fixed: the town and the forest, the Tower, the Diary, the
 Guardians and the other characters, the dreamcore places and the items in
 the shop. The world the logline names
-is set out in CAN-0020 (the town and forest), CAN-0030 (the Tower and the
-System), CAN-0040 (the floors) and CAN-0050 (the Tangles).
+is set out in CAN-0020 (the town and forest), CAN-0030 (the Tower), CAN-0040 (the floors) and CAN-0050 (the Tangles).
 
 ## Logline
 
@@ -33,12 +32,11 @@ across the floors: funny glitch creatures that tie counting, measure and the
 shape of things into knots.
 
 The heroine notices the Tower first and finds the old «Дневник Смотрителя»
-(Keeper's Diary). A System window flashes up in front of her: «Пробуждение
-завершено. Ранг: E» (Awakening complete. Rank: E). From then on the Tower
-re-knits itself every night, new knots appear on the floors, and only someone
-who can count can untangle them.
+(Keeper's Diary), and she starts as a hunter of rank E. From then on the
+floors change every night, new knots appear on them, and only someone who can
+count can untangle them.
 
-The central mystery is who knitted the Tower and why it woke now. The answer
+The central mystery is who knitted the Tower and why it appeared now. The answer
 hides somewhere among the Diary's pages, the neighbour's knitted scarves and
 a very suspicious cat who is mayor.
 
@@ -50,15 +48,15 @@ tone faster than the rule does.
 | Rule | Good | Bad |
 | --- | --- | --- |
 | 1. The world is absurd and takes itself completely seriously. Nobody is surprised by the strange; everybody is surprised by the normal. | «Мэр города — кошка. На заседаниях совета она спит на печати. Решения принимаются по тому, на какой бок она повернулась.» (The town's mayor is a cat. At council meetings she sleeps on the seal. Decisions depend on which side she turns over onto.) | «Представляешь, мэр — КОШКА! Вот умора!» (Can you imagine, the mayor is a CAT! What a laugh!) |
-| 2. The joke is dry and never explained. No exclamation marks, no "ha-ha", no emoji, no winking. | СИСТЕМА: «Вы подобрали ложку. Ложка не является оружием.» Пауза. «Статус пересмотрен.» (SYSTEM: You picked up a spoon. A spoon is not a weapon. Pause. Status revised.) | СИСТЕМА: «Ой, это же ложка, хи-хи! Ей нельзя сражаться, глупышка!» (SYSTEM: Oh, it's a spoon, tee-hee! You can't fight with it, silly!) |
-| 3. Joke about the world, the System, the Tangles and the Guardians. Never about the heroine or her mistakes. | «Путаница увернулась. По её лицу видно, что она сама не поняла как.» (The Tangle dodged. Its face shows it has no idea how either.) | «Ты промахнулась. Ну что же ты так.» (You missed. Oh, how could you.) |
+| 2. The joke is dry and never explained. No exclamation marks, no "ha-ha", no emoji, no winking. | «Ложка не является оружием. Статус пересмотрен.» (A spoon is not a weapon. Status revised.) | «Ой, это же ложка, хи-хи! Ей нельзя сражаться, глупышка!» (Oh, it's a spoon, tee-hee! You can't fight with it, silly!) |
+| 3. Joke about the world, the Tangles and the Guardians. Never about the heroine or her mistakes. | «Путаница увернулась. По её лицу видно, что она сама не поняла как.» (The Tangle dodged. Its face shows it has no idea how either.) | «Ты промахнулась. Ну что же ты так.» (You missed. Oh, how could you.) |
 | 4. Eerie-cute, never frightening. The mystery tickles and doesn't scare. Shadows rustle; they don't attack. Mild creepiness comes only by CAN-0130 and the creepiness level, and it always resolves kindly. | «В конце коридора кто-то очень тихо пересчитывал ложки. Когда героиня заглянула, там никого не было. Ложек стало больше.» (At the end of the corridor someone was very quietly counting spoons. When the heroine looked, nobody was there. There were more spoons.) | «Из темноты вытянулись длинные руки, и кто-то закричал.» (Long arms reached out of the dark, and someone screamed.) |
 | 5. Mathematics is the world's physics, not a lesson. Nobody jokes about it, and the story never explains it. Only the knot scheme after a spell and the familiar walking the guiding thread show how the thread lay (CAN-0030). Nobody in the world says «школа», «пример», «задачка» or «оценка» (school, sum, problem, mark). | «Мост держится на Мере. Кто-то сбил ему длину, и теперь он заканчивается раньше реки.» (The bridge is held up by Measure. Someone knocked its length off, and now it ends before the river does.) | «Реши пример, чтобы починить мост. Это как на уроке математики!» (Solve the sum to fix the bridge. It's just like a maths lesson!) |
 
 ## Words the heroine never sees
 
-One forbidden list binds every text the heroine sees: the System, the
-Master's narration and characters, the familiars' lines and explanations,
+One forbidden list binds every text the heroine sees: the Master's
+narration and characters, the familiars' lines and explanations,
 task statements, hints, knot schemes, interface labels, Diary pages and item
 descriptions. It covers every form of each word, so «ошибкой» and «задачку»
 count too.

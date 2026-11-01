@@ -1,0 +1,1066 @@
+// Domain M, part 3: the area of rectangles, other quadrilaterals and triangles (RES-4286). The Dutch goals count squares
+// at group 5, give the formula l x b at group 6 and the area of triangles at group 7. Texts are plain blanks in
+// `content/tasks-m.ru.json`. Generated from one table with the strings.
+import type { Q } from "../math/q.js";
+import { calc, of, rg } from "./kitc.js";
+import { dec, q, qd } from "./kitf.js";
+import { SIGNS, type Spec } from "./spec.js";
+
+const sign = (x: Q, y: Q): (typeof SIGNS)[number] => SIGNS[x.cmp(y) + 1] ?? "=";
+/** A sign, or `null` when it repeats a sign another trap of the same task already gives. */
+const unless = (
+  x: (typeof SIGNS)[number],
+  ...seen: (typeof SIGNS)[number][]
+): (typeof SIGNS)[number] | null => (seen.includes(x) ? null : x);
+const whole = (x: Q): Q | null => (x.d === 1n ? x : null);
+/** A whole positive wrong answer, or null when it is not one or repeats a value in `no`. */
+const w = (v: number, ...no: number[]): Q | null =>
+  Number.isInteger(v) && v > 0 && !no.includes(v) ? q(v) : null;
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+/** `v` added `n` times, one addition at a time. */
+const sumTimes = (n: number, v: number): number => {
+  let s = 0;
+  for (let i = 0; i < n; i++) s += v;
+  return s;
+};
+/** The whole number of times `step` can be taken away from `total`, found by taking it away again and again. */
+const takeAway = (total: number, step: number): number => {
+  let n = 0;
+  for (let left = total; left >= step; left -= step) n++;
+  return n;
+};
+
+const M5_grid = calc("M5", "grid");
+const M5_grid_specs: readonly Spec<never>[] = [
+  M5_grid({
+    id: "M5.grid.01",
+    alt: (a, b) => q((2 * a + b) / 2),
+    form: "whole-and-half-cells",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(5, 20), of(2, 4, 6, 8)],
+    f: (a, b) => q(a + b / 2),
+    t: {
+      "halves-as-wholes": (a, b) => q(a + b),
+      "halves-ignored": (a) => q(a),
+      "everything-halved": (a, b) => w((a + b) / 2, a + b / 2, a + b, a),
+    },
+    c: [1, 2],
+  }),
+  M5_grid({
+    id: "M5.grid.02",
+    alt: (a, b) => q((a / 2) * b),
+    form: "a-right-triangle-on-a-grid",
+    g: [6, 6],
+    kind: "integer",
+    p: [of(2, 4, 6, 8), rg(3, 9)],
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "legs-added": (a, b) => q(a + b),
+    },
+    c: [1],
+  }),
+  M5_grid({
+    id: "M5.grid.03",
+    alt: (a, b) => q(sumTimes(a, b)),
+    form: "a-rectangle-counted-by-rows",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(3, 9), rg(4, 12)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a * b),
+    t: {
+      added: (a, b) => q(a + b),
+      perimeter: (a, b) => q(2 * (a + b)),
+      "one-row-only": (a, b) => q(b),
+    },
+    c: [1],
+  }),
+  M5_grid({
+    id: "M5.grid.04",
+    alt: (a, b, c, d) => q(a * (b - d) + (a + c) * d),
+    form: "an-l-shape-counted-by-rows",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(2, 4), rg(5, 8), rg(2, 4), rg(2, 4)],
+    ok: (a, b, c, d) => b > d && a * b !== c * d,
+    f: (a, b, c, d) => q(a * b + c * d),
+    t: {
+      "rows-added": (a, b, c, d) => q(a + b + c + d),
+      "second-block-forgotten": (a, b) => q(a * b),
+      "all-rows-as-long-as-the-first": (a, b, c) => q((a + c) * b),
+    },
+    c: [1],
+  }),
+  M5_grid({
+    id: "M5.grid.05",
+    alt: (a, b, c) => q((a - 1) * b + (b - c)),
+    form: "a-figure-with-holes",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(5, 9), rg(4, 8), rg(1, 4)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(a * b - c),
+    t: {
+      "holes-added": (a, b, c) => q(a * b + c),
+      "holes-ignored": (a, b) => q(a * b),
+      "holes-taken-off-one-side": (a, b, c) => q(a * (b - c)),
+    },
+    c: [1],
+  }),
+  M5_grid({
+    id: "M5.grid.06",
+    alt: (a) => q(sumTimes(a, sumTimes(2, 2))),
+    form: "cells-with-a-side-of-two-centimetres",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(6, 20)],
+    f: (a) => q(4 * a),
+    t: {
+      cells: (a) => q(a),
+      "side-not-squared": (a) => q(2 * a),
+      "perimeter-of-a-cell": (a) => q(8 * a),
+    },
+    c: [1, 2, 4],
+  }),
+  M5_grid({
+    id: "M5.grid.07",
+    alt: (a, b) => q(2 * (a + b) - 4),
+    form: "cells-on-the-border-of-a-rectangle",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(4, 9), rg(4, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a * b - (a - 2) * (b - 2)),
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "inner-cells": (a, b) => q((a - 2) * (b - 2)),
+      "whole-rectangle": (a, b) => q(a * b),
+    },
+    c: [2],
+  }),
+  M5_grid({
+    id: "M5.grid.08",
+    alt: (a, b, c, d) => q(sumTimes(b, a) + sumTimes(d, c)),
+    form: "two-rectangles-on-a-grid",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(2, 6), rg(3, 7), rg(2, 6), rg(2, 5)],
+    ok: (a, b, c, d) => a * b !== c * d,
+    f: (a, b, c, d) => q(a * b + c * d),
+    t: {
+      "sides-added": (a, b, c, d) => q(a + b + c + d),
+      "second-rectangle-forgotten": (a, b) => q(a * b),
+      "perimeters-added": (a, b, c, d) => q(2 * (a + b) + 2 * (c + d)),
+    },
+  }),
+  M5_grid({
+    id: "M5.grid.09",
+    alt: (a) => q((a * (a + 1) * (2 * a + 1)) / 6),
+    form: "squares-of-all-sizes-in-a-grid",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(2, 7)],
+    x: (a) => ({
+      terms: Array.from({ length: a }, (_, i) => (a - i) ** 2).join(" + "),
+    }),
+    f: (a) =>
+      q(
+        Array.from({ length: a }, (_, i) => (i + 1) ** 2).reduce(
+          (x, y) => x + y,
+          0,
+        ),
+      ),
+    t: {
+      "unit-only": (a) => q(a * a),
+      "sum-of-sizes": (a) => q((a * (a + 1)) / 2),
+      "units-and-the-whole": (a) => q(a * a + 1),
+    },
+    c: [1],
+    origin: { olympiad: "counting squares in a grid (RES-4286)" },
+  }),
+  M5_grid({
+    id: "M5.grid.10",
+    alt: (a, b) => q(sumTimes(b, a)),
+    form: "a-parallelogram-on-a-grid",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(3, 9), rg(2, 6)],
+    ok: (a, b) => a !== b && a * b !== 2 * (a + b),
+    f: (a, b) => q(a * b),
+    t: {
+      "perimeter-like": (a, b) => q(2 * (a + b)),
+      "half-of-the-product": (a, b) => whole(q(a * b, 2)),
+      "sides-added": (a, b) => q(a + b),
+    },
+    c: [1],
+  }),
+  M5_grid({
+    id: "M5.grid.11",
+    alt: (a) => {
+      let total = 0;
+      for (let row = 1; row <= a; row++) total += row;
+      return q(total);
+    },
+    form: "a-staircase-counted-by-rows",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(4, 12)],
+    f: (a) => q((a * (a + 1)) / 2),
+    t: {
+      square: (a) => q(a * a),
+      "half-of-the-square": (a) => whole(q(a * a, 2)),
+      "last-row-forgotten": (a) => q((a * (a - 1)) / 2),
+    },
+    c: [1, 2],
+  }),
+  M5_grid({
+    id: "M5.grid.12",
+    alt: (a) => q(25 * a, 100),
+    form: "cells-with-a-side-of-five-millimetres",
+    g: [6, 7],
+    kind: "decimal",
+    p: [rg(10, 40)],
+    f: (a) => q(a, 4),
+    t: {
+      "side-not-squared": (a) => q(a, 2),
+      "square-millimetres": (a) => q(25 * a),
+      "comma-misplaced": (a) => q(25 * a, 10),
+    },
+    c: [5],
+  }),
+  M5_grid({
+    id: "M5.grid.13",
+    alt: (a, b, c, d, e, f) => q(a * b + (c * d - e * f)),
+    form: "two-overlapping-rectangles-on-a-grid",
+    g: [6, 6],
+    kind: "integer",
+    p: [rg(4, 8), rg(3, 6), rg(4, 8), rg(3, 6), rg(2, 3), rg(1, 2)],
+    ok: (a, b, c, d) => a !== c || b !== d,
+    f: (a, b, c, d, e, f) => q(a * b + c * d - e * f),
+    t: {
+      "overlap-counted-twice": (a, b, c, d) => q(a * b + c * d),
+      "overlap-removed-twice": (a, b, c, d, e, f) =>
+        q(a * b + c * d - 2 * e * f),
+    },
+    roles: {
+      a: "length of the first rectangle",
+      b: "width of the first",
+      c: "length of the second",
+      d: "width of the second",
+      e: "length of the common part",
+      f: "width of the common part",
+    },
+  }),
+  M5_grid({
+    id: "M5.grid.14",
+    alt: (a, b) =>
+      q(
+        Math.ceil(a / 2) * Math.ceil(b / 2) +
+          Math.floor(a / 2) * Math.floor(b / 2),
+      ),
+    form: "black-cells-of-a-chessboard",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 9), rg(3, 9)],
+    f: (a, b) => q(Math.ceil((a * b) / 2)),
+    t: {
+      "rounded-down": (a, b) => q(Math.floor((a * b) / 2)),
+      "rows-halved-down": (a, b) => q(a * Math.floor(b / 2)),
+    },
+    x: (a, b) => ({
+      e:
+        (a * b) % 2 === 0
+          ? `${a * b} : 2 = ${(a * b) / 2}`
+          : `(${a * b} + 1) : 2 = ${(a * b + 1) / 2}`,
+    }),
+    c: [1, 2],
+    origin: {
+      olympiad:
+        "a chessboard with black corners: the parity of the number of cells decides the count, in the spirit of the parity items of the Kangoeroe and MCCME papers (RES-4286)",
+    },
+  }),
+];
+
+const M5_sides = calc("M5", "sides");
+const M5_sides_specs: readonly Spec<never>[] = [
+  M5_sides({
+    id: "M5.sides.01",
+    alt: (a, b) => q(sumTimes(b, a)),
+    form: "area-of-a-rectangle-in-square-centimetres",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 15), rg(2, 12)],
+    ok: (a, b) => a !== b && a * b !== 2 * (a + b),
+    f: (a, b) => q(a * b),
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "sides-added": (a, b) => q(a + b),
+      "one-side-doubled": (a, b) => q(2 * a + b),
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.02",
+    alt: (a, b) => q(sumTimes(a, b)),
+    form: "area-of-a-room-in-square-metres",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 9), rg(2, 8)],
+    ok: (a, b) => a !== b && a * b !== 2 * (a + b),
+    f: (a, b) => q(a * b),
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "sides-added": (a, b) => q(a + b),
+      "one-side-doubled": (a, b) => q(2 * a + b),
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.03",
+    alt: (a) => q(sumTimes(a, a)),
+    form: "area-of-a-square-from-its-side",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 15)],
+    ok: (a) => a !== 4,
+    f: (a) => q(a * a),
+    t: {
+      perimeter: (a) => q(4 * a),
+      "side-doubled": (a) => q(2 * a),
+      "side-cubed": (a) => q(a * a * a),
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.04",
+    alt: (a, b) => q(takeAway(a * b, a)),
+    form: "the-missing-side-from-the-area-and-a-side",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 12), rg(2, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(b),
+    t: {
+      "area-minus-side": (a, b) => q(a * b - a),
+      "area-times-side": (a, b) => q(a * a * b),
+      "area-plus-side": (a, b) => q(a * b + a),
+    },
+    x: (a, b) => ({ x: String(a * b) }),
+  }),
+  M5_sides({
+    id: "M5.sides.05",
+    alt: (a, b, c, d) => sign(q(sumTimes(b, a)), q(sumTimes(d, c))),
+    form: "which-rectangle-has-the-larger-area",
+    g: [6, 7],
+    kind: "compare",
+    p: [rg(3, 12), rg(2, 9), rg(3, 12), rg(2, 9)],
+    ok: (a, b, c, d) =>
+      a * b !== c * d && sign(q(a * b), q(c * d)) !== sign(q(a + b), q(c + d)),
+    f: (a, b, c, d) => sign(q(a * b), q(c * d)),
+    t: {
+      "perimeters-compared": (a, b, c, d) => sign(q(a + b), q(c + d)),
+      "longer-side-compared": (a, b, c, d) =>
+        unless(
+          sign(q(Math.max(a, b)), q(Math.max(c, d))),
+          sign(q(a + b), q(c + d)),
+        ),
+      "areas-look-equal": (a, b, c, d) =>
+        a + b === c + d || Math.max(a, b) === Math.max(c, d) ? null : "=",
+    },
+    x: (a, b, c, d) => ({ sign: sign(q(a * b), q(c * d)) }),
+  }),
+  M5_sides({
+    id: "M5.sides.06",
+    alt: (a, b, c, d) => q(sumTimes(b, a) - sumTimes(d, c)),
+    form: "a-wall-without-a-window",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(4, 9), rg(3, 5), rg(1, 2), rg(1, 2)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c, d) => q(a * b - c * d),
+    t: {
+      "window-added": (a, b, c, d) => q(a * b + c * d),
+      "window-forgotten": (a, b) => q(a * b),
+      "window-sides-subtracted": (a, b, c, d) => q(a * b - c - d),
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.07",
+    alt: (a, b) => q(sumTimes(b, a)),
+    form: "square-tiles-for-a-floor",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 9), rg(2, 8)],
+    ok: (a, b) => a !== b && a * b !== 2 * (a + b),
+    f: (a, b) => q(a * b),
+    t: {
+      perimeter: (a, b) => q(2 * (a + b)),
+      "sides-added": (a, b) => q(a + b),
+      "one-side-doubled": (a, b) => q(2 * a + b),
+    },
+    c: [1],
+  }),
+  M5_sides({
+    id: "M5.sides.08",
+    alt: (a, b, c, d) => q(sumTimes(a, b) - sumTimes(c, d)),
+    form: "how-much-larger-one-room-is",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(5, 9), rg(4, 8), rg(2, 4), rg(2, 4)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c, d) => q(a * b - c * d),
+    t: {
+      added: (a, b, c, d) => q(a * b + c * d),
+      "larger-room-only": (a, b) => q(a * b),
+      "sides-subtracted": (a, b, c, d) => q((a - c) * (b - d)),
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.09",
+    alt: (a, b) => q(2 * a * b + 2 * a),
+    form: "one-side-doubled",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 9), rg(2, 8)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(2 * a * (b + 1)),
+    t: {
+      "doubled-only": (a, b) => q(2 * a * b),
+      "one-added-to-area": (a, b) => q(2 * a * b + 1),
+      "both-doubled": (a, b) => q(4 * a * b),
+    },
+    c: [1, 2],
+  }),
+  M5_sides({
+    id: "M5.sides.10",
+    alt: (a) => q(((4 * a * 10) / 4) ** 2),
+    form: "a-square-from-its-perimeter",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 9)],
+    f: (a) => q(100 * a * a),
+    t: {
+      "square-decimetres": (a) => q(a * a),
+      "ten-not-squared": (a) => q(10 * a * a),
+      "side-in-cm": (a) => q(10 * a),
+    },
+    x: (a) => ({ x: String(4 * a) }),
+    c: [4, 10],
+  }),
+  M5_sides({
+    id: "M5.sides.11",
+    alt: (a, b, c) => q(sumTimes(c, a * b)),
+    form: "the-cost-of-covering-a-floor",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(3, 6), rg(2, 5), rg(2, 9)],
+    ok: (a, b, c) => a !== b && a * b !== c,
+    f: (a, b, c) => q(a * b * c),
+    t: {
+      "area-only": (a, b) => q(a * b),
+      "perimeter-priced": (a, b, c) => q(2 * (a + b) * c),
+      "area-and-price-added": (a, b, c) => q(a * b + c),
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.12",
+    alt: (a, b, c) => q((a * b * c) / a),
+    form: "the-length-of-a-roll-of-carpet",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 4), rg(2, 3), rg(4, 9)],
+    f: (a, b, c) => q(b * c),
+    t: {
+      "area-instead": (a, b, c) => q(a * b * c),
+      "one-strip": (a, b, c) => q(c),
+    },
+    x: (a, b, c) => ({ x: String(a * b), y: String(c) }),
+    roles: {
+      a: "width of the roll",
+      b: "number of strips",
+      y: "length of the floor",
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.13",
+    alt: (a, b, c, d) => {
+      let cans = 0;
+      for (let covered = 0; covered < a * b; covered += c * d) cans++;
+      return q(cans);
+    },
+    form: "cans-of-paint-for-a-wall",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(4, 9), rg(3, 5), of(4, 5, 6), of(2, 3, 5)],
+    ok: (a, b, c, d) => (a * b) % (c * d) !== 0 && a * b > c * d,
+    f: (a, b, c, d) => q(Math.ceil((a * b) / (c * d))),
+    t: {
+      "rounded-down": (a, b, c, d) => q(Math.floor((a * b) / (c * d))),
+      "litres-as-cans": (a, b, c) => q(Math.ceil((a * b) / c)),
+    },
+    c: [1],
+    roles: {
+      a: "length of the wall",
+      b: "height of the wall",
+      c: "area one litre covers",
+      d: "litres in a can",
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.14",
+    alt: (a, b, c) => q((100 * a * (100 * b)) / (c * c)),
+    form: "tiles-with-a-side-in-centimetres",
+    g: [6, 7],
+    kind: "integer",
+    p: [rg(2, 5), rg(3, 6), of(20, 25, 50)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q(((100 * a) / c) * ((100 * b) / c)),
+    t: {
+      "side-as-area": (a, b, c) => q((100 * a * b) / c),
+      "area-over-side": (a, b, c) => q((10000 * a * b) / c),
+    },
+    c: [100],
+    roles: {
+      a: "length of the floor in metres",
+      b: "width of the floor in metres",
+      c: "side of a tile in centimetres",
+    },
+  }),
+  M5_sides({
+    id: "M5.sides.15",
+    alt: (a, b, c) => {
+      const x = a * b;
+      const y = a * c;
+      const tile = gcd(x, y);
+      return q((x * y) / (tile * tile));
+    },
+    form: "the-fewest-equal-square-tiles",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(2, 5), rg(2, 6), rg(2, 6)],
+    ok: (a, b, c) => b !== c && gcd(b, c) === 1,
+    f: (a, b, c) => q(b * c),
+    t: {
+      "tile-side-taken": (a) => q(a),
+      "metre-tiles": (a, b, c) => q(a * a * b * c),
+    },
+    x: (a, b, c) => ({ x: String(a * b), y: String(a * c) }),
+    origin: {
+      olympiad:
+        "the largest square tile that fits a rectangle exactly is set by the greatest common divisor, a tiling item in the spirit of the MCCME papers (RES-4286)",
+    },
+  }),
+];
+
+const M5_formula = calc("M5", "formula");
+const M5_formula_specs: readonly Spec<never>[] = [
+  M5_formula({
+    id: "M5.formula.01",
+    alt: (a, b) => q(a, 10).mul(q(b, 10)),
+    form: "area-with-decimal-sides",
+    g: [6, 8],
+    kind: "decimal",
+    p: [rg(11, 49), rg(11, 49)],
+    ok: (a, b) => a % 10 !== 0 && b % 10 !== 0 && a !== b && (a * b) % 10 !== 0,
+    f: (a, b) => qd(a * b, 2),
+    t: {
+      "one-place": (a, b) => qd(a * b, 1),
+      "no-comma": (a, b) => q(a * b),
+      "sides-added": (a, b) => qd(a + b, 1),
+    },
+    x: (a, b) => ({ x: dec(a, 1), y: dec(b, 1) }),
+  }),
+  M5_formula({
+    id: "M5.formula.02",
+    alt: (a, b) => q(100 * a * b, 10000),
+    form: "sides-in-different-units",
+    g: [6, 8],
+    kind: "decimal",
+    p: [rg(2, 5), of(25, 50, 75)],
+    f: (a, b) => qd(a * b, 2),
+    t: {
+      "units-mixed": (a, b) => q(a * b),
+      "divided-by-ten": (a, b) => qd(a * b, 1),
+      "sides-added": (a, b) => qd(100 * a + b, 2),
+    },
+  }),
+  M5_formula({
+    id: "M5.formula.03",
+    alt: (a, b) => q(a, 100).mul(q(b, 100)),
+    form: "a-field-in-hectares",
+    g: [6, 8],
+    kind: "integer",
+    p: [of(100, 200, 300, 400), of(100, 200, 500, 600)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q((a * b) / 10000),
+    t: {
+      "square-metres": (a, b) => q(a * b),
+      "divided-by-a-hundred": (a, b) => q((a * b) / 100),
+      "divided-by-a-thousand": (a, b) => q((a * b) / 1000),
+    },
+    c: [10000],
+  }),
+  M5_formula({
+    id: "M5.formula.04",
+    alt: (a) => q(sumTimes(9, a)),
+    form: "the-area-after-tripling-both-sides",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(3, 9)],
+    f: (a) => q(9 * a),
+    t: {
+      tripled: (a) => q(3 * a),
+      "factors-added": (a) => q(6 * a),
+    },
+    c: [3, 9],
+  }),
+  M5_formula({
+    id: "M5.formula.05",
+    alt: (a, b) => q(sumTimes(b, a)),
+    form: "the-area-of-a-parallelogram",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(4, 12), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a * b),
+    t: {
+      "slanted-side": (a, b) => q(a * (b + 2)),
+      "half-of-the-product": (a, b) => whole(q(a * b, 2)),
+      perimeter: (a, b) => q(2 * (a + b + 2)),
+    },
+    c: [2],
+  }),
+  M5_formula({
+    id: "M5.formula.06",
+    alt: (a, b) => q(a, 2).mul(q(b)),
+    form: "the-area-of-a-rhombus-from-its-diagonals",
+    g: [6, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10, 12), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      product: (a, b) => q(a * b),
+      "diagonals-added": (a, b) => q(a + b),
+      "half-of-the-sum": (a, b) => whole(q(a + b, 2)),
+    },
+    c: [2],
+  }),
+  M5_formula({
+    id: "M5.formula.07",
+    alt: (a, b) => q(takeAway(a * b, b), 10),
+    form: "a-side-from-an-area-with-a-decimal",
+    g: [6, 8],
+    kind: "decimal",
+    p: [rg(11, 29), rg(2, 6)],
+    ok: (a, b) => a % 10 !== 0 && (a * b) % 10 !== 0,
+    f: (a) => qd(a, 1),
+    t: {
+      "area-minus-side": (a, b) => qd(a * b - 10 * b, 1),
+      "area-times-side": (a, b) => qd(a * b * b, 1),
+      "comma-in-the-wrong-place": (a) => qd(a, 2),
+    },
+    x: (a, b) => ({ x: dec(a * b, 1) }),
+  }),
+  M5_formula({
+    id: "M5.formula.08",
+    alt: (a, b, c) => q(a * b - c * b),
+    form: "a-plot-without-a-strip",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(6, 12), rg(4, 9), rg(1, 3)],
+    ok: (a, b) => a !== b,
+    f: (a, b, c) => q((a - c) * b),
+    t: {
+      "strip-added": (a, b, c) => q((a + c) * b),
+      "strip-ignored": (a, b) => q(a * b),
+      "strip-taken-from-both-sides": (a, b, c) => q((a - c) * (b - c)),
+    },
+  }),
+  M5_formula({
+    id: "M5.formula.09",
+    alt: (a) => {
+      let best = 0;
+      for (let s = 1; s < a; s++) best = Math.max(best, s * (a - s));
+      return q(best);
+    },
+    form: "the-largest-area-for-a-given-wire",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(7, 19)],
+    f: (a) => q(Math.floor(a / 2) * Math.ceil(a / 2)),
+    t: {
+      "long-thin": (a) => q(a - 1),
+      "square-side-rounded-down": (a) => q(Math.floor(a / 2) ** 2),
+      "half-wire-squared": (a) =>
+        w(a * a, Math.floor(a / 2) * Math.ceil(a / 2), a - 1),
+    },
+    x: (a) => ({
+      x: String(2 * a),
+      y: String(a - 1),
+      s1: String(Math.floor(a / 2)),
+      s2: String(Math.ceil(a / 2)),
+    }),
+    c: [1, 2],
+    origin: { olympiad: "the rectangle of the largest area (RES-4286)" },
+  }),
+  M5_formula({
+    id: "M5.formula.10",
+    alt: (a) => q((4 * ((a / 2) * (a / 2))) / 2),
+    form: "the-area-of-a-square-from-its-diagonal",
+    g: [6, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10, 12, 14, 16)],
+    f: (a) => q((a * a) / 2),
+    t: {
+      "diagonal-squared": (a) => q(a * a),
+      "half-diagonal-squared": (a) => q((a * a) / 4),
+      "half-diagonal": (a) => q(a / 2),
+    },
+    c: [2],
+  }),
+  M5_formula({
+    id: "M5.formula.11",
+    alt: (a, b) => q((a * b * (a * b)) / (a * a)),
+    form: "how-many-times-larger-the-area-of-a-bigger-square-is",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(2, 5), rg(2, 4)],
+    f: (a, b) => q(b * b),
+    t: {
+      "side-ratio": (a, b) => q(b),
+      "squared-as-doubled": (a, b) => q(2 * b),
+      "side-difference": (a, b) => q(a * b - a),
+    },
+    x: (a, b) => ({ x: String(a * b) }),
+  }),
+  M5_formula({
+    id: "M5.formula.12",
+    alt: (a) => {
+      const perimeter = 3 * a;
+      let side = 1;
+      while (2 * (side + side / 2) !== perimeter && side < 1000) side++;
+      return q(2 * (side * (side / 2)));
+    },
+    form: "the-area-of-a-square-cut-into-two-rectangles",
+    g: [6, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10, 12, 14, 16)],
+    f: (a) => q(a * a),
+    t: {
+      "perimeter-over-four": (a) =>
+        (3 * a) % 4 === 0 ? q(((3 * a) / 4) ** 2) : null,
+      "one-rectangle": (a) => q((a * a) / 2),
+    },
+    x: (a) => ({ x: String(3 * a) }),
+    c: [3, 4],
+    origin: {
+      olympiad:
+        "a square cut into two equal rectangles: the perimeter of one holds three sides of the square, in the spirit of the perimeter items of the MCCME papers (RES-4286)",
+    },
+  }),
+  M5_formula({
+    id: "M5.formula.13",
+    alt: (a, b, c) => {
+      const area = a * b * c * c;
+      let part = 1;
+      while (a * b * part * part < area && part < 1000) part++;
+      return q(a * part);
+    },
+    form: "the-shorter-side-from-the-ratio-and-the-area",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(1, 3), rg(2, 5), rg(2, 6)],
+    ok: (a, b) => a < b && gcd(a, b) === 1,
+    f: (a, b, c) => q(a * c),
+    t: {
+      "square-of-a-part": (a, b, c) => q(c * c),
+      "longer-side": (a, b, c) => q(b * c),
+    },
+    x: (a, b, c) => ({
+      m: String(a),
+      n: String(b),
+      k: String(c),
+      x: String(a * b * c * c),
+    }),
+    roles: {
+      m: "parts of the first side",
+      n: "parts of the second side",
+      x: "area",
+    },
+  }),
+  M5_formula({
+    id: "M5.formula.14",
+    alt: (a, b) => q(takeAway(a * b, a)),
+    form: "the-other-side-from-the-growth-of-the-area",
+    g: [6, 8],
+    kind: "integer",
+    p: [rg(2, 5), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(b),
+    t: {
+      multiplied: (a, b) => q(a * a * b),
+      subtracted: (a, b) => w(a * b - a, b),
+    },
+    x: (a, b) => ({ x: String(a * b) }),
+  }),
+];
+
+const M6_triangle = calc("M6", "triangle");
+const M6_triangle_specs: readonly Spec<never>[] = [
+  M6_triangle({
+    id: "M6.triangle.01",
+    alt: (a, b) => q((a / 2) * b),
+    form: "a-right-triangle-by-its-legs",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "legs-added": (a, b) => q(a + b),
+    },
+    c: [2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.02",
+    alt: (a, b) => q((a / 2) * b),
+    form: "a-triangle-by-a-base-and-a-height",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10, 12), rg(3, 9)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      product: (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
+    c: [2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.03",
+    alt: (a, b) => q(a).mul(q(2, b)),
+    form: "the-height-from-the-area-and-the-base",
+    g: [7, 8],
+    kind: "decimal",
+    p: [rg(6, 30), of(4, 5, 8, 10)],
+    ok: (a, b) => a !== b && (2 * a) % b !== 0,
+    f: (a, b) => q(2 * a, b),
+    t: {
+      "area-over-base": (a, b) => q(a, b),
+      "area-times-base": (a, b) => q(a * b),
+      "area-minus-base": (a, b) => (a > b ? q(a - b) : null),
+    },
+    c: [2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.04",
+    alt: (a, b) => q(a).mul(q(b, 2)),
+    form: "half-of-a-rectangle-cut-by-a-diagonal",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(3, 9), rg(4, 10)],
+    ok: (a, b) => a !== b && (a * b) % 2 === 0,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.05",
+    alt: (a, b, c) => q((a * (2 * b + c)) / 2),
+    form: "a-house-made-of-a-rectangle-and-a-triangle",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(3, 8), rg(3, 6), of(2, 4, 6)],
+    ok: (a, b, c) => a % 2 === 0 || c % 2 === 0,
+    f: (a, b, c) => q(a * b + (a * c) / 2),
+    t: {
+      "triangle-as-rectangle": (a, b, c) => q(a * b + a * c),
+      "triangle-forgotten": (a, b) => q(a * b),
+      "rectangle-forgotten": (a, b, c) => q((a * c) / 2),
+    },
+    c: [2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.06",
+    alt: (a, b, c) => q((a / 2) * b + (a / 2) * c),
+    form: "two-triangles-with-a-common-base",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10), rg(2, 7), rg(2, 7)],
+    ok: (a, b, c) => b !== c,
+    f: (a, b, c) => q((a * (b + c)) / 2),
+    t: {
+      "one-triangle": (a, b) => q((a * b) / 2),
+      "second-triangle-only": (a, b, c) => q((a * c) / 2),
+      "not-halved": (a, b, c) => q(a * (b + c)),
+    },
+    c: [2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.07",
+    alt: (a, b, c) => q(a + (b + c)),
+    form: "the-perimeter-of-a-triangle",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(3, 9), rg(4, 9), rg(4, 9)],
+    ok: (a, b, c) => a + b > c && a + c > b && b + c > a && b !== c && a !== b,
+    f: (a, b, c) => q(a + b + c),
+    t: {
+      "two-sides": (a, b) => q(a + b),
+      "doubled-sum": (a, b, c) => q(2 * (a + b + c)),
+      "last-two-sides": (a, b, c) => (a === c ? null : q(b + c)),
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.08",
+    alt: (a, b) => q(takeAway(a * b, b)),
+    form: "the-base-from-the-area-and-the-height",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 6, 8, 10), rg(3, 8)],
+    ok: (a, b) => a !== b && (a * b) % 4 === 0,
+    f: (a) => q(a),
+    t: {
+      "area-over-height": (a) => q(a / 2),
+      "area-times-height": (a, b) => q((a * b * b) / 2),
+      "area-minus-height": (a, b) => q((a * b) / 2 - b),
+    },
+    x: (a, b) => ({ x: String((a * b) / 2) }),
+    c: [2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.09",
+    alt: (a, b) => q(2 * ((a * b) / 2)),
+    form: "the-area-when-the-base-doubles",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 6, 8), rg(3, 8)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q(a * b),
+    t: {
+      unchanged: (a, b) => q((a * b) / 2),
+      "not-halved": (a, b) => q(2 * a * b),
+    },
+    c: [2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.10",
+    alt: (a, b) => q((a / 2) * b),
+    form: "a-triangle-on-the-coordinate-plane",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 6, 8), rg(3, 7)],
+    ok: (a, b) => a !== b,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      rectangle: (a, b) => q(a * b),
+      "coordinates-added": (a, b) => q(a + b),
+    },
+    c: [0, 2],
+  }),
+  M6_triangle({
+    id: "M6.triangle.11",
+    alt: (a, b) => q(a).mul(q(b, 2)),
+    form: "a-triangle-as-half-of-a-parallelogram",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(4, 12), rg(3, 8)],
+    ok: (a, b) => a !== b && (a * b) % 2 === 0,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      parallelogram: (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.12",
+    alt: (a, b) => q(a).mul(q(b, 2)),
+    form: "a-triangle-in-a-rectangle-with-its-apex-on-a-side",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(4, 12), rg(3, 9)],
+    ok: (a, b) => a !== b && (a * b) % 2 === 0,
+    f: (a, b) => q((a * b) / 2),
+    t: {
+      "whole-rectangle": (a, b) => q(a * b),
+      "sides-added": (a, b) => q(a + b),
+    },
+    c: [2],
+    origin: {
+      olympiad:
+        "the area of a triangle on a side of a rectangle with its apex on the opposite side does not depend on where the apex is, in the spirit of the area items of the MCCME papers (RES-4286)",
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.13",
+    alt: (a, b) => q(a * (a - 2 * b) + 2 * (a - b) * b),
+    form: "an-octagon-from-a-square-with-cut-corners",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(8, 16), rg(2, 4)],
+    f: (a, b) => q(a * a - 2 * b * b),
+    t: {
+      "squares-instead-of-triangles": (a, b) => q(a * a - 4 * b * b),
+      "one-triangle-cut": (a, b) =>
+        (b * b) % 2 === 0 ? q(a * a - (b * b) / 2) : null,
+      "leg-instead-of-area": (a, b) => q(a * a - 4 * b),
+    },
+    c: [4],
+  }),
+  M6_triangle({
+    id: "M6.triangle.14",
+    alt: (a, b, c) => q((a + b) * c * a, a + b),
+    form: "a-part-of-a-triangle-cut-by-a-line-to-the-base",
+    g: [7, 8],
+    kind: "integer",
+    p: [rg(1, 3), rg(2, 5), rg(2, 6)],
+    ok: (a, b) => a < b,
+    f: (a, b, c) => q(a * c),
+    t: {
+      "parts-swapped": (a, b, c) => q(b * c),
+      "half-of-the-whole": (a, b, c) =>
+        ((a + b) * c) % 2 === 0 ? w(((a + b) * c) / 2, a * c) : null,
+    },
+    x: (a, b, c) => ({ x: String((a + b) * c), k: String(c) }),
+    origin: {
+      olympiad:
+        "triangles with a common height have areas in the ratio of their bases, in the spirit of the area items of the MCCME papers (RES-4286)",
+    },
+    roles: {
+      a: "length of the first part of the base",
+      b: "length of the second part",
+      x: "area of the whole triangle",
+    },
+  }),
+  M6_triangle({
+    id: "M6.triangle.15",
+    alt: (a) => {
+      const twice = Math.abs(a * (0 - a / 2) + (a / 2) * (a / 2 - a));
+      return q(twice, 2);
+    },
+    form: "a-triangle-from-a-corner-to-two-midpoints-of-a-square",
+    g: [7, 8],
+    kind: "integer",
+    p: [of(4, 8, 12, 16, 20, 24, 28, 32)],
+    f: (a) => q((3 * a * a) / 8),
+    t: {
+      "half-of-the-square": (a) => q((a * a) / 2),
+      "quarter-of-the-square": (a) => q((a * a) / 4),
+    },
+    c: [2],
+    origin: {
+      olympiad:
+        "a triangle from a corner to the midpoints of two sides of a square, found by cutting away three corner triangles, a classic item in the spirit of the Kangaroo papers (RES-4286)",
+    },
+  }),
+];
+
+export const mSpecs3: readonly Spec<never>[] = [
+  ...M5_grid_specs,
+  ...M5_sides_specs,
+  ...M5_formula_specs,
+  ...M6_triangle_specs,
+];

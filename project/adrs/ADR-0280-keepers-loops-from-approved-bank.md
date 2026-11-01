@@ -3,8 +3,11 @@ id: ADR-0280
 artifact: adr
 status: approved
 revised: 2026-09-28
-addresses: [REQ-5700, REQ-5702, REQ-5704, REQ-5706, REQ-5708, REQ-5710, REQ-5712, REQ-5714, REQ-5716, REQ-5718, REQ-5720, REQ-5722, REQ-5724, REQ-5725, REQ-5726, REQ-5728, REQ-5730, REQ-5731, REQ-5732, REQ-5734, REQ-5736, REQ-5738, REQ-5740, REQ-5742, REQ-5744, REQ-5746, REQ-5748, REQ-5750, REQ-5752, REQ-5754, REQ-5756, REQ-5758, REQ-5760, REQ-5762, REQ-5764, REQ-5766, REQ-5768, REQ-5770, REQ-5772, REQ-5774, REQ-5776, REQ-5778, REQ-5780, REQ-5782, REQ-5784, REQ-5786, REQ-5788, REQ-5790, REQ-5792, REQ-5794, REQ-5795, REQ-5796, REQ-5798, REQ-6064]
+addresses: [REQ-5700, REQ-5702, REQ-5704, REQ-5706, REQ-5710, REQ-5712, REQ-5714, REQ-5716, REQ-5718, REQ-5720, REQ-5722, REQ-5724, REQ-5725, REQ-5726, REQ-5728, REQ-5730, REQ-5731, REQ-5732, REQ-5734, REQ-5736, REQ-5738, REQ-5740, REQ-5742, REQ-5744, REQ-5746, REQ-5748, REQ-5750, REQ-5752, REQ-5754, REQ-5756, REQ-5758, REQ-5760, REQ-5762, REQ-5764, REQ-5766, REQ-5768, REQ-5770, REQ-5772, REQ-5774, REQ-5776, REQ-5778, REQ-5780, REQ-5782, REQ-5784, REQ-5786, REQ-5788, REQ-5790, REQ-5792, REQ-5794, REQ-5795, REQ-5796, REQ-5798, REQ-6064]
 supersedes: []
+issue: 48
+projected: e388ddb5c085
+tracked: aab66b9681b3
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -76,7 +79,7 @@ The server owns the flow, because ADR-0030 makes the server decide everything:
 
 ADR-0080's attempt flow, its one parallel second attempt and its rule of no third attempt bind adventure tasks, and no rule of that flow runs on a puzzle (REQ-5788).
 
-A solved puzzle gives the Diary page with the full solution in the Keeper's hand and a mark in the collection for its theme (REQ-5772). It also gives 2 star yarn, or 3 for a puzzle of the week (REQ-5774), and for every fifth puzzle solved in one theme, a new cosmetic title from `content/economy.json` (REQ-5776). The reward is the same after a hint (REQ-5778), and a puzzle gives nothing else (REQ-5780). An unsolved or boxed puzzle takes and withholds nothing (REQ-5708): no rule of ADR-0140 reads a puzzle event other than `puzzle_solved`, and that one only grants. The solution page is the one lesson the game offers that teaches an idea outside the skill graph, such as parity or the pigeonhole principle (REQ-5736), and the parent judges it with the puzzle.
+A solved puzzle gives the Diary page with the full solution in the Keeper's hand and a mark in the collection for its theme (REQ-5772). It also gives 2 star yarn, or 3 for a puzzle of the week (REQ-5774), and for every fifth puzzle solved in one theme, a new cosmetic title from `content/economy.json` (REQ-5776). The reward is the same after a hint (REQ-5778), and a puzzle gives nothing else (REQ-5780). An unsolved or boxed puzzle takes and withholds nothing (REQ-8018): no rule of ADR-0140 reads a puzzle event other than `puzzle_solved`, and that one only grants. The solution page is the one lesson the game offers that teaches an idea outside the skill graph, such as parity or the pigeonhole principle (REQ-5736), and the parent judges it with the puzzle.
 
 ### Time, the eye count and the soft stop
 
@@ -134,7 +137,7 @@ The strongest objection is that the whole branch rests on a guard this record al
 
 | Option | Better at | Why it lost |
 | --- | --- | --- |
-| Do nothing: keep the Diary's riddles deferred until she shows she likes puzzles, as RES-3000 set | No bank, no widgets, no review hours and no new events; every build hour goes to the measured core | The owner's addendum puts the branch in the MVP (REQ-5076, REQ-5700), and a game with no puzzle can't show whether she likes puzzles |
+| Do nothing: keep the Diary's riddles deferred until she shows she likes puzzles, as RES-3000 set | No bank, no widgets, no review hours and no new events; every build hour goes to the measured core | The owner's addendum puts the branch in the MVP (REQ-8020, REQ-5700), and a game with no puzzle can't show whether she likes puzzles |
 | Puzzles as adventure tasks, each a template run through ADR-0080's flow | Reuses the flow, the hint ledger, the packet tests and the task window; nothing new to build for play | Its `attempt_submitted` events would reach the knowledge model (REQ-5732), it gives one second attempt where a puzzle needs unlimited answers (REQ-5784), and a task takes a slot in the plan (REQ-5706) |
 | An approved bank of data only, with the model retelling the words each time she opens a puzzle | Fresh wording each time and no text to review | A model call during play would write a rung before her answer (REQ-5758), text nobody approved would reach her (REQ-5752, REQ-5760), and it would spend from the play key |
 | Every text written by hand, by the owner or the parent, with no model pipeline | No model cost, no blind solve, and the Diary's voice from a person | At my estimate of 20 minutes to write each puzzle's five texts, 50 puzzles cost about 17 hours of a person's time before her first puzzle, against about 1.5 hours of review; the addendum sets the offline pipeline |
@@ -245,3 +248,23 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0390, approved on 2026-09-28, whose `## Amends` sections change parts of this record; where they differ from the text above, they hold.
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. A puzzle is a language-free data file and a Russian text file, and the build fails one that breaks a static rule (`archive/tasks/TSK-0868-puzzle-bank-files-and-the-group-1-static-checks.md`)
+2. A puzzle's check accepts every answer that meets its rules, for numbers, sets, arrangements and grid cells (`archive/tasks/TSK-0869-checks-accept-every-answer-that-meets-the-rules-for-four-kinds.md`)
+3. Each of the five widgets has one pure rules module that the client and the server both run, and the move-sequence check replays moves through it (`archive/tasks/TSK-0870-five-widget-rules-modules-and-the-move-sequence-check.md`)
+4. The Diary shows puzzle pages and the five widgets as play she enters by her own choice, under the names «Петельки Смотрителя» and «головоломка» (`archive/tasks/TSK-0871-diary-puzzle-pages-the-widgets-and-the-branch-names.md`)
+5. `npm run puzzles:prepare` passes each puzzle through five steps on the offline key and stops at its own budget (`archive/tasks/TSK-0872-offline-preparation-run-gets-a-puzzle-through-five-steps.md`)
+6. The parent approves each puzzle by hash on one screen, and the game serves only the content she approved (`archive/tasks/TSK-0873-parent-approves-a-puzzle-by-hash-and-the-game-serves-only-approved.md`)
+7. The Director of puzzles offers at most one new puzzle a game day, after a finale, and never more than three are open (`archive/tasks/TSK-0874-director-of-puzzles-offers-one-new-puzzle-after-the-finale.md`)
+8. The server runs a puzzle's own flow: unlimited answers, a three-rung ladder, one free thread and a box (`archive/tasks/TSK-0875-puzzle-routes-answers-rungs-free-thread-and-the-box.md`)
+9. Every puzzle action is an event type of its own, and the knowledge model and the Director read none of them (`archive/tasks/TSK-0876-puzzle-events-of-their-own-that-the-knowledge-model-never-reads.md`)
+10. A puzzle opens from a rest stop, its minutes count towards the eyes and the soft stop, and the soft stop waits for a boundary (`archive/tasks/TSK-0877-puzzle-time-the-rest-stop-the-eye-count-and-the-soft-stop.md`)
+11. A solved puzzle gives its Diary page, a mark, 2 or 3 star yarn and a title for each series of five, the same after a hint (`archive/tasks/TSK-0878-a-solved-puzzle-gives-its-page-yarn-and-titles-and-nothing-else.md`)
+12. The economy's balance simulation counts the star yarn puzzles give and the guiding threads they spend (`archive/tasks/TSK-0879-balance-simulation-includes-puzzle-yarn-and-thread-spend.md`)
+13. The VWO readiness screen shows «Нестандартное мышление» as a reserve, with the puzzle counts, and report v1 keeps nine screens (`archive/tasks/TSK-0880-report-section-non-standard-thinking-on-the-readiness-screen.md`)
+

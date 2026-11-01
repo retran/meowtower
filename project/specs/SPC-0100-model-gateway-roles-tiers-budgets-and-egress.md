@@ -2,8 +2,8 @@
 id: SPC-0100
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2702, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2718, REQ-2720, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688]
+revised: 2026-10-31
+states: [REQ-7880, REQ-7870, REQ-7810, REQ-7750, REQ-7650, REQ-1642, REQ-1644, REQ-1646, REQ-1648, REQ-1650, REQ-1652, REQ-1654, REQ-1656, REQ-1686, REQ-1688, REQ-1690, REQ-1692, REQ-1694, REQ-1696, REQ-2602, REQ-2604, REQ-2606, REQ-2608, REQ-2612, REQ-2614, REQ-2616, REQ-2618, REQ-2620, REQ-2622, REQ-2624, REQ-2626, REQ-2628, REQ-2630, REQ-2632, REQ-2634, REQ-2638, REQ-2644, REQ-2700, REQ-2704, REQ-2706, REQ-2708, REQ-2710, REQ-2712, REQ-2714, REQ-2716, REQ-2722, REQ-2726, REQ-2728, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-6412, REQ-6686, REQ-6688, REQ-7590, REQ-7600, REQ-7610, REQ-7620, REQ-7630, REQ-7690, REQ-7700, REQ-7710, REQ-7740]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -42,6 +42,8 @@ Each role takes its model id from `.env` (REQ-1642). The code fixes each role's 
 | `PLANNER_MODEL` | player | play | adventure | `z-ai/glm-5.3` |
 | `FREE_PEN_MODEL` | player | play | adventure | the adventure's Master model |
 | `LIVE_GEN_MODEL` | content | play | adventure | set in `.env` |
+| `FRAME_JUDGE_MODEL` | content | play | adventure | unset; ADR-3210 names Claude Haiku 5.5 |
+| `TASK_TEXT_MODEL` | content | play | adventure | unset; ADR-3100 names `claude-haiku-5-5` |
 | `LIVE_CHECK_MODEL` | player | play | adventure for frames, explanations for explanations | set in `.env` |
 | `SAFETY_MODEL` | player | play | the caller's bucket | set in `.env` |
 | `JUDGE_MODEL` | player | play | the caller's bucket | `typesafe/jev-1.13` |
@@ -63,7 +65,8 @@ The server reads these from `.env` at start and at no other time:
 - `MASTER_MODEL_CHOICES`, the Master models an owner-approved decision names;
 - `JUDGE_CHECKS`, the checks moved to `JUDGE_MODEL`, by the check names ADR-0350 uses;
 - `PLAYER_TIER_PROVIDERS` and `CONTENT_TIER_PROVIDERS`;
-- `OPENROUTER_PLAY_KEY` and `OPENROUTER_OFFLINE_KEY`;
+- `OPENROUTER_PLAY_KEY`, `OPENROUTER_OFFLINE_KEY` and `ANTHROPIC_API_KEY`;
+- `ANTHROPIC_ZDR_ATTESTED`, the owner's statement of zero retention;
 - the budget values of the buckets table below, and `VERIFY_LIVE_BUDGET_USD`;
 - `GATEWAY_MODE`, one of `play`, `verify`, `replay` or `bakeoff`.
 
@@ -105,6 +108,12 @@ The dependencies run one way. Only `src/server/gateway/` opens a connection to a
 
 ## Behaviour
 
+### Routes
+
+The gateway has two routes, `openrouter` and `anthropic`. Each role's value is `<route>:<model>`, such as `anthropic:claude-haiku-5-5` (REQ-7590), and a value with no known route stops the start as `model_config_invalid`. Each request goes by exactly its role's route, with no failover to the other (REQ-7600). A player-tier role may name `anthropic` only while `ANTHROPIC_ZDR_ATTESTED` is `true`, the owner's statement that the organisation has zero retention (REQ-7610). An image-output role may name only `openrouter` (REQ-7630).
+
+Both routes return text, a stop reason, tokens and a cost in US dollars. OpenRouter's cost comes from `usage.cost`. A direct call's cost comes from the dated price table in `src/server/gateway/prices.ts`. The month of play counts `llm_log` across every route (REQ-7620), and OpenRouter's key limit is a second ceiling on that route alone.
+
 ### Roles and configuration
 
 Each role's model comes from `.env`, so switching a model needs a restart of the server container and no code change and no rebuild (REQ-1642). The server reads `.env` only at start, so every changed model passes the start-up check before a call uses it (REQ-1646). A model enters the play configuration only when an owner-approved decision record in `project/adrs/` names it, whether it is the bake-off's choice or a substitute (REQ-1656). That record's list of approved Master models is `MASTER_MODEL_CHOICES`.
@@ -116,6 +125,7 @@ Every call carries its role's `max_tokens` and ends at its role's timeout. Both 
 | `MASTER_MODEL`, `MASTER_FALLBACK_MODEL`, `FREE_PEN_MODEL` | what remains of the 12 seconds since the order | 2,000 |
 | `PLANNER_MODEL` | 60 s | 4,000 |
 | `LIVE_GEN_MODEL` | 30 s | 4,000 |
+| `TASK_TEXT_MODEL` | 90 s | 12,000 |
 | `LIVE_CHECK_MODEL` | 10 s | 1,000 |
 | `EXPLAIN_MODEL` | 15 s | 2,000 |
 | `SAFETY_MODEL` | 5 s | 200 |
@@ -156,7 +166,7 @@ An `ExplainRequest` carries only the fields the class table lists, with no name 
 
 A `ParseRequest` carries the riddle with every number replaced by a token, `n1` to `nm` in text order (REQ-5036). A number is a digit run, a decimal, a fraction or a Russian numeral word from `content/numerals.ru.json`, such as «пять» (five) or «полтора» (one and a half). The map from tokens to numbers stays on the Mac, and no request class has a field for it. A `ParseRequest` holds no target expression, node id, topic name or task id (REQ-5038). `PARSE_MODEL` runs on the player tier with `zdr: true`, so only an endpoint that keeps nothing receives a riddle (REQ-5040). Its timeout is 10 seconds and its `max_tokens` 4,000.
 
-No request class has a field for a figure the Parent Room computes: the ability profile, the weekly breakdown, retention checks, transfer figures, the quadrants, the probe's results and every other addendum 2 figure stay on the Mac, as do the hypotheses ADR-0450 keeps (REQ-6686). A test searches every request schema and fails on a field typed with a Parent Room figure, probe result or hypothesis schema, and on a numeric field other than `readerAge`, the one answer an `ExplainRequest` carries and the probe run's target length, a rule I chose.
+One exception holds: the `ContentRequest` for a second attempt's story may show that the first attempt failed, by carrying the first story, and holds no answer, name or time (REQ-7870), and a frame request may carry the player's gender (REQ-7880). No request class has a field for a figure the Parent Room computes: the ability profile, the weekly breakdown, retention checks, transfer figures, the quadrants, the probe's results and every other addendum 2 figure stay on the Mac, as do the hypotheses ADR-0450 keeps (REQ-6686). A test searches every request schema and fails on a field typed with a Parent Room figure, probe result or hypothesis schema, and on a numeric field other than `readerAge`, the one answer an `ExplainRequest` carries and the probe run's target length, a rule I chose.
 
 After the MVP, the Dutch probe's Russian and Dutch texts are written only by the offline probe run, under `PROBE_TEXT_MODEL`, `CHECK_MODEL` and `PROBE_LANGUAGE_MODEL` on the content tier and the offline key, in `ContentRequest`s whose fields hold no answer, tap, opened word or other data about the player (REQ-6688). ADR-0430 states the run and its import rule. No Dutch probe text is built until the owner amends the rule in `CLAUDE.md` that text the player sees is in Russian only.
 
@@ -188,7 +198,7 @@ Every other request is in the content tier and carries `provider: { data_collect
 
 ### Keys
 
-The gateway holds two OpenRouter keys. The play key carries a spending limit of $60 that resets each month (REQ-2718), and the play roles spend from it. Offline runs spend from the offline key (REQ-2728). The gateway refuses an offline role on the play key. It refuses a play role on the offline key, apart from `verify` mode, `bakeoff` mode and a call marked as a sandbox call, which only the sandbox's own routes can make. The framing of hint rungs and the retelling of puzzles run under `FRAMING_MODEL` and `PUZZLE_MODEL`, offline roles on the offline key, and never under `PLANNER_MODEL` (REQ-5034). The sandbox's model features spend from the offline key and never from the play key (REQ-5050).
+The gateway holds two OpenRouter keys. The play key carries a spending limit of $200 that resets each month (REQ-7700), and the play roles spend from it. Offline runs spend from the offline key (REQ-2728). The gateway refuses an offline role on the play key. It refuses a play role on the offline key, apart from `verify` mode, `bakeoff` mode and a call marked as a sandbox call, which only the sandbox's own routes can make. The framing of hint rungs and the retelling of puzzles run under `FRAMING_MODEL` and `PUZZLE_MODEL`, offline roles on the offline key, and never under `PLANNER_MODEL` (REQ-5034). The sandbox's model features spend from the offline key and never from the play key (REQ-5050).
 
 Between runs, the offline key's limit is the sandbox's $20 a month, reset at 00:00 UTC on the 1st. Before each offline run, the owner sets the limit so that what remains of it equals that run's budget (REQ-6412), and after the run sets it to $20 plus what the month's offline runs have spent on the key, so the sandbox keeps its $20 a month. `verify --live`'s budget is what remains of the limit during that run. After the MVP, a probe text run's budget is $20 a run, set on the offline key's limit the same way (ADR-0430).
 
@@ -198,10 +208,10 @@ The gateway counts spend in buckets. Each call first reserves its worst-case cos
 
 | Bucket | Limit | Key | Counts | When it runs out |
 | --- | --- | --- | --- | --- |
-| Adventure | $1.5 an adventure (REQ-2702) | play | the Master, the planner, live frames, blind checks of frames, the judge's checks and `SAFETY_MODEL`; `FREE_PEN_MODEL` in the current adventure (REQ-5054) | live calls stop for that adventure; the game plays the library and the pools with no live frames at the usual pace (REQ-2714) |
+| Adventure | $5 an adventure (REQ-7690) | play | the Master, the planner, live frames, blind checks of frames, the judge's checks and `SAFETY_MODEL`; `FREE_PEN_MODEL` in the current adventure (REQ-5054) | live calls stop for that adventure; the game plays the library and the pools with no live frames at the usual pace (REQ-2714) |
 | Explanations | $0.3 and 20 live generations a game day (REQ-2704, REQ-2706) | play | `EXPLAIN_MODEL` and its blind check | a spent thread still gets an explanation from the cache or the template (REQ-2716) |
 | Parse | $0.1 a game day (REQ-5046) | play | `PARSE_MODEL` | «Сплети загадку» (Weave a riddle) offers sentence cards for the rest of the game day |
-| Month of play | $60 from 00:00 UTC on the 1st (REQ-2718) | play | every call on the play key, read from the main database file's `llm_log` | every session to the end of the month uses the fallbacks (REQ-2720), and the Parent Room shows a notice (REQ-2722) |
+| Month of play | $200 from 00:00 UTC on the 1st (REQ-7700) | play | every call on the play key, read from the main database file's `llm_log` | every session to the end of the month uses the fallbacks (REQ-7710), and the Parent Room shows a notice (REQ-2722) |
 | Live art | $0.5 an adventure (REQ-2712) | play | `LIVE_ART_MODEL` | off in the MVP, where the gateway refuses every call to the role |
 | Art run | $40 a run (REQ-2708) | offline | offline art | the run stops and reports what it made |
 | Bake-off | $25 (REQ-2710) | offline | the bake-off | the run stops and reports the candidates it finished |
@@ -209,15 +219,17 @@ The gateway counts spend in buckets. Each call first reserves its worst-case cos
 
 A game day ends at 04:00, and the explanation and parse buckets reset then. «Свободное перо» (Free Pen) has no bucket of its own: it spends from the current adventure's bucket, which is the open adventure, or after the finale the one that finished that game day (REQ-5054). SPC-0090 states how «Свободное перо» closes when that bucket runs out. ADR-0280 states the puzzle run's bucket, ADR-0430 the probe text run's $20 under "Keys", and ADR-0190 the `verify --live` budget.
 
-From 00:00 UTC on the 1st to the end of the game day then in progress, the gateway treats every daily bucket on the play key, the adventure bucket included, as spent, so the fallbacks run and a calendar month in UTC holds the buckets of at most 31 game days. The daily buckets on the play key, the adventure's $1.5, the explanations' $0.3 and the parse's $0.1, sum to $1.9 a day, or $58.90 over those 31 game days, below the $60 monthly limit (REQ-5048). A group 1 check reads the play-key bucket of every role that is on from `verify/baselines.json`, multiplies each by 31 and fails as `bucket_sum_over_limit` when the sum reaches the monthly limit. The check counts a bucket set per adventure as daily, since at most one adventure starts in a game day, as SPC-0090 states. The live art bucket joins the sum when `LIVE_ART_MODEL` turns on.
+From 00:00 UTC on the 1st to the end of the game day then in progress, the gateway treats every daily bucket on the play key, the adventure bucket included, as spent, so the fallbacks run and a calendar month in UTC holds the buckets of at most 31 game days. The daily buckets on the play key, the adventure's $5, the explanations' $0.3 and the parse's $0.1, sum to $5.4 a day, or $167.40 over those 31 game days, below the $200 monthly limit (REQ-5048). A group 1 check reads the play-key bucket of every role that is on from `verify/baselines.json`, multiplies each by 31 and fails as `bucket_sum_over_limit` when the sum reaches the monthly limit. The check counts a bucket set per adventure as daily, since at most one adventure starts in a game day, as SPC-0090 states. The live art bucket joins the sum when `LIVE_ART_MODEL` turns on.
 
-When the month of play reaches $60, by the gateway's own count or because OpenRouter refuses a call on the play key with HTTP 402, the gateway refuses every later play call to the end of the month and appends `budget_month_spent` once (REQ-2720). The Parent Room shows its notice until the month ends (REQ-2722).
+When the month of play reaches $200, by the gateway's own count or because OpenRouter refuses a call on the play key with HTTP 402, the gateway refuses every later play call to the end of the month and appends `budget_month_spent` once (REQ-7710). The Parent Room shows its notice until the month ends (REQ-2722).
 
 When any bucket runs out, a check whose cost was reserved with its Master reply runs on that reservation. The gateway answers each pending check that holds no reservation with `BudgetExhausted`, and the caller discards every generated text whose checks haven't passed, so the game shows only text that passed a safety check (REQ-2726).
 
 ### The log
 
-Every call to an external model service writes an `llm_log` row with its cost and appends an `llm_call` event, the judge's calls included (REQ-2700). A sandbox call writes both to the sandbox's database file, as ADR-0340 states. A nightly job deletes request and response bodies after 90 days and keeps the row. The gateway reports once to the owner when an adventure's Master calls read less than half their input from the cache, and once when the body store passes 1 GB.
+The Parent Room shows every row in full, with the request as it left and the reply as it came (REQ-7650), and a call its budget refuses writes a row with outcome `budget_exhausted` (REQ-7810).
+
+Every call to an external model service writes an `llm_log` row with its cost and appends an `llm_call` event, the judge's calls included (REQ-2700). A sandbox call writes both to the sandbox's database file, as ADR-0340 states. `llm_log` keeps every request and reply for good (REQ-7740). The gateway reports once to the owner when an adventure's Master calls read less than half their input from the cache.
 
 ### Modes
 
@@ -271,5 +283,5 @@ Three rules bind both parts. A local call carries no OpenRouter key and reserves
 | OpenRouter answers HTTP 402 on the offline key | `offline_key_refused`: the call falls back and the run or the sandbox reports it. |
 | An offline role is sent on the play key, or a play role on the offline key outside `verify` mode, `bakeoff` mode and a sandbox call | The gateway refuses the call. |
 | A call to `LIVE_ART_MODEL` in the MVP | The gateway refuses it. |
-| The play-key daily buckets times 31 reach $60 | `bucket_sum_over_limit`: the build fails. |
+| The play-key daily buckets times 31 reach $200 | `bucket_sum_over_limit`: the build fails. |
 | A `replay` request has no recording | `recording_missing`: the request fails. |

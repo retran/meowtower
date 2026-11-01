@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-6000, REQ-6002, REQ-6004, REQ-6006, REQ-6008, REQ-6010, REQ-6012, REQ-6014, REQ-6016, REQ-6018, REQ-6020, REQ-6022, REQ-6024, REQ-6026, REQ-6028, REQ-6030, REQ-6032, REQ-6034, REQ-6036, REQ-6038, REQ-6040, REQ-6044, REQ-6046, REQ-6048, REQ-6050, REQ-6052, REQ-6054, REQ-6056, REQ-6058, REQ-6060, REQ-6062, REQ-6064, REQ-6066, REQ-6068, REQ-6070, REQ-6072, REQ-6074, REQ-6076, REQ-6078, REQ-6080, REQ-6082, REQ-6084, REQ-6086, REQ-6088, REQ-6090, REQ-6092]
 supersedes: []
+issue: 51
+projected: 529dc0ea5f02
+tracked: 49eca47f67d4
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -245,3 +248,22 @@ A timed-out parse and a document with no readable text both reach `snapshot_unre
 - Reading the vendor's teacher dashboard or any service that needs a school login.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6042 (superseded by REQ-7046, which ADR-0420 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Six school snapshot event types have schemas and names that don't name the school's vendor (`archive/tasks/TSK-0916-six-school-snapshot-event-types-and-the-goal-key.md`)
+2. The parser's tests read only generated pupil overviews, and no real overview enters a tracked file (`archive/tasks/TSK-0917-generated-pupil-overviews-for-the-parser-tests.md`)
+3. The blob store keeps each snapshot file once under its hash and byte for byte (`archive/tasks/TSK-0918-blob-store-keeps-a-snapshot-file-once-and-unchanged.md`)
+4. A local parser reads an overview into goals, names its version, and leaves every field the document doesn't show empty (`archive/tasks/TSK-0919-local-parser-reads-an-overview-and-leaves-unseen-fields-empty.md`)
+5. The parent imports a snapshot on the Mac, checks the name and the date, and nothing is written until the parent confirms (`archive/tasks/TSK-0920-import-on-the-mac-writes-nothing-until-the-parent-confirms.md`)
+6. A new parser version rereads every kept file that isn't withdrawn and leaves earlier parses unchanged (`archive/tasks/TSK-0921-reparse-worker-rereads-kept-files-under-a-new-parser-version.md`)
+7. A correction names the file, the goal and the field, wins over a parse, and a disagreement shows both values (`archive/tasks/TSK-0922-corrections-win-over-parses-and-disagreements-show-both-values.md`)
+8. The view of changes between snapshots derives from the four snapshot events and marks a moved target (`archive/tasks/TSK-0923-changes-between-snapshots-with-target-moves-marked.md`)
+9. A withdrawn snapshot disappears from every projection, report and export, and its file never leaves the Mac (`archive/tasks/TSK-0924-withdrawal-hides-a-snapshot-from-every-view-and-nothing-restores-it.md`)
+10. Static checks keep school data out of the knowledge model, the Director and every model call (`archive/tasks/TSK-0925-static-checks-keep-school-data-out-of-the-model-the-director-and-every-model-call.md`)
+11. The parent maps each school goal to nodes through a catalogue or by hand, and only a confirmed link counts (`archive/tasks/TSK-0926-goal-catalogue-mapping-panel-and-confirmed-links.md`)
+12. After the MVP, the «home and school» screen sets the school's values beside the home states and converts neither (`archive/tasks/TSK-0927-home-and-school-screen-sets-two-measures-side-by-side.md`)
+13. After the MVP, the timeline draws the school's levels, the Cito results and the home scale as three labelled series (`archive/tasks/TSK-0928-timeline-draws-school-cito-and-home-series-on-three-scales.md`)
+14. The export for the school holds school values, corrections and Cito results only, and is written only on the Mac (`archive/tasks/TSK-0929-export-for-the-school-holds-school-data-only-and-is-written-on-the-mac.md`)
+

@@ -381,11 +381,26 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
           .all() as { payload: string }[]
       ).map((r) => JSON.parse(r.payload));
 
-    expect(await read()).toEqual({ threeDayLimit: 3 });
+    expect(await read()).toEqual({
+      threeDayLimit: 3,
+      language: "ru",
+      creepiness: 2,
+      gender: "f",
+    });
     expect((await save(5)).status).toBe(200);
-    expect(await read()).toEqual({ threeDayLimit: 5 });
+    expect(await read()).toEqual({
+      threeDayLimit: 5,
+      language: "ru",
+      creepiness: 2,
+      gender: "f",
+    });
     expect((await save(null)).status).toBe(200);
-    expect(await read()).toEqual({ threeDayLimit: null });
+    expect(await read()).toEqual({
+      threeDayLimit: null,
+      language: "ru",
+      creepiness: 2,
+      gender: "f",
+    });
     expect(logged()).toEqual([
       { key: "threeDayLimit", value: 5 },
       { key: "threeDayLimit", value: null },

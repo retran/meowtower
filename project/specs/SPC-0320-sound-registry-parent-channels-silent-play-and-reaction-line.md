@@ -2,7 +2,7 @@
 id: SPC-0320
 artifact: spec
 status: live
-revised: 2026-09-28
+revised: 2026-10-31
 states: [REQ-6100, REQ-6102, REQ-6104, REQ-6106, REQ-6108, REQ-6110, REQ-6112, REQ-6114, REQ-6116, REQ-6118, REQ-6120, REQ-6122, REQ-6124, REQ-6126, REQ-6128, REQ-6130, REQ-6430, REQ-6432, REQ-6136, REQ-6138, REQ-6140, REQ-6142, REQ-6144, REQ-6146, REQ-6148, REQ-6150, REQ-6152, REQ-6154, REQ-6156, REQ-6158, REQ-6160, REQ-6162, REQ-6164]
 ---
 
@@ -12,7 +12,7 @@ states: [REQ-6100, REQ-6102, REQ-6104, REQ-6106, REQ-6108, REQ-6110, REQ-6112, R
 
 ## Scope
 
-This document covers how the game plays with no sound and how it plays sound when the parent allows it: the parent's two channels, the audio module that is the only code allowed to make sound, the volume ceiling, the registry of sound events and the picture each one must have, the ban on sound inside tasks, the pictures that replace what a level-up, a trick and the canon's heard things used to sound like, the eye exercises that take her eyes off the screen, the prepared reaction line that answers her free text first, the familiar's waiting animation, the pressed look of a tapped control, and the tests and iPad checks that prove silence. It is written at the level of modules, routes, events and the checks the build runs.
+This document covers how the game plays with no sound and how it plays sound when the parent allows it: the parent's two channels, the audio module that is the only code allowed to make sound, the volume ceiling, the registry of sound events and the picture each one must have, the ban on sound inside tasks, the pictures that replace what a level-up, a trick and the canon's heard things sound like, the eye exercises that take her eyes off the screen, the prepared reaction line that answers her free text first, the familiar's waiting animation, the pressed look of a tapped control, and the tests and iPad checks that prove silence. It is written at the level of modules, routes, events and the checks the build runs.
 
 It leaves out what other specifications state. SPC-0090 states when an eye exercise is due, the order of the four exercises and the parent's «Пропустить» (Skip) switch. SPC-0030 states the routes' shared contract, pauses and the idle clock. SPC-0110 states the Master's reply path, its checks, its 6-second budget and the line pool with its shuffled cycles and approvals. SPC-0150 states the design-system ports, the motion tokens and the loudness normalisation of each sound file. SPC-0140 states when a level-up, a chest, hatching and evolution fire. SPC-0160 states the forbidden-word list and the time-word check. SPC-0190 states the verify groups and the stage order. Which sound files the game ships, and whether the MVP ships any, is left open: every registry file is optional.
 

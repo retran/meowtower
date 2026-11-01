@@ -73,7 +73,8 @@ describe("the client's strings", () => {
     const keys = Object.keys(strings);
     expect(keys.length).toBeGreaterThan(0);
     expect(keys.every((k) => k.startsWith("ui."))).toBe(true);
-    expect((await app.request("/i18n/xx.json")).status).toBe(404);
+    // A language outside the shipped set answers 400 with the Russian strings (ADR-0160).
+    expect((await app.request("/i18n/xx.json")).status).toBe(400);
   });
 
   it("serves the compiled client modules and nothing else under /client", async () => {

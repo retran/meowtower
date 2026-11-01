@@ -28,6 +28,18 @@ import {
 import { resumeFromLog } from "../engine/projections/resume.js";
 import { isZone } from "../shared/game-day.js";
 import { baseSeed } from "../math/rng.js";
+import { notation } from "../templates/spec.js";
+import {
+  hexOf,
+  inputOf,
+  judge,
+  pick,
+  present,
+  presentFramed,
+  rebuild,
+  trapOf,
+  twinOf,
+} from "./task-source.js";
 import {
   generate,
   type Built,
@@ -64,7 +76,8 @@ import {
   SessionStartOut,
   StopOffer,
 } from "../shared/api.js";
-import { t } from "../shared/i18n.js";
+import type { FrameQueue } from "./frames/queue.js";
+import { keyFor, lang, t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
 import { createRateCap } from "./rate.js";
@@ -99,7 +112,6 @@ import {
   taskOf,
   taskSolution,
   taskText,
-  type StandinTask,
   type Verdict,
 } from "./standin.js";
 
@@ -117,6 +129,10 @@ export interface PlayOptions {
   onSessionEnded?: (sessionId: string) => void;
   /** Sweeps for an expired lease this often; without it only a request does. */
   sweepLeasesMs?: number;
+  /** Where the tasks come from: the three fixed stand-in tasks, or the template registry (EPC-0480). */
+  tasks?: "standin" | "registry";
+  /** The live story frames (ADR-3100); without it every task shows its template text. */
+  frames?: FrameQueue;
 }
 
 /** The candidate a task was drawn at, read from its effective seed `base/k`. */
@@ -150,7 +166,14 @@ interface ItemShown {
   subtype: string;
   seed: string;
   parentItemId?: string;
+  /** The registry template of the task; absent for a stand-in task. */
+  templateId?: string;
+  /** The live frame the task was shown with (ADR-3100). */
+  frameId?: number;
 }
+
+/** How long a task waits for its story before it shows its template text (REQ-7890). */
+const FRAME_WAIT_MS = 90_000;
 
 const payloadOf = <T>(e: StoredEvent): T => e.payload as T;
 
@@ -178,10 +201,33 @@ const hintLevels = (log: StoredEvent[], itemId: string): number[] =>
     .filter((h) => h.itemId === itemId)
     .map((h) => h.level);
 
+/** A shown item in the parent's language: the log keeps the words of the language it was shown in (REQ-7548). */
+function shownOf(event: StoredEvent): ItemShown {
+  const shown = payloadOf<ItemShown>(event);
+  if (shown.view.locale === lang) return shown;
+  const item = shown.templateId
+    ? rebuild(shown.templateId, shown.seed, lang)
+    : null;
+  if (!item) return shown;
+  const shape = present(item);
+  return {
+    ...shown,
+    view: {
+      ...shown.view,
+      locale: lang,
+      text: shape.text,
+      svg: item.made.svg,
+      options: shape.options,
+    },
+    correctAnswer: notation(shape.answer, lang),
+    shortSolution: [...item.made.solution],
+  };
+}
+
 const firstsOf = (log: StoredEvent[]): ItemShown[] =>
   log
     .filter((e) => e.type === "item_shown")
-    .map((e) => payloadOf<ItemShown>(e))
+    .map(shownOf)
     .filter((s) => s.attemptNo === 1);
 
 const answeredIn = (log: StoredEvent[]): Set<string> =>
@@ -203,7 +249,7 @@ function roomFor(
     kind: "room",
     itemId: shown.itemId,
     view: shown.view,
-    input: { kind: "integer" },
+    input: inputOf(shown.templateId, shown.seed, shown.view.locale),
     slot: Math.max(slot, 0) % ROOM_LENGTH,
     roomLength: ROOM_LENGTH,
     attemptNo: shown.attemptNo,
@@ -222,8 +268,19 @@ function answerReply(
   const upTo = log.filter((e) => e.seq <= verdictSeq);
   const verdicts = upTo
     .filter((e) => e.type === "verdict")
-    .map((e) => payloadOf<{ attemptNo: number; outcome: Outcome }>(e));
-  const outcome = verdicts[verdicts.length - 1]?.outcome ?? "alt";
+    .map((e) =>
+      payloadOf<{
+        attemptNo: number;
+        outcome: Outcome;
+        trapId: string | null;
+      }>(e),
+    );
+  const last = verdicts[verdicts.length - 1];
+  const outcome = last?.outcome ?? "alt";
+  const item = shown.templateId
+    ? rebuild(shown.templateId, shown.seed, shown.view.locale)
+    : null;
+  const note = item?.made.traps.find((t) => t.id === last?.trapId)?.explanation;
   // The streak counts clean first attempts in a row.
   const firsts = verdicts.filter((v) => v.attemptNo === 1);
   let streak = 0;
@@ -235,8 +292,9 @@ function answerReply(
     grants: [],
     threads: stockAt(upTo),
     feedback: { correctAnswer: shown.correctAnswer },
+    ...(note ? { note } : {}),
     shortSolution: shown.shortSolution,
-    battleLine: t(`battle.${outcome}.1`),
+    battleLine: t(keyFor(`battle.${outcome}.1`)),
   };
 }
 
@@ -252,9 +310,41 @@ interface Lease {
 export function mountPlay(
   app: Hono,
   db: Db,
-  { now, stream, explainer, onSessionEnded, sweepLeasesMs }: PlayOptions,
+  {
+    now,
+    stream,
+    explainer,
+    onSessionEnded,
+    sweepLeasesMs,
+    tasks,
+    frames,
+  }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
+  /** Tasks go on with no end for now: the ladder is walked again, with other seeds, each lap (ADR-3210). */
+  const endlessTask = (key: string, index: number) =>
+    pick(
+      `${key}/${Math.floor(index / STANDIN_ADVENTURE_TASKS).toString()}`,
+      index % STANDIN_ADVENTURE_TASKS,
+      STANDIN_ADVENTURE_TASKS,
+    );
+  /** What a task is drawn from and spends from: a reload starts a session, and the adventure goes on. */
+  const adventureKey = (sessionId: string): string =>
+    sessionRow(db, sessionId)?.adventureId ?? sessionId;
+  /** Waits for the story of the task about to show, while the client shows its loader (REQ-7890). */
+  const nextFrame = async (sessionId: string): Promise<void> => {
+    if (!frames || tasks !== "registry") return;
+    const played = playLog(sessionId);
+    const answered = answeredIn(played);
+    const open = played
+      .filter((e) => e.type === "item_shown")
+      .some((e) => !answered.has(payloadOf<ItemShown>(e).itemId));
+    const index = firstsOf(played).length;
+    if (open) return;
+    const key = adventureKey(sessionId);
+    const { template, base } = endlessTask(key, index);
+    await frames.ready({ template, base, bucket: key, lang }, FRAME_WAIT_MS);
+  };
 
   // One device holds the adventure at a time. The lease is kept in memory and
   // taken only by a tap (`session/start`); every change to it is in the log
@@ -371,7 +461,7 @@ export function mountPlay(
     const event = itemEvents(db, itemId).find((e) => e.type === "item_shown");
     if (!event?.sessionId) return c.json({ error: "item_unknown" }, 404);
     return {
-      shown: payloadOf<ItemShown>(event),
+      shown: shownOf(event),
       sessionId: event.sessionId,
       log: sessionEvents(db, event.sessionId),
       shownBy: event.deviceId,
@@ -383,7 +473,7 @@ export function mountPlay(
     sessionId: string,
     seq: number,
     itemId: string,
-    task: StandinTask,
+    fallback: string,
   ): Promise<void> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<null>((resolve) => {
@@ -399,7 +489,7 @@ export function mountPlay(
       seq,
       itemId,
       source: text === null ? "template" : "model",
-      text: text ?? taskExplanation(task),
+      text: text ?? fallback,
     });
   }
 
@@ -505,6 +595,9 @@ export function mountPlay(
     const point = resumePoint(db, adventureId);
     const index = point?.index ?? 0;
     const roomIndex = Math.floor(index / ROOM_LENGTH);
+    const openEvent = point?.open
+      ? itemEvents(db, point.open.itemId).find((e) => e.type === "item_shown")
+      : undefined;
     return {
       sessionId,
       adventureId,
@@ -512,7 +605,7 @@ export function mountPlay(
       room: (roomIndex % STANDIN_ROOMS_PER_FLOOR) + 1,
       slot: index % ROOM_LENGTH,
       itemId: point?.open?.itemId ?? null,
-      view: point?.open ? { ...point.open.view, locale: "ru" } : null,
+      view: openEvent ? shownOf(openEvent).view : null,
       attemptNo: point?.open?.attemptNo ?? null,
       hintLevels: point?.open?.hintLevels ?? [],
       explainedItemIds: (point?.explained ?? []).filter(
@@ -590,11 +683,15 @@ export function mountPlay(
     });
   });
 
-  app.get("/api/session/:id/next", (c) => {
+  app.get("/api/session/:id/next", async (c) => {
     const deviceId = device(db, c);
     if (deviceId instanceof Response) return deviceId;
-    if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
+    const waiting = sessionRow(db, sessionId);
+    if (waiting && waiting.state !== "ended" && !displaced(deviceId))
+      await nextFrame(sessionId);
+    // The wait can outlive the session, so everything is read after it.
+    if (displaced(deviceId)) return leaseMoved(c);
     const session = sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
@@ -646,7 +743,7 @@ export function mountPlay(
     // and a second attempt left open alike (REQ-0204).
     const open = played
       .filter((e) => e.type === "item_shown")
-      .map((e) => payloadOf<ItemShown>(e))
+      .map(shownOf)
       .find((s) => !answered.has(s.itemId));
     if (open) {
       if (lifecycle.length) appendEvents(db, lifecycle);
@@ -654,7 +751,7 @@ export function mountPlay(
     }
 
     const index = firsts.length;
-    // After «Закончить на сегодня» the next boundary is the stop offer, once an
+    // After the finish-today action the next boundary is the stop offer, once an
     // open scene or chest is done, and it takes no extension (REQ-2444).
     if (finishedToday(db, Date.now(), sessionZone(db, sessionId))) {
       const point = resumeFromLog(played);
@@ -669,6 +766,7 @@ export function mountPlay(
     // secrets she didn't open (REQ-0228, REQ-0232). A room left half done
     // goes on until it is whole.
     if (
+      tasks !== "registry" &&
       session.adventureId &&
       index % ROOM_LENGTH === 0 &&
       wrapUpOf(sessionId)
@@ -701,7 +799,11 @@ export function mountPlay(
     // The stand-in adventure's finale: its scene, then its chest, then the end.
     // An open scene or chest is shown again as it was, never prepared anew
     // (REQ-0216, REQ-0218).
-    if (session.adventureId && index >= STANDIN_ADVENTURE_TASKS) {
+    if (
+      tasks !== "registry" &&
+      session.adventureId &&
+      index >= STANDIN_ADVENTURE_TASKS
+    ) {
       const point = resumeFromLog(played);
       if (point?.scene) {
         if (lifecycle.length) appendEvents(db, lifecycle);
@@ -757,6 +859,58 @@ export function mountPlay(
       ]);
       return send(c, End, { kind: "end" });
     }
+    if (tasks === "registry") {
+      const chosen = endlessTask(adventureKey(sessionId), index);
+      const frame =
+        frames?.take({ template: chosen.template, base: chosen.base, lang }) ??
+        null;
+      const made = chosen.template.make(chosen.base, lang);
+      const seed = hexOf(chosen.base);
+      const shape = frame
+        ? presentFramed({ template: chosen.template, made }, frame.text)
+        : present({ template: chosen.template, made });
+      const shown: ItemShown = {
+        itemId: randomUUID(),
+        view: {
+          locale: lang,
+          text: shape.text,
+          svg: made.svg,
+          options: shape.options,
+          terms: [],
+        },
+        attemptNo: 1,
+        correctAnswer: notation(shape.answer, lang),
+        shortSolution: [...made.solution],
+        subtype: chosen.template.subtype,
+        seed,
+        templateId: chosen.template.id,
+        ...(frame ? { frameId: frame.id } : {}),
+      };
+      appendEvents(db, [
+        ...lifecycle,
+        {
+          type: "item_shown",
+          v: 2,
+          payload: {
+            ...shown,
+            templateVersion: 1,
+            params: { drawn: made.paramsKey },
+            node: chosen.template.node,
+            purpose: "ladder",
+            effectiveSeed: `${seed}/0`,
+            candidate: 0,
+            frameSource: frame ? "live" : "template",
+          },
+          origin,
+          ...within(sessionId),
+        },
+      ]);
+      return send(
+        c,
+        Room,
+        roomFor(shown, sessionEvents(db, sessionId), playLog(sessionId)),
+      );
+    }
     const task = STANDIN_TASKS[index % STANDIN_TASKS.length];
     if (!task) return c.json({ error: "no_task" }, 500);
     const base = baseSeed(sessionId, `standin.task.${task.n}`, index);
@@ -765,7 +919,7 @@ export function mountPlay(
     const shown: ItemShown = {
       itemId: randomUUID(),
       view: {
-        locale: "ru",
+        locale: lang,
         text: taskText(task),
         svg: null,
         options: null,
@@ -1193,11 +1347,12 @@ export function mountPlay(
     }
 
     // The server checks `raw` itself and ignores the client's `parsed`.
-    const verdict: Verdict = standinVerdict(
-      a.raw,
-      a.dontKnow,
-      shown.correctAnswer,
-    );
+    const registry = shown.templateId
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
+      : null;
+    const verdict: Verdict = registry
+      ? judge(registry, a.raw, a.dontKnow)
+      : standinVerdict(a.raw, a.dontKnow, shown.correctAnswer);
     // An entry the engine can't parse is returned to the player to correct. It
     // is not an attempt, so nothing is logged and the task's time keeps running
     // (REQ-0734, REQ-0736, REQ-0740).
@@ -1246,7 +1401,10 @@ export function mountPlay(
               attemptNo: shown.attemptNo,
               verdict,
               outcome,
-              trapId: null,
+              trapId:
+                registry && verdict === "wrong"
+                  ? trapOf(registry, a.raw)
+                  : null,
               errorClass: null,
               steps: [],
             },
@@ -1282,7 +1440,16 @@ export function mountPlay(
     if (found instanceof Response) return found;
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
-    if (!task) return c.json({ error: "item_unknown" }, 404);
+    const registry = shown.templateId
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
+      : null;
+    const hintText = (n: number): string =>
+      registry
+        ? (registry.made.hints[Math.min(2, Math.max(0, n - 1))] ?? "")
+        : task
+          ? taskHint(task, n)
+          : "";
+    if (!task && !registry) return c.json({ error: "item_unknown" }, 404);
     const key = `hint:${deviceId}:${clientSeq}`;
 
     // A repeat gets the rung it bought and the stock as it was then.
@@ -1292,7 +1459,7 @@ export function mountPlay(
       const bought = payloadOf<{ level: number }>(first).level;
       return send(c, HintOut, {
         level: bought,
-        text: taskHint(task, bought),
+        text: hintText(bought),
         threads: stockAt(log, prior[prior.length - 1]?.seq),
       });
     }
@@ -1301,7 +1468,7 @@ export function mountPlay(
     if (levels.includes(level))
       return send(c, HintOut, {
         level,
-        text: taskHint(task, level),
+        text: hintText(level),
         threads: stockAt(log),
       });
     if (level !== Math.max(0, ...levels) + 1)
@@ -1332,7 +1499,7 @@ export function mountPlay(
     );
     return send(c, HintOut, {
       level,
-      text: taskHint(task, level),
+      text: hintText(level),
       threads: stockAt(sessionEvents(db, sessionId)),
     });
   });
@@ -1348,7 +1515,10 @@ export function mountPlay(
     if (found instanceof Response) return found;
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
-    if (!task) return c.json({ error: "item_unknown" }, 404);
+    const registry = shown.templateId
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
+      : null;
+    if (!task && !registry) return c.json({ error: "item_unknown" }, 404);
     const key = `explain:${deviceId}:${body.data.clientSeq}`;
 
     const prior = requestEvents(db, key);
@@ -1390,7 +1560,17 @@ export function mountPlay(
       ),
     );
     // The reply doesn't wait for the text (REQ-2424); the stream brings it.
-    if (written) void deliver(sessionId, written.seq, itemId, task);
+    if (written)
+      void deliver(
+        sessionId,
+        written.seq,
+        itemId,
+        registry
+          ? registry.made.solution.join(" ")
+          : task
+            ? taskExplanation(task)
+            : "",
+      );
     return send(c, ExplainOut, {
       status: "pending",
       threads: stockAt(sessionEvents(db, sessionId)),
@@ -1412,7 +1592,7 @@ export function mountPlay(
     // parallel task created the first time (REQ-2426).
     const created = log
       .filter((e) => e.type === "item_shown")
-      .map((e) => payloadOf<ItemShown>(e))
+      .map(shownOf)
       .find((s) => s.parentItemId === itemId);
     if (created)
       return send(c, Room, roomFor(created, log, playLog(sessionId)));
@@ -1426,6 +1606,83 @@ export function mountPlay(
     );
     if (!answered) return c.json({ error: "attempt_open" }, 409);
     const task = taskOf(shown.subtype);
+    const original = shown.templateId
+      ? rebuild(shown.templateId, shown.seed, shown.view.locale)
+      : null;
+    if (original && shown.templateId) {
+      const other = twinOf(
+        shown.templateId,
+        sessionId,
+        original.made,
+        shown.view.locale,
+      );
+      if (!other) return c.json({ error: "item_unknown" }, 404);
+      await frames?.ready(
+        {
+          template: other.template,
+          base: Uint8Array.from(Buffer.from(other.seed, "hex")),
+          bucket: adventureKey(sessionId),
+          lang,
+          ...(shown.frameId === undefined ? {} : { previous: shown.view.text }),
+        },
+        FRAME_WAIT_MS,
+      );
+      const twinFrame =
+        frames?.take({
+          template: other.template,
+          base: Uint8Array.from(Buffer.from(other.seed, "hex")),
+          lang,
+        }) ?? null;
+      const shape = twinFrame
+        ? presentFramed(other, twinFrame.text)
+        : present(other);
+      const twin: ItemShown = {
+        itemId: randomUUID(),
+        view: {
+          locale: lang,
+          text: shape.text,
+          svg: other.made.svg,
+          options: shape.options,
+          terms: [],
+        },
+        attemptNo: 2,
+        correctAnswer: notation(shape.answer, shown.view.locale),
+        shortSolution: [...other.made.solution],
+        subtype: shown.subtype,
+        seed: other.seed,
+        parentItemId: itemId,
+        templateId: shown.templateId,
+        ...(twinFrame ? { frameId: twinFrame.id } : {}),
+      };
+      appendEvents(
+        db,
+        keyed(
+          [
+            {
+              type: "item_shown",
+              v: 2,
+              payload: {
+                ...twin,
+                templateVersion: 1,
+                params: { drawn: other.made.paramsKey },
+                node: other.template.node,
+                purpose: "ladder",
+                effectiveSeed: `${other.seed}/0`,
+                candidate: 0,
+              },
+              origin: { deviceId, clientMs: Date.now() },
+              ...within(sessionId),
+            },
+          ],
+          `second-attempt:${deviceId}:${body.data.clientSeq}`,
+        ),
+      );
+      return send(
+        c,
+        Room,
+        roomFor(twin, sessionEvents(db, sessionId), playLog(sessionId)),
+      );
+    }
     if (!task) return c.json({ error: "item_unknown" }, 404);
     const twinBase = baseSeed(sessionId, `standin.task.${task.n}.twin`, 0);
     const drawnTwin = drawnTask(standinTemplate(task, true), twinBase);

@@ -1,5 +1,7 @@
+import { adminPage } from "./admin.js";
+import { llmAudit, playAudit } from "./audit.js";
 import { Hono } from "hono";
-import { lang, t } from "../shared/i18n.js";
+import { t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { issuePairingCode } from "./devices.js";
 import { PIN_PATTERN, setPin } from "./parent-access.js";
@@ -13,8 +15,10 @@ import { readFileSync } from "node:fs";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const escape = (s: string): string =>
-  s.replace(/[&<>"]/g, (ch) => `&#${ch.charCodeAt(0)};`);
+const limitOf = (raw: string | undefined): number => {
+  const n = Number(raw ?? 1000);
+  return Number.isInteger(n) && n > 0 ? n : 1000;
+};
 
 // The Parent Room's listener, published on the Mac's loopback only (REQ-2510).
 // ADR-0180 fills the room; ADR-0020's export routes mount here and nowhere else.
@@ -144,13 +148,14 @@ export function createParentApp({
         ? t("parent.notice.logWriteFailed", { at: notices.log_write_failed.at })
         : null,
     ].filter((l): l is string => l !== null);
-    return c.html(
-      `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">` +
-        `<title>${escape(t("parent.room.title"))}</title></head>` +
-        `<body><h1>${escape(t("parent.room.title"))}</h1>` +
-        lines.map((l) => `<p role="alert">${escape(l)}</p>`).join("") +
-        `</body></html>`,
-    );
+    return c.html(adminPage(db, new Date(now()), lines));
   });
+  // The two audits as data (ADR-3100), for anything the page doesn't show.
+  app.get("/audit/llm", (c) =>
+    c.json(llmAudit(db, limitOf(c.req.query("limit")))),
+  );
+  app.get("/audit/play", (c) =>
+    c.json(playAudit(db, limitOf(c.req.query("limit")))),
+  );
   return app;
 }

@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-0820, REQ-0832, REQ-0956, REQ-0966, REQ-0970, REQ-0972, REQ-0974, REQ-1002, REQ-1004, REQ-1006, REQ-1008, REQ-1010, REQ-1012, REQ-1016, REQ-1018, REQ-1020, REQ-1022, REQ-1024, REQ-1028, REQ-1030, REQ-1032, REQ-1034, REQ-1036, REQ-1038, REQ-1040, REQ-1042, REQ-1044, REQ-1046, REQ-1048, REQ-1050, REQ-1052, REQ-1054, REQ-1056, REQ-1102, REQ-1104, REQ-1106, REQ-1108, REQ-1110, REQ-1114, REQ-1118, REQ-1120, REQ-1122, REQ-1124, REQ-1126, REQ-1128, REQ-1130, REQ-1132]
 supersedes: []
+issue: 27
+projected: 8e8d11f488ac
+tracked: 5ba16154cfdb
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -236,3 +239,26 @@ Amended by ADR-0380, ADR-0400, ADR-0410 and ADR-0430, approved on 2026-09-28, wh
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 9 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0822 (superseded by REQ-6404, which ADR-0360 addresses); REQ-0958 (superseded by REQ-6406, which ADR-0360 addresses); REQ-0978 (superseded by REQ-6844, which ADR-0400 addresses); REQ-1000 (superseded by REQ-5554, which ADR-0260 addresses); REQ-1014 (superseded by REQ-6846, which ADR-0400 addresses); REQ-1026 (superseded by REQ-6400, which ADR-0360 addresses); REQ-1100 (superseded by REQ-5842, which ADR-0290 addresses); REQ-1112 (superseded by REQ-6402, which ADR-0360, ADR-0370 addresses); REQ-1116 (superseded by REQ-5840, which ADR-0290 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: this record takes each slot's candidates through the node's ability level.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The success share of the last 10 graded attempts decides whether a room slot is review or frontier (`archive/tasks/TSK-0532-director-flow-corridor-slot-source.md`)
+2. A review task comes from a fluent or stable node the player will probably solve, and looks like any other task (`archive/tasks/TSK-0533-director-review-slot.md`)
+3. A frontier slot takes the candidate node of highest value, and the play routes ask the Director for every room slot (`archive/tasks/TSK-0534-director-frontier-value-and-room-slots.md`)
+4. The Director never picks a task to make the player fail or to balance the success share (`archive/tasks/TSK-0535-director-honest-difficulty-property.md`)
+5. A stretch node is admitted only by tested results and gets at most 2 tasks in an adventure day (`archive/tasks/TSK-0536-director-stretch-gate-and-daily-cap.md`)
+6. The Director acts on each obligation the model writes: escalation, owed probes, cut-off nodes and island checks (`archive/tasks/TSK-0537-director-obligations-and-island-checks.md`)
+7. Each maths domain gets its floor in any three consecutive adventure days, counting only floors the player completed (`archive/tasks/TSK-0538-director-day-plan-and-domain-window.md`)
+8. A floor opens with a warm-up and two mental arithmetic tasks, and an adventure holds control facts at its start and its end (`archive/tasks/TSK-0539-director-floor-opening-and-control-facts.md`)
+9. The Guardian's first task of a day has one step more than the largest fluent word-problem node, and the ladder follows the outcomes (`archive/tasks/TSK-0540-director-guardian-ladder.md`)
+10. Cold start probes each domain's chain from the typical group down and reviews the first nodes while estimates are few (`archive/tasks/TSK-0541-director-cold-start.md`)
+11. The plan fits the adventure before the soft stop by trimming in a fixed order, and never plans fewer than 28 graded first attempts (`archive/tasks/TSK-0542-director-volume-trimming-and-plan-targets.md`)
+12. Story takes at most 10 minutes of an adventure, and an extension adds only rooms chosen by value (`archive/tasks/TSK-0543-director-story-cap-and-extensions.md`)
+13. An answer faster than its template's minimum time is a rapid guess and stays out of every estimate and block (`archive/tasks/TSK-0544-director-rapid-guess-and-minimum-time.md`)
+14. The fatigue signal fires from answer time alone, offers a rest stop and halves the weight of later attempts (`archive/tasks/TSK-0545-director-fatigue-signal.md`)
+15. Too many rapid guesses or too much help raises a flag for the parent and puts the next session in raised mode (`archive/tasks/TSK-0546-director-raised-mode-flags-and-exposure.md`)
+16. A 30-day simulation classifies at least 90 % of the nodes into their true state and shows guessing buys no gain (`archive/tasks/TSK-0547-director-simulation-over-30-days.md`)
+

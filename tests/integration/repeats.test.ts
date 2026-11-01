@@ -284,7 +284,7 @@ describe("REQ-2424: a bought explanation is confirmed at once and arrives on the
   });
 
   it("sends a written explanation as soon as it exists, and charges a repeat nothing", async () => {
-    const p = player({ explainer: () => Promise.resolve("Разбор задачи.") });
+    const p = player({ explainer: () => Promise.resolve("Разбор шага.") });
     const { sessionId, itemId } = await bought(p);
     await p.post(`/api/item/${itemId}/explain`, { clientSeq: 2 });
     await p.post(`/api/item/${itemId}/explain`, { clientSeq: 2 });
@@ -300,7 +300,7 @@ describe("REQ-2424: a bought explanation is confirmed at once and arrives on the
       await (await p.get(`/api/session/${sessionId}/poll?after=0`)).json(),
     );
     expect(messages).toMatchObject([
-      { source: "model", text: "Разбор задачи.", itemId },
+      { source: "model", text: "Разбор шага.", itemId },
     ]);
   });
 });

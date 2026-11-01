@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-6064, REQ-6202, REQ-6204, REQ-6206, REQ-6210, REQ-6212, REQ-6214, REQ-6216, REQ-6218, REQ-6221, REQ-6222, REQ-6224, REQ-6226, REQ-6228, REQ-6230, REQ-6232, REQ-6233, REQ-6234, REQ-6236, REQ-6238, REQ-6240, REQ-6242, REQ-6243, REQ-6244, REQ-6245, REQ-6246, REQ-6248, REQ-6250, REQ-6252, REQ-6254, REQ-6256, REQ-6258, REQ-6260, REQ-6262, REQ-6264, REQ-6266, REQ-6268, REQ-6270, REQ-6272, REQ-6274, REQ-6276, REQ-6278, REQ-6279, REQ-6280, REQ-6282, REQ-6284, REQ-6286, REQ-6288, REQ-6290, REQ-6292, REQ-6294, REQ-6296, REQ-6298]
 supersedes: []
+issue: 53
+projected: 58205ca3b1b6
+tracked: ab91bf4c0378
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -226,3 +229,24 @@ The security boundary protects her text and the measurement. The threats, most l
 The premortem, written as though it had already happened. Six weeks in, the parent found she had stopped writing, and the signal had never risen. The starters had taken two taps where the old options took one, so she had learned to press «Дальше» at every point. Her own words per adventure fell to nothing, but she sent nothing either, so the share of unchanged starters never rose and REQ-6292's signal, which needs both, stayed down. A second failure sat in the freshness list: the familiar's greeting wasn't tagged `catchphrase` in the canon, so after two weeks the list struck it, and the familiar lost its one line. A third came from the routes: on most days B differed from A only in order, and the teasers said so plainly, so she stopped reading them and pressed «Дальше». The reversal conditions on points passed with no send and on routes taken with «Дальше» watch the first and third failures, and check 12 watches the second.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6200 (superseded by REQ-6438, which ADR-0360 addresses); REQ-6208 (superseded by REQ-6436, which ADR-0360 addresses); REQ-6220 (superseded by REQ-6434, which ADR-0360 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Systems open by days of play, and every route of a closed system answers 404 (`archive/tasks/TSK-0948-systems-open-by-days-of-play.md`)
+2. Every attempt is unassisted until guiding threads open on day 2 (`archive/tasks/TSK-0949-attempts-are-unassisted-until-threads-open.md`)
+3. `planDay` returns two routes that keep the three-day window and the planned graded slots (`archive/tasks/TSK-0950-two-routes-keep-the-window-and-the-slots.md`)
+4. A story scene offers the two routes, and «Дальше» takes the route of higher total value (`archive/tasks/TSK-0951-route-choice-scene-and-next-takes-the-higher-route.md`)
+5. Starters insert into the field and never send, and options that send exist only where the plot offers a choice (`archive/tasks/TSK-0952-starters-insert-and-never-send.md`)
+6. The server computes the origin of each send, stores it as a story fact, and the planner must answer her own words in a later scene (`archive/tasks/TSK-0953-her-own-words-are-answered-in-a-later-scene.md`)
+7. Every adventure plays a scene without tasks and brings in a character she has met (`archive/tasks/TSK-0954-interlude-and-a-known-character-in-every-adventure.md`)
+8. No line of an adventure's first scene misses her, waits for her or asks where she was (`archive/tasks/TSK-0955-no-first-scene-misses-her.md`)
+9. A phrase the Master repeats joins a do-not-use list, and the whitelist keeps jokes, catchphrases and her names out of it (`archive/tasks/TSK-0956-repeated-phrases-join-a-do-not-use-list.md`)
+10. Openings, finales and temperaments come from dealt decks, each opening is scored with no model call, and the parent reads a weekly sample (`archive/tasks/TSK-0957-decks-opening-similarity-and-the-weekly-sample.md`)
+11. The Master refuses a story action only for safety, keeps the trial with a "yes, and", and a refused name says which limit it broke (`archive/tasks/TSK-0958-refusals-only-for-safety-and-names-name-the-limit.md`)
+12. She rereads any chapter, marks favourites and finds hidden details, and rituals follow game events only (`archive/tasks/TSK-0959-she-rereads-favourites-and-finds-details.md`)
+13. "Show" cards reach only the Parent Room, the story book prints, and the memo holds a first-week checklist (`archive/tasks/TSK-0960-show-cards-story-book-print-and-first-week-memo.md`)
+14. «Свободное перо» writes with the Master outside the task window and spends only what the adventure's bucket left (`archive/tasks/TSK-0961-the-free-pen-spends-what-the-adventure-left.md`)
+15. The report's summary shows an Interest section, the parent marks each day, and a signal says when the story is stopping being hers (`archive/tasks/TSK-0962-interest-section-day-marks-and-the-signal.md`)
+16. A 60-day simulation shows the story rules hold and the log holds the 14 event types (`archive/tasks/TSK-0963-sixty-day-run-and-the-fourteen-event-types.md`)
+

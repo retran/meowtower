@@ -76,7 +76,9 @@ const itemShownBase = z.object({
   itemId,
   view: z
     .object({
-      locale: z.enum(["ru"]).describe("the language the view was rendered in"),
+      locale: z
+        .enum(["ru", "en", "nl"])
+        .describe("the language the view was rendered in"),
       text: z.string().describe("the task's text as rendered"),
       svg: z
         .string()
@@ -153,6 +155,15 @@ const itemShownV2 = itemShownBase
       .describe(
         "the candidate k the task was drawn at, or null for a fallback",
       ),
+    frameSource: z
+      .enum(["live", "template"])
+      .optional()
+      .describe("whether a live frame or the template's text was shown"),
+    frameId: z
+      .number()
+      .int()
+      .optional()
+      .describe("the frames row of a live frame"),
   })
   .strict()
   .superRefine(requireParentForSecond);
@@ -796,6 +807,18 @@ const safetyDefs: EventDef[] = [
     schema: obj({
       llmLogId: id("the llm_log row of the call"),
       role: id("the model role called"),
+    }),
+  },
+  {
+    type: "budget_month_spent",
+    v: 1,
+    schema: obj({ month: id("the month, as YYYY-MM, that reached its limit") }),
+  },
+  {
+    type: "live_frames_paused",
+    v: 1,
+    schema: obj({
+      gameDay: z.number().int().describe("the game day live frames stopped"),
     }),
   },
 ];

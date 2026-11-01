@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-1924, REQ-2800, REQ-2802, REQ-2804, REQ-2806, REQ-2808, REQ-2810, REQ-2812, REQ-2814, REQ-2816, REQ-2818, REQ-2820, REQ-2822, REQ-2824, REQ-2826, REQ-2828, REQ-2830, REQ-2832, REQ-2834, REQ-2836, REQ-2838, REQ-2840, REQ-3400, REQ-3402, REQ-3406, REQ-3408, REQ-3410, REQ-3412, REQ-3414, REQ-3416, REQ-3418, REQ-3420, REQ-3422, REQ-1510]
 supersedes: []
+issue: 37
+projected: be22ae95d606
+tracked: 49f30498ea5f
 ---
 
 <!-- Reader: the owner and whoever writes the spec, evaluating the decision. They know RES-2800 and RES-3400. -->
@@ -159,3 +162,23 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-3404 (superseded by REQ-6418, which ADR-0360 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The art catalogue and the style file exist, and a check fails on a card that breaks a rule (`archive/tasks/TSK-0692-art-catalogue-and-style-files-with-catalogue-check.md`)
+2. The art queue keeps each variant before the next generation and resumes without repeating one (`archive/tasks/TSK-0693-art-queue-resumes-without-repeating-a-variant.md`)
+3. An art run starts only with its models and references, and stops at its budget (`archive/tasks/TSK-0694-art-run-starts-only-with-models-references-and-budget.md`)
+4. A transparent asset is cut from its key colour, and two program checks reject pure black and a key-colour fringe (`archive/tasks/TSK-0695-program-checks-and-key-colour-cutout.md`)
+5. The judge scores every variant from 1 to 10 and rejects six findings whatever the score (`archive/tasks/TSK-0696-judge-scores-every-variant-and-hard-fails-six-findings.md`)
+6. Each variant request carries the style, the references and the floor's palette, and takes card ids only (`archive/tasks/TSK-0697-variant-request-carries-style-references-and-card-ids-only.md`)
+7. A character's sheet is generated first, and a familiar's stage waits for its previous stage (`archive/tasks/TSK-0698-sheets-first-and-stages-after-their-previous-stage.md`)
+8. The queue makes only the four heroine sheets until the parent records the style check (`archive/tasks/TSK-0699-style-check-opens-the-rest-of-the-queue.md`)
+9. A character's other pictures follow the sheet a person chose, and a different choice queues them again (`archive/tasks/TSK-0700-dependents-follow-the-chosen-sheet.md`)
+10. A person chooses each picture on the Graphics choice screen, and nothing ships without a logged choice (`archive/tasks/TSK-0701-choice-screen-and-shipped-pictures-need-a-chosen-variant.md`)
+11. The server sends the chosen picture, else the draft, else a placeholder, and filters by creepiness level (`archive/tasks/TSK-0702-server-sends-chosen-draft-or-placeholder-by-creepiness.md`)
+12. The colours of art, placeholders, shaders and particles can't reach pure black (`archive/tasks/TSK-0703-art-and-placeholder-colours-keep-pure-black-out.md`)
+13. A heroine picture's tint mask is made offline, approved by a person and sent only once approved (`archive/tasks/TSK-0704-heroine-tint-mask-is-approved-before-it-is-sent.md`)
+14. Characters move as whole sprites, emotions swap pictures, and the cloak colour tints only the mask (`archive/tasks/TSK-0705-characters-move-as-whole-sprites-and-tint-only-the-mask.md`)
+15. An SVG check fails an icon or element symbol with a wrong outline, black or a wrong size (`archive/tasks/TSK-0706-icon-and-element-svg-check.md`)
+

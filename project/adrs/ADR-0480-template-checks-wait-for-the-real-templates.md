@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-11
 addresses: [REQ-0816, REQ-0818, REQ-0852, REQ-1244]
 supersedes: []
+issue: 67
+projected: 21fa53c205b5
+tracked: 718d52e322ee
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -47,3 +50,9 @@ Two tasks wait for the real templates, and the record carries one more epic unti
 ## What this does not settle
 
 - Whether the real templates arrive in the order the epics realising ADR-0040 set.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Area and volume by formula sit at 1S, and the perimeter node M4 splits as the requirement says (`archive/tasks/TSK-0506-graph-measurement-subtypes.md`)
+

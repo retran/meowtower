@@ -414,6 +414,14 @@ cmd_status() {
     [[ -n "$rfailed" ]] && echo "recompute_failed: the recompute at $rfailed failed; the old projections stay."
     [[ -n "$rslow" ]] && echo "recompute_slow: a full recompute took $rslow ms, over the 60 s budget."
     [[ -n "$large" ]] && echo "log_large: the event log passed 1 GB."
+    local snaprows blocked_sources
+    snaprows="$(sed -n 's/.*"snapshot_ceiling":{"at":"[^"]*","rows":\([0-9]*\)}.*/\1/p' data/snapshots/notices.json)"
+    [[ -n "$snaprows" ]] && echo "snapshot_ceiling: node_snapshots holds $snaprows rows, over the 2 million ceiling; no row was deleted."
+    # One line for each source whose blocked share of a day's lines passed 5 % (ADR-0160).
+    blocked_sources="$(grep -o '"text_blocked_high":{.*' data/snapshots/notices.json | grep -o '"[a-z]*":{"at"' | sed 's/":{"at"//; s/"//' || true)"
+    for source in $blocked_sources; do
+      echo "text_blocked_high: more than 5 % of the lines of $source were blocked in a day."
+    done
     local wfailed
     wfailed="$(sed -n 's/.*"log_write_failed":{"at":"\([^"]*\)".*/\1/p' data/snapshots/notices.json)"
     [[ -n "$wfailed" ]] && echo "log_write_failed: a write to the event log failed at $wfailed; check the free space on the Mac."

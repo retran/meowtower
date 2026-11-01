@@ -24,7 +24,7 @@ export interface Observation {
   readonly itemId: string;
   readonly node: string;
   readonly subtype: string;
-  /** Score: 1 right, 0.5 partly right, 0 wrong or "Не знаю" (REQ-0918). */
+  /** Score: 1 right, 0.5 partly right, 0 wrong or "don't know" (REQ-0918). */
   readonly c: number;
   /** Weight: 1, or 0.5 with the fatigue mark. */
   readonly w: number;

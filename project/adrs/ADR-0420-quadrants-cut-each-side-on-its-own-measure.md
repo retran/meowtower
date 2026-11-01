@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-7000, REQ-7002, REQ-7004, REQ-7006, REQ-7008, REQ-7010, REQ-7012, REQ-7014, REQ-7016, REQ-7018, REQ-7020, REQ-7022, REQ-7024, REQ-7026, REQ-7028, REQ-7030, REQ-7032, REQ-7036, REQ-7038, REQ-7040, REQ-7042, REQ-7044, REQ-7046, REQ-7048, REQ-7050, REQ-7052, REQ-7054, REQ-7056, REQ-7058, REQ-7060, REQ-7062, REQ-7064, REQ-7066, REQ-7068, REQ-7070, REQ-7072, REQ-7074, REQ-7076, REQ-7404]
 supersedes: []
+issue: 62
+projected: 280401127f78
+tracked: 2a69dbfae3bd
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -253,3 +256,21 @@ A `developing` status and a missing target level both reach `school_unplaced`, d
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-7034 (superseded by REQ-7404, which this record now addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The MVP's Cito form takes an optional list of category entries, and no model call reads it (`archive/tasks/TSK-1092-cito-form-category-list.md`)
+2. `content/cito-categories.json` maps the four domains from the research table and holds the LOVS categories unconfirmed (`archive/tasks/TSK-1093-cito-categories-mapping-file.md`)
+3. A goal's home side reads block states of tested nodes at the snapshot's document date (`archive/tasks/TSK-1094-goal-home-reading.md`)
+4. A goal's school side reads its status against its target level (`archive/tasks/TSK-1095-goal-school-reading.md`)
+5. A Cito row compares its category's tested nodes with the tested nodes outside it (`archive/tasks/TSK-1096-cito-row-relative-cut.md`)
+6. A small category reads on a floor scaled to its size and passes a one-node guard (`archive/tasks/TSK-1097-small-category-floor-and-one-node-guard.md`)
+7. Every row in no quadrant shows its first reason, and the Cito section says Cito builds no profile for the top and bottom 10 % (`archive/tasks/TSK-1098-reasons-for-rows-in-no-quadrant.md`)
+8. The route computes the screen at request time from the log and writes nothing (`archive/tasks/TSK-1099-home-and-school-route-at-request-time.md`)
+9. Each quadrant shows its checks, and the two disagreeing quadrants name their causes on both sides (`archive/tasks/TSK-1100-quadrant-checks-and-causes.md`)
+10. Each row names the basis of each node's state and carries «одна проверка» when a node rests on one block (`archive/tasks/TSK-1101-node-basis-and-one-check-mark.md`)
+11. After the MVP, the parent maps a typed category or an `other` signal and the screen reads the resolution (`archive/tasks/TSK-1102-parent-resolves-typed-category-and-signal.md`)
+12. The Dutch memo lists the category analysis and the test conditions among what the parent can ask the school for (`archive/tasks/TSK-1103-dutch-memo-category-analysis-and-conditions.md`)
+13. The acceptance run shows every quadrant and reason on fixtures, the build time and the parent's judgement of the wording (`archive/tasks/TSK-1104-quadrants-acceptance-run.md`)
+

@@ -4,12 +4,14 @@
 import type { Context } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { z } from "zod";
+import type { Source } from "./outgoing.js";
 
 export function send<S extends z.ZodType>(
   c: Context,
   schema: S,
   body: z.input<S>,
   status: ContentfulStatusCode = 200,
+  source: Source = "fixed",
 ): Response {
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
@@ -18,5 +20,8 @@ export function send<S extends z.ZodType>(
     );
     return c.json({ error: "packet_invalid" }, 500);
   }
-  return c.json(parsed.data as object, status);
+  // The app sets the gate on the context, so no body leaves around it (REQ-3326).
+  const gate = c.get("outgoing");
+  const safe = gate ? gate.body(parsed.data, source) : parsed.data;
+  return c.json(safe as object, status);
 }

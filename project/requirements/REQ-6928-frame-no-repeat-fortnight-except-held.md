@@ -3,8 +3,8 @@ id: REQ-6928
 artifact: requirement
 topic: task-text
 class: functional
-status: approved
-revised: 2026-09-28
+status: superseded
+revised: 2026-10-31
 elaborates: RES-4230
 verification: behavioural
 supersedes: [REQ-3610]

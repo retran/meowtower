@@ -5,6 +5,9 @@ status: approved
 revised: 2026-09-28
 addresses: [REQ-2648, REQ-2732, REQ-3910, REQ-3912, REQ-3914, REQ-3916, REQ-3918, REQ-3920, REQ-3922, REQ-3924]
 supersedes: []
+issue: 55
+projected: e08a36ddc462
+tracked: aabe04bc0663
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -510,3 +513,16 @@ month. The test had measured an idle Mac. The notice now names the day's local
 p95 and the hours the fallbacks fell in, which points at the load on the Mac,
 and the reversal on a fallback share above 5 % in the first month returns the
 checks to their hosted route if the load can't be moved.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. A local judge answers only the Mac and only with the key (`archive/tasks/TSK-0980-a-local-judge-answers-only-the-mac-and-only-with-the-key.md`)
+2. A model whose card lists its languages without Russian never answers a judge check (`archive/tasks/TSK-0981-a-model-whose-card-lists-no-russian-never-answers-a-check.md`)
+3. A local judge's answer is read as one label with a probability for each label, and anything else goes to the safety model (`archive/tasks/TSK-0982-a-local-answer-is-read-as-probabilities-or-it-is-an-error.md`)
+4. A judge is confirmed before it gets a check, and a changed file or prompt holds only the checks it affects (`archive/tasks/TSK-0983-a-judge-is-confirmed-before-it-gets-a-check-and-a-changed-file-holds-its-checks.md`)
+5. `tools/bakeoff.ts --local` measures each candidate's latency at the gateway and agreement with the reference (`archive/tasks/TSK-0984-local-bakeoff-measures-latency-and-agreement-on-the-family-mac.md`)
+6. Each judge check takes the route its own test set proves, and every other check stays on its hosted route (`archive/tasks/TSK-0985-each-judge-check-takes-the-route-its-own-test-set-proves.md`)
+7. Hosted judge calls go on the play key, and local calls carry no key, reserve nothing and replay from recordings (`archive/tasks/TSK-0986-hosted-judge-calls-go-on-the-play-key-and-local-calls-cost-nothing.md`)
+8. The Parent Room tells, for each check on her text, where it runs and which company reads it (`archive/tasks/TSK-0987-parent-room-tells-where-each-check-on-her-text-runs.md`)
+

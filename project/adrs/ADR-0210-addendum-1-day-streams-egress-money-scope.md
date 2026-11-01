@@ -3,8 +3,11 @@ id: ADR-0210
 artifact: adr
 status: approved
 revised: 2026-10-10
-addresses: [REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5018, REQ-5020, REQ-5022, REQ-5024, REQ-5026, REQ-5028, REQ-5030, REQ-5032, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-5056, REQ-5058, REQ-5060, REQ-5062, REQ-5064, REQ-5066, REQ-5068, REQ-5070, REQ-5072, REQ-5074, REQ-5076, REQ-5078, REQ-5080, REQ-5082, REQ-5086, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5096, REQ-5098]
+addresses: [REQ-5000, REQ-5002, REQ-5004, REQ-5006, REQ-5008, REQ-5010, REQ-5012, REQ-5014, REQ-5016, REQ-5018, REQ-5020, REQ-5022, REQ-5024, REQ-5026, REQ-5028, REQ-5030, REQ-5032, REQ-5034, REQ-5036, REQ-5038, REQ-5040, REQ-5042, REQ-5044, REQ-5046, REQ-5048, REQ-5050, REQ-5052, REQ-5054, REQ-5056, REQ-5058, REQ-5060, REQ-5062, REQ-5064, REQ-5066, REQ-5068, REQ-5070, REQ-5072, REQ-5074, REQ-5078, REQ-5080, REQ-5082, REQ-5086, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5096, REQ-5098]
 supersedes: []
+issue: 41
+projected: 5b65b6ce2a76
+tracked: 9f06b0c9c8ed
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -56,7 +59,7 @@ The addendum adds four model jobs, and each runs under a role of its own in ADR-
 
 The blind check of puzzles uses `CHECK_MODEL` as it stands, since that job is already an offline check. No `GOALS_MODEL` role exists. The framing and the retelling run as offline roles on the offline key, never under the planner's play role (REQ-5034). The gateway already refuses an offline role on the play key. I gave «Свободное перо» a role of its own, with the Master's model as its default, because REQ-5030 covers every new use and the separate role lets `llm_log` show its spend apart from the story's. Its `StoryRequest` keeps every rule the Master's has, so it carries no number, node id or topic name.
 
-The gateway hands a role's output to the game only after it passes the zod schema of the role's declared output and the data rules that bind the role (REQ-5032). An output that fails gets the role's fallback. A parse output that names a number token the request didn't carry, or an operation outside the schema, fails the check. A framed rung or a retold puzzle that fails the content checks ADR-0130 runs on frames fails the same way. A parse that times out after 10 seconds, returns invalid JSON or fails its schema gives the riddle the verdict `unparsed`, with base experience and no observation (REQ-5288), as ADR-0230 sets out. The other fallbacks are the plain rung text from the template for the framing, and the puzzle bank's own text for the retelling. «Свободное перо» falls back to a library scene that closes the book.
+The gateway hands a role's output to the game only after it passes the zod schema of the role's declared output and the data rules that bind the role (REQ-5032). An output that fails gets the role's fallback. A parse output that names a number token the request didn't carry, or an operation outside the schema, fails the check. A framed rung or a retold puzzle that fails the content checks ADR-0130 runs on frames fails the same way. A parse that times out after 10 seconds, returns invalid JSON or fails its schema gives the riddle the verdict `unparsed`, with no observation (REQ-8028), as ADR-0230 sets out. The other fallbacks are the plain rung text from the template for the framing, and the puzzle bank's own text for the retelling. «Свободное перо» falls back to a library scene that closes the book.
 
 ### Only a riddle with its numbers masked joins what leaves the Mac
 
@@ -115,7 +118,7 @@ The changed fields of `attempt_submitted`, `item_shown` and `verdict` arrive as 
 
 ### The MVP holds the addendum's items and the Dutch bridge
 
-The first version holds every part of the MVP contents list REQ-5076 names: the approved list, plus the addendum's items 1 to 9 and 11 to 13. The owner judges it at the stage 0.3 acceptance. The first version holds none of the deferred items REQ-5078 names, which now include snapshots of the school's learning system. The scope guard gains two traces for that item, a schema for a `school_snapshot_*` type and a Parent Room route for a school snapshot, beside the vendor's name it already lists for REQ-5064.
+The first version holds every part of the MVP contents list REQ-8020 names: the approved list, plus the addendum's items 1 to 9 and 11 to 13. The owner judges it at the stage 0.3 acceptance. The first version holds none of the deferred items REQ-5078 names, which now include snapshots of the school's learning system. The scope guard gains two traces for that item, a schema for a `school_snapshot_*` type and a Parent Room route for a school snapshot, beside the vendor's name it already lists for REQ-5064.
 
 Every text and task the player sees is in Russian, apart from the Dutch keywords of the word bridge and the Dutch word a term hint shows, each once the parent has approved it (REQ-5080). The bridge's words are entries in `lexicon.ru.json`, the file that already holds the glossary's Dutch word beside the Russian term (ADR-0160). A bridge entry carries `bridge: true`, and its Dutch word sits in the same field a glossary entry uses. No Dutch locale file appears, so the scope guard keeps failing on `content/i18n/nl.json` and on any `*.nl.*` file. The Dutch layer stays out of the MVP, and the parent's Dutch memo is allowed, because it is parent-facing. ADR-0160's string check refuses a Latin-script word on a player screen unless the word is an approved Dutch field of the lexicon or sits inside a task's content as a bridge keyword.
 
@@ -220,7 +223,7 @@ Failure states, each with its next step and one audience:
 | --- | --- | --- |
 | `parser_not_accepted`: the last live run is missing or below 95 % | free composition stays off; sentence cards | the owner, in the verify report |
 | `parse_budget_spent` | sentence cards for the rest of the game day | the parent, in the day's cost line |
-| `parse_output_refused`: the output failed its schema or named an unknown token | this riddle gets `unparsed` (REQ-5288) | the owner, in `llm_log` |
+| `parse_output_refused`: the output failed its schema or named an unknown token | this riddle gets `unparsed` (REQ-8028) | the owner, in `llm_log` |
 | `mask_incomplete`: a digit or numeral word survived masking | the request isn't sent; the riddle gets `unparsed`; reported once per cause | the owner |
 | `sandbox_budget_spent` | sandbox model features fall back until the month ends; one notice | the parent |
 | `offline_key_refused`: OpenRouter answers 402 on the offline key | the call falls back; the run or sandbox reports it | the owner |
@@ -228,7 +231,7 @@ Failure states, each with its next step and one audience:
 | `bridge_below_minimum`: fewer than 30 words approved | the bridge stays off | the parent, as a count in the glossary panel |
 | `bridge_share_out_of_band`, `event_type_unowned`, `bucket_sum_over_limit`, `vendor_name_found`, `hour_read_outside_day_module` | the build fails and names the case | the building agent |
 
-The player sees none of these states as an error: each ends in sentence cards, an `unparsed` riddle with base experience, a library scene or a plain rung, and the story reads the same. `parse_budget_spent` and `parser_not_accepted` look the same to her on purpose, since both give sentence cards.
+The player sees none of these states as an error: each ends in sentence cards, an `unparsed` riddle, a library scene or a plain rung, and the story reads the same. `parse_budget_spent` and `parser_not_accepted` look the same to her on purpose, since both give sentence cards.
 
 ## What would reverse it
 
@@ -327,3 +330,26 @@ Amended by ADR-0380, ADR-0420, ADR-0430 and ADR-0440, approved on 2026-09-28, wh
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5084 (superseded by REQ-6416, which ADR-0360 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. One module turns a time into a game day, a lint rule bars hour reads elsewhere, and every daily job runs once per game day (`archive/tasks/TSK-0756-game-day-module-and-hour-lint-rule.md`)
+2. The server plans one adventure a game day, and daily quests and rewards come on every game day she plays (`archive/tasks/TSK-0757-one-adventure-a-game-day-and-daily-quests.md`)
+3. The story tells the change of day as the Tower re-knitting itself, and no string she can reach names the hour (`archive/tasks/TSK-0758-day-turn-line-and-no-hour-on-screen.md`)
+4. The seven screens without tasks open whenever the task window is closed, and a new puzzle appears only after the finale (`archive/tasks/TSK-0759-screens-without-tasks-open-when-the-task-window-is-closed.md`)
+5. Time on the screens without tasks counts for the eyes, and the clock check skips a task's own content (`archive/tasks/TSK-0760-time-on-task-free-screens-counts-and-the-clock-check-skips-task-content.md`)
+6. `item_shown`, `attempt_submitted` and `verdict` each get one new version for the whole addendum, and each fact has one record (`archive/tasks/TSK-0761-one-new-version-of-three-event-types-with-upcasters.md`)
+7. Every new form writes a stream of its own, and no stream enters "on her own" until a model version admits it (`archive/tasks/TSK-0762-new-forms-write-streams-outside-on-her-own.md`)
+8. Every event schema names an approved owner, no code names the school's vendor, and the parent's acts have owned types (`archive/tasks/TSK-0763-every-event-type-has-an-owner-and-no-code-names-the-vendor.md`)
+9. `PARSE_MODEL`, `FRAMING_MODEL`, `PUZZLE_MODEL` and `FREE_PEN_MODEL` run as roles of their own, and the gateway checks each output before the game uses it (`archive/tasks/TSK-0764-four-model-roles-with-checked-output-and-offline-keys.md`)
+10. A parse request carries only a masked riddle, five kinds of data leave the Mac, and the school's goal list never does (`archive/tasks/TSK-0765-masked-parse-request-and-the-five-kinds-that-leave-the-mac.md`)
+11. The play key's daily buckets sum below $60, the parse bucket falls back to sentence cards, and «Свободное перо» spends from the adventure's bucket (`archive/tasks/TSK-0766-play-key-buckets-stay-under-sixty-dollars-and-the-parse-bucket-falls-back-to-cards.md`)
+12. A sandbox call charges the offline key under a $20 monthly bucket, and never the play key (`archive/tasks/TSK-0767-sandbox-spends-from-the-offline-key-under-a-monthly-cap.md`)
+13. The sandbox's model routes answer 409 until the gateway and the PIN exist, and its pages are served only on the loopback listener until then (`archive/tasks/TSK-0768-sandbox-model-features-wait-for-the-gateway-and-the-pin.md`)
+14. The scope guard fails on deferred items and Dutch files, and the string check lets in only the Dutch the parent approved (`archive/tasks/TSK-0769-scope-guard-knows-the-mvp-list-the-deferred-list-and-the-dutch-exception.md`)
+15. The Dutch word bridge holds 30 to 50 keywords, and a word shows only after the parent approves it (`archive/tasks/TSK-0770-dutch-bridge-holds-30-to-50-words-and-shows-none-before-approval.md`)
+16. The fact stage offers one set of fact tasks a game day on the stage 0.1 templates, with no model call (`archive/tasks/TSK-0771-fact-stage-offers-one-set-a-game-day-with-no-model-call.md`)
+

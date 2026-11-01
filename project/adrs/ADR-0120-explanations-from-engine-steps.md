@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-0600, REQ-0602, REQ-0604, REQ-0606, REQ-0610, REQ-0612, REQ-0614, REQ-0616, REQ-0618, REQ-0620, REQ-0622, REQ-0624, REQ-0628, REQ-0630, REQ-0632, REQ-0634, REQ-0636, REQ-0638, REQ-2604, REQ-2606, REQ-2716]
 supersedes: []
+issue: 32
+projected: fb5d809065cd
+tracked: 96faad4ff28d
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -168,3 +171,17 @@ Amended by ADR-0350, approved on 2026-09-28, whose `## Amends` sections change p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0608 (superseded by REQ-6500, which ADR-0370 addresses); REQ-0626 (superseded by REQ-6502, which ADR-0370 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. A model's explanation text passes code checks for its schema, placeholders, length, numbers and step order before it is shown (`archive/tasks/TSK-0612-explanation-text-checks-in-code.md`)
+2. The forbidden-word and safety checks read the explanation with its placeholders unfilled and without her answer (`archive/tasks/TSK-0613-safety-and-forbidden-words-on-unfilled-text.md`)
+3. A blind solver reads the filled explanation with the task alone, and its answer must equal the engine's (`archive/tasks/TSK-0614-blind-solve-on-the-filled-text.md`)
+4. The Explainer writes as her familiar about her answer and its trap, and the Explainer never appears in the world (`archive/tasks/TSK-0615-familiar-explains-the-given-answer.md`)
+5. The cache keeps up to three visible variants for each group and shows them in turn (`archive/tasks/TSK-0616-cache-keeps-three-variants-a-group.md`)
+6. A failed or late explanation is replaced by the engine's template within 10 seconds, and the thread pays once (`archive/tasks/TSK-0617-template-fallback-and-one-payment.md`)
+7. `npm run explain:generate` fills trap groups with checked variants outside any session (`archive/tasks/TSK-0618-explain-generate-fills-trap-groups-offline.md`)
+8. The parent lists stored variants by group and hides any one from the player (`archive/tasks/TSK-0619-parent-hides-a-stored-variant.md`)
+9. An explanation's text never enters a story event or the Master's memory (`archive/tasks/TSK-0620-explanation-text-stays-out-of-the-story.md`)
+

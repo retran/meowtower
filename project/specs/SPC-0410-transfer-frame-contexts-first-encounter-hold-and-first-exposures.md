@@ -2,8 +2,8 @@
 id: SPC-0410
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6930, REQ-6932, REQ-6934, REQ-7512, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980, REQ-6982]
+revised: 2026-10-31
+states: [REQ-6900, REQ-6902, REQ-6904, REQ-6906, REQ-6908, REQ-6910, REQ-6912, REQ-6914, REQ-6916, REQ-6918, REQ-6920, REQ-6922, REQ-6924, REQ-6926, REQ-6930, REQ-6932, REQ-6934, REQ-7512, REQ-6938, REQ-6940, REQ-6942, REQ-6944, REQ-6946, REQ-6948, REQ-6950, REQ-6952, REQ-6954, REQ-6956, REQ-6958, REQ-6960, REQ-6962, REQ-6964, REQ-6966, REQ-6968, REQ-6970, REQ-6972, REQ-6974, REQ-6976, REQ-6978, REQ-6980]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -147,7 +147,7 @@ A first-encounter attempt counts in the "on her own" estimate as an ordinary tas
 
 ### Versions and recompute
 
-`expected` and the tested states that conditions 9 and 10 read are taken under the model, threshold and graph versions active at the show (REQ-6942). The log records each version change as `model_activated`, `settings_changed` or `fact_threshold_set`, and `content/model.vN.json` holds each model version's parameters. A full recompute keeps the model-derived fields of every row whose show fell under an earlier version set and recomputes the rest from the log, as SPC-0020 does for `node_snapshots`. A rebuild after the table is lost replays each version set over the part of the log it governed. A show with no active model version, as before the knowledge model exists, gets `expected: null`, and, unless an earlier condition fails, it fails condition 9 or 10, since no node is fluent by a tested result; a recompute keeps these rows as they are. When a rebuild can't load a model file, every row whose show fell under that version fails condition 1 and reads `eligible: false`, `reason: version_missing` and `expected: null`.
+`expected` and the tested states that conditions 9 and 10 read are taken under the model, threshold and graph versions active at the show (REQ-6942). The log records each version change as `model_activated`, `settings_changed` or `fact_threshold_set`, and `content/model.vN.json` holds each model version's parameters. A full recompute keeps the model-derived fields of every row whose show fell under a past version set and recomputes the rest from the log, as SPC-0020 does for `node_snapshots`. A rebuild after the table is lost replays each version set over the part of the log it governed. A show with no active model version, as before the knowledge model exists, gets `expected: null`, and, unless an earlier condition fails, it fails condition 9 or 10, since no node is fluent by a tested result; a recompute keeps these rows as they are. When a rebuild can't load a model file, every row whose show fell under that version fails condition 1 and reads `eligible: false`, `reason: version_missing` and `expected: null`.
 
 The holds read the used sets, which depend on no version, and the node's tested state as the knowledge model recorded it at the time, so a replay releases a hold on the same show as play did.
 

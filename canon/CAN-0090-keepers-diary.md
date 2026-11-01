@@ -2,7 +2,7 @@
 id: CAN-0090
 artifact: canon
 status: approved
-revised: 2026-09-26
+revised: 2026-10-31
 ---
 
 # The Keeper's Diary
@@ -28,8 +28,8 @@ dog-eared pages, jam stains and drawings in the margins.
 The pages are hidden all over the Tower: in the Archive's books, under the
 boilers of the Works, in old ovens, in the canal locks, in «Барон»'s (the
 Baron's) pockets. Many sit in hiding places that open after a clean
-untangling. A page that isn't found today is re-hidden by the Tower and will
-turn up later. The pages of the plot checkpoints arrive on the calendar,
+untangling. A page that isn't found today moves to another hiding place
+overnight and will turn up later. The pages of the plot checkpoints arrive on the calendar,
 whatever the outcomes.
 
 ## The Diary's voice
@@ -81,11 +81,11 @@ you count steps too).
 9. A cipher in mirror writing: a page to be read in a mirror. «Изнанка есть у
    всего. Даже у Башни. Даже у меня.» (Everything has an underside. Even the
    Tower. Even me.)
-10. The last page, which opens in July. «Если ты это читаешь, значит, Башня
-    выбрала тебя. Не я. Она. Это важно. Ты справишься лучше меня, потому что
+10. The last page, which opens in July. «Если ты это читаешь, значит, ты
+    нашла Башню сама. Я тебя не звала. Это важно. Ты справишься лучше меня, потому что
     ты — это ты. Приходи на чай. Ты знаешь, где я живу. Ты всегда знала. —
-    И.» (If you're reading this, the Tower chose you. Not me. It did. That
-    matters. You'll do better than I did, because you are you. Come for tea.
+    И.» (If you're reading this, you found the Tower yourself. I didn't call
+    you. That matters. You'll do better than I did, because you are you. Come for tea.
     You know where I live. You always knew. — I.)
 
 ## Ciphers
@@ -131,7 +131,7 @@ first version").
   same notes, hints and names. RES-1600 holds the reason.
 - «Числа вместо букв» shows numbers on a Diary page, and the Master's text
   can't contain digits or numerals (CAN-0110). Does the code render cipher
-  pages as a separate field, the way it renders System counters, or does the
+  pages as a separate field, the way it renders the game's counters, or does the
   Master never write cipher text at all?
 - The Diary develops one letter "a session later" when the player is stuck.
   What counts as stuck: a page left undecoded for one session, or a request

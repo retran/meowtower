@@ -1,0 +1,137 @@
+{
+  "version": "v1",
+  "forms": [
+    {
+      "lemma": "fout",
+      "diminutives": [],
+      "forms": ["fout", "fouten", "foutje", "foutjes"]
+    },
+    {
+      "lemma": "verkeerd",
+      "diminutives": [],
+      "forms": ["verkeerd", "verkeerde"]
+    },
+    {
+      "lemma": "onjuist",
+      "diminutives": [],
+      "forms": ["onjuist", "onjuiste"]
+    },
+    {
+      "lemma": "mislukt",
+      "diminutives": [],
+      "forms": ["mislukt", "mislukte", "mislukking"]
+    },
+    {
+      "lemma": "jammer",
+      "diminutives": [],
+      "forms": ["jammer"]
+    },
+    {
+      "lemma": "slecht",
+      "diminutives": [],
+      "forms": ["slecht", "slechte"]
+    },
+    {
+      "lemma": "opgave",
+      "diminutives": [],
+      "forms": ["opgave", "opgaven", "opgaves"]
+    },
+    {
+      "lemma": "som",
+      "diminutives": [],
+      "forms": ["som", "sommen", "sommetje", "sommetjes"]
+    },
+    {
+      "lemma": "oefening",
+      "diminutives": [],
+      "forms": ["oefening", "oefeningen"]
+    },
+    {
+      "lemma": "les",
+      "diminutives": [],
+      "forms": ["les", "lessen"]
+    },
+    {
+      "lemma": "school",
+      "diminutives": [],
+      "forms": ["school", "scholen"]
+    },
+    {
+      "lemma": "cijfer",
+      "diminutives": [],
+      "forms": ["cijfer", "cijfers"]
+    },
+    {
+      "lemma": "toets",
+      "diminutives": [],
+      "forms": ["toets", "toetsen"]
+    },
+    {
+      "lemma": "slim",
+      "diminutives": [],
+      "forms": ["slim", "slimme"]
+    },
+    {
+      "lemma": "genie",
+      "diminutives": [],
+      "forms": ["genie"]
+    }
+  ],
+  "phrases": [
+    {
+      "phrase": "niet gelukt",
+      "runs": [["niet", "gelukt"]]
+    },
+    {
+      "phrase": "lukte niet",
+      "runs": [["lukte", "niet"]]
+    },
+    {
+      "phrase": "je begreep het niet",
+      "runs": [["je", "begreep", "het", "niet"]]
+    },
+    {
+      "phrase": "het is makkelijk",
+      "runs": [["het", "is", "makkelijk"]]
+    },
+    {
+      "phrase": "dat is makkelijk",
+      "runs": [["dat", "is", "makkelijk"]]
+    },
+    {
+      "phrase": "je bent slim",
+      "runs": [["je", "bent", "slim"]]
+    },
+    {
+      "phrase": "je bent de slimste",
+      "runs": [["je", "bent", "de", "slimste"]]
+    }
+  ],
+  "shortage": [
+    {
+      "phrase": "draden zijn op",
+      "runs": [["draden", "zijn", "op"]]
+    },
+    {
+      "phrase": "geen draden meer",
+      "runs": [["geen", "draden", "meer"]]
+    },
+    {
+      "phrase": "geen draden",
+      "runs": [["geen", "draden"]]
+    }
+  ],
+  "rejectedLabels": [],
+  "labelPatterns": ["nog \\d+ minuten", "over \\d+ minuten"],
+  "knot": {
+    "keys": [],
+    "lemma": "",
+    "diminutives": [],
+    "forms": []
+  },
+  "fixtures": {
+    "match": ["fouten", "Les", "mislukt"],
+    "knot": [],
+    "pass": ["voorbeeld", "goed"]
+  }
+}

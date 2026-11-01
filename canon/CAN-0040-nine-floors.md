@@ -2,7 +2,7 @@
 id: CAN-0040
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # The nine floors
@@ -138,7 +138,7 @@ division, order of operations.
     Works rests for one day.
 - Secrets: the boiler room holds a cog in a knitted cover (someone cared for
   it a great deal); the clock on the Works' main tower shows not the time
-  but how many days the Tower has slept; behind the boiler stands the
+  but how many days the Tower stood without a Keeper; behind the boiler stands the
   Keeper's old desk with copper knitting needles.
 - Adventures:
   1. The conveyor carries nothing but clockwork beetles instead of parts, and
@@ -438,12 +438,12 @@ Thread Count, element Echo: data, tables, charts, patterns, probability.
   birds sometimes bring whispers from town (from Lotta or Irma, CAN-0020); a
   cipher slips through on the telegraph tape.
 - Adventures:
-  1. The whispers broke out of their boxes, and suddenly the whole Tower
-     spoke in other people's voices.
+  1. The whispers broke out of their boxes, and suddenly everyone in the
+     Tower spoke in other people's voices.
   2. Rumour spread a rumour about himself and now can't sort out which part
      of it is true.
-  3. The Questionnaire wants to find out which familiar is the Tower's
-     favourite, and a scandal is brewing.
+  3. The Questionnaire wants to find out which familiar is the
+     favourite in the Tower, and a scandal is brewing.
   4. A letter addressed to the heroine arrived at the Sorting Office, with a
      postmark from the past.
   5. The chart columns grew up to the ceiling and keep growing.
@@ -502,16 +502,15 @@ and the sky.
   This record avoids a pronoun for the Keeper until the canon decides.
 - Where is the Underside described? The Garden's pond secret points to the
   campaign chapter (CAN-0080) for the Underside, while the dreamcore chapter
-  (CAN-0130) also defines it as the Tower's sleep layer. Are the spring
+  (CAN-0130) also defines it as the sleepy layer. Are the spring
   mirror floors and the sleep layer one place?
 - How many of each floor's five adventures does the game plan to use, and
   may the Master invent more? The chapter lists five per floor and doesn't
   say whether they are a closed set.
-- The game specification gives word problems (domain T) no floor of their
-  own and makes them a Guardian's trial. This chapter doesn't mention them.
-  Does the canon need a line on what a Guardian's trial is?
-- The Observatory has no Guardian, so its floor outcome uses the "floor
-  without a Guardian" lines in CAN-0030. The game specification says a
+- Resolved on 2026-10-31 by ADR-3230: word problems (domain T) have no floor of
+  their own. They are the Guardians' trials on every floor.
+- The Observatory has no Guardian, so its floor outcome uses the one-line
+  floor result in CAN-0110. The game specification says a
   floor with no rooms and no Guardian, such as the Observatory, gets no
   outcome state at all. Which holds for the Observatory?
 - Resolved on 2026-09-27: the Guardians keep fixed names, because each

@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-5600, REQ-5602, REQ-5604, REQ-5608, REQ-5610, REQ-5612, REQ-5614, REQ-5616, REQ-5618, REQ-5620, REQ-5622, REQ-5624, REQ-5626, REQ-5628, REQ-5630, REQ-5632, REQ-5634, REQ-5638, REQ-5640, REQ-5642, REQ-5644, REQ-5646, REQ-5648, REQ-5650, REQ-5652, REQ-5654, REQ-5656, REQ-5658, REQ-5660, REQ-5662, REQ-5664, REQ-5666, REQ-5668, REQ-5670, REQ-5672]
 supersedes: []
+issue: 47
+projected: cac2c3f993e8
+tracked: 50ae1c4242f4
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -99,7 +102,7 @@ Once this is accepted and built, a compound word problem can open with a plan, t
 
 ## Why
 
-The plan exists because the owner asked for it in the owner's addendum 1 of 2026-09-28 and REQ-5076 puts solution plan cards in the MVP. RES-4060 records why it earns its place beside the model choice: the cards name quantities without naming operations, so they separate "knows what to find" from "knows which operation", and a random arrangement of three cards is right about 1 time in 15 where a random model is right 1 in 4.
+The plan exists because the owner asked for it in the owner's addendum 1 of 2026-09-28 and REQ-8020 puts solution plan cards in the MVP. RES-4060 records why it earns its place beside the model choice: the cards name quantities without naming operations, so they separate "knows what to find" from "knows which operation", and a random arrangement of three cards is right about 1 time in 15 where a random model is right 1 in 4.
 
 The cycle exists because the approved rule opened every Guardian problem with a model and step input (RES-4060, "The approved rule that a Guardian problem opens with a model"). REQ-5604 replaces it with shared phases, and the phases need a rule that keeps three shares and one independence in a band over every 30 days. A counter does that by construction, and ADR-0040 already uses one for step input.
 
@@ -113,7 +116,7 @@ The strongest objection is that the cards may be laid right by reading, not by p
 
 | Option | Better at | Why it lost |
 | --- | --- | --- |
-| Do nothing: keep the model choice as the only modelling phase | No new spec, event, screen or report cell, and ADR-0150's Guardian screen stays as it is | The owner asked for the plan and REQ-5076 puts it in the MVP, and the model choice can't tell "doesn't know what to find" from "doesn't know how" (RES-4060) |
+| Do nothing: keep the model choice as the only modelling phase | No new spec, event, screen or report cell, and ADR-0150's Guardian screen stays as it is | The owner asked for the plan and REQ-8020 puts it in the MVP, and the model choice can't tell "doesn't know what to find" from "doesn't know how" (RES-4060) |
 | Reuse `AnswerSpec.order` with a partial-selection variant, as the addendum words it | One answer kind fewer, and the addendum's own words | The `order` checker returns credit and accepts only the exact permutation (REQ-0772); a plan leaves cards out, has two right orders in a fork and returns a label, so the variant would need its own grader anyway and an exception in an approved requirement |
 | A seeded random draw per problem: plan with odds 1 in 4, then model with odds 1 in 3 of the rest | Simpler code, and she can't learn a pattern | Over 40 compound problems in 30 days a draw at 1 in 4 has a standard deviation of about 2.7 problems, so a noticeable share of windows falls outside 7 to 13 plans, and nothing makes plan problems split between the two input forms |
 | The same eight slots shuffled within each block of eight by the seeded stream | Keeps each block's shares and removes the fixed pattern she might learn | A shuffle breaks the parity pairing, so plan problems in a block can both land on one input form and REQ-5608 then holds only across blocks; she would have to count compound problems across days to learn the fixed cycle, and knowing a plan is next changes nothing the plan measures |
@@ -212,3 +215,17 @@ Amended by ADR-0390, approved on 2026-09-28, whose `## Amends` sections change p
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 2 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5606 (superseded by REQ-6422, which ADR-0360 addresses); REQ-5636 (superseded by REQ-7508, which ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The plan builder takes the needed cards from one valid graph and the decoys from quantities outside every valid graph (`archive/tasks/TSK-0852-plan-builder-takes-cards-and-decoys-from-one-valid-graph.md`)
+2. Each card's wording sits in `content/plans.ru.json`, written by the template author, with no model call (`archive/tasks/TSK-0853-card-wordings-live-in-the-per-language-file.md`)
+3. The server grades a plan into one of five labels, and the exact-permutation rule of `order` answers stays as it is (`archive/tasks/TSK-0854-grade-plan-by-five-labels-never-by-exact-permutation.md`)
+4. The item builder gives every first-shown word problem its opening phase and input form from fixed counters (`archive/tasks/TSK-0855-opening-phase-comes-from-one-counter-over-the-log.md`)
+5. The server logs the laid plan as `plan_submitted` before she answers, restores it on resume and sends only the strict view (`archive/tasks/TSK-0856-plan-route-plan-submitted-and-resume.md`)
+6. The task window shows a card board with no verdict and labels the step rows with the cards she laid (`archive/tasks/TSK-0857-card-board-and-step-rows-labelled-with-her-cards.md`)
+7. The answer after a plan counts as the answer after no phase, and the label feeds no credit, outcome or estimate (`archive/tasks/TSK-0858-the-plan-label-feeds-no-measure.md`)
+8. After the answer, the knot's scheme shows her cards beside the engine's cards with no tick or cross (`archive/tasks/TSK-0859-knot-scheme-shows-her-plan-beside-the-engines-plan.md`)
+9. The word-problem matrix becomes three counts and two crosses sharing the answer axis (`archive/tasks/TSK-0860-report-shows-planning-errors-and-two-crosses.md`)
+

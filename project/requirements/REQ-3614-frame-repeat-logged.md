@@ -3,8 +3,8 @@ id: REQ-3614
 artifact: requirement
 topic: task-text
 class: functional
-status: approved
-revised: 2026-09-27
+status: superseded
+revised: 2026-10-31
 elaborates: RES-0720
 verification: behavioural
 ---

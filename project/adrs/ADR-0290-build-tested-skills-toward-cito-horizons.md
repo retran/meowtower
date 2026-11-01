@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-5800, REQ-5802, REQ-5804, REQ-5806, REQ-5808, REQ-5810, REQ-5812, REQ-5814, REQ-5816, REQ-5818, REQ-5820, REQ-5822, REQ-5824, REQ-5826, REQ-5828, REQ-5830, REQ-5832, REQ-5834, REQ-5836, REQ-5838, REQ-5840, REQ-5842, REQ-5844, REQ-5848, REQ-5850, REQ-5852, REQ-5854, REQ-5858, REQ-5862, REQ-5864, REQ-5866, REQ-5868, REQ-5870, REQ-5872, REQ-5874, REQ-5876, REQ-5878, REQ-5880, REQ-5884, REQ-5886, REQ-5888, REQ-5890, REQ-5892, REQ-5894, REQ-5896, REQ-5898, REQ-6064]
 supersedes: []
+issue: 49
+projected: 216127c431c6
+tracked: 27c76895a262
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -279,3 +282,24 @@ The strongest objection is that this is drilling for a test with the word taken 
 The premortem, written as though it had failed. By February the report showed blocks 1 and 2 stuck at 70 % automatic, and the parent read it as her failing, while the cause was supply. She played 2 floors most days, so two Volleys a day became one, and the 14-day rule expired facts faster than one Volley refreshed them. The Director then lifted A and N nodes every day, which made her days feel alike, and she asked why the Tower always counted. A second cause sat in the Cito facts: a check in November marked the claim about the adaptive second part unconfirmed after a page moved. Nobody updated the file, and the mark sat beside the readiness text for months until the parent stopped reading marks. The capacity numbers under the costs, the second reversal condition and the yearly line exist for these.
 
 Amended on 2026-10-10: this record no longer addresses 4 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5846 (superseded by REQ-6424, which ADR-0360, ADR-0460 addresses); REQ-5856 (superseded by REQ-7148, which ADR-0430, ADR-0460 addresses); REQ-5860 (superseded by REQ-6426, which ADR-0360, ADR-0460 addresses); REQ-5882 (superseded by REQ-7058, which ADR-0420 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The Cito facts file holds each claim with its quotation, and the check only reports (`archive/tasks/TSK-0884-cito-facts-file-with-quotations-and-a-check-that-only-reports.md`)
+2. The parent sets horizons and enters Cito results, and a result moves the active horizon (`archive/tasks/TSK-0885-horizons-results-form-and-dutch-memo-in-the-cito-panel.md`)
+3. No player route, screen or string shows a test, its date or its name (`archive/tasks/TSK-0886-no-player-screen-shows-a-test-its-date-or-its-name.md`)
+4. Every node and subtype carries a Cito block, and a block is ready at 80 % fluent or stable (`archive/tasks/TSK-0887-cito-block-on-every-node-and-block-readiness.md`)
+5. The Director's value gains block priority and a school-goal term, and takes the larger of a goal and a lesson mark (`archive/tasks/TSK-0888-block-priority-and-school-goal-terms-in-the-value.md`)
+6. Each of the 308 basic facts has a state over its last 3 shows (`archive/tasks/TSK-0889-basic-facts-file-fact-states-and-default-threshold.md`)
+7. The parent changes the fact threshold as a new version, and facts keep their own minimum time and repeat exemption (`archive/tasks/TSK-0890-fact-threshold-versions-minimum-time-and-repeat-exemption.md`)
+8. The Volley shows 8 to 10 basic facts in one window, picked from the facts that aren't automatic first (`archive/tasks/TSK-0891-volley-picks-8-to-10-facts-and-runs-in-one-window.md`)
+9. A Volley with at most one miss gives 1 star yarn, a guess earns nothing, the record never falls and a miss gets a line about the fact (`archive/tasks/TSK-0892-volley-result-yarn-record-and-replies-to-a-miss.md`)
+10. A Volley takes the place of the mental arithmetic on 2 floors in 3 before M7 and 1 in 2 after, counted across days (`archive/tasks/TSK-0893-volley-share-on-maths-floors-and-the-floor-order.md`)
+11. Every template declares bare or context, and at least half of a mixed node's scored tasks are bare (`archive/tasks/TSK-0894-templates-declare-bare-or-context-and-half-are-bare.md`)
+12. A 60-day simulation holds the corridor with both new terms on, and a node ahead of school opens on its prerequisites (`archive/tasks/TSK-0895-sixty-day-simulation-with-both-terms-and-nodes-ahead-of-school.md`)
+13. The home skill scale is a view that changes no estimate, says it is not a Cito score and refits on pupils who grow (`archive/tasks/TSK-0896-home-skill-scale-as-a-view-with-a-refit-test.md`)
+14. The report shows each block's readiness by week, the formats apart, the work ahead of school and the Cito entries with their marks (`archive/tasks/TSK-0897-report-shows-block-readiness-formats-work-ahead-and-marks.md`)
+15. The report shows careless errors on familiar material, two 10 x 10 fact maps and a printable list of slow facts (`archive/tasks/TSK-0898-careless-errors-fact-report-and-printable-list.md`)
+16. The parent sets the multiplication sign, and a bridge word shows only at «Понимает» and while the bridge is on (`archive/tasks/TSK-0899-multiplication-sign-setting-and-the-bridge-gates.md`)
+

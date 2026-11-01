@@ -17,6 +17,8 @@ const env = {
   MEOWTOWER_DB: join(dir, "meowtower.sqlite"),
   PORT: "3917",
   PARENT_PORT: "3918",
+  // The test answers the fixed stand-in task.
+  MEOWTOWER_TASKS: "standin",
 };
 
 // A failed assertion skips the test's own kill, so every child still running

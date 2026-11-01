@@ -2,6 +2,7 @@
 // first start picks one from the device, the settings switch it, and a hash
 // route shows each registered screen.
 import { device } from "./api.js";
+import { focusField, installKeys } from "./controls.js";
 import { openQueue } from "./event-queue.js";
 import {
   applyInterface,
@@ -58,13 +59,16 @@ async function boot(): Promise<void> {
     SCREENS.map((s) => s.path),
   );
 
+  installKeys();
   const main = document.querySelector("main");
   if (!main) return;
   const show = (): void => {
     const path = location.hash.replace(/^#/, "") || "/";
     const screen = SCREENS.find((s) => s.path === path) ?? SCREENS[0];
     if (!screen) return;
-    main.replaceChildren(screen.render(shell));
+    const shown = screen.render(shell);
+    main.replaceChildren(shown);
+    focusField(shown);
     document.title = t("ui.app.name");
     document.body.dataset["screen"] = screen.path;
   };

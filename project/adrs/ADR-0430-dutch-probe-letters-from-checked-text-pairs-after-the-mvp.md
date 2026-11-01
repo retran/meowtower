@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-7100, REQ-7102, REQ-7104, REQ-7106, REQ-7108, REQ-7110, REQ-7112, REQ-7114, REQ-7116, REQ-7118, REQ-7120, REQ-7122, REQ-7124, REQ-7126, REQ-7128, REQ-7130, REQ-7132, REQ-7134, REQ-7136, REQ-7138, REQ-7140, REQ-7142, REQ-7144, REQ-7146, REQ-7148, REQ-7150, REQ-7152, REQ-7154, REQ-7156, REQ-7158, REQ-7160, REQ-7162, REQ-7164, REQ-7166, REQ-7168, REQ-7170, REQ-7172, REQ-7174, REQ-7176, REQ-7178, REQ-7180, REQ-7182, REQ-7184, REQ-7186, REQ-7188, REQ-7190, REQ-7194, REQ-7196, REQ-7198, REQ-6656, REQ-6664, REQ-6684]
 supersedes: []
+issue: 63
+projected: 7ceaba78bb3e
+tracked: 38f1f2fe70c4
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -92,7 +95,7 @@ Every presentation of a family falls fewer than 14 game days after its first pre
 
 Every letter takes the template's final-answer input in every presentation, with the keypad, «Не знаю» (I don't know), the thread button and «Готово» (Done). A T1 to T4 letter shows no model choice, plan cards, step fields, «Нельзя узнать» (can't be known) or options for what is missing (REQ-7154), and no letter shows ADR-0240's estimate or inverse check. I chose to drop those two steps from letters of every track, because the bare presentation must carry the same controls as the text ones, and each step adds Russian interface text inside a Dutch presentation. Since a letter is never unanswerable, leaving «Нельзя узнать» out hides nothing that exists (REQ-7158, REQ-7160).
 
-The attempt flow is ADR-0080's, with two changes. After a wrong answer or «Не знаю» she sees the short solution at once and gets no second attempt, whatever hint she saw (REQ-7162, REQ-7164). The review offers no detailed explanation either, because REQ-7162 allows the short solution only. A letter gives the same experience, streak and rewards as an ordinary task of its kind, whatever its presentation and whether she opened cards (REQ-7152).
+The attempt flow is ADR-0080's, with two changes. After a wrong answer or «Не знаю» she sees the short solution at once and gets no second attempt, whatever hint she saw (REQ-7162, REQ-7164). The review offers no detailed explanation either, because REQ-7162 allows the short solution only. A letter gives the same streak and rewards as an ordinary task of its kind, whatever its presentation and whether she opened cards (REQ-7152).
 
 In the `nl` and `nl_source` presentations each marked word is underlined, and a tap opens its card (REQ-7150). The first open of each word in an attempt writes `probe_card_opened` with `trigger: "tap"`, marks the attempt `assisted: true`, and leaves it in its presentation's count (REQ-7138, REQ-7140). Later openings of the same word in the same attempt write nothing, which bounds the events at 8 an attempt. The `nl_after_words` presentation opens with the cards of every marked word and shows the task only after she closes them (REQ-7142). She can close them at once and reopen any card during the task. Opening them writes one `probe_card_opened` with `trigger: "planned"` and every marked word, and a reopening writes `trigger: "reopen"` once a word. Neither marks the attempt as assisted, because the planned cards are the presentation's condition. A term hint she opens in a `ru` letter also marks the attempt assisted, because a word explained on request is help in either language. A bought hint rung marks every letter assisted, as ADR-0080 already does, and its Russian text inside a Dutch letter is then counted as the help it is.
 
@@ -264,7 +267,7 @@ The player sees none of these. `probe_texts_short`, `probe_text_blocked` and `pr
 8. A packet test of every presentation of a T family finds the same `InputSpec`: no model choice, plan, step fields, «Нельзя узнать», options, estimate or inverse check.
 9. A state-machine test answers a letter wrong, and the flow shows the short solution with no `twin_open` and no detailed explanation, whatever rung she saw.
 10. A test taps a card in `nl`: the attempt is `assisted: true`, stays in the `nl` count and logs one `probe_card_opened` a word; in `nl_after_words` the planned cards open first and the attempt stays unassisted.
-11. A reward test finds the same experience and streak effect for a clean letter in each presentation, with cards and without.
+11. A reward test finds the same streak effect for a clean letter in each presentation, with cards and without.
 12. A report fixture shows «мало данных» with the count for a cell with 11 observations and a share for one with 12, «мало данных» for a gap whose one side holds 11, the mark «тексты не проверены носителем» at a native share of 0.4 and not at 0.5, the word list, the practice gain by position, the card counts and the count of families closed short.
 13. ADR-0290's word check fails a build with "Cito" in `content/probe/`, `tools/probe/` or an event schema value.
 14. The owner reads the canon record for the Mainland at the stage acceptance, and the line pool holds no letter scene before that record is approved.
@@ -281,3 +284,24 @@ The player sees none of these. `probe_texts_short`, `probe_text_blocked` and `pr
 - Which templates carry `probeFamily`, beyond the rule of 1 to 2 for each group; the owner approves the list at the stage acceptance.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-7192 (superseded by REQ-7514, which ADR-0460 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: a letter gives no experience, and its streak and rewards stay as written.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. No Dutch probe trace exists before the owner's amendment, and the parent's switch holds the whole probe (`archive/tasks/TSK-1108-probe-scope-guard-and-switch.md`)
+2. A template joins the probe only by naming its family (`archive/tasks/TSK-1109-template-probe-family-field.md`)
+3. The offline run refuses to start on shared models, holds no player data and runs under roles of its own (`archive/tasks/TSK-1110-probe-offline-run-roles-and-refusals.md`)
+4. The pipeline passes a candidate pair only after code, the forbidden list, a blind solve and the language check (`archive/tasks/TSK-1111-probe-pipeline-checks-each-pair.md`)
+5. The parent approves each pair, its marks and its cards, and the game shows only an approved pair (`archive/tasks/TSK-1112-parent-approves-each-pair.md`)
+6. A family is one ordinary template shown in up to five presentations from one approved pair (`archive/tasks/TSK-1113-probe-family-and-presentations.md`)
+7. Letters take a fixed place on the floor, one presentation of a family a game day, in a balanced order (`archive/tasks/TSK-1114-probe-letters-floor-place-and-order.md`)
+8. A letter keeps one set of controls in every presentation and gets no twin and no second attempt (`archive/tasks/TSK-1115-letter-controls-and-no-twin.md`)
+9. A tapped card marks the attempt assisted, and the after-words presentation opens with its cards (`archive/tasks/TSK-1116-word-cards-assisted-mark-and-after-words-opening.md`)
+10. Letters feed only the stream `nl_probe`, and no other measure counts them (`archive/tasks/TSK-1117-letters-feed-only-nl-probe.md`)
+11. The report shows each presentation's share and the two gaps, with «мало данных» under 12 observations (`archive/tasks/TSK-1118-report-probe-shares-and-gaps.md`)
+12. The report shows the card counts, the word list, the practice gain, the native-review share and the families closed short (`archive/tasks/TSK-1119-report-probe-cards-words-practice-and-native-share.md`)
+13. A canon record adds the Mainland and its letters before any letter scene is written (`archive/tasks/TSK-1120-canon-record-for-the-mainland.md`)
+14. A 60-day simulation shows the probe's order, window, floor and phase rules hold (`archive/tasks/TSK-1121-probe-sixty-day-simulation.md`)
+

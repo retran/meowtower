@@ -5,6 +5,7 @@
 // `graph_invalid` once. A file that breaks with nothing stored stops the start
 // as `graph_unloadable`. At 1,000 stored versions it raises `graph_versions_many`
 // once and deletes none (REQ-0804, REQ-0808).
+import { templates } from "../templates/index.js";
 import { readFileSync } from "node:fs";
 import {
   openCanonical,
@@ -78,7 +79,7 @@ export function startGraph(
     const after = storedCount(db);
     // A new version tells the parent once which subtypes have no template (TSK-0509).
     if (after > before) {
-      const missing = notGeneratable(graph, []).length;
+      const missing = notGeneratable(graph, templates).length;
       raise(
         "not_generatable",
         `${missing} subtypes of graph ${version} have no template`,

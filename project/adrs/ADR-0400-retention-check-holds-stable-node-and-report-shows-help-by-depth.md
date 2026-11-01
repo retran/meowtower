@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-6796, REQ-6800, REQ-6802, REQ-6804, REQ-6806, REQ-6808, REQ-6810, REQ-6812, REQ-6814, REQ-6816, REQ-6820, REQ-6822, REQ-6824, REQ-6826, REQ-6828, REQ-6830, REQ-6832, REQ-6834, REQ-6836, REQ-6838, REQ-6840, REQ-6842, REQ-6844, REQ-6846, REQ-6848, REQ-6850, REQ-6852, REQ-6854, REQ-6856, REQ-6858, REQ-6860, REQ-6862, REQ-6864, REQ-6866, REQ-6868, REQ-6870, REQ-6872, REQ-6874, REQ-6876, REQ-6878, REQ-6880, REQ-6882, REQ-6884, REQ-6886, REQ-6888, REQ-6890, REQ-6892, REQ-6894, REQ-6896, REQ-6898]
 supersedes: []
+issue: 60
+projected: fc2a5859ceca
+tracked: 922e4b8bf4fa
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -205,3 +208,23 @@ The premortem, written as though it had happened: four months after the check sh
 - Retention of the exempt nodes, which the fact states of ADR-0290 cover for basic facts and nothing covers for T1 to T4.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6818 (superseded by REQ-7502, which ADR-0460 addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Every short solution and every hint rung names its task (`archive/tasks/TSK-1060-walkthrough-events-name-their-task.md`)
+2. A projection puts each counted first attempt into exactly one weekly bin (`archive/tasks/TSK-1061-weekly-breakdown-bins.md`)
+3. The trajectory draws one point per node and week, with its share, its depth of help and its marks (`archive/tasks/TSK-1062-trajectory-points-and-marks.md`)
+4. The dynamics screen shows each node's weekly counts, and the node card splits them by subtype (`archive/tasks/TSK-1063-dynamics-screen-counts-and-subtype-split.md`)
+5. The projection `retention_observations` finds every attempt that tests a node after a gap (`archive/tasks/TSK-1064-retention-observations-projection.md`)
+6. Nodes the hold would break are exempt, and the report says why (`archive/tasks/TSK-1065-exempt-nodes-and-their-reason.md`)
+7. A holdable node that first reaches «устойчиво» gets a logged plan that opens its series (`archive/tasks/TSK-1066-retention-check-plan-and-series-start.md`)
+8. A held node reaches no path until its check, because one predicate refuses it (`archive/tasks/TSK-1067-hold-in-the-reject-predicate.md`)
+9. A due check takes the first slot of its floor, at most three a day, and a late one says so (`archive/tasks/TSK-1068-due-check-placement-and-caps.md`)
+10. A series ends at 2 of 2 or 3 of 4, and the Director plans the next check by the last result (`archive/tasks/TSK-1069-series-ends-and-next-plans.md`)
+11. A series that isn't confirmed owes a full block and starts again on evidence of relearning (`archive/tasks/TSK-1070-failed-series-owes-a-block.md`)
+12. A lesson mark cancels the plan and a new series follows the lesson's second recheck (`archive/tasks/TSK-1071-lesson-mark-cancels-the-plan.md`)
+13. Nodes that are already stable get a check at ship time, and a recompute never undoes a plan (`archive/tasks/TSK-1072-plan-at-ship-time-and-after-recompute.md`)
+14. The retention list shows each node's series and every observation, with its warning beside it (`archive/tasks/TSK-1073-retention-list-with-its-warning.md`)
+15. Acceptance test 1 and a 90-day run show that no held node is met before its check (`archive/tasks/TSK-1074-acceptance-test-1-and-the-90-day-run.md`)
+

@@ -3,8 +3,11 @@ id: ADR-0110
 artifact: adr
 status: approved
 revised: 2026-10-10
-addresses: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1514, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1524, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1682, REQ-1684, REQ-1840, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-2610, REQ-2714, REQ-2726, REQ-3316, REQ-3320, REQ-3330, REQ-3712]
+addresses: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1606, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1616, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-1640, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1684, REQ-1840, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1816, REQ-1818, REQ-1820, REQ-1822, REQ-1824, REQ-1826, REQ-1828, REQ-1830, REQ-1832, REQ-1834, REQ-1836, REQ-1838, REQ-2610, REQ-2714, REQ-2726, REQ-3316, REQ-3320, REQ-3330, REQ-3712]
 supersedes: []
+issue: 31
+projected: 88a32da0b578
+tracked: 271a21c46244
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -236,11 +239,11 @@ waits and never shows unchecked text.
     start date the parent sets. `campaignId` lives only in the story tables,
     so a change of campaign leaves every diagnostic record as it was
     (REQ-1658). The MVP's stand-ins follow RES-1600 (REQ-1678, REQ-1680,
-    REQ-1682, REQ-1684):
+    REQ-1684):
     - each chapter ends with a story finale in its last daily adventure;
     - a season finale awards its chapter title and main reward, and the rank
       doesn't change;
-    - a rank opening opens on its calendar date while the badge stays E;
+    - a rank opening opens when she first reaches that rank (ADR-3220);
     - an enciphered Diary page arrives already developed.
 
     ADR-0140 grants the rewards. When ciphers ship, a cipher answer is a
@@ -479,3 +482,30 @@ Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-1626 (superseded by REQ-6208, which ADR-0330, ADR-0360 addresses); REQ-1628 (superseded by REQ-6214, which ADR-0330 addresses); REQ-1630 (superseded by REQ-5268, which ADR-0230, ADR-0360 addresses).
+
+Amended on 2026-10-31: this record no longer addresses REQ-1514 and REQ-1524, which REQ-7850, REQ-7830 and REQ-7840 replaced.
+
+Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
+
+Amended by ADR-3240, approved on 2026-10-31: the single planner becomes the story pipeline's roles, and the Master still writes only inside checked scene orders.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The Director emits story events with no free strings, and the Master can import neither the maths nor the task engine (`archive/tasks/TSK-0596-director-writes-no-story-text.md`)
+2. The scene order and the Master's reply are strict schemas, and the whole reply is discarded when one rule fails (`archive/tasks/TSK-0597-strict-order-and-reply-schemas.md`)
+3. The prompt takes only the canon sections up to the current checkpoint, and nothing in the game writes the canon (`archive/tasks/TSK-0598-canon-by-checkpoint-read-only.md`)
+4. A Master reply reaches the screen only as `CheckedText`, after the schema, length, speaker, numeral, word and safety checks (`archive/tasks/TSK-0599-reply-checks-and-checked-text.md`)
+5. A failed reply is retried once and then replaced from the library, and no consequence of an answer waits for a model (`archive/tasks/TSK-0600-retry-once-then-library-without-waiting.md`)
+6. Hand-written triggers read her text on the Mac first, a serious signal pauses the game and no model lowers the level they found (`archive/tasks/TSK-0601-serious-signal-from-hand-written-triggers.md`)
+7. An everyday signal gets a warm answer and a quiet mark, and fear resolves the scene kindly and lowers the level for the day (`archive/tasks/TSK-0602-everyday-signal-and-fear-lower-the-level.md`)
+8. The parent sets a creepiness level of 0, 1 or 2, no line above it shows, and a fixed list of things never shows at any level (`archive/tasks/TSK-0603-creepiness-levels-and-forbidden-always.md`)
+9. A dreamcore floor changes only the decoration, and a slip into the Underside is rare, short and ends where it began (`archive/tasks/TSK-0604-dreamcore-variant-and-underside-slip.md`)
+10. A pool line enters play only after the parent approves it, a flagged scene teaches later orders, and every dialogue is saved (`archive/tasks/TSK-0605-pool-lines-approved-by-the-parent-and-the-book.md`)
+11. She names and renames her heroine, familiars, items, floors, Tangles and room, and a name passes the content check first (`archive/tasks/TSK-0606-names-she-gives-and-renames.md`)
+12. The campaign runs from a calendar in a content file, its MVP stand-ins hold, and a cipher answer is play and never maths (`archive/tasks/TSK-0607-campaign-stand-ins-and-cipher-pages.md`)
+13. After each session the planner writes a summary and a plan of 5 to 7 beats, and two failures fall back to unused beats (`archive/tasks/TSK-0608-planner-writes-summary-and-plan.md`)
+14. The parent prepares the day's adventure ahead, previews it, and the approved one plays with no live model call (`archive/tasks/TSK-0609-adventure-prepared-ahead-and-previewed.md`)
+15. The prompt tells every trial as a spell and every outcome as an event, and the parent judges a week of dialogues against the rules (`archive/tasks/TSK-0610-prompt-rules-the-parent-judges.md`)
+16. The Reverse One is always reversed, wants nothing of hers and is the only look-alike, and the game's music has no tick (`archive/tasks/TSK-0611-reverse-one-and-music-judged-rules.md`)
+

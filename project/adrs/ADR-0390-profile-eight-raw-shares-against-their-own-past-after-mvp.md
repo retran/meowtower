@@ -5,6 +5,9 @@ status: approved
 revised: 2026-09-28
 addresses: [REQ-6700, REQ-6702, REQ-6704, REQ-6706, REQ-6708, REQ-6710, REQ-6712, REQ-6714, REQ-6716, REQ-6718, REQ-6720, REQ-6722, REQ-6724, REQ-6726, REQ-6728, REQ-6730, REQ-6732, REQ-6734, REQ-6736, REQ-6738, REQ-6740, REQ-6742, REQ-6744, REQ-6746, REQ-6748, REQ-6750, REQ-6752, REQ-6754, REQ-6756, REQ-6758, REQ-6760, REQ-6762, REQ-6764, REQ-6766, REQ-6768, REQ-6770, REQ-6772, REQ-6774, REQ-6776, REQ-6778, REQ-6780, REQ-6782, REQ-6784, REQ-6786, REQ-6788, REQ-6790, REQ-6792, REQ-6794, REQ-6796, REQ-6798]
 supersedes: []
+issue: 59
+projected: 7106697d2438
+tracked: 385540fd13b8
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -185,3 +188,21 @@ The premortem, written as though it had happened: four months after the MVP the 
 - The layout, spacing and exact colour of the bars: ADR-0150's design system.
 - A profile at a past date: the profile has no `?at=`. I chose this, because the previous window already shows the last change, and a past profile can be rebuilt from the log later.
 - Whether the grouping stream should feed a dimension: mapping version 1 assigns it none, and a later version may, through a change to the content file that records its version.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The profile model holds eight bars in a fixed order, no total, and serialises byte for byte (`archive/tasks/TSK-1044-profile-model-eight-bars-reproducible.md`)
+2. A versioned mapping file and a fixed order give every observation to one bar (`archive/tasks/TSK-1045-profile-mapping-file-and-one-dimension-order.md`)
+3. Each bar reads the last 28 played game days and the 28 before them (`archive/tasks/TSK-1046-profile-windows-of-28-played-game-days.md`)
+4. A bar is one raw share with its 80 % Wilson interval, or «мало данных», or «нет данных» (`archive/tasks/TSK-1047-profile-raw-share-with-floor-states.md`)
+5. A change line claims a rise or a fall only when a 97.5 % interval excludes zero (`archive/tasks/TSK-1048-profile-change-line-at-97-5-percent.md`)
+6. The basic facts bar counts each fact once and shows the time and threshold behind it (`archive/tasks/TSK-1049-profile-basic-facts-bar.md`)
+7. The accuracy bar reads mastered nodes only, and the understanding bar reads four streams only (`archive/tasks/TSK-1050-profile-accuracy-and-understanding-bars.md`)
+8. The model building bar counts a Guardian problem's modelling phase, and plan labels enter only after a check (`archive/tasks/TSK-1051-profile-model-building-bar-and-plan-check.md`)
+9. The finding patterns, transfer and retention bars read their own sources and carry the slow-bar note (`archive/tasks/TSK-1052-profile-patterns-transfer-and-retention-bars.md`)
+10. The language and format bar shows a gap centred on zero, with its presentations and no Dutch row (`archive/tasks/TSK-1053-profile-language-and-format-gap-bar.md`)
+11. Each bar states what it counts and links to the observations behind it (`archive/tasks/TSK-1054-profile-counting-lines-and-observation-list.md`)
+12. The profile screen comes first among the report tabs and shows no number outside a bar (`archive/tasks/TSK-1055-profile-screen-first-report-tab.md`)
+13. The profile never reaches the player, the Master or the school export (`archive/tasks/TSK-1056-profile-stays-with-the-parent.md`)
+

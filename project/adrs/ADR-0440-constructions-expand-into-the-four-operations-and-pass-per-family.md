@@ -5,6 +5,9 @@ status: approved
 revised: 2026-09-28
 addresses: [REQ-7200, REQ-7202, REQ-7204, REQ-7206, REQ-7208, REQ-7210, REQ-7212, REQ-7214, REQ-7216, REQ-7218, REQ-7220, REQ-7222, REQ-7224, REQ-7226, REQ-7228, REQ-7230, REQ-7232, REQ-7234, REQ-7236, REQ-7238, REQ-7240, REQ-7242, REQ-7244, REQ-7246, REQ-7248, REQ-7250, REQ-7252, REQ-7254, REQ-7256, REQ-7258, REQ-7260, REQ-7262, REQ-7264, REQ-7266, REQ-7268, REQ-7270, REQ-7272, REQ-7274, REQ-7276, REQ-7278, REQ-7280, REQ-7282]
 supersedes: []
+issue: 64
+projected: 50c5d97bb67c
+tracked: 2e8968d59a24
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -219,3 +222,22 @@ The premortem, written as though it had happened. Three months after the item sh
 - Which backlog item comes first after the MVP: the family's choice at the stage 0.3 review (ADR-0190).
 
 Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. The masker takes decimals, slash fractions, mixed numbers and multiplicative words as `n` tokens (`archive/tasks/TSK-1124-masker-numbers-and-multiplicative-words.md`)
+2. The masker takes fraction words, ordinals and cardinal-plus-ordinal runs as `d` tokens whose values stay on the Mac (`archive/tasks/TSK-1125-masker-d-tokens.md`)
+3. The egress guard refuses an unmasked word, and a masking test generates forms from an independent dictionary (`archive/tasks/TSK-1126-egress-guard-and-independent-masking-test.md`)
+4. The parse reply names six operations over tokens, refuses any other number, and ends a unit story as `unparsed` (`archive/tasks/TSK-1127-parse-reply-named-operations.md`)
+5. `judgeCompose` expands each named operation before it applies the verdict table, and the log keeps the named graph (`archive/tasks/TSK-1128-judge-compose-expands-named-operations.md`)
+6. Three new error classes mark the times-or-divide, percentage-as-number and additive-ratio ideas (`archive/tasks/TSK-1129-three-conceptual-error-classes.md`)
+7. A construction template declares its construction and a division's meaning, and a ratio names a total or a known part (`archive/tasks/TSK-1130-construction-templates-meaning-and-ratio.md`)
+8. The Director offers a construction only when its nodes are at "understands" or above, from any floor that lets a riddle play (`archive/tasks/TSK-1131-director-offers-construction-by-node-gate.md`)
+9. The Director asks for the division meaning with fewer clean riddles, and the target names the meaning in words (`archive/tasks/TSK-1132-division-meaning-request-and-note.md`)
+10. Card frames, paraphrase templates and meaning notes come from content files, pass the frame checks and are written offline (`archive/tasks/TSK-1133-construction-strings-from-content-files.md`)
+11. A family plays in text only after its own pass on the configured model and prompt, and the whole-number constructions after the 200 texts alone (`archive/tasks/TSK-1134-family-text-form-gate.md`)
+12. The composing stream counts each verdict per construction, form and meaning, and the report line shows the counts (`archive/tasks/TSK-1135-composing-stream-construction-counts-and-line.md`)
+13. Acceptance test 3 holds a subset of 50 texts for each family and reports the unit stories and the division kinds apart (`archive/tasks/TSK-1136-acceptance-test-3-family-subsets.md`)
+14. A construction riddle plays as sentence cards with three roles and a distractor of the named error (`archive/tasks/TSK-1137-construction-card-sets.md`)
+

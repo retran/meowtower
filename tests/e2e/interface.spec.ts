@@ -64,6 +64,15 @@ test("REQ-2538: the switch in the settings holds after a reload and in the devic
   expect(row.kind).toBe(other);
 });
 
+/** Takes the cursor out of a field a computer screen opens with, so Tab walks from the top. */
+const fromTheTop = (page: Page): Promise<void> =>
+  page.evaluate(() => {
+    // A blur alone leaves the walk starting after the field.
+    document.body.tabIndex = -1;
+    document.body.focus();
+    document.body.removeAttribute("tabindex");
+  });
+
 test("REQ-2540: every control of every route works from the keyboard with a focus ring", async ({
   page,
 }, info) => {
@@ -78,6 +87,7 @@ test("REQ-2540: every control of every route works from the keyboard with a focu
 
   for (const route of routes) {
     await ready(page, route);
+    await fromTheTop(page);
     // Walk the screen with Tab until focus comes back round.
     const controls: string[] = [];
     for (let i = 0; i < 40; i++) {
@@ -108,6 +118,7 @@ test("REQ-2540: every control of every route works from the keyboard with a focu
     // Operate each control from the keyboard and see its action run.
     for (const [index, action] of controls.entries()) {
       await ready(page, route);
+      await fromTheTop(page);
       await page.evaluate(() => delete document.body.dataset["lastAction"]);
       for (let i = 0; i <= index; i++) await page.keyboard.press("Tab");
       const kind = await page.evaluate(() => {

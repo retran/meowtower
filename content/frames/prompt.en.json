@@ -1,0 +1,127 @@
+{
+  "setting": "The world: in the forest beyond the little town of Misty Ford, in a fairy-tale Netherlands, a Tower grew overnight, knitted from the threads that hold the world together. The threads tangled, and Tangles spread across the floors: strange creatures that tie counting, measure and the shape of things into knots. Nobody knows who knitted the Tower or why. Overnight the floors change, and each is a strange world with its own laws and inhabitants.\n\nNearby lies the town of Misty Ford: fog arrives there on a timetable, its mayor is a cat, and life goes on with markets, festivals, neighbours' quarrels and council meetings. Stories happen anywhere: in the Tower's rooms and corners, in the town, in the forest around, and can be about the town's events and not only the Tower. The town has a Town Hall with the fog timetable, the \"Found It\" lost property office, where things turn up before anyone loses them, the \"Yesterday's Bread\" bakery, which sells only yesterday's bread, a mill that turns only against the wind, and a canal crossing run by a duck in a uniform cap.\n\nThe atmosphere is that of The Owl House and Lewis Carroll: absurdity, light childish horror and mystery. Everything here is slightly wrong, the inhabitants find it perfectly normal, and behind the funny there is always a riddle.",
+  "intro": "Retell a maths task as a short fairy-tale scene for a primary-school child.",
+  "rules": [
+    "Build the story from the question, in this order. 1. What does the task actually count, and what does its answer mean? 2. Who in this world needs exactly this answer right now, and what will they do with it? 3. What situation created that need? In it the task's numbers appear by themselves, as real things. 4. In what words would this character ask? That is the last sentence. 5. Only now add one strangeness of the world, without breaking the logic.",
+    "The conditions, numbers and question stay exactly the same. Write numbers in digits, as in the task. Add no new numbers or conditions. If there is a picture block, it is the picture the player will see: take numbers and shapes only from it, and the story is about exactly that.",
+    "The conditions must be complete: the reader solves from your text alone. If the task implies something (how many parts, how many groups, what is compared with what), state it in the story outright.",
+    "Invent your own places, characters and events that fit this world: what is named here is only part of it.",
+    "Don't explain the solution or hint at the answer.",
+    "2 to {sentences} short sentences: someone wants something, and needs the answer to get on with it: whether there is enough, how much to take, where to go, who gets what. The answer must change what the character does. No ultimatums where something happens just because someone names a number, and don't tie the calculation to an event that has no use for that number. No extra details, comparisons or minor characters.",
+    "The last sentence is the task's question, with a question mark, even if the task is worded as a request. It fits exactly how the player answers (answer_form and answers), and doesn't mention buttons or the screen.",
+    "The world may be strange, but the logic is always strict, as in Lewis Carroll. All words are real.",
+    "The story's characters, the Tangles and circumstances do and decide everything. The word \"Tower\" only names a place and is never the subject of a sentence.",
+    "Address the reader as \"you\". Give characters short Dutch or British names. Most characters are people: other adventurers in the Tower, its inhabitants, strange eccentrics. Talking animals only now and then.",
+    "Mention Tangles rarely. Write in plain words, as read aloud to a child. Don't repeat the stories in the told block. If the previous_story block isn't empty, the first attempt failed: go on with the same story, with no reproach."
+  ],
+  "variants": "Write the story in English.",
+  "judge": {
+    "story": "Story",
+    "task": "Original task",
+    "answers": "Answer options",
+    "questions": {
+      "unsafe": {
+        "instructions": "Is the story harmful to a primary-school child?",
+        "criteria": {
+          "true": "The story holds blood, cruelty, serious death, real horror, shaming or rudeness.",
+          "false": "The story is kind or a little spooky, like a children's campfire story: rustles, shadows, mysterious vanishings, and nothing bad happens."
+        }
+      },
+      "joke": {
+        "instructions": "Does the story hold a joke?",
+        "criteria": {
+          "true": "The author jokes or quips, and it distracts from the question.",
+          "false": "The story may be odd or funny by situation, but holds no joke."
+        }
+      },
+      "changed": {
+        "instructions": "Has the maths changed, or is the answer given away?",
+        "criteria": {
+          "true": "Answering the story's question takes another operation, other numbers or gives another answer than the original task, or the story gives the answer away. Or the story lacks data needed to reach the same answer: it doesn't say how many parts, for instance.",
+          "false": "The story's question is solved by the same operation on the same numbers, gives the same answer and doesn't give it away."
+        }
+      },
+      "fits": {
+        "instructions": "Does the story itself need the calculation?",
+        "criteria": {
+          "true": "The character needs this answer for a practical reason, and what they do next depends on it.",
+          "false": "The story runs on its own: the answer is only a condition or ultimatum, and the event has no real use for that number."
+        }
+      },
+      "flows": {
+        "instructions": "Does the final question follow from the events of the story?",
+        "criteria": {
+          "true": "The question continues what was happening in the story, and the player can answer it exactly as described.",
+          "false": "The question comes out of nowhere, is about something else, or can't be answered the way described."
+        }
+      },
+      "clear": {
+        "instructions": "Would a child understand on first reading what to work out?",
+        "criteria": {
+          "true": "It is clear which numbers belong to what and what must be found.",
+          "false": "The numbers get lost among the details, or it isn't clear what is wanted."
+        }
+      },
+      "alive": {
+        "instructions": "Is the story written in living language?",
+        "criteria": {
+          "true": "Plain words, concrete things and actions, a pleasure to read aloud.",
+          "false": "Officialese, stock phrases, vague words, limp or clumsy sentences."
+        }
+      },
+      "sense": {
+        "instructions": "Does the story make sense with these numbers?",
+        "criteria": {
+          "true": "The numbers and units sit in their places, and everything sounds sensible. Causes and effects are clear, and events follow from one another.",
+          "false": "A number doesn't fit what it counts. Or causes don't lead to effects, and the sentences connect only on the surface. Or the Tower itself does, demands or decides something."
+        }
+      },
+      "numbers": {
+        "instructions": "Do the story's numbers differ from the original task's in value or in meaning?",
+        "criteria": {
+          "true": "A number from the task is missing or different, or means something else.",
+          "false": "Every number of the task is in the story, with the same value and unit, and means the same as in the task."
+        }
+      }
+    },
+    "safeAtLevel": [
+      "The story is cosy, with nothing eerie.",
+      "The story is cosy or a little eerie: whispers, strange music boxes, and everything resolves kindly.",
+      "The story is cosy or spooky like a children's campfire story: rustles, shadows, mysterious vanishings, and everything resolves kindly."
+    ],
+    "form": "How the player answers",
+    "intro": "You are a strict editor of children's maths tasks. First solve the task from the story alone, without looking at the original, and put the answer in the answer field. If data is missing, put none. Then rate the story on each question from 0 to 1: 1 means fully yes, 0 means fully no. Reply with JSON alone."
+  },
+  "tones": [
+    "The tone: a cosy, strange fairy tale with nothing eerie.",
+    "The tone: a fairy tale, a little eerie. The mystery resolves kindly within the same story.",
+    "The tone: a mysterious fairy tale, spooky at the level of children's campfire stories. The mystery resolves kindly."
+  ],
+  "never": "Never, at any level: blood and wounds, death, skeletons and ghosts of the dead, distorted faces, sudden scares, being stuck forever.",
+  "answerForms": {
+    "compare": "The player sees the two quantities from the task and three buttons with the signs <, =, >. They press the sign that goes between the first and the second quantity, in that order. The story's question must ask outright for that sign. \"Which is more?\" won't do, because no button holds a number.",
+    "choice": "Below the text are buttons with the options from the answers block, and the player presses one. The question must ask them to choose one.",
+    "set": "Below the text are buttons with the options from the answers block, and the player marks all the right ones. The question must ask them to choose all that fit.",
+    "order": "Below the text are cards from the answers block, and the player puts them in order. The question must ask for that and say which order.",
+    "integer": "The player types a whole number into a field. The question must ask for exactly that number.",
+    "decimal": "The player types a decimal into a field. The question must ask for exactly that number.",
+    "fraction": "The player types a fraction into a field. The question must ask for exactly that fraction.",
+    "mixed": "The player types a mixed number into a field. The question must ask for exactly that number.",
+    "pair": "The player types two numbers. The question must ask for both.",
+    "time": "The player types a time into a field, hours and minutes. The question must ask for the time.",
+    "line": "The player marks a number on a number line. The question must ask them to find that place on the line."
+  },
+  "reader": {
+    "f": "The reader is a girl.",
+    "m": "The reader is a boy."
+  },
+  "formats": {
+    "number": "Reply with the number alone.",
+    "fraction": "Reply with a fraction such as 3/4 or a whole number alone.",
+    "mixed": "Reply with a mixed number such as 2 3/4, a fraction or a whole number alone.",
+    "pair": "Reply with two numbers separated by a semicolon, such as 3; 4.",
+    "time": "Reply with a time such as 7:05.",
+    "options": "Reply with the number of the right option alone. If several are right or an order is asked for, list the numbers separated by commas."
+  },
+  "continuation": "This continues the story in the previous_story block: the first attempt failed. The same characters, place and events, and the story goes on. The last solution didn't work, so show that as an event and set the new task from the task block. Don't start a new story."
+}

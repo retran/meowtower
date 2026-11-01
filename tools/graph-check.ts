@@ -1,7 +1,12 @@
 // `./meowtower graph check [file]` (SPC-0050, rule 1): loads the skill graph and
 // reports its version, or the failing rule with the node and field it names.
 import { existsSync, readFileSync } from "node:fs";
-import { notGeneratable } from "../src/engine/catalogue.js";
+import {
+  MIN_TEMPLATES,
+  notGeneratable,
+  thinSubtypes,
+} from "../src/engine/catalogue.js";
+import { templates } from "../src/templates/index.js";
 import {
   checkCounts,
   checkSlo,
@@ -25,9 +30,13 @@ try {
   );
   checkCounts(graph.baseOnly());
   checkSlo(graph);
-  // Until the real templates exist every subtype is listed as not_generatable (TSK-0509).
-  const missing = notGeneratable(graph, []);
+  // A subtype with no template is not_generatable (TSK-0509); one with fewer than ten is thin (ADR-0490).
+  const missing = notGeneratable(graph, templates);
   console.log(`not_generatable: ${missing.length} subtypes without a template`);
+  const thin = thinSubtypes(graph, templates);
+  console.log(
+    `thin: ${thin.length} subtypes with fewer than ${MIN_TEMPLATES} templates${thin.length > 0 ? `: ${thin.join(", ")}` : ""}`,
+  );
   console.log(
     `graph check: ${graph.graphVersion()} passes rules 1${fixture === undefined ? "" : ", 2 and 3"} and 5 (schema, field checks, levels and prerequisites${fixture === undefined ? "" : ", and the RES-0800 fixture"}) with ${graph.nodes().length} nodes`,
   );

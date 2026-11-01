@@ -13,10 +13,19 @@ import {
   type Tried,
 } from "./api.js";
 import { flushOnce, refusedAnswers, stuckEntries } from "./answer-queue.js";
-import { act, button, choice, el, heading, link, status } from "./controls.js";
+import {
+  act,
+  button,
+  choice,
+  el,
+  enterPresses,
+  heading,
+  link,
+  status,
+} from "./controls.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
-import { clock, t } from "./strings.js";
+import { clock, t, uiKey, type UiKey } from "./strings.js";
 
 export interface Shell {
   paired: boolean;
@@ -46,12 +55,13 @@ const home: Screen = {
       ),
     );
     const nav = el("nav", { className: "actions" });
-    nav.append(
-      button("ui.home.play", "play", () => {
-        location.hash = "#/play";
-      }),
-      link("ui.nav.settings", "open-settings", "/settings"),
-    );
+    if (shell.paired)
+      nav.append(
+        button("ui.home.play", "play", () => {
+          location.hash = "#/play";
+        }),
+      );
+    nav.append(link("ui.nav.settings", "open-settings", "/settings"));
     if (shell.paired)
       nav.append(link("ui.nav.parent", "open-parent", "/parent"));
     else nav.append(link("ui.nav.pair", "open-pair", "/pair"));
@@ -154,25 +164,26 @@ const pairing: Screen = {
     code.addEventListener("input", () => {
       document.body.dataset["lastAction"] = "pair-code";
     });
+    const send = button("ui.pair.submit", "pair-submit", async () => {
+      const result = await pair(code.value.trim(), shell.current);
+      if (result.ok) shell.setPaired(true);
+      note.textContent = refusal(
+        result,
+        "ui.pair.done",
+        {
+          pairing_locked: "ui.pair.locked",
+        },
+        "ui.pair.failed",
+      );
+    });
     const form = el(
       "form",
       {},
       el("label", { htmlFor: "pair-code" }, t("ui.pair.code")),
       code,
-      button("ui.pair.submit", "pair-submit", async () => {
-        const result = await pair(code.value.trim(), shell.current);
-        if (result.ok) shell.setPaired(true);
-        note.textContent = refusal(
-          result,
-          "ui.pair.done",
-          {
-            pairing_locked: "ui.pair.locked",
-          },
-          "ui.pair.failed",
-        );
-      }),
+      send,
     );
-    form.addEventListener("submit", (e) => e.preventDefault());
+    form.addEventListener("submit", enterPresses(send));
     return el(
       "section",
       {},
@@ -187,9 +198,9 @@ const pairing: Screen = {
 /** The line for an attempt's result; a lockout names when attempts resume. */
 function refusal(
   result: Tried,
-  done: string,
-  locked: Record<string, string>,
-  failed: string,
+  done: UiKey,
+  locked: Record<string, UiKey>,
+  failed: UiKey,
 ): string {
   if (result.ok) return t(done);
   const key = locked[result.error];
@@ -208,31 +219,32 @@ function pinForm(note: HTMLElement, opened: () => void): HTMLFormElement {
   });
   pin.dataset["action"] = "parent-pin";
   pin.addEventListener("input", () => act("parent-pin"));
+  const enter = button("ui.parent.enter", "parent-login", async () => {
+    const result = await parentLogin(pin.value.trim());
+    if (result.ok) {
+      opened();
+      return;
+    }
+    note.textContent =
+      result.error === "pin_not_set"
+        ? t("ui.parent.noPin")
+        : refusal(
+            result,
+            "ui.parent.enter",
+            {
+              pin_locked: "ui.parent.locked",
+            },
+            "ui.parent.wrong",
+          );
+  });
   const form = el(
     "form",
     {},
     el("label", { htmlFor: "parent-pin" }, t("ui.parent.pin")),
     pin,
-    button("ui.parent.enter", "parent-login", async () => {
-      const result = await parentLogin(pin.value.trim());
-      if (result.ok) {
-        opened();
-        return;
-      }
-      note.textContent =
-        result.error === "pin_not_set"
-          ? t("ui.parent.noPin")
-          : refusal(
-              result,
-              "ui.parent.enter",
-              {
-                pin_locked: "ui.parent.locked",
-              },
-              "ui.parent.wrong",
-            );
-    }),
+    enter,
   );
-  form.addEventListener("submit", (e) => e.preventDefault());
+  form.addEventListener("submit", enterPresses(enter));
   return form;
 }
 
@@ -317,7 +329,11 @@ const parentDevicesScreen: Screen = {
         delete section.dataset["busy"];
         return;
       }
-      devices.forEach((d, i) => {
+      // Devices in use come first; a revoked one is only history.
+      const inOrder = [...devices].sort(
+        (x, y) => Number(x.revoked) - Number(y.revoked),
+      );
+      inOrder.forEach((d, i) => {
         const label = t(
           d.kind === "tablet" ? "ui.devices.tablet" : "ui.devices.computer",
           {
@@ -382,6 +398,8 @@ const parentDevicesScreen: Screen = {
 /** The three-day limits, in adventure days, as the server accepts them; null is off. */
 const THREE_DAY_LIMITS = [null, 1, 2, 3, 4, 5, 6, 7];
 
+const LANGUAGES = ["ru", "en", "nl"] as const;
+
 // Stand-in until the Parent Room's own page exists: the three-day limit alone
 // (REQ-0234). A choice saves at once, as the device settings do.
 const parentSettingsScreen: Screen = {
@@ -389,11 +407,17 @@ const parentSettingsScreen: Screen = {
   render() {
     const note = status();
     const limits = el("fieldset", {});
+    const languages = el("fieldset", {});
+    const creepiness = el("fieldset", {});
+    const gender = el("fieldset", {});
     const nav = el("nav", { className: "actions" });
     const section = el(
       "section",
       {},
       heading("ui.parentSettings.title"),
+      languages,
+      creepiness,
+      gender,
       limits,
       note,
       nav,
@@ -406,6 +430,66 @@ const parentSettingsScreen: Screen = {
         delete section.dataset["busy"];
         return;
       }
+      languages.append(
+        el("legend", {}, t("ui.parentSettings.language")),
+        ...LANGUAGES.map((code) =>
+          choice(
+            "language",
+            code,
+            uiKey(`ui.parentSettings.language.${code}`),
+            code === current.language,
+            async () => {
+              note.textContent = "";
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ language: code }),
+              );
+              // The strings of the page come from the server in the new language.
+              if (saved) location.reload();
+              else note.textContent = t("ui.devices.failed");
+            },
+          ),
+        ),
+      );
+      creepiness.append(
+        el("legend", {}, t("ui.parentSettings.creepiness")),
+        ...([0, 1, 2] as const).map((level) =>
+          choice(
+            "creepiness",
+            String(level),
+            uiKey(`ui.parentSettings.creepiness.${String(level)}`),
+            level === current.creepiness,
+            async () => {
+              note.textContent = "";
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ creepiness: level }),
+              );
+              note.textContent = t(
+                saved ? "ui.settings.saved" : "ui.devices.failed",
+              );
+            },
+          ),
+        ),
+      );
+      gender.append(
+        el("legend", {}, t("ui.parentSettings.gender")),
+        ...(["f", "m"] as const).map((value) =>
+          choice(
+            "gender",
+            value,
+            uiKey(`ui.parentSettings.gender.${value}`),
+            value === current.gender,
+            async () => {
+              note.textContent = "";
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ gender: value }),
+              );
+              note.textContent = t(
+                saved ? "ui.settings.saved" : "ui.devices.failed",
+              );
+            },
+          ),
+        ),
+      );
       limits.append(
         el("legend", {}, t("ui.parentSettings.threeDay")),
         ...THREE_DAY_LIMITS.map((limit) => {
@@ -413,7 +497,7 @@ const parentSettingsScreen: Screen = {
           return choice(
             "three-day",
             value,
-            `ui.parentSettings.limit.${value}`,
+            uiKey(`ui.parentSettings.limit.${value}`),
             limit === current.threeDayLimit,
             async () => {
               note.textContent = "";

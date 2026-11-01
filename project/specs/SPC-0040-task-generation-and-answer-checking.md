@@ -2,8 +2,8 @@
 id: SPC-0040
 artifact: spec
 status: live
-revised: 2026-10-10
-states: [REQ-0701, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-3712, REQ-5096, REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5420, REQ-5428, REQ-5430, REQ-5432, REQ-5436, REQ-5442, REQ-5444, REQ-5450, REQ-5466, REQ-5472, REQ-7158, REQ-7160]
+revised: 2026-10-31
+states: [REQ-7548, REQ-0701, REQ-0702, REQ-0704, REQ-0705, REQ-0706, REQ-0707, REQ-0708, REQ-0709, REQ-0710, REQ-0713, REQ-0726, REQ-0728, REQ-0730, REQ-0732, REQ-0734, REQ-0736, REQ-0740, REQ-0742, REQ-0744, REQ-0746, REQ-0748, REQ-0750, REQ-0752, REQ-0754, REQ-0756, REQ-0758, REQ-0760, REQ-0762, REQ-0766, REQ-0768, REQ-0770, REQ-0772, REQ-0774, REQ-0776, REQ-0778, REQ-0780, REQ-0782, REQ-0784, REQ-0786, REQ-0788, REQ-0790, REQ-0792, REQ-0794, REQ-0796, REQ-0798, REQ-0830, REQ-0836, REQ-0844, REQ-0848, REQ-1200, REQ-1202, REQ-1204, REQ-1206, REQ-1208, REQ-1210, REQ-1214, REQ-1216, REQ-1218, REQ-1220, REQ-1222, REQ-1224, REQ-1226, REQ-1230, REQ-1232, REQ-1234, REQ-1240, REQ-1242, REQ-3712, REQ-5096, REQ-5402, REQ-5404, REQ-5406, REQ-5408, REQ-5410, REQ-5420, REQ-5428, REQ-5430, REQ-5432, REQ-5436, REQ-5442, REQ-5444, REQ-5450, REQ-5466, REQ-5472, REQ-7158, REQ-7160, REQ-7520, REQ-7522, REQ-7530, REQ-7532, REQ-7534, REQ-7542, REQ-7546]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -61,7 +61,7 @@ A word problem template adds its structure id, the role of each number placehold
 
 ### The answer contract
 
-`AnswerSpec` has the kinds `integer`, `decimal`, `fraction`, `mixed`, `quotientRemainder`, `time`, `point`, `compare`, `choice`, `grid`, `order`, `steps` and `equation`, and ADR-0300 adds `region`. An `equation` answer produces an `Answer` of kind `number`, or `fraction` under the `equivalent` rule. `Answer` also has the kinds `dont_know` and `insufficient`, the second with `missing: 0 | 1 | 2 | 3 | null`, the position of the chosen option or none.
+`AnswerSpec` has the kinds `integer`, `decimal`, `fraction`, `mixed`, `quotientRemainder`, `time`, `point`, `compare`, `choice`, `grid`, `order`, `steps`, `equation`, `set` and `pair`, and ADR-0300 adds `region`. A `set` answer selects every correct option and earns half credit one option away from the exact set (ADR-0520). A `pair` answer gives two numbers in order and earns half credit for one right (ADR-0520). A `point` answer, or a number placed on a line, may carry a `within` distance that a template states for "ongeveer" tasks (ADR-0520). An `equation` answer produces an `Answer` of kind `number`, or `fraction` under the `equivalent` rule. `Answer` also has the kinds `dont_know` and `insufficient`, the second with `missing: 0 | 1 | 2 | 3 | null`, the position of the chosen option or none.
 
 `check(spec, correct, raw)` returns either `unparsed` or a verdict with a credit of 1, 0.5 or 0, a class and a trap id. Besides the verdicts of an ordinary answer and `dont_know`, it returns `insufficient_correct`, `insufficient_partial` and `false_insufficient` for an answer of kind `insufficient`. The classes of a wrong answer are a trap's type, `computational`, `unclassified`, `used_extra_data` and `answered_insufficient`, and a verdict can also carry `alsoSlip: true` or `formMismatch: true`. A composed riddle has no `AnswerSpec` kind and takes its verdict from `judgeCompose(target, graph)`.
 
@@ -289,3 +289,7 @@ The generator builds a riddle's target with the purpose `compose`, and `judgeCom
 | An outgoing `ItemViewOut` or `InputSpec` carries an unlisted field | Serialisation fails, and the body never reaches the client. |
 | `COMPOSE_FREE` is on with no passing record for the configured `PARSE_MODEL` and prompt hash | Text riddles turn off, card riddles play, and `./meowtower status` shows `compose_flag_off`. |
 | The game day's parse bucket can't reserve two parses | The Director offers a card riddle. |
+
+## What a template's strings and pictures hold
+
+Each step of a solution states its calculation with the numbers of the task (REQ-7520), and the solution of a choice or a set names the reason the right option is right (REQ-7522). A string computes a value with `{=expression}` and agrees a noun with `{name|one|few|many}`, so a noun takes the form its number requires (REQ-7530). Every task of geometry, area, volume and the circle carries a picture drawn by code (REQ-7532) that never writes what the task asks (REQ-7546), and the letters on a picture follow the language the task is built for (REQ-7534). Every task knows the typical mistakes of its form and explains each one (REQ-7542).

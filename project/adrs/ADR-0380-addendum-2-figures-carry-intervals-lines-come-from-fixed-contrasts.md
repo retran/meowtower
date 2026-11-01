@@ -5,6 +5,9 @@ status: approved
 revised: 2026-10-10
 addresses: [REQ-6600, REQ-6602, REQ-6604, REQ-6606, REQ-6608, REQ-6610, REQ-6612, REQ-6614, REQ-6616, REQ-6618, REQ-6620, REQ-6622, REQ-6624, REQ-6626, REQ-6628, REQ-6630, REQ-6632, REQ-6634, REQ-6638, REQ-6640, REQ-6642, REQ-6644, REQ-6646, REQ-6648, REQ-6650, REQ-6652, REQ-6654, REQ-6656, REQ-6658, REQ-6660, REQ-6664, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-6684, REQ-6686, REQ-6688, REQ-6690, REQ-7400, REQ-7402]
 supersedes: []
+issue: 58
+projected: 48ee21628953
+tracked: cc6cef15bc67
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -127,7 +130,7 @@ Templates gain `contexts`, owned by ADR-0410, and a probe template gains `probeF
 
 ### The MVP gains only the parts that shape the log
 
-The first version holds REQ-5076's list and adds addendum 2's parts that shape the log (REQ-6676):
+The first version holds REQ-8020's list and adds addendum 2's parts that shape the log (REQ-6676):
 
 - `hypothesis_recorded`, `hypothesis_updated` and the Parent Room form that records a hypothesis and what would confirm and refute it, as text with no status (ADR-0450);
 - the context tag on every accepted frame, `contexts` on templates, the Director's hold on first encounters and the projection `first_exposures` (ADR-0410);
@@ -272,3 +275,24 @@ The premortem, written as though it had happened. At the first probe stage check
 - Whether the owner allows Dutch probe text at all: the owner's amendment to `CLAUDE.md`.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-6636 (superseded by REQ-7400, which this record now addresses); REQ-6668 (superseded by REQ-7500, which ADR-0460 addresses); REQ-6672 (superseded by REQ-7402, which this record now addresses).
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. One module computes every Wilson, Newcombe and median interval, and a reference table holds it to 0.0005 (`archive/tasks/TSK-1028-one-interval-module-with-a-reference-table.md`)
+2. Each measure owns a «мало данных» floor, and a figure below it feeds no finding (`archive/tasks/TSK-1029-measure-registry-and-floor-property-test.md`)
+3. The report draws its own lines only from a list fixed before her data exists (`archive/tasks/TSK-1030-fixed-list-of-contrasts.md`)
+4. The language line and the maths line appear at 95 % and say «пока не ясно» otherwise (`archive/tasks/TSK-1031-language-and-maths-lines.md`)
+5. Every line the report draws names a check to run and proposes no lesson (`archive/tasks/TSK-1032-interpretation-lines-name-a-check.md`)
+6. The report offers no setting, filter or mode that hides a node or a figure (`archive/tasks/TSK-1033-report-cannot-be-curated.md`)
+7. The summary counts excluded attempts as right and wrong, and each node card strikes them through (`archive/tasks/TSK-1034-exclusion-trail-in-summary-and-node-card.md`)
+8. The summary lists nodes with errors that carry no hard word, beside the language-cause list (`archive/tasks/TSK-1035-errors-without-hard-words-list.md`)
+9. The PDF snapshot prints every report screen and every node card, or nothing (`archive/tasks/TSK-1036-pdf-snapshot-prints-everything-or-nothing.md`)
+10. Three states have node labels, the fourth has none, and «на пороге» names one label only (`archive/tasks/TSK-1037-four-states-and-the-threshold-word.md`)
+11. The four new event types each have one owning decision, and the owner check fails while it is a draft (`archive/tasks/TSK-1038-event-types-have-one-approved-owner.md`)
+12. `item_shown` records two new purposes and the probe's presentation, and stored events stay readable (`archive/tasks/TSK-1039-item-shown-purposes-probe-field-and-upcast.md`)
+13. The scope guard fails on every deferred part of addendum 2, and a probe template names its family (`archive/tasks/TSK-1040-scope-guard-keeps-deferred-parts-out-of-the-mvp.md`)
+14. No model request can carry a report figure, a probe result or a hypothesis (`archive/tasks/TSK-1041-no-request-carries-a-figure-or-her-data-to-the-probe.md`)
+15. Check 5 plays four students whose accuracy follows the presentation, and counts both lines on one seed (`archive/tasks/TSK-1042-check-5-students-and-the-both-gaps-bar.md`)
+16. Check 5 holds the single-gap and no-gap bars, a phase limit, and a rate the report's own code measures (`archive/tasks/TSK-1043-check-5-single-gap-bars-phase-limit-and-rates.md`)
+

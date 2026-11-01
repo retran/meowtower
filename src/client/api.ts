@@ -1,6 +1,7 @@
 // The routes the shell calls. The device token and the parent session travel
 // as HttpOnly cookies. Every body is read, because an unread one stays open.
 import type {
+  HintOut,
   AnswerIn,
   Chest,
   Grant,
@@ -117,6 +118,9 @@ export async function parentDevices(): Promise<ParentReply<ParentDevice[]>> {
 /** The parent settings; a null limit means the three-day rule is off (REQ-0234). */
 export interface ParentSettings {
   threeDayLimit: number | null;
+  creepiness: 0 | 1 | 2;
+  gender: "f" | "m";
+  language: string;
 }
 
 export async function parentSettings(): Promise<ParentReply<ParentSettings>> {
@@ -125,7 +129,7 @@ export async function parentSettings(): Promise<ParentReply<ParentSettings>> {
 }
 
 export async function saveParentSettings(
-  settings: ParentSettings,
+  settings: Partial<ParentSettings>,
 ): Promise<ParentReply<ParentSettings>> {
   const { status, body } = await call("/api/parent/settings", {
     method: "PUT",
@@ -216,6 +220,19 @@ export async function nextPacket(
   return status === 200 ? (body as unknown as Packet) : null;
 }
 
+/** The parallel task of a failed first attempt; a repeat returns the same one (REQ-2426). */
+export async function secondAttempt(
+  itemId: string,
+): Promise<Room | Moved | null | typeof UNREACHABLE> {
+  const { status, body } = await call(
+    `/api/item/${encodeURIComponent(itemId)}/second-attempt`,
+    { method: "POST", body: JSON.stringify({ clientSeq: nextSeq() }) },
+  );
+  if (status === UNREACHABLE) return UNREACHABLE;
+  if (isMoved(status, body)) return MOVED;
+  return status === 200 ? (body as unknown as Room) : null;
+}
+
 /** The holder's heartbeat, sent every 15 seconds (SPC-0030). */
 export async function heartbeat(
   sessionId: string,
@@ -233,6 +250,18 @@ export async function heartbeat(
  * after a lost reply is recorded once (REQ-2432). `status` is `UNREACHABLE`
  * when no reply came.
  */
+/** Buys a rung of the hint ladder, or shows one already bought; null when it can't be had. */
+export async function buyHint(
+  itemId: string,
+  level: number,
+): Promise<HintOut | null> {
+  const { status, body } = await call(
+    `/api/item/${encodeURIComponent(itemId)}/hint`,
+    { method: "POST", body: JSON.stringify({ level, clientSeq: nextSeq() }) },
+  );
+  return status === 200 ? (body as unknown as HintOut) : null;
+}
+
 export function postAnswer(
   sessionId: string,
   sent: AnswerIn,
@@ -314,7 +343,7 @@ export async function deliverRewards(
   return status === 200;
 }
 
-/** «Ещё один ряд»: the server refuses with `day_finished` once the parent ended the day. */
+/** The extension by one row: the server refuses with `day_finished` once the parent ended the day. */
 export async function extend(
   sessionId: string,
 ): Promise<"ok" | "day_finished" | Moved | null> {

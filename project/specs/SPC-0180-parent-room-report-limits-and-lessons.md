@@ -2,8 +2,8 @@
 id: SPC-0180
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-0105, REQ-0107, REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364, REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-1426, REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378, REQ-3710, REQ-3814, REQ-5146, REQ-5148, REQ-5150, REQ-5360, REQ-5362, REQ-5364, REQ-5366, REQ-5368, REQ-5458, REQ-5460, REQ-5462, REQ-5464, REQ-6064, REQ-6600, REQ-6602, REQ-6604, REQ-6606, REQ-6608, REQ-6610, REQ-6612, REQ-6614, REQ-6616, REQ-6618, REQ-6620, REQ-6622, REQ-6624, REQ-6626, REQ-6628, REQ-6630, REQ-6632, REQ-6634, REQ-6638, REQ-6640, REQ-6642, REQ-6644, REQ-6648, REQ-6650, REQ-6796, REQ-7170, REQ-7174, REQ-7400]
+revised: 2026-11-01
+states: [REQ-7660, REQ-0105, REQ-0107, REQ-0711, REQ-0824, REQ-0826, REQ-0828, REQ-0834, REQ-0838, REQ-0846, REQ-1300, REQ-1302, REQ-1304, REQ-1306, REQ-1308, REQ-1310, REQ-1312, REQ-1314, REQ-1316, REQ-1318, REQ-1322, REQ-1324, REQ-1326, REQ-1328, REQ-1330, REQ-1332, REQ-1334, REQ-1336, REQ-1338, REQ-1340, REQ-1344, REQ-1346, REQ-1348, REQ-1350, REQ-1352, REQ-1354, REQ-1356, REQ-1358, REQ-1360, REQ-1362, REQ-1364, REQ-1400, REQ-1402, REQ-1404, REQ-1406, REQ-1408, REQ-1410, REQ-1412, REQ-1416, REQ-1418, REQ-1420, REQ-1422, REQ-1424, REQ-1426, REQ-2300, REQ-2302, REQ-2304, REQ-2306, REQ-2310, REQ-2312, REQ-2314, REQ-2316, REQ-2318, REQ-2320, REQ-2322, REQ-2324, REQ-2326, REQ-2328, REQ-2330, REQ-2332, REQ-2334, REQ-2336, REQ-2338, REQ-2340, REQ-2342, REQ-2344, REQ-2346, REQ-2348, REQ-2350, REQ-2352, REQ-2354, REQ-2356, REQ-2358, REQ-2360, REQ-2362, REQ-2364, REQ-2366, REQ-2368, REQ-2370, REQ-2372, REQ-2374, REQ-2376, REQ-2378, REQ-3710, REQ-3814, REQ-5146, REQ-5148, REQ-5150, REQ-5360, REQ-5362, REQ-5364, REQ-5366, REQ-5368, REQ-5458, REQ-5460, REQ-5462, REQ-5464, REQ-6064, REQ-6600, REQ-6602, REQ-6604, REQ-6606, REQ-6608, REQ-6610, REQ-6612, REQ-6614, REQ-6616, REQ-6618, REQ-6620, REQ-6622, REQ-6624, REQ-6626, REQ-6628, REQ-6630, REQ-6632, REQ-6634, REQ-6638, REQ-6640, REQ-6642, REQ-6644, REQ-6648, REQ-6650, REQ-6796, REQ-7170, REQ-7174, REQ-7400, REQ-8116, REQ-8118, REQ-8120, REQ-8122, REQ-8124, REQ-8126, REQ-8128, REQ-8130, REQ-8132, REQ-8134, REQ-8136, REQ-8138, REQ-8140, REQ-8142, REQ-8144, REQ-8146, REQ-8148, REQ-8150]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -99,6 +99,26 @@ The `meowtower` service mounts `content/` read-only.
 - The Director reads `parent_tags` and `thresholds` only for the open recheck windows and the due motor check.
 
 ## Behaviour
+
+### The front page
+
+The room opens on one front page for the parent (REQ-8116), in seven blocks.
+
+| Block | Holds | Requirement |
+| --- | --- | --- |
+| This week | Days played, active time and her signals, in words | REQ-8118 |
+| Since you last looked | Up to 7 changes, kept until seen with `front_page_seen` | REQ-8120, REQ-8122 |
+| Do this week | At most 3 actions from a fixed list, each with why and how, none a drill or a talk about a score | REQ-8124, REQ-8126 |
+| Against the goals | Rank, 1F and 1S coverage and VWO readiness, each with its change over 4 weeks | REQ-8128 |
+| Abilities | Every ability by floor with its level, with marks on falls and unknowns | REQ-8132 |
+| In the story | Season, world date, arc, last episode and its marks | REQ-8134 |
+| Owner's line | Spend, generation failures and alarms | REQ-8146 |
+
+The page compares her only with her own past and the Dutch goals (REQ-8130). It states certainty in words with no error bars (REQ-8136). A fall states what happened and what helps, and carries an alarm only when a limit fired (REQ-8138). Each line comes from a named rule in `src/report/front.ts` with no model (REQ-8140), and links to the screen that proves it (REQ-8142). A node's card shows both level and state and says why they differ (REQ-8144). The first-month review states how many proposed actions the parent took (REQ-8150).
+
+### The tab «Служебное» (Service)
+
+The tab shows figures of play and model spend, above the frame counts (REQ-8148). Below them, the game audit lists each task with its text, the answer given, the verdict and the hints taken (REQ-7660), and the model audit lists each call in full (REQ-7650). Both are also JSON at `/audit/play` and `/audit/llm`.
 
 ### Access
 

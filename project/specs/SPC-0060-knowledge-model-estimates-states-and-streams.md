@@ -2,7 +2,7 @@
 id: SPC-0060
 artifact: spec
 status: live
-revised: 2026-09-29
+revised: 2026-10-31
 states: [REQ-0900, REQ-0902, REQ-0904, REQ-0906, REQ-0908, REQ-0910, REQ-0912, REQ-0914, REQ-0916, REQ-0918, REQ-0920, REQ-0922, REQ-0924, REQ-0926, REQ-0928, REQ-0930, REQ-0932, REQ-0934, REQ-0936, REQ-0938, REQ-0940, REQ-0942, REQ-0944, REQ-0946, REQ-0950, REQ-0952, REQ-0954, REQ-0960, REQ-0962, REQ-0964, REQ-0968, REQ-0976, REQ-0982, REQ-0984, REQ-0986, REQ-0988, REQ-0992, REQ-0994, REQ-5024, REQ-5026, REQ-5028, REQ-5136, REQ-5138, REQ-5140, REQ-5142, REQ-5144, REQ-5318, REQ-5320, REQ-5322, REQ-5354, REQ-5424, REQ-5452, REQ-6842, REQ-7506]
 ---
 
@@ -155,7 +155,7 @@ A node's estimate is the mean of its subtypes' estimates weighted by the subtype
 
 Two beta estimates sit beside BKT per node and subtype, and neither feeds `pKnow`. Fluency takes the observations of the "on her own" estimate, graded unassisted first attempts, except an attempt whose time counts in no measure, and "with help" takes assisted attempts:
 
-- Fluency starts at `αf = βf = 1`. Each observation adds `w * c * fast * 2^(-age / 30 days)` to `αf` and `w * (1 - c * fast) * 2^(-age / 30 days)` to `βf`, so it estimates the share of first attempts that are right, unassisted and no slower than the fluency threshold (REQ-0926), and an attempt 30 days old has half its weight (REQ-0928). `fast` is 1 when the attempt took no longer than the template's threshold for the device type under the active threshold version.
+- Fluency starts at `αf = βf = 1`. Each observation adds `w * c * fast * 2^(-age / 30 days)` to `αf` and `w * (1 - c * fast) * 2^(-age / 30 days)` to `βf`, so it estimates the share of first attempts that are right, unassisted and no slower than the fluency threshold (REQ-0926), and an attempt 30 days old has half its weight (REQ-0928). `fast` is 1 when the attempt took at most the template's threshold for the device type under the active threshold version.
 - "With help" does the same over assisted attempts only, counting a right assisted attempt as a success, with the same 30-day half-life (REQ-0922, REQ-0924). It is pooled over every depth of help (REQ-5140).
 
 Beside the pooled "with help" estimate, each node and subtype keeps four shares of right answers as separate figures: after rung 1, after rung 2, after rung 3 and on the second attempt (REQ-5136). A first attempt counts in the share of its deepest rung, `hintLevel`, and a second attempt counts in the fourth share whatever rung it used. Each share is a beta estimate from `α = β = 1` with the pooled estimate's score and weight, and weights an assisted attempt by `2^(-age in days / 30)` (REQ-5138), so the four shares' observations add up to the pooled estimate's.

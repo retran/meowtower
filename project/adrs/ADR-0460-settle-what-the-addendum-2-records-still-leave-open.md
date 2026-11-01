@@ -2,9 +2,12 @@
 id: ADR-0460
 artifact: adr
 status: approved
-revised: 2026-10-10
-addresses: [REQ-0784, REQ-0840, REQ-0914, REQ-0916, REQ-0950, REQ-0988, REQ-1040, REQ-1306, REQ-2726, REQ-3300, REQ-3304, REQ-3306, REQ-3318, REQ-3640, REQ-3644, REQ-5048, REQ-5248, REQ-5278, REQ-5300, REQ-5318, REQ-5414, REQ-5646, REQ-5812, REQ-5824, REQ-5858, REQ-5864, REQ-5912, REQ-6064, REQ-6324, REQ-6348, REQ-6412, REQ-6424, REQ-6616, REQ-6664, REQ-6842, REQ-6874, REQ-6890, REQ-6946, REQ-6956, REQ-7106, REQ-7110, REQ-7120, REQ-7122, REQ-7128, REQ-7136, REQ-7148, REQ-7150, REQ-7202, REQ-7210, REQ-7264, REQ-7500, REQ-7502, REQ-7504, REQ-7506, REQ-7508, REQ-7510, REQ-7512, REQ-7514]
+revised: 2026-10-31
+addresses: [REQ-0784, REQ-0840, REQ-0914, REQ-0916, REQ-0950, REQ-0988, REQ-1040, REQ-1306, REQ-2726, REQ-3300, REQ-3304, REQ-3306, REQ-3318, REQ-3640, REQ-5048, REQ-5248, REQ-5278, REQ-5300, REQ-5318, REQ-5414, REQ-5646, REQ-5812, REQ-5824, REQ-5858, REQ-5864, REQ-5912, REQ-6064, REQ-6324, REQ-6348, REQ-6412, REQ-6424, REQ-6616, REQ-6664, REQ-6842, REQ-6874, REQ-6890, REQ-6946, REQ-6956, REQ-7106, REQ-7110, REQ-7120, REQ-7122, REQ-7128, REQ-7136, REQ-7148, REQ-7150, REQ-7202, REQ-7210, REQ-7264, REQ-7500, REQ-7502, REQ-7504, REQ-7506, REQ-7508, REQ-7510, REQ-7512, REQ-7514]
 supersedes: []
+issue: 66
+projected: 474a7d5473b2
+tracked: d3f9f64bcd2f
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -207,3 +210,26 @@ The premortem, written as though it had happened: two months into stage 0.3, `ll
 - REQ-7404's open finding on the tested and mapped counts, which waits for the owner as its own requirement.
 
 Amended on 2026-10-10: this record no longer addresses 8 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0980 (superseded by REQ-7506, which this record now addresses); REQ-5636 (superseded by REQ-7508, which this record now addresses); REQ-6426 (superseded by REQ-7510, which this record now addresses); REQ-6668 (superseded by REQ-7500, which this record now addresses); REQ-6818 (superseded by REQ-7502, which this record now addresses); REQ-6936 (superseded by REQ-7512, which this record now addresses); REQ-7192 (superseded by REQ-7514, which this record now addresses); REQ-7360 (superseded by REQ-7504, which this record now addresses).
+
+Amended on 2026-10-31: this record no longer addresses REQ-3644, which ADR-3100 superseded.
+
+## Plan
+
+The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
+1. Only unassisted first attempts feed the estimate, an excluded task can be restored and a hinted retention check counts as wrong (`archive/tasks/TSK-1156-evidence-exclusion-and-retention-rules.md`)
+2. The model's block, uncertainty, number-sense stream and parameter gate follow the settled rules, and a submitted plan logs its choice (`archive/tasks/TSK-1157-model-block-uncertainty-stream-gate-and-plan-answer.md`)
+3. Pocket-thread and twin events carry what the ledger needs, and a puzzle's state and save route follow the settled rules (`archive/tasks/TSK-1158-ledger-events-and-puzzle-routes.md`)
+4. A word problem draws no step from a held node, an unanswerable problem asks for its estimate like a solvable one, and a frame's glossary words get spans (`archive/tasks/TSK-1159-word-problem-held-nodes-estimate-and-glossary-spans.md`)
+5. The day's plan keeps both floors at a slow pace, a room slot names its floor's own domain and the track tasks follow one order (`archive/tasks/TSK-1160-plan-floors-slots-and-track-tasks.md`)
+6. The Volley's share, fact mix and intervals, the bare count and the school goal follow the settled rules (`archive/tasks/TSK-1161-volley-cito-horizon-and-fact-intervals.md`)
+7. The masker and reply check hold from the MVP, the reference set holds every error class and a family's text form waits for its own pass (`archive/tasks/TSK-1162-compose-masker-reference-set-and-family-gate.md`)
+8. Each role has its timeout and token ceiling, a reserved check is never refused and the month's reset spends the daily buckets (`archive/tasks/TSK-1163-gateway-role-limits-reserved-checks-and-month-reset.md`)
+9. The text gate blocks Latin test names, the judge checks four System-line and joke rules, and the gate counts what it checks (`archive/tasks/TSK-1164-russian-text-gate-checklist-and-counters.md`)
+10. A live frame moves to the library only after its checks, and a discarded reply counts as five rejected frames (`archive/tasks/TSK-1165-live-frames-library-move-and-rejection-count.md`)
+11. Report v1 has nine screens, its interval table covers every count, and a thin week pools up to four weeks (`archive/tasks/TSK-1166-report-nine-screens-intervals-and-pooled-weeks.md`)
+12. Check 5 waits for 20 on every cell, the hold tool reads its interval once, and each scope-guard trace names its backlog item (`archive/tasks/TSK-1167-check-5-cells-hold-bar-and-scope-guard-traces.md`)
+13. Sandbox code can't start timers or change the flag, a reset is compared by table hashes and a start-up writes missing pointers (`archive/tasks/TSK-1168-sandbox-lints-pointers-and-header-state.md`)
+14. A first encounter is computed from the log at its recorded versions, and a side slot takes a context she has met (`archive/tasks/TSK-1169-first-encounter-contexts-and-recompute.md`)
+15. A probe template names its family, every Dutch text passes its checks and the player's word cards reach the source question (`archive/tasks/TSK-1170-probe-template-text-checks-and-word-cards.md`)
+16. A letter's seed is its task's base seed, a family closes at its last presentation, and the day's letters follow the count of templates (`archive/tasks/TSK-1171-probe-seed-family-window-and-daily-letters.md`)
+

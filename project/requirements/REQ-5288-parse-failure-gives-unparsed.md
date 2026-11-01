@@ -3,8 +3,8 @@ id: REQ-5288
 artifact: requirement
 topic: outcomes
 class: functional
-status: approved
-revised: 2026-09-28
+status: withdrawn
+revised: 2026-10-31
 elaborates: RES-4020
 verification: behavioural
 ---
@@ -12,6 +12,8 @@ verification: behavioural
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
 
 # REQ-5288
+
+Withdrawn by ADR-3220 and replaced by REQ-8028: the game accumulates no experience.
 
 When a parse times out after 10 seconds, returns invalid JSON or returns a graph with no question, the riddle MUST get the verdict `unparsed`, with base experience and no observation.
 

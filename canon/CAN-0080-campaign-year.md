@@ -2,7 +2,7 @@
 id: CAN-0080
 artifact: canon
 status: approved
-revised: 2026-09-27
+revised: 2026-10-31
 ---
 
 # The campaign year
@@ -11,8 +11,7 @@ revised: 2026-09-27
 
 This record holds the year-long campaign: the central mystery and its answer,
 the four seasons with their figures and finales, chapters and Ascents, how
-the first version of the game runs the campaign without Ascents, rank changes
-or ciphers, the ten
+the first version of the game runs the campaign without Ascents or ciphers, the ten
 plot checkpoints, rivals and allies, and the four endings. The mystery's
 answer is for the Master only, and the Master reveals it only at its
 checkpoints (CAN-0110). The places belong to the town and the Tower
@@ -20,6 +19,18 @@ checkpoints (CAN-0110). The places belong to the town and the Tower
 CAN-0050. The legendary familiars come from CAN-0060, the ranks from CAN-0070,
 the Diary's pages from CAN-0090 and the Underside of the spring season from
 CAN-0130.
+
+## The world's calendar and the series
+
+The world keeps its own calendar. Each adventure is one day or one night: nights
+belong to the Tower and days to the town. Time passes only in the days the
+heroine lives through, so nothing happens without her. A year has four seasons
+of three months of 28 days. The months named in this record are the world's own
+months, and the owner gives them their names in the setting.
+
+The story runs like a long series. This record's plot, checkpoints and endings
+stay fixed. Inside them, arcs grow from what she does, and each adventure is one
+episode.
 
 ## The central mystery (for the Master only)
 
@@ -32,22 +43,25 @@ Warp) twisted so badly that the river flowed uphill and the houses began to
 count themselves. Young Irma saw the threads because she too counted things
 for no reason. With her familiar, the cat «Муфта» (Muff), she knitted the
 Tower to wind the tangled threads onto it and keep them in order. The fog over
-the town is fluff from that knitting, which is why it arrives on a timetable:
-the Tower breathes.
+the town is fluff from that knitting, which is why it arrives on a timetable.
 
 When Irma grew up, the Tangles became few. She wound the Tower into a small
 glowing ball, «Клубочек» (Little Ball), hid it under a stump in the clearing
-and left the knitting pattern to wait. The pattern waited so long that it
-learnt to speak and became the System. Irma tore the Diary into pages and hid
+and left the knitting pattern with it. Irma tore the Diary into pages and hid
 them in the Tower's walls, because the Keepers' rule says a previous Keeper
 can't tell the new one everything and can only leave traces.
 
-The Tower woke now for two reasons. Knots had piled up over the years. And
-the Tower saw a girl who counted the mill's steps on her way past the forest.
-The Tower itself chose her, not Irma. Irma learnt of it that same morning from
-the fog and was overjoyed, but she keeps silent because that's the rule. Muff
-became mayor to watch over the town while the Tower slept. She knows
-everything and keeps silent too, because cats.
+The Tower appeared now because knots had piled up over the years and a girl
+counted the mill's steps on her way past the forest. Irma didn't choose her.
+Irma learnt of it that same morning from the fog and was overjoyed, but she
+keeps silent because that's the rule. Muff became mayor to watch over the town
+in the meantime. She knows everything and keeps silent too, because cats.
+
+Secret, never shown (CAN-0030, "The Tower's secret"): the Tower breathes, and
+that is why the fog keeps its timetable. It slept, and it woke now because it
+saw that girl. The Tower itself chose her, not Irma. No reveal at any
+checkpoint carries this paragraph, and what the heroine learns stops at who
+knitted the Tower.
 
 Nobody in this story is wicked, ill or disappearing. Irma has simply grown
 older, and her hands can no longer keep up with the Tower. She's waiting for
@@ -59,9 +73,7 @@ Observatory once more.
 The hints are visible from the first session, but the player can only really
 put them together in spring. The Master never states the answer outright
 before checkpoint 9. If the player guesses earlier, the Master neither
-confirms nor denies: the characters dodge the question in their own styles,
-and the System writes «Данные недоступны. Предположение записано» (Data
-unavailable. Assumption recorded).
+confirms nor denies: the characters dodge the question in their own styles.
 
 ### Running clues
 
@@ -88,7 +100,7 @@ several sessions:
 - Figure of the season: «Господин Узел» (Mister Knot). A big, respectable
   knot in a bowler hat, tied with a dozen bows. He is the last knot that once
   tied off the Tower's knitting. He wants to pull every thread dead tight so
-  the Tower stops re-knitting itself at night. Why: every night he fears
+  the floors stop changing at night. Why: every night he fears
   being undone and vanishing. He isn't wicked; he's afraid of change.
 - Arc: the awakening, the first familiar, the first floors and Guardians.
   Every night an over-tight knot appears somewhere, and floors stop changing.
@@ -97,9 +109,9 @@ several sessions:
   whole Tower tight. The heroine shows him that an untangled knot doesn't
   vanish but becomes part of the pattern, like every Tangle. He unravels into
   a beautiful ribbon and becomes «Бантик» (Little Bow), a small helper who
-  ties the heroine's shoelaces and is very proud of it. Her rank rises; in
-  the first version the finale gives the chapter title and main reward and
-  the rank stays E (see "The campaign in the first version").
+  ties the heroine's shoelaces and is very proud of it. The finale gives the
+  chapter title and main reward, and her rank stays as her abilities set it
+  (see "The campaign in the first version").
 
 ### Winter: «Ревизия» (The Audit), December to February
 
@@ -109,8 +121,8 @@ several sessions:
   long coat, with a briefcase, a stamp and glasses on a chain. He arrives from
   «Главное Управление Основы» (the Chief Directorate of the Warp) to close the
   Tower as an «незарегистрированная постройка» (unregistered structure). In
-  winter this makes the Tower freeze: its rows grow frost and stop
-  re-knitting. Why he's like this: in his whole life he has inspected
+  winter his closing order freezes the Tower: its rows grow frost and stop
+  changing. Why he's like this: in his whole life he has inspected
   thousands of places, and none let him stay. He has no home, only a
   briefcase.
 - Arc: Knopp inspects the floors and writes remarks such as «Торт не
@@ -174,74 +186,70 @@ several sessions:
   the Moth is sure that finished knitting isn't needed any more, so she
   starts neatly eating the edges of the floors. She isn't wicked; that's how
   she understands her job, and she hasn't talked with anyone for a long time.
-- Arc: the pattern (the System) reports that it has run out of rows. The
-  Tower needs a new Keeper to knit new rows, or it will have to be cast off
-  and wound back into a ball. The heroine collects the Diary's last pages,
-  finds the last key in the Keeper's armchair and learns the truth about
+- Arc: the pattern runs out of rows. A new Keeper must knit new rows, or
+  the Tower will have to be cast off and wound back into a ball. The heroine
+  collects the Diary's last pages, finds the last key in the Keeper's armchair and learns the truth about
   Irma. The Moth becomes keeper of the scraps: she receives all the Tower's
   spare threads and is happy.
 - Finale: «Праздник Последнего Ряда» (the Feast of the Last Row). The heroine
   brings Irma to the Tower. All the Guardians, the familiars, Knopp, the
   Reverse One, Little Bow and «Мирра» (Mirra) gather in the Observatory. Irma
   sits in her armchair for the last time, hands the heroine her needles and
-  says: «Теперь вяжи сама» (Now knit by yourself). The heroine receives rank
-  S, the title «Смотрительница» (Keeper) and «Клубочек», and chooses the
+  says: «Теперь вяжи сама» (Now knit by yourself). The heroine receives the
+  title «Смотрительница» (Keeper) and «Клубочек», whatever her rank, and chooses the
   Tower's future.
 
 ## Chapters and Ascents
 
 Within a season, chapters run for about two weeks each, and each has its own
-riddle. A chapter ends with «Восхождение» (the Ascent): that night the whole
-Tower re-knits itself, in the morning it lights every window, and the heroine
-climbs through every floor to the Observatory. The Guardians greet her in
-their own styles, and at the end the System awards the chapter's title.
+riddle. A chapter ends with «Восхождение» (the Ascent): that night every
+floor changes, in the morning every window is lit, and the heroine climbs
+through every floor to the Observatory. The Guardians greet her in their own
+styles, and at the end they award the chapter's title.
 
 The triumph variant: if many floors were untangled cleanly during the
 chapter, the finale runs in its solemn variant. The code decides by the floor
 results over the chapter's daily adventures, not by the Ascent itself. The
 Guardians come out together, the Tower's windows burn in a pattern, and the
-System awards a special chapter title: «Та, Что Распутала Главу Начисто» (She
+Guardians award a special chapter title: «Та, Что Распутала Главу Начисто» (She
 Who Untangled the Chapter Clean), «Хозяйка Чистых Рядов» (Mistress of Clean
 Rows) or «Та, Перед Кем Узлы Развязываются Сами» (She Before Whom Knots Untie
 Themselves). The Master can invent another in the same style.
 
 The ordinary finale is just as solemn and gives the chapter's main reward;
 it only lacks the special title. No finale reproaches or compares. The rank
-doesn't change at an Ascent, because ranks come at campaign milestones. On
+doesn't change at an Ascent, because a rank follows her abilities. On
 the Ascent itself the strength of spells brings no bonus and doesn't change
 the road: the heroine simply climbs higher and higher, and the rewards (the
 floors' chests, the title and the chapter's main reward) come for walking the
-whole way. The evening before, the System writes, with no countdown: «Башня
-зажигает окна по вечерам. Готовится Восхождение.» (The Tower lights its
-windows in the evenings. An Ascent is being prepared.)
+whole way. The evening before, with no countdown, the Tower's windows are lit
+and an Ascent is being prepared.
 
 ## The campaign in the first version
 
-The first version of the game has no Ascents, no rank changes and no
-ciphers, and it still runs the whole calendar, so the story never waits for
-them. Each of the three has a stand-in that gives way to it when it arrives,
+The first version of the game has no Ascents and no ciphers, and it still
+runs the whole calendar, so the story never waits for them. Each of the two
+has a stand-in that gives way to it when it arrives,
 with no change to the story above.
 
 - Chapter finales. A chapter ends inside its last daily adventure, in the
-  scene that closes the session. The Tower lights its windows, the Guardians
-  greet the heroine in their own styles, and the System awards the chapter's
-  title and main reward. The triumph variant and its special titles work as
+  scene that closes the session. The Tower's windows are lit, and the Guardians
+  greet the heroine in their own styles and award the chapter's title and
+  main reward. The triumph variant and its special titles work as
   above, from the floor results over the chapter. The heroine doesn't climb
-  every floor, and the System doesn't write its evening line about an Ascent.
+  every floor, and no evening before it signals an Ascent.
   When Ascents arrive, the same finale moves into the Ascent.
-- Ranks. The heroine stays at rank E all year. A season finale plays in full
-  and gives its chapter title and main reward, and the rank doesn't change.
-  A later rank's opening that the first version has, such as the floors'
-  secret places at rank D, opens on the date that rank would have arrived;
-  one it doesn't have, such as a path, stays closed (CAN-0070). When ranks
-  arrive, one solemn scene gives her the rank the calendar has reached.
+- Ranks. The rank follows the heroine's abilities, so the calendar never
+  waits for it and it never waits for the calendar. A season finale plays in
+  full and gives its chapter title and main reward, and the rank doesn't
+  change. A later rank's opening that the first version has, such as the
+  floors' secret places at rank D, opens when she first reaches that rank;
+  one it doesn't have, such as a path, stays closed (CAN-0070).
   Mirra holds rank D from her first appearance and keeps it all through the
-  first version, so she stays one rank above the heroine. After the first
-  version she stays one rank above the heroine at every rank until the last
-  chapter, where the heroine draws level with her.
-- Rank months. The canon names no month for any rank. After the first
-  version, the campaign's season milestones set when ranks come, and the
-  specification holds that calendar (CAN-0070).
+  first version, so the heroine can catch her and pass her. After the first
+  version the specification sets Mirra's rank.
+- Rank months. The canon names no month for any rank, because a rank comes
+  from the heroine's abilities (CAN-0070).
 - Ciphers. A Diary page that would be enciphered arrives already developed:
   the Diary shows the whole page before the heroine opens it, as it develops a
   letter for a stuck reader (CAN-0090). She still gets the page's notes, hints
@@ -252,21 +260,21 @@ with no change to the story above.
 
 | No. | When | Event | What the heroine learns |
 | --- | --- | --- | --- |
-| 1 | Session 0 | The awakening, the Diary, the first familiar | The Tower is knitted from threads; the Tower chose her |
+| 1 | Session 0 | The awakening, the Diary, the first familiar | The Tower is knitted from threads; she sees it because she counts things |
 | 2 | End of September | The first page signed «С.», with a pattern that repeats Irma's scarf | There was a Keeper, and the Keeper left hints |
 | 3 | November, autumn finale | Mister Knot becomes Little Bow | Mister Knot knew whoever tied the Tower and calls that person «Она» (She) |
-| 4 | December | «Мирра Шпилька» appears | There are other towers, but they haven't woken |
+| 4 | December | «Мирра Шпилька» appears | There are other towers, but they stay closed |
 | 5 | February, winter finale | The Tower's registration signed «И.» | The Keeper was a woman whose name begins with «И.» |
 | 6 | March | The pond shows the reverse; Muff's first word | The Tower has two sides; the mayor is no ordinary cat |
 | 7 | May, spring finale | Muff reveals herself as the Cat of the First Loop | The Keeper had a cat called Muff |
-| 8 | June | The System: «Рядов больше нет» (There are no more rows) | The Tower needs a new Keeper |
+| 8 | June | The pattern runs out of rows | A new Keeper must knit the next rows |
 | 9 | July | The last key in the armchair, the Diary's last page | The Keeper is Granny Irma |
 | 10 | August, year finale | The Feast of the Last Row | The heroine becomes the Keeper and chooses the future |
 
 ## Rivals and allies
 
 - «Мирра Шпилька» (Mirra Hairpin). A hunter from the neighbouring town of
-  «Острый Шпиль» (Sharp Spire), where the tower never woke. She's the
+  «Острый Шпиль» (Sharp Spire), where the tower stays closed. She's the
   heroine's age. Proud and ambitious, she holds rank D, one above the
   heroine's starting rank E, with a
   familiar that is a hedgehog of steel wire, «Колючкин» (Pricklykin). She
@@ -297,13 +305,13 @@ one choice in the finale. Every ending is happy, and nobody loses anything.
 | «Открытая Башня» (The Open Tower) | Show the Tower to the town | The fog clears and the townsfolk finally see the Tower. «Туманный Брод» becomes a town with a Tower. Lotta is the first guest. «Пекарь Мякиш» (Crumb the baker) opens a branch inside. |
 | «Тихая Башня» (The Quiet Tower) | Keep the Tower secret | The Tower stays in the forest, and the heroine is its secret Keeper. Irma sometimes comes to tea in the Observatory. |
 | «Клубок в кармане» (A Ball in the Pocket) | Wind up the Tower and take it with her | The Tower rolls up into «Клубочек», which can be unrolled anywhere. A hook for a sequel: journeys to other towns. |
-| «Две стороны» (Two Sides) | Open the door to the Underside and to other towers for good | The tower of Sharp Spire wakes, and Mirra becomes its Keeper. A network of towers begins. |
+| «Две стороны» (Two Sides) | Open the door to the Underside and to other towers for good | The tower of Sharp Spire opens, and Mirra becomes its Keeper. A network of towers begins. |
 
 ## Open questions
 
 - Resolved 2026-09-26: the first version runs the whole calendar, and its
   chapter finale inside an ordinary adventure is a stand-in until Ascents
-  arrive, beside stand-ins for ranks and ciphers ("The campaign in the first
+  arrive, beside a stand-in for ciphers ("The campaign in the first
   version"). RES-1600 holds the reason.
 - Resolved 2026-09-26: the Reverse One stays within CAN-0130's ban on doubles
   who want the heroine's place, not as an exception to it. The canon now
@@ -314,12 +322,11 @@ one choice in the finale. Every ending is happy, and nobody loses anything.
   starting E, and keeps it through the first version, checkpoint 4
   included. Research decided it on the owner's instruction, and RES-2000
   holds the reason.
-- Resolved on 2026-09-27: after the first version Mirra stays one rank
-  above the heroine until the last chapter, where they draw level, because
-  a rival who always keeps a step ahead gives the heroine a goal without a
-  loss. Research decided it on the owner's instruction.
-- Resolved on 2026-09-27: the canon names no month for a rank; the
-  campaign's season milestones set when ranks come after the first version.
+- Replaced on 2026-10-31 by ADR-3220: Mirra no longer stays one rank above
+  the heroine after the first version, because the rank now follows the
+  heroine's abilities.
+- Resolved on 2026-09-27 and changed on 2026-10-31 by ADR-3220: the canon
+  names no month for a rank, and a rank comes from her abilities.
   Research decided it on the owner's instruction, and RES-2000 holds the
   reason.
 - Resolved on 2026-09-26: Mister Knot's new name after autumn is «Бантик»

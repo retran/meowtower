@@ -26,7 +26,7 @@ export const SessionStartOut = z
 
 const View = z
   .object({
-    locale: z.enum(["ru"]),
+    locale: z.enum(["ru", "en", "nl"]),
     text: z.string(),
     svg: z.string().nullable(),
     options: z.array(z.string()).nullable(),
@@ -34,7 +34,20 @@ const View = z
   })
   .strict();
 
-export const InputSpec = z.object({ kind: z.enum(["integer"]) }).strict();
+export const InputSpec = z
+  .object({
+    /** A typed entry, one button, several buttons, or buttons tapped in order. */
+    kind: z.enum(["integer", "text", "choice", "set", "order"]),
+    /** The answer kind of a typed entry, which names the format the field shows. */
+    format: z
+      .enum(["decimal", "fraction", "mixed", "pair", "time", "line"])
+      .optional(),
+    /** What each option of `view.options` sends as the answer. */
+    values: z.array(z.string()).optional(),
+  })
+  .strict();
+
+export type InputSpec = z.infer<typeof InputSpec>;
 
 export const Room = z
   .object({
@@ -150,6 +163,8 @@ export const AnswerOut = z
     ),
     threads: z.number().int().nonnegative(),
     feedback: z.object({ correctAnswer: z.string() }).strict(),
+    /** What went differently, when the entry is a known wrong answer of the task. */
+    note: z.string().min(1).optional(),
     shortSolution: z.array(z.string()).min(1),
     battleLine: z.string().min(1),
   })
@@ -221,7 +236,9 @@ export const HintOut = z
   })
   .strict();
 
-/** «Ещё один ряд»: the reply once the extension is logged. */
+export type HintOut = z.infer<typeof HintOut>;
+
+/** The extension by one row: the reply once the extension is logged. */
 export const ExtendOut = z.object({ status: z.literal("extended") }).strict();
 
 /** The body of the explain and second-attempt requests. */
@@ -257,7 +274,7 @@ export type StreamMessage = z.infer<typeof StreamMessage>;
 
 export const PollOut = z.object({ messages: z.array(StreamMessage) }).strict();
 
-/** «Сохранить и уйти», the page hidden, or no input for too long (SPC-0030). */
+/** The save-and-leave action, the page hidden, or no input for too long (SPC-0030). */
 export const HeartbeatIn = z.object({ clientSeq }).strict();
 export const HeartbeatOut = z.object({ status: z.literal("ok") }).strict();
 
