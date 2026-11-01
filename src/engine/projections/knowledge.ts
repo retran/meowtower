@@ -13,6 +13,7 @@ import {
   levelsOf,
   type OlympiadFacts,
   rankOf,
+  skillsOf,
   snapshotsOf,
 } from "../model/project.js";
 import type { Projection } from "./registry.js";
@@ -121,6 +122,40 @@ const nodeLevels: Projection = {
         l.rule,
         l.warning ? 1 : 0,
         JSON.stringify(l.changes),
+        computedAt,
+      );
+  },
+  apply: noFold,
+};
+
+const skillScores: Projection = {
+  name: "skill_scores",
+  class: "knowledge",
+  module: import.meta.url,
+  table: "skill_scores",
+  create: `CREATE TABLE skill_scores (
+    skill TEXT PRIMARY KEY,
+    shown INTEGER NOT NULL,
+    level INTEGER,
+    percent INTEGER,
+    computed_at TEXT NOT NULL
+  ) STRICT`,
+  fullPass(db: Db, target: string, computedAt: string) {
+    if (!setup) return;
+    const scores = skillsOf(
+      setup.graph,
+      [...allEvents(db)],
+      setup.params,
+      setup.olympiad ?? NO_OLYMPIAD,
+    );
+    db.prepare(`DELETE FROM ${target}`).run();
+    const insert = db.prepare(`INSERT INTO ${target} VALUES (?, ?, ?, ?, ?)`);
+    for (const s of scores)
+      insert.run(
+        s.skill,
+        s.shown ? 1 : 0,
+        s.shown ? s.level : null,
+        s.shown ? s.percent : null,
         computedAt,
       );
   },
@@ -302,6 +337,7 @@ const nodeSnapshots: Projection = {
 export const knowledge: Projection[] = [
   nodeEstimates,
   nodeLevels,
+  skillScores,
   rankState,
   nodeObligations,
   nodeSnapshots,

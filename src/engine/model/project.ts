@@ -9,6 +9,7 @@ import { estimatePairs } from "./bkt.js";
 import { fluencyOf, type Beta, withHelpOf } from "./beta.js";
 import { levelOf, type LevelResult } from "./levels.js";
 import { rankOver, type RankResult } from "./rank.js";
+import { skillScoresOf, type SkillScore } from "./skills.js";
 import { type LogEvent, observationsOf } from "./observations.js";
 import { type ModelParamsT } from "./params.js";
 import { priorOf, rowOf } from "./priors.js";
@@ -178,6 +179,24 @@ export function levelsOf(
     );
     return { node: n.id, ...result };
   });
+}
+
+/** Each skill's score from one log: its domain's node levels and estimates (ADR-3300). */
+export function skillsOf(
+  graph: KnowledgeGraph,
+  log: readonly LogEvent[],
+  params: ModelParamsT,
+  olympiad: OlympiadFacts,
+): SkillScore[] {
+  return skillScoresOf(
+    levelsOf(graph, log, params, olympiad).map((l) => ({
+      node: l.node,
+      domain: l.node.slice(0, 1),
+      level: l.level,
+      estimate: l.estimate,
+      answers: l.answers,
+    })),
+  );
 }
 
 /** The rank of one log (ADR-3220, rule rank.v1), from each node's level at the end of each played day. */
