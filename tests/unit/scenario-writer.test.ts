@@ -12,6 +12,23 @@ const encounter = (i: number, n: number) => ({
   people: [{ name: "Tobias", aim: "keep quiet" }],
   pressure: "the water rises",
   checks: 2,
+  act: (i < 2 ? 1 : i < n - 3 ? 2 : 3) as 1 | 2 | 3,
+  beat:
+    i === 0
+      ? "inciting"
+      : i === 1
+        ? "first_turn"
+        : i === Math.floor(n / 2)
+          ? "midpoint"
+          : i === n - 3
+            ? "low_point"
+            : i === n - 2
+              ? "climax"
+              : i === n - 1
+                ? "resolution"
+                : "rising",
+  tension: i === n - 2 ? 5 : 2,
+  value: { from: "safe", to: "at risk" },
   exits: [
     { when: "she wins", next: i === n - 1 ? "e0" : `n${String(i + 1)}` },
     {
@@ -24,6 +41,8 @@ const scenario = (n: number) =>
   JSON.stringify({
     id: "s1",
     premise: "p",
+    conflict: { wants: "w", against: "a", stakes: "s" },
+    question: "q",
     start: "n0",
     encounters: Array.from({ length: n }, (_, i) => encounter(i, n)),
     endings: [
