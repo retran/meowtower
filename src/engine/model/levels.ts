@@ -14,6 +14,8 @@ const FALL_MARGIN = 0.1;
 const WARN_AFTER = 2;
 const FALL_AFTER = 3;
 const OLYMPIAD_CLEAN = 2;
+/** A level needs this many answers behind it, so a prior alone never gives one (REQ-7960). */
+const MIN_EVIDENCE = 3;
 
 export type LevelObservation = Pick<
   Observation,
@@ -77,8 +79,9 @@ export function levelOf(
     nodeEstimate(
       [...pairs].map(([s, pair]) => ({ weight: weights[s] ?? 0, p: pair.p })),
     );
-  let level = reached(estimate(), TOP_LEVEL - 1);
+  let level = 1;
   const start = level;
+  let seen = 0;
   let below = 0;
   let clean = 0;
   const changes: LevelChange[] = [];
@@ -86,6 +89,8 @@ export function levelOf(
     const current = pairs.get(o.subtype) ?? freshPair(prior, params);
     pairs.set(o.subtype, applyObservation(current, o, params));
     if (o.olympiad && o.c === 1) clean += 1;
+    seen += 1;
+    if (seen < MIN_EVIDENCE) continue;
     const p = estimate();
     const cap =
       !hasOlympiad || clean >= OLYMPIAD_CLEAN ? TOP_LEVEL : TOP_LEVEL - 1;
