@@ -56,6 +56,10 @@ A deep antagonist believes they're right, has a coherent logic and is competent.
 
 Subtext hides what a character wants under what they say. A MacGuffin only moves the plot, and the real goal is inner. Showing beats telling. Exposition comes in small doses, through action, and rules appear when the hero hits them. A logline names no names: when an event happens, a described hero must reach a measurable goal against an obstacle, or a stated loss follows.
 
+### Twists, endings, voice and stages
+
+A twist rests on hidden setups, can use a red herring, rewrites what earlier scenes meant, and hits the hero's false belief, which pushes the third act. A closed ending answers the dramatic question, and an open one leaves the outer question while the inner change is done, unlike a cliffhanger. A voiceover earns its place by contrast: an unreliable narrator, a voice from later, or hidden thoughts. A synopsis of a page or two tests the story's direction, and a treatment finds structural holes before dialogue.
+
 ### What changes for this game
 
 [Inference] The heroine's arc is positive, and her false belief concerns the story's world and never the player. A dark night stays short: a calm, a helper and a way on. A clock counts world time in the scene, never real time. A goal is concrete enough for a child to say aloud. Subtext stays readable. A mythology fits CAN-0080's question of who knitted the Tower. Her actions can move a beat, so the Master holds it as a target.
@@ -116,6 +120,10 @@ Encounters map Snyder's beats: opening with a small kind act, catalyst, debate, 
 | `reveal` | A rule she hits or a clue she finds |
 | `plants`, `pays` | Setups |
 
+### Twists and stages
+
+An arc plans its twist in `reveals`, with the setups that prepare it and a false trail where it fits. The loop writes logline, synopsis, treatment and beat sheet in turn, and the critic reads the treatment before encounters are written, because a hole found there costs far less than one found in a finished graph. The Master is the storyteller's voice, and it may add a layer the scene can't show, such as what the heroine will remember later.
+
 ### The Master's rules
 
 The system prompt tells the Master to run each encounter as a scene with a turn, to show and not tell, to give rules when she hits them, to keep subtext readable, to let new people earn sympathy, to tell the world's rules in action, and to end with the prepared cliffhanger. It may reach a beat another way when she acts differently.
@@ -159,6 +167,9 @@ Structure moves into the scenario schema first, then arcs and campaign when thei
 13. Code checks what a field proves, and the critic judges the rest.
 14. All is lost never means a death, a dark night stays short, and a cliffhanger stays within the creepiness level and leaves no fright at the end of a day.
 15. The studio shows a mythology map of questions, clues and answers.
+16. A twist is prepared by setups the player could have seen, and a major one strikes the heroine's false belief.
+17. An arc's ending states whether it closes its question or leaves it open.
+18. The pipeline writes logline, synopsis, treatment and beat sheet before encounters, and the critic reads the treatment first.
 
 ## Sources
 
