@@ -238,6 +238,8 @@ Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes p
 
 Amended on 2026-10-10: this record no longer addresses 5 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-1320 (superseded by REQ-5248, which ADR-0230, ADR-0460 addresses); REQ-1342 (superseded by REQ-7170, which ADR-0430 addresses); REQ-1414 (superseded by REQ-6796, which ADR-0390, ADR-0400 addresses); REQ-2308 (superseded by REQ-6064, which ADR-0280, ADR-0290, ADR-0300, ADR-0310, ADR-0330, ADR-0460 addresses); REQ-3518 (superseded by REQ-6348, which ADR-0340, ADR-0370, ADR-0460 addresses).
 
+Amended by ADR-3250, approved on 2026-11-01: the Parent Room opens on a front page, and the report's screens stay behind it.
+
 ## Plan
 
 The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
