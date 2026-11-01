@@ -15,7 +15,10 @@ export const test = base.extend<{ leaks: string[] }>({
       page.on("response", (res) => {
         pending.push(
           (async () => {
-            const headers = JSON.stringify(await res.allHeaders());
+            // A response still arriving as the test closes its page has no headers to read.
+            const headers = JSON.stringify(
+              await res.allHeaders().catch(() => ({})),
+            );
             // An event stream never ends, so its body can't be read whole:
             // only its headers are checked. It carries the two messages of
             // SPC-0030, which hold no key.
