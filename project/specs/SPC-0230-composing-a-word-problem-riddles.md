@@ -2,8 +2,8 @@
 id: SPC-0230
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-5200, REQ-7202, REQ-5204, REQ-7210, REQ-5208, REQ-5210, REQ-5212, REQ-5214, REQ-5216, REQ-6420, REQ-5220, REQ-5222, REQ-5224, REQ-5226, REQ-5228, REQ-5230, REQ-5232, REQ-5234, REQ-5236, REQ-5238, REQ-5240, REQ-5242, REQ-5244, REQ-5246, REQ-5248, REQ-5250, REQ-5252, REQ-5254, REQ-5256, REQ-5258, REQ-5260, REQ-5262, REQ-5264, REQ-5266, REQ-5268, REQ-5270, REQ-5272, REQ-5274, REQ-5276, REQ-5278, REQ-5280, REQ-5282, REQ-5284, REQ-5286, REQ-5288, REQ-5290, REQ-5292, REQ-5294, REQ-5296, REQ-5298, REQ-7200, REQ-7204, REQ-7206, REQ-7208, REQ-7212, REQ-7214, REQ-7216, REQ-7218, REQ-7220, REQ-7222, REQ-7224, REQ-7226, REQ-7228, REQ-7230, REQ-7232, REQ-7234, REQ-7236, REQ-7238, REQ-7240, REQ-7242, REQ-7244, REQ-7246, REQ-7248, REQ-7250, REQ-7252, REQ-7254, REQ-7256, REQ-7258, REQ-7260, REQ-7262, REQ-7264, REQ-7266, REQ-7268, REQ-7270, REQ-7272, REQ-7274, REQ-7276, REQ-7278, REQ-7280, REQ-7282]
+revised: 2026-10-31
+states: [REQ-5200, REQ-7202, REQ-5204, REQ-7210, REQ-5208, REQ-5210, REQ-5212, REQ-5214, REQ-5216, REQ-6420, REQ-5220, REQ-5222, REQ-5224, REQ-5226, REQ-5228, REQ-5230, REQ-5232, REQ-5234, REQ-5238, REQ-5240, REQ-5242, REQ-5244, REQ-5246, REQ-5248, REQ-5250, REQ-5252, REQ-5254, REQ-5256, REQ-5258, REQ-5260, REQ-5262, REQ-5264, REQ-5266, REQ-5268, REQ-5270, REQ-5272, REQ-5274, REQ-5276, REQ-5278, REQ-5280, REQ-5282, REQ-5284, REQ-5286, REQ-5290, REQ-5292, REQ-5294, REQ-5296, REQ-5298, REQ-7200, REQ-7204, REQ-7206, REQ-7208, REQ-7212, REQ-7214, REQ-7216, REQ-7218, REQ-7220, REQ-7222, REQ-7224, REQ-7226, REQ-7228, REQ-7230, REQ-7232, REQ-7234, REQ-7236, REQ-7238, REQ-7240, REQ-7242, REQ-7244, REQ-7246, REQ-7248, REQ-7250, REQ-7252, REQ-7254, REQ-7256, REQ-7258, REQ-7260, REQ-7262, REQ-7264, REQ-7266, REQ-7268, REQ-7270, REQ-7272, REQ-7274, REQ-7276, REQ-7278, REQ-7280, REQ-7282, REQ-8026, REQ-8028]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -132,7 +132,7 @@ After the MVP, a construction's card set holds the cards its target needs, each 
 
 The short review is one example riddle the engine builds from the target's template frame and the target's numbers, in the familiar's voice, with no word of error. No riddle has a twin, and a riddle that gets `wrong_structure` ends with the short review (REQ-5262).
 
-The riddle ends as `unparsed`, with base experience and no observation, when she rejects the paraphrase of her corrected text or her corrected text fails to parse (REQ-5236). The player sees one fixed familiar's line for every `unparsed` riddle, saying the familiar couldn't untangle it.
+The riddle ends as `unparsed`, with no observation, when she rejects the paraphrase of her corrected text or her corrected text fails to parse (REQ-8026). The player sees one fixed familiar's line for every `unparsed` riddle, saying the familiar couldn't untangle it.
 
 ### Her text before a model reads it
 
@@ -166,7 +166,7 @@ Every parse call spends from the parse bucket of $0.1 a game day on the play key
 
 After the MVP, the fixed parse prompt reads a colon between two tokens as a division, unless «в отношении» (in the ratio) or «на … приходится» (for … there are) marks a ratio (REQ-7220). The reply's graph can then use six named operations over tokens: a fraction a/b, a mixed number, a fraction of a number, a percentage of a number, a share of a ratio from its total and a part of a ratio from a known part (REQ-7218). The prompt reads an ordinal followed by «часть» or «доля» (part, share), such as «третья часть» (the third part), as a fraction with the ordinal's `d` token as its denominator, and a = the count before it or a = 1 when none stands there. A change to the prompt changes its hash.
 
-From the MVP on, the engine refuses the reply as invalid when the JSON fails the schema, when a span isn't found word for word in the masked text, or when the graph names a number other than an `n` or `d` token of the masked text it sent (REQ-7210). The constant 100 of a percentage, the sum of a ratio's parts and the numerator 1 of a fraction word with no count come from the named operation's fixed definition in code, and the graph never names them. A timeout after 10 seconds, an invalid reply or a graph with no question gives the riddle the verdict `unparsed`, with base experience and no observation (REQ-5288). On a valid reply the engine puts her own number forms back into the spans from the mapping.
+From the MVP on, the engine refuses the reply as invalid when the JSON fails the schema, when a span isn't found word for word in the masked text, or when the graph names a number other than an `n` or `d` token of the masked text it sent (REQ-7210). The constant 100 of a percentage, the sum of a ratio's parts and the numerator 1 of a fraction word with no count come from the named operation's fixed definition in code, and the graph never names them. A timeout after 10 seconds, an invalid reply or a graph with no question gives the riddle the verdict `unparsed`, with no observation (REQ-8028). On a valid reply the engine puts her own number forms back into the spans from the mapping.
 
 After the MVP, a story that needs a unit conversion to join its quantities, such as «2 кг 500 г» (2 kg 500 g), ends as `unparsed` (REQ-7232). Its graph either names the conversion factor, which is no token, and fails as `parse_invalid`, or leaves a quantity out and fails as `parse_no_question`. The engine gives it the same outcome and the same fixed line as any other parse failure.
 
@@ -198,7 +198,7 @@ The function then normalises both graphs with `+` and `·` commutative and assoc
 | `match_other_structure` | other operations with the target's value, such as «6 · 5» for «6 · 4 + 6» | REQ-5228 |
 | `wrong_structure` with `wrongNumbers: true` | the target's operations on other numbers | REQ-5230, REQ-5232 |
 | `wrong_structure` | any other value, a reversed `−` or `:` such as «6 : 48» for «48 : 6» included | REQ-5298 |
-| `unparsed` | a parse failure, a rejected correction or a failed correction parse | REQ-5288, REQ-5236 |
+| `unparsed` | a parse failure, a rejected correction or a failed correction parse | REQ-8028, REQ-8026 |
 
 The function also returns one error class, which the error-type limit places in the conceptual class (REQ-5244, REQ-7252). Each class sits beside the verdict the table gives:
 
@@ -252,11 +252,11 @@ After the MVP, every player-facing string the construction riddles add is in Rus
 | A serious trigger or a serious judge result on her composed text | The story's serious path runs; the riddle ends with an empty verdict and nothing is sent to the parser (REQ-5222). |
 | No judge on the safety check's route answers | Nothing is sent to the parser; the riddle ends as `unparsed` with the fixed line, cause `safety_unchecked`. |
 | The egress guard finds a digit or a word the masker masks in a `ParseRequest` | Nothing is sent, and the riddle turns into a card riddle for the same target (REQ-7214). `mask_incomplete` is reported once per cause; for a word form of REQ-7204, REQ-7206 or REQ-7208 or a form REQ-7202 adds, `./meowtower status` shows one line per missed form on every run until the numerals file gains it. |
-| The parse times out after 10 seconds, returns invalid JSON or returns a graph with no question | The riddle ends as `unparsed`, with base experience, no observation and the fixed line (REQ-5288). |
-| The graph names a number other than an `n` or `d` token of the text sent, or a span isn't found word for word in the masked text | The engine refuses the reply as invalid, and the riddle ends as `unparsed` (REQ-7210, REQ-5288). |
+| The parse times out after 10 seconds, returns invalid JSON or returns a graph with no question | The riddle ends as `unparsed`, with no observation and the fixed line (REQ-8028). |
+| The graph names a number other than an `n` or `d` token of the text sent, or a span isn't found word for word in the masked text | The engine refuses the reply as invalid, and the riddle ends as `unparsed` (REQ-7210, REQ-8028). |
 | A story needs a unit conversion | The riddle ends as `unparsed` through `parse_invalid` or `parse_no_question`, with the fixed line (REQ-7232). |
 | 12 seconds pass from «Готово» without a paraphrase | The riddle ends as `unparsed` with the fixed line (`wait_exceeded`), and a late reply is dropped. |
-| She rejects the paraphrase of her corrected text, or the corrected text fails to parse | The riddle ends as `unparsed`, with base experience and no observation (REQ-5236). |
+| She rejects the paraphrase of her corrected text, or the corrected text fails to parse | The riddle ends as `unparsed`, with no observation (REQ-8026). |
 | The parse bucket can't reserve two worst-case parses | The Director offers a card riddle (`parse_budget_short`) (REQ-6420). |
 | The composing flag is off, live calls are off or the parent switched off the free-text field | The Director offers a card riddle (REQ-6420). |
 | `COMPOSE_FREE` is on and `verify/parser-eval.json` holds no pass on the 200 texts for the configured `PARSE_MODEL` and prompt hash | The server starts with the flag off, offers card riddles only, and `./meowtower status` shows `compose_flag_off` once per change of model or prompt (REQ-5290). |

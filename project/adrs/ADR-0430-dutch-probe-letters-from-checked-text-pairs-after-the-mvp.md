@@ -95,7 +95,7 @@ Every presentation of a family falls fewer than 14 game days after its first pre
 
 Every letter takes the template's final-answer input in every presentation, with the keypad, «Не знаю» (I don't know), the thread button and «Готово» (Done). A T1 to T4 letter shows no model choice, plan cards, step fields, «Нельзя узнать» (can't be known) or options for what is missing (REQ-7154), and no letter shows ADR-0240's estimate or inverse check. I chose to drop those two steps from letters of every track, because the bare presentation must carry the same controls as the text ones, and each step adds Russian interface text inside a Dutch presentation. Since a letter is never unanswerable, leaving «Нельзя узнать» out hides nothing that exists (REQ-7158, REQ-7160).
 
-The attempt flow is ADR-0080's, with two changes. After a wrong answer or «Не знаю» she sees the short solution at once and gets no second attempt, whatever hint she saw (REQ-7162, REQ-7164). The review offers no detailed explanation either, because REQ-7162 allows the short solution only. A letter gives the same experience, streak and rewards as an ordinary task of its kind, whatever its presentation and whether she opened cards (REQ-7152).
+The attempt flow is ADR-0080's, with two changes. After a wrong answer or «Не знаю» she sees the short solution at once and gets no second attempt, whatever hint she saw (REQ-7162, REQ-7164). The review offers no detailed explanation either, because REQ-7162 allows the short solution only. A letter gives the same streak and rewards as an ordinary task of its kind, whatever its presentation and whether she opened cards (REQ-7152).
 
 In the `nl` and `nl_source` presentations each marked word is underlined, and a tap opens its card (REQ-7150). The first open of each word in an attempt writes `probe_card_opened` with `trigger: "tap"`, marks the attempt `assisted: true`, and leaves it in its presentation's count (REQ-7138, REQ-7140). Later openings of the same word in the same attempt write nothing, which bounds the events at 8 an attempt. The `nl_after_words` presentation opens with the cards of every marked word and shows the task only after she closes them (REQ-7142). She can close them at once and reopen any card during the task. Opening them writes one `probe_card_opened` with `trigger: "planned"` and every marked word, and a reopening writes `trigger: "reopen"` once a word. Neither marks the attempt as assisted, because the planned cards are the presentation's condition. A term hint she opens in a `ru` letter also marks the attempt assisted, because a word explained on request is help in either language. A bought hint rung marks every letter assisted, as ADR-0080 already does, and its Russian text inside a Dutch letter is then counted as the help it is.
 
@@ -267,7 +267,7 @@ The player sees none of these. `probe_texts_short`, `probe_text_blocked` and `pr
 8. A packet test of every presentation of a T family finds the same `InputSpec`: no model choice, plan, step fields, «Нельзя узнать», options, estimate or inverse check.
 9. A state-machine test answers a letter wrong, and the flow shows the short solution with no `twin_open` and no detailed explanation, whatever rung she saw.
 10. A test taps a card in `nl`: the attempt is `assisted: true`, stays in the `nl` count and logs one `probe_card_opened` a word; in `nl_after_words` the planned cards open first and the attempt stays unassisted.
-11. A reward test finds the same experience and streak effect for a clean letter in each presentation, with cards and without.
+11. A reward test finds the same streak effect for a clean letter in each presentation, with cards and without.
 12. A report fixture shows «мало данных» with the count for a cell with 11 observations and a share for one with 12, «мало данных» for a gap whose one side holds 11, the mark «тексты не проверены носителем» at a native share of 0.4 and not at 0.5, the word list, the practice gain by position, the card counts and the count of families closed short.
 13. ADR-0290's word check fails a build with "Cito" in `content/probe/`, `tools/probe/` or an event schema value.
 14. The owner reads the canon record for the Mainland at the stage acceptance, and the line pool holds no letter scene before that record is approved.
@@ -284,6 +284,8 @@ The player sees none of these. `probe_texts_short`, `probe_text_blocked` and `pr
 - Which templates carry `probeFamily`, beyond the rule of 1 to 2 for each group; the owner approves the list at the stage acceptance.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-7192 (superseded by REQ-7514, which ADR-0460 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: a letter gives no experience, and its streak and rewards stay as written.
 
 ## Plan
 

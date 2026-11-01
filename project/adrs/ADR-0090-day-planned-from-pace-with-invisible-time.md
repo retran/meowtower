@@ -3,7 +3,7 @@ id: ADR-0090
 artifact: adr
 status: approved
 revised: 2026-10-10
-addresses: [REQ-0100, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0148, REQ-0300, REQ-0302, REQ-0304, REQ-0308, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364]
+addresses: [REQ-0100, REQ-0114, REQ-0116, REQ-0118, REQ-0120, REQ-0122, REQ-0124, REQ-0126, REQ-0128, REQ-0130, REQ-0132, REQ-0134, REQ-0136, REQ-0138, REQ-0140, REQ-0142, REQ-0144, REQ-0146, REQ-0300, REQ-0302, REQ-0304, REQ-0308, REQ-0312, REQ-0314, REQ-0316, REQ-0318, REQ-0320, REQ-0322, REQ-0324, REQ-0326, REQ-0328, REQ-0330, REQ-0332, REQ-0340, REQ-0342, REQ-0344, REQ-0346, REQ-0348, REQ-0350, REQ-0352, REQ-0354, REQ-0356, REQ-0358, REQ-0360, REQ-0362, REQ-0364]
 supersedes: []
 issue: 29
 projected: e298b2377208
@@ -42,7 +42,7 @@ Before each task the System announces the knot in a System window (REQ-0144), an
 
 The battle model has no health for the heroine: no field, event or line can damage her, whatever she answers (REQ-0126). A Tangle's lines come from content that ADR-0110's frames and ADR-0160's forbidden-word list check, and an agent reads every battle line and scene where a Tangle acts to judge that none attacks or mocks her (REQ-0128).
 
-The end of the row names in words the growth she made in the adventure: experience, level, familiars, quests, star-steel shards and star yarn (REQ-0148). It shows no score, no percentage and no comparison with past days (RES-0100 conclusion 5). ADR-0140 supplies the amounts.
+The end of the row names in words the growth she made in the adventure: ability levels, rank, familiars, quests, star-steel shards and star yarn (REQ-8016). It shows no score, no percentage and no comparison with past days (RES-0100 conclusion 5). ADR-0140 supplies the amounts.
 
 ### Session 0
 
@@ -208,6 +208,8 @@ Amended by ADR-0360, approved on 2026-09-28, whose `## Amends` section changes p
 Amended by ADR-0370, approved on 2026-09-28, whose `## Amends` section changes parts of this record; where it differs from the text above, it holds.
 
 Amended on 2026-10-10: this record no longer addresses 7 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0102 (superseded by REQ-6234, which ADR-0330, ADR-0370 addresses); REQ-0104 (superseded by REQ-5856, which ADR-0290, ADR-0300 addresses); REQ-0306 (superseded by REQ-6132, which ADR-0320, ADR-0360 addresses); REQ-0310 (superseded by REQ-5726, which ADR-0280 addresses); REQ-0334 (superseded by REQ-5000, which ADR-0210 addresses); REQ-0336 (superseded by REQ-5012, which ADR-0210, ADR-0360 addresses); REQ-0338 (superseded by REQ-5016, which ADR-0210, ADR-0360 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
 
 ## Plan
 

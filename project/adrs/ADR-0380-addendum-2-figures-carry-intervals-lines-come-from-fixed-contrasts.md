@@ -130,7 +130,7 @@ Templates gain `contexts`, owned by ADR-0410, and a probe template gains `probeF
 
 ### The MVP gains only the parts that shape the log
 
-The first version holds REQ-5076's list and adds addendum 2's parts that shape the log (REQ-6676):
+The first version holds REQ-8020's list and adds addendum 2's parts that shape the log (REQ-6676):
 
 - `hypothesis_recorded`, `hypothesis_updated` and the Parent Room form that records a hypothesis and what would confirm and refute it, as text with no status (ADR-0450);
 - the context tag on every accepted frame, `contexts` on templates, the Director's hold on first encounters and the projection `first_exposures` (ADR-0410);

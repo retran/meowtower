@@ -240,6 +240,8 @@ Amended by ADR-0460, approved on 2026-09-29, whose `## Amends` section changes p
 
 Amended on 2026-10-10: this record no longer addresses 9 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0822 (superseded by REQ-6404, which ADR-0360 addresses); REQ-0958 (superseded by REQ-6406, which ADR-0360 addresses); REQ-0978 (superseded by REQ-6844, which ADR-0400 addresses); REQ-1000 (superseded by REQ-5554, which ADR-0260 addresses); REQ-1014 (superseded by REQ-6846, which ADR-0400 addresses); REQ-1026 (superseded by REQ-6400, which ADR-0360 addresses); REQ-1100 (superseded by REQ-5842, which ADR-0290 addresses); REQ-1112 (superseded by REQ-6402, which ADR-0360, ADR-0370 addresses); REQ-1116 (superseded by REQ-5840, which ADR-0290 addresses).
 
+Amended by ADR-3220, approved on 2026-10-31: this record takes each slot's candidates through the node's ability level.
+
 ## Plan
 
 The upgrade folded these open tasks in (ADR-3090). Read each one before its step.

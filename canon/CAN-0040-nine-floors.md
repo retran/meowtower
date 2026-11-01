@@ -507,9 +507,8 @@ and the sky.
 - How many of each floor's five adventures does the game plan to use, and
   may the Master invent more? The chapter lists five per floor and doesn't
   say whether they are a closed set.
-- The game specification gives word problems (domain T) no floor of their
-  own and makes them a Guardian's trial. This chapter doesn't mention them.
-  Does the canon need a line on what a Guardian's trial is?
+- Resolved on 2026-10-31 by ADR-3230: word problems (domain T) have no floor of
+  their own. They are the Guardians' trials on every floor.
 - The Observatory has no Guardian, so its floor outcome uses the one-line
   floor result in CAN-0110. The game specification says a
   floor with no rooms and no Guardian, such as the Observatory, gets no

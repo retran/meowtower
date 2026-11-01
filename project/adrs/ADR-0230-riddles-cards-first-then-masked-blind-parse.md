@@ -3,7 +3,7 @@ id: ADR-0230
 artifact: adr
 status: approved
 revised: 2026-10-10
-addresses: [REQ-5036, REQ-5038, REQ-5040, REQ-5046, REQ-5096, REQ-5200, REQ-5204, REQ-5208, REQ-5210, REQ-5212, REQ-5214, REQ-5216, REQ-5220, REQ-5222, REQ-5224, REQ-5226, REQ-5228, REQ-5230, REQ-5232, REQ-5234, REQ-5236, REQ-5238, REQ-5240, REQ-5242, REQ-5244, REQ-5246, REQ-5248, REQ-5250, REQ-5252, REQ-5254, REQ-5256, REQ-5258, REQ-5260, REQ-5262, REQ-5264, REQ-5266, REQ-5268, REQ-5270, REQ-5272, REQ-5274, REQ-5276, REQ-5278, REQ-5280, REQ-5282, REQ-5284, REQ-5286, REQ-5288, REQ-5290, REQ-5292, REQ-5294, REQ-5296, REQ-5298]
+addresses: [REQ-5036, REQ-5038, REQ-5040, REQ-5046, REQ-5096, REQ-5200, REQ-5204, REQ-5208, REQ-5210, REQ-5212, REQ-5214, REQ-5216, REQ-5220, REQ-5222, REQ-5224, REQ-5226, REQ-5228, REQ-5230, REQ-5232, REQ-5234, REQ-5238, REQ-5240, REQ-5242, REQ-5244, REQ-5246, REQ-5248, REQ-5250, REQ-5252, REQ-5254, REQ-5256, REQ-5258, REQ-5260, REQ-5262, REQ-5264, REQ-5266, REQ-5268, REQ-5270, REQ-5272, REQ-5274, REQ-5276, REQ-5278, REQ-5280, REQ-5282, REQ-5284, REQ-5286, REQ-5290, REQ-5292, REQ-5294, REQ-5296, REQ-5298]
 supersedes: []
 issue: 43
 projected: 0b113d2bcb5c
@@ -157,7 +157,7 @@ into parts or groups by a size. The engine refuses the reply as invalid when
 the JSON fails the schema, when the graph names a number or a token that
 isn't one of `n1` to `nm` of the text it was sent (REQ-5206), or when a span
 isn't found word for word in the masked text. A timeout, an invalid reply or
-a graph with no question gives `unparsed` (REQ-5288). The engine then puts
+a graph with no question gives `unparsed` (REQ-8028). The engine then puts
 her own number forms back into the spans from the mapping.
 
 The paraphrase holds only template strings from the per-language content
@@ -180,7 +180,7 @@ and `:` in fixed order, then decides:
 | `match_other_structure` | other operations, the target's value | REQ-5228 |
 | `wrong_structure`, marked `wrongNumbers: true` | the target's operations on other numbers | REQ-5230, REQ-5232 |
 | `wrong_structure` | any other value, a reversed `−` or `:` included | REQ-5298 |
-| `unparsed` | a parse failure, a rejected correction or a failed correction parse | REQ-5236, REQ-5288 |
+| `unparsed` | a parse failure, a rejected correction or a failed correction parse | REQ-8026, REQ-8028 |
 
 The function also gives an error class in the conceptual class of the
 error-type limit (REQ-5244). It gives `compose_on_vs_times` when a `+` or `−`
@@ -308,7 +308,7 @@ The strongest objection is that «Нет, я имела в виду другое
 any verdict she fears. If she reads the paraphrase, suspects it misses the
 target, and says no twice, a `wrong_structure` becomes `unparsed`, so the
 stream counts only the riddles she was sure of and overstates her `match`
-share. I keep the step because the addendum and REQ-5236 make it the only
+share. I keep the step because the addendum and REQ-8026 make it the only
 check against a parser's error, and a parser's error blamed on her is the
 worse harm. Three things limit the escape. The paraphrase shows no value and
 no sign, so she can't compare a number with the target. The stream feeds no
@@ -320,7 +320,7 @@ watches.
 
 | Option | Better at | Why it lost |
 | --- | --- | --- |
-| Do nothing: no composing form; RES-0800's model choice stays the structure measure | no new role, no text leaves the Mac, nothing to build | REQ-5076 puts composing in the MVP, and a choice among notes tests recognition, not production |
+| Do nothing: no composing form; RES-0800's model choice stays the structure measure | no new role, no text leaves the Mac, nothing to build | REQ-8020 puts composing in the MVP, and a choice among notes tests recognition, not production |
 | Cards only, never a parser | a judge that can't misread her, no model, no privacy change and a verdict in milliseconds | she never writes her own story, which the addendum values, and REQ-5096 makes cards the form only until the parser passes |
 | Hosted parse of her cleaned text with its digits | the parser sees magnitudes such as "more than" next to a larger number | her digits leave the Mac and the model reads numbers it could compute with; REQ-5202 and REQ-5292 forbid it |
 | A parser on the Mac beside a local judge | her text stays home and a parse costs nothing per call | test 3 would gate either parser, so they differ in time and work: RES-4020 puts a cold 3,000-token prompt at 3.4 to 4.2 seconds before any output, which leaves under 2 seconds of the 6-second budget to write a graph of several hundred tokens, and the owner would install, update and serve a local model on the Mac; I record the local parser as the option to try if the hosted one fails test 3, before REQ-5292's cards-only path |
@@ -360,7 +360,7 @@ She pays a wait. After «Готово» on a text riddle she waits for the safet
 check and the parse. I chose a budget of p95 at most 6 seconds from
 «Готово» to the paraphrase, the story's wait under REQ-1622, because she
 perceives both as the same pause. The parse's 10-second timeout is imposed
-(REQ-5288), and the whole wait stops at 12 seconds, the story's fallback
+(REQ-8028), and the whole wait stops at 12 seconds, the story's fallback
 moment under REQ-1624, after which the riddle ends as `unparsed`.
 
 The security boundary is the Mac's edge. It protects her composed text, her
@@ -390,7 +390,7 @@ Failure states, each with its next step and one audience:
 
 | State | Next step | Audience |
 | --- | --- | --- |
-| `parse_timeout`, `parse_invalid`, `parse_no_question` | the riddle ends as `unparsed` with base experience and the familiar's fixed line that she couldn't untangle the riddle | the owner, in `llm_log`; the player sees one line for all three, on purpose, because the cause is never hers |
+| `parse_timeout`, `parse_invalid`, `parse_no_question` | the riddle ends as `unparsed` with the familiar's fixed line that she couldn't untangle the riddle | the owner, in `llm_log`; the player sees one line for all three, on purpose, because the cause is never hers |
 | `safety_unchecked`: neither judge answered | nothing is sent, and the riddle ends as `unparsed` with the same line | the owner, in `llm_log` |
 | `mask_incomplete`: the guard found a digit or a numeral word in a `ParseRequest` (ADR-0210) | nothing is sent, and the riddle turns into a card riddle for the same target, as ADR-0210 sets; reported once per cause | the owner |
 | `wait_exceeded`: 12 seconds passed from «Готово» before a paraphrase, the safety check having used part of them | the riddle ends as `unparsed` with the same line, and a late reply is dropped | the owner, in `llm_log` |
@@ -477,7 +477,7 @@ file with a dictionary it wasn't written from.
 - ADR-0110: "Her text, before a model reads it" applies to a composed riddle as ADR-0230's five steps, with the judge reading the masked text and a failed check sending nothing.
 - ADR-0180: the holding-steps row's "Every unassisted first attempt on a k-step problem from a Guardian or a room counts" becomes REQ-5248's rule, which leaves out riddles and problems with a missing number.
 - ADR-0180: the graph map's word-problem matrix gains the line «Может составить задачу» with the composing stream's counts and no state.
-- ADR-0190: the Baselines table gains "Parse spend | $0.1 a game day | ADR-0230 | imposed by REQ-5216", "Parse timeout | 10 s | ADR-0230 | imposed by REQ-5288", "Wait from «Готово» to the paraphrase | p95 at most 6 s, stop at 12 s | ADR-0230 | chosen" and "`verify --live --compose` | $4 a run on the offline key | ADR-0230 | chosen".
+- ADR-0190: the Baselines table gains "Parse spend | $0.1 a game day | ADR-0230 | imposed by REQ-5216", "Parse timeout | 10 s | ADR-0230 | imposed by REQ-8028", "Wait from «Готово» to the paraphrase | p95 at most 6 s, stop at 12 s | ADR-0230 | chosen" and "`verify --live --compose` | $4 a run on the offline key | ADR-0230 | chosen".
 
 ## How I will know it was realised
 
@@ -519,7 +519,7 @@ file with a dictionary it wasn't written from.
   requirements step revises it, and this decision reads it that way until
   then.
 - The rewards for `match`, `match_other_structure` and `wrong_structure`;
-  this decision sets only base experience for `unparsed`: ADR-0140.
+  this decision grants nothing for `unparsed`: ADR-0140.
 - Number words outside REQ-5202's set, such as «вдвое», «втрое»,
   «половина», «пополам», «пара» and ordinals: they leave the Mac unmasked as
   ordinary words, and a graph that needs one as a number names no token, so
@@ -530,7 +530,7 @@ file with a dictionary it wasn't written from.
 - A state for composing, and whether the stream ever enters an estimate:
   a later record under REQ-5026.
 - A fifth verdict for a problem with no question or an unsolvable one:
-  REQ-5288 sends a graph with no question to `unparsed`, and REQ-5226's
+  REQ-8028 sends a graph with no question to `unparsed`, and REQ-5226's
   review rejected a fifth verdict.
 - The Parent Room's page on what leaves the Mac and its wording of the
   parse: ADR-0210 under REQ-5044.
@@ -542,6 +542,8 @@ file with a dictionary it wasn't written from.
   for a second language covers when that language ships.
 
 Amended on 2026-10-10: this record no longer addresses 3 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5202 (superseded by REQ-7202, which ADR-0440, ADR-0460 addresses); REQ-5206 (superseded by REQ-7210, which ADR-0440, ADR-0460 addresses); REQ-5218 (superseded by REQ-6420, which ADR-0360 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
 
 ## Plan
 

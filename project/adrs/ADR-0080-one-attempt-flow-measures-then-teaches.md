@@ -3,7 +3,7 @@ id: ADR-0080
 artifact: adr
 status: approved
 revised: 2026-10-31
-addresses: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0424, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552]
+addresses: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552]
 supersedes: []
 issue: 28
 projected: 07afeffdc9c6
@@ -22,7 +22,7 @@ Every task the adventure shows, scored or not, runs one attempt flow that the se
 2. `first_answered`: the server checks the answer (ADR-0040) and gives one outcome, `clean`, `partial` or `alt`, with «Не знаю» (I don't know) giving `alt` (RES-0400). Its reply carries the correct answer for the first time (REQ-0430).
 3. `review`: the window stays open and shows the correct answer after every outcome. After `clean` it marks the answer accepted with a dry outcome line (REQ-0402) and offers the short solution under «Как легла нить» (How the thread lay) (REQ-0404). After `partial` or `alt` it shows the short solution at once, with no extra tap (REQ-0408). After every outcome it offers the detailed explanation for 1 guiding thread (REQ-0406, REQ-0528). The window titles the review «Схема узла» (The knot's scheme) (REQ-0112).
 4. `twin_open`, only after `alt`: the window shows one second attempt on a parallel task that ADR-0040's generator builds with the same template, subtype and difficulty features and new numbers (REQ-0414, REQ-1224). The event log records it `assisted: true` and links it to the original task (REQ-0420, REQ-2206). After `partial` no twin follows (REQ-0418), because the owner's instruction of 2026-09-27 settled it (RES-0400).
-5. `twin_review`: the window shows the correct answer. A correct second answer shows «Нить закреплена» (The thread is secured) (REQ-0422) and earns base experience and no bonus (REQ-0424). A wrong second answer or «Не знаю» shows the parallel task's short solution at once. The flow ends here, with no third attempt (REQ-0416).
+5. `twin_review`: the window shows the correct answer. A correct second answer shows «Нить закреплена» (The thread is secured) (REQ-0422) and earns no bonus (REQ-8024). A wrong second answer or «Не знаю» shows the parallel task's short solution at once. The flow ends here, with no third attempt (REQ-0416).
 6. `closed`: the player taps to leave the window, and the scene plays the first attempt's outcome as a spell (ADR-0090, ADR-0140).
 
 The short solution and the hint rungs come from the template's one solution graph (ADR-0040), so every number in them is the number the engine computed (REQ-0410, REQ-0412, REQ-0536), and no language model is called to build a rung (REQ-0534). The ladder has three rungs (REQ-0532): rung 1 says what the task asks and where to start with no numbers (REQ-0538), rung 2 gives the first step with the task's numbers (REQ-0540) and rung 3 gives every step except the last calculation (REQ-0542). No rung contains the correct answer. For a template whose graph has fewer than three steps, the template author writes rung 2 as the operation and its operands without the result, and rung 3 as a method to reach the result. I chose this, because a one-step times-table fact would otherwise put the answer in rung 2, and this way the three texts still differ and none gives the answer. A bought rung stays visible for the rest of the attempt at no further cost.
@@ -113,7 +113,7 @@ A client that loses a reply and resends it gets the same state back, and a resum
 - If assisted first attempts pass 30 % of first attempts, averaged over 7 adventures, the thread supply is too generous for measurement, and the morning grant or the pocket rule is reopened. The 30 % comes from REQ-1128's flag.
 - If the balance simulation shows a typical day yields more than 10 threads with thread finds at their lowest content rate, REQ-0512 and RES-0500's own estimate of 10 to 11 threads a day disagree, and the owner chooses between the range and a source amount.
 - If `twin_unavailable` fires on more than 1 % of `alt` outcomes in the simulation, the parallel-task rule is too strict for some templates and ADR-0040 is reopened for them.
-- If `alt` outcomes with «Не знаю» on the first attempt rise from week to week while the twin's accuracy stays high, she is using «Не знаю» to reach the walkthrough, and the twin's base experience (REQ-0424) is reopened.
+- If `alt` outcomes with «Не знаю» on the first attempt rise from week to week while the twin's accuracy stays high, she is using «Не знаю» to reach the walkthrough, and the twin's walkthrough (REQ-8024) is reopened.
 
 The premortem, written as though it had happened: six months in, the report showed her times-table nodes as fluent while her school marks said otherwise. The cause was rung 2 on one-step templates, which named the operation and the result, so a single bought rung gave the answer, and the attempt was recorded as assisted but the check that no rung holds the answer covered only multi-step templates. A second cause sat in the ledger: the stock stayed at 30 for weeks, so the price meant nothing, and nobody watched the assisted share until the parent's flag fired. The checks below exist for both.
 
@@ -159,6 +159,8 @@ Amended by ADR-0430, approved on 2026-09-28, whose `## Amends` sections change p
 
 Amended on 2026-10-10: this record no longer addresses 12 requirements that were superseded, because a decision cannot realise a requirement that is no longer in force: REQ-0108 (superseded by REQ-5120, which ADR-0220, ADR-0300 addresses); REQ-0414 (superseded by REQ-5130, which ADR-0220 addresses); REQ-0416 (superseded by REQ-5788, which ADR-0280 addresses); REQ-0418 (superseded by REQ-5132, which ADR-0220 addresses); REQ-0500 (superseded by REQ-6248, which ADR-0330 addresses); REQ-0526 (superseded by REQ-5100, which ADR-0220 addresses); REQ-0532 (superseded by REQ-5106, which ADR-0220, ADR-0360 addresses); REQ-0534 (superseded by REQ-5758, which ADR-0280 addresses); REQ-0538 (superseded by REQ-5112, which ADR-0220, ADR-0360 addresses); REQ-0540 (superseded by REQ-6408, which ADR-0360 addresses); REQ-0542 (superseded by REQ-6410, which ADR-0360 addresses); REQ-0548 (superseded by REQ-6250, which ADR-0330, ADR-0360 addresses).
 
+Amended by ADR-3220, approved on 2026-10-31: its text now states ADR-3220's rules, and it no longer addresses the requirements ADR-3220 withdrew.
+
 ## Plan
 
 The upgrade folded these open tasks in (ADR-3090). Read each one before its step.
@@ -166,7 +168,7 @@ The upgrade folded these open tasks in (ADR-3090). Read each one before its step
 2. No packet carries the correct answer or a solution step before the first attempt, and the window shows the answer after every attempt (`archive/tasks/TSK-0549-no-answer-in-any-packet-before-the-first-attempt.md`)
 3. After an answer the window shows a review that depends on the outcome, titled «Схема узла» (`archive/tasks/TSK-0550-review-per-outcome-in-the-task-window.md`)
 4. The short solution and every hint rung show only numbers the engine computed (`archive/tasks/TSK-0551-short-solution-and-rungs-from-one-graph.md`)
-5. The second attempt runs on a parallel task, is logged as assisted, and earns base experience and no bonus (`archive/tasks/TSK-0552-second-attempt-on-a-parallel-task.md`)
+5. The second attempt runs on a parallel task, is logged as assisted, and earns no bonus (`archive/tasks/TSK-0552-second-attempt-on-a-parallel-task.md`)
 6. After the player sees a solution, every later task of the same node that game day is marked as coming after feedback (`archive/tasks/TSK-0553-solution-shown-and-post-feedback-mark.md`)
 7. A bought hint rung marks the attempt as assisted with the deepest rung (`archive/tasks/TSK-0554-hint-rung-marks-the-attempt-assisted.md`)
 8. The guiding-thread stock is a projection of the log, never above 30, and a surplus thread turns silently into 2 buttons (`archive/tasks/TSK-0555-thread-ledger-cap-and-buttons.md`)

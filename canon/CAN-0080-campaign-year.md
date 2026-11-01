@@ -11,8 +11,7 @@ revised: 2026-10-31
 
 This record holds the year-long campaign: the central mystery and its answer,
 the four seasons with their figures and finales, chapters and Ascents, how
-the first version of the game runs the campaign without Ascents, rank changes
-or ciphers, the ten
+the first version of the game runs the campaign without Ascents or ciphers, the ten
 plot checkpoints, rivals and allies, and the four endings. The mystery's
 answer is for the Master only, and the Master reveals it only at its
 checkpoints (CAN-0110). The places belong to the town and the Tower
@@ -20,6 +19,18 @@ checkpoints (CAN-0110). The places belong to the town and the Tower
 CAN-0050. The legendary familiars come from CAN-0060, the ranks from CAN-0070,
 the Diary's pages from CAN-0090 and the Underside of the spring season from
 CAN-0130.
+
+## The world's calendar and the series
+
+The world keeps its own calendar. Each adventure is one day or one night: nights
+belong to the Tower and days to the town. Time passes only in the days the
+heroine lives through, so nothing happens without her. A year has four seasons
+of three months of 28 days. The months named in this record are the world's own
+months, and the owner gives them their names in the setting.
+
+The story runs like a long series. This record's plot, checkpoints and endings
+stay fixed. Inside them, arcs grow from what she does, and each adventure is one
+episode.
 
 ## The central mystery (for the Master only)
 
@@ -98,9 +109,9 @@ several sessions:
   whole Tower tight. The heroine shows him that an untangled knot doesn't
   vanish but becomes part of the pattern, like every Tangle. He unravels into
   a beautiful ribbon and becomes «Бантик» (Little Bow), a small helper who
-  ties the heroine's shoelaces and is very proud of it. Her rank rises; in
-  the first version the finale gives the chapter title and main reward and
-  the rank stays E (see "The campaign in the first version").
+  ties the heroine's shoelaces and is very proud of it. The finale gives the
+  chapter title and main reward, and her rank stays as her abilities set it
+  (see "The campaign in the first version").
 
 ### Winter: «Ревизия» (The Audit), December to February
 
@@ -184,8 +195,8 @@ several sessions:
   brings Irma to the Tower. All the Guardians, the familiars, Knopp, the
   Reverse One, Little Bow and «Мирра» (Mirra) gather in the Observatory. Irma
   sits in her armchair for the last time, hands the heroine her needles and
-  says: «Теперь вяжи сама» (Now knit by yourself). The heroine receives rank
-  S, the title «Смотрительница» (Keeper) and «Клубочек», and chooses the
+  says: «Теперь вяжи сама» (Now knit by yourself). The heroine receives the
+  title «Смотрительница» (Keeper) and «Клубочек», whatever her rank, and chooses the
   Tower's future.
 
 ## Chapters and Ascents
@@ -207,7 +218,7 @@ Themselves). The Master can invent another in the same style.
 
 The ordinary finale is just as solemn and gives the chapter's main reward;
 it only lacks the special title. No finale reproaches or compares. The rank
-doesn't change at an Ascent, because ranks come at campaign milestones. On
+doesn't change at an Ascent, because a rank follows her abilities. On
 the Ascent itself the strength of spells brings no bonus and doesn't change
 the road: the heroine simply climbs higher and higher, and the rewards (the
 floors' chests, the title and the chapter's main reward) come for walking the
@@ -216,9 +227,9 @@ and an Ascent is being prepared.
 
 ## The campaign in the first version
 
-The first version of the game has no Ascents, no rank changes and no
-ciphers, and it still runs the whole calendar, so the story never waits for
-them. Each of the three has a stand-in that gives way to it when it arrives,
+The first version of the game has no Ascents and no ciphers, and it still
+runs the whole calendar, so the story never waits for them. Each of the two
+has a stand-in that gives way to it when it arrives,
 with no change to the story above.
 
 - Chapter finales. A chapter ends inside its last daily adventure, in the
@@ -228,19 +239,17 @@ with no change to the story above.
   above, from the floor results over the chapter. The heroine doesn't climb
   every floor, and no evening before it signals an Ascent.
   When Ascents arrive, the same finale moves into the Ascent.
-- Ranks. The heroine stays at rank E all year. A season finale plays in full
-  and gives its chapter title and main reward, and the rank doesn't change.
-  A later rank's opening that the first version has, such as the floors'
-  secret places at rank D, opens on the date that rank would have arrived;
-  one it doesn't have, such as a path, stays closed (CAN-0070). When ranks
-  arrive, one solemn scene gives her the rank the calendar has reached.
+- Ranks. The rank follows the heroine's abilities, so the calendar never
+  waits for it and it never waits for the calendar. A season finale plays in
+  full and gives its chapter title and main reward, and the rank doesn't
+  change. A later rank's opening that the first version has, such as the
+  floors' secret places at rank D, opens when she first reaches that rank;
+  one it doesn't have, such as a path, stays closed (CAN-0070).
   Mirra holds rank D from her first appearance and keeps it all through the
-  first version, so she stays one rank above the heroine. After the first
-  version she stays one rank above the heroine at every rank until the last
-  chapter, where the heroine draws level with her.
-- Rank months. The canon names no month for any rank. After the first
-  version, the campaign's season milestones set when ranks come, and the
-  specification holds that calendar (CAN-0070).
+  first version, so the heroine can catch her and pass her. After the first
+  version the specification sets Mirra's rank.
+- Rank months. The canon names no month for any rank, because a rank comes
+  from the heroine's abilities (CAN-0070).
 - Ciphers. A Diary page that would be enciphered arrives already developed:
   the Diary shows the whole page before the heroine opens it, as it develops a
   letter for a stuck reader (CAN-0090). She still gets the page's notes, hints
@@ -302,7 +311,7 @@ one choice in the finale. Every ending is happy, and nobody loses anything.
 
 - Resolved 2026-09-26: the first version runs the whole calendar, and its
   chapter finale inside an ordinary adventure is a stand-in until Ascents
-  arrive, beside stand-ins for ranks and ciphers ("The campaign in the first
+  arrive, beside a stand-in for ciphers ("The campaign in the first
   version"). RES-1600 holds the reason.
 - Resolved 2026-09-26: the Reverse One stays within CAN-0130's ban on doubles
   who want the heroine's place, not as an exception to it. The canon now
@@ -313,12 +322,11 @@ one choice in the finale. Every ending is happy, and nobody loses anything.
   starting E, and keeps it through the first version, checkpoint 4
   included. Research decided it on the owner's instruction, and RES-2000
   holds the reason.
-- Resolved on 2026-09-27: after the first version Mirra stays one rank
-  above the heroine until the last chapter, where they draw level, because
-  a rival who always keeps a step ahead gives the heroine a goal without a
-  loss. Research decided it on the owner's instruction.
-- Resolved on 2026-09-27: the canon names no month for a rank; the
-  campaign's season milestones set when ranks come after the first version.
+- Replaced on 2026-10-31 by ADR-3220: Mirra no longer stays one rank above
+  the heroine after the first version, because the rank now follows the
+  heroine's abilities.
+- Resolved on 2026-09-27 and changed on 2026-10-31 by ADR-3220: the canon
+  names no month for a rank, and a rank comes from her abilities.
   Research decided it on the owner's instruction, and RES-2000 holds the
   reason.
 - Resolved on 2026-09-26: Mister Knot's new name after autumn is «Бантик»

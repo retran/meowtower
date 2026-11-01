@@ -167,7 +167,7 @@ Every presentation of a family falls fewer than 14 game days after its first pre
 
 Every letter takes the template's final-answer input with the keypad, «Не знаю» (I don't know), the thread button and «Готово» (Done), in every presentation. A T1 to T4 letter shows no model choice, plan cards, step fields, «Нельзя узнать» or options for what is missing (REQ-7154). No letter shows the estimate or the inverse check.
 
-The attempt flow is SPC-0080's with two changes. After a wrong answer or «Не знаю» she sees the short solution at once and gets no second attempt, whatever hint she saw, and the review offers no detailed explanation (REQ-7162). A letter gives the same experience, streak and rewards as an ordinary task of its kind, whatever its presentation and whether she opened cards (REQ-7152). The bridge's renderer never picks a letter, so no letter carries a bridge keyword (REQ-7178).
+The attempt flow is SPC-0080's with two changes. After a wrong answer or «Не знаю» she sees the short solution at once and gets no second attempt, whatever hint she saw, and the review offers no detailed explanation (REQ-7162). A letter gives the same streak and rewards as an ordinary task of its kind, whatever its presentation and whether she opened cards (REQ-7152). The bridge's renderer never picks a letter, so no letter carries a bridge keyword (REQ-7178).
 
 ### Word cards
 

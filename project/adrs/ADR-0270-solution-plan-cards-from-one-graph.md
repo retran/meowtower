@@ -102,7 +102,7 @@ Once this is accepted and built, a compound word problem can open with a plan, t
 
 ## Why
 
-The plan exists because the owner asked for it in the owner's addendum 1 of 2026-09-28 and REQ-5076 puts solution plan cards in the MVP. RES-4060 records why it earns its place beside the model choice: the cards name quantities without naming operations, so they separate "knows what to find" from "knows which operation", and a random arrangement of three cards is right about 1 time in 15 where a random model is right 1 in 4.
+The plan exists because the owner asked for it in the owner's addendum 1 of 2026-09-28 and REQ-8020 puts solution plan cards in the MVP. RES-4060 records why it earns its place beside the model choice: the cards name quantities without naming operations, so they separate "knows what to find" from "knows which operation", and a random arrangement of three cards is right about 1 time in 15 where a random model is right 1 in 4.
 
 The cycle exists because the approved rule opened every Guardian problem with a model and step input (RES-4060, "The approved rule that a Guardian problem opens with a model"). REQ-5604 replaces it with shared phases, and the phases need a rule that keeps three shares and one independence in a band over every 30 days. A counter does that by construction, and ADR-0040 already uses one for step input.
 
@@ -116,7 +116,7 @@ The strongest objection is that the cards may be laid right by reading, not by p
 
 | Option | Better at | Why it lost |
 | --- | --- | --- |
-| Do nothing: keep the model choice as the only modelling phase | No new spec, event, screen or report cell, and ADR-0150's Guardian screen stays as it is | The owner asked for the plan and REQ-5076 puts it in the MVP, and the model choice can't tell "doesn't know what to find" from "doesn't know how" (RES-4060) |
+| Do nothing: keep the model choice as the only modelling phase | No new spec, event, screen or report cell, and ADR-0150's Guardian screen stays as it is | The owner asked for the plan and REQ-8020 puts it in the MVP, and the model choice can't tell "doesn't know what to find" from "doesn't know how" (RES-4060) |
 | Reuse `AnswerSpec.order` with a partial-selection variant, as the addendum words it | One answer kind fewer, and the addendum's own words | The `order` checker returns credit and accepts only the exact permutation (REQ-0772); a plan leaves cards out, has two right orders in a fork and returns a label, so the variant would need its own grader anyway and an exception in an approved requirement |
 | A seeded random draw per problem: plan with odds 1 in 4, then model with odds 1 in 3 of the rest | Simpler code, and she can't learn a pattern | Over 40 compound problems in 30 days a draw at 1 in 4 has a standard deviation of about 2.7 problems, so a noticeable share of windows falls outside 7 to 13 plans, and nothing makes plan problems split between the two input forms |
 | The same eight slots shuffled within each block of eight by the seeded stream | Keeps each block's shares and removes the fixed pattern she might learn | A shuffle breaks the parity pairing, so plan problems in a block can both land on one input form and REQ-5608 then holds only across blocks; she would have to count compound problems across days to learn the fixed cycle, and knowing a plan is next changes nothing the plan measures |

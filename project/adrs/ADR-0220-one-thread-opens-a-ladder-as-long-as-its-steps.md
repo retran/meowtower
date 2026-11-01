@@ -52,7 +52,7 @@ A first attempt brings one second attempt on a parallel task when it ends `alt`,
 
 The twin keeps the first task's template, subtype and difficulty features with new numbers, except that the twin of a problem with a missing number draws at random between a missing-number and a solvable problem of the same tier (REQ-5166). RES-4040's decision owns that draw's share.
 
-The review after a hinted `clean` or `partial` runs as ADR-0080 already runs it for that outcome, and the twin follows the review. ADR-0140 already caps an assisted first attempt at 0.5 in the room and floor shares, with no streak and no shard, and gives a second attempt 3 experience and no buttons. So a right answer after rung 2 earns 3 experience more than one after rung 1 and less than one with no hint, and I keep ADR-0140's rules, which settles RES-4010 conclusion 12 with no amendment.
+The review after a hinted `clean` or `partial` runs as ADR-0080 already runs it for that outcome, and the twin follows the review. ADR-0140 already caps an assisted first attempt at 0.5 in the room and floor shares, with no streak and no shard, and gives a second attempt no buttons. I keep ADR-0140's rules, which settles RES-4010 conclusion 12 with no amendment.
 
 ### Measurement and the report
 
@@ -210,6 +210,8 @@ The premortem, written as though it had happened: three months in, the report sh
 - The thread economy's grants: ADR-0080 keeps them, and the first reversal condition above reopens only the price.
 
 Amended on 2026-10-10: this record no longer addresses 1 requirement that was superseded, because a decision cannot realise a requirement that is no longer in force: REQ-5130 (superseded by REQ-7164, which ADR-0430 addresses).
+
+Amended by ADR-3220, approved on 2026-10-31: a second attempt gives no experience.
 
 ## Plan
 

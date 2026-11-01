@@ -75,7 +75,7 @@ forest. While the Tower is in order, so is the town.
 
 ## Why the floors change every night
 
-Every night, while everyone sleeps, several rows unravel and are knitted
+Every night the heroine lives through, while everyone sleeps, several rows unravel and are knitted
 again. So:
 
 - the rooms on each floor stand differently every day, and corridors lead to
@@ -93,7 +93,7 @@ again. So:
   change.
 
 In the morning a plain note with no speaker says what changed overnight.
-Every session is a new adventure, because the floors have literally become
+Every session is a new day or night, because the floors have literally become
 different.
 
 The re-knitting never touches the heroine's room, nor anything she forged,
@@ -127,10 +127,10 @@ loosened.
 - Before a spell, nothing names the answer or hints at it, except the hint
   step paid for with a guiding thread.
 - The code picks every outcome line by the outcome and fills in every number
-  and step. Row numbers and every counter (experience, points, level) go into
+  and step. Row numbers and every counter (points, ability levels) go into
   separate fields, so the text itself holds no digits and no number words. At
-  a level-up the fields show the new level and the experience to the next,
-  and a rank badge shows the rank.
+  a rise of an ability the fields show its new level, and a rank badge shows
+  the rank.
 - A line never grades or reproaches the heroine and never uses a word from
   the forbidden list in CAN-0010. It notes events: the thread returned, the
   row came together, the path opened.
