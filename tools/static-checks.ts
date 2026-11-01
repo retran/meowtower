@@ -367,6 +367,30 @@ export function checkListReader(root: string): Finding[] {
   return scan("list_outside_voice", paths, root, /shaming\.ru\.json/);
 }
 
+/**
+ * REQ-7980: the game accumulates no experience. No code, content or tool names experience points,
+ * and nothing but the event list names `level_up`, which old logs still hold.
+ */
+export function checkNoExperience(root: string): Finding[] {
+  const self = join(root, "tools", "static-checks.ts");
+  const paths = ["src", "content", "tools"]
+    .flatMap((d) => files(root, join(root, d)))
+    .filter((p) => p !== self);
+  const eventList = join(root, "src", "shared", "events.ts");
+  return [
+    ...scan("experience", paths, root, /\b(?:experience|xp|xpbar)\b/i),
+    ...scan(
+      "experience",
+      paths.filter((p) => p !== eventList),
+      root,
+      /level_up/,
+    ),
+  ].filter(
+    (f, i, all) =>
+      all.findIndex((g) => g.file === f.file && g.match === f.match) === i,
+  );
+}
+
 /** TSK-0682: every fixed string, the canon and 200 seeds of every template pass the text gate. */
 export async function checkContentGate(root: string): Promise<Finding[]> {
   const { STANDIN_TASKS, taskSolution, taskText } =
@@ -417,6 +441,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkNoKeyInClient(root),
     ...checkNoCyrillic(root),
     ...checkListReader(root),
+    ...checkNoExperience(root),
     ...checkNoPush(root),
     ...checkClientStorage(root),
     ...checkEventsSqlConfined(root),
