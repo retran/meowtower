@@ -117,6 +117,7 @@ const valid: Record<string, Record<string, unknown>> = {
   soft_stop: { activeMs: 3600000 },
   extension: { minutes: 20 },
   finish_today: {},
+  stats_reset: {},
   parent_tag_added: { node: "F2", subtype: null },
   parent_tag_removed: { node: "F2", subtype: null },
   item_flagged: { itemId: "i-1", note: null },

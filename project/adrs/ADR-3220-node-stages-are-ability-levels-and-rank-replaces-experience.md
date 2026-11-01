@@ -3,7 +3,7 @@ id: ADR-3220
 artifact: adr
 status: approved
 revised: 2026-11-01
-addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8010, REQ-8012, REQ-8014, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034]
+addresses: [REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7972, REQ-7974, REQ-7976, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8010, REQ-8012, REQ-8014, REQ-8016, REQ-8018, REQ-8020, REQ-8022, REQ-8024, REQ-8026, REQ-8028, REQ-8030, REQ-8032, REQ-8034, REQ-8386]
 supersedes: []
 concerns: []
 ---
@@ -81,6 +81,7 @@ The parent reads two views of a node, a state and a level, which will sometimes 
 
 ## Plan
 
+0. A statistics reset: the event `stats_reset`, a confirmed route and a button in the Parent Room, so the player starts from nothing once testing is over (REQ-8386).
 1. Turn the knowledge model on, by naming its version in `content/versions.json`, so the estimates exist. Levels from the log: rule `level.v1`, the simulation and a replay tool over the player's log, in `src/engine/` and `tools/` (REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7978).
 2. Task candidates by level in `src/server/task-source.ts` through a function the Director can read (REQ-7972, REQ-7974, REQ-7976).
 3. Rank from levels with its simulation, given through a story event (REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-8034).
