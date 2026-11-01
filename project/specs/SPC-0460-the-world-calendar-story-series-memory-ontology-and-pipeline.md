@@ -3,7 +3,7 @@ id: SPC-0460
 artifact: spec
 status: live
 revised: 2026-11-01
-states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114, REQ-8168, REQ-8170, REQ-8172, REQ-8174, REQ-8176, REQ-8178, REQ-8180, REQ-8182, REQ-8184, REQ-8186, REQ-8188, REQ-8190, REQ-8192, REQ-8194, REQ-8196, REQ-8198, REQ-8244, REQ-8250, REQ-8204, REQ-8206, REQ-8246, REQ-8248, REQ-8214, REQ-8256, REQ-8218, REQ-8220, REQ-8222, REQ-8224, REQ-8228, REQ-8234, REQ-8236, REQ-8238, REQ-8240, REQ-8252, REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282]
+states: [REQ-8058, REQ-8060, REQ-8062, REQ-8064, REQ-8066, REQ-8072, REQ-8074, REQ-8076, REQ-8078, REQ-8082, REQ-8084, REQ-8086, REQ-8088, REQ-8090, REQ-8092, REQ-8094, REQ-8096, REQ-8098, REQ-8254, REQ-8104, REQ-8106, REQ-8108, REQ-8110, REQ-8112, REQ-8114, REQ-8168, REQ-8170, REQ-8172, REQ-8174, REQ-8176, REQ-8178, REQ-8180, REQ-8182, REQ-8184, REQ-8186, REQ-8188, REQ-8190, REQ-8192, REQ-8194, REQ-8196, REQ-8198, REQ-8244, REQ-8250, REQ-8204, REQ-8206, REQ-8246, REQ-8248, REQ-8214, REQ-8256, REQ-8218, REQ-8220, REQ-8222, REQ-8224, REQ-8228, REQ-8234, REQ-8236, REQ-8238, REQ-8240, REQ-8252, REQ-8258, REQ-8260, REQ-8262, REQ-8264, REQ-8266, REQ-8268, REQ-8270, REQ-8272, REQ-8274, REQ-8276, REQ-8278, REQ-8280, REQ-8282, REQ-8284, REQ-8286, REQ-8288, REQ-8290, REQ-8292, REQ-8294, REQ-8296, REQ-8298, REQ-8300, REQ-8302, REQ-8304, REQ-8306, REQ-8308, REQ-8310, REQ-8312, REQ-8314, REQ-8316, REQ-8318, REQ-8320, REQ-8322, REQ-8324, REQ-8326]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -47,6 +47,16 @@ Between adventures and at major events, the showrunner picks an arc, the arc wri
 ### The studio
 
 The Parent Room shows the campaign as a graph of arcs, each arc as a graph of adventures and each adventure as a graph of encounters, and opening a node opens the graph inside it (REQ-8258). The parent can generate each level (REQ-8260). A prompt on a selected node makes an agent rework that level under the same checks (REQ-8262). Every edit makes a new version, and older ones stay readable (REQ-8264). A change above approved work marks it for review (REQ-8270). With no approved scenario, the game plays tasks with no scenario and notifies the parent (REQ-8272). Each arc and adventure shows `draft`, `approved`, `playing` or `played` (REQ-8274), and a played adventure has its log beside the general log (REQ-8276). The parent reads and edits libraries of characters, places and facts, which every story agent reads (REQ-8278). A campaign-wide profile of the child and her interests reaches every story agent (REQ-8280), through the egress guard on the player tier, and holds no real name or school (REQ-8282).
+
+### What the Master remembers
+
+The Master records facts and events by `record_fact` and `record_event` as play goes (REQ-8320). Each played adventure leaves a summary linked to them (REQ-8322). Each turn's request carries the entries that touch the scene, and `query_world` searches the rest (REQ-8324). The parent can read, correct or remove any of them (REQ-8326).
+
+### Testing from the Parent Room
+
+The parent's sandbox exists before any test feature, and nothing done in test reaches her game (REQ-8284). There the parent plays any adventure, drafts included, from any encounter, as the child sees it (REQ-8286), sets any game state (REQ-8288), and forces the next outcome, a fall, a rise or an open gate (REQ-8290). An inspector shows each turn's request, reply, tools, the Director's note, cost and time (REQ-8292). A simulated player runs a scenario under a persona and reports its paths (REQ-8294), and the graph marks what tests reached (REQ-8296). The task lab opens any template, node or level (REQ-8298), the screen lab any child's screen in any language (REQ-8300), and the prompt lab each prompt's version with a comparison of two runs (REQ-8302). A page names where each feature is tested, and a test fails when one has no place (REQ-8304). Testing has its own monthly limit (REQ-8314).
+
+A field can be edited by hand, and the edit passes code's check (REQ-8306). A prompted edit shows beside the old version with changes marked, until the parent keeps or discards it (REQ-8308). A prompt reworks a node's level by default, and everything inside it when asked (REQ-8310). Each spending action shows an estimate first (REQ-8312). A library entry shows where it is used (REQ-8316). Generators and edits run as background jobs with progress on the page (REQ-8318).
 
 ### Efficiency
 
