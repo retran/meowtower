@@ -3,7 +3,7 @@ id: ADR-3290
 artifact: adr
 status: approved
 revised: 2026-11-01
-addresses: [REQ-8338, REQ-8340, REQ-8342, REQ-8344, REQ-8346, REQ-8348, REQ-8350, REQ-8352, REQ-8354, REQ-8356, REQ-8358, REQ-8360, REQ-8362, REQ-8364, REQ-8366, REQ-8368, REQ-8370, REQ-8372, REQ-8374]
+addresses: [REQ-8338, REQ-8340, REQ-8342, REQ-8344, REQ-8346, REQ-8348, REQ-8350, REQ-8352, REQ-8354, REQ-8356, REQ-8358, REQ-8360, REQ-8362, REQ-8364, REQ-8366, REQ-8368, REQ-8370, REQ-8372, REQ-8374, REQ-8376]
 supersedes: []
 concerns: []
 ---
@@ -17,6 +17,8 @@ concerns: []
 The campaign is a series, an arc a season, an adventure an episode and an encounter a scene. RES-4317's Design section states each level's fields. In short: a campaign holds a logline, theme, heroine's arc, mythology and reveals. An arc holds anchors, a closing question, and adventures of the kinds `mythology`, `case`, `character` and `filler`. An adventure holds lines A, B and C, the 15 beats, a clock, a setup ledger and a fair cliffhanger. An encounter holds a tactical goal, opposition, a turn, subtext and its plants and payoffs.
 
 The loop writes logline, synopsis, treatment and beat sheet in turn, and the critic reads the treatment before encounters are written. A twist is prepared by setups she could have seen, and a major one strikes the heroine's false belief. An arc's ending states whether it closes its question.
+
+A character's library card holds a want, a need, a wound, a false belief, a voice, skills, weak spots, relations and an arc, and the Master reads it when that person is in the scene.
 
 The Master's system prompt carries the rules of scene craft, and it may reach a beat another way. Code checks what a field proves, and the critic judges the rest. The world's limits win over craft: nobody dies, a dark night stays short, and a day doesn't end on a fright.
 
@@ -63,5 +65,5 @@ Larger prompts and schemas, more critic faults and more revisions, so each scena
 
 1. Scenario schema, writing stages, checks, prompts and critic (REQ-8368, REQ-8370, REQ-8372, REQ-8374, REQ-8340, REQ-8344, REQ-8346, REQ-8348, REQ-8350, REQ-8352, REQ-8354, REQ-8356, REQ-8358, REQ-8362, REQ-8364).
 2. The Master's prompt (REQ-8360).
-3. Arc and campaign levels with generators (REQ-8338, REQ-8342).
+3. Arc and campaign levels with generators, and the character card (REQ-8376, REQ-8338, REQ-8342).
 4. Mythology map (REQ-8366).

@@ -60,6 +60,10 @@ Subtext hides what a character wants under what they say. A MacGuffin only moves
 
 A twist rests on hidden setups, can use a red herring, rewrites what earlier scenes meant, and hits the hero's false belief, which pushes the third act. A closed ending answers the dramatic question, and an open one leaves the outer question while the inner change is done, unlike a cliffhanger. A voiceover earns its place by contrast: an unreliable narrator, a voice from later, or hidden thoughts. A synopsis of a page or two tests the story's direction, and a treatment finds structural holes before dialogue.
 
+### A character bible
+
+A bible fixes each person's want against their need, a ghost from the past that shaped their defence, a lie about how the world works, a speech print that identifies a line with no name beside it, skills and blind spots, how they reflect others, and an arc from a starting state to an end state.
+
 ### What changes for this game
 
 [Inference] The heroine's arc is positive, and her false belief concerns the story's world and never the player. A dark night stays short: a calm, a helper and a way on. A clock counts world time in the scene, never real time. A goal is concrete enough for a child to say aloud. Subtext stays readable. A mythology fits CAN-0080's question of who knitted the Tower. Her actions can move a beat, so the Master holds it as a target.
@@ -120,6 +124,10 @@ Encounters map Snyder's beats: opening with a small kind act, catalyst, debate, 
 | `reveal` | A rule she hits or a clue she finds |
 | `plants`, `pays` | Setups |
 
+### The character card
+
+The library's character card holds `want`, `need`, `wound`, `falseBelief`, `voice`, `skills`, `weakSpots`, `relations` and `arc`. A wound suits a children's story: a lost friend who moved away or an old failure, and no trauma. The heroine has a card without a fixed `voice`, because the player speaks for her. The Master reads the card when the person is in the scene, so voices hold across generations.
+
 ### Twists and stages
 
 An arc plans its twist in `reveals`, with the setups that prepare it and a false trail where it fits. The loop writes logline, synopsis, treatment and beat sheet in turn, and the critic reads the treatment before encounters are written, because a hole found there costs far less than one found in a finished graph. The Master is the storyteller's voice, and it may add a layer the scene can't show, such as what the heroine will remember later.
@@ -169,7 +177,8 @@ Structure moves into the scenario schema first, then arcs and campaign when thei
 15. The studio shows a mythology map of questions, clues and answers.
 16. A twist is prepared by setups the player could have seen, and a major one strikes the heroine's false belief.
 17. An arc's ending states whether it closes its question or leaves it open.
-18. The pipeline writes logline, synopsis, treatment and beat sheet before encounters, and the critic reads the treatment first.
+18. A character's library entry holds a want, a need, a wound, a false belief, a voice, skills, weak spots, relations and an arc.
+19. The pipeline writes logline, synopsis, treatment and beat sheet before encounters, and the critic reads the treatment first.
 
 ## Sources
 
