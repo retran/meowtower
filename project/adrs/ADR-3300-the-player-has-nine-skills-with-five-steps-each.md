@@ -3,7 +3,7 @@ id: ADR-3300
 artifact: adr
 status: approved
 revised: 2026-11-01
-addresses: [REQ-8394, REQ-8396, REQ-8398, REQ-8400, REQ-8402, REQ-8404, REQ-8406, REQ-8408]
+addresses: [REQ-8394, REQ-8396, REQ-8398, REQ-8400, REQ-8402, REQ-8404, REQ-8406, REQ-8408, REQ-8410, REQ-8412, REQ-8414]
 supersedes: []
 concerns: []
 ---
@@ -17,6 +17,8 @@ concerns: []
 The nine domains of the skill graph are nine skills for the player: Marks, Mechanics, Sharing, Precision, Trade, Wayfinding, Shaping, Scouting and Interpreting, with Russian and Dutch names as RES-4318 lists. A skill's score is the mean over its answered nodes of the node's level plus the fraction of the way from its own line to the next. The sheet shows the whole part as the level and the rest as the percentage to the next level, and never a node, an estimate or the chance of knowing. Everyone starts on level 1 at 0 %. A skill with no answered node shows as not yet shown until its first answer.
 
 Each level from 1 to 5 opens a step: try through a check, notice, act freely, take a short way, help others. RES-4318 lists the 45 steps. No step pays an item or a currency. An encounter lists the skills that fit its obstacle in `accepts`, the Master maps her words to one of them, and where several fit, the Director picks the check's domain among them by need. The Master and the scenario writer receive the opened steps as things she can do and what she is still learning, and never a level, a node or an estimate.
+
+The first adventure is a tutorial scenario, written once, approved by the parent and fixed. For each skill it holds a scene that explains it and one check on a task of its domain, and the sheet shows a skill from the moment the tutorial introduces it.
 
 Once accepted, nothing runs yet. After the plan, the sheet shows the skills, scenarios list what each obstacle accepts, and the Master uses the opened steps.
 
@@ -65,3 +67,4 @@ Nine names in three languages to write and judge, 45 steps to put in the Master'
 3. `accepts` in the scenario schema and prompts (REQ-8404, REQ-8408).
 4. The Director's pick among accepted skills (REQ-8406).
 5. The Master's opened steps (REQ-8402).
+6. The tutorial scenario (REQ-8410, REQ-8412, REQ-8414).

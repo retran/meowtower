@@ -143,6 +143,10 @@ The ladder is the same for every skill: 1, try through a check; 2, notice; 3, ac
 
 [Proposal] An encounter lists `accepts`, the skills that fit its obstacle. The Master maps her words to one of them, and where two fit, the Director chooses the domain of the check by need. The Master receives the steps she has opened as things she can do, such as "she reads codes freely", and never a level, a node or an estimate. The scenario writer receives the same kind of fact about what she can do and what she is still learning, so it writes obstacles where her strong skills shine and her weak ones get a gentle reason to grow. A rank scene, a gate and a free action all read the same steps.
 
+### The first adventure teaches the skills
+
+The owner asked that the first scenario be a tutorial, in which each skill is explained and opened in turn. [Proposal] It is written once by a person, approved by the parent and fixed, because it is the first impression. For each skill it holds a short scene that shows what the skill does, one check on a task of that domain, and the moment the sheet shows the skill. The checks also give each domain its first answers. It is written in general terms here and left to the build to detail.
+
 ## Conclusions
 
 1. The player has nine skills, one for each domain, in the names above.
@@ -154,6 +158,7 @@ The ladder is the same for every skill: 1, try through a check; 2, notice; 3, ac
 7. The Director picks the check's domain among the accepted skills by need.
 8. The Master receives the opened steps as things she can do, and no level, node or estimate.
 9. The scenario writer receives what she can do and what she is learning, as facts.
+10. The first adventure is a fixed tutorial scenario that explains and opens the skills one by one.
 
 ## Sources
 
