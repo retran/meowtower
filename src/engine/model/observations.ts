@@ -101,6 +101,14 @@ export function observationsOf(log: readonly LogEvent[]): Observations {
   const excluded = new Set<string>();
 
   for (const [index, event] of log.entries()) {
+    if (event.type === "stats_reset") {
+      // Nothing before a reset counts (REQ-8386).
+      items.clear();
+      attempts.clear();
+      verdicts.clear();
+      excluded.clear();
+      continue;
+    }
     const p = event.payload;
     const itemId = field<string>(p, "itemId");
     if (event.type === "item_shown" && itemId !== undefined) {

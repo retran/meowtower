@@ -212,5 +212,9 @@
   "ui.parentSettings.language": "Game language",
   "ui.parentSettings.language.ru": "Русский",
   "ui.parentSettings.language.en": "English",
-  "ui.parentSettings.language.nl": "Nederlands"
+  "ui.parentSettings.language.nl": "Nederlands",
+  "ui.parentSettings.resetTitle": "Statistics",
+  "ui.parentSettings.reset": "Start the statistics again",
+  "ui.parentSettings.resetAsk": "Press again: knowledge and levels reset, and the answers stay in the log.",
+  "ui.parentSettings.resetDone": "Statistics reset."
 }
