@@ -44,6 +44,9 @@ export interface LevelResult {
   readonly rule: string;
   /** The level before any answer, from the prior. */
   readonly start: number;
+  /** The node's estimate after its last answer, and how many answers it has. */
+  readonly estimate: number;
+  readonly answers: number;
   /** True after a second observation in a row below the line (REQ-7996). */
   readonly warning: boolean;
   readonly changes: readonly LevelChange[];
@@ -124,6 +127,8 @@ export function levelOf(
     level,
     rule: LEVEL_RULE,
     start,
+    estimate: estimate(),
+    answers: seen,
     warning: below >= WARN_AFTER,
     changes,
   };
