@@ -66,6 +66,10 @@ describe("the rank of a log", () => {
     expect(rankFor([]).rank).toBe("E");
   });
 
+  it("stays E for a log with no answers, whatever the priors say", () => {
+    expect(rankFor([]).changes).toEqual([]);
+  });
+
   it("rises to D when groups 1 to 4 are mastered", () => {
     const got = rankFor(masteryUpTo(4));
     expect(got.rank).toBe("D");

@@ -39,6 +39,17 @@ describe("an ability's level", () => {
     expect(got.rule).toBe(LEVEL_RULE);
   });
 
+  it("stays on level 1 with no answers, whatever the prior says", () => {
+    expect(levelOf([], { ...ask, prior: 0.9 }).level).toBe(1);
+  });
+
+  it("stays on level 1 until three answers stand behind it", () => {
+    const two = [answer(1, 1), answer(1, 2)];
+    expect(levelOf(two, { ...ask, prior: 0.9 }).level).toBe(1);
+    const three = [...two, answer(1, 3)];
+    expect(levelOf(three, { ...ask, prior: 0.9 }).level).toBeGreaterThan(1);
+  });
+
   it("rises as soon as the estimate reaches a line", () => {
     const rights = Array.from({ length: 12 }, (_, i) => answer(1, i));
     const got = levelOf(rights, ask);
