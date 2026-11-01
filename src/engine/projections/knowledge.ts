@@ -10,6 +10,8 @@ import type { ModelParamsT } from "../model/params.js";
 import {
   type KnowledgeGraph,
   knowledgeOf,
+  levelsOf,
+  type OlympiadFacts,
   snapshotsOf,
 } from "../model/project.js";
 import type { Projection } from "./registry.js";
@@ -22,6 +24,7 @@ export interface KnowledgeSetup {
   readonly params: ModelParamsT;
   readonly graph: KnowledgeGraph;
   readonly zone: string;
+  readonly olympiad?: OlympiadFacts;
 }
 
 let setup: KnowledgeSetup | null = null;
@@ -82,6 +85,46 @@ export const activeKnowledgeParams = (): ModelParamsT | null =>
   setup?.params ?? null;
 
 const noFold = (): void => {};
+
+const NO_OLYMPIAD: OlympiadFacts = { templates: new Set(), nodes: new Set() };
+
+const nodeLevels: Projection = {
+  name: "node_levels",
+  class: "knowledge",
+  module: import.meta.url,
+  table: "node_levels",
+  create: `CREATE TABLE node_levels (
+    node TEXT PRIMARY KEY,
+    level INTEGER NOT NULL,
+    rule TEXT NOT NULL,
+    warning INTEGER NOT NULL,
+    changes TEXT NOT NULL,
+    computed_at TEXT NOT NULL
+  ) STRICT`,
+  fullPass(db: Db, target: string, computedAt: string) {
+    if (!setup) return;
+    const levels = levelsOf(
+      setup.graph,
+      [...allEvents(db)],
+      setup.params,
+      setup.olympiad ?? NO_OLYMPIAD,
+    );
+    db.prepare(`DELETE FROM ${target}`).run();
+    const insert = db.prepare(
+      `INSERT INTO ${target} VALUES (?, ?, ?, ?, ?, ?)`,
+    );
+    for (const l of levels)
+      insert.run(
+        l.node,
+        l.level,
+        l.rule,
+        l.warning ? 1 : 0,
+        JSON.stringify(l.changes),
+        computedAt,
+      );
+  },
+  apply: noFold,
+};
 
 const nodeEstimates: Projection = {
   name: "node_estimates",
@@ -223,6 +266,7 @@ const nodeSnapshots: Projection = {
 
 export const knowledge: Projection[] = [
   nodeEstimates,
+  nodeLevels,
   nodeObligations,
   nodeSnapshots,
 ];

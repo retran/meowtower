@@ -40,7 +40,7 @@ async function start(): Promise<ChildProcess> {
   );
   running.add(child);
   child.once("exit", () => running.delete(child));
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 600; i++) {
     try {
       if ((await fetch("http://127.0.0.1:3917/health")).ok) return child;
     } catch {

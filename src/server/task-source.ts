@@ -22,6 +22,58 @@ const seedOf = (hex: string): Uint8Array =>
 export const isRegistryTemplate = (id: string | undefined): boolean =>
   id !== undefined && byId.has(id);
 
+const LEVELS = 5;
+const isOlympiad = (t: Compiled): boolean =>
+  t.origin !== undefined && "olympiad" in t.origin;
+const SAMPLE_SEED = baseSeed("band", "steps", 0);
+const stepsOf = (t: Compiled): number => t.make(SAMPLE_SEED).solution.length;
+
+const bands = new Map<string, readonly (readonly Compiled[])[]>();
+
+/** A node's templates in five bands, easy to hard, with olympiad templates leading the top one. */
+function bandsOf(node: string): readonly (readonly Compiled[])[] {
+  const known = bands.get(node);
+  if (known) return known;
+  const all = templates.filter((t) => t.node === node);
+  const plain = all
+    .filter((t) => !isOlympiad(t))
+    .map((t) => ({ t, top: Math.max(...t.groups), steps: stepsOf(t) }))
+    .sort(
+      (a, b) =>
+        a.top - b.top || a.steps - b.steps || (a.t.id < b.t.id ? -1 : 1),
+    )
+    .map((row) => row.t);
+  const split = Array.from({ length: LEVELS }, (_, i) =>
+    plain.slice(
+      Math.floor((i * plain.length) / LEVELS),
+      Math.floor(((i + 1) * plain.length) / LEVELS),
+    ),
+  );
+  split[LEVELS - 1] = [...all.filter(isOlympiad), ...(split[LEVELS - 1] ?? [])];
+  bands.set(node, split);
+  return split;
+}
+
+/** The tasks of a level, or of the nearest level that has any (REQ-7972, REQ-7974). */
+export function bandOf(node: string, level: number): readonly Compiled[] {
+  const split = bandsOf(node);
+  for (let down = level; down >= 1; down -= 1) {
+    const band = split[down - 1];
+    if (band && band.length > 0) return band;
+  }
+  return split.find((band) => band.length > 0) ?? [];
+}
+
+/** A template of the same node at the node's level, drawn by the seed. */
+export function atLevel(
+  template: Compiled,
+  level: number,
+  seed: Uint8Array,
+): Compiled {
+  const band = bandOf(template.node, level);
+  return band[(seed[0] ?? 0) % band.length] ?? template;
+}
+
 export interface RegistryItem {
   readonly template: Compiled;
   readonly made: Made;

@@ -35,6 +35,7 @@ import {
   judge,
   pick,
   present,
+  atLevel,
   presentFramed,
   rebuild,
   trapOf,
@@ -322,12 +323,22 @@ export function mountPlay(
 ): void {
   const allowed = createRateCap(now);
   /** Tasks go on with no end for now: the ladder is walked again, with other seeds, each lap (ADR-3210). */
-  const endlessTask = (key: string, index: number) =>
-    pick(
+  const endlessTask = (key: string, index: number) => {
+    const { template, base } = pick(
       `${key}/${Math.floor(index / STANDIN_ADVENTURE_TASKS).toString()}`,
       index % STANDIN_ADVENTURE_TASKS,
       STANDIN_ADVENTURE_TASKS,
     );
+    const level = db
+      .prepare<[string], { level: number }>(
+        "SELECT level FROM node_levels WHERE node = ?",
+      )
+      .get(template.node)?.level;
+    return {
+      template: level === undefined ? template : atLevel(template, level, base),
+      base,
+    };
+  };
   /** What a task is drawn from and spends from: a reload starts a session, and the adventure goes on. */
   const adventureKey = (sessionId: string): string =>
     sessionRow(db, sessionId)?.adventureId ?? sessionId;

@@ -33,7 +33,11 @@ export function pKnowAt(state: PairState, now: number): number {
 /** One observation applied to a pair: forgetting, feedback, evidence and practice (ADR-0060). */
 export function applyObservation(
   state: PairState,
-  obs: Observation,
+  obs: Partial<Observation> &
+    Pick<
+      Observation,
+      "at" | "c" | "w" | "form" | "options" | "steps" | "postFeedback"
+    >,
   p: ModelParamsT,
 ): PairState {
   const days = state.last === null ? 0 : (obs.at - state.last) / DAY_MS;
