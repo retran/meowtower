@@ -43,10 +43,10 @@ A task is marked in the commit that advances it, never in a later pass. A task t
 
 ## Tasks
 
-- [ ] T-001 [P] TSK-0532 The success share of the last 10 graded attempts decides whether a room slot is review or frontier
+- [x] T-001 [P] TSK-0532 The success share of the last 10 graded attempts decides whether a room slot is review or frontier (done: pull request 22)
       closes: REQ-1006, REQ-1008, REQ-1010
       depends: none
-- [ ] T-002 [P] TSK-0533 A review task comes from a fluent or stable node the player will probably solve, and looks like any other task
+- [x] T-002 [P] TSK-0533 A review task comes from a fluent or stable node the player will probably solve, and looks like any other task (done: pull request 22)
       closes: REQ-1012, REQ-1016, REQ-1018
       depends: TSK-0532 (not blocking) - the corridor decides when a slot is review; either task can land first against a stub.
 - [ ] T-003 TSK-0534 A frontier slot takes the candidate node of highest value, and the play routes ask the Director for every room slot
