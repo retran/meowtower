@@ -64,6 +64,10 @@ A twist rests on hidden setups, can use a red herring, rewrites what earlier sce
 
 A bible fixes each person's want against their need, a ghost from the past that shaped their defence, a lie about how the world works, a speech print that identifies a line with no name beside it, skills and blind spots, how they reflect others, and an arc from a starting state to an end state.
 
+### A series bible
+
+A pitch bible states a logline, format and references, a setting that generates problems, the franchise engine (what the heroes do in an ordinary episode of the second season), the cast's dynamics, a pilot synopsis, and a roadmap of the first season with a plan for years ahead.
+
 ### What changes for this game
 
 [Inference] The heroine's arc is positive, and her false belief concerns the story's world and never the player. A dark night stays short: a calm, a helper and a way on. A clock counts world time in the scene, never real time. A goal is concrete enough for a child to say aloud. Subtext stays readable. A mythology fits CAN-0080's question of who knitted the Tower. Her actions can move a beat, so the Master holds it as a target.
@@ -85,6 +89,8 @@ A bible fixes each person's want against their need, a ghost from the past that 
 | `arcs` | The graph |
 
 The studio's mythology map shows open questions, planted clues and what has been answered. Canon holds the answers, and the Tower's secret stays out of play as CAN-0030 demands.
+
+The campaign's first document is its bible, which every generator reads: the logline, the format of a day or night adventure, the setting as a generator of problems, the engine, the cast's dynamics, a pilot synopsis and a roadmap of seasons. The engine here: each day or night the Tower has changed, a Tangle has knotted something in the town or on a floor, and she goes to untie it, meeting people and clues on the way.
 
 ### Arc, the season
 
@@ -178,7 +184,8 @@ Structure moves into the scenario schema first, then arcs and campaign when thei
 16. A twist is prepared by setups the player could have seen, and a major one strikes the heroine's false belief.
 17. An arc's ending states whether it closes its question or leaves it open.
 18. A character's library entry holds a want, a need, a wound, a false belief, a voice, skills, weak spots, relations and an arc.
-19. The pipeline writes logline, synopsis, treatment and beat sheet before encounters, and the critic reads the treatment first.
+19. A campaign opens from a bible holding its logline, format, setting, engine, cast dynamics, pilot synopsis and roadmap.
+20. The pipeline writes logline, synopsis, treatment and beat sheet before encounters, and the critic reads the treatment first.
 
 ## Sources
 
