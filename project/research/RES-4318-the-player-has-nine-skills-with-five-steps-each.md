@@ -147,6 +147,10 @@ The ladder is the same for every skill: 1, try through a check; 2, notice; 3, ac
 
 The owner asked that obstacles be chosen with the knowledge graph and the skills in mind. [Proposal] The Director already plans each adventure by what is due: the skills to practise, and whether each is new ground, a review or a parent's topic. The scenario writer receives that plan, told in skills and purposes without nodes, levels or estimates, and writes obstacles whose `accepts` cover it. Code checks that every skill the plan asks for is accepted by some encounter, with at least the planned number of checks, so the Director finds a place for each task it has planned. What she can already do shapes the obstacles too, as in the first finding.
 
+### The skills are drawn by weighted chance with a default seed
+
+The owner asked that the chosen skill not always be the least developed one. [Proposal] The Director draws the skills an adventure practises by weighted chance: a skill's weight is 1 plus the levels it lacks to the top, so a skill on level 1 weighs 5 against 1 for a skill on level 5, and a skill not yet shown weighs like level 1. The draw is without repeats and uses a seed that defaults to a function of the adventure, so a run repeats and a test can pin it. In the sandbox the parent may set the seed. The owner said the adventure itself is assembled once the editor exists, so the tutorial scenario of the next finding is written there.
+
 ### The first adventure teaches the skills
 
 The owner asked that the first scenario be a tutorial, in which each skill is explained and opened in turn. [Proposal] It is written once by a person, approved by the parent and fixed, because it is the first impression. For each skill it holds a short scene that shows what the skill does, one check on a task of that domain, and the moment the sheet shows the skill. The checks also give each domain its first answers. It is written in general terms here and left to the build to detail.
@@ -163,7 +167,8 @@ The owner asked that the first scenario be a tutorial, in which each skill is ex
 8. The Master receives the opened steps as things she can do, and no level, node or estimate.
 9. The scenario writer receives what she can do and what she is learning, as facts.
 10. The scenario writer receives the Director's plan in skills and purposes, and code refuses a scenario that leaves a planned skill unaccepted.
-11. The first adventure is a fixed tutorial scenario that explains and opens the skills one by one.
+11. The Director draws the skills an adventure practises by weighted chance, from a seed that defaults to a function of the adventure.
+12. The first adventure is a fixed tutorial scenario that explains and opens the skills one by one.
 
 ## Sources
 

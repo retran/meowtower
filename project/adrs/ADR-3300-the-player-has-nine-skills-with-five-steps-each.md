@@ -3,7 +3,7 @@ id: ADR-3300
 artifact: adr
 status: approved
 revised: 2026-11-01
-addresses: [REQ-8394, REQ-8396, REQ-8398, REQ-8400, REQ-8402, REQ-8404, REQ-8406, REQ-8408, REQ-8410, REQ-8412, REQ-8414, REQ-8416, REQ-8418]
+addresses: [REQ-8394, REQ-8396, REQ-8398, REQ-8400, REQ-8402, REQ-8404, REQ-8406, REQ-8408, REQ-8410, REQ-8412, REQ-8414, REQ-8416, REQ-8418, REQ-8420, REQ-8422]
 supersedes: []
 concerns: []
 ---
@@ -19,6 +19,8 @@ The nine domains of the skill graph are nine skills for the player: Marks, Mecha
 Each level from 1 to 5 opens a step: try through a check, notice, act freely, take a short way, help others. RES-4318 lists the 45 steps. No step pays an item or a currency. An encounter lists the skills that fit its obstacle in `accepts`, the Master maps her words to one of them, and where several fit, the Director picks the check's domain among them by need. The Master and the scenario writer receive the opened steps as things she can do and what she is still learning, and never a level, a node or an estimate.
 
 The scenario writer receives the Director's plan for the adventure, the skills to practise and why, told as facts without nodes, levels or estimates, and chooses obstacles that fit it. Code refuses a scenario in which a planned skill is accepted by no encounter or has fewer checks than planned.
+
+The Director draws the skills an adventure practises by weighted chance, with a weight of 1 plus the levels a skill lacks to the top and no repeats, from a seed that defaults to a function of the adventure, so a run repeats and the sandbox can set the seed.
 
 The first adventure is a tutorial scenario, written once, approved by the parent and fixed. For each skill it holds a scene that explains it and one check on a task of its domain, and the sheet shows a skill from the moment the tutorial introduces it.
 
@@ -67,6 +69,6 @@ Nine names in three languages to write and judge, 45 steps to put in the Master'
 1. The skill score and its percentage, with tests (REQ-8394, REQ-8398).
 2. The sheet in three languages (REQ-8396, REQ-8400).
 3. `accepts` in the scenario schema and prompts, and the Director's plan for the writer (REQ-8404, REQ-8408, REQ-8416, REQ-8418).
-4. The Director's pick among accepted skills (REQ-8406).
+4. The Director's pick among accepted skills and its weighted draw of skills with a default seed (REQ-8406, REQ-8420, REQ-8422).
 5. The Master's opened steps (REQ-8402).
 6. The tutorial scenario (REQ-8410, REQ-8412, REQ-8414).
