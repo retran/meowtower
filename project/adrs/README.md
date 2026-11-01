@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-59 decisions in all: 47 approved, 12 done.
+60 decisions in all: 48 approved, 12 done.
 
 | Identifier                                                                                    | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -65,5 +65,6 @@
 | [ADR-3220](ADR-3220-node-stages-are-ability-levels-and-rank-replaces-experience.md)           | Each node is an ability with a level from its estimate, the rank is computed from those levels, and experience goes                                                                                                                                                                                                                               | approved |
 | [ADR-3230](ADR-3230-the-tower-opens-by-ability-and-the-world-keeps-a-played-calendar.md)      | Abilities are keys to gates inside an open Tower, a rank counts every group below it, and the world keeps a calendar of played days                                                                                                                                                                                                               | approved |
 | [ADR-3240](ADR-3240-arcs-are-generated-by-agents-over-a-story-ontology.md)                    | The story is a series of generated arcs over a fixed spine, written by agents through a typed story ontology with craft rules as checks                                                                                                                                                                                                           | approved |
+| [ADR-3250](ADR-3250-the-parent-room-opens-on-a-front-page-of-rules-and-actions.md)            | The Parent Room opens on a front page of what changed and what to do, built from rules, with the report behind it                                                                                                                                                                                                                                 | approved |
 
 <!-- /meow-flow index -->
