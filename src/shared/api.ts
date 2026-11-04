@@ -321,6 +321,26 @@ export const ResumeOut = z
   .strict();
 export type ResumeOut = z.infer<typeof ResumeOut>;
 
+/** The player's skills for the sheet: a whole level and the percentage to the next, never a node or an estimate (REQ-8400). */
+export const SkillsOut = z
+  .object({
+    skills: z.array(
+      z.union([
+        z.object({ skill: z.string(), shown: z.literal(false) }).strict(),
+        z
+          .object({
+            skill: z.string(),
+            shown: z.literal(true),
+            level: z.number().int().min(1).max(5),
+            percent: z.number().int().min(0).max(100),
+          })
+          .strict(),
+      ]),
+    ),
+  })
+  .strict();
+export type SkillsOut = z.infer<typeof SkillsOut>;
+
 export const AdventureCurrentOut = z
   .object({
     adventure: z

@@ -7,6 +7,7 @@ import {
   parentLogin,
   parentSettings,
   resetStats,
+  skills,
   revoke,
   saveParentSettings,
   storeInterface,
@@ -62,6 +63,7 @@ const home: Screen = {
           location.hash = "#/play";
         }),
       );
+    if (shell.paired) nav.append(link("ui.nav.sheet", "open-sheet", "/sheet"));
     nav.append(link("ui.nav.settings", "open-settings", "/settings"));
     if (shell.paired)
       nav.append(link("ui.nav.parent", "open-parent", "/parent"));
@@ -546,9 +548,56 @@ const parentSettingsScreen: Screen = {
   },
 };
 
+const sheet: Screen = {
+  path: "/sheet",
+  render() {
+    const section = el("section", {}, heading("ui.sheet.title"));
+    const list = el("ul", { className: "skills" });
+    section.append(list);
+    section.append(link("ui.nav.back", "back", "/"));
+    section.dataset["busy"] = "1";
+    void skills().then((got) => {
+      delete section.dataset["busy"];
+      if (!got) {
+        list.append(el("li", {}, t("ui.devices.failed")));
+        return;
+      }
+      for (const s of got) {
+        const item = el("li", { className: "skill" });
+        item.dataset["skill"] = s.skill;
+        item.append(el("h2", {}, t(uiKey(`ui.skills.${s.skill}.name`))));
+        if (!s.shown) {
+          item.append(el("p", {}, t("ui.sheet.notShown")));
+        } else {
+          item.append(
+            el(
+              "p",
+              { className: "level" },
+              `${t("ui.sheet.level")} ${String(s.level)}`,
+            ),
+          );
+          const bar = el("progress", {});
+          bar.setAttribute("max", "100");
+          bar.setAttribute("value", String(s.percent));
+          item.append(bar, el("span", {}, ` ${String(s.percent)} %`));
+          const steps = el("ul", { className: "steps" });
+          for (let n = 1; n <= s.level; n += 1)
+            steps.append(
+              el("li", {}, t(uiKey(`ui.skills.${s.skill}.step.${String(n)}`))),
+            );
+          item.append(steps);
+        }
+        list.append(item);
+      }
+    });
+    return section;
+  },
+};
+
 export const SCREENS: readonly Screen[] = [
   home,
   settings,
+  sheet,
   pairing,
   parentLoginScreen,
   parentDevicesScreen,
