@@ -1,6 +1,7 @@
 // A prepared scenario (ADR-3270): a graph of encounters that the Master turns into full scenes.
 // It is data, so code can refuse one that can't be played.
 import { z } from "zod";
+import { SKILLS, type SkillName } from "../engine/model/skills.js";
 
 const Id = z.string().min(1);
 
@@ -25,6 +26,8 @@ export const BEATS = [
 export type Beat = (typeof BEATS)[number];
 
 export const KINDS = ["mythology", "case", "character", "filler"] as const;
+
+const SKILL_NAMES = SKILLS.map((s) => s.skill) as [SkillName, ...SkillName[]];
 
 export const Scenario = z.object({
   id: Id,
@@ -71,6 +74,8 @@ export const Scenario = z.object({
       subtext: z.string(),
       /** Exits are what passing the encounter led to, and never the player's choices. */
       exits: z.array(z.object({ when: z.string().min(1), next: Id })),
+      /** The skills that fit this encounter's obstacle, for the Director to draw a check from (REQ-8404). */
+      accepts: z.array(z.enum(SKILL_NAMES)).optional(),
       /** Library entries that reach the Master by default in this encounter (REQ-8336). */
       attached: z.array(Id).optional(),
     }),
@@ -196,7 +201,12 @@ function skipsFinale(
 /** The faults that stop a scenario from being played; an empty list means it can run (REQ-8204). */
 export function checkScenario(
   scenario: Scenario,
-  plan: { readonly minChecks: number; readonly names?: readonly string[] },
+  plan: {
+    readonly minChecks: number;
+    readonly names?: readonly string[];
+    /** The skills the Director asks the adventure to practise, with the checks each needs (REQ-8418). */
+    readonly practise?: readonly { skill: SkillName; checks: number }[];
+  },
 ): string[] {
   const faults: string[] = [];
   const encounters = new Map(scenario.encounters.map((e) => [e.id, e]));
@@ -231,6 +241,14 @@ export function checkScenario(
   walk(scenario.start);
   for (const encounter of scenario.encounters)
     if (!reached.has(encounter.id)) faults.push(`unreachable:${encounter.id}`);
+  for (const { skill, checks } of plan.practise ?? []) {
+    const taking = scenario.encounters.filter((e) =>
+      e.accepts?.includes(skill),
+    );
+    if (taking.length === 0) faults.push(`skill_unaccepted:${skill}`);
+    else if (taking.reduce((sum, e) => sum + e.checks, 0) < checks)
+      faults.push(`skill_too_few_checks:${skill}`);
+  }
   const least = fewestChecks(scenario.start, encounters, new Map(), new Set());
   if (least === null) faults.push("loop");
   else {
