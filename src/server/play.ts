@@ -48,6 +48,7 @@ import {
 } from "../engine/tasks/template.js";
 import {
   AdventureCurrentOut,
+  SkillsOut,
   AnswerIn,
   AnswerOut,
   BreakIn,
@@ -83,6 +84,7 @@ import type { Db } from "./database.js";
 import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
 import { createRateCap } from "./rate.js";
 import { send } from "./send.js";
+import { skillsRead } from "./skills.js";
 import { mountStream, type Stream } from "./stream.js";
 import {
   adventureState,
@@ -670,6 +672,12 @@ export function mountPlay(
     lease ??= { deviceId, sessionId, beatAt: tick };
     lease.beatAt = tick;
     return send(c, HeartbeatOut, { status: "ok" });
+  });
+
+  app.get("/api/player/skills", (c) => {
+    const deviceId = device(db, c);
+    if (deviceId instanceof Response) return deviceId;
+    return send(c, SkillsOut, { skills: skillsRead(db) });
   });
 
   app.get("/api/adventure/current", (c) => {

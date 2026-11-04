@@ -8,6 +8,7 @@ import type {
   ResumeOut,
   Room,
   Scene,
+  SkillsOut,
   StopOffer,
 } from "../shared/api.js";
 import type { Interface } from "./interface.js";
@@ -139,6 +140,11 @@ export async function saveParentSettings(
 }
 
 /** The statistics reset; the server wants `confirm` and refuses without it (REQ-8386). */
+export async function skills(): Promise<SkillsOut["skills"] | null> {
+  const { status, body } = await call("/api/player/skills");
+  return status === 200 ? (body as unknown as SkillsOut).skills : null;
+}
+
 export async function resetStats(): Promise<ParentReply<null>> {
   const { status, body } = await call("/api/parent/reset-stats", {
     method: "POST",
