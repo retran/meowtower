@@ -2,6 +2,8 @@
 // reading, and revises until no major fault is left (REQ-8254). Every step is a structured reply (REQ-8236).
 import { readFileSync } from "node:fs";
 import { z } from "zod";
+import type { PracticeItem } from "../engine/director/skill-plan.js";
+import type { SkillName } from "../engine/model/skills.js";
 import type { Gateway } from "../server/gateway/gateway.js";
 import type { Lang } from "../shared/i18n.js";
 import {
@@ -10,6 +12,7 @@ import {
   MIN_ENCOUNTERS,
   Scenario,
 } from "./scenario.js";
+import { practiseText, skillTexts, type SkillFacts } from "./skill-facts.js";
 
 const Prompt = z.object({
   system: z.string(),
@@ -66,6 +69,10 @@ export interface ScenarioAsk {
   readonly lang: Lang;
   readonly brief: string;
   readonly minChecks: number;
+  /** The Director's plan of practice, which the scenario must serve (REQ-8416, REQ-8418). */
+  readonly practise?: readonly PracticeItem[];
+  /** What the player can do and is learning, as facts without numbers (REQ-8408). */
+  readonly facts?: SkillFacts;
 }
 
 export interface WrittenScenario {
@@ -79,7 +86,7 @@ export interface WrittenScenario {
 /** A playable scenario, or null when no version passed code's check (REQ-8198, REQ-8204). */
 export async function writeScenario(
   gateway: Gateway,
-  { bucket, lang, brief, minChecks }: ScenarioAsk,
+  { bucket, lang, brief, minChecks, practise, facts }: ScenarioAsk,
 ): Promise<WrittenScenario | null> {
   const prompt = promptOf(lang);
   const system = `${prompt.system}\n\n${worldOf(lang)}`;
@@ -89,6 +96,13 @@ export async function writeScenario(
       .replace("{min}", String(MIN_ENCOUNTERS))
       .replace("{max}", String(MAX_ENCOUNTERS))
       .replace("{checks}", String(minChecks)),
+    ...(facts && facts.can.length > 0
+      ? [skillTexts(lang).can.replace("{list}", facts.can.join("; "))]
+      : []),
+    ...(facts && facts.learning.length > 0
+      ? [skillTexts(lang).learning.replace("{list}", facts.learning.join(", "))]
+      : []),
+    ...(practise && practise.length > 0 ? [practiseText(practise, lang)] : []),
   ].join("\n");
 
   async function step<T>(
@@ -137,7 +151,13 @@ export async function writeScenario(
     const draft = await step(Scenario, system, user);
     if (!draft) return kept;
     const faults = draft.value
-      ? checkScenario(draft.value, { minChecks })
+      ? checkScenario(draft.value, {
+          minChecks,
+          practise: (practise ?? []).map((p) => ({
+            skill: p.skill as SkillName,
+            checks: p.checks,
+          })),
+        })
       : ["schema"];
     let unresolved: readonly string[] = [];
     if (draft.value && faults.length === 0) {

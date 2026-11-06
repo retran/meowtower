@@ -6,5 +6,16 @@
   "write": "Schrijf alle ontmoetingen volgens dit plan:\n{plan}",
   "revise": "Dit is het scenario:\n{scenario}\nHerstel dit: {faults}. Geef het hele scenario terug.",
   "critic": "Je redigeert modules voor tafelspellen. Beoordeel deze graaf van ontmoetingen voor een kinderavontuur, streng volgens deze regels: het conflict is duidelijk en houdt stand, de climax beantwoordt de dramatische vraag en wendingen keren de situatie echt om; elke ontmoeting heeft een duidelijk doel, obstakel en druk; ze kan uitgroeien tot een boeiende scène; uitgangen zijn verschillende gevolgen; wat wordt opgezet, komt later terug; belangrijke personages hebben een eigen doel; de spanning stijgt naar het einde; de eindes verschillen en volgen uit het pad; niets is enger of volwassener dan de wereld. Verdeel je bevindingen: major is wat het spelen tegenhoudt of de logica of spanning breekt, en minor is wat een goede spelleider onderweg oplost. Dit is een skelet, dus vraag geen details die de Meester uitwerkt. Noem alleen echte problemen, kort en concreet.",
-  "review": "Het scenario:\n{scenario}"
+  "review": "Het scenario:\n{scenario}",
+  "skills": {
+    "can": "Wat de speler al kan: {list}.",
+    "learning": "Wat de speler nog leert: {list}.",
+    "practise": "Het plan van het avontuur vraagt om vaardigheden te oefenen. Kies hindernissen die erbij passen en noem in het veld accepts van elke ontmoeting de passende vaardigheden met hun code. Verzamel voor elke vaardigheid minstens het genoemde aantal controles in totaal in de ontmoetingen die haar accepteren:\n{list}",
+    "line": "{code} (\"{name}\"): {purpose}, minstens {checks} controles",
+    "purposes": {
+      "learn": "de speler leert het nog, dus een makkelijker hindernis met een hint in het verhaal",
+      "practise": "de speler maakt het vast, dus een gewone hindernis",
+      "use": "de speler beheerst het, dus laat haar het gebruiken en anderen helpen"
+    }
+  }
 }
