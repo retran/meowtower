@@ -2,7 +2,11 @@
 // learning as facts without numbers, and the plan's skills by name, purpose and checks.
 import { describe, expect, it } from "vitest";
 import type { SkillScore } from "../../src/engine/model/skills.js";
-import { practiseText, skillFacts } from "../../src/story/skill-facts.js";
+import {
+  openedSteps,
+  practiseText,
+  skillFacts,
+} from "../../src/story/skill-facts.js";
 
 const scores: SkillScore[] = [
   { skill: "marks", shown: true, level: 4, percent: 37 },
@@ -34,5 +38,21 @@ describe("what the writer is told about the player", () => {
     expect(text).toContain("trade");
     expect(text).toContain("Trade");
     expect(text).toContain("4");
+  });
+});
+
+describe("what the Master is told she can do", () => {
+  it("lists every step she has opened in each skill and none she has not", () => {
+    const steps = openedSteps(scores, "en");
+    const marks = steps.find((s) => s.startsWith("Marks"));
+    expect(marks).toContain("read a label");
+    expect(marks).toContain("code locks");
+    expect(marks).not.toContain("forgery");
+    expect(steps.find((s) => s.startsWith("Sharing"))).toBeUndefined();
+  });
+
+  it("holds no digit, so no level, node or estimate reaches the Master", () => {
+    for (const lang of ["ru", "en", "nl"] as const)
+      expect(openedSteps(scores, lang).join(" ")).not.toMatch(/\d/);
   });
 });

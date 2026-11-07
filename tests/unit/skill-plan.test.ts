@@ -3,6 +3,7 @@
 import { describe, expect, it } from "vitest";
 import {
   chooseSkills,
+  pickAccepted,
   practisePlan,
   purposeOf,
   defaultSeed,
@@ -72,5 +73,34 @@ describe("the plan of practice", () => {
     expect(purposeOf(3)).toBe("practise");
     expect(purposeOf(4)).toBe("practise");
     expect(purposeOf(5)).toBe("use");
+  });
+});
+
+describe("the check's domain among the accepted skills", () => {
+  it("picks the skill with the greatest need, which is the lowest level, and a skill not yet shown counts as level 1", () => {
+    expect(
+      pickAccepted(["sharing", "precision"], skills, defaultSeed("a")),
+    ).toBe("sharing");
+    expect(
+      pickAccepted(["trade", "wayfinding"], skills, defaultSeed("a")),
+    ).toBe("wayfinding");
+  });
+
+  it("breaks a tie by the seed, the same way each time and not always the same skill", () => {
+    const tied = ["marks", "wayfinding"];
+    const first = pickAccepted(tied, skills, defaultSeed("t1"));
+    expect(pickAccepted(tied, skills, defaultSeed("t1"))).toBe(first);
+    const picks = new Set(
+      Array.from({ length: 40 }, (_, i) =>
+        pickAccepted(tied, skills, defaultSeed(`t${String(i)}`)),
+      ),
+    );
+    expect(picks.size).toBe(2);
+  });
+
+  it("returns the only skill, and null when none is accepted or none is known", () => {
+    expect(pickAccepted(["trade"], skills, defaultSeed("a"))).toBe("trade");
+    expect(pickAccepted([], skills, defaultSeed("a"))).toBeNull();
+    expect(pickAccepted(["cooking"], skills, defaultSeed("a"))).toBeNull();
   });
 });
