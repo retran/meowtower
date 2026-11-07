@@ -3,6 +3,8 @@
 import { describe, expect, it } from "vitest";
 import {
   chooseSkills,
+  practisePlan,
+  purposeOf,
   defaultSeed,
   weightOf,
 } from "../../src/engine/director/skill-plan.js";
@@ -51,5 +53,24 @@ describe("the draw", () => {
     expect(of("marks")).toBeGreaterThan(of("trade"));
     expect(of("marks")).toBeLessThan(3000);
     expect(of("trade")).toBeGreaterThan(0);
+  });
+});
+
+describe("the plan of practice", () => {
+  it("names each chosen skill with its purpose by level and the checks asked, and no number of the model", () => {
+    const plan = practisePlan(skills, 3, defaultSeed("p1"), 4);
+    expect(plan).toHaveLength(3);
+    for (const item of plan) {
+      expect(item.checks).toBe(4);
+      expect(Object.keys(item).sort()).toEqual(["checks", "purpose", "skill"]);
+    }
+  });
+
+  it("gives a purpose by what the player can already do", () => {
+    expect(purposeOf(null)).toBe("learn");
+    expect(purposeOf(2)).toBe("learn");
+    expect(purposeOf(3)).toBe("practise");
+    expect(purposeOf(4)).toBe("practise");
+    expect(purposeOf(5)).toBe("use");
   });
 });

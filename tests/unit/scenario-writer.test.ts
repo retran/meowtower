@@ -189,3 +189,28 @@ describe("the scenario loop", () => {
     expect((await writeScenario(gateway, ask))?.scenario.id).toBe("s1");
   });
 });
+
+describe("the plan of practice in the loop", () => {
+  const practising = {
+    ...ask,
+    lang: "en" as const,
+    practise: [
+      { skill: "trade" as const, purpose: "learn" as const, checks: 2 },
+    ],
+    facts: { can: ["Marks: opens code locks"], learning: ["Trade"] },
+  };
+
+  it("tells the writer the plan and the facts before it plans", async () => {
+    const { gateway, users } = replies(PLAN, OK);
+    await writeScenario(gateway, practising);
+    expect(users[0]).toContain("trade");
+    expect(users[0]).toContain("Marks: opens code locks");
+    expect(users[0]).toContain("Trade");
+  });
+
+  it("revises a scenario that no encounter accepts a skill of the plan", async () => {
+    const { gateway, users } = replies(PLAN, OK, scenario(10), scenario(10));
+    await writeScenario(gateway, practising);
+    expect(users[3]).toContain("skill_unaccepted:trade");
+  });
+});

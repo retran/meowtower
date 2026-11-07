@@ -6,5 +6,16 @@
   "write": "Write all the encounters from this plan:\n{plan}",
   "revise": "Here is the scenario:\n{scenario}\nFix this: {faults}. Return the whole scenario.",
   "critic": "You edit modules for tabletop games. Judge this graph of encounters for a child's adventure, strictly by these rules: the conflict is clear and holds, the climax answers the dramatic question, and turning points truly reverse the situation; each encounter has a clear goal, obstacle and pressure; it can unfold into an interesting scene; exits are different consequences and not one thing; what is set up pays off later; important characters have aims of their own; tension rises to the end; endings differ and follow from the path; nothing is scarier or more adult than the world. Sort your findings: major is what stops the game from being run or breaks its logic or interest, and minor is what a good Dungeon Master fixes on the fly. This is a skeleton, so don't ask for detail the Master unfolds. Name only real problems, briefly and concretely.",
-  "review": "The scenario:\n{scenario}"
+  "review": "The scenario:\n{scenario}",
+  "skills": {
+    "can": "What the player can already do: {list}.",
+    "learning": "What the player is still learning: {list}.",
+    "practise": "The adventure's plan asks to practise skills. Choose obstacles that fit them, and in each encounter's accepts field name the fitting skills by their code. For each skill, gather at least the stated number of checks in total across the encounters that accept it:\n{list}",
+    "line": "{code} (\"{name}\"): {purpose}, at least {checks} checks",
+    "purposes": {
+      "learn": "the player is still learning it, so an easier obstacle with a hint in the story",
+      "practise": "the player is settling it, so an ordinary obstacle",
+      "use": "the player has it, so let her use it and help others"
+    }
+  }
 }

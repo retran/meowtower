@@ -267,3 +267,44 @@ describe("a scenario", () => {
     expect(checkScenario(flat, { minChecks: 0 })).toContain("few_branches");
   });
 });
+
+describe("the skills a scenario accepts", () => {
+  const accepting = (skill: string, count: number): Scenario => {
+    const base = chain(10);
+    return {
+      ...base,
+      encounters: base.encounters.map((e, i) =>
+        i < count ? { ...e, accepts: [skill as "trade"] } : e,
+      ),
+    };
+  };
+  const plan = (skill: "trade", checks: number) => ({
+    minChecks: 0,
+    practise: [{ skill, checks }],
+  });
+
+  it("parses a skill by its name and refuses a name that is no skill", () => {
+    expect(Schema.safeParse(accepting("trade", 2)).success).toBe(true);
+    expect(Schema.safeParse(accepting("cooking", 2)).success).toBe(false);
+  });
+
+  it("passes when the encounters that accept a skill hold the checks the plan asks", () => {
+    expect(checkScenario(accepting("trade", 3), plan("trade", 6))).toEqual([]);
+  });
+
+  it("refuses a scenario in which no encounter accepts a skill the plan asks for", () => {
+    expect(checkScenario(chain(10), plan("trade", 2))).toContain(
+      "skill_unaccepted:trade",
+    );
+  });
+
+  it("refuses a scenario in which the accepting encounters hold too few checks", () => {
+    expect(checkScenario(accepting("trade", 2), plan("trade", 6))).toContain(
+      "skill_too_few_checks:trade",
+    );
+  });
+
+  it("asks nothing of skills when the plan names none", () => {
+    expect(checkScenario(chain(10), { minChecks: 0 })).toEqual([]);
+  });
+});
