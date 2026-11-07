@@ -69,3 +69,19 @@ export function practisePlan(
     checks,
   }));
 }
+
+/**
+ * The skill whose check a player's action takes among those the encounter accepts: the one she needs
+ * most, which is the lowest level, and a tie goes by the seed (REQ-8404). `null` where none is known.
+ */
+export function pickAccepted(
+  accepts: readonly string[],
+  skills: readonly SkillLevel[],
+  seed: Uint8Array,
+): string | null {
+  const known = skills.filter((s) => accepts.includes(s.skill));
+  const lowest = Math.min(...known.map((s) => s.level ?? 1));
+  const tied = known.filter((s) => (s.level ?? 1) === lowest);
+  if (tied.length === 0) return null;
+  return tied[Xoshiro128.fromSeed(seed).int(tied.length)]?.skill ?? null;
+}

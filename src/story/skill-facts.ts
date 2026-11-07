@@ -82,3 +82,20 @@ export function practiseText(
     .join("\n");
   return practise.replace("{list}", list);
 }
+
+/** Every step she has opened in each skill she has shown, as things she can do, with no number (REQ-8406). */
+export function openedSteps(
+  scores: readonly SkillScore[],
+  lang: Lang,
+): string[] {
+  const words = wordsOf(lang);
+  return scores.flatMap((s) =>
+    s.shown
+      ? [
+          `${words.name(s.skill)}: ${Array.from({ length: s.level }, (_, i) =>
+            words.step(s.skill, i + 1),
+          ).join(" ")}`,
+        ]
+      : [],
+  );
+}
