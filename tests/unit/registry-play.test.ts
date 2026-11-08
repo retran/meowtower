@@ -3,7 +3,6 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import Database from "better-sqlite3";
 import { afterAll, describe, expect, it } from "vitest";
 import { createApp } from "../../src/server/app.js";
 import { openDatabase } from "../../src/server/database.js";
@@ -24,9 +23,7 @@ const app = await createApp({
 let seq = 0;
 const token = await registerDevice(db, "tablet");
 const cookie = { cookie: `meowtower_device=${token}` };
-const second = new Database(path, { readonly: true });
 afterAll(async () => {
-  second.close();
   await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
@@ -59,16 +56,16 @@ async function next(sessionId: string): Promise<Room> {
   return Room.parse(await res.json());
 }
 
-const shownOf = (
+const shownOf = async (
   itemId: string,
-): { correctAnswer: string; templateId: string; seed: string } =>
+): Promise<{ correctAnswer: string; templateId: string; seed: string }> =>
   JSON.parse(
     (
-      second
+      (await db
         .prepare(
-          "SELECT payload FROM events WHERE type = 'item_shown' AND json_extract(payload, '$.itemId') = ?",
+          `SELECT payload FROM events WHERE type = 'item_shown' AND ${db.jsonField("payload", "itemId")} = ?`,
         )
-        .get(itemId) as { payload: string }
+        .get(itemId)) as { payload: string }
     ).payload,
   ) as { correctAnswer: string; templateId: string; seed: string };
 
@@ -126,7 +123,7 @@ describe("the registry as the source of tasks", () => {
     let pictures = 0;
     for (let i = 0; i < 30; i += 1) {
       const room = await next(sessionId);
-      const shown = shownOf(room.itemId);
+      const shown = await shownOf(room.itemId);
       templates.add(shown.templateId);
       if (room.view.svg) pictures += 1;
       expect(room.view.text.length).toBeGreaterThan(0);
@@ -142,7 +139,7 @@ describe("the registry as the source of tasks", () => {
   it("gives a template hint, then a parallel task of the same template after a wrong answer", async () => {
     const sessionId = await start();
     const room = await next(sessionId);
-    const first = shownOf(room.itemId);
+    const first = await shownOf(room.itemId);
     const hint = await app.request(`/api/item/${room.itemId}/hint`, {
       method: "POST",
       headers: json,
@@ -169,7 +166,7 @@ describe("the registry as the source of tasks", () => {
     });
     const twin = Room.parse(await again.json());
     expect(twin.attemptNo).toBe(2);
-    const shown = shownOf(twin.itemId);
+    const shown = await shownOf(twin.itemId);
     expect(shown.templateId).toBe(first.templateId);
     expect(shown.seed).not.toBe(first.seed);
   });
@@ -178,7 +175,7 @@ describe("the registry as the source of tasks", () => {
     const sessionId = await start();
     for (let i = 0; i < 12; i += 1) {
       const room = await next(sessionId);
-      const shown = shownOf(room.itemId);
+      const shown = await shownOf(room.itemId);
       const item = rebuild(shown.templateId, shown.seed);
       const trap = item?.made.traps[0];
       // A draw can leave a task without a trap: a sign has few wrong values.

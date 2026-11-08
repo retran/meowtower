@@ -41,7 +41,7 @@ const latestStored = async (
 ): Promise<{ version: string; canonical: string } | undefined> =>
   (await db
     .prepare(
-      "SELECT version, canonical FROM graph_versions ORDER BY stored_at DESC, rowid DESC LIMIT 1",
+      "SELECT version, canonical FROM graph_versions ORDER BY stored_at DESC, version DESC LIMIT 1",
     )
     .get()) as { version: string; canonical: string } | undefined;
 
@@ -75,7 +75,7 @@ export async function startGraph(
     const before = await storedCount(db);
     await db
       .prepare(
-        "INSERT OR IGNORE INTO graph_versions (version, canonical, stored_at) VALUES (?, ?, ?)",
+        "INSERT INTO graph_versions (version, canonical, stored_at) VALUES (?, ?, ?) ON CONFLICT DO NOTHING",
       )
       .run(version, graph.canonical(), now().toISOString());
     const after = await storedCount(db);

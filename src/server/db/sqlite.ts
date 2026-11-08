@@ -61,6 +61,43 @@ export class SqliteDb implements Db {
     return this.native.pragma(source, options);
   }
 
+  async tableExists(name: string): Promise<boolean> {
+    await this.enter();
+    return (
+      this.native
+        .prepare(
+          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+        )
+        .get(name) !== undefined
+    );
+  }
+
+  async tableNames(): Promise<string[]> {
+    await this.enter();
+    return (
+      this.native
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name",
+        )
+        .all() as { name: string }[]
+    ).map((r) => r.name);
+  }
+
+  async columnsOf(table: string): Promise<string[]> {
+    await this.enter();
+    return (
+      this.native
+        .prepare("SELECT name FROM pragma_table_info(?)")
+        .all(table) as {
+        name: string;
+      }[]
+    ).map((c) => c.name);
+  }
+
+  jsonField(column: string, field: string): string {
+    return `json_extract(${column}, '$.${field}')`;
+  }
+
   transaction<A extends unknown[], R>(
     fn: (...args: A) => Promise<R> | R,
   ): (...args: A) => Promise<R> {

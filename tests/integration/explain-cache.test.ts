@@ -21,12 +21,7 @@ afterAll(async () => {
 
 /** A table's rows, `computed_at` left out, in a fixed order. */
 async function rows(table: string): Promise<string> {
-  const columns = (
-    (await db.prepare("SELECT name FROM pragma_table_info(?)").all(table)) as {
-      name: string;
-    }[]
-  )
-    .map((c) => c.name)
+  const columns = (await db.columnsOf(table))
     .filter((c) => c !== "computed_at")
     .join(", ");
   return JSON.stringify(

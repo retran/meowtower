@@ -97,7 +97,7 @@ export async function dashboard(db: Db, now: Date): Promise<Dashboard> {
   const judged = rows.filter((r) => r.verdict !== null);
   const calls = (await db
     .prepare(
-      `SELECT COUNT(*) AS calls, COALESCE(SUM(outcome != 'ok'), 0) AS failed,
+      `SELECT COUNT(*) AS calls, COALESCE(SUM(CASE WHEN outcome != 'ok' THEN 1 ELSE 0 END), 0) AS failed,
          COALESCE(SUM(CASE WHEN at >= ? THEN cost_usd ELSE 0 END), 0) AS month
        FROM llm_log`,
     )

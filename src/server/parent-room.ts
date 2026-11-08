@@ -60,11 +60,7 @@ export async function parentSettings(db: Db): Promise<{
   hideRankFalls: boolean;
 }> {
   const stored = async (key: string): Promise<{ value: string } | undefined> =>
-    (await db
-      .prepare(
-        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parent_settings'",
-      )
-      .get())
+    (await db.tableExists("parent_settings"))
       ? ((await db
           .prepare("SELECT value FROM parent_settings WHERE key = ?")
           .get(key)) as { value: string } | undefined)

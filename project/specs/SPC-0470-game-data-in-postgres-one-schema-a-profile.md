@@ -26,6 +26,8 @@ The migrations for Postgres live in `migrations/postgres/` under the numbers of 
 
 The tool `tools/move-to-postgres.ts` moves the existing player's log into the schema of profile 1 with every event, the same event count and the same derived tables (REQ-8522). It opens the SQLite file read-only and leaves it unchanged until the parent deletes it (REQ-8526).
 
+The test run holds the engine to one behaviour on both databases: `npm test` runs the whole suite on SQLite and again on Postgres (`npm run test:pg`), and a test that reads a SQLite file with a handle of its own runs on SQLite only.
+
 A restore loads a dump into a new schema and swaps it in only when its derived tables match the log it holds (REQ-8524). The backups and the export read Postgres (REQ-8528).
 
 ## Failure paths

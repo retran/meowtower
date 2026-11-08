@@ -5,9 +5,10 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Database from "better-sqlite3";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, expect, it } from "vitest";
 import { openDatabase } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
+import { sqliteOnly } from "../helpers/backend.js";
 
 const RUNS = Number(process.env["CRASH_RUNS"] ?? 100);
 const dir = mkdtempSync(join(tmpdir(), "meowtower-crash-"));
@@ -59,75 +60,78 @@ async function kill(child: ChildProcess): Promise<void> {
 
 // TSK-0030 criterion 3, and since TSK-0440 the only write route the crash test
 // uses: the answer request of ADR-0030.
-describe("REQ-2508: no answer whose reply was sent is lost when the process dies", () => {
-  it("finds no server already on the test port", async () => {
-    await expect(fetch("http://127.0.0.1:3917/health")).rejects.toThrow();
-  });
+sqliteOnly(
+  "REQ-2508: no answer whose reply was sent is lost when the process dies",
+  () => {
+    it("finds no server already on the test port", async () => {
+      await expect(fetch("http://127.0.0.1:3917/health")).rejects.toThrow();
+    });
 
-  it(
-    `keeps the answer ${RUNS} times out of ${RUNS}`,
-    async () => {
-      const seed = await openDatabase(env.MEOWTOWER_DB);
-      const token = await registerDevice(seed, "tablet");
-      await seed.close();
-      const headers = {
-        cookie: `meowtower_device=${token}`,
-        "content-type": "application/json",
-      };
-      const input = {
-        firstKeyMs: 500,
-        submittedMs: 1500,
-        edits: 0,
-        erasures: 0,
-        keyPresses: 1,
-        focusLosses: { count: 0, totalMs: 0 },
-        method: "keypad",
-      };
-      let lost = 0;
-      for (let i = 0; i < RUNS; i++) {
-        const child = await start();
-        const { sessionId } = (await (
-          await fetch("http://127.0.0.1:3917/api/session/start", {
-            method: "POST",
-            headers,
-            body: JSON.stringify({ mode: "zero", clientSeq: i }),
-          })
-        ).json()) as { sessionId: string };
-        const { itemId } = (await (
-          await fetch(`http://127.0.0.1:3917/api/session/${sessionId}/next`, {
-            headers,
-          })
-        ).json()) as { itemId: string };
-        const res = await fetch(
-          `http://127.0.0.1:3917/api/session/${sessionId}/answer`,
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              itemId,
-              raw: String(i),
-              dontKnow: false,
-              input,
-              clientSeq: i,
-            }),
-          },
+    it(
+      `keeps the answer ${RUNS} times out of ${RUNS}`,
+      async () => {
+        const seed = await openDatabase(env.MEOWTOWER_DB);
+        const token = await registerDevice(seed, "tablet");
+        await seed.close();
+        const headers = {
+          cookie: `meowtower_device=${token}`,
+          "content-type": "application/json",
+        };
+        const input = {
+          firstKeyMs: 500,
+          submittedMs: 1500,
+          edits: 0,
+          erasures: 0,
+          keyPresses: 1,
+          focusLosses: { count: 0, totalMs: 0 },
+          method: "keypad",
+        };
+        let lost = 0;
+        for (let i = 0; i < RUNS; i++) {
+          const child = await start();
+          const { sessionId } = (await (
+            await fetch("http://127.0.0.1:3917/api/session/start", {
+              method: "POST",
+              headers,
+              body: JSON.stringify({ mode: "zero", clientSeq: i }),
+            })
+          ).json()) as { sessionId: string };
+          const { itemId } = (await (
+            await fetch(`http://127.0.0.1:3917/api/session/${sessionId}/next`, {
+              headers,
+            })
+          ).json()) as { itemId: string };
+          const res = await fetch(
+            `http://127.0.0.1:3917/api/session/${sessionId}/answer`,
+            {
+              method: "POST",
+              headers,
+              body: JSON.stringify({
+                itemId,
+                raw: String(i),
+                dontKnow: false,
+                input,
+                clientSeq: i,
+              }),
+            },
+          );
+          expect(res.status).toBe(200);
+          await kill(child);
+          const log = new Database(env.MEOWTOWER_DB, { readonly: true });
+          const found = log
+            .prepare(
+              "SELECT count(*) AS n FROM events WHERE type IN ('attempt_submitted', 'verdict') AND json_extract(payload, '$.itemId') = ?",
+            )
+            .get(itemId) as { n: number };
+          log.close();
+          if (found.n !== 2) lost++;
+        }
+        console.log(
+          `crash test (answer): ${RUNS - lost} of ${RUNS} answers kept, ${lost} lost`,
         );
-        expect(res.status).toBe(200);
-        await kill(child);
-        const log = new Database(env.MEOWTOWER_DB, { readonly: true });
-        const found = log
-          .prepare(
-            "SELECT count(*) AS n FROM events WHERE type IN ('attempt_submitted', 'verdict') AND json_extract(payload, '$.itemId') = ?",
-          )
-          .get(itemId) as { n: number };
-        log.close();
-        if (found.n !== 2) lost++;
-      }
-      console.log(
-        `crash test (answer): ${RUNS - lost} of ${RUNS} answers kept, ${lost} lost`,
-      );
-      expect(lost).toBe(0);
-    },
-    RUNS * 8000,
-  );
-});
+        expect(lost).toBe(0);
+      },
+      RUNS * 8000,
+    );
+  },
+);

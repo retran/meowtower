@@ -67,7 +67,7 @@ export function createOutgoing(
     (statements ??= {
       count: db.prepare(
         `INSERT INTO text_counters (game_day, source, checked, blocked) VALUES (?, ?, 1, ?)
-         ON CONFLICT (game_day, source) DO UPDATE SET checked = checked + 1, blocked = blocked + excluded.blocked`,
+         ON CONFLICT (game_day, source) DO UPDATE SET checked = text_counters.checked + 1, blocked = text_counters.blocked + excluded.blocked`,
       ),
       share: db.prepare(
         "SELECT checked, blocked FROM text_counters WHERE game_day = ? AND source = ?",

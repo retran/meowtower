@@ -13,6 +13,9 @@ CREATE TABLE events (
   idem_key TEXT UNIQUE
 );
 
+-- The task a verdict or a hint belongs to is read from the payload.
+CREATE INDEX events_item ON events ((payload::jsonb ->> 'itemId'));
+
 -- REQ-2226: the database itself refuses every change and removal.
 CREATE FUNCTION append_only() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN

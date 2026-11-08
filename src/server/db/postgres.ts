@@ -8,6 +8,9 @@ import type { Db, RunResult, Statement } from "./index.js";
 // A bigint column holds counts and sequence numbers far below 2^53, so it reads as a number, the
 // way SQLite gave it.
 pg.types.setTypeParser(20, (value) => Number(value));
+// A sum or an average comes back as numeric, which the driver keeps as text; the figures here are
+// money, counts and estimates, all well inside a double.
+pg.types.setTypeParser(1700, (value) => Number(value));
 
 const SCHEMA_NAME = /^[a-z_][a-z0-9_]*$/;
 
@@ -85,6 +88,18 @@ export function bind(sql: string, params: unknown[]): Bound {
   };
 }
 
+/**
+ * Turns the SQLite spelling of a table definition into Postgres's: the projections declare their
+ * tables once, with `STRICT` and SQLite's type names. Other statements pass unchanged.
+ */
+export function ddl(sql: string): string {
+  if (!/^\s*CREATE\s+TABLE\b/i.test(sql)) return sql;
+  return sql
+    .replace(/\)\s*STRICT\s*$/i, ")")
+    .replace(/\bINTEGER\b/gi, "BIGINT")
+    .replace(/\bREAL\b/gi, "DOUBLE PRECISION");
+}
+
 interface Inside {
   readonly client: pg.PoolClient;
   savepoints: number;
@@ -129,12 +144,40 @@ export class PgDb implements Db {
 
   async exec(sql: string): Promise<void> {
     const store = this.inside.getStore();
-    await (store ? store.client : this.pool).query(sql);
+    await (store ? store.client : this.pool).query(ddl(sql));
   }
 
   /** Postgres has no pragmas; the call exists so shared start-up code runs on both. */
   async pragma(): Promise<unknown> {
     return undefined;
+  }
+
+  async tableExists(name: string): Promise<boolean> {
+    const res = await this.query(
+      "SELECT 1 FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ?",
+      [name],
+    );
+    return res.rows.length > 0;
+  }
+
+  async tableNames(): Promise<string[]> {
+    const res = await this.query(
+      "SELECT table_name AS name FROM information_schema.tables WHERE table_schema = current_schema() AND table_type = 'BASE TABLE' ORDER BY table_name",
+      [],
+    );
+    return (res.rows as { name: string }[]).map((r) => r.name);
+  }
+
+  async columnsOf(table: string): Promise<string[]> {
+    const res = await this.query(
+      "SELECT column_name AS name FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? ORDER BY ordinal_position",
+      [table],
+    );
+    return (res.rows as { name: string }[]).map((c) => c.name);
+  }
+
+  jsonField(column: string, field: string): string {
+    return `(${column}::jsonb ->> '${field}')`;
   }
 
   transaction<A extends unknown[], R>(

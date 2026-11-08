@@ -334,7 +334,7 @@ describe("REQ-0200: «Сохранить и уйти» at any step", () => {
       ]);
       const reasons = (await w.db
         .prepare(
-          "SELECT json_extract(payload, '$.reason') AS reason FROM events WHERE type IN ('adventure_paused', 'session_ended')",
+          `SELECT ${w.db.jsonField("payload", "reason")} AS reason FROM events WHERE type IN ('adventure_paused', 'session_ended')`,
         )
         .all()) as { reason: string }[];
       expect(reasons.map((r) => r.reason)).toEqual(["leave", "leave"]);

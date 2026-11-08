@@ -3,7 +3,6 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import Database from "better-sqlite3";
 import { afterAll, describe, expect, it } from "vitest";
 import { createApp } from "../../src/server/app.js";
 import { openDatabase } from "../../src/server/database.js";
@@ -19,9 +18,7 @@ const app = await createApp({ db, now: () => (clock += 100) });
 let seq = 0;
 const token = await registerDevice(db, "tablet");
 const cookie = { cookie: `meowtower_device=${token}` };
-const second = new Database(path, { readonly: true });
 afterAll(async () => {
-  second.close();
   await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
@@ -64,12 +61,14 @@ async function answer(sessionId: string, body: object): Promise<Response> {
   });
 }
 
-const logged = (itemId: string): { type: string; payload: string }[] =>
-  second
+const logged = async (
+  itemId: string,
+): Promise<{ type: string; payload: string }[]> =>
+  (await db
     .prepare(
-      "SELECT type, payload FROM events WHERE json_extract(payload, '$.itemId') = ? ORDER BY seq",
+      `SELECT type, payload FROM events WHERE ${db.jsonField("payload", "itemId")} = ? ORDER BY seq`,
     )
-    .all(itemId) as { type: string; payload: string }[];
+    .all(itemId)) as { type: string; payload: string }[];
 
 describe("every route needs a device token", () => {
   it("answers 401 without one", async () => {
@@ -88,7 +87,7 @@ describe("REQ-2508: the answer is committed before the reply", () => {
     const room = await next(sessionId);
     const res = await answer(sessionId, { itemId: room.itemId, raw: "7" });
     expect(res.status).toBe(200);
-    expect(logged(room.itemId).map((e) => e.type)).toEqual([
+    expect((await logged(room.itemId)).map((e) => e.type)).toEqual([
       "item_shown",
       "attempt_submitted",
       "verdict",
@@ -146,7 +145,9 @@ describe("REQ-2442: «Не знаю» is its own verdict", () => {
     ]) {
       const room = await next(sessionId);
       await answer(sessionId, { itemId: room.itemId, ...body });
-      const verdict = logged(room.itemId).find((e) => e.type === "verdict");
+      const verdict = (await logged(room.itemId)).find(
+        (e) => e.type === "verdict",
+      );
       verdicts.push(
         (JSON.parse(verdict?.payload ?? "{}") as { verdict: string }).verdict,
       );

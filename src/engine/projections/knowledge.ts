@@ -56,9 +56,16 @@ async function writeEstimates(
   computedAt: string,
 ): Promise<void> {
   const insert = db.prepare(
-    `INSERT OR REPLACE INTO ${target} VALUES (@node, @subtype, @pKnow, @nEff, @uncertainty, @lastSeen,
+    `INSERT INTO ${target} VALUES (@node, @subtype, @pKnow, @nEff, @uncertainty, @lastSeen,
       @stale, @nextReview, @confidence, @state, @rule, @items, @inferredState, @cutBy,
-      @isGap, @helpA, @helpB, @fluentA, @fluentB, @computedAt)`,
+      @isGap, @helpA, @helpB, @fluentA, @fluentB, @computedAt)
+     ON CONFLICT (node, subtype) DO UPDATE SET p_know = excluded.p_know, n_eff = excluded.n_eff,
+       uncertainty = excluded.uncertainty, last_seen = excluded.last_seen, stale = excluded.stale,
+       next_review = excluded.next_review, confidence = excluded.confidence, state = excluded.state,
+       rule = excluded.rule, items = excluded.items, inferred_state = excluded.inferred_state,
+       cut_by = excluded.cut_by, is_gap = excluded.is_gap, with_help_alpha = excluded.with_help_alpha,
+       with_help_beta = excluded.with_help_beta, fluency_alpha = excluded.fluency_alpha,
+       fluency_beta = excluded.fluency_beta, computed_at = excluded.computed_at`,
   );
   for (const e of estimates)
     await insert.run({

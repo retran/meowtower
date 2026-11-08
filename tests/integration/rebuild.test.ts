@@ -23,6 +23,7 @@ import { checkLogSize, runRecompute } from "../../src/server/recompute.js";
 import { createParentApp } from "../../src/server/parent.js";
 import { writeSyntheticLog } from "../helpers/synthetic-log.js";
 import { webp } from "../helpers/webp.js";
+import { onPostgres } from "../helpers/backend.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-recompute-"));
 const opened: Db[] = [];
@@ -54,12 +55,7 @@ async function world() {
 
 /** Every row of a table, `computed_at` left out, in a fixed order. */
 async function rows(db: Db, table: string): Promise<string> {
-  const columns = (
-    (await db.prepare("SELECT name FROM pragma_table_info(?)").all(table)) as {
-      name: string;
-    }[]
-  )
-    .map((c) => c.name)
+  const columns = (await db.columnsOf(table))
     .filter((c) => c !== "computed_at")
     .join(", ");
   return JSON.stringify(
@@ -84,13 +80,8 @@ async function services(db: Db): Promise<Record<string, string>> {
   return Object.fromEntries(
     await Promise.all(
       SERVICE_TABLES.map(async (t) => {
-        const there = await db
-          .prepare(
-            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
-          )
-          .get(t);
-        if (!there) return [t, "absent"] as const;
-        const all = await db.prepare(`SELECT * FROM ${t} ORDER BY rowid`).all();
+        if (!(await db.tableExists(t))) return [t, "absent"] as const;
+        const all = await db.prepare(`SELECT * FROM ${t} ORDER BY 1`).all();
         return [
           t,
           `${all.length} ${createHash("sha256").update(JSON.stringify(all)).digest("hex")}`,
@@ -101,34 +92,34 @@ async function services(db: Db): Promise<Record<string, string>> {
 }
 
 const shadowsLeft = async (db: Db): Promise<string[]> =>
-  (
-    (await db
-      .prepare(
-        "SELECT name FROM sqlite_master WHERE name LIKE '%\\_\\_next' ESCAPE '\\'",
-      )
-      .all()) as { name: string }[]
-  ).map((r) => r.name);
+  (await db.tableNames()).filter((name) => name.endsWith("__next"));
 
 describe("REQ-2200: each projection rebuilds identical from the log alone", () => {
-  it("rebuilds every table after it is deleted, the same in every column but computed_at", async () => {
-    const w = await world();
-    const report: string[] = [];
-    for (const p of PROJECTIONS) {
-      const before = await rows(w.db, p.table);
-      const count = (
-        (await w.db.prepare(`SELECT count(*) AS n FROM ${p.table}`).get()) as {
-          n: number;
-        }
-      ).n;
-      await w.db.exec(`DROP TABLE ${p.table}`);
-      const result = await recompute(w.db, { computedAt: "later" });
-      expect(await rows(w.db, p.table)).toEqual(before);
-      report.push(`${p.table} ${count} rows`);
-      expect(result.tables).toContain(p.table);
-    }
-    expect(await shadowsLeft(w.db)).toEqual([]);
-    console.log(`rebuild: ${w.events} events; ${report.join(", ")}`);
-  });
+  it(
+    "rebuilds every table after it is deleted, the same in every column but computed_at",
+    async () => {
+      const w = await world();
+      const report: string[] = [];
+      for (const p of PROJECTIONS) {
+        const before = await rows(w.db, p.table);
+        const count = (
+          (await w.db
+            .prepare(`SELECT count(*) AS n FROM ${p.table}`)
+            .get()) as {
+            n: number;
+          }
+        ).n;
+        await w.db.exec(`DROP TABLE ${p.table}`);
+        const result = await recompute(w.db, { computedAt: "later" });
+        expect(await rows(w.db, p.table)).toEqual(before);
+        report.push(`${p.table} ${count} rows`);
+        expect(result.tables).toContain(p.table);
+      }
+      expect(await shadowsLeft(w.db)).toEqual([]);
+      console.log(`rebuild: ${w.events} events; ${report.join(", ")}`);
+    },
+    onPostgres ? 120_000 : 30_000,
+  );
 });
 
 describe("REQ-2242: the seven service tables stay as they were", () => {
@@ -200,7 +191,9 @@ describe("appends go on while a recompute runs", () => {
     ).n;
     expect(appended).toBeGreaterThan(1);
     expect(shown).toBe(appended);
-    expect(worst).toBeLessThan(50);
+    // The swap's transaction also runs the knowledge passes, each a read of the whole log, and on
+    // Postgres each read is a round trip; the wait stays a fraction of a second.
+    expect(worst).toBeLessThan(onPostgres ? 250 : 50);
     console.log(
       `appends during recompute: ${appended}, longest wait ${worst.toFixed(2)} ms, recompute ${result.ms} ms`,
     );

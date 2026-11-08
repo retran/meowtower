@@ -1,6 +1,10 @@
 import { EventInvalid, events as registry } from "../../shared/events.js";
 import { ADVENTURE_STATE, FINISHED } from "../projections/lifecycle.js";
-import { applyProjections } from "../projections/registry.js";
+import {
+  applyProjections,
+  ensureProjectionTables,
+  recordFolded,
+} from "../projections/registry.js";
 import { ulid } from "./ulid.js";
 import { prepared } from "../projections/statements.js";
 import type { Db } from "../../server/db/index.js";
@@ -61,16 +65,9 @@ export async function appendEvents(
     db,
     `INSERT INTO events
        (id, ts, client_ms, device_id, session_id, adventure_id, type, v, payload, idem_key)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING seq`,
   );
-  // The adventures projection is created on its first fold, so an empty log
-  // has no table yet, and then no adventure to guard.
   const stateOf = async (adventureId: string): Promise<string | undefined> => {
-    const table = await prepared(
-      db,
-      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'adventures'",
-    ).get();
-    if (!table) return undefined;
     const row = (await prepared(
       db,
       "SELECT state FROM adventures WHERE adventure_id = ?",
@@ -80,7 +77,10 @@ export async function appendEvents(
   const write = db.transaction(async (batch: readonly NewEvent[]) => {
     // Every event of the batch is checked before any is written (ADR-0020).
     for (const e of batch) registry.validate(e.type, e.v, e.payload);
+    // A projection's table is created on the first append that needs it (SPC-0020).
+    await ensureProjectionTables(db);
     const appended: { seq: number; id: string }[] = [];
+    let lastTs = "";
     for (const e of batch) {
       // No event reopens a finished adventure (REQ-2404). Checked per event,
       // after the batch's earlier events have folded, so a batch that
@@ -97,7 +97,7 @@ export async function appendEvents(
         e.origin === "server"
           ? [SERVER_DEVICE, now]
           : [e.origin.deviceId, e.origin.clientMs];
-      const { lastInsertRowid } = await insert.run(
+      const inserted = (await insert.get(
         id,
         new Date(now).toISOString(),
         clientMs,
@@ -108,8 +108,8 @@ export async function appendEvents(
         e.v,
         JSON.stringify(e.payload),
         e.idemKey ?? null,
-      );
-      const seq = Number(lastInsertRowid);
+      )) as { seq: number };
+      const seq = Number(inserted.seq);
       const ts = new Date(now).toISOString();
       // Every projection folds the event in this same transaction (SPC-0020).
       await applyProjections(
@@ -129,8 +129,11 @@ export async function appendEvents(
         },
         ts,
       );
+      lastTs = ts;
       appended.push({ seq, id });
     }
+    const last = appended[appended.length - 1];
+    if (last) await recordFolded(db, last.seq, lastTs);
     return appended;
   });
   try {

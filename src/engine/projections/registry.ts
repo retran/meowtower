@@ -95,12 +95,17 @@ export async function withProjection<T>(
 }
 
 async function tableExists(db: Db, table: string): Promise<boolean> {
-  return (
-    (await prepared(
-      db,
-      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
-    ).get(table)) !== undefined
-  );
+  return await db.tableExists(table);
+}
+
+/**
+ * Creates the tables of the registered projections that are missing: one catalogue read for all of
+ * them, made once at the start of an append, not once for every event.
+ */
+export async function ensureProjectionTables(db: Db): Promise<void> {
+  const existing = new Set(await db.tableNames());
+  for (const p of registered)
+    if (!existing.has(p.table)) await db.exec(p.create);
 }
 
 /** Applies one stored event to every projection; runs inside appendEvents' transaction. */
@@ -109,27 +114,37 @@ export async function applyProjections(
   event: StoredEvent,
   computedAt: string,
 ): Promise<void> {
-  const meta = prepared(
-    db,
-    `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, rules_version, last_seq, computed_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(name) DO UPDATE SET model_version = excluded.model_version,
-       threshold_version = excluded.threshold_version, graph_version = excluded.graph_version,
-       rules_version = excluded.rules_version, last_seq = excluded.last_seq, computed_at = excluded.computed_at`,
-  );
-  for (const p of registered) {
-    if (!(await tableExists(db, p.table))) await db.exec(p.create);
-    await p.apply(db, event, computedAt);
-    await meta.run(
-      p.name,
-      VERSIONS.model,
-      VERSIONS.thresholds,
-      VERSIONS.graph,
-      VERSIONS.rules,
-      event.seq,
-      computedAt,
-    );
-  }
+  for (const p of registered) await p.apply(db, event, computedAt);
+}
+
+/**
+ * Records, for every registered projection, the versions it was folded under and the last event it
+ * took in (REQ-3802): one statement for the whole batch of an append.
+ */
+export async function recordFolded(
+  db: Db,
+  lastSeq: number,
+  computedAt: string,
+): Promise<void> {
+  const row = "(?, ?, ?, ?, ?, ?, ?)";
+  const values = registered.flatMap((p) => [
+    p.name,
+    VERSIONS.model,
+    VERSIONS.thresholds,
+    VERSIONS.graph,
+    VERSIONS.rules,
+    lastSeq,
+    computedAt,
+  ]);
+  await db
+    .prepare(
+      `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, rules_version, last_seq, computed_at)
+       VALUES ${registered.map(() => row).join(", ")}
+       ON CONFLICT(name) DO UPDATE SET model_version = excluded.model_version,
+         threshold_version = excluded.threshold_version, graph_version = excluded.graph_version,
+         rules_version = excluded.rules_version, last_seq = excluded.last_seq, computed_at = excluded.computed_at`,
+    )
+    .run(...values);
 }
 
 /**
@@ -154,7 +169,12 @@ export async function rebuildMissing(
     }
     const meta = prepared(
       db,
-      `INSERT OR REPLACE INTO derived_meta (name, model_version, threshold_version, graph_version, rules_version, last_seq, computed_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO derived_meta (name, model_version, threshold_version, graph_version, rules_version, last_seq, computed_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT (name) DO UPDATE SET model_version = excluded.model_version,
+         threshold_version = excluded.threshold_version, graph_version = excluded.graph_version,
+         rules_version = excluded.rules_version, last_seq = excluded.last_seq,
+         computed_at = excluded.computed_at`,
     );
     for (const p of missing) await p.fullPass?.(db, p.table, computedAt);
     for (const p of missing)
