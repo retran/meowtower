@@ -8,7 +8,7 @@ The generated indexes live in [specs](specs/README.md) and [defects](bugs/README
 
 <!-- meow-flow index -->
 
-36 specifications in all: 36 live.
+38 specifications in all: 38 live.
 
 | Identifier                                                                                               | What it concluded                                                                                                                                           | Status |
 | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
@@ -48,6 +48,8 @@ The generated indexes live in [specs](specs/README.md) and [defects](bugs/README
 | [SPC-0430](specs/SPC-0430-dutch-probe-families-letters-text-pairs-and-report.md)                         | The Dutch probe: its families, its letters, its Russian and Dutch text pairs, the stream `nl_probe` and its report section                                  | live   |
 | [SPC-0450](specs/SPC-0450-parent-hypotheses-conditions-hold-and-label.md)                                | The parent's hypotheses: the two events, the text form and history, and after the MVP the numeric conditions, the hold and the label                        | live   |
 | [SPC-0460](specs/SPC-0460-the-world-calendar-story-series-memory-ontology-and-pipeline.md)               | The world calendar, the story series, its memory, ontology and pipeline                                                                                     | live   |
+| [SPC-0470](specs/SPC-0470-game-data-in-postgres-one-schema-a-profile.md)                                 | Game data in Postgres on the Mac, one schema a profile                                                                                                      | live   |
+| [SPC-0480](specs/SPC-0480-parent-accounts-profiles-and-pairing.md)                                       | Parent accounts, profiles and the pairing of a child's device                                                                                               | live   |
 
 <!-- /meow-flow index -->
 
