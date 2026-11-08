@@ -277,5 +277,12 @@
   "ui.skills.interpreting.step.5": "You explain meanings to others and negotiate for them.",
   "ui.fall.warning": "The thread of {skill} is growing thin: it slipped twice in a row. Walk it once more while you still can, and it will pull tight again.",
   "ui.fall.skill": "The thread of {skill} has loosened, and its step slipped back by one. Every item, friend and opened floor stays with you. Tasks on this thread bring the step back.",
-  "ui.fall.rank": "Your rank mark has dimmed by one step because several threads loosened. Everything you gathered is still here. Tighten the threads and the mark will shine again."
+  "ui.fall.rank": "Your rank mark has dimmed by one step because several threads loosened. Everything you gathered is still here. Tighten the threads and the mark will shine again.",
+  "ui.parentSettings.hideRankFalls": "Falls of rank for the child",
+  "ui.parentSettings.hideRankFalls.no": "Show",
+  "ui.parentSettings.hideRankFalls.yes": "Hide",
+  "ui.parentFalls.title": "Falls of levels and rank",
+  "ui.parentFalls.none": "Nothing has fallen yet.",
+  "ui.parentFalls.skill": "{skill}: level of node {node} {from} → {to}, {when}",
+  "ui.parentFalls.rank": "Rank {from} → {to}, game day {day}"
 }

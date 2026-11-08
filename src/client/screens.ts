@@ -5,6 +5,7 @@ import {
   pair,
   parentDevices,
   parentLogin,
+  parentFalls,
   parentSettings,
   resetStats,
   skills,
@@ -413,6 +414,8 @@ const parentSettingsScreen: Screen = {
     const languages = el("fieldset", {});
     const creepiness = el("fieldset", {});
     const gender = el("fieldset", {});
+    const hideFalls = el("fieldset", {});
+    const falls = el("ul", { className: "falls" });
     const resetBox = el("fieldset", {});
     const nav = el("nav", { className: "actions" });
     const section = el(
@@ -422,7 +425,10 @@ const parentSettingsScreen: Screen = {
       languages,
       creepiness,
       gender,
+      hideFalls,
       limits,
+      heading("ui.parentFalls.title"),
+      falls,
       resetBox,
       note,
       nav,
@@ -495,6 +501,49 @@ const parentSettingsScreen: Screen = {
           ),
         ),
       );
+      hideFalls.append(
+        el("legend", {}, t("ui.parentSettings.hideRankFalls")),
+        ...(["no", "yes"] as const).map((value) =>
+          choice(
+            "hide-rank-falls",
+            value,
+            uiKey(`ui.parentSettings.hideRankFalls.${value}`),
+            (value === "yes") === current.hideRankFalls,
+            async () => {
+              note.textContent = "";
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ hideRankFalls: value === "yes" }),
+              );
+              note.textContent = t(
+                saved ? "ui.settings.saved" : "ui.devices.failed",
+              );
+            },
+          ),
+        ),
+      );
+      const listed = await asParent(section, note, parentFalls);
+      if (listed && listed.length === 0)
+        falls.append(el("li", {}, t("ui.parentFalls.none")));
+      for (const f of listed ?? [])
+        falls.append(
+          el(
+            "li",
+            {},
+            f.kind === "rank"
+              ? t("ui.parentFalls.rank", {
+                  from: f.from,
+                  to: f.to,
+                  day: f.day,
+                })
+              : t("ui.parentFalls.skill", {
+                  skill: t(uiKey(`ui.skills.${f.skill}.name`)),
+                  node: f.node,
+                  from: f.from,
+                  to: f.to,
+                  when: f.at.slice(0, 10),
+                }),
+          ),
+        );
       limits.append(
         el("legend", {}, t("ui.parentSettings.threeDay")),
         ...THREE_DAY_LIMITS.map((limit) => {
