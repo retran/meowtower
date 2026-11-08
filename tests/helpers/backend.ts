@@ -8,3 +8,6 @@ export const onPostgres = Boolean(process.env["MEOWTOWER_DATABASE_URL"]);
 
 export const sqliteOnly = onPostgres ? describe.skip : describe;
 export const sqliteOnlyIt = onPostgres ? it.skip : it;
+
+/** A test that opens Postgres by itself runs once, in the first pass, not again in the second. */
+export const oncePerRun = sqliteOnly;

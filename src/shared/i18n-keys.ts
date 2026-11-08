@@ -304,6 +304,8 @@ export interface StringParams {
   "ui.offline.title": NoParams;
   "ui.offline.body": NoParams;
   "ui.offline.retry": NoParams;
+  "ui.account.mail.subject": NoParams;
+  "ui.account.mail.body": { code: string | number; minutes: string | number };
 }
 
 export type Key = keyof StringParams;

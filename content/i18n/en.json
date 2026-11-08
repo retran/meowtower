@@ -287,5 +287,7 @@
   "ui.parentFalls.rank": "Rank {from} → {to}, game day {day}",
   "ui.offline.title": "No connection",
   "ui.offline.body": "The game needs a connection to the server. Check the Wi-Fi and the game opens by itself.",
-  "ui.offline.retry": "Try again"
+  "ui.offline.retry": "Try again",
+  "ui.account.mail.subject": "Your sign-in code for Misty Ford",
+  "ui.account.mail.body": "Your sign-in code is {code}. It works for {minutes} minutes. If you did not ask for it, ignore this message."
 }

@@ -16,7 +16,7 @@ This document covers the parent's account, the profiles it owns, sign-in, and ho
 
 ## Boundary
 
-Two tables in the `public` schema: `accounts` and `profiles`. The routes sign a parent in with an email and a six-digit code, list her profiles, and open the Parent Room of one. A child's device holds a device cookie for one profile.
+Three tables in the schema `acct`, apart from every profile's: `accounts`, `profiles` and `sign_in_codes`. The routes sign a parent in with an email and a six-digit code, list her profiles, and open the Parent Room of one. A child's device holds a device cookie for one profile.
 
 ## Behaviour
 

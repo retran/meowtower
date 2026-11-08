@@ -287,5 +287,7 @@
   "ui.parentFalls.rank": "Rang {from} → {to}, speldag {day}",
   "ui.offline.title": "Geen verbinding",
   "ui.offline.body": "Het spel heeft een verbinding met de server nodig. Controleer de wifi en het spel opent vanzelf.",
-  "ui.offline.retry": "Probeer opnieuw"
+  "ui.offline.retry": "Probeer opnieuw",
+  "ui.account.mail.subject": "Je inlogcode voor Nevelwade",
+  "ui.account.mail.body": "Je inlogcode is {code}. Hij werkt {minutes} minuten. Als je er niet om gevraagd hebt, negeer dan dit bericht."
 }
