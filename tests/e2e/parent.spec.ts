@@ -157,4 +157,15 @@ test("REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps
   await expect(page.getByRole("status")).toHaveText("Сохранено.");
   await ready(page, "/parent/settings");
   await expect(page.locator('[data-action="three-day-off"]')).toBeChecked();
+
+  // REQ-8004, REQ-8006: the hide setting saves, and the list of falls answers.
+  await page.locator('[data-action="hide-rank-falls-yes"]').check();
+  await expect(page.getByRole("status")).toHaveText("Сохранено.");
+  await ready(page, "/parent/settings");
+  await expect(
+    page.locator('[data-action="hide-rank-falls-yes"]'),
+  ).toBeChecked();
+  await page.locator('[data-action="hide-rank-falls-no"]').check();
+  await expect(page.locator("ul.falls li")).toHaveCount(1);
+  await expect(page.locator("ul.falls")).toContainText("Падений пока не было.");
 });

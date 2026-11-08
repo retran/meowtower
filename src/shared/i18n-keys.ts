@@ -284,6 +284,23 @@ export interface StringParams {
   "ui.fall.warning": { skill: string | number };
   "ui.fall.skill": { skill: string | number };
   "ui.fall.rank": NoParams;
+  "ui.parentSettings.hideRankFalls": NoParams;
+  "ui.parentSettings.hideRankFalls.no": NoParams;
+  "ui.parentSettings.hideRankFalls.yes": NoParams;
+  "ui.parentFalls.title": NoParams;
+  "ui.parentFalls.none": NoParams;
+  "ui.parentFalls.skill": {
+    from: string | number;
+    node: string | number;
+    skill: string | number;
+    to: string | number;
+    when: string | number;
+  };
+  "ui.parentFalls.rank": {
+    day: string | number;
+    from: string | number;
+    to: string | number;
+  };
 }
 
 export type Key = keyof StringParams;

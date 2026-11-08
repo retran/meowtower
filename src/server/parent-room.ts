@@ -10,6 +10,7 @@ import { z } from "zod";
 import { type Lang, setLang, SHIPPED } from "../shared/i18n.js";
 import { appendEvents } from "../engine/events/append.js";
 import type { Db } from "./database.js";
+import { fallsRead } from "./falls.js";
 import {
   CODE_LIFETIME_MS,
   DEVICE_COOKIE,
@@ -46,6 +47,7 @@ const SettingsIn = z
     language: z.enum(SHIPPED).optional(),
     creepiness: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
     gender: z.enum(["f", "m"]).optional(),
+    hideRankFalls: z.boolean().optional(),
   })
   .strict();
 
@@ -55,6 +57,7 @@ export function parentSettings(db: Db): {
   language: Lang;
   creepiness: 0 | 1 | 2;
   gender: "f" | "m";
+  hideRankFalls: boolean;
 } {
   const stored = (key: string): { value: string } | undefined =>
     db
@@ -70,6 +73,7 @@ export function parentSettings(db: Db): {
   const language = stored("language");
   const creepiness = stored("creepiness");
   const gender = stored("gender");
+  const hideRankFalls = stored("hideRankFalls");
   return {
     threeDayLimit: limit
       ? (JSON.parse(limit.value) as number | null)
@@ -80,6 +84,10 @@ export function parentSettings(db: Db): {
       ? (JSON.parse(creepiness.value) as 0 | 1 | 2)
       : CREEPINESS_DEFAULT,
     gender: gender ? (JSON.parse(gender.value) as "f" | "m") : "f",
+    // A fall of rank shows to the player until the parent hides it (REQ-8004).
+    hideRankFalls: hideRankFalls
+      ? (JSON.parse(hideRankFalls.value) as boolean)
+      : false,
   };
 }
 
@@ -164,6 +172,12 @@ export function mountParentRoom(
   });
 
   // Each change logs settings_changed, and the next read returns it (REQ-0234).
+  app.get("/api/parent/falls", (c) => {
+    const deviceId = parent(c);
+    if (deviceId instanceof Response) return deviceId;
+    return c.json({ falls: fallsRead(db) });
+  });
+
   app.put("/api/parent/settings", async (c) => {
     const deviceId = parent(c);
     if (deviceId instanceof Response) return deviceId;

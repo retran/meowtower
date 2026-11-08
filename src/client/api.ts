@@ -122,6 +122,24 @@ export interface ParentSettings {
   creepiness: 0 | 1 | 2;
   gender: "f" | "m";
   language: string;
+  hideRankFalls: boolean;
+}
+
+/** One fall the Parent Room lists (REQ-8006). */
+export type ParentFall =
+  | {
+      kind: "skill";
+      skill: string;
+      node: string;
+      from: number;
+      to: number;
+      at: string;
+    }
+  | { kind: "rank"; from: string; to: string; day: number };
+
+export async function parentFalls(): Promise<ParentReply<ParentFall[]>> {
+  const { status, body } = await call("/api/parent/falls");
+  return parentReply(status, body, () => body["falls"] as ParentFall[]);
 }
 
 export async function parentSettings(): Promise<ParentReply<ParentSettings>> {
