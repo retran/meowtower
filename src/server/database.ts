@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import Database from "better-sqlite3";
-import { type Db, SqliteDb } from "./db/index.js";
+import { type Db, openPostgres, SqliteDb } from "./db/index.js";
 import { allEvents, storedTypeVersions } from "../engine/events/read.js";
 import { rebuildMissing } from "../engine/projections/registry.js";
 import { events } from "../shared/events.js";
@@ -8,6 +8,7 @@ import { events } from "../shared/events.js";
 export type { Db } from "./db/index.js";
 
 const MIGRATIONS = new URL("../../migrations/", import.meta.url);
+const PG_MIGRATIONS = new URL("../../migrations/postgres/", import.meta.url);
 
 /**
  * The triggers that keep the log append-only (REQ-2226). The start-up check
@@ -20,7 +21,10 @@ export const GUARDED_TRIGGERS = [
   { name: "blobs_no_delete", table: "blobs", on: "DELETE" },
 ] as const;
 
-const GUARD_MESSAGE = "RAISE(ABORT, 'events are append-only')";
+const GUARD_MESSAGE = {
+  sqlite: "RAISE(ABORT, 'events are append-only')",
+  postgres: "RAISE EXCEPTION 'events are append-only'",
+} as const;
 
 /**
  * Opens the live database durably (REQ-2508): WAL with synchronous FULL, so a
@@ -62,6 +66,26 @@ export async function openDatabase(
 }
 
 async function triggerSql(db: Db): Promise<Map<string, string>> {
+  if (db.dialect === "postgres") {
+    // The definition of the trigger and the body of its function, with the schema left out of the
+    // table name, so one check reads both dialects. A disabled trigger does not count.
+    const found = (await db
+      .prepare(
+        `SELECT t.tgname AS name, c.relname AS tbl,
+                pg_get_triggerdef(t.oid) || E'\\n' || pg_get_functiondef(t.tgfoid) AS sql
+           FROM pg_trigger t
+           JOIN pg_class c ON c.oid = t.tgrelid
+           JOIN pg_namespace n ON n.oid = c.relnamespace
+          WHERE NOT t.tgisinternal AND t.tgenabled = 'O' AND n.nspname = current_schema()`,
+      )
+      .all()) as { name: string; tbl: string; sql: string }[];
+    return new Map(
+      found.map((r) => [
+        r.name,
+        `${r.tbl}\n${r.sql.replace(/\bON\s+\w+\.(\w+)/i, "ON $1")}`,
+      ]),
+    );
+  }
   const rows = (await db
     .prepare(
       "SELECT name, tbl_name AS tbl, sql FROM sqlite_master WHERE type = 'trigger'",
@@ -88,7 +112,7 @@ async function checkGuard(db: Db): Promise<void> {
     const guards =
       sql.startsWith(`${g.table}\n`) &&
       new RegExp(`BEFORE\\s+${g.on}\\s+ON\\s+${g.table}\\b`, "i").test(sql) &&
-      sql.includes(GUARD_MESSAGE);
+      sql.includes(GUARD_MESSAGE[db.dialect]);
     if (!guards) throw new Error(`log_guard_missing: ${g.name}`);
   }
 }
@@ -134,7 +158,7 @@ async function migrate(
   beforeMigrate?: (db: Db) => void,
 ): Promise<void> {
   await db.exec(
-    "CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL) STRICT",
+    `CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)${db.dialect === "sqlite" ? " STRICT" : ""}`,
   );
   const applied = new Set(
     (await db.prepare("SELECT version FROM schema_migrations").all()).map(
@@ -167,6 +191,31 @@ async function migrate(
         .run(version, new Date().toISOString());
     })();
   }
+}
+
+/**
+ * Opens the schema of one profile in Postgres (ADR-3310): creates it when it is missing, applies
+ * the numbered migrations of `migrations/postgres/` that have not run, and refuses to go on without
+ * the log's guard. The projections join in the next step of the plan.
+ */
+export async function openProfile(
+  url: string,
+  schema: string,
+  {
+    migrations = PG_MIGRATIONS,
+    beforeMigrate,
+  }: { migrations?: URL; beforeMigrate?: (db: Db) => void } = {},
+): Promise<Db> {
+  const db = await openPostgres(url, schema);
+  try {
+    await migrate(db, migrations, beforeMigrate);
+    await checkGuard(db);
+    await checkSchemas(db);
+  } catch (err) {
+    await db.close();
+    throw err;
+  }
+  return db;
 }
 
 export function isOpen(db: Db): boolean {

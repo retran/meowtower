@@ -22,6 +22,8 @@ The compose stack runs a service `postgres` on its internal network only, with i
 
 All game data, meaning the event log, the derived tables, the settings and the accounts, lives in that database on the parent's Mac (REQ-8520). A profile's events, devices, settings, lockouts, budget and derived tables sit in its schema, and a request sees only the schema its profile names (REQ-8506).
 
+The migrations for Postgres live in `migrations/postgres/` under the numbers of the SQLite ones. An event's payload stays text that Postgres checks as JSON, and the guard triggers of `events` and `blobs` also refuse a `TRUNCATE` of `events`.
+
 The tool `tools/move-to-postgres.ts` moves the existing player's log into the schema of profile 1 with every event, the same event count and the same derived tables (REQ-8522). It opens the SQLite file read-only and leaves it unchanged until the parent deletes it (REQ-8526).
 
 A restore loads a dump into a new schema and swaps it in only when its derived tables match the log it holds (REQ-8524). The backups and the export read Postgres (REQ-8528).

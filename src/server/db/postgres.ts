@@ -92,6 +92,7 @@ interface Inside {
 
 export class PgDb implements Db {
   readonly name: string;
+  readonly dialect = "postgres" as const;
   private readonly pool: pg.Pool;
   private readonly inside = new AsyncLocalStorage<Inside>();
   private closed = false;
