@@ -344,7 +344,7 @@ cmd_db_snapshot() {
 cmd_restore() {
   compose stop meowtower
   compose run --rm --no-deps meowtower node dist/server/restore.js
-  compose start meowtower
+  compose up -d meowtower
 }
 
 # Once, when the game moves from SQLite to Postgres (ADR-3310): the log in the old file of the
@@ -354,7 +354,7 @@ cmd_move() {
   compose up -d postgres
   compose stop meowtower
   compose run --rm meowtower node dist/server/move-cli.js
-  compose start meowtower
+  compose up -d meowtower
 }
 
 # The export, run by the server from a fresh copy (REQ-2238): the raw log,
