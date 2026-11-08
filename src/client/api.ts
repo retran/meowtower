@@ -31,10 +31,13 @@ async function call(
       ...init,
       headers: { "content-type": "application/json" },
     });
-    return {
-      status: res.status,
-      body: (await res.json()) as Record<string, unknown>,
-    };
+    const body = (await res.json()) as Record<string, unknown>;
+    // A request the device's rate cap refused goes again like one that got no reply, and is not
+    // an answer that this device may not play (SPC-0030, REQ-2438). A lockout also answers 429,
+    // with its own error, and keeps its screen (REQ-2522).
+    if (res.status === 429 && body["error"] === "rate_limited")
+      return { status: UNREACHABLE, body: {} };
+    return { status: res.status, body };
   } catch {
     return { status: UNREACHABLE, body: {} };
   }

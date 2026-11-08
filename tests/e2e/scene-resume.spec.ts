@@ -88,10 +88,10 @@ function api(request: APIRequestContext, cookie: string) {
     start: async (): Promise<string> =>
       (await post("/api/session/start", { mode: "daily" })).sessionId,
     next: (s: string) => get(`/api/session/${s}/next`),
-    answer: (s: string, itemId: string) =>
+    answer: (s: string, itemId: string, raw = "7") =>
       post(`/api/session/${s}/answer`, {
         itemId,
-        raw: "7",
+        raw,
         dontKnow: false,
         input,
       }),
@@ -211,7 +211,8 @@ test("REQ-0208: a second context resumes each attempt state on the same task and
   // answered_feedback_pending, solution_shown and second_attempt_shown: the
   // verdict is in the log, and the parallel task is the step left open.
   s = await a.start();
-  await a.answer(home, first.itemId);
+  // A wrong answer, so the task offers its second attempt whatever the task is.
+  await a.answer(home, first.itemId, "-1");
   const twin = await a.post(`/api/item/${first.itemId}/second-attempt`);
   expect(twin.attemptNo).toBe(2);
   there = await resumed();
@@ -320,6 +321,9 @@ test("REQ-0208: the draft typed in a scene returns as last held and is sent at m
     const body = r.postDataJSON() as { kind: string; text?: string };
     if (body.kind === "draft") sent.push(body.text ?? "");
   });
+  // The calls above may fill the device's one-second rate window, and a page that meets a 429
+  // waits on a timer the fake clock below would never fire.
+  await page.waitForTimeout(1_100);
   await page.clock.install({ time: Date.now() });
   const resumedOut = page.waitForResponse("**/api/adventure/resume");
   await ready(page, "/play");

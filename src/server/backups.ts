@@ -13,7 +13,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { isAbsolute, join, relative } from "node:path";
-import { snapshotName, takeSnapshot } from "./snapshots.js";
+import { snapshotName, type Snapshot, takeSnapshot } from "./snapshots.js";
 
 export const KEEP_NEWEST = 30;
 const GB = 1024 ** 3;
@@ -95,6 +95,8 @@ export interface BackupOptions {
   dataRoot: string;
   now: () => number;
   sizeOf?: (root: string) => number;
+  /** How a snapshot is taken: of the SQLite file `live` by default, of a Postgres profile when set. */
+  take?: (dir: string, at: Date) => Promise<Snapshot>;
 }
 
 /**
@@ -113,7 +115,9 @@ export async function backupAfterSession(o: BackupOptions): Promise<void> {
     let named = at;
     while (existsSync(join(o.dir, snapshotName(named))))
       named = new Date(named.getTime() + 1000);
-    const taken = await takeSnapshot(o.live, o.dir, named);
+    const taken = o.take
+      ? await o.take(o.dir, named)
+      : await takeSnapshot(o.live, o.dir, named);
     writeFileSync(
       join(o.dir, "last.json"),
       JSON.stringify({ file: taken.file, ms: taken.ms, at: at.toISOString() }),

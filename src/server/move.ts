@@ -52,11 +52,11 @@ async function copyTable(from: Db, to: Db, table: string): Promise<number> {
     const batch = rows.slice(i, i + BATCH);
     await to
       .prepare(
-        `INSERT INTO ${table} (${columns.join(", ")}) OVERRIDING SYSTEM VALUE VALUES ${batch.map(() => one).join(", ")}`,
+        `INSERT INTO ${table} (${columns.join(", ")})${to.dialect === "postgres" ? " OVERRIDING SYSTEM VALUE" : ""} VALUES ${batch.map(() => one).join(", ")}`,
       )
       .run(...batch.flatMap((r) => columns.map((c) => r[c])));
   }
-  if (columns.includes("id") && rows.length > 0)
+  if (columns.includes("id") && rows.length > 0 && to.dialect === "postgres")
     await to
       .prepare(
         `SELECT setval(pg_get_serial_sequence('${table}', 'id'), (SELECT max(id) FROM ${table}))`,
@@ -81,8 +81,46 @@ async function derivedRows(db: Db, table: string): Promise<string> {
 }
 
 /**
+ * Copies the log and the service tables from `source` into `target`, an empty database of either
+ * dialect, rebuilds the target's projections from the copied log, and compares the two: the event
+ * count, one hash over the log, the projections against a fresh rebuild, and each derived table.
+ */
+export async function transfer(source: Db, target: Db): Promise<MoveReport> {
+  if ((await eventCount(target)) > 0)
+    throw new MoveRefused("the target already holds events");
+  const events = await eventCount(source);
+  await copyEvents(source, target);
+
+  const tables: Record<string, number> = {};
+  for (const t of SERVICE_TABLES)
+    tables[t] = await copyTable(source, target, t);
+
+  await recompute(target, { computedAt: new Date().toISOString() });
+
+  if ((await eventCount(target)) !== events)
+    throw new MoveRefused("the event count differs");
+  if ((await logHash(source)) !== (await logHash(target)))
+    throw new MoveRefused("the log differs");
+  const diverged = await checkProjections(target);
+  if (diverged.length > 0)
+    throw new MoveRefused(
+      `a derived table differs from the log: ${diverged.map((d) => d.table).join(", ")}`,
+    );
+  let derivedTables = 0;
+  for (const p of PROJECTIONS) {
+    if (
+      (await derivedRows(source, p.table)) !==
+      (await derivedRows(target, p.table))
+    )
+      throw new MoveRefused(`the table ${p.table} differs from the source`);
+    derivedTables++;
+  }
+  return { events, tables, derivedTables };
+}
+
+/**
  * Moves the log of the SQLite file at `sqlitePath` into `schema` of the database at `url`. The
- * target must hold no event yet.
+ * file is opened read-only. The target must hold no event yet.
  */
 export async function moveToPostgres(
   sqlitePath: string,
@@ -94,39 +132,11 @@ export async function moveToPostgres(
   );
   const target = await openProfile(url, schema);
   try {
-    if ((await eventCount(target)) > 0)
+    return await transfer(source, target);
+  } catch (err) {
+    if (err instanceof MoveRefused && /already holds events/.test(err.message))
       throw new MoveRefused(`${schema} already holds events`);
-    const events = await eventCount(source);
-
-    await copyEvents(source, target);
-
-    const tables: Record<string, number> = {};
-    for (const t of SERVICE_TABLES)
-      tables[t] = await copyTable(source, target, t);
-
-    await recompute(target, { computedAt: new Date().toISOString() });
-
-    if ((await eventCount(target)) !== events)
-      throw new MoveRefused("the event count differs");
-    if ((await logHash(source)) !== (await logHash(target)))
-      throw new MoveRefused("the log differs");
-    const diverged = await checkProjections(target);
-    if (diverged.length > 0)
-      throw new MoveRefused(
-        `a derived table differs from the log: ${diverged.map((d) => d.table).join(", ")}`,
-      );
-    let derivedTables = 0;
-    for (const p of PROJECTIONS) {
-      if (
-        (await derivedRows(source, p.table)) !==
-        (await derivedRows(target, p.table))
-      )
-        throw new MoveRefused(
-          `the table ${p.table} differs from the one in the SQLite file`,
-        );
-      derivedTables++;
-    }
-    return { events, tables, derivedTables };
+    throw err;
   } finally {
     await target.close();
     await source.close();

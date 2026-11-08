@@ -54,6 +54,20 @@ export async function openDatabase(
       : `p_${createHash("sha1").update(path).digest("hex").slice(0, 20)}`;
     return openProfile(url, schema, beforeMigrate ? { beforeMigrate } : {});
   }
+  return openSqlite(path, {
+    migrations,
+    ...(beforeMigrate ? { beforeMigrate } : {}),
+  });
+}
+
+/** Opens one SQLite file durably, whatever the suite's backend is: snapshots and exports are SQLite files. */
+export async function openSqlite(
+  path: string,
+  {
+    migrations = MIGRATIONS,
+    beforeMigrate,
+  }: { migrations?: URL; beforeMigrate?: (db: Db) => void } = {},
+): Promise<Db> {
   const native = new Database(path);
   native.pragma("journal_mode = WAL");
   native.pragma("synchronous = FULL");
