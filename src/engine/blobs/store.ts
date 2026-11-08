@@ -122,7 +122,7 @@ export async function storeScratch(
   }
   await db
     .prepare(
-      "INSERT OR IGNORE INTO blobs (sha256, bytes, created_at) VALUES (?, ?, ?)",
+      "INSERT INTO blobs (sha256, bytes, created_at) VALUES (?, ?, ?) ON CONFLICT DO NOTHING",
     )
     .run(sha256, image.length, new Date().toISOString());
   await appendEvents(db, [

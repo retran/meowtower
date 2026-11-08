@@ -8,6 +8,7 @@
 // transaction, and yields to the event loop between chunks: better-sqlite3 is
 // synchronous, so a second connection in the same thread would block play
 // just the same, and an append waits at most for one chunk.
+import { holdAppends } from "./events/lock.js";
 import { eventsAfter, headSeq } from "./events/read.js";
 import {
   PROJECTIONS,
@@ -101,11 +102,7 @@ export async function recompute(
       await db.exec(`DROP TABLE IF EXISTS ${shadow(p)}`);
       await db.exec(createAs(p, shadow(p)));
       // A versioned table keeps the rows earlier versions computed.
-      const live = await db
-        .prepare(
-          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
-        )
-        .get(p.table);
+      const live = await db.tableExists(p.table);
       if (p.versioned && live)
         await db
           .prepare(
@@ -136,6 +133,7 @@ export async function recompute(
     }
     // Catch up and swap in one transaction: no append lands between them.
     await db.transaction(async () => {
+      await holdAppends(db);
       for (;;) {
         const last = await foldInto(
           db,
@@ -194,13 +192,7 @@ export interface Divergence {
 
 /** The columns a comparison reads: all but `computed_at`, which a rebuild renews. */
 async function comparedColumns(db: Db, table: string): Promise<string[]> {
-  return (
-    (await db.prepare(`SELECT name FROM pragma_table_info(?)`).all(table)) as {
-      name: string;
-    }[]
-  )
-    .map((c) => c.name)
-    .filter((c) => c !== "computed_at");
+  return (await db.columnsOf(table)).filter((c) => c !== "computed_at");
 }
 
 /**

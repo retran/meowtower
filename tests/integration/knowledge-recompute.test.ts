@@ -64,12 +64,7 @@ async function world(end = true): Promise<Db> {
 
 /** A hash of a table's rows, all columns but the computed time, in key order. */
 async function hashOf(db: Db, table: string, where = "1 = 1"): Promise<string> {
-  const columns = (
-    (await db.prepare("SELECT name FROM pragma_table_info(?)").all(table)) as {
-      name: string;
-    }[]
-  )
-    .map((c) => c.name)
+  const columns = (await db.columnsOf(table))
     .filter((c) => c !== "computed_at")
     .join(", ");
   const rows = await db

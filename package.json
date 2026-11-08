@@ -14,7 +14,8 @@
     "levels": "tsx tools/replay-levels.ts",
     "scenario": "GATEWAY_MODE=verify tsx --env-file=.env tools/write-scenario.ts",
     "format": "prettier --check .",
-    "test": "vitest run tests && playwright test",
+    "test": "vitest run tests && npm run test:pg && playwright test",
+    "test:pg": "MEOWTOWER_TEST_BACKEND=postgres vitest run tests",
     "test:smoke": "vitest run tests/smoke",
     "start": "node dist/server/main.js",
     "strings:system": "tsx tools/strings-system.ts"

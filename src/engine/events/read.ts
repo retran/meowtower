@@ -111,7 +111,7 @@ export async function itemEvents(
   return (
     (await db
       .prepare(
-        "SELECT * FROM events WHERE json_extract(payload, '$.itemId') = ? ORDER BY seq",
+        `SELECT * FROM events WHERE ${db.jsonField("payload", "itemId")} = ? ORDER BY seq`,
       )
       .all(itemId)) as Row[]
   ).map(toEvent);
@@ -170,13 +170,11 @@ export async function headSeq(db: Db): Promise<number> {
 
 /** The bytes the log's table takes in the file, for the `log_large` notice. */
 export async function eventsBytes(db: Db): Promise<number> {
-  return (
-    (await db
-      .prepare(
-        "SELECT coalesce(sum(pgsize), 0) AS bytes FROM dbstat WHERE name = 'events'",
-      )
-      .get()) as { bytes: number }
-  ).bytes;
+  const sql =
+    db.dialect === "postgres"
+      ? "SELECT pg_total_relation_size('events') AS bytes"
+      : "SELECT coalesce(sum(pgsize), 0) AS bytes FROM dbstat WHERE name = 'events'";
+  return ((await db.prepare(sql).get()) as { bytes: number }).bytes;
 }
 
 /** Every event row as stored, in log order, for the export. */

@@ -75,7 +75,7 @@ export function createGateway({
   const insert = db.prepare(
     `INSERT INTO llm_log (at, role, route, model, tier, bucket, input_tokens, output_tokens,
        cost_usd, latency_ms, outcome, request, response)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
   );
   return {
     async call({ role, bucket, system, user: raw, schema }) {
@@ -109,7 +109,7 @@ export function createGateway({
         response: string,
       ): Promise<number | bigint> =>
         (
-          await insert.run(
+          (await insert.get(
             started.toISOString(),
             role,
             name,
@@ -123,8 +123,8 @@ export function createGateway({
             outcome,
             JSON.stringify(route.body(request)),
             response,
-          )
-        ).lastInsertRowid;
+          )) as { id: number }
+        ).id;
       const log = async (
         outcome: string,
         reply: RouteReply | null,

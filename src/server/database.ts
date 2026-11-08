@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import Database from "better-sqlite3";
 import { type Db, openPostgres, SqliteDb } from "./db/index.js";
@@ -43,6 +44,16 @@ export async function openDatabase(
     beforeMigrate?: (db: Db) => void;
   } = {},
 ): Promise<Db> {
+  // The tests run the whole suite on Postgres by naming a database here; each file path becomes one
+  // schema, so a test that reopens a path finds its data again.
+  const url = process.env["MEOWTOWER_DATABASE_URL"];
+  if (url) {
+    // `Db.name` of a Postgres database is its schema, so reopening by that name finds the same data.
+    const schema = /^p_[0-9a-f]{20}$/.test(path)
+      ? path
+      : `p_${createHash("sha1").update(path).digest("hex").slice(0, 20)}`;
+    return openProfile(url, schema, beforeMigrate ? { beforeMigrate } : {});
+  }
   const native = new Database(path);
   native.pragma("journal_mode = WAL");
   native.pragma("synchronous = FULL");
@@ -211,6 +222,8 @@ export async function openProfile(
     await migrate(db, migrations, beforeMigrate);
     await checkGuard(db);
     await checkSchemas(db);
+    // REQ-2232: a missing projection table is rebuilt before any request.
+    await rebuildMissing(db, () => allEvents(db), new Date().toISOString());
   } catch (err) {
     await db.close();
     throw err;

@@ -23,6 +23,7 @@ import {
 import { recompute } from "../../src/engine/recompute.js";
 import { openDatabase } from "../../src/server/database.js";
 import { writeSyntheticLog } from "../helpers/synthetic-log.js";
+import { sqliteOnly } from "../helpers/backend.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-versions-"));
 // The graph version the server computes from content/graph.yaml at start (TSK-0500).
@@ -137,36 +138,39 @@ const meta = (live: string) => {
   return rows;
 };
 
-describe("REQ-2230: a version change recomputes every projection at start-up", () => {
-  it("recomputes when the model version changes, and every derived_meta row names the new one", async () => {
-    const live = await computedUnder(A);
-    expect(meta(live).every((m) => m.model_version === "A")).toBe(true);
-    const out = await start(live, B);
-    expect(out).toContain(
-      `startup_recompute: now model B, thresholds t1, graph ${GRAPH}`,
-    );
-    const after = meta(live);
-    expect(after.map((m) => m.name)).toEqual(
-      PROJECTIONS.map((p) => p.name).sort(),
-    );
-    expect(after.every((m) => m.model_version === "B")).toBe(true);
-  }, 60000);
+sqliteOnly(
+  "REQ-2230: a version change recomputes every projection at start-up",
+  () => {
+    it("recomputes when the model version changes, and every derived_meta row names the new one", async () => {
+      const live = await computedUnder(A);
+      expect(meta(live).every((m) => m.model_version === "A")).toBe(true);
+      const out = await start(live, B);
+      expect(out).toContain(
+        `startup_recompute: now model B, thresholds t1, graph ${GRAPH}`,
+      );
+      const after = meta(live);
+      expect(after.map((m) => m.name)).toEqual(
+        PROJECTIONS.map((p) => p.name).sort(),
+      );
+      expect(after.every((m) => m.model_version === "B")).toBe(true);
+    }, 60000);
 
-  it("recomputes when only the threshold version changes", async () => {
-    const live = await computedUnder(A);
-    const out = await start(live, A2);
-    expect(out).toContain("startup_recompute");
-    expect(meta(live).every((m) => m.threshold_version === "t2")).toBe(true);
-  }, 60000);
+    it("recomputes when only the threshold version changes", async () => {
+      const live = await computedUnder(A);
+      const out = await start(live, A2);
+      expect(out).toContain("startup_recompute");
+      expect(meta(live).every((m) => m.threshold_version === "t2")).toBe(true);
+    }, 60000);
 
-  it("recomputes nothing when the versions are unchanged", async () => {
-    const live = await computedUnder(A);
-    const before = meta(live);
-    const out = await start(live, A);
-    expect(out).not.toContain("startup_recompute");
-    expect(meta(live)).toEqual(before);
-  }, 60000);
-});
+    it("recomputes nothing when the versions are unchanged", async () => {
+      const live = await computedUnder(A);
+      const before = meta(live);
+      const out = await start(live, A);
+      expect(out).not.toContain("startup_recompute");
+      expect(meta(live)).toEqual(before);
+    }, 60000);
+  },
+);
 
 describe("REQ-2224: a new model changes the estimates, not what the game decided", () => {
   it("leaves every game table as it was and keeps node_snapshots rows under both versions", async () => {
@@ -174,14 +178,7 @@ describe("REQ-2224: a new model changes the estimates, not what the game decided
     const db = await openDatabase(live);
     const game = PROJECTIONS.filter((p) => p.class === "game");
     const rows = async (table: string) => {
-      const columns = (
-        (await db
-          .prepare("SELECT name FROM pragma_table_info(?)")
-          .all(table)) as {
-          name: string;
-        }[]
-      )
-        .map((c) => c.name)
+      const columns = (await db.columnsOf(table))
         .filter((c) => c !== "computed_at")
         .join(", ");
       return JSON.stringify(
@@ -204,7 +201,7 @@ describe("REQ-2224: a new model changes the estimates, not what the game decided
       expect(await rows(p.table), p.table).toEqual(before[p.table]);
     const snapshots = (await db
       .prepare(
-        "SELECT model_version, threshold_version, graph_version, count(*) AS n, round(avg(p_know), 3) AS mean FROM node_snapshots GROUP BY 1, 2, 3 ORDER BY 1",
+        "SELECT model_version, threshold_version, graph_version, count(*) AS n, round(CAST(avg(p_know) AS NUMERIC), 3) AS mean FROM node_snapshots GROUP BY 1, 2, 3 ORDER BY 1",
       )
       .all()) as {
       model_version: string;

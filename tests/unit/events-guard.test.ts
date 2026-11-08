@@ -5,13 +5,14 @@ import { copyFileSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Database from "better-sqlite3";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, expect, it } from "vitest";
 import { appendEvents } from "../../src/engine/events/append.js";
 import {
   GUARDED_TRIGGERS,
   openDatabase,
   type Db,
 } from "../../src/server/database.js";
+import { sqliteOnly } from "../helpers/backend.js";
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -59,7 +60,7 @@ async function refusesChange(db: Db): Promise<void> {
   expect(await rows(db)).toEqual(before);
 }
 
-describe("REQ-2226: the log is append-only at the database", () => {
+sqliteOnly("REQ-2226: the log is append-only at the database", () => {
   it("refuses UPDATE and DELETE and leaves every row unchanged", async () => {
     const { db } = await seeded();
     await refusesChange(db);
@@ -111,7 +112,7 @@ describe("REQ-2226: the log is append-only at the database", () => {
   });
 });
 
-describe("REQ-2226: meowtower refuses to start without the guard", () => {
+sqliteOnly("REQ-2226: meowtower refuses to start without the guard", () => {
   it.each(GUARDED_TRIGGERS.map((g) => g.name))(
     "exits with log_guard_missing when %s is dropped",
     async (trigger) => {

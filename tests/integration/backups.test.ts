@@ -5,7 +5,7 @@ import { mkdirSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Database from "better-sqlite3";
-import { afterAll, describe, expect, it, vi } from "vitest";
+import { afterAll, expect, it, vi } from "vitest";
 import {
   backupAfterSession,
   KEEP_NEWEST,
@@ -17,6 +17,7 @@ import { openDatabase, type Db } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
 import { snapshotName } from "../../src/server/snapshots.js";
+import { sqliteOnly } from "../helpers/backend.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-backups-"));
 const opened: Db[] = [];
@@ -68,7 +69,7 @@ async function world(start = Date.parse("2026-07-01T09:00:00Z")) {
   return { base, live, dir, clock, session };
 }
 
-describe("REQ-2526: a snapshot when a session ends", () => {
+sqliteOnly("REQ-2526: a snapshot when a session ends", () => {
   it("writes a new snapshot after the leave that ends the session", async () => {
     const w = await world();
     expect(snapshotFiles(w.dir)).toEqual([]);
@@ -81,7 +82,7 @@ describe("REQ-2526: a snapshot when a session ends", () => {
   });
 });
 
-describe("REQ-2530: the newest 30 and the first of each month", () => {
+sqliteOnly("REQ-2530: the newest 30 and the first of each month", () => {
   it("keeps them after 40 sessions over three months, each one readable", async () => {
     const w = await world();
     const taken: string[] = [];
@@ -118,7 +119,7 @@ describe("REQ-2530: the newest 30 and the first of each month", () => {
   }, 120000);
 });
 
-describe("the parent's notices", () => {
+sqliteOnly("the parent's notices", () => {
   it("raises backup_failed once, shows it in the Parent Room, and clears it on the next good snapshot", async () => {
     const w = await world();
     const errors = vi

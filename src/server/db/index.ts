@@ -22,6 +22,14 @@ export interface Db {
   prepare(sql: string): Statement;
   exec(sql: string): Promise<void>;
   pragma(source: string, options?: { simple?: boolean }): Promise<unknown>;
+  /** True when the current schema holds a table of this name. */
+  tableExists(name: string): Promise<boolean>;
+  /** The names of the tables of the current schema. */
+  tableNames(): Promise<string[]>;
+  /** The columns of a table in their order. */
+  columnsOf(table: string): Promise<string[]>;
+  /** The SQL that reads one top-level field of a JSON text column as text. */
+  jsonField(column: string, field: string): string;
   /**
    * Wraps `fn` so that each call runs in one transaction that commits when `fn` resolves and rolls
    * back when it throws. A call made inside a transaction joins it. Statements from other callers

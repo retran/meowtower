@@ -105,7 +105,7 @@ export function createFrameQueue({
     const day = gameDayOf(now(), zone);
     const row = (await db
       .prepare(
-        `SELECT COUNT(*) AS checked, COALESCE(SUM(status = 'rejected'), 0) AS rejected
+        `SELECT COUNT(*) AS checked, COALESCE(SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END), 0) AS rejected
          FROM frames WHERE game_day = ?`,
       )
       .get(day)) as { checked: number; rejected: number };

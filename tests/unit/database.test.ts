@@ -1,8 +1,9 @@
 import { mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, expect, it } from "vitest";
 import { openDatabase } from "../../src/server/database.js";
+import { sqliteOnly } from "../helpers/backend.js";
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -15,7 +16,7 @@ const fresh = (): string => {
   return join(dir, "meowtower.sqlite");
 };
 
-describe("REQ-2508: the database is durable before any reply", () => {
+sqliteOnly("REQ-2508: the database is durable before any reply", () => {
   it("opens in WAL mode with synchronous FULL", async () => {
     const db = await openDatabase(fresh());
     expect(await db.pragma("journal_mode", { simple: true })).toBe("wal");
@@ -24,7 +25,7 @@ describe("REQ-2508: the database is durable before any reply", () => {
   });
 });
 
-describe("migrations", () => {
+sqliteOnly("migrations", () => {
   it("applies each migration once and records it", async () => {
     const path = fresh();
     await (await openDatabase(path)).close();

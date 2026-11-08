@@ -10,8 +10,9 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, expect, it } from "vitest";
 import { openDatabase } from "../../src/server/database.js";
+import { sqliteOnly } from "../helpers/backend.js";
 
 // The newest migration the repository ships; a refused one leaves it newest.
 const LATEST = Math.max(
@@ -43,7 +44,7 @@ async function setup(bad: string): Promise<{ path: string; migrations: URL }> {
   return { path, migrations: pathToFileURL(`${migrations}/`) };
 }
 
-describe("REQ-2226: the migration runner guards the triggers", () => {
+sqliteOnly("REQ-2226: the migration runner guards the triggers", () => {
   it.each([
     ["drops a trigger", "DROP TRIGGER events_no_update;"],
     [

@@ -11,7 +11,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Database from "better-sqlite3";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, expect, it } from "vitest";
 import { appendEvents } from "../../src/engine/events/append.js";
 import { storeScratch } from "../../src/engine/blobs/store.js";
 import { openDatabase } from "../../src/server/database.js";
@@ -21,6 +21,7 @@ import {
   takeSnapshot,
 } from "../../src/server/snapshots.js";
 import { webp } from "../helpers/webp.js";
+import { sqliteOnly } from "../helpers/backend.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-snap-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
@@ -47,41 +48,44 @@ const count = (path: string, table: string): number => {
   return n;
 };
 
-describe("REQ-2532, REQ-2524: a snapshot is a readable copy holding the log and blobs", () => {
-  it("writes meowtower-<UTC timestamp>.sqlite with every table and the rows", async () => {
-    const live = join(dir, "a.sqlite");
-    const snaps = join(dir, "snaps-a");
-    const db = await openDatabase(live);
-    await appendEvents(db, [
-      {
-        type: "attempt_submitted",
-        v: 0,
-        payload: { raw: "1" },
+sqliteOnly(
+  "REQ-2532, REQ-2524: a snapshot is a readable copy holding the log and blobs",
+  () => {
+    it("writes meowtower-<UTC timestamp>.sqlite with every table and the rows", async () => {
+      const live = join(dir, "a.sqlite");
+      const snaps = join(dir, "snaps-a");
+      const db = await openDatabase(live);
+      await appendEvents(db, [
+        {
+          type: "attempt_submitted",
+          v: 0,
+          payload: { raw: "1" },
+          origin: "server",
+        },
+      ]);
+      await storeScratch(db, join(dir, "blobs-a"), webp("pad"), {
+        itemId: "i",
+        attemptNo: 1,
         origin: "server",
-      },
-    ]);
-    await storeScratch(db, join(dir, "blobs-a"), webp("pad"), {
-      itemId: "i",
-      attemptNo: 1,
-      origin: "server",
+      });
+      const taken = await takeSnapshot(
+        live,
+        snaps,
+        new Date("2026-09-27T12:00:00Z"),
+      );
+      expect(taken.file).toBe(
+        join(snaps, "meowtower-2026-09-27T12-00-00Z.sqlite"),
+      );
+      expect(taken.ms).toBeGreaterThanOrEqual(0);
+      expect(tables(taken.file)).toEqual(tables(live));
+      expect(count(taken.file, "events")).toBe(count(live, "events"));
+      expect(count(taken.file, "blobs")).toBe(1);
+      await db.close();
     });
-    const taken = await takeSnapshot(
-      live,
-      snaps,
-      new Date("2026-09-27T12:00:00Z"),
-    );
-    expect(taken.file).toBe(
-      join(snaps, "meowtower-2026-09-27T12-00-00Z.sqlite"),
-    );
-    expect(taken.ms).toBeGreaterThanOrEqual(0);
-    expect(tables(taken.file)).toEqual(tables(live));
-    expect(count(taken.file, "events")).toBe(count(live, "events"));
-    expect(count(taken.file, "blobs")).toBe(1);
-    await db.close();
-  });
-});
+  },
+);
 
-describe("REQ-2528: a snapshot before a pending migration", () => {
+sqliteOnly("REQ-2528: a snapshot before a pending migration", () => {
   it("snapshots a database that holds data before the migration runs", async () => {
     const live = join(dir, "b.sqlite");
     const snaps = join(dir, "snaps-b");
@@ -126,7 +130,7 @@ describe("REQ-2528: a snapshot before a pending migration", () => {
   });
 });
 
-describe("snapshots don't hold up writes", () => {
+sqliteOnly("snapshots don't hold up writes", () => {
   it("lets writes run while a snapshot runs, none waiting for it", async () => {
     const live = join(dir, "d.sqlite");
     const db = await openDatabase(live);
@@ -170,7 +174,7 @@ describe("snapshots don't hold up writes", () => {
   }, 60000);
 });
 
-describe("restore", () => {
+sqliteOnly("restore", () => {
   it("makes the live database equal the newest snapshot", async () => {
     const live = join(dir, "e.sqlite");
     const snaps = join(dir, "snaps-e");
