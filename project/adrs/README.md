@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-65 decisions in all: 53 approved, 12 done.
+67 decisions in all: 55 approved, 12 done.
 
 | Identifier                                                                                    | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -71,5 +71,7 @@
 | [ADR-3280](ADR-3280-the-parent-designs-the-campaign-in-a-studio-of-nested-graphs.md)          | The parent designs, approves and tests the whole game in a studio of nested graphs and a sandbox, and the Master plays approved scenarios freely                                                                                                                                                                                                  | approved |
 | [ADR-3290](ADR-3290-the-story-is-built-like-a-modern-serial.md)                               | The story is built like a modern serial, from mythology to scene, and code checks what a field can prove                                                                                                                                                                                                                                          | approved |
 | [ADR-3300](ADR-3300-the-player-has-nine-skills-with-five-steps-each.md)                       | The player has nine skills in game terms, each with five steps that open something new, and a score that shows a level and the percentage to the next                                                                                                                                                                                             | approved |
+| [ADR-3310](ADR-3310-all-game-data-lives-in-postgres-on-the-mac-one-schema-a-profile.md)       | All game data lives in Postgres on the Mac, one schema a profile, and the log's rules stay as ADR-0020 wrote them                                                                                                                                                                                                                                 | approved |
+| [ADR-3320](ADR-3320-a-parent-account-on-a-verified-email-owns-one-profile-a-child.md)         | A parent account on a verified email owns one profile a child, and a child's device opens a profile through a pairing and holds no login                                                                                                                                                                                                          | approved |
 
 <!-- /meow-flow index -->
