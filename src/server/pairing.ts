@@ -25,7 +25,9 @@ const PairIn = z
 
 export function mountPairing(app: Hono, db: Db, now: () => number): void {
   app.use("/api/*", async (c, next) => {
-    if (c.req.path === "/api/pair") return await next();
+    // A parent signs in from any browser, so the account routes need no paired device.
+    if (c.req.path === "/api/pair" || c.req.path.startsWith("/api/account/"))
+      return await next();
     const found = await deviceForToken(db, getCookie(c, DEVICE_COOKIE));
     if (!found.ok) return c.json({ error: found.error }, 401);
     return await next();
