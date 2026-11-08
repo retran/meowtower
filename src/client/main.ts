@@ -27,6 +27,27 @@ function keepStorage(): void {
       .catch(() => undefined);
 }
 
+/**
+ * The game needs its server (REQ-6510): with no reply the client says so, shows no task and no
+ * pairing field, and starts again by itself when the browser reports the connection back.
+ */
+function showOffline(): void {
+  const main = document.querySelector("main");
+  if (!main) return;
+  const retry = document.createElement("button");
+  retry.type = "button";
+  retry.dataset["action"] = "retry";
+  retry.textContent = t("ui.offline.retry");
+  retry.addEventListener("click", () => location.reload());
+  const title = document.createElement("h1");
+  title.textContent = t("ui.offline.title");
+  const body = document.createElement("p");
+  body.textContent = t("ui.offline.body");
+  main.replaceChildren(title, body, retry);
+  document.body.dataset["screen"] = "offline";
+  addEventListener("online", () => location.reload(), { once: true });
+}
+
 async function boot(): Promise<void> {
   keepStorage();
   const style = document.createElement("style");
@@ -35,6 +56,10 @@ async function boot(): Promise<void> {
   await loadStrings(document.documentElement.lang || "ru");
 
   const found = await device();
+  if (found.state === "offline") {
+    showOffline();
+    return;
+  }
   const shell: Shell = {
     paired: found.state === "paired",
     revoked: found.state === "revoked",

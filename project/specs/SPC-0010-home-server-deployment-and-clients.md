@@ -2,8 +2,8 @@
 id: SPC-0010
 artifact: spec
 status: live
-revised: 2026-10-31
-states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-7930]
+revised: 2026-11-08
+states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-7930, REQ-6508, REQ-6510]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -127,6 +127,10 @@ The client holds no text of its own: it reads the `ui.` keys of the language fil
 On the computer interface every control on every screen works from the keyboard alone, with a visible focus ring (REQ-2540).
 
 The device stores in IndexedDB only the unsent entries of its event queue, in the database `meowtower-queue`, store `entries`, and asks for `navigator.storage.persist()` on launch. The event queue holds answers, grouping sets, `looks_set`, `glossary_opened` and `plan_draft` in the order the player made them, with at most one answer per device, and ADR-0030 states how the queue sends them. Its service worker, served at `/sw.js`, asks the network first and keeps a copy of the code, the language file and the pictures it fetched, and no `/api` reply; it caches sound files only while a sound channel is on (ADR-0320), and `localStorage` holds no game data (REQ-6506). A lint check keeps IndexedDB in the queue's module, the Cache API in the service worker, and every `localStorage` or `sessionStorage` write, cookie write and origin-private file system call out of the client.
+
+### Installing and the connection
+
+The game is a progressive web app: the page serves a manifest with an `id`, a `scope` of `/`, `display: standalone` and icons of 192 and 512 pixels, so a browser offers to install it to the home screen and opens it in a window of its own (REQ-6508). The game needs the server to show a task or take an answer. When the first request of a start gets no reply, the client shows an offline screen with a retry button and no task, and starts the game by itself when the connection returns (REQ-6510).
 
 ### Push
 
