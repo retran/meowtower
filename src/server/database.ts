@@ -179,7 +179,7 @@ function guardBreach(sql: string, existing: Set<string>): string | undefined {
   return undefined;
 }
 
-async function migrate(
+export async function migrate(
   db: Db,
   dir: URL,
   beforeMigrate?: (db: Db) => void,
