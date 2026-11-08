@@ -1,7 +1,8 @@
 ---
 id: ADR-3310
 artifact: adr
-status: approved
+status: done
+pr: 103
 revised: 2026-11-08
 addresses: [REQ-8506, REQ-8520, REQ-8522, REQ-8524, REQ-8526, REQ-8528]
 supersedes: []
