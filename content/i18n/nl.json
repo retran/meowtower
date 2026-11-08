@@ -274,5 +274,8 @@
   "ui.skills.interpreting.step.2": "Je ziet wat een tekst weglaat.",
   "ui.skills.interpreting.step.3": "Je begrijpt geruchten, briefjes en contracten vrij en praat met Bewakers.",
   "ui.skills.interpreting.step.4": "Je vindt in een tekst wat anderen misten, een verborgen clausule of een ontbrekend getal.",
-  "ui.skills.interpreting.step.5": "Je legt anderen betekenissen uit en onderhandelt voor hen."
+  "ui.skills.interpreting.step.5": "Je legt anderen betekenissen uit en onderhandelt voor hen.",
+  "ui.fall.warning": "De draad van {skill} wordt dun: hij gleed twee keer achter elkaar weg. Loop hem nog een keer, nu het nog kan, en hij spant weer strak.",
+  "ui.fall.skill": "De draad van {skill} is losser geworden en de trede gleed één stap terug. Alle spullen, vrienden en geopende verdiepingen blijven bij je. Opgaven op deze draad brengen de trede terug.",
+  "ui.fall.rank": "Je rangteken is één stap gedoofd omdat meerdere draden losser werden. Alles wat je verzameld hebt, is er nog. Span de draden weer, dan straalt het teken opnieuw."
 }

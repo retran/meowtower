@@ -274,5 +274,8 @@
   "ui.skills.interpreting.step.2": "You notice what a text leaves out.",
   "ui.skills.interpreting.step.3": "You understand rumours, notes and contracts freely and speak with Guardians.",
   "ui.skills.interpreting.step.4": "You find in a text what others missed, a hidden clause or a missing number.",
-  "ui.skills.interpreting.step.5": "You explain meanings to others and negotiate for them."
+  "ui.skills.interpreting.step.5": "You explain meanings to others and negotiate for them.",
+  "ui.fall.warning": "The thread of {skill} is growing thin: it slipped twice in a row. Walk it once more while you still can, and it will pull tight again.",
+  "ui.fall.skill": "The thread of {skill} has loosened, and its step slipped back by one. Every item, friend and opened floor stays with you. Tasks on this thread bring the step back.",
+  "ui.fall.rank": "Your rank mark has dimmed by one step because several threads loosened. Everything you gathered is still here. Tighten the threads and the mark will shine again."
 }
