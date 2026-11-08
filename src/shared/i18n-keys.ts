@@ -281,6 +281,9 @@ export interface StringParams {
   "ui.skills.interpreting.step.3": NoParams;
   "ui.skills.interpreting.step.4": NoParams;
   "ui.skills.interpreting.step.5": NoParams;
+  "ui.fall.warning": { skill: string | number };
+  "ui.fall.skill": { skill: string | number };
+  "ui.fall.rank": NoParams;
 }
 
 export type Key = keyof StringParams;
