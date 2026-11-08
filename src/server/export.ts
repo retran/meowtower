@@ -5,7 +5,8 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { DuckDBInstance } from "@duckdb/node-api";
 import Database from "better-sqlite3";
-import { SqliteDb } from "./db/index.js";
+import { type Db, SqliteDb } from "./db/index.js";
+import { snapshotProfileTo } from "./pg-backup.js";
 import { eventRows } from "../engine/events/read.js";
 import { VIEW_COLUMNS } from "../engine/projections/flat-views.js";
 import { fieldDictionary } from "../shared/events.js";
@@ -64,7 +65,27 @@ export async function exportAll(
   const source = new Database(live, { readonly: true });
   source.prepare("VACUUM INTO ?").run(copyPath);
   source.close();
+  return await writeExport(copyPath, dir);
+}
 
+/** Exports a profile in Postgres from a copy taken when called; play after that is not seen. */
+export async function exportProfile(
+  db: Db,
+  root: string,
+  at: Date,
+): Promise<ExportResult> {
+  const dir = join(root, exportDirName(at));
+  mkdirSync(dir, { recursive: true });
+  const copyPath = join(dir, ".copy.sqlite");
+  await snapshotProfileTo(db, copyPath);
+  return await writeExport(copyPath, dir);
+}
+
+/** Writes the seven files from the SQLite copy at `copyPath` into `dir`, then removes the copy. */
+async function writeExport(
+  copyPath: string,
+  dir: string,
+): Promise<ExportResult> {
   const copy = new SqliteDb(new Database(copyPath, { readonly: true }));
   const events = await eventRows(copy);
   // One event a line; an empty log is an empty file.

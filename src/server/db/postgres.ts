@@ -254,3 +254,43 @@ export async function dropSchema(url: string, schema: string): Promise<void> {
     await pool.end();
   }
 }
+
+/**
+ * Puts the schema `fresh` in the place of `live` in one transaction: `live` is renamed aside and
+ * dropped after the commit, so a restore never leaves a half-loaded profile. The server that
+ * holds `live` must be stopped.
+ */
+export async function swapSchema(
+  url: string,
+  live: string,
+  fresh: string,
+): Promise<void> {
+  for (const name of [live, fresh])
+    if (!SCHEMA_NAME.test(name))
+      throw new Error(`schema_name_invalid: ${name}`);
+  const aside = `${live}_old`;
+  const pool = new pg.Pool({ connectionString: url, max: 1 });
+  try {
+    await pool.query(`DROP SCHEMA IF EXISTS ${aside} CASCADE`);
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      const found = await client.query(
+        "SELECT 1 FROM pg_namespace WHERE nspname = $1",
+        [live],
+      );
+      if (found.rows.length > 0)
+        await client.query(`ALTER SCHEMA ${live} RENAME TO ${aside}`);
+      await client.query(`ALTER SCHEMA ${fresh} RENAME TO ${live}`);
+      await client.query("COMMIT");
+    } catch (err) {
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
+    await pool.query(`DROP SCHEMA IF EXISTS ${aside} CASCADE`);
+  } finally {
+    await pool.end();
+  }
+}

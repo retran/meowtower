@@ -542,3 +542,19 @@ test("REQ-7164: a failed first attempt offers a second one, a new task the playe
   await expect(page.locator(".solution")).toBeVisible();
   await expect(page.locator('[data-action="play-again"]')).toHaveCount(0);
 });
+
+test("REQ-2438: a start the rate cap refuses waits and goes again instead of refusing the device", async ({
+  page,
+}) => {
+  await pairDevice(page);
+  // Every reply is the cap's refusal, so the server gains no session the other specs would meet.
+  let asked = 0;
+  await page.route(/\/api\/adventure\/resume$/, (route) => {
+    asked++;
+    return route.fulfill({ status: 429, json: { error: "rate_limited" } });
+  });
+  await ready(page, "/play");
+  await expect(page.locator(".waiting")).toBeVisible();
+  await expect.poll(() => asked, { timeout: 10_000 }).toBeGreaterThan(1);
+  await expect(page.getByText("знакомо башне")).toHaveCount(0);
+});

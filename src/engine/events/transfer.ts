@@ -43,13 +43,13 @@ export async function copyEvents(from: Db, to: Db): Promise<number> {
     if (rows.length === 0) break;
     await to
       .prepare(
-        `INSERT INTO events (${COLUMNS.join(", ")}) OVERRIDING SYSTEM VALUE VALUES ${rows.map(() => one).join(", ")}`,
+        `INSERT INTO events (${COLUMNS.join(", ")})${to.dialect === "postgres" ? " OVERRIDING SYSTEM VALUE" : ""} VALUES ${rows.map(() => one).join(", ")}`,
       )
       .run(...rows.flatMap((r) => COLUMNS.map((c) => r[c])));
     after = rows[rows.length - 1]?.["seq"] as number;
     copied += rows.length;
   }
-  if (copied > 0)
+  if (copied > 0 && to.dialect === "postgres")
     await to
       .prepare(
         "SELECT setval(pg_get_serial_sequence('events', 'seq'), (SELECT max(seq) FROM events))",
