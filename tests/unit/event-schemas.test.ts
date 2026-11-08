@@ -83,6 +83,18 @@ const valid: Record<string, Record<string, unknown>> = {
   },
   choice_made: { sceneId: "sc-1", choiceId: "c-2" },
   free_text: { sceneId: "sc-1", cleaned: "Я иду к мосту." },
+  turn_taken: {
+    encounter: "e-1",
+    said: "Иду к мосту.",
+    reply: "Мост скрипит.",
+  },
+  check_requested: {
+    encounter: "e-1",
+    tried: "she crosses the bridge",
+    hard: "the boards are worn",
+    itemId: "i-1",
+  },
+  world_changed: { kind: "place", name: "bridge", note: "its rope is cut" },
   name_given: { target: "familiar", targetId: "f-1", name: "Пуговка" },
   reward_granted: {
     source: "quest",
