@@ -49,9 +49,11 @@ export async function openDatabase(
   const url = process.env["MEOWTOWER_DATABASE_URL"];
   if (url) {
     // `Db.name` of a Postgres database is its schema, so reopening by that name finds the same data.
-    const schema = /^p_[0-9a-f]{20}$/.test(path)
-      ? path
-      : `p_${createHash("sha1").update(path).digest("hex").slice(0, 20)}`;
+    const schema =
+      process.env["MEOWTOWER_SCHEMA"] ??
+      (/^p_[0-9a-f]{20}$/.test(path)
+        ? path
+        : `p_${createHash("sha1").update(path).digest("hex").slice(0, 20)}`);
     return openProfile(url, schema, beforeMigrate ? { beforeMigrate } : {});
   }
   return openSqlite(path, {

@@ -187,6 +187,32 @@ export function checkExplainCacheConfined(root: string): Finding[] {
   return scan("explain_cache", paths, root, /\bexplain_cache\b/);
 }
 
+/**
+ * ADR-3310: the game's data lives in Postgres, so the SQLite driver is imported only where a
+ * SQLite file is still the thing worked on: the adapter, the opener that reads old files, the
+ * snapshots and the export that read them, and the one-time move.
+ */
+export const SQLITE_MODULES = [
+  "src/server/db/sqlite.ts",
+  "src/server/database.ts",
+  "src/server/snapshots.ts",
+  "src/server/export.ts",
+  "src/server/move.ts",
+];
+export function checkSqliteConfined(root: string): Finding[] {
+  const allowed = SQLITE_MODULES.map((p) => join(root, ...p.split("/")));
+  const srcDir = join(root, "src");
+  const paths = (existsSync(srcDir) ? files(srcDir) : []).filter(
+    (p) => /\.[cm]?[jt]s$/.test(p) && !allowed.includes(p),
+  );
+  return scan(
+    "sqlite_driver",
+    paths,
+    root,
+    /\bfrom\s+["']better-sqlite3["']|require\(["']better-sqlite3["']\)/,
+  );
+}
+
 /** Projections are pure folds: no clock, random source or network (SPC-0020). */
 export function checkProjectionsPure(root: string): Finding[] {
   const dir = join(root, "src", "engine", "projections");
@@ -447,6 +473,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     ...checkEventsSqlConfined(root),
     ...checkBlobWritesConfined(root),
     ...checkProjectionsPure(root),
+    ...checkSqliteConfined(root),
     ...checkNoVerdictWords(root),
     ...checkGameProjectionImports(root),
     ...checkExplainCacheConfined(root),
@@ -471,6 +498,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       "forbidden_in_content passed every fixed string, the canon and 200 seeds of every template through the text gate; " +
       "i18n_keys compared src/shared/i18n-keys.ts with the file tools/gen-keys.ts writes from ru.json; " +
       "blob_write searched the code outside the blob store for writes or deletes in data/blobs; " +
+      "sqlite_driver searched src outside the snapshot, export, move and SQLite adapter modules for the SQLite driver; " +
       "projection_purity searched src/engine/projections for clocks, random sources and network modules; " +
       "verdict_words searched the battle lines and short solutions in content/i18n/ru.json for «верно» and «неверно»; " +
       "game_projection_imports followed the runtime imports of each game projection in the registry to the knowledge model, the Director, the answer check and the version modules, and projection_reads_llm_log followed every projection's runtime imports for llm_log; " +

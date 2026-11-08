@@ -7,6 +7,7 @@ import {
   checkClientStorage,
   checkEventsSqlConfined,
   checkExplainCacheConfined,
+  checkSqliteConfined,
   checkGameProjectionImports,
   type ProjectionEntry,
   checkNoExperience,
@@ -269,6 +270,32 @@ describe("REQ-3816: only the explanation request reads explain_cache", () => {
       "tests/x.test.ts": "explain_cache\n",
     });
     expect(checkExplainCacheConfined(root)).toEqual([]);
+  });
+});
+
+describe("ADR-3310: only the snapshot, export, move and adapter modules import the SQLite driver", () => {
+  it("passes this repository", () => {
+    expect(checkSqliteConfined(process.cwd())).toEqual([]);
+  });
+  it("names a route and a projection that import the driver", () => {
+    const root = repo({
+      "src/server/play.ts": 'import Database from "better-sqlite3";\n',
+      "src/engine/projections/x.ts": 'const D = require("better-sqlite3");\n',
+    });
+    expect(
+      checkSqliteConfined(root)
+        .map((f) => f.file)
+        .sort(),
+    ).toEqual([
+      join("src", "engine", "projections", "x.ts"),
+      join("src", "server", "play.ts"),
+    ]);
+  });
+  it("passes the snapshot module", () => {
+    const root = repo({
+      "src/server/snapshots.ts": 'import Database from "better-sqlite3";\n',
+    });
+    expect(checkSqliteConfined(root)).toEqual([]);
   });
 });
 

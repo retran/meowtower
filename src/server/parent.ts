@@ -10,7 +10,8 @@ import { readNotices } from "./backups.js";
 import { runRecompute } from "./recompute.js";
 import { ModelParamsInvalid } from "../engine/model/params.js";
 import { type ActivationContext, activateModel } from "./model-activate.js";
-import { EXPORT_FILES, exportAll } from "./export.js";
+import { EXPORT_FILES, exportAll, exportProfile } from "./export.js";
+import { snapshotProfile } from "./pg-backup.js";
 import { readFileSync } from "node:fs";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -57,7 +58,10 @@ export function createParentApp({
   let lastExport: string | undefined;
   app.post("/api/parent/export", async (c) => {
     if (!dbPath || !exports) return c.json({ error: "export_failed" }, 500);
-    const { dir, counts } = await exportAll(dbPath, exports, new Date(now()));
+    const { dir, counts } =
+      db.dialect === "postgres"
+        ? await exportProfile(db, exports, new Date(now()))
+        : await exportAll(dbPath, exports, new Date(now()));
     lastExport = dir;
     return c.json({ dir, counts });
   });
@@ -106,7 +110,10 @@ export function createParentApp({
   app.post("/snapshot", async (c) => {
     if (!dbPath || !snapshots) return c.json({ error: "backup_failed" }, 500);
     try {
-      const taken = await takeSnapshot(dbPath, snapshots, new Date(now()));
+      const taken =
+        db.dialect === "postgres"
+          ? await snapshotProfile(db, snapshots, new Date(now()))
+          : await takeSnapshot(dbPath, snapshots, new Date(now()));
       writeFileSync(
         join(snapshots, "last.json"),
         JSON.stringify({

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, watch, pair, db-snapshot, restore and export.
+# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, watch, pair, db-snapshot, restore, move and export.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -347,6 +347,16 @@ cmd_restore() {
   compose start meowtower
 }
 
+# Once, when the game moves from SQLite to Postgres (ADR-3310): the log in the old file of the
+# volume is copied into the Postgres profile, the tables are rebuilt and compared, and the file
+# stays where it is. Play stops while it runs. A profile that holds events is left alone.
+cmd_move() {
+  compose up -d postgres
+  compose stop meowtower
+  compose run --rm meowtower node dist/server/move-cli.js
+  compose start meowtower
+}
+
 # The export, run by the server from a fresh copy (REQ-2238): the raw log,
 # the flat tables and the field dictionary under data/exports/<UTC time>/.
 cmd_export() {
@@ -445,6 +455,7 @@ case "${1:-}" in
   recompute) cmd_recompute ;;
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
+  move) cmd_move ;;
   export) cmd_export ;;
   model)
     case "${2:-}" in
@@ -455,5 +466,5 @@ case "${1:-}" in
   graph)
     if [[ "${2:-}" == check ]]; then shift 2; npx tsx tools/graph-check.ts "$@"
     else echo "usage: ./meowtower graph check [file]" >&2; exit 2; fi ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|export|graph check|model check|model activate" >&2; exit 2 ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|move|export|graph check|model check|model activate" >&2; exit 2 ;;
 esac
