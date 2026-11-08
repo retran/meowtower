@@ -2,6 +2,7 @@
 // with an outcome alone.
 import { describe, expect, it } from "vitest";
 import {
+  checkOutcome,
   CheckReply,
   MASTER_TOOL_NAMES,
   parseToolCall,
@@ -62,5 +63,11 @@ describe("the Master's tools", () => {
       false,
     );
     expect(CheckReply.safeParse({ outcome: "fail" }).success).toBe(false);
+  });
+
+  it("maps a clean answer to success, a partial one to a cost and a failed one to a twist", () => {
+    expect(checkOutcome("clean")).toBe("success");
+    expect(checkOutcome("partial")).toBe("cost");
+    expect(checkOutcome("alt")).toBe("twist");
   });
 });

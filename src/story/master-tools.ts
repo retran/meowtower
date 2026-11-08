@@ -57,3 +57,18 @@ export function parseToolCall(tool: string, input: unknown): ParsedCall {
 
 /** The reply a check gives the Master: the outcome and nothing of the model (REQ-8176). */
 export const CheckReply = z.object({ outcome: z.enum(OUTCOMES) }).strict();
+
+/** The game outcome of a verdict as the Master hears it: clean, partial and alternative (REQ-8180). */
+export type GameOutcome = "clean" | "partial" | "alt";
+
+/** A clean answer succeeds, a partial one succeeds at a cost, a failed one moves the story on with a twist. */
+export function checkOutcome(outcome: GameOutcome): Outcome {
+  switch (outcome) {
+    case "clean":
+      return "success";
+    case "partial":
+      return "cost";
+    case "alt":
+      return "twist";
+  }
+}
