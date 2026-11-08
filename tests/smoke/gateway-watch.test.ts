@@ -204,7 +204,7 @@ describe("REQ-2510: up loads the network watch and down unloads it", () => {
 });
 
 describe("REQ-2510: the watch stops both containers when the gateway changes", () => {
-  const stops = (w: ReturnType<typeof world>): number =>
+  const stops = (w: Awaited<ReturnType<typeof world>>): number =>
     (w.read("docker.log").match(/compose .*stop/g) ?? []).length;
 
   it("stops both containers on a different IP address and writes wrong_network", () => {

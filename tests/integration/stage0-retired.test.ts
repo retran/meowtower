@@ -17,22 +17,22 @@ import { registerDevice } from "../../src/server/devices.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-stage0-retired-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
-function database(name: string): Db {
-  const db = openDatabase(join(root, `${name}.sqlite`));
+async function database(name: string): Promise<Db> {
+  const db = await openDatabase(join(root, `${name}.sqlite`));
   opened.push(db);
   return db;
 }
 
 describe("TSK-0440 criterion 1: the stage 0 write routes answer 404", () => {
   it("answers a paired device 404 on both routes", async () => {
-    const db = database("routes");
-    const app = createApp({ db });
-    const cookie = `meowtower_device=${registerDevice(db, "tablet")}`;
+    const db = await database("routes");
+    const app = await createApp({ db });
+    const cookie = `meowtower_device=${await registerDevice(db, "tablet")}`;
     const post = await app.request("/api/stage0/write", {
       method: "POST",
       headers: { "content-type": "application/json", cookie },
@@ -43,20 +43,20 @@ describe("TSK-0440 criterion 1: the stage 0 write routes answer 404", () => {
       headers: { cookie },
     });
     expect(get.status).toBe(404);
-    expect(eventByIdemKey(db, "w1")).toBeUndefined();
+    expect(await eventByIdemKey(db, "w1")).toBeUndefined();
   });
 });
 
 describe("TSK-0440 criterion 2: version 0 events the routes wrote stay readable", () => {
-  it("reads each one back unchanged after the projections rebuild", () => {
-    const db = database("fixture");
+  it("reads each one back unchanged after the projections rebuild", async () => {
+    const db = await database("fixture");
     // As the routes wrote them: attempt_submitted at version 0 with the raw answer.
     for (const [id, raw] of [
       ["s0-1", "12"],
       ["s0-2", ""],
       ["s0-3", "3/4"],
     ] as const)
-      appendEvents(db, [
+      await appendEvents(db, [
         {
           type: "attempt_submitted",
           v: 0,
@@ -65,16 +65,21 @@ describe("TSK-0440 criterion 2: version 0 events the routes wrote stay readable"
           idemKey: id,
         },
       ]);
-    const before = ["s0-1", "s0-2", "s0-3"].map((id) => eventByIdemKey(db, id));
+    const before = await Promise.all(
+      ["s0-1", "s0-2", "s0-3"].map((id) => eventByIdemKey(db, id)),
+    );
     // A start-up with every projection table missing rebuilds them from the log.
-    for (const p of PROJECTIONS) db.exec(`DROP TABLE IF EXISTS ${p.table}`);
-    const rebuilt = rebuildMissing(
+    for (const p of PROJECTIONS)
+      await db.exec(`DROP TABLE IF EXISTS ${p.table}`);
+    const rebuilt = await rebuildMissing(
       db,
-      () => allEvents(db),
+      async () => await allEvents(db),
       new Date().toISOString(),
     );
     expect(rebuilt.length).toBe(PROJECTIONS.length);
-    const after = ["s0-1", "s0-2", "s0-3"].map((id) => eventByIdemKey(db, id));
+    const after = await Promise.all(
+      ["s0-1", "s0-2", "s0-3"].map((id) => eventByIdemKey(db, id)),
+    );
     expect(after).toEqual(before);
     expect(after.map((e) => e?.payload)).toEqual([
       { raw: "12" },

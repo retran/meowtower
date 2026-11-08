@@ -4,7 +4,6 @@
 // `node_snapshots` keeps one row per node and game day of play under each set of the four
 // versions, so a new model or rules version adds its rows beside the old ones. Until a model
 // is set (`useKnowledge`) the tables stay empty.
-import type Database from "better-sqlite3";
 import { allEvents, itemEvents, type StoredEvent } from "../events/read.js";
 import type { ModelParamsT } from "../model/params.js";
 import {
@@ -18,8 +17,7 @@ import {
 } from "../model/project.js";
 import type { Projection } from "./registry.js";
 import { VERSIONS } from "./versions.js";
-
-type Db = Database.Database;
+import type { Db } from "../../server/db/index.js";
 
 /** What the knowledge model reads besides the log: its parameters, the graph and the game-day zone. */
 export interface KnowledgeSetup {
@@ -39,26 +37,31 @@ export function useKnowledge(next: KnowledgeSetup | null): void {
 type Estimates = ReturnType<typeof knowledgeOf>["estimates"];
 
 /** The node an item belongs to, from the event that showed it. */
-function nodeOfVerdict(db: Db, verdict: StoredEvent): string | undefined {
+async function nodeOfVerdict(
+  db: Db,
+  verdict: StoredEvent,
+): Promise<string | undefined> {
   const itemId = (verdict.payload as { itemId?: string }).itemId;
   if (itemId === undefined) return undefined;
-  const shown = itemEvents(db, itemId).find((e) => e.type === "item_shown");
+  const shown = (await itemEvents(db, itemId)).find(
+    (e) => e.type === "item_shown",
+  );
   return (shown?.payload as { node?: string } | undefined)?.node;
 }
 
-function writeEstimates(
+async function writeEstimates(
   db: Db,
   target: string,
   estimates: Estimates,
   computedAt: string,
-): void {
+): Promise<void> {
   const insert = db.prepare(
     `INSERT OR REPLACE INTO ${target} VALUES (@node, @subtype, @pKnow, @nEff, @uncertainty, @lastSeen,
       @stale, @nextReview, @confidence, @state, @rule, @items, @inferredState, @cutBy,
       @isGap, @helpA, @helpB, @fluentA, @fluentB, @computedAt)`,
   );
   for (const e of estimates)
-    insert.run({
+    await insert.run({
       node: e.node,
       subtype: e.subtype ?? "",
       pKnow: e.pKnow,
@@ -86,7 +89,7 @@ function writeEstimates(
 export const activeKnowledgeParams = (): ModelParamsT | null =>
   setup?.params ?? null;
 
-const noFold = (): void => {};
+const noFold = async (): Promise<void> => {};
 
 const NO_OLYMPIAD: OlympiadFacts = { templates: new Set(), nodes: new Set() };
 
@@ -103,20 +106,20 @@ const nodeLevels: Projection = {
     changes TEXT NOT NULL,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  fullPass(db: Db, target: string, computedAt: string) {
+  async fullPass(db: Db, target: string, computedAt: string) {
     if (!setup) return;
     const levels = levelsOf(
       setup.graph,
-      [...allEvents(db)],
+      [...(await allEvents(db))],
       setup.params,
       setup.olympiad ?? NO_OLYMPIAD,
     );
-    db.prepare(`DELETE FROM ${target}`).run();
+    await db.prepare(`DELETE FROM ${target}`).run();
     const insert = db.prepare(
       `INSERT INTO ${target} VALUES (?, ?, ?, ?, ?, ?)`,
     );
     for (const l of levels)
-      insert.run(
+      await insert.run(
         l.node,
         l.level,
         l.rule,
@@ -140,18 +143,18 @@ const skillScores: Projection = {
     percent INTEGER,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  fullPass(db: Db, target: string, computedAt: string) {
+  async fullPass(db: Db, target: string, computedAt: string) {
     if (!setup) return;
     const scores = skillsOf(
       setup.graph,
-      [...allEvents(db)],
+      [...(await allEvents(db))],
       setup.params,
       setup.olympiad ?? NO_OLYMPIAD,
     );
-    db.prepare(`DELETE FROM ${target}`).run();
+    await db.prepare(`DELETE FROM ${target}`).run();
     const insert = db.prepare(`INSERT INTO ${target} VALUES (?, ?, ?, ?, ?)`);
     for (const s of scores)
-      insert.run(
+      await insert.run(
         s.skill,
         s.shown ? 1 : 0,
         s.shown ? s.level : null,
@@ -175,23 +178,25 @@ const rankState: Projection = {
     changes TEXT NOT NULL,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  fullPass(db: Db, target: string, computedAt: string) {
+  async fullPass(db: Db, target: string, computedAt: string) {
     if (!setup) return;
     const got = rankOf(
       setup.graph,
-      [...allEvents(db)],
+      [...(await allEvents(db))],
       setup.params,
       setup.olympiad ?? NO_OLYMPIAD,
       setup.zone,
     );
-    db.prepare(`DELETE FROM ${target}`).run();
-    db.prepare(`INSERT INTO ${target} VALUES (1, ?, ?, ?, ?, ?)`).run(
-      got.rank,
-      got.rule,
-      got.warning ? 1 : 0,
-      JSON.stringify(got.changes),
-      computedAt,
-    );
+    await db.prepare(`DELETE FROM ${target}`).run();
+    await db
+      .prepare(`INSERT INTO ${target} VALUES (1, ?, ?, ?, ?, ?)`)
+      .run(
+        got.rank,
+        got.rule,
+        got.warning ? 1 : 0,
+        JSON.stringify(got.changes),
+        computedAt,
+      );
   },
   apply: noFold,
 };
@@ -224,30 +229,30 @@ const nodeEstimates: Projection = {
     computed_at TEXT NOT NULL,
     PRIMARY KEY (node, subtype)
   ) STRICT`,
-  fullPass(db: Db, target: string, computedAt: string) {
+  async fullPass(db: Db, target: string, computedAt: string) {
     if (!setup) return;
-    const log = [...allEvents(db)];
+    const log = [...(await allEvents(db))];
     const { estimates } = knowledgeOf(setup.graph, log, setup.params);
-    db.prepare(`DELETE FROM ${target}`).run();
-    writeEstimates(db, target, estimates, computedAt);
+    await db.prepare(`DELETE FROM ${target}`).run();
+    await writeEstimates(db, target, estimates, computedAt);
   },
   /**
    * After a verdict, the node's own rows are rewritten from the log, so the Director sees its
    * new estimate at once. The end-of-adventure pass replaces every row (REQ-0900), and a
    * failure here is logged and leaves the node's last rows, never the event (TSK-0527).
    */
-  apply(db: Db, event: StoredEvent, computedAt: string, table?: string) {
+  async apply(db: Db, event: StoredEvent, computedAt: string, table?: string) {
     if (table !== undefined || !setup || event.type !== "verdict") return;
     try {
-      const node = nodeOfVerdict(db, event);
+      const node = await nodeOfVerdict(db, event);
       if (node === undefined) return;
       const { estimates } = knowledgeOf(
         setup.graph,
-        [...allEvents(db)],
+        [...(await allEvents(db))],
         setup.params,
       );
-      db.prepare("DELETE FROM node_estimates WHERE node = ?").run(node);
-      writeEstimates(
+      await db.prepare("DELETE FROM node_estimates WHERE node = ?").run(node);
+      await writeEstimates(
         db,
         "node_estimates",
         estimates.filter((e) => e.node === node),
@@ -274,14 +279,14 @@ const nodeObligations: Projection = {
     PRIMARY KEY (node, kind)
   ) STRICT`,
   apply: noFold,
-  fullPass(db: Db, target: string, computedAt: string) {
+  async fullPass(db: Db, target: string, computedAt: string) {
     if (!setup) return;
-    const log = [...allEvents(db)];
+    const log = [...(await allEvents(db))];
     const { obligations } = knowledgeOf(setup.graph, log, setup.params);
-    db.prepare(`DELETE FROM ${target}`).run();
+    await db.prepare(`DELETE FROM ${target}`).run();
     const insert = db.prepare(`INSERT INTO ${target} VALUES (?, ?, ?, ?)`);
     for (const o of obligations)
-      insert.run(o.node, o.kind, o.cutBy ?? null, computedAt);
+      await insert.run(o.node, o.kind, o.cutBy ?? null, computedAt);
   },
 };
 
@@ -306,19 +311,21 @@ const nodeSnapshots: Projection = {
     PRIMARY KEY (game_day, node, model_version, threshold_version, graph_version, rules_version)
   ) STRICT`,
   apply: noFold,
-  fullPass(db: Db, target: string, computedAt: string) {
+  async fullPass(db: Db, target: string, computedAt: string) {
     if (!setup) return;
-    const log = [...allEvents(db)];
+    const log = [...(await allEvents(db))];
     const rows = snapshotsOf(setup.graph, log, setup.params, setup.zone);
     // Only the rows of the active versions are rewritten; earlier versions stay (REQ-0904).
-    db.prepare(
-      `DELETE FROM ${target} WHERE model_version = ? AND threshold_version = ? AND graph_version = ? AND rules_version = ?`,
-    ).run(VERSIONS.model, VERSIONS.thresholds, VERSIONS.graph, VERSIONS.rules);
+    await db
+      .prepare(
+        `DELETE FROM ${target} WHERE model_version = ? AND threshold_version = ? AND graph_version = ? AND rules_version = ?`,
+      )
+      .run(VERSIONS.model, VERSIONS.thresholds, VERSIONS.graph, VERSIONS.rules);
     const insert = db.prepare(
       `INSERT INTO ${target} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     );
     for (const r of rows)
-      insert.run(
+      await insert.run(
         r.day,
         r.node,
         r.pKnow,
@@ -347,8 +354,11 @@ export const knowledge: Projection[] = [
  * The full pass over the live knowledge tables, in one transaction: the end of an adventure
  * runs it (TSK-0527). A failure leaves the tables as they were and throws.
  */
-export function refreshKnowledge(db: Db, computedAt: string): void {
-  db.transaction(() => {
-    for (const p of knowledge) p.fullPass?.(db, p.table, computedAt);
+export async function refreshKnowledge(
+  db: Db,
+  computedAt: string,
+): Promise<void> {
+  await db.transaction(async () => {
+    for (const p of knowledge) await p.fullPass?.(db, p.table, computedAt);
   })();
 }

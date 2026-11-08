@@ -134,10 +134,10 @@ describe("REQ-3810: a key built at run time is checked against the file", () => 
   });
 });
 
-describe("REQ-3810: a request for a language outside the shipped set gets Russian and a 400", () => {
-  const db = openDatabase(join(root, "route.sqlite"));
-  const app = createApp({ db });
-  afterAll(() => db.close());
+describe("REQ-3810: a request for a language outside the shipped set gets Russian and a 400", async () => {
+  const db = await openDatabase(join(root, "route.sqlite"));
+  const app = await createApp({ db });
+  afterAll(async () => await db.close());
 
   it("answers 400 with the Russian strings for de and 200 for ru", async () => {
     const de = await app.request("/i18n/de.json");

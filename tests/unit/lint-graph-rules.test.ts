@@ -6,7 +6,7 @@ import { ESLint } from "eslint";
 import { describe, expect, it } from "vitest";
 
 const lint = async (code: string, filePath: string) =>
-  new ESLint().lintText(code, { filePath });
+  await new ESLint().lintText(code, { filePath });
 const ruleIds = (messages: { ruleId: string | null }[]) =>
   messages.map((m) => m.ruleId);
 const FILE_NAME = ["graph", ".yaml"].join("");

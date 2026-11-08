@@ -25,8 +25,8 @@ import { ResumeOut, Room, Scene } from "../../src/shared/api.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-three-day-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 beforeEach(() => {
@@ -54,13 +54,13 @@ const day = (n: number, hour = 10): void => {
 };
 
 let worlds = 0;
-function world() {
-  const db = openDatabase(join(root, `w${++worlds}.sqlite`));
+async function world() {
+  const db = await openDatabase(join(root, `w${++worlds}.sqlite`));
   opened.push(db);
   let clock = 0;
-  const app = createApp({ db, now: () => (clock += 100) });
+  const app = await createApp({ db, now: () => (clock += 100) });
   const headers = {
-    cookie: `meowtower_device=${registerDevice(db, "tablet")}`,
+    cookie: `meowtower_device=${await registerDevice(db, "tablet")}`,
     "content-type": "application/json",
   };
   let seq = 0;
@@ -77,7 +77,7 @@ function world() {
       await post("/api/session/start", { mode: "daily", zone: "UTC" })
     ).json()) as { sessionId: string; wrapUp: boolean };
   const next = async (sessionId: string): Promise<unknown> =>
-    (await get(`/api/session/${sessionId}/next`)).json();
+    await (await get(`/api/session/${sessionId}/next`)).json();
   /** Shows the next task and answers it. */
   const play = async (sessionId: string): Promise<Room> => {
     const room = Room.parse(await next(sessionId));
@@ -89,16 +89,16 @@ function world() {
     });
     return room;
   };
-  const leave = (sessionId: string) =>
-    post(`/api/session/${sessionId}/pause`, { reason: "leave" });
-  const events = (type: string) =>
+  const leave = async (sessionId: string) =>
+    await post(`/api/session/${sessionId}/pause`, { reason: "leave" });
+  const events = async (type: string) =>
     (
-      db
+      (await db
         .prepare("SELECT seq, payload FROM events WHERE type = ? ORDER BY seq")
-        .all(type) as { seq: number; payload: string }[]
+        .all(type)) as { seq: number; payload: string }[]
     ).map((r) => ({ seq: r.seq, ...(JSON.parse(r.payload) as object) }));
-  const setLimit = (value: number | null): void => {
-    appendEvents(db, [
+  const setLimit = async (value: number | null): Promise<void> => {
+    await appendEvents(db, [
       {
         type: "settings_changed",
         v: 1,
@@ -107,9 +107,12 @@ function world() {
       },
     ]);
   };
-  const adventureState = (): string =>
-    (db.prepare("SELECT state FROM adventures").get() as { state: string })
-      .state;
+  const adventureState = async (): Promise<string> =>
+    (
+      (await db.prepare("SELECT state FROM adventures").get()) as {
+        state: string;
+      }
+    ).state;
   return {
     db,
     app,
@@ -125,7 +128,7 @@ function world() {
   };
 }
 
-type World = ReturnType<typeof world>;
+type World = Awaited<ReturnType<typeof world>>;
 
 /** Plays `tasks` tasks on game day `n` and leaves. */
 async function playDay(w: World, n: number, tasks: number, hour = 10) {
@@ -138,7 +141,7 @@ async function playDay(w: World, n: number, tasks: number, hour = 10) {
 
 describe("REQ-0236: only game days with play count towards the limit", () => {
   it("sets wrapUp on the first session after three adventure days, gaps not counted", async () => {
-    const w = world();
+    const w = await world();
     expect(await playDay(w, 1, 1)).toBe(false);
     expect(await playDay(w, 3, 1)).toBe(false);
     expect(await playDay(w, 6, 1)).toBe(false);
@@ -148,7 +151,7 @@ describe("REQ-0236: only game days with play count towards the limit", () => {
   });
 
   it("counts no game day on which only a session started", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1);
     await playDay(w, 2, 0);
     await playDay(w, 3, 0);
@@ -159,7 +162,7 @@ describe("REQ-0236: only game days with play count towards the limit", () => {
   });
 
   it("ends a game day at 04:00, so one calendar day can hold two", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1, 3);
     await playDay(w, 1, 1, 5);
     await playDay(w, 2, 1, 5);
@@ -171,7 +174,7 @@ describe("REQ-0236: only game days with play count towards the limit", () => {
   });
 
   it("returns wrapUp on resume too", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1);
     await playDay(w, 2, 1);
     await playDay(w, 3, 1);
@@ -183,31 +186,31 @@ describe("REQ-0236: only game days with play count towards the limit", () => {
   });
 
   it("wraps up at the next new game day after the parent lowers the limit", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1);
     await playDay(w, 2, 1);
     day(3);
     expect((await w.start()).wrapUp).toBe(false);
-    w.setLimit(2);
+    await w.setLimit(2);
     day(4);
     expect((await w.start()).wrapUp).toBe(true);
   });
 
   it("never wraps up with the limit off", async () => {
-    const w = world();
-    w.setLimit(null);
+    const w = await world();
+    await w.setLimit(null);
     for (let d = 1; d <= 6; d++) await playDay(w, d, 1);
     day(7);
     const { sessionId, wrapUp } = await w.start();
     expect(wrapUp).toBe(false);
     Room.parse(await w.next(sessionId));
-    expect(w.events("adventure_wrapped_up")).toHaveLength(0);
+    expect(await w.events("adventure_wrapped_up")).toHaveLength(0);
   });
 });
 
 describe("REQ-0228: the open task and room finish, then the short ending plays", () => {
   it("shows the rest of the room, then the ending, then the end", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 2); // tasks 0 and 1 of room 1
     await playDay(w, 3, 1); // task 2 closes room 1
     await playDay(w, 5, 1); // task 3 opens room 2
@@ -221,8 +224,8 @@ describe("REQ-0228: the open task and room finish, then the short ending plays",
     expect(b.slot).toBe(2);
     const ending = Scene.parse(await w.next(sessionId));
     expect(ending.lines.length).toBeGreaterThan(0);
-    expect(w.events("adventure_wrapped_up")).toHaveLength(1);
-    expect(w.adventureState()).toBe("wrapped_up");
+    expect(await w.events("adventure_wrapped_up")).toHaveLength(1);
+    expect(await w.adventureState()).toBe("wrapped_up");
     // The ending stays until she leaves it, and then the adventure is over.
     expect(Scene.parse(await w.next(sessionId)).sceneId).toBe(ending.sceneId);
     await w.post(`/api/session/${sessionId}/scene/input`, {
@@ -234,7 +237,7 @@ describe("REQ-0228: the open task and room finish, then the short ending plays",
   });
 
   it("shows an open task again before the ending", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1);
     await playDay(w, 2, 1);
     // A task shown on day 3 and left unanswered.
@@ -247,7 +250,7 @@ describe("REQ-0228: the open task and room finish, then the short ending plays",
     expect(wrapUp).toBe(true);
     const open = Room.parse(await w.next(sessionId));
     expect(open.itemId).toBe(shown.itemId);
-    expect(w.events("adventure_wrapped_up")).toHaveLength(0);
+    expect(await w.events("adventure_wrapped_up")).toHaveLength(0);
     // Answered, the room is whole, and the ending follows.
     await w.post(`/api/session/${sessionId}/answer`, {
       itemId: open.itemId,
@@ -256,26 +259,26 @@ describe("REQ-0228: the open task and room finish, then the short ending plays",
       input,
     });
     Scene.parse(await w.next(sessionId));
-    expect(w.events("adventure_wrapped_up")).toHaveLength(1);
+    expect(await w.events("adventure_wrapped_up")).toHaveLength(1);
   });
 
   it("plays the ending at once when the room is already complete", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1);
     await playDay(w, 2, 1);
     await playDay(w, 3, 1); // three tasks: room 1 complete
     day(4);
     const { sessionId } = await w.start();
     expect(Scene.parse(await w.next(sessionId)).sceneId).toBeTruthy();
-    expect(w.events("adventure_wrapped_up")).toHaveLength(1);
+    expect(await w.events("adventure_wrapped_up")).toHaveLength(1);
   });
 });
 
 describe("REQ-0230, REQ-0232: the ending keeps every grant and queues the secrets", () => {
   it("holds each earlier grant, removes no event and queues the unopened secrets", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1);
-    appendEvents(w.db, [
+    await appendEvents(w.db, [
       {
         type: "reward_granted",
         v: 1,
@@ -287,7 +290,7 @@ describe("REQ-0230, REQ-0232: the ending keeps every grant and queues the secret
         },
         origin: "server",
         adventureId: (
-          w.db.prepare("SELECT adventure_id FROM adventures").get() as {
+          (await w.db.prepare("SELECT adventure_id FROM adventures").get()) as {
             adventure_id: string;
           }
         ).adventure_id,
@@ -296,15 +299,15 @@ describe("REQ-0230, REQ-0232: the ending keeps every grant and queues the secret
     await playDay(w, 2, 1);
     await playDay(w, 3, 1);
     const before = (
-      w.db
+      (await w.db
         .prepare("SELECT seq, type, payload FROM events ORDER BY seq")
-        .all() as {
+        .all()) as {
         seq: number;
         type: string;
         payload: string;
       }[]
     ).map((e) => JSON.stringify(e));
-    const inventoryBefore = w.db
+    const inventoryBefore = await w.db
       .prepare("SELECT reward_id, kind, amount FROM inventory ORDER BY seq")
       .all();
     expect(inventoryBefore).toEqual([
@@ -316,9 +319,9 @@ describe("REQ-0230, REQ-0232: the ending keeps every grant and queues the secret
     Scene.parse(await w.next(sessionId));
 
     const after = (
-      w.db
+      (await w.db
         .prepare("SELECT seq, type, payload FROM events ORDER BY seq")
-        .all() as {
+        .all()) as {
         seq: number;
         type: string;
         payload: string;
@@ -327,41 +330,41 @@ describe("REQ-0230, REQ-0232: the ending keeps every grant and queues the secret
     // Nothing earlier was removed or changed; the log only grew.
     expect(after.slice(0, before.length)).toEqual(before);
     expect(
-      w.db
+      await w.db
         .prepare("SELECT reward_id, kind, amount FROM inventory ORDER BY seq")
         .all(),
     ).toEqual(inventoryBefore);
-    expect(w.events("adventure_wrapped_up")).toMatchObject([
+    expect(await w.events("adventure_wrapped_up")).toMatchObject([
       { unopenedSecrets: [...STANDIN_SECRETS] },
     ]);
     expect(
       (
-        w.db
+        (await w.db
           .prepare("SELECT secret_id FROM reward_queue ORDER BY secret_id")
-          .all() as { secret_id: string }[]
+          .all()) as { secret_id: string }[]
       ).map((r) => r.secret_id),
     ).toEqual([...STANDIN_SECRETS].sort());
   });
 
   it("rebuilds inventory and reward_queue from the log alone", async () => {
-    const w = world();
+    const w = await world();
     await playDay(w, 1, 1);
     await playDay(w, 2, 1);
     await playDay(w, 3, 1);
     day(4);
     const { sessionId } = await w.start();
     Scene.parse(await w.next(sessionId));
-    const queue = w.db
+    const queue = await w.db
       .prepare("SELECT secret_id FROM reward_queue ORDER BY secret_id")
       .all();
-    w.db.prepare("DROP TABLE reward_queue").run();
-    w.db.prepare("DROP TABLE inventory").run();
-    const reopened = openDatabase(w.db.name);
+    await w.db.prepare("DROP TABLE reward_queue").run();
+    await w.db.prepare("DROP TABLE inventory").run();
+    const reopened = await openDatabase(w.db.name);
     expect(
-      reopened
+      await reopened
         .prepare("SELECT secret_id FROM reward_queue ORDER BY secret_id")
         .all(),
     ).toEqual(queue);
-    reopened.close();
+    await reopened.close();
   });
 });

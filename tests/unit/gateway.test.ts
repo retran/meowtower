@@ -22,14 +22,14 @@ import { type Route, type Routes } from "../../src/server/gateway/routes.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-gateway-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 let n = 0;
-const database = (): Db => {
+const database = async (): Promise<Db> => {
   n += 1;
-  const db = openDatabase(join(root, `${n.toString()}.sqlite`));
+  const db = await openDatabase(join(root, `${n.toString()}.sqlite`));
   opened.push(db);
   return db;
 };
@@ -56,7 +56,7 @@ function fake(costUsd = 0.001): Route & { calls: number } {
         costUsd,
       });
     },
-    hasModel: () => Promise.resolve(true),
+    hasModel: async () => Promise.resolve(true),
   };
 }
 
@@ -100,23 +100,23 @@ describe("role values", () => {
 
 describe("the gateway", () => {
   it("sends each request by its role's route and logs both the same way", async () => {
-    const db = database();
+    const db = await database();
     const routes = { anthropic: fake(), openrouter: fake() };
     const gateway = createGateway({ db, config, routes: routes as Routes });
     await gateway.call({ role: "TASK_TEXT_MODEL", ...asked });
     await gateway.call({ role: "FRAME_JUDGE_MODEL", ...asked });
     expect(routes.anthropic.calls).toBe(1);
     expect(routes.openrouter.calls).toBe(1);
-    const rows = db
+    const rows = (await db
       .prepare("SELECT route, outcome, request, response FROM llm_log")
-      .all() as { route: string; outcome: string; response: string }[];
+      .all()) as { route: string; outcome: string; response: string }[];
     expect(rows.map((r) => r.route)).toEqual(["anthropic", "openrouter"]);
     expect(rows.every((r) => r.outcome === "ok" && r.response === "ok")).toBe(
       true,
     );
   });
   it("counts the month across routes", async () => {
-    const db = database();
+    const db = await database();
     const routes = { anthropic: fake(), openrouter: fake(199.9999) };
     const gateway = createGateway({ db, config, routes: routes as Routes });
     await gateway.call({
@@ -131,19 +131,19 @@ describe("the gateway", () => {
     });
     expect(refused).toEqual({ ok: false, reason: "budget_exhausted" });
     expect(routes.anthropic.calls).toBe(0);
-    expect(eventsOfType(db, "budget_month_spent")).toHaveLength(1);
-    expect(eventsOfType(db, "llm_call")).toHaveLength(1);
+    expect(await eventsOfType(db, "budget_month_spent")).toHaveLength(1);
+    expect(await eventsOfType(db, "llm_call")).toHaveLength(1);
     expect(
-      db
+      await db
         .prepare("SELECT role FROM llm_log WHERE outcome = 'budget_exhausted'")
         .all(),
     ).toEqual([{ role: "TASK_TEXT_MODEL" }]);
   });
   it("logs a failure and answers provider_failed", async () => {
-    const db = database();
+    const db = await database();
     const broken: Route = {
       ...fake(),
-      call: () => Promise.reject(new Error("down")),
+      call: async () => Promise.reject(new Error("down")),
     };
     const gateway = createGateway({
       db,
@@ -155,11 +155,11 @@ describe("the gateway", () => {
       reason: "provider_failed",
     });
     expect(
-      db.prepare("SELECT outcome, response FROM llm_log").get(),
+      await db.prepare("SELECT outcome, response FROM llm_log").get(),
     ).toMatchObject({ outcome: "provider_failed", response: "down" });
   });
   it("stops an adventure at $5 and leaves another adventure alone", async () => {
-    const db = database();
+    const db = await database();
     const routes = { anthropic: fake(4.9999), openrouter: fake() };
     const gateway = createGateway({ db, config, routes: routes as Routes });
     const first = { role: "TASK_TEXT_MODEL", ...asked } as const;
@@ -168,11 +168,11 @@ describe("the gateway", () => {
     expect((await gateway.call({ ...first, bucket: "other" })).ok).toBe(true);
   });
   it("cleans names and contact details", async () => {
-    const db = database();
+    const db = await database();
     const seen: string[] = [];
     const route: Route = {
       ...fake(),
-      call(r) {
+      async call(r) {
         seen.push(r.user);
         return Promise.resolve({
           text: "ok",
@@ -208,7 +208,7 @@ describe("the gateway", () => {
     const replay = replayRoute(live, dir);
     expect((await replay.call(request)).text).toBe("ok");
     expect(live.calls).toBe(1);
-    expect(() => replay.call({ ...request, user: "other" })).toThrow(
+    await expect(replay.call({ ...request, user: "other" })).rejects.toThrow(
       "recording_missing",
     );
   });

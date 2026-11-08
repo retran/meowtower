@@ -1,12 +1,11 @@
 // items_view and attempts_view (SPC-0020): one row per task shown and one per
 // attempt, with the parent's corrections applied as flags, never as edits to
 // the events (REQ-2228).
-import type Database from "better-sqlite3";
 import type { StoredEvent } from "../events/read.js";
 import type { Projection } from "./registry.js";
 import { prepared } from "./statements.js";
+import type { Db } from "../../server/db/index.js";
 
-type Db = Database.Database;
 type P = Record<string, unknown>;
 
 const itemsView: Projection = {
@@ -30,10 +29,15 @@ const itemsView: Projection = {
     flagged INTEGER NOT NULL DEFAULT 0,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string, table = "items_view") {
+  async apply(
+    db: Db,
+    e: StoredEvent,
+    computedAt: string,
+    table = "items_view",
+  ) {
     const p = e.payload as P;
     if (e.type === "item_shown") {
-      prepared(
+      await prepared(
         db,
         `INSERT INTO ${table} (item_id, session_id, template_id, template_version, node, subtype,
            purpose, attempt_no, parent_item_id, correct_answer, shown_seq, computed_at)
@@ -54,7 +58,7 @@ const itemsView: Projection = {
       );
     } else if (e.type === "item_flagged" || e.type === "item_excluded") {
       const column = e.type === "item_flagged" ? "flagged" : "excluded";
-      prepared(
+      await prepared(
         db,
         `UPDATE ${table} SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
       ).run(computedAt, p["itemId"]);
@@ -84,12 +88,17 @@ const attemptsView: Projection = {
     computed_at TEXT NOT NULL,
     PRIMARY KEY (item_id, attempt_no)
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string, table = "attempts_view") {
+  async apply(
+    db: Db,
+    e: StoredEvent,
+    computedAt: string,
+    table = "attempts_view",
+  ) {
     const p = e.payload as P;
     if (e.type === "attempt_submitted" && e.v >= 1) {
       const input = p["input"] as P;
       const answer = p["answer"] as P;
-      prepared(
+      await prepared(
         db,
         `INSERT INTO ${table} (item_id, attempt_no, session_id, entered, assisted, hint_level,
            submitted_ms, input_method, computed_at)
@@ -110,7 +119,7 @@ const attemptsView: Projection = {
         computedAt,
       );
     } else if (e.type === "verdict") {
-      prepared(
+      await prepared(
         db,
         `INSERT INTO ${table} (item_id, attempt_no, session_id, verdict, outcome, trap_id, computed_at)
          VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -127,7 +136,7 @@ const attemptsView: Projection = {
       );
     } else if (e.type === "item_flagged" || e.type === "item_excluded") {
       const column = e.type === "item_flagged" ? "flagged" : "excluded";
-      prepared(
+      await prepared(
         db,
         `UPDATE ${table} SET ${column} = 1, computed_at = ? WHERE item_id = ?`,
       ).run(computedAt, p["itemId"]);

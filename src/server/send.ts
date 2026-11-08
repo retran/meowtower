@@ -6,13 +6,13 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { z } from "zod";
 import type { Source } from "./outgoing.js";
 
-export function send<S extends z.ZodType>(
+export async function send<S extends z.ZodType>(
   c: Context,
   schema: S,
   body: z.input<S>,
   status: ContentfulStatusCode = 200,
   source: Source = "fixed",
-): Response {
+): Promise<Response> {
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     console.error(
@@ -22,6 +22,6 @@ export function send<S extends z.ZodType>(
   }
   // The app sets the gate on the context, so no body leaves around it (REQ-3326).
   const gate = c.get("outgoing");
-  const safe = gate ? gate.body(parsed.data, source) : parsed.data;
+  const safe = gate ? await gate.body(parsed.data, source) : parsed.data;
   return c.json(safe as object, status);
 }

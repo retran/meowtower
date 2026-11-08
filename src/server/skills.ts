@@ -11,12 +11,12 @@ interface Row {
   percent: number | null;
 }
 
-export function skillsRead(db: Db): SkillsOut["skills"] {
+export async function skillsRead(db: Db): Promise<SkillsOut["skills"]> {
   const rows = new Map(
     (
-      db
+      (await db
         .prepare("SELECT skill, shown, level, percent FROM skill_scores")
-        .all() as Row[]
+        .all()) as Row[]
     ).map((r) => [r.skill, r]),
   );
   return SKILLS.map(({ skill }) => {

@@ -3,7 +3,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import type Database from "better-sqlite3";
+import type { Db } from "../../server/db/index.js";
 import { eventsOfType } from "../events/read.js";
 
 export interface BlobFailure {
@@ -11,7 +11,7 @@ export interface BlobFailure {
   file: string;
 }
 
-export function verifyBlobs(db: Database.Database, dir: string): BlobFailure[] {
+export async function verifyBlobs(db: Db, dir: string): Promise<BlobFailure[]> {
   const failures: BlobFailure[] = [];
   const files = existsSync(dir)
     ? readdirSync(dir).filter((f) => f.endsWith(".webp"))
@@ -24,7 +24,7 @@ export function verifyBlobs(db: Database.Database, dir: string): BlobFailure[] {
       failures.push({ failure: "blob_changed", file });
   }
   const present = new Set(files);
-  for (const e of eventsOfType(db, "scratch_snapshot")) {
+  for (const e of await eventsOfType(db, "scratch_snapshot")) {
     const file = `${(e.payload as { sha256: string }).sha256}.webp`;
     if (!present.has(file)) failures.push({ failure: "blob_missing", file });
   }

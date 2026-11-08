@@ -15,19 +15,19 @@ describe("health page (TSK-0010)", () => {
   it("answers 200 with the database open", async () => {
     const dir = mkdtempSync(join(tmpdir(), "meowtower-"));
     dirs.push(dir);
-    const db = openDatabase(join(dir, "meowmeowtower.sqlite"));
-    const res = await createApp({ db }).request("/health");
+    const db = await openDatabase(join(dir, "meowmeowtower.sqlite"));
+    const res = await (await createApp({ db })).request("/health");
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ status: "ok", database: "ok" });
-    db.close();
+    await db.close();
   });
 
   it("answers 503 when the database is closed", async () => {
     const dir = mkdtempSync(join(tmpdir(), "meowtower-"));
     dirs.push(dir);
-    const db = openDatabase(join(dir, "meowmeowtower.sqlite"));
-    db.close();
-    const res = await createApp({ db }).request("/health");
+    const db = await openDatabase(join(dir, "meowmeowtower.sqlite"));
+    await db.close();
+    const res = await (await createApp({ db })).request("/health");
     expect(res.status).toBe(503);
     expect(await res.json()).toEqual({
       status: "unavailable",

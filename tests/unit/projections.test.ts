@@ -15,7 +15,8 @@ import { openDatabase, type Db } from "../../src/server/database.js";
 const dir = mkdtempSync(join(tmpdir(), "meowtower-proj-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 let n = 0;
-const fresh = (): Db => openDatabase(join(dir, `p${n++}.sqlite`));
+const fresh = async (): Promise<Db> =>
+  await openDatabase(join(dir, `p${n++}.sqlite`));
 
 const shown = (itemId: string): NewEvent => ({
   type: "item_shown",
@@ -76,17 +77,20 @@ const attempt = (itemId: string): NewEvent[] => [
     },
   },
 ];
-const rows = (db: Db, table: string): Record<string, unknown>[] =>
-  db.prepare(`SELECT * FROM ${table} ORDER BY 1, 2`).all() as Record<
+const rows = async (
+  db: Db,
+  table: string,
+): Promise<Record<string, unknown>[]> =>
+  (await db.prepare(`SELECT * FROM ${table} ORDER BY 1, 2`).all()) as Record<
     string,
     unknown
   >[];
 
 describe("REQ-3802: derived_meta records versions, the last seq and the time", () => {
-  it("has a row per projection with the versions, the last seq and a UTC time", () => {
-    const db = fresh();
-    const appended = appendEvents(db, [shown("i-1"), ...attempt("i-1")]);
-    const meta = rows(db, "derived_meta");
+  it("has a row per projection with the versions, the last seq and a UTC time", async () => {
+    const db = await fresh();
+    const appended = await appendEvents(db, [shown("i-1"), ...attempt("i-1")]);
+    const meta = await rows(db, "derived_meta");
     expect(meta.map((m) => m["name"]).sort()).toEqual(
       PROJECTIONS.map((p) => p.name).sort(),
     );
@@ -99,20 +103,20 @@ describe("REQ-3802: derived_meta records versions, the last seq and the time", (
       });
       expect(String(m["computed_at"])).toMatch(/^\d{4}-\d{2}-\d{2}T.*Z$/);
     }
-    db.close();
+    await db.close();
   });
 });
 
 describe("the flat views fold in the log's transaction", () => {
-  it("holds one items_view row per task shown and one attempts_view row per attempt", () => {
-    const db = fresh();
-    appendEvents(db, [shown("i-1"), ...attempt("i-1"), shown("i-2")]);
-    expect(rows(db, "items_view").map((r) => r["item_id"])).toEqual([
+  it("holds one items_view row per task shown and one attempts_view row per attempt", async () => {
+    const db = await fresh();
+    await appendEvents(db, [shown("i-1"), ...attempt("i-1"), shown("i-2")]);
+    expect((await rows(db, "items_view")).map((r) => r["item_id"])).toEqual([
       "i-1",
       "i-2",
     ]);
-    expect(rows(db, "attempts_view")).toHaveLength(1);
-    expect(rows(db, "attempts_view")[0]).toMatchObject({
+    expect(await rows(db, "attempts_view")).toHaveLength(1);
+    expect((await rows(db, "attempts_view"))[0]).toMatchObject({
       item_id: "i-1",
       attempt_no: 1,
       entered: "7",
@@ -121,11 +125,11 @@ describe("the flat views fold in the log's transaction", () => {
       excluded: 0,
       flagged: 0,
     });
-    db.close();
+    await db.close();
   });
 
-  it("writes neither the events nor the rows when a projection throws", () => {
-    const db = fresh();
+  it("writes neither the events nor the rows when a projection throws", async () => {
+    const db = await fresh();
     const failing = {
       name: "failing",
       table: "failing_view",
@@ -136,21 +140,23 @@ describe("the flat views fold in the log's transaction", () => {
         throw new Error("projection failed");
       },
     };
-    withProjection(failing, () => {
-      expect(() => appendEvents(db, [shown("i-9")])).toThrow();
+    await withProjection(failing, async () => {
+      await expect(appendEvents(db, [shown("i-9")])).rejects.toThrow();
     });
-    expect(itemEvents(db, "i-9")).toEqual([]);
-    expect(rows(db, "items_view")).toEqual([]);
-    db.close();
+    expect(await itemEvents(db, "i-9")).toEqual([]);
+    expect(await rows(db, "items_view")).toEqual([]);
+    await db.close();
   });
 });
 
 describe("REQ-2228: a correction is a new event, the original untouched", () => {
-  it("marks a task excluded and flagged, leaving item_shown and verdict as they were", () => {
-    const db = fresh();
-    appendEvents(db, [shown("i-1"), ...attempt("i-1")]);
-    const before = itemEvents(db, "i-1").map((e) => JSON.stringify(e.payload));
-    appendEvents(db, [
+  it("marks a task excluded and flagged, leaving item_shown and verdict as they were", async () => {
+    const db = await fresh();
+    await appendEvents(db, [shown("i-1"), ...attempt("i-1")]);
+    const before = (await itemEvents(db, "i-1")).map((e) =>
+      JSON.stringify(e.payload),
+    );
+    await appendEvents(db, [
       {
         type: "item_flagged",
         v: 1,
@@ -164,41 +170,43 @@ describe("REQ-2228: a correction is a new event, the original untouched", () => 
         payload: { itemId: "i-1", reason: "ambiguous" },
       },
     ]);
-    expect(rows(db, "items_view")[0]).toMatchObject({
+    expect((await rows(db, "items_view"))[0]).toMatchObject({
       excluded: 1,
       flagged: 1,
     });
-    expect(rows(db, "attempts_view")[0]).toMatchObject({
+    expect((await rows(db, "attempts_view"))[0]).toMatchObject({
       excluded: 1,
       flagged: 1,
     });
-    const after = itemEvents(db, "i-1")
+    const after = (await itemEvents(db, "i-1"))
       .filter((e) =>
         ["item_shown", "attempt_submitted", "verdict"].includes(e.type),
       )
       .map((e) => JSON.stringify(e.payload));
     expect(after).toEqual(before);
-    db.close();
+    await db.close();
   });
 });
 
 describe("folds are pure", () => {
-  it("gives equal rows for the same events", () => {
-    const a = fresh();
-    const b = fresh();
+  it("gives equal rows for the same events", async () => {
+    const a = await fresh();
+    const b = await fresh();
     for (const db of [a, b])
-      appendEvents(db, [shown("i-1"), ...attempt("i-1")]);
+      await appendEvents(db, [shown("i-1"), ...attempt("i-1")]);
     const strip = (r: Record<string, unknown>[]) =>
       r.map((row) =>
         Object.fromEntries(
           Object.entries(row).filter(([k]) => k !== "computed_at"),
         ),
       );
-    expect(strip(rows(a, "items_view"))).toEqual(strip(rows(b, "items_view")));
-    expect(strip(rows(a, "attempts_view"))).toEqual(
-      strip(rows(b, "attempts_view")),
+    expect(strip(await rows(a, "items_view"))).toEqual(
+      strip(await rows(b, "items_view")),
     );
-    a.close();
-    b.close();
+    expect(strip(await rows(a, "attempts_view"))).toEqual(
+      strip(await rows(b, "attempts_view")),
+    );
+    await a.close();
+    await b.close();
   });
 });

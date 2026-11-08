@@ -1,13 +1,11 @@
-import type Database from "better-sqlite3";
 import { EventInvalid, events as registry } from "../../shared/events.js";
 import { ADVENTURE_STATE, FINISHED } from "../projections/lifecycle.js";
 import { applyProjections } from "../projections/registry.js";
 import { ulid } from "./ulid.js";
 import { prepared } from "../projections/statements.js";
+import type { Db } from "../../server/db/index.js";
 
 export { EventInvalid };
-
-type Db = Database.Database;
 
 /** The device identifier of an event the server writes on its own (REQ-2202). */
 export const SERVER_DEVICE = "server";
@@ -55,7 +53,10 @@ const finished = (s: string): boolean =>
  * The only writer of the log (ADR-0020). Inserts every event in one
  * transaction and returns once it has committed.
  */
-export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
+export async function appendEvents(
+  db: Db,
+  events: readonly NewEvent[],
+): Promise<Appended[]> {
   const insert = prepared(
     db,
     `INSERT INTO events
@@ -64,28 +65,29 @@ export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
   );
   // The adventures projection is created on its first fold, so an empty log
   // has no table yet, and then no adventure to guard.
-  const stateOf = (adventureId: string): string | undefined => {
-    const table = prepared(
+  const stateOf = async (adventureId: string): Promise<string | undefined> => {
+    const table = await prepared(
       db,
       "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'adventures'",
     ).get();
     if (!table) return undefined;
-    const row = prepared(
+    const row = (await prepared(
       db,
       "SELECT state FROM adventures WHERE adventure_id = ?",
-    ).get(adventureId) as { state: string } | undefined;
+    ).get(adventureId)) as { state: string } | undefined;
     return row?.state;
   };
-  const write = db.transaction((batch: readonly NewEvent[]) => {
+  const write = db.transaction(async (batch: readonly NewEvent[]) => {
     // Every event of the batch is checked before any is written (ADR-0020).
     for (const e of batch) registry.validate(e.type, e.v, e.payload);
-    return batch.map((e) => {
+    const appended: { seq: number; id: string }[] = [];
+    for (const e of batch) {
       // No event reopens a finished adventure (REQ-2404). Checked per event,
       // after the batch's earlier events have folded, so a batch that
       // completes an adventure and then pauses it is refused too.
       const next = ADVENTURE_STATE[e.type];
       if (next && e.adventureId && !finished(next)) {
-        const now = stateOf(e.adventureId);
+        const now = await stateOf(e.adventureId);
         if (now && finished(now))
           throw new AdventureClosed(e.adventureId, now, e.type);
       }
@@ -95,7 +97,7 @@ export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
         e.origin === "server"
           ? [SERVER_DEVICE, now]
           : [e.origin.deviceId, e.origin.clientMs];
-      const { lastInsertRowid } = insert.run(
+      const { lastInsertRowid } = await insert.run(
         id,
         new Date(now).toISOString(),
         clientMs,
@@ -110,7 +112,7 @@ export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
       const seq = Number(lastInsertRowid);
       const ts = new Date(now).toISOString();
       // Every projection folds the event in this same transaction (SPC-0020).
-      applyProjections(
+      await applyProjections(
         db,
         {
           seq,
@@ -127,11 +129,12 @@ export function appendEvents(db: Db, events: readonly NewEvent[]): Appended[] {
         },
         ts,
       );
-      return { seq, id };
-    });
+      appended.push({ seq, id });
+    }
+    return appended;
   });
   try {
-    return write(events);
+    return await write(events);
   } catch (err) {
     if (err instanceof EventInvalid || err instanceof AdventureClosed)
       throw err;

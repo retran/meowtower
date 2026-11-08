@@ -53,26 +53,26 @@ afterAll(() => rmSync(root, { recursive: true, force: true }));
 
 let worlds = 0;
 /** A database with a 10-day synthetic log and its knowledge rows written under `V1`. */
-function world(end = true): Db {
+async function world(end = true): Promise<Db> {
   useVersions(V1);
   useKnowledge({ params, graph, zone: ZONE });
-  const db = openDatabase(join(root, `w${++worlds}.sqlite`));
-  writeSyntheticLog(db, { days: 10, tasksPerDay: 12, seed: 5 });
-  if (end) refreshKnowledge(db, "end-of-adventure");
+  const db = await openDatabase(join(root, `w${++worlds}.sqlite`));
+  await writeSyntheticLog(db, { days: 10, tasksPerDay: 12, seed: 5 });
+  if (end) await refreshKnowledge(db, "end-of-adventure");
   return db;
 }
 
 /** A hash of a table's rows, all columns but the computed time, in key order. */
-function hashOf(db: Db, table: string, where = "1 = 1"): string {
+async function hashOf(db: Db, table: string, where = "1 = 1"): Promise<string> {
   const columns = (
-    db.prepare("SELECT name FROM pragma_table_info(?)").all(table) as {
+    (await db.prepare("SELECT name FROM pragma_table_info(?)").all(table)) as {
       name: string;
     }[]
   )
     .map((c) => c.name)
     .filter((c) => c !== "computed_at")
     .join(", ");
-  const rows = db
+  const rows = await db
     .prepare(
       `SELECT ${columns} FROM ${table} WHERE ${where} ORDER BY ${columns}`,
     )
@@ -82,122 +82,132 @@ function hashOf(db: Db, table: string, where = "1 = 1"): string {
 
 describe("REQ-0900: a full recompute gives the rows the end of an adventure wrote", () => {
   it("rebuilds node_estimates and the active node_snapshots rows to the same hash", async () => {
-    const db = world();
-    const estimates = hashOf(db, "node_estimates");
-    const snapshots = hashOf(db, "node_snapshots");
+    const db = await world();
+    const estimates = await hashOf(db, "node_estimates");
+    const snapshots = await hashOf(db, "node_snapshots");
     expect(
-      db.prepare("SELECT count(*) AS n FROM node_estimates").get(),
+      await db.prepare("SELECT count(*) AS n FROM node_estimates").get(),
     ).not.toEqual({ n: 0 });
-    db.exec("DELETE FROM node_estimates; DELETE FROM node_snapshots");
+    await db.exec("DELETE FROM node_estimates; DELETE FROM node_snapshots");
     await recompute(db, { computedAt: "recompute" });
-    expect(hashOf(db, "node_estimates")).toBe(estimates);
-    expect(hashOf(db, "node_snapshots")).toBe(snapshots);
-    db.close();
+    expect(await hashOf(db, "node_estimates")).toBe(estimates);
+    expect(await hashOf(db, "node_snapshots")).toBe(snapshots);
+    await db.close();
   });
 });
 
 describe("REQ-0906: one snapshot set for each game day of play", () => {
-  it("holds a row for every node on each played day and none for a day without play", () => {
-    const db = world();
+  it("holds a row for every node on each played day and none for a day without play", async () => {
+    const db = await world();
     const played = new Set(
-      [...allEvents(db)].map((e) => gameDayOf(Date.parse(e.ts), ZONE)),
+      [...(await allEvents(db))].map((e) => gameDayOf(Date.parse(e.ts), ZONE)),
     );
     const days = (
-      db.prepare("SELECT DISTINCT game_day AS d FROM node_snapshots").all() as {
+      (await db
+        .prepare("SELECT DISTINCT game_day AS d FROM node_snapshots")
+        .all()) as {
         d: number;
       }[]
     ).map((r) => r.d);
     expect(new Set(days)).toEqual(played);
-    const perDay = db
+    const perDay = (await db
       .prepare("SELECT count(*) AS n FROM node_snapshots GROUP BY game_day")
-      .all() as { n: number }[];
+      .all()) as { n: number }[];
     expect(new Set(perDay.map((r) => r.n))).toEqual(
       new Set([graph.nodes().length]),
     );
-    db.close();
+    await db.close();
   });
 });
 
 describe("REQ-0904, REQ-0902: a new rules version adds its rows and keeps the earlier ones", () => {
   it("rewrites every past play day under rules 2 and leaves the rules 1 rows unchanged", async () => {
-    const db = world();
-    const before = hashOf(db, "node_snapshots", "rules_version = '1'");
+    const db = await world();
+    const before = await hashOf(db, "node_snapshots", "rules_version = '1'");
     useVersions(V2);
     await recompute(db, { computedAt: "under-rules-2" });
-    expect(hashOf(db, "node_snapshots", "rules_version = '1'")).toBe(before);
-    const count = (rules: string) =>
+    expect(await hashOf(db, "node_snapshots", "rules_version = '1'")).toBe(
+      before,
+    );
+    const count = async (rules: string) =>
       (
-        db
+        (await db
           .prepare(
             "SELECT count(*) AS n FROM node_snapshots WHERE rules_version = ?",
           )
-          .get(rules) as { n: number }
+          .get(rules)) as { n: number }
       ).n;
-    expect(count("2")).toBe(count("1"));
-    db.close();
+    expect(await count("2")).toBe(await count("1"));
+    await db.close();
   });
 
   it("reports a change of the rules version at start-up and clears after the recompute", async () => {
-    const db = world();
+    const db = await world();
     await recompute(db, { computedAt: "settle" });
-    expect(versionsChanged(db)).toBe(false);
+    expect(await versionsChanged(db)).toBe(false);
     useVersions(V2);
-    expect(versionsChanged(db)).toBe(true);
+    expect(await versionsChanged(db)).toBe(true);
     await recompute(db, { computedAt: "under-rules-2" });
-    expect(versionsChanged(db)).toBe(false);
-    db.close();
+    expect(await versionsChanged(db)).toBe(false);
+    await db.close();
   });
 });
 
 describe("TSK-0528: node_snapshots above the ceiling raises snapshot_ceiling once and deletes nothing", () => {
-  it("reports at a low ceiling a single time and keeps every row", () => {
-    const db = world();
+  it("reports at a low ceiling a single time and keeps every row", async () => {
+    const db = await world();
     const dir = mkdtempSync(join(root, "notices-"));
-    const rows = () =>
+    const rows = async () =>
       (
-        db.prepare("SELECT count(*) AS n FROM node_snapshots").get() as {
+        (await db
+          .prepare("SELECT count(*) AS n FROM node_snapshots")
+          .get()) as {
           n: number;
         }
       ).n;
-    const before = rows();
-    expect(checkSnapshotCeiling(db, dir, Date.now, before + 1)).toBe(false);
-    expect(checkSnapshotCeiling(db, dir, Date.now, 5)).toBe(true);
-    expect(checkSnapshotCeiling(db, dir, Date.now, 5)).toBe(false);
+    const before = await rows();
+    expect(await checkSnapshotCeiling(db, dir, Date.now, before + 1)).toBe(
+      false,
+    );
+    expect(await checkSnapshotCeiling(db, dir, Date.now, 5)).toBe(true);
+    expect(await checkSnapshotCeiling(db, dir, Date.now, 5)).toBe(false);
     expect(readNotices(dir).snapshot_ceiling?.rows).toBe(before);
-    expect(rows()).toBe(before);
-    db.close();
+    expect(await rows()).toBe(before);
+    await db.close();
   });
 });
 
 describe("REQ-0900: a per-node update after a verdict is replaced by the full pass", () => {
-  it("writes the verdict's node without a full pass", () => {
-    const db = world(false);
-    const row = db
+  it("writes the verdict's node without a full pass", async () => {
+    const db = await world(false);
+    const row = await db
       .prepare(
         "SELECT state FROM node_estimates WHERE node = 'A1' AND subtype = ''",
       )
       .get();
     expect(row).toBeDefined();
-    db.close();
+    await db.close();
   });
 
-  it("replaces a deliberately wrong row at the end of the adventure", () => {
-    const db = world();
-    const right = hashOf(db, "node_estimates");
-    db.exec("UPDATE node_estimates SET p_know = 0.123 WHERE node = 'A1'");
-    expect(hashOf(db, "node_estimates")).not.toBe(right);
-    refreshKnowledge(db, "end-of-adventure");
-    expect(hashOf(db, "node_estimates")).toBe(right);
-    db.close();
+  it("replaces a deliberately wrong row at the end of the adventure", async () => {
+    const db = await world();
+    const right = await hashOf(db, "node_estimates");
+    await db.exec("UPDATE node_estimates SET p_know = 0.123 WHERE node = 'A1'");
+    expect(await hashOf(db, "node_estimates")).not.toBe(right);
+    await refreshKnowledge(db, "end-of-adventure");
+    expect(await hashOf(db, "node_estimates")).toBe(right);
+    await db.close();
   });
 });
 
 describe("TSK-0527: a failing per-node update keeps the event and the node's last rows", () => {
-  it("logs the failure, appends the event anyway and leaves node_estimates as it was", () => {
-    const db = world();
-    const before = hashOf(db, "node_estimates");
+  it("logs the failure, appends the event anyway and leaves node_estimates as it was", async () => {
+    const db = await world();
+    const before = await hashOf(db, "node_estimates");
     const events = (
-      db.prepare("SELECT count(*) AS n FROM events").get() as { n: number }
+      (await db.prepare("SELECT count(*) AS n FROM events").get()) as {
+        n: number;
+      }
     ).n;
     const broken = {
       ...graph,
@@ -210,31 +220,35 @@ describe("TSK-0527: a failing per-node update keeps the event and the node's las
       graph: broken as unknown as typeof graph,
       zone: ZONE,
     });
-    writeSyntheticLog(db, { days: 1, tasksPerDay: 3, seed: 99 });
+    await writeSyntheticLog(db, { days: 1, tasksPerDay: 3, seed: 99 });
     expect(
-      (db.prepare("SELECT count(*) AS n FROM events").get() as { n: number }).n,
+      (
+        (await db.prepare("SELECT count(*) AS n FROM events").get()) as {
+          n: number;
+        }
+      ).n,
     ).toBeGreaterThan(events);
-    expect(hashOf(db, "node_estimates")).toBe(before);
-    db.close();
+    expect(await hashOf(db, "node_estimates")).toBe(before);
+    await db.close();
   });
 });
 
 describe("TSK-0527: the full pass and the per-node update stay inside their budgets", () => {
-  it("recomputes a 365-day log within 10 s and reports the per-update time", () => {
+  it("recomputes a 365-day log within 10 s and reports the per-update time", async () => {
     useVersions(V1);
-    const db = openDatabase(join(root, `w${++worlds}.sqlite`));
-    writeSyntheticLog(db, { days: 365, tasksPerDay: 20, seed: 3 });
+    const db = await openDatabase(join(root, `w${++worlds}.sqlite`));
+    await writeSyntheticLog(db, { days: 365, tasksPerDay: 20, seed: 3 });
     useKnowledge({ params, graph, zone: ZONE });
     const started = performance.now();
-    refreshKnowledge(db, "budget");
+    await refreshKnowledge(db, "budget");
     const pass = performance.now() - started;
     const tick = performance.now();
-    writeSyntheticLog(db, { days: 1, tasksPerDay: 10, seed: 4 });
+    await writeSyntheticLog(db, { days: 1, tasksPerDay: 10, seed: 4 });
     const update = (performance.now() - tick) / 10;
     console.log(
       `knowledge: full pass ${Math.round(pass)} ms, per-node update about ${Math.round(update)} ms`,
     );
     expect(pass).toBeLessThan(10_000);
-    db.close();
+    await db.close();
   }, 120_000);
 });

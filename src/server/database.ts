@@ -1,10 +1,11 @@
 import { readdirSync, readFileSync } from "node:fs";
 import Database from "better-sqlite3";
+import { type Db, SqliteDb } from "./db/index.js";
 import { allEvents, storedTypeVersions } from "../engine/events/read.js";
 import { rebuildMissing } from "../engine/projections/registry.js";
 import { events } from "../shared/events.js";
 
-export type Db = Database.Database;
+export type { Db } from "./db/index.js";
 
 const MIGRATIONS = new URL("../../migrations/", import.meta.url);
 
@@ -27,7 +28,7 @@ const GUARD_MESSAGE = "RAISE(ABORT, 'events are append-only')";
  * each numbered migration that hasn't run, in order, and refuses to go on
  * without the log's guard.
  */
-export function openDatabase(
+export async function openDatabase(
   path: string,
   {
     migrations = MIGRATIONS,
@@ -37,36 +38,41 @@ export function openDatabase(
     /** Called once before pending migrations run on a database that holds data (REQ-2528). */
     beforeMigrate?: (db: Db) => void;
   } = {},
-): Db {
-  const db = new Database(path);
-  db.pragma("journal_mode = WAL");
-  db.pragma("synchronous = FULL");
-  db.pragma("busy_timeout = 5000");
+): Promise<Db> {
+  const native = new Database(path);
+  native.pragma("journal_mode = WAL");
+  native.pragma("synchronous = FULL");
+  native.pragma("busy_timeout = 5000");
+  const db = new SqliteDb(native);
   try {
-    migrate(db, migrations, beforeMigrate);
-    checkGuard(db);
-    checkSchemas(db);
+    await migrate(db, migrations, beforeMigrate);
+    await checkGuard(db);
+    await checkSchemas(db);
     // REQ-2232: a missing projection table is rebuilt before any request.
-    rebuildMissing(db, () => allEvents(db), new Date().toISOString());
+    await rebuildMissing(
+      db,
+      async () => await allEvents(db),
+      new Date().toISOString(),
+    );
   } catch (err) {
-    db.close();
+    await db.close();
     throw err;
   }
   return db;
 }
 
-function triggerSql(db: Db): Map<string, string> {
-  const rows = db
+async function triggerSql(db: Db): Promise<Map<string, string>> {
+  const rows = (await db
     .prepare(
       "SELECT name, tbl_name AS tbl, sql FROM sqlite_master WHERE type = 'trigger'",
     )
-    .all() as { name: string; tbl: string; sql: string }[];
+    .all()) as { name: string; tbl: string; sql: string }[];
   return new Map(rows.map((r) => [r.name, `${r.tbl}\n${r.sql}`]));
 }
 
 /** Every type and version in the log must have a schema (ADR-0020). */
-function checkSchemas(db: Db): void {
-  const unknown = storedTypeVersions(db).filter(
+async function checkSchemas(db: Db): Promise<void> {
+  const unknown = (await storedTypeVersions(db)).filter(
     (e) => !events.has(e.type, e.v),
   );
   if (unknown.length) {
@@ -75,8 +81,8 @@ function checkSchemas(db: Db): void {
   }
 }
 
-function checkGuard(db: Db): void {
-  const found = triggerSql(db);
+async function checkGuard(db: Db): Promise<void> {
+  const found = await triggerSql(db);
   for (const g of GUARDED_TRIGGERS) {
     const sql = found.get(g.name) ?? "";
     const guards =
@@ -122,15 +128,18 @@ function guardBreach(sql: string, existing: Set<string>): string | undefined {
   return undefined;
 }
 
-function migrate(db: Db, dir: URL, beforeMigrate?: (db: Db) => void): void {
-  db.exec(
+async function migrate(
+  db: Db,
+  dir: URL,
+  beforeMigrate?: (db: Db) => void,
+): Promise<void> {
+  await db.exec(
     "CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL) STRICT",
   );
   const applied = new Set(
-    db
-      .prepare("SELECT version FROM schema_migrations")
-      .all()
-      .map((row) => (row as { version: number }).version),
+    (await db.prepare("SELECT version FROM schema_migrations").all()).map(
+      (row) => (row as { version: number }).version,
+    ),
   );
   const files = readdirSync(dir)
     .filter((f) => /^\d{4}_.+\.sql$/.test(f))
@@ -141,22 +150,21 @@ function migrate(db: Db, dir: URL, beforeMigrate?: (db: Db) => void): void {
     const version = Number(file.slice(0, 4));
     if (applied.has(version)) continue;
     const sql = readFileSync(new URL(file, dir), "utf8");
-    const before = triggerSql(db);
+    const before = await triggerSql(db);
     const breach = guardBreach(sql, new Set(before.keys()));
     if (breach) throw new Error(`migration_refused: ${file} ${breach}`);
-    db.transaction(() => {
-      db.exec(sql);
+    await db.transaction(async () => {
+      await db.exec(sql);
       // Catches what the text check can't see, and rolls the file back.
-      const after = triggerSql(db);
+      const after = await triggerSql(db);
       for (const g of GUARDED_TRIGGERS)
         if (before.has(g.name) && before.get(g.name) !== after.get(g.name))
           throw new Error(
             `migration_refused: ${file} changes trigger ${g.name}`,
           );
-      db.prepare("INSERT INTO schema_migrations VALUES (?, ?)").run(
-        version,
-        new Date().toISOString(),
-      );
+      await db
+        .prepare("INSERT INTO schema_migrations VALUES (?, ?)")
+        .run(version, new Date().toISOString());
     })();
   }
 }

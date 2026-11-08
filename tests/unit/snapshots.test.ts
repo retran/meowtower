@@ -51,8 +51,8 @@ describe("REQ-2532, REQ-2524: a snapshot is a readable copy holding the log and 
   it("writes meowtower-<UTC timestamp>.sqlite with every table and the rows", async () => {
     const live = join(dir, "a.sqlite");
     const snaps = join(dir, "snaps-a");
-    const db = openDatabase(live);
-    appendEvents(db, [
+    const db = await openDatabase(live);
+    await appendEvents(db, [
       {
         type: "attempt_submitted",
         v: 0,
@@ -60,7 +60,7 @@ describe("REQ-2532, REQ-2524: a snapshot is a readable copy holding the log and 
         origin: "server",
       },
     ]);
-    storeScratch(db, join(dir, "blobs-a"), webp("pad"), {
+    await storeScratch(db, join(dir, "blobs-a"), webp("pad"), {
       itemId: "i",
       attemptNo: 1,
       origin: "server",
@@ -77,19 +77,19 @@ describe("REQ-2532, REQ-2524: a snapshot is a readable copy holding the log and 
     expect(tables(taken.file)).toEqual(tables(live));
     expect(count(taken.file, "events")).toBe(count(live, "events"));
     expect(count(taken.file, "blobs")).toBe(1);
-    db.close();
+    await db.close();
   });
 });
 
 describe("REQ-2528: a snapshot before a pending migration", () => {
-  it("snapshots a database that holds data before the migration runs", () => {
+  it("snapshots a database that holds data before the migration runs", async () => {
     const live = join(dir, "b.sqlite");
     const snaps = join(dir, "snaps-b");
     const migrations = join(dir, "migrations-b");
     cpSync("migrations", migrations, { recursive: true });
     const url = new URL(`file://${migrations}/`);
-    const db = openDatabase(live, { migrations: url });
-    appendEvents(db, [
+    const db = await openDatabase(live, { migrations: url });
+    await appendEvents(db, [
       {
         type: "attempt_submitted",
         v: 0,
@@ -97,17 +97,17 @@ describe("REQ-2528: a snapshot before a pending migration", () => {
         origin: "server",
       },
     ]);
-    db.close();
+    await db.close();
     writeFileSync(
       join(migrations, "0099_add_note.sql"),
       "CREATE TABLE note (x INTEGER) STRICT;",
     );
-    const reopened = openDatabase(live, {
+    const reopened = await openDatabase(live, {
       migrations: url,
-      beforeMigrate: (d) =>
-        snapshotNow(d, snaps, new Date("2026-09-27T13:00:00Z")),
+      beforeMigrate: async (d) =>
+        await snapshotNow(d, snaps, new Date("2026-09-27T13:00:00Z")),
     });
-    reopened.close();
+    await reopened.close();
     const [file] = readdirSync(snaps);
     expect(file).toBe("meowtower-2026-09-27T13-00-00Z.sqlite");
     const before = tables(join(snaps, file ?? ""));
@@ -115,11 +115,13 @@ describe("REQ-2528: a snapshot before a pending migration", () => {
     expect(tables(live)).toContain("note");
   });
 
-  it("takes no snapshot of a fresh database", () => {
+  it("takes no snapshot of a fresh database", async () => {
     const snaps = join(dir, "snaps-c");
-    openDatabase(join(dir, "c.sqlite"), {
-      beforeMigrate: (d) => snapshotNow(d, snaps, new Date()),
-    }).close();
+    await (
+      await openDatabase(join(dir, "c.sqlite"), {
+        beforeMigrate: async (d) => await snapshotNow(d, snaps, new Date()),
+      })
+    ).close();
     expect(() => readdirSync(snaps)).toThrow();
   });
 });
@@ -127,14 +129,14 @@ describe("REQ-2528: a snapshot before a pending migration", () => {
 describe("snapshots don't hold up writes", () => {
   it("lets writes run while a snapshot runs, none waiting for it", async () => {
     const live = join(dir, "d.sqlite");
-    const db = openDatabase(live);
+    const db = await openDatabase(live);
     const filler = Array.from({ length: 2000 }, (_, i) => ({
       type: "attempt_submitted",
       v: 0,
       payload: { raw: "x".repeat(2000) + i },
       origin: "server" as const,
     }));
-    for (let i = 0; i < 20; i++) appendEvents(db, filler);
+    for (let i = 0; i < 20; i++) await appendEvents(db, filler);
     const snapshot = takeSnapshot(live, join(dir, "snaps-d"), new Date());
     let worst = 0;
     let writes = 0;
@@ -146,7 +148,7 @@ describe("snapshots don't hold up writes", () => {
     });
     while (!done) {
       const t0 = performance.now();
-      appendEvents(db, [
+      await appendEvents(db, [
         {
           type: "attempt_submitted",
           v: 0,
@@ -164,7 +166,7 @@ describe("snapshots don't hold up writes", () => {
     // A write that waited for the snapshot would take about as long as it does.
     expect(writes).toBeGreaterThan(1);
     expect(worst).toBeLessThan(snapshotMs / 2);
-    db.close();
+    await db.close();
   }, 60000);
 });
 
@@ -172,8 +174,8 @@ describe("restore", () => {
   it("makes the live database equal the newest snapshot", async () => {
     const live = join(dir, "e.sqlite");
     const snaps = join(dir, "snaps-e");
-    const db = openDatabase(live);
-    appendEvents(db, [
+    const db = await openDatabase(live);
+    await appendEvents(db, [
       {
         type: "attempt_submitted",
         v: 0,
@@ -182,7 +184,7 @@ describe("restore", () => {
       },
     ]);
     await takeSnapshot(live, snaps, new Date("2026-09-27T10:00:00Z"));
-    appendEvents(db, [
+    await appendEvents(db, [
       {
         type: "attempt_submitted",
         v: 0,
@@ -191,7 +193,7 @@ describe("restore", () => {
       },
     ]);
     await takeSnapshot(live, snaps, new Date("2026-09-27T11:00:00Z"));
-    appendEvents(db, [
+    await appendEvents(db, [
       {
         type: "attempt_submitted",
         v: 0,
@@ -199,7 +201,7 @@ describe("restore", () => {
         origin: "server",
       },
     ]);
-    db.close();
+    await db.close();
     const used = restoreNewest(snaps, live);
     expect(used).toBe(join(snaps, "meowtower-2026-09-27T11-00-00Z.sqlite"));
     expect(count(live, "events")).toBe(2);

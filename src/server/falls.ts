@@ -27,11 +27,11 @@ const skillOf = (node: string): string =>
   SKILLS.find((s) => s.domain === node.slice(0, 1))?.skill ?? node;
 
 /** Every fall in the projections, the newest first: skills by time, then rank by game day. */
-export function fallsRead(db: Db): Fall[] {
+export async function fallsRead(db: Db): Promise<Fall[]> {
   const skills: Fall[] = [];
-  for (const row of db
+  for (const row of (await db
     .prepare("SELECT node, changes FROM node_levels")
-    .all() as { node: string; changes: string }[])
+    .all()) as { node: string; changes: string }[])
     for (const c of JSON.parse(row.changes) as Changes[])
       if (c.fell && c.at !== undefined)
         skills.push({
@@ -45,9 +45,9 @@ export function fallsRead(db: Db): Fall[] {
   skills.sort((a, b) =>
     a.kind === "skill" && b.kind === "skill" ? b.at.localeCompare(a.at) : 0,
   );
-  const rank = db
+  const rank = (await db
     .prepare("SELECT changes FROM rank_state WHERE id = 1")
-    .get() as { changes: string } | undefined;
+    .get()) as { changes: string } | undefined;
   const ranks: Fall[] = rank
     ? (JSON.parse(rank.changes) as Changes[])
         .filter((c) => c.fell && c.day !== undefined)

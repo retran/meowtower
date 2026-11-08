@@ -5,7 +5,7 @@ import { ESLint } from "eslint";
 import { describe, expect, it } from "vitest";
 
 const lint = async (code: string, filePath: string) =>
-  new ESLint().lintText(code, { filePath });
+  await new ESLint().lintText(code, { filePath });
 
 const restricted = [
   "src/math/fixture.ts",

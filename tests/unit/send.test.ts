@@ -16,7 +16,10 @@ const reply = {
 
 describe("send parses the body before it leaves", () => {
   it("sends a body its schema accepts", async () => {
-    const app = new Hono().get("/", (c) => send(c, AnswerOut, reply));
+    const app = new Hono().get(
+      "/",
+      async (c) => await send(c, AnswerOut, reply),
+    );
     const res = await app.request("/");
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual(reply);
@@ -24,8 +27,9 @@ describe("send parses the body before it leaves", () => {
 
   it("fails with 500 and sends nothing of a body with a field outside its schema", async () => {
     const errors = vi.spyOn(console, "error").mockImplementation(() => {});
-    const app = new Hono().get("/", (c) =>
-      send(c, AnswerOut, { ...reply, node: "A1" } as never),
+    const app = new Hono().get(
+      "/",
+      async (c) => await send(c, AnswerOut, { ...reply, node: "A1" } as never),
     );
     const res = await app.request("/");
     expect(res.status).toBe(500);

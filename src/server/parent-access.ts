@@ -20,16 +20,17 @@ export type Attempt =
  * Runs one attempt of a kind: refused while locked, counted when wrong, and
  * resetting the count when right. `check` runs only outside a lockout.
  */
-export function attempt(
+export async function attempt(
   db: Db,
   kind: LockKind,
   now: number,
-  check: () => boolean,
-): Attempt {
-  return db.transaction((): Attempt => {
-    const row = (db
+  check: () => Promise<boolean> | boolean,
+): Promise<Attempt> {
+  return await db.transaction(async (): Promise<Attempt> => {
+    const row = ((await db
       .prepare("SELECT wrong, locked_until_ms FROM lockouts WHERE kind = ?")
-      .get(kind) as { wrong: number; locked_until_ms: number } | undefined) ?? {
+      .get(kind)) as
+      { wrong: number; locked_until_ms: number } | undefined) ?? {
       wrong: 0,
       locked_until_ms: 0,
     };
@@ -40,14 +41,14 @@ export function attempt(
        ON CONFLICT(kind) DO UPDATE SET wrong = excluded.wrong,
          locked_until_ms = excluded.locked_until_ms`,
     );
-    if (check()) {
-      save.run(kind, 0, 0);
+    if (await check()) {
+      await save.run(kind, 0, 0);
       return { result: "ok" };
     }
     const wrong = row.wrong + 1;
     // The fifth wrong entry starts the lockout, and the count starts again after it.
-    if (wrong >= WRONG_LIMIT) save.run(kind, 0, now + LOCK_MS);
-    else save.run(kind, wrong, 0);
+    if (wrong >= WRONG_LIMIT) await save.run(kind, 0, now + LOCK_MS);
+    else await save.run(kind, wrong, 0);
     return { result: "wrong" };
   })();
 }
@@ -56,25 +57,28 @@ const scrypt = (pin: string, salt: string): Buffer => scryptSync(pin, salt, 32);
 
 export const PIN_PATTERN = /^\d{4,8}$/;
 
-export function setPin(db: Db, pin: string, at: Date): void {
+export async function setPin(db: Db, pin: string, at: Date): Promise<void> {
   const salt = randomBytes(16).toString("hex");
-  db.prepare(
-    `INSERT INTO parent_pin (id, hash, salt, set_at) VALUES (1, ?, ?, ?)
+  await db
+    .prepare(
+      `INSERT INTO parent_pin (id, hash, salt, set_at) VALUES (1, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET hash = excluded.hash, salt = excluded.salt,
        set_at = excluded.set_at`,
-  ).run(scrypt(pin, salt).toString("hex"), salt, at.toISOString());
+    )
+    .run(scrypt(pin, salt).toString("hex"), salt, at.toISOString());
 }
 
-export function pinIsSet(db: Db): boolean {
+export async function pinIsSet(db: Db): Promise<boolean> {
   return (
-    db.prepare("SELECT 1 FROM parent_pin WHERE id = 1").get() !== undefined
+    (await db.prepare("SELECT 1 FROM parent_pin WHERE id = 1").get()) !==
+    undefined
   );
 }
 
-export function pinMatches(db: Db, pin: string): boolean {
-  const row = db
+export async function pinMatches(db: Db, pin: string): Promise<boolean> {
+  const row = (await db
     .prepare("SELECT hash, salt FROM parent_pin WHERE id = 1")
-    .get() as { hash: string; salt: string } | undefined;
+    .get()) as { hash: string; salt: string } | undefined;
   if (!row) return false;
   return timingSafeEqual(scrypt(pin, row.salt), Buffer.from(row.hash, "hex"));
 }

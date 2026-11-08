@@ -8,7 +8,6 @@
 // transaction, and yields to the event loop between chunks: better-sqlite3 is
 // synchronous, so a second connection in the same thread would block play
 // just the same, and an append waits at most for one chunk.
-import type Database from "better-sqlite3";
 import { eventsAfter, headSeq } from "./events/read.js";
 import {
   PROJECTIONS,
@@ -16,8 +15,7 @@ import {
   versionLabel,
   type Projection,
 } from "./projections/registry.js";
-
-type Db = Database.Database;
+import type { Db } from "../server/db/index.js";
 
 export const shadowOf = (table: string): string => `${table}__next`;
 const checkOf = (table: string): string => `${table}__check`;
@@ -36,17 +34,17 @@ function createAs(p: Projection, target: string): string {
 }
 
 /** Folds the events after `after` into `target` of each projection; returns the last seq. */
-function foldInto(
+async function foldInto(
   db: Db,
   projections: readonly Projection[],
   target: (p: Projection) => string,
   after: number,
   limit: number,
   computedAt: string,
-): number {
+): Promise<number> {
   let last = after;
-  for (const e of eventsAfter(db, after, limit)) {
-    for (const p of projections) p.apply(db, e, computedAt, target(p));
+  for (const e of await eventsAfter(db, after, limit)) {
+    for (const p of projections) await p.apply(db, e, computedAt, target(p));
     last = e.seq;
   }
   return last;
@@ -100,33 +98,36 @@ export async function recompute(
   const shadow = (p: Projection): string => shadowOf(p.table);
   try {
     for (const p of projections) {
-      db.exec(`DROP TABLE IF EXISTS ${shadow(p)}`);
-      db.exec(createAs(p, shadow(p)));
+      await db.exec(`DROP TABLE IF EXISTS ${shadow(p)}`);
+      await db.exec(createAs(p, shadow(p)));
       // A versioned table keeps the rows earlier versions computed.
-      const live = db
+      const live = await db
         .prepare(
           "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
         )
         .get(p.table);
       if (p.versioned && live)
-        db.prepare(
-          `INSERT INTO ${shadow(p)} SELECT * FROM ${p.table} WHERE ${OTHER_VERSIONS}`,
-        ).run(...versionArgs());
+        await db
+          .prepare(
+            `INSERT INTO ${shadow(p)} SELECT * FROM ${p.table} WHERE ${OTHER_VERSIONS}`,
+          )
+          .run(...versionArgs());
     }
     // The build runs up to the head as it stood at the start, since appends
     // go on meanwhile; the swap's transaction catches up the rest.
-    const target = headSeq(db);
+    const target = await headSeq(db);
     let after = 0;
     while (after < target) {
-      const last = db.transaction(() =>
-        foldInto(
-          db,
-          projections,
-          shadow,
-          after,
-          Math.min(chunk, target - after),
-          computedAt,
-        ),
+      const last = await db.transaction(
+        async () =>
+          await foldInto(
+            db,
+            projections,
+            shadow,
+            after,
+            Math.min(chunk, target - after),
+            computedAt,
+          ),
       )();
       if (last === after) break;
       after = last;
@@ -134,9 +135,9 @@ export async function recompute(
       await pause();
     }
     // Catch up and swap in one transaction: no append lands between them.
-    db.transaction(() => {
+    await db.transaction(async () => {
       for (;;) {
-        const last = foldInto(
+        const last = await foldInto(
           db,
           projections,
           shadow,
@@ -155,11 +156,12 @@ export async function recompute(
            rules_version = excluded.rules_version, last_seq = excluded.last_seq, computed_at = excluded.computed_at`,
       );
       // The knowledge tables of the active versions, built from the whole log (TSK-0527).
-      for (const p of projections) p.fullPass?.(db, shadow(p), computedAt);
+      for (const p of projections)
+        await p.fullPass?.(db, shadow(p), computedAt);
       for (const p of projections) {
-        db.exec(`DROP TABLE IF EXISTS ${p.table}`);
-        db.exec(`ALTER TABLE ${shadow(p)} RENAME TO ${p.table}`);
-        meta.run(
+        await db.exec(`DROP TABLE IF EXISTS ${p.table}`);
+        await db.exec(`ALTER TABLE ${shadow(p)} RENAME TO ${p.table}`);
+        await meta.run(
           p.name,
           VERSIONS.model,
           VERSIONS.thresholds,
@@ -176,7 +178,8 @@ export async function recompute(
       ms: Math.round(performance.now() - started),
     };
   } catch (err) {
-    for (const p of projections) db.exec(`DROP TABLE IF EXISTS ${shadow(p)}`);
+    for (const p of projections)
+      await db.exec(`DROP TABLE IF EXISTS ${shadow(p)}`);
     throw err;
   }
 }
@@ -190,9 +193,9 @@ export interface Divergence {
 }
 
 /** The columns a comparison reads: all but `computed_at`, which a rebuild renews. */
-function comparedColumns(db: Db, table: string): string[] {
+async function comparedColumns(db: Db, table: string): Promise<string[]> {
   return (
-    db.prepare(`SELECT name FROM pragma_table_info(?)`).all(table) as {
+    (await db.prepare(`SELECT name FROM pragma_table_info(?)`).all(table)) as {
       name: string;
     }[]
   )
@@ -204,35 +207,42 @@ function comparedColumns(db: Db, table: string): string[] {
  * The verify check `projection_diverged`: derives each projection afresh from
  * the log and reports the first row where the stored table differs.
  */
-export function checkProjections(db: Db): Divergence[] {
+export async function checkProjections(db: Db): Promise<Divergence[]> {
   const found: Divergence[] = [];
   for (const p of PROJECTIONS) {
     const fresh = checkOf(p.table);
-    db.exec(`DROP TABLE IF EXISTS ${fresh}`);
-    db.exec(createAs(p, fresh));
+    await db.exec(`DROP TABLE IF EXISTS ${fresh}`);
+    await db.exec(createAs(p, fresh));
     try {
-      db.transaction(() => {
+      await db.transaction(async () => {
         let after = 0;
         for (;;) {
-          const last = foldInto(db, [p], () => fresh, after, 5000, "check");
+          const last = await foldInto(
+            db,
+            [p],
+            () => fresh,
+            after,
+            5000,
+            "check",
+          );
           if (last === after) break;
           after = last;
         }
       })();
-      p.fullPass?.(db, fresh, "check");
-      const columns = comparedColumns(db, p.table);
+      await p.fullPass?.(db, fresh, "check");
+      const columns = await comparedColumns(db, p.table);
       const list = columns.join(", ");
       // A versioned table is compared on the current versions' rows only.
       const where = p.versioned ? ` WHERE ${CURRENT_VERSIONS}` : "";
-      const rows = (table: string) =>
-        db
+      const rows = async (table: string) =>
+        (await db
           .prepare(`SELECT ${list} FROM ${table}${where} ORDER BY ${list}`)
-          .all(...(p.versioned ? versionArgs() : [])) as Record<
+          .all(...(p.versioned ? versionArgs() : []))) as Record<
           string,
           unknown
         >[];
-      const stored = rows(p.table);
-      const derived = rows(fresh);
+      const stored = await rows(p.table);
+      const derived = await rows(fresh);
       const n = Math.max(stored.length, derived.length);
       for (let i = 0; i < n; i++) {
         if (JSON.stringify(stored[i]) !== JSON.stringify(derived[i])) {
@@ -246,7 +256,7 @@ export function checkProjections(db: Db): Divergence[] {
         }
       }
     } finally {
-      db.exec(`DROP TABLE IF EXISTS ${fresh}`);
+      await db.exec(`DROP TABLE IF EXISTS ${fresh}`);
     }
   }
   return found;

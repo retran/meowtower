@@ -23,8 +23,8 @@ import { Room, Scene, StopOffer } from "../../src/shared/api.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-finish-today-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 beforeEach(() => {
@@ -48,20 +48,20 @@ const input = {
 
 let worlds = 0;
 async function world() {
-  const db = openDatabase(join(root, `w${++worlds}.sqlite`));
+  const db = await openDatabase(join(root, `w${++worlds}.sqlite`));
   opened.push(db);
   // The server's own clock for leases and the rate cap moves on each call;
   // the events' time is the fake `Date`.
   let tick = 0;
   const now = () => (tick += 100);
-  const app = createApp({ db, now });
+  const app = await createApp({ db, now });
   const mac = createParentApp({ db, now });
   await mac.request("/pin", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ pin: PIN }),
   });
-  const device = `meowtower_device=${registerDevice(db, "tablet")}`;
+  const device = `meowtower_device=${await registerDevice(db, "tablet")}`;
   const json = { "content-type": "application/json" };
   let seq = 0;
   const post = async (path: string, body: object = {}, cookie = device) =>
@@ -95,19 +95,19 @@ async function world() {
       ).json()) as { sessionId: string }
     ).sessionId;
   const next = async (sessionId: string): Promise<unknown> =>
-    (await get(`/api/session/${sessionId}/next`)).json();
-  const answer = (sessionId: string, itemId: string) =>
-    post(`/api/session/${sessionId}/answer`, {
+    await (await get(`/api/session/${sessionId}/next`)).json();
+  const answer = async (sessionId: string, itemId: string) =>
+    await post(`/api/session/${sessionId}/answer`, {
       itemId,
       raw: "7",
       dontKnow: false,
       input,
     });
-  const extend = (sessionId: string) =>
-    post(`/api/session/${sessionId}/extend`);
-  const types = (): string[] =>
+  const extend = async (sessionId: string) =>
+    await post(`/api/session/${sessionId}/extend`);
+  const types = async (): Promise<string[]> =>
     (
-      db.prepare("SELECT type FROM events ORDER BY seq").all() as {
+      (await db.prepare("SELECT type FROM events ORDER BY seq").all()) as {
         type: string;
       }[]
     ).map((r) => r.type);
@@ -132,7 +132,9 @@ describe("REQ-2444: finishing the day brings a stop offer at the next boundary",
     const open = Room.parse(await w.next(s));
     const res = await w.finishToday();
     expect(res.status).toBe(200);
-    expect(w.types().filter((t) => t === "finish_today")).toHaveLength(1);
+    expect((await w.types()).filter((t) => t === "finish_today")).toHaveLength(
+      1,
+    );
     // Mid-task, the task comes back first.
     expect(Room.parse(await w.next(s)).itemId).toBe(open.itemId);
     await w.answer(s, open.itemId);
@@ -165,11 +167,11 @@ describe("REQ-2444: finishing the day brings a stop offer at the next boundary",
   it("refuses the route without a parent session", async () => {
     const w = await world();
     const res = await w.finishToday(
-      `meowtower_device=${registerDevice(w.db, "computer")}`,
+      `meowtower_device=${await registerDevice(w.db, "computer")}`,
     );
     expect(res.status).toBe(401);
     expect(await res.json()).toEqual({ error: "parent_session_missing" });
-    expect(w.types()).not.toContain("finish_today");
+    expect(await w.types()).not.toContain("finish_today");
   });
 });
 
@@ -181,7 +183,7 @@ describe("REQ-2444: extend gets 409 day_finished until 04:00", () => {
     const refused = await w.extend(s);
     expect(refused.status).toBe(409);
     expect(await refused.json()).toEqual({ error: "day_finished" });
-    expect(w.types()).not.toContain("extension");
+    expect(await w.types()).not.toContain("extension");
 
     // 03:59 the next calendar day is still the same game day.
     vi.setSystemTime(Date.parse("2026-03-03T03:59:00Z"));
@@ -195,17 +197,17 @@ describe("REQ-2444: extend gets 409 day_finished until 04:00", () => {
     vi.setSystemTime(Date.parse("2026-03-03T04:00:00Z"));
     const morning = await w.start();
     expect((await w.extend(morning)).status).toBe(200);
-    expect(w.types().filter((t) => t === "extension")).toHaveLength(1);
+    expect((await w.types()).filter((t) => t === "extension")).toHaveLength(1);
     Room.parse(await w.next(morning));
   });
 
   it("logs extension and changes nothing else on a day not finished", async () => {
     const w = await world();
     const s = await w.start();
-    const before = w.types().length;
+    const before = (await w.types()).length;
     const res = await w.extend(s);
     expect(res.status).toBe(200);
-    expect(w.types().slice(before)).toEqual(["extension"]);
+    expect((await w.types()).slice(before)).toEqual(["extension"]);
   });
 });
 
@@ -221,9 +223,11 @@ describe("REQ-8386: the parent resets the statistics", () => {
       });
     const refused = await reset({});
     expect(refused.status).toBe(400);
-    expect(w.types()).not.toContain("stats_reset");
+    expect(await w.types()).not.toContain("stats_reset");
     expect((await reset({ confirm: true })).status).toBe(200);
-    expect(w.types().filter((t) => t === "stats_reset")).toHaveLength(1);
+    expect((await w.types()).filter((t) => t === "stats_reset")).toHaveLength(
+      1,
+    );
   });
 
   it("refuses a device that is not in the Parent Room", async () => {
@@ -234,6 +238,6 @@ describe("REQ-8386: the parent resets the statistics", () => {
       body: JSON.stringify({ confirm: true }),
     });
     expect(res.status).toBeGreaterThanOrEqual(401);
-    expect(w.types()).not.toContain("stats_reset");
+    expect(await w.types()).not.toContain("stats_reset");
   });
 });

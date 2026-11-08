@@ -25,14 +25,14 @@ import { templates } from "../../src/templates/index.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-frames-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 let n = 0;
-const database = (): Db => {
+const database = async (): Promise<Db> => {
   n += 1;
-  const db = openDatabase(join(root, `${n.toString()}.sqlite`));
+  const db = await openDatabase(join(root, `${n.toString()}.sqlite`));
   opened.push(db);
   return db;
 };
@@ -104,8 +104,10 @@ describe("the prompt", () => {
 describe("the queue", () => {
   const rightAnswer = template.make(base, "ru").entry;
   const task = { template, base, bucket: "b", lang: "ru" as const };
-  const queueOf = (gateway: Gateway, db = database()) =>
-    createFrameQueue({ db, gateway, zone: "UTC" });
+  const queueOf = async (
+    gateway: Gateway,
+    db?: Awaited<ReturnType<typeof database>>,
+  ) => createFrameQueue({ db: db ?? (await database()), gateway, zone: "UTC" });
   /** An author that writes `stories` in turn, and a judge that scores each by `of`. */
   const writing = (
     stories: readonly string[],
@@ -116,7 +118,7 @@ describe("the queue", () => {
     let round = 0;
     return {
       seen: [],
-      call(r) {
+      async call(r) {
         this.seen.push(r);
         if (r.role === "TASK_TEXT_MODEL") {
           round += 1;
@@ -137,23 +139,23 @@ describe("the queue", () => {
   };
   it("takes the first story that clears the bar, with two calls", async () => {
     const gateway = writing(["Первая?"], () => ({}));
-    const queue = queueOf(gateway);
+    const queue = await queueOf(gateway);
     await queue.prepare(task);
     expect(gateway.seen.map((r) => r.role)).toEqual([
       "TASK_TEXT_MODEL",
       "FRAME_JUDGE_MODEL",
     ]);
-    expect(queue.take(task)?.text).toBe("Первая?");
-    expect(queue.take(task)).toBeNull();
+    expect((await queue.take(task))?.text).toBe("Первая?");
+    expect(await queue.take(task)).toBeNull();
   });
   it("writes again below the bar", async () => {
-    const queue = queueOf(
+    const queue = await queueOf(
       writing(["Плохая?", "Хорошая?"], (v) =>
         v === "Плохая?" ? { changed: 0.9 } : {},
       ),
     );
     await queue.prepare(task);
-    expect(queue.take(task)?.text).toBe("Хорошая?");
+    expect((await queue.take(task))?.text).toBe("Хорошая?");
   });
   it("writes again when the story can't be solved to the engine's answer", async () => {
     const gateway = writing(
@@ -161,29 +163,29 @@ describe("the queue", () => {
       () => ({}),
       (r) => (r.user.includes("Нерешаемая") ? "нет" : rightAnswer),
     );
-    const queue = queueOf(gateway);
+    const queue = await queueOf(gateway);
     await queue.prepare(task);
-    expect(queue.take(task)?.text).toBe("Решаемая?");
+    expect((await queue.take(task))?.text).toBe("Решаемая?");
   });
   it("shows the best of three rounds when none clears the bar", async () => {
-    const queue = queueOf(
+    const queue = await queueOf(
       writing(["Раз?", "Два?", "Три?"], (v) => ({
         changed: v === "Два?" ? 0.6 : 0.9,
       })),
     );
     await queue.prepare(task);
-    expect(queue.take(task)?.text).toBe("Два?");
+    expect((await queue.take(task))?.text).toBe("Два?");
   });
   it("removes only a plainly unsafe text", async () => {
-    const db = database();
-    const queue = queueOf(
+    const db = await database();
+    const queue = await queueOf(
       writing(["Жуть?"], () => ({ unsafe: 0.7 })),
       db,
     );
     await queue.prepare(task);
-    expect(queue.take(task)).toBeNull();
+    expect(await queue.take(task)).toBeNull();
     expect(
-      db.prepare("SELECT DISTINCT status, step FROM frames").all(),
+      await db.prepare("SELECT DISTINCT status, step FROM frames").all(),
     ).toEqual([{ status: "rejected", step: "judge" }]);
   });
   it("counts numbers that differ from the task against a story", async () => {
@@ -197,10 +199,10 @@ describe("the queue", () => {
   it("follows the parent's level in the author's tone and the judge's safety bar", async () => {
     const gateway = writing(["Текст?"], () => ({}));
     const queue = createFrameQueue({
-      db: database(),
+      db: await database(),
       gateway,
       zone: "UTC",
-      level: () => 0,
+      level: async () => 0,
     });
     await queue.prepare(task);
     expect(gateway.seen[0]?.system).toContain("без жути");
@@ -213,7 +215,7 @@ describe("the queue", () => {
     const choice = templates.find((t) => t.answer === "compare");
     if (!choice) throw new Error("no_compare");
     const gateway = writing(["Текст?"], () => ({}));
-    await queueOf(gateway).prepare({ ...task, template: choice });
+    await (await queueOf(gateway)).prepare({ ...task, template: choice });
     expect(gateway.seen[0]?.user).toContain("<answers><; =; ></answers>");
     expect(gateway.seen[0]?.user).toContain("кнопки со знаками");
     expect(
@@ -221,23 +223,23 @@ describe("the queue", () => {
     ).toContain("кнопки со знаками");
   });
   it("waits for a frame, starts one nobody started, and gives up at its limit", async () => {
-    const queue = queueOf(writing(["Текст?"], () => ({})));
+    const queue = await queueOf(writing(["Текст?"], () => ({})));
     await queue.ready(task, 1000);
-    expect(queue.take(task)).not.toBeNull();
-    const stuck = queueOf({ call: () => new Promise(() => undefined) });
+    expect(await queue.take(task)).not.toBeNull();
+    const stuck = await queueOf({ call: () => new Promise(() => undefined) });
     await stuck.ready(task, 10);
-    expect(stuck.take(task)).toBeNull();
+    expect(await stuck.take(task)).toBeNull();
   });
   it("shows the author a task's picture", async () => {
     const drawn = templates.find((t) => t.make(base).svg !== null);
     if (!drawn) throw new Error("no_picture");
     const gateway = writing(["Текст?"], () => ({}));
-    await queueOf(gateway).prepare({ ...task, template: drawn });
+    await (await queueOf(gateway)).prepare({ ...task, template: drawn });
     expect(gateway.seen[0]?.user).toContain("<picture><svg");
   });
   it("gives a second attempt the story it continues, and no other stories", async () => {
     const gateway = writing(["Старая?", "Новая?"], () => ({}));
-    const queue = queueOf(gateway);
+    const queue = await queueOf(gateway);
     await queue.prepare(task);
     await queue.prepare({
       ...task,
@@ -255,7 +257,7 @@ describe("the queue", () => {
       ["Это ошибка.", "Это ошибка.", "Это ошибка."],
       () => ({}),
     );
-    await queueOf(gateway).prepare(task);
+    await (await queueOf(gateway)).prepare(task);
     const filled = template.make(base, "ru", template.blank("ru")).text;
     const authored = gateway.seen.filter((r) => r.role === "TASK_TEXT_MODEL");
     expect(authored).toHaveLength(3);
@@ -264,18 +266,19 @@ describe("the queue", () => {
   });
   it("tells the author the recent stories of its language", async () => {
     const gateway = writing(["Старая?", "Новая?"], () => ({}));
-    const queue = queueOf(gateway);
+    const queue = await queueOf(gateway);
     await queue.prepare(task);
     await queue.prepare({ ...task, base: baseSeed("s", "t", 1) });
     const authored = gateway.seen.filter((r) => r.role === "TASK_TEXT_MODEL");
     expect(authored[1]?.user).toContain("Старая?");
   });
   it("leaves no frame when a model fails", async () => {
-    const queue = queueOf({
-      call: () => Promise.resolve({ ok: false, reason: "provider_failed" }),
+    const queue = await queueOf({
+      call: async () =>
+        Promise.resolve({ ok: false, reason: "provider_failed" }),
     });
     await queue.prepare(task);
-    expect(queue.take(task)).toBeNull();
+    expect(await queue.take(task)).toBeNull();
   });
 });
 
@@ -317,15 +320,17 @@ describe("the forbidden lists", () => {
 });
 
 describe("the admin page", () => {
-  it("shows the figures and the whole of a model call", () => {
-    const db = database();
-    db.prepare(
-      `INSERT INTO llm_log (at, role, route, model, tier, bucket, input_tokens, output_tokens,
+  it("shows the figures and the whole of a model call", async () => {
+    const db = await database();
+    await db
+      .prepare(
+        `INSERT INTO llm_log (at, role, route, model, tier, bucket, input_tokens, output_tokens,
          cost_usd, latency_ms, outcome, request, response)
        VALUES ('2026-10-31', 'SAFETY_MODEL', 'anthropic', 'm', 'player', 'b', 1, 2, 0.5, 3, 'ok', '{"q":"<x>"}', 'reply')`,
-    ).run();
-    expect(llmAudit(db, 10)).toHaveLength(1);
-    const page = adminPage(db, new Date("2026-10-31T12:00:00Z"), []);
+      )
+      .run();
+    expect(await llmAudit(db, 10)).toHaveLength(1);
+    const page = await adminPage(db, new Date("2026-10-31T12:00:00Z"), []);
     expect(page).toContain("$0.50");
     expect(page).toContain("&lt;x&gt;");
     expect(page).toContain("reply");

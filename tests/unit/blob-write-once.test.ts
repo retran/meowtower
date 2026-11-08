@@ -9,16 +9,16 @@ import { checkBlobWritesConfined } from "../../tools/static-checks.js";
 import { webp } from "../helpers/webp.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-once-"));
-const db = openDatabase(join(dir, "meowtower.sqlite"));
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "meowtower.sqlite"));
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 
 describe("data/blobs is write-once", () => {
-  it("refuses an overwrite of a stored image", () => {
+  it("refuses an overwrite of a stored image", async () => {
     const blobs = join(dir, "blobs");
-    const hash = storeScratch(db, blobs, webp("once"), {
+    const hash = await storeScratch(db, blobs, webp("once"), {
       itemId: "i",
       attemptNo: 1,
       origin: "server",

@@ -9,34 +9,36 @@ import { fallsRead } from "../../src/server/falls.js";
 import { parentSettings } from "../../src/server/parent-room.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-falls-"));
-const db = openDatabase(join(root, "f.sqlite"));
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(root, "f.sqlite"));
+afterAll(async () => {
+  await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
 describe("falls in the Parent Room", () => {
-  it("lists nothing while nothing has fallen", () => {
-    expect(fallsRead(db)).toEqual([]);
+  it("lists nothing while nothing has fallen", async () => {
+    expect(await fallsRead(db)).toEqual([]);
   });
 
-  it("lists a fall of a node and of the rank, and skips the rises", () => {
+  it("lists a fall of a node and of the rank, and skips the rises", async () => {
     const changes = JSON.stringify([
       { from: 1, to: 2, fell: false, itemId: "a", at: 1_000 },
       { from: 2, to: 1, fell: true, itemId: "b", at: 2_000 },
     ]);
-    db.prepare(
-      "INSERT INTO node_levels VALUES ('P3', 1, 'level.v1', 0, ?, 'x')",
-    ).run(changes);
-    db.prepare(
-      "INSERT INTO rank_state VALUES (1, 'E', 'rank.v1', 0, ?, 'x')",
-    ).run(
-      JSON.stringify([
-        { from: "E", to: "D", fell: false, day: 3 },
-        { from: "D", to: "E", fell: true, day: 9 },
-      ]),
-    );
-    expect(fallsRead(db)).toEqual([
+    await db
+      .prepare(
+        "INSERT INTO node_levels VALUES ('P3', 1, 'level.v1', 0, ?, 'x')",
+      )
+      .run(changes);
+    await db
+      .prepare("INSERT INTO rank_state VALUES (1, 'E', 'rank.v1', 0, ?, 'x')")
+      .run(
+        JSON.stringify([
+          { from: "E", to: "D", fell: false, day: 3 },
+          { from: "D", to: "E", fell: true, day: 9 },
+        ]),
+      );
+    expect(await fallsRead(db)).toEqual([
       { kind: "rank", from: "D", to: "E", day: 9 },
       {
         kind: "skill",
@@ -49,7 +51,7 @@ describe("falls in the Parent Room", () => {
     ]);
   });
 
-  it("hides no fall of rank until the parent says so", () => {
-    expect(parentSettings(db).hideRankFalls).toBe(false);
+  it("hides no fall of rank until the parent says so", async () => {
+    expect((await parentSettings(db)).hideRankFalls).toBe(false);
   });
 });

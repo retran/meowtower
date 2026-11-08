@@ -5,6 +5,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { DuckDBInstance } from "@duckdb/node-api";
 import Database from "better-sqlite3";
+import { SqliteDb } from "./db/index.js";
 import { eventRows } from "../engine/events/read.js";
 import { VIEW_COLUMNS } from "../engine/projections/flat-views.js";
 import { fieldDictionary } from "../shared/events.js";
@@ -64,8 +65,8 @@ export async function exportAll(
   source.prepare("VACUUM INTO ?").run(copyPath);
   source.close();
 
-  const copy = new Database(copyPath, { readonly: true });
-  const events = eventRows(copy);
+  const copy = new SqliteDb(new Database(copyPath, { readonly: true }));
+  const events = await eventRows(copy);
   // One event a line; an empty log is an empty file.
   writeFileSync(
     join(dir, "events.jsonl"),
@@ -83,14 +84,15 @@ export async function exportAll(
     ["items", "items_view"],
   ] as const) {
     const columns = Object.keys(VIEW_COLUMNS[view] ?? {});
-    const rows = copy
-      .prepare(`SELECT ${columns.join(", ")} FROM ${view}`)
-      .raw()
-      .all() as unknown[][];
+    const rows = (
+      (await copy
+        .prepare(`SELECT ${columns.join(", ")} FROM ${view}`)
+        .all()) as Record<string, unknown>[]
+    ).map((row) => columns.map((c) => row[c]));
     writeFileSync(join(dir, `${file}.csv`), csv(columns, rows));
     counts[file] = rows.length;
   }
-  copy.close();
+  await copy.close();
 
   const fields: unknown[][] = [
     ...Object.entries(ENVELOPE).map(([c, d]) => ["events", c, d]),

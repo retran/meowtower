@@ -26,14 +26,16 @@ afterEach(() => {
     rmSync(dir, { recursive: true, force: true });
 });
 
-function setup(bad: string): { path: string; migrations: URL } {
+async function setup(bad: string): Promise<{ path: string; migrations: URL }> {
   const dir = mkdtempSync(join(tmpdir(), "meowtower-migrations-"));
   dirs.push(dir);
   const migrations = join(dir, "migrations");
   cpSync("migrations", migrations, { recursive: true });
   const path = join(dir, "meowtower.sqlite");
   // Bring the database to the current schema before the bad file lands.
-  openDatabase(path, { migrations: pathToFileURL(`${migrations}/`) }).close();
+  await (
+    await openDatabase(path, { migrations: pathToFileURL(`${migrations}/`) })
+  ).close();
   writeFileSync(
     join(migrations, "0099_bad.sql"),
     `CREATE TABLE sneaked_in (x INTEGER);\n${bad}\n`,
@@ -55,30 +57,35 @@ describe("REQ-2226: the migration runner guards the triggers", () => {
     ["drops the guarded table", "DROP TABLE events;"],
     ["renames the guarded table", "ALTER TABLE events RENAME TO events_old;"],
     ["writes the schema directly", "PRAGMA writable_schema = ON;"],
-  ])("refuses a migration that %s and applies nothing of it", (_name, sql) => {
-    const { path, migrations } = setup(sql);
-    expect(() => openDatabase(path, { migrations })).toThrow(
-      /migration_refused: 0099_bad\.sql/,
-    );
-    const db = openDatabase(path);
-    const tables = db
-      .prepare("SELECT name FROM sqlite_master WHERE name = 'sneaked_in'")
-      .all();
-    expect(tables).toEqual([]);
-    expect(
-      db.prepare("SELECT max(version) AS v FROM schema_migrations").get(),
-    ).toEqual({ v: LATEST });
-    db.close();
-  });
+  ])(
+    "refuses a migration that %s and applies nothing of it",
+    async (_name, sql) => {
+      const { path, migrations } = await setup(sql);
+      await expect(openDatabase(path, { migrations })).rejects.toThrow(
+        /migration_refused: 0099_bad\.sql/,
+      );
+      const db = await openDatabase(path);
+      const tables = await db
+        .prepare("SELECT name FROM sqlite_master WHERE name = 'sneaked_in'")
+        .all();
+      expect(tables).toEqual([]);
+      expect(
+        await db
+          .prepare("SELECT max(version) AS v FROM schema_migrations")
+          .get(),
+      ).toEqual({ v: LATEST });
+      await db.close();
+    },
+  );
 
-  it("applies a migration that leaves the triggers alone", () => {
-    const { path, migrations } = setup(
+  it("applies a migration that leaves the triggers alone", async () => {
+    const { path, migrations } = await setup(
       "ALTER TABLE events ADD COLUMN note TEXT;",
     );
-    const db = openDatabase(path, { migrations });
+    const db = await openDatabase(path, { migrations });
     expect(
-      db.prepare("SELECT max(version) AS v FROM schema_migrations").get(),
+      await db.prepare("SELECT max(version) AS v FROM schema_migrations").get(),
     ).toEqual({ v: 99 });
-    db.close();
+    await db.close();
   });
 });

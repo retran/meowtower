@@ -47,24 +47,24 @@ export function adventureDays(events: StoredEvent[]): Set<number> {
  * whatever she is shown on it, and a limit the parent lowers below the days an
  * adventure already has takes hold at the next new game day.
  */
-export function wrapUpDue(
+export async function wrapUpDue(
   db: Db,
   adventureId: string,
   zone: string,
   nowMs: number,
-): boolean {
-  const limit = parentSettings(db).threeDayLimit;
+): Promise<boolean> {
+  const limit = (await parentSettings(db)).threeDayLimit;
   if (limit === null) return false;
   const today = gameDayOf(nowMs, zone);
   let before = 0;
-  for (const day of adventureDays(adventureEvents(db, adventureId)))
+  for (const day of adventureDays(await adventureEvents(db, adventureId)))
     if (day < today) before++;
   return before >= limit;
 }
 
 /** The zone a session was started in, or the default for one that sent none. */
-export function sessionZone(db: Db, sessionId: string): string {
-  const started = sessionEvents(db, sessionId).find(
+export async function sessionZone(db: Db, sessionId: string): Promise<string> {
+  const started = (await sessionEvents(db, sessionId)).find(
     (e) => e.type === "session_started",
   );
   return zoneOrDefault(

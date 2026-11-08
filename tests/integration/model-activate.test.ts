@@ -33,29 +33,29 @@ const variant = (version: string, prior: number): string => {
   return JSON.stringify(file);
 };
 let n = 0;
-const fresh = () => {
-  const db = openDatabase(join(root, `a${++n}.sqlite`));
-  writeSyntheticLog(db, { days: 20, tasksPerDay: 15, seed: 8 });
+const fresh = async () => {
+  const db = await openDatabase(join(root, `a${++n}.sqlite`));
+  await writeSyntheticLog(db, { days: 20, tasksPerDay: 15, seed: 8 });
   return db;
 };
-const activated = (db: ReturnType<typeof fresh>) =>
-  eventsOfType(db, "model_activated");
+const activated = async (db: Awaited<ReturnType<typeof fresh>>) =>
+  await eventsOfType(db, "model_activated");
 
 describe("TSK-0529 AC3: the first version has no predecessor, so the gate is skipped", () => {
-  it("writes model_activated with no earlier figures", () => {
-    const db = fresh();
-    const r = activateModel(db, v1Text, {
+  it("writes model_activated with no earlier figures", async () => {
+    const db = await fresh();
+    const r = await activateModel(db, v1Text, {
       graph,
       zone: "UTC",
       active: () => null,
     });
     expect(r.accepted).toBe(true);
     expect(r.previous).toBeNull();
-    const payload = activated(db)[0]?.payload as {
+    const payload = (await activated(db))[0]?.payload as {
       figures: { active: unknown };
     };
     expect(payload.figures.active).toBeNull();
-    db.close();
+    await db.close();
   });
 });
 
@@ -63,9 +63,9 @@ describe("TSK-0529 AC1, AC2: the event is written exactly when the candidate bea
   it.each([
     ["v2", 0.95],
     ["v3", 0.01],
-  ])("agrees with the figures for candidate %s", (version, prior) => {
-    const db = fresh();
-    const r = activateModel(db, variant(version, prior), {
+  ])("agrees with the figures for candidate %s", async (version, prior) => {
+    const db = await fresh();
+    const r = await activateModel(db, variant(version, prior), {
       graph,
       zone: "UTC",
       active: () => v1,
@@ -74,40 +74,40 @@ describe("TSK-0529 AC1, AC2: the event is written exactly when the candidate bea
     const c = r.figures.candidate;
     const better = a !== null && c.logLoss < a.logLoss && c.ece < a.ece;
     expect(r.accepted).toBe(better);
-    expect(activated(db)).toHaveLength(better ? 1 : 0);
+    expect(await activated(db)).toHaveLength(better ? 1 : 0);
     if (!better) expect(r.reasons.length).toBeGreaterThan(0);
-    db.close();
+    await db.close();
   });
 
-  it("separates the two candidates, so one is refused and one differs", () => {
-    const db = fresh();
+  it("separates the two candidates, so one is refused and one differs", async () => {
+    const db = await fresh();
     const context = { graph, zone: "UTC", active: () => v1 };
-    const low = activateModel(db, variant("v3", 0.01), context);
-    const high = activateModel(db, variant("v2", 0.95), context);
+    const low = await activateModel(db, variant("v3", 0.01), context);
+    const high = await activateModel(db, variant("v2", 0.95), context);
     expect(low.figures.candidate).not.toEqual(high.figures.candidate);
-    db.close();
+    await db.close();
   });
 });
 
 describe("TSK-0529: a file already active and an invalid file", () => {
-  it("refuses the active version again and writes no event", () => {
-    const db = fresh();
-    const r = activateModel(db, v1Text, {
+  it("refuses the active version again and writes no event", async () => {
+    const db = await fresh();
+    const r = await activateModel(db, v1Text, {
       graph,
       zone: "UTC",
       active: () => v1,
     });
     expect(r.accepted).toBe(false);
-    expect(activated(db)).toHaveLength(0);
-    db.close();
+    expect(await activated(db)).toHaveLength(0);
+    await db.close();
   });
 
-  it("throws for a file the validator refuses", () => {
-    const db = fresh();
+  it("throws for a file the validator refuses", async () => {
+    const db = await fresh();
     const bad = JSON.stringify({ ...JSON.parse(v1Text), pGuessFree: 2 });
-    expect(() =>
+    await expect(
       activateModel(db, bad, { graph, zone: "UTC", active: () => v1 }),
-    ).toThrow(ModelParamsInvalid);
-    db.close();
+    ).rejects.toThrow(ModelParamsInvalid);
+    await db.close();
   });
 });

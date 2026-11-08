@@ -19,10 +19,10 @@ export interface LlmRow {
   readonly response: string;
 }
 
-export const llmAudit = (db: Db, limit: number): LlmRow[] =>
-  db
+export const llmAudit = async (db: Db, limit: number): Promise<LlmRow[]> =>
+  (await db
     .prepare("SELECT * FROM llm_log ORDER BY id DESC LIMIT ?")
-    .all(limit) as LlmRow[];
+    .all(limit)) as LlmRow[];
 
 export interface PlayRow {
   readonly at: string;
@@ -50,13 +50,14 @@ interface Shown {
 }
 
 /** The latest tasks, newest first, each with what was answered and how it was judged. */
-export function playAudit(db: Db, limit: number): PlayRow[] {
-  return eventsOfType(db, "item_shown")
+export async function playAudit(db: Db, limit: number): Promise<PlayRow[]> {
+  const shownEvents = (await eventsOfType(db, "item_shown"))
     .slice(-limit)
-    .reverse()
-    .map((event) => {
+    .reverse();
+  return await Promise.all(
+    shownEvents.map(async (event) => {
       const shown = event.payload as Shown;
-      const later = itemEvents(db, shown.itemId);
+      const later = await itemEvents(db, shown.itemId);
       const payloadOf = (type: string): unknown =>
         later.find((e) => e.type === type)?.payload;
       const answer = payloadOf("attempt_submitted") as
@@ -76,7 +77,8 @@ export function playAudit(db: Db, limit: number): PlayRow[] {
         verdict: verdict?.verdict ?? null,
         hints: later.filter((e) => e.type === "hint_shown").length,
       };
-    });
+    }),
+  );
 }
 
 export interface Dashboard {
@@ -90,16 +92,16 @@ export interface Dashboard {
   readonly frames: readonly { status: string; step: string; count: number }[];
 }
 
-export function dashboard(db: Db, now: Date): Dashboard {
-  const rows = playAudit(db, Number.MAX_SAFE_INTEGER);
+export async function dashboard(db: Db, now: Date): Promise<Dashboard> {
+  const rows = await playAudit(db, Number.MAX_SAFE_INTEGER);
   const judged = rows.filter((r) => r.verdict !== null);
-  const calls = db
+  const calls = (await db
     .prepare(
       `SELECT COUNT(*) AS calls, COALESCE(SUM(outcome != 'ok'), 0) AS failed,
          COALESCE(SUM(CASE WHEN at >= ? THEN cost_usd ELSE 0 END), 0) AS month
        FROM llm_log`,
     )
-    .get(`${now.toISOString().slice(0, 7)}-01`) as {
+    .get(`${now.toISOString().slice(0, 7)}-01`)) as {
     calls: number;
     failed: number;
     month: number;
@@ -112,11 +114,11 @@ export function dashboard(db: Db, now: Date): Dashboard {
     calls: calls.calls,
     failed: calls.failed,
     monthUsd: calls.month,
-    frames: db
+    frames: (await db
       .prepare(
         `SELECT status, COALESCE(step, '') AS step, COUNT(*) AS count FROM frames
          GROUP BY status, step ORDER BY count DESC`,
       )
-      .all() as Dashboard["frames"],
+      .all()) as Dashboard["frames"],
   };
 }

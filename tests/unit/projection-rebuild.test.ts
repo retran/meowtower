@@ -14,9 +14,9 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 it("rebuilds items_view before the first request is accepted", async () => {
   const live = join(dir, "live.sqlite");
-  const db = openDatabase(live);
+  const db = await openDatabase(live);
   for (let i = 0; i < 50; i++) {
-    appendEvents(db, [
+    await appendEvents(db, [
       {
         type: "item_shown",
         v: 1,
@@ -45,7 +45,7 @@ it("rebuilds items_view before the first request is accepted", async () => {
       },
     ]);
   }
-  appendEvents(db, [
+  await appendEvents(db, [
     {
       type: "item_excluded",
       v: 1,
@@ -60,13 +60,12 @@ it("rebuilds items_view before the first request is accepted", async () => {
       ),
     );
   const before = strip(
-    db.prepare("SELECT * FROM items_view ORDER BY item_id").all() as Record<
-      string,
-      unknown
-    >[],
+    (await db
+      .prepare("SELECT * FROM items_view ORDER BY item_id")
+      .all()) as Record<string, unknown>[],
   );
-  db.exec("DROP TABLE items_view");
-  db.close();
+  await db.exec("DROP TABLE items_view");
+  await db.close();
 
   const child = spawn(
     process.execPath,

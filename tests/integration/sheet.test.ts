@@ -11,17 +11,17 @@ import { SkillsOut } from "../../src/shared/api.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-sheet-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
 let worlds = 0;
-function world() {
-  const db = openDatabase(join(root, `w${String(++worlds)}.sqlite`));
+async function world() {
+  const db = await openDatabase(join(root, `w${String(++worlds)}.sqlite`));
   opened.push(db);
-  const app = createApp({ db, now: () => 1_000_000 });
-  const cookie = `meowtower_device=${registerDevice(db, "tablet")}`;
+  const app = await createApp({ db, now: () => 1_000_000 });
+  const cookie = `meowtower_device=${await registerDevice(db, "tablet")}`;
   return {
     db,
     skills: () => app.request("/api/player/skills", { headers: { cookie } }),
@@ -31,11 +31,11 @@ function world() {
 
 describe("GET /api/player/skills", () => {
   it("refuses a request from a device the game does not know", async () => {
-    expect((await world().anonymous()).status).not.toBe(200);
+    expect((await (await world()).anonymous()).status).not.toBe(200);
   });
 
   it("gives all nine skills as not yet shown while nothing is scored", async () => {
-    const res = await world().skills();
+    const res = await (await world()).skills();
     expect(res.status).toBe(200);
     const { skills } = SkillsOut.parse(await res.json());
     expect(skills.map((s) => s.skill)).toEqual([
@@ -53,8 +53,8 @@ describe("GET /api/player/skills", () => {
   });
 
   it("gives a scored skill its level and percentage and nothing else", async () => {
-    const w = world();
-    w.db
+    const w = await world();
+    await w.db
       .prepare(
         "INSERT INTO skill_scores VALUES ('trade', 1, 3, 40, '2026-11-04T00:00:00Z')",
       )

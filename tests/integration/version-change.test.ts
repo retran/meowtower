@@ -65,14 +65,14 @@ afterAll(() => rmSync(root, { recursive: true, force: true }));
 
 let worlds = 0;
 /** A database holding the 30-day log, computed under `versions`. */
-function computedUnder(versions: Versions): string {
+async function computedUnder(versions: Versions): Promise<string> {
   const live = join(root, `w${++worlds}.sqlite`);
   useVersions(versions);
   useKnowledge(knowledgeFor(versions));
-  const db = openDatabase(live);
-  writeSyntheticLog(db, { days: 30, tasksPerDay: 20, seed: 11 });
-  refreshKnowledge(db, "end-of-adventure");
-  db.close();
+  const db = await openDatabase(live);
+  await writeSyntheticLog(db, { days: 30, tasksPerDay: 20, seed: 11 });
+  await refreshKnowledge(db, "end-of-adventure");
+  await db.close();
   useVersions(NONE);
   useKnowledge(null);
   return live;
@@ -139,7 +139,7 @@ const meta = (live: string) => {
 
 describe("REQ-2230: a version change recomputes every projection at start-up", () => {
   it("recomputes when the model version changes, and every derived_meta row names the new one", async () => {
-    const live = computedUnder(A);
+    const live = await computedUnder(A);
     expect(meta(live).every((m) => m.model_version === "A")).toBe(true);
     const out = await start(live, B);
     expect(out).toContain(
@@ -153,14 +153,14 @@ describe("REQ-2230: a version change recomputes every projection at start-up", (
   }, 60000);
 
   it("recomputes when only the threshold version changes", async () => {
-    const live = computedUnder(A);
+    const live = await computedUnder(A);
     const out = await start(live, A2);
     expect(out).toContain("startup_recompute");
     expect(meta(live).every((m) => m.threshold_version === "t2")).toBe(true);
   }, 60000);
 
   it("recomputes nothing when the versions are unchanged", async () => {
-    const live = computedUnder(A);
+    const live = await computedUnder(A);
     const before = meta(live);
     const out = await start(live, A);
     expect(out).not.toContain("startup_recompute");
@@ -170,12 +170,14 @@ describe("REQ-2230: a version change recomputes every projection at start-up", (
 
 describe("REQ-2224: a new model changes the estimates, not what the game decided", () => {
   it("leaves every game table as it was and keeps node_snapshots rows under both versions", async () => {
-    const live = computedUnder(A);
-    const db = openDatabase(live);
+    const live = await computedUnder(A);
+    const db = await openDatabase(live);
     const game = PROJECTIONS.filter((p) => p.class === "game");
-    const rows = (table: string) => {
+    const rows = async (table: string) => {
       const columns = (
-        db.prepare("SELECT name FROM pragma_table_info(?)").all(table) as {
+        (await db
+          .prepare("SELECT name FROM pragma_table_info(?)")
+          .all(table)) as {
           name: string;
         }[]
       )
@@ -183,11 +185,15 @@ describe("REQ-2224: a new model changes the estimates, not what the game decided
         .filter((c) => c !== "computed_at")
         .join(", ");
       return JSON.stringify(
-        db.prepare(`SELECT ${columns} FROM ${table} ORDER BY ${columns}`).all(),
+        await db
+          .prepare(`SELECT ${columns} FROM ${table} ORDER BY ${columns}`)
+          .all(),
       );
     };
     const before = Object.fromEntries(
-      game.map((p) => [p.table, rows(p.table)]),
+      await Promise.all(
+        game.map(async (p) => [p.table, await rows(p.table)] as const),
+      ),
     );
 
     useVersions(B);
@@ -195,19 +201,19 @@ describe("REQ-2224: a new model changes the estimates, not what the game decided
     await recompute(db, { computedAt: "under-B" });
 
     for (const p of game)
-      expect(rows(p.table), p.table).toEqual(before[p.table]);
-    const snapshots = db
+      expect(await rows(p.table), p.table).toEqual(before[p.table]);
+    const snapshots = (await db
       .prepare(
         "SELECT model_version, threshold_version, graph_version, count(*) AS n, round(avg(p_know), 3) AS mean FROM node_snapshots GROUP BY 1, 2, 3 ORDER BY 1",
       )
-      .all() as {
+      .all()) as {
       model_version: string;
       threshold_version: string;
       graph_version: string;
       n: number;
       mean: number;
     }[];
-    db.close();
+    await db.close();
     expect(snapshots.map((s) => s.model_version)).toEqual(["A", "B"]);
     expect(
       snapshots.every(

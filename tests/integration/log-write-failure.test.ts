@@ -14,19 +14,22 @@ import { createParentApp } from "../../src/server/parent.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-log-write-"));
 const notices = join(dir, "snapshots");
-const db = openDatabase(join(dir, "live.sqlite"));
-afterAll(() => {
+const db = await openDatabase(join(dir, "live.sqlite"));
+afterAll(async () => {
   useNoticesDir(null);
-  db.close();
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 
 it("replies 503, raises log_write_failed for the parent, and clears it after a later write", async () => {
   useNoticesDir(notices);
   const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
-  const app = createApp({ db, now: () => Date.parse("2026-09-27T23:40:00Z") });
+  const app = await createApp({
+    db,
+    now: () => Date.parse("2026-09-27T23:40:00Z"),
+  });
   const headers = {
-    cookie: `meowtower_device=${registerDevice(db, "tablet")}`,
+    cookie: `meowtower_device=${await registerDevice(db, "tablet")}`,
     "content-type": "application/json",
   };
   const start = (clientSeq: number) =>
@@ -35,19 +38,25 @@ it("replies 503, raises log_write_failed for the parent, and clears it after a l
       headers,
       body: JSON.stringify({ mode: "zero", clientSeq }),
     });
-  const count = () =>
-    (db.prepare("SELECT count(*) AS n FROM events").get() as { n: number }).n;
+  const count = async () =>
+    (
+      (await db.prepare("SELECT count(*) AS n FROM events").get()) as {
+        n: number;
+      }
+    ).n;
   const page = async () =>
-    (await createParentApp({ db, snapshots: notices }).request("/")).text();
+    await (
+      await createParentApp({ db, snapshots: notices }).request("/")
+    ).text();
 
   // A database that refuses writes makes appendEvents fail, as a full disk would.
-  const before = count();
-  db.pragma("query_only = ON");
+  const before = await count();
+  await db.pragma("query_only = ON");
   const failed = await start(1);
-  db.pragma("query_only = OFF");
+  await db.pragma("query_only = OFF");
   expect(failed.status).toBe(503);
   expect(await failed.json()).toEqual({ error: "log_write_failed" });
-  expect(count()).toBe(before);
+  expect(await count()).toBe(before);
   expect(readNotices(notices).log_write_failed?.at).toBe(
     "2026-09-27T23:40:00.000Z",
   );

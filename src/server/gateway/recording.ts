@@ -18,14 +18,14 @@ const fileOf = (dir: string, route: Route, request: RouteRequest): string =>
 export function replayRoute(inner: Route, dir: string): Route {
   return {
     body: inner.body,
-    call(request) {
+    async call(request) {
       const file = fileOf(dir, inner, request);
       if (!existsSync(file)) throw new Error("recording_missing");
       return Promise.resolve(
         JSON.parse(readFileSync(file, "utf8")) as RouteReply,
       );
     },
-    hasModel: () => Promise.resolve(true),
+    hasModel: async () => Promise.resolve(true),
   };
 }
 

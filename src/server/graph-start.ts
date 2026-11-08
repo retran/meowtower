@@ -29,21 +29,21 @@ export interface GraphStart {
   readonly source: "file" | "stored";
 }
 
-const storedCount = (db: Db): number =>
+const storedCount = async (db: Db): Promise<number> =>
   (
-    db.prepare("SELECT COUNT(*) AS n FROM graph_versions").get() as {
+    (await db.prepare("SELECT COUNT(*) AS n FROM graph_versions").get()) as {
       n: number;
     }
   ).n;
 
-const latestStored = (
+const latestStored = async (
   db: Db,
-): { version: string; canonical: string } | undefined =>
-  db
+): Promise<{ version: string; canonical: string } | undefined> =>
+  (await db
     .prepare(
       "SELECT version, canonical FROM graph_versions ORDER BY stored_at DESC, rowid DESC LIMIT 1",
     )
-    .get() as { version: string; canonical: string } | undefined;
+    .get()) as { version: string; canonical: string } | undefined;
 
 /** The stored graph, or undefined when none is stored or it can't be read back. */
 const readStored = (
@@ -58,11 +58,11 @@ const readStored = (
 };
 
 /** Starts the server on the graph in `file`, or on the last stored version of it. */
-export function startGraph(
+export async function startGraph(
   db: Db,
   file: string,
   now: () => Date = () => new Date(),
-): GraphStart {
+): Promise<GraphStart> {
   let start: GraphStart;
   try {
     const graph = openOverlaid(
@@ -70,13 +70,15 @@ export function startGraph(
       overlaysBeside(file),
     );
     const version = graph.graphVersion();
-    const stored = latestStored(db);
+    const stored = await latestStored(db);
     const previous = readStored(stored);
-    const before = storedCount(db);
-    db.prepare(
-      "INSERT OR IGNORE INTO graph_versions (version, canonical, stored_at) VALUES (?, ?, ?)",
-    ).run(version, graph.canonical(), now().toISOString());
-    const after = storedCount(db);
+    const before = await storedCount(db);
+    await db
+      .prepare(
+        "INSERT OR IGNORE INTO graph_versions (version, canonical, stored_at) VALUES (?, ?, ?)",
+      )
+      .run(version, graph.canonical(), now().toISOString());
+    const after = await storedCount(db);
     // A new version tells the parent once which subtypes have no template (TSK-0509).
     if (after > before) {
       const missing = notGeneratable(graph, templates).length;
@@ -93,7 +95,7 @@ export function startGraph(
     start = { graph, version, source: "file", previous };
   } catch (error) {
     const message = (error as Error).message;
-    const stored = latestStored(db);
+    const stored = await latestStored(db);
     if (stored === undefined) {
       raise("graph_unloadable", message);
       throw new Error(`graph_unloadable: ${message}`);

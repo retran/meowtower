@@ -12,9 +12,9 @@ import { registerDevice } from "../../src/server/devices.js";
 import { forbiddenFields } from "../helpers/packets.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-recorder-"));
-const db = openDatabase(join(dir, "live.sqlite"));
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "live.sqlite"));
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 
@@ -35,12 +35,12 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
   // A clock that moves 100 ms a request keeps the run under the rate cap, and
   // an explainer that answers at once puts explanation_ready on the poll route.
   let clock = 0;
-  const app = createApp({
+  const app = await createApp({
     db,
     now: () => (clock += 100),
-    explainer: () => Promise.resolve("Объяснение."),
+    explainer: async () => Promise.resolve("Объяснение."),
   });
-  const cookie = `meowtower_device=${registerDevice(db, "tablet")}`;
+  const cookie = `meowtower_device=${await registerDevice(db, "tablet")}`;
   const packets: { itemId?: string; body: unknown }[] = [];
   const answered = new Set<string>();
   const earlyAnswers: string[] = [];
@@ -67,7 +67,7 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
     if (body["kind"] === "room" || helps) {
       const itemId = helps ?? String(body["itemId"]);
       if (!answered.has(itemId)) {
-        const shown = itemEvents(db, itemId).find(
+        const shown = (await itemEvents(db, itemId)).find(
           (x) => x.type === "item_shown",
         );
         const answer = (shown?.payload as { correctAnswer: string })
@@ -107,8 +107,8 @@ it("finds 0 forbidden fields and 0 early answers in 30 days of packets", async (
         })) as { sessionId: string }
       ).sessionId;
     let sessionId = await start();
-    const post = (path: string, body: object, helps?: string) =>
-      call(
+    const post = async (path: string, body: object, helps?: string) =>
+      await call(
         path,
         { method: "POST", body: JSON.stringify({ ...body, clientSeq: ++seq }) },
         helps,

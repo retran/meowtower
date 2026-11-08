@@ -73,7 +73,7 @@ const replies = (...texts: (string | undefined)[]) => {
   const users: string[] = [];
   let i = 0;
   const gateway = {
-    call: (request: { user: string }) => {
+    call: async (request: { user: string }) => {
       users.push(request.user);
       const text = texts[i++];
       return Promise.resolve(

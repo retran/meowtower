@@ -56,21 +56,21 @@ export function createGateway({
     held.set(key, (held.get(key) ?? 0) + amount);
   };
   const heldOn = (key: string): number => held.get(key) ?? 0;
-  const spentSince = (from: string): number =>
+  const spentSince = async (from: string): Promise<number> =>
     (
-      db
+      (await db
         .prepare(
           "SELECT COALESCE(SUM(cost_usd), 0) AS s FROM llm_log WHERE at >= ?",
         )
-        .get(from) as { s: number }
+        .get(from)) as { s: number }
     ).s;
-  const spentOn = (bucket: string): number =>
+  const spentOn = async (bucket: string): Promise<number> =>
     (
-      db
+      (await db
         .prepare(
           "SELECT COALESCE(SUM(cost_usd), 0) AS s FROM llm_log WHERE bucket = ?",
         )
-        .get(bucket) as { s: number }
+        .get(bucket)) as { s: number }
     ).s;
   const insert = db.prepare(
     `INSERT INTO llm_log (at, role, route, model, tier, bucket, input_tokens, output_tokens,
@@ -102,34 +102,36 @@ export function createGateway({
         spec.maxTokens,
       );
       const monthOver =
-        spentSince(month) + heldOn("month") + worst > limits.month;
-      const row = (
+        (await spentSince(month)) + heldOn("month") + worst > limits.month;
+      const row = async (
         outcome: string,
         reply: RouteReply | null,
         response: string,
-      ): number | bigint =>
-        insert.run(
-          started.toISOString(),
-          role,
-          name,
-          model,
-          spec.tier,
-          bucket,
-          reply?.inputTokens ?? 0,
-          reply?.outputTokens ?? 0,
-          reply?.costUsd ?? 0,
-          now() - started.getTime(),
-          outcome,
-          JSON.stringify(route.body(request)),
-          response,
+      ): Promise<number | bigint> =>
+        (
+          await insert.run(
+            started.toISOString(),
+            role,
+            name,
+            model,
+            spec.tier,
+            bucket,
+            reply?.inputTokens ?? 0,
+            reply?.outputTokens ?? 0,
+            reply?.costUsd ?? 0,
+            now() - started.getTime(),
+            outcome,
+            JSON.stringify(route.body(request)),
+            response,
+          )
         ).lastInsertRowid;
-      const log = (
+      const log = async (
         outcome: string,
         reply: RouteReply | null,
         response: string,
-      ): void => {
-        const id = row(outcome, reply, response);
-        appendEvents(db, [
+      ): Promise<void> => {
+        const id = await row(outcome, reply, response);
+        await appendEvents(db, [
           {
             type: "llm_call",
             v: 1,
@@ -139,12 +141,12 @@ export function createGateway({
         ]);
       };
       if (
-        spentOn(bucket) + heldOn(bucket) + worst > limits.adventure ||
+        (await spentOn(bucket)) + heldOn(bucket) + worst > limits.adventure ||
         monthOver
       ) {
         if (monthOver && monthSpent !== month) {
           monthSpent = month;
-          appendEvents(db, [
+          await appendEvents(db, [
             {
               type: "budget_month_spent",
               v: 1,
@@ -153,7 +155,7 @@ export function createGateway({
             },
           ]);
         }
-        row("budget_exhausted", null, `reserve ${worst.toFixed(6)}`);
+        await row("budget_exhausted", null, `reserve ${worst.toFixed(6)}`);
         return { ok: false, reason: "budget_exhausted" };
       }
       hold(bucket, worst);
@@ -161,12 +163,16 @@ export function createGateway({
       try {
         const reply = await route.call(request);
         const finished = reply.stopReason !== "refusal" && reply.text !== "";
-        log(finished ? "ok" : reply.stopReason, reply, reply.text);
+        await log(finished ? "ok" : reply.stopReason, reply, reply.text);
         return finished
           ? { ok: true, text: reply.text }
           : { ok: false, reason: "provider_failed" };
       } catch (err) {
-        log("provider_failed", null, err instanceof Error ? err.message : "");
+        await log(
+          "provider_failed",
+          null,
+          err instanceof Error ? err.message : "",
+        );
         return { ok: false, reason: "provider_failed" };
       } finally {
         hold(bucket, -worst);

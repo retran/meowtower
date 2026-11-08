@@ -50,8 +50,8 @@ try {
   // The versions come first: a table rebuilt at open records them.
   useVersions(readContentVersions());
   // A snapshot before any pending migration (REQ-2528).
-  db = openDatabase(dbPath, {
-    beforeMigrate: (d) => snapshotNow(d, snapshots, new Date()),
+  db = await openDatabase(dbPath, {
+    beforeMigrate: async (d) => await snapshotNow(d, snapshots, new Date()),
   });
 } catch (err) {
   // A missing guard or a refused migration stops the start (SPC-0020).
@@ -60,7 +60,7 @@ try {
 }
 // The latest model_activated event names the model in use; the content file names it only
 // while the log holds none (ADR-0510).
-const activated = latestEvent(db, "model_activated");
+const activated = await latestEvent(db, "model_activated");
 if (activated)
   useVersions({
     ...VERSIONS,
@@ -71,7 +71,10 @@ if (activated)
 // version is served (TSK-0500).
 let activation: ActivationContext | undefined;
 try {
-  const started = startGraph(db, process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE);
+  const started = await startGraph(
+    db,
+    process.env["MEOWTOWER_GRAPH"] ?? GRAPH_FILE,
+  );
   // The knowledge model runs once a model version is named (SPC-0060); until then its
   // tables stay empty. The game-day zone is the family's, set in the environment.
   const model = VERSIONS.model;
@@ -108,7 +111,7 @@ try {
 // A new model or threshold version recomputes every projection before the
 // first request (REQ-2230); a failure leaves the old projections and play
 // goes on, with recompute_failed for the parent.
-if (versionsChanged(db)) {
+if (await versionsChanged(db)) {
   console.log(`startup_recompute: now ${versionLabel()}`);
   try {
     const done = await runRecompute(db, { dir: snapshots, now: Date.now });
@@ -122,21 +125,21 @@ if (versionsChanged(db)) {
 
 // A file in data/blobs/ with no row gets its row, or `blob_changed` in the log;
 // the start goes on either way (REQ-2210).
-recoverBlobs(db, join(dirname(snapshots), "blobs"), (file) =>
+await recoverBlobs(db, join(dirname(snapshots), "blobs"), (file) =>
   raise("blob_changed", file),
 );
 
 // A snapshot after each session (REQ-2526); data/ is the snapshots folder's parent.
-const onSessionEnded = (): void => {
+const onSessionEnded = async (): Promise<void> => {
   // The end of an adventure recomputes the knowledge rows from the whole log; a failure
   // keeps the earlier rows and the next end retries it (TSK-0527).
   try {
-    refreshKnowledge(db, new Date().toISOString());
+    await refreshKnowledge(db, new Date().toISOString());
   } catch (err) {
     raise("recompute_failed", err instanceof Error ? err.message : String(err));
   }
-  checkLogSize(db, snapshots, Date.now);
-  checkSnapshotCeiling(db, snapshots, Date.now);
+  await checkLogSize(db, snapshots, Date.now);
+  await checkSnapshotCeiling(db, snapshots, Date.now);
   void backupAfterSession({
     live: dbPath,
     dir: snapshots,
@@ -172,8 +175,8 @@ try {
           .filter((n) => n !== ""),
       }),
       zone,
-      level: () => parentSettings(db).creepiness,
-      gender: () => parentSettings(db).gender,
+      level: async () => (await parentSettings(db)).creepiness,
+      gender: async () => (await parentSettings(db)).gender,
     });
     if (await turnOn()) frames = queue;
     else {
@@ -198,18 +201,24 @@ try {
 }
 const live: { current: FrameQueue | undefined } = { current: frames };
 const game = serve({
-  fetch: createApp({
-    db,
-    onSessionEnded,
-    sweepLeasesMs: 5000,
-    tasks:
-      process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry",
-    frames: {
-      prepare: (task) => live.current?.prepare(task) ?? Promise.resolve(),
-      ready: (task, ms) => live.current?.ready(task, ms) ?? Promise.resolve(),
-      take: (task) => live.current?.take(task) ?? null,
-    },
-  }).fetch,
+  fetch: (
+    await createApp({
+      db,
+      onSessionEnded,
+      sweepLeasesMs: 5000,
+      tasks:
+        process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry",
+      frames: {
+        prepare: async (task) => {
+          await live.current?.prepare(task);
+        },
+        ready: async (task, ms) => {
+          await live.current?.ready(task, ms);
+        },
+        take: async (task) => (await live.current?.take(task)) ?? null,
+      },
+    })
+  ).fetch,
   port,
 });
 const parent = serve({
@@ -225,8 +234,8 @@ const parent = serve({
 
 const stop = (): void => {
   parent.close();
-  game.close(() => {
-    db.close();
+  game.close(async () => {
+    await db.close();
     process.exit(0);
   });
 };

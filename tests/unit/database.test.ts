@@ -16,29 +16,29 @@ const fresh = (): string => {
 };
 
 describe("REQ-2508: the database is durable before any reply", () => {
-  it("opens in WAL mode with synchronous FULL", () => {
-    const db = openDatabase(fresh());
-    expect(db.pragma("journal_mode", { simple: true })).toBe("wal");
-    expect(db.pragma("synchronous", { simple: true })).toBe(2);
-    db.close();
+  it("opens in WAL mode with synchronous FULL", async () => {
+    const db = await openDatabase(fresh());
+    expect(await db.pragma("journal_mode", { simple: true })).toBe("wal");
+    expect(await db.pragma("synchronous", { simple: true })).toBe(2);
+    await db.close();
   });
 });
 
 describe("migrations", () => {
-  it("applies each migration once and records it", () => {
+  it("applies each migration once and records it", async () => {
     const path = fresh();
-    openDatabase(path).close();
-    const db = openDatabase(path);
-    const applied = db
+    await (await openDatabase(path)).close();
+    const db = await openDatabase(path);
+    const applied = await db
       .prepare("SELECT version FROM schema_migrations ORDER BY version")
       .all();
     const shipped = readdirSync("migrations")
       .filter((f) => /^\d{4}_.+\.sql$/.test(f))
       .map((f) => ({ version: Number(f.slice(0, 4)) }));
     expect(applied).toEqual(shipped);
-    expect(db.prepare("SELECT count(*) AS n FROM events").get()).toEqual({
+    expect(await db.prepare("SELECT count(*) AS n FROM events").get()).toEqual({
       n: 0,
     });
-    db.close();
+    await db.close();
   });
 });
