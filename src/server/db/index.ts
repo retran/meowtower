@@ -17,6 +17,8 @@ export interface Db {
   readonly open: boolean;
   /** Where the database lives: the file of a SQLite database. */
   readonly name: string;
+  /** Which SQL the database speaks; migrations and catalogue queries differ by it. */
+  readonly dialect: "sqlite" | "postgres";
   prepare(sql: string): Statement;
   exec(sql: string): Promise<void>;
   pragma(source: string, options?: { simple?: boolean }): Promise<unknown>;

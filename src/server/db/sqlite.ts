@@ -19,6 +19,8 @@ export class SqliteDb implements Db {
     return this.native.open;
   }
 
+  readonly dialect = "sqlite" as const;
+
   get name(): string {
     return this.native.name;
   }
