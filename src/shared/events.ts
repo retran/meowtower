@@ -363,6 +363,36 @@ const obj = <T extends z.ZodRawShape>(shape: T) => z.object(shape).strict();
 
 const storyDefs: EventDef[] = [
   {
+    type: "turn_taken",
+    v: 1,
+    schema: obj({
+      encounter: id("the encounter the turn belongs to"),
+      said: z.string().describe("what she said or picked, after cleaning"),
+      reply: z.string().describe("the Master's reply as shown"),
+    }),
+  },
+  {
+    type: "check_requested",
+    v: 1,
+    schema: obj({
+      encounter: id("the encounter"),
+      tried: z.string().describe("what she tried"),
+      hard: z.string().describe("why it is hard"),
+      itemId: id("the task the Director set for the check"),
+    }),
+  },
+  {
+    type: "world_changed",
+    v: 1,
+    schema: obj({
+      kind: z
+        .enum(["person", "place", "item", "relation", "state"])
+        .describe("what the Master changed"),
+      name: z.string().describe("its name"),
+      note: z.string().describe("the change"),
+    }),
+  },
+  {
     type: "scene_shown",
     v: 1,
     schema: obj({
@@ -921,6 +951,9 @@ export const EVENT_CATALOGUE: readonly string[] = [
   "llm_call",
   "budget_month_spent",
   "master_pick_rejected",
+  "turn_taken",
+  "check_requested",
+  "world_changed",
   "scene_shown",
   "choice_made",
   "free_text",
