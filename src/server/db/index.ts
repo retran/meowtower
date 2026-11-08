@@ -32,3 +32,4 @@ export interface Db {
 }
 
 export { SqliteDb } from "./sqlite.js";
+export { dropSchema, openPostgres, PgDb } from "./postgres.js";
