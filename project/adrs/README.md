@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-67 decisions in all: 55 approved, 12 done.
+68 decisions in all: 56 approved, 12 done.
 
 | Identifier                                                                                    | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -73,5 +73,6 @@
 | [ADR-3300](ADR-3300-the-player-has-nine-skills-with-five-steps-each.md)                       | The player has nine skills in game terms, each with five steps that open something new, and a score that shows a level and the percentage to the next                                                                                                                                                                                             | approved |
 | [ADR-3310](ADR-3310-all-game-data-lives-in-postgres-on-the-mac-one-schema-a-profile.md)       | All game data lives in Postgres on the Mac, one schema a profile, and the log's rules stay as ADR-0020 wrote them                                                                                                                                                                                                                                 | approved |
 | [ADR-3320](ADR-3320-a-parent-account-on-a-verified-email-owns-one-profile-a-child.md)         | A parent account on a verified email owns one profile a child, and a child's device opens a profile through a pairing and holds no login                                                                                                                                                                                                          | approved |
+| [ADR-3330](ADR-3330-the-game-is-an-installable-web-app-that-needs-its-server.md)              | The game is an installable web app that needs its server, and a device with no connection says so                                                                                                                                                                                                                                                 | approved |
 
 <!-- /meow-flow index -->

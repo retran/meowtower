@@ -284,5 +284,8 @@
   "ui.parentFalls.title": "Falls of levels and rank",
   "ui.parentFalls.none": "Nothing has fallen yet.",
   "ui.parentFalls.skill": "{skill}: level of node {node} {from} → {to}, {when}",
-  "ui.parentFalls.rank": "Rank {from} → {to}, game day {day}"
+  "ui.parentFalls.rank": "Rank {from} → {to}, game day {day}",
+  "ui.offline.title": "No connection",
+  "ui.offline.body": "The game needs a connection to the server. Check the Wi-Fi and the game opens by itself.",
+  "ui.offline.retry": "Try again"
 }

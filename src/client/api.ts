@@ -16,7 +16,8 @@ import type { Interface } from "./interface.js";
 export type DeviceState =
   | { state: "paired"; kind: Interface }
   | { state: "unpaired" }
-  | { state: "revoked" };
+  | { state: "revoked" }
+  | { state: "offline" };
 
 /** The status of a request that got no usable reply: no connection, or no JSON. */
 export const UNREACHABLE = 0;
@@ -41,6 +42,7 @@ async function call(
 
 export async function device(): Promise<DeviceState> {
   const { status, body } = await call("/api/device");
+  if (status === UNREACHABLE) return { state: "offline" };
   if (status === 200)
     return { state: "paired", kind: body["kind"] as Interface };
   return body["error"] === "device_revoked"

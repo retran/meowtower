@@ -284,5 +284,8 @@
   "ui.parentFalls.title": "Dalingen van niveaus en rang",
   "ui.parentFalls.none": "Er is nog niets gedaald.",
   "ui.parentFalls.skill": "{skill}: niveau van knoop {node} {from} → {to}, {when}",
-  "ui.parentFalls.rank": "Rang {from} → {to}, speldag {day}"
+  "ui.parentFalls.rank": "Rang {from} → {to}, speldag {day}",
+  "ui.offline.title": "Geen verbinding",
+  "ui.offline.body": "Het spel heeft een verbinding met de server nodig. Controleer de wifi en het spel opent vanzelf.",
+  "ui.offline.retry": "Probeer opnieuw"
 }

@@ -284,5 +284,8 @@
   "ui.parentFalls.title": "Падения уровней и ранга",
   "ui.parentFalls.none": "Падений пока не было.",
   "ui.parentFalls.skill": "{skill}: уровень узла {node} {from} → {to}, {when}",
-  "ui.parentFalls.rank": "Ранг {from} → {to}, игровой день {day}"
+  "ui.parentFalls.rank": "Ранг {from} → {to}, игровой день {day}",
+  "ui.offline.title": "Нужна связь",
+  "ui.offline.body": "Игре нужна связь с сервером. Проверьте Wi-Fi, и игра откроется сама.",
+  "ui.offline.retry": "Попробовать ещё раз"
 }

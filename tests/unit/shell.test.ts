@@ -48,6 +48,7 @@ describe("REQ-2500: the game runs as a web app in a browser on the iPad and the 
       lang: "ru",
     });
     expect(manifest["icons"]).toEqual([
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
       { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ]);
   });

@@ -73,11 +73,16 @@ export function mountShell(app: Hono): void {
         name: t("ui.app.name"),
         short_name: t("ui.app.shortName"),
         lang,
+        id: "/",
         start_url: "/",
+        scope: "/",
         display: "standalone",
         background_color: "#fdf1e6",
         theme_color: "#f6c6cf",
-        icons: [{ src: "/icon-512.png", sizes: "512x512", type: "image/png" }],
+        icons: [
+          { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+        ],
       }),
       200,
       { "content-type": "application/manifest+json; charset=utf-8" },
@@ -85,5 +90,10 @@ export function mountShell(app: Hono): void {
   );
   app.get("/icon-512.png", (c) =>
     c.body(new Uint8Array(icon), 200, { "content-type": "image/png" }),
+  );
+  app.get("/icon-192.png", (c) =>
+    c.body(new Uint8Array(iconPng(192)), 200, {
+      "content-type": "image/png",
+    }),
   );
 }

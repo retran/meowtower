@@ -301,6 +301,9 @@ export interface StringParams {
     from: string | number;
     to: string | number;
   };
+  "ui.offline.title": NoParams;
+  "ui.offline.body": NoParams;
+  "ui.offline.retry": NoParams;
 }
 
 export type Key = keyof StringParams;
