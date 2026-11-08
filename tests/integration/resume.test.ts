@@ -27,8 +27,8 @@ import {
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-resume-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
@@ -43,13 +43,13 @@ const input = {
 };
 
 let worlds = 0;
-function world() {
-  const db = openDatabase(join(root, `w${++worlds}.sqlite`));
+async function world() {
+  const db = await openDatabase(join(root, `w${++worlds}.sqlite`));
   opened.push(db);
   let clock = 0;
-  const app = createApp({ db, now: () => (clock += 100) });
-  const tablet = registerDevice(db, "tablet");
-  const computer = registerDevice(db, "computer");
+  const app = await createApp({ db, now: () => (clock += 100) });
+  const tablet = await registerDevice(db, "tablet");
+  const computer = await registerDevice(db, "computer");
   const seqs = { tablet: 0, computer: 0 };
   type Who = "tablet" | "computer";
   const tokens = { tablet, computer };
@@ -74,32 +74,32 @@ function world() {
   const next = async (who: Who, sessionId: string) =>
     Room.parse(await (await get(who, `/api/session/${sessionId}/next`)).json());
   const answer = async (who: Who, sessionId: string, itemId: string) =>
-    post(who, `/api/session/${sessionId}/answer`, {
+    await post(who, `/api/session/${sessionId}/answer`, {
       itemId,
       raw: "7",
       dontKnow: false,
       input,
     });
-  const leave = (who: Who, sessionId: string) =>
-    post(who, `/api/session/${sessionId}/pause`, { reason: "leave" });
+  const leave = async (who: Who, sessionId: string) =>
+    await post(who, `/api/session/${sessionId}/pause`, { reason: "leave" });
   const resume = async (who: Who) =>
     ResumeOut.parse(await (await post(who, "/api/adventure/resume")).json());
-  const events = (type: string) =>
+  const events = async (type: string) =>
     (
-      db
+      (await db
         .prepare("SELECT payload FROM events WHERE type = ? ORDER BY seq")
-        .all(type) as { payload: string }[]
+        .all(type)) as { payload: string }[]
     ).map((r) => JSON.parse(r.payload) as Record<string, unknown>);
-  const adventureId = (): string =>
+  const adventureId = async (): Promise<string> =>
     (
-      db.prepare("SELECT adventure_id FROM adventures").get() as {
+      (await db.prepare("SELECT adventure_id FROM adventures").get()) as {
         adventure_id: string;
       }
     ).adventure_id;
-  const stored = (): unknown => {
-    const row = db
+  const stored = async (): Promise<unknown> => {
+    const row = (await db
       .prepare("SELECT point FROM resume_snapshot WHERE adventure_id = ?")
-      .get(adventureId()) as { point: string } | undefined;
+      .get(await adventureId())) as { point: string } | undefined;
     return row ? JSON.parse(row.point) : null;
   };
   return {
@@ -119,85 +119,92 @@ function world() {
 
 describe("REQ-0206: resume_snapshot equals the resume point derived from the log", () => {
   it("matches after every committed request of a played script and after a rebuild", async () => {
-    const w = world();
+    const w = await world();
     let compared = 0;
     let differences = 0;
-    const compare = (): void => {
-      const derived = resumeFromLog(adventureEvents(w.db, w.adventureId()));
+    const compare = async (): Promise<void> => {
+      const derived = resumeFromLog(
+        await adventureEvents(w.db, await w.adventureId()),
+      );
       compared++;
-      if (JSON.stringify(w.stored()) !== JSON.stringify(derived)) differences++;
+      if (JSON.stringify(await w.stored()) !== JSON.stringify(derived))
+        differences++;
     };
     const a = await w.start("tablet");
-    compare();
+    await compare();
     const first = await w.next("tablet", a);
-    compare();
+    await compare();
     await w.post("tablet", `/api/item/${first.itemId}/hint`, { level: 1 });
-    compare();
+    await compare();
     await w.post("tablet", `/api/item/${first.itemId}/explain`);
-    compare();
+    await compare();
     await w.answer("tablet", a, first.itemId);
-    compare();
+    await compare();
     const twin = Room.parse(
       await (
         await w.post("tablet", `/api/item/${first.itemId}/second-attempt`)
       ).json(),
     );
-    compare();
+    await compare();
     await w.answer("tablet", a, twin.itemId);
-    compare();
+    await compare();
     await w.next("tablet", a);
-    compare();
+    await compare();
     await w.leave("tablet", a);
-    compare();
+    await compare();
     const b = await w.resume("computer");
-    compare();
+    await compare();
     const second = await w.next("computer", b.sessionId);
-    compare();
+    await compare();
     await w.answer("computer", b.sessionId, second.itemId);
-    compare();
+    await compare();
 
     expect(compared).toBe(12);
     expect(differences).toBe(0);
 
     // A rebuild from the log alone gives the same row.
-    const before = w.stored();
-    w.db.prepare("DROP TABLE resume_snapshot").run();
-    const reopened = openDatabase(w.db.name);
+    const before = await w.stored();
+    await w.db.prepare("DROP TABLE resume_snapshot").run();
+    const reopened = await openDatabase(w.db.name);
     expect(
       JSON.parse(
         (
-          reopened.prepare("SELECT point FROM resume_snapshot").get() as {
+          (await reopened
+            .prepare("SELECT point FROM resume_snapshot")
+            .get()) as {
             point: string;
           }
         ).point,
       ),
     ).toEqual(before);
-    reopened.close();
+    await reopened.close();
   });
 });
 
 describe("REQ-0206: the 30-day simulation's snapshots equal the log's", () => {
-  it("compares every adventure's stored row with the point derived from its events", () => {
-    const db = openDatabase(join(root, "sim.sqlite"));
+  it("compares every adventure's stored row with the point derived from its events", async () => {
+    const db = await openDatabase(join(root, "sim.sqlite"));
     opened.push(db);
-    const written = writeSyntheticLog(db, {
+    const written = await writeSyntheticLog(db, {
       days: 30,
       tasksPerDay: 20,
       seed: 11,
     });
     const ids = (
-      db.prepare("SELECT DISTINCT adventure_id FROM adventures").all() as {
+      (await db
+        .prepare("SELECT DISTINCT adventure_id FROM adventures")
+        .all()) as {
         adventure_id: string;
       }[]
     ).map((r) => r.adventure_id);
     let compared = 0;
     let differences = 0;
     for (const id of ids) {
-      const events = adventureEvents(db, id);
+      const events = await adventureEvents(db, id);
       compared += events.length;
-      const row = db
+      const row = (await db
         .prepare("SELECT point FROM resume_snapshot WHERE adventure_id = ?")
-        .get(id) as { point: string } | undefined;
+        .get(id)) as { point: string } | undefined;
       const derived = resumeFromLog(events);
       if (
         JSON.stringify(row && JSON.parse(row.point)) !== JSON.stringify(derived)
@@ -212,7 +219,7 @@ describe("REQ-0206: the 30-day simulation's snapshots equal the log's", () => {
 
 describe("REQ-0204: resume returns the same step on another device", () => {
   it("carries the floor, room, slot, task, view, attempt step and hint levels", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("tablet");
     const answered = await w.next("tablet", a);
     await w.answer("tablet", a, answered.itemId);
@@ -242,7 +249,7 @@ describe("REQ-0204: resume returns the same step on another device", () => {
   });
 
   it("answers 404 when no adventure is open", async () => {
-    const w = world();
+    const w = await world();
     const reply = await w.post("tablet", "/api/adventure/resume");
     expect(reply.status).toBe(404);
   });
@@ -250,7 +257,7 @@ describe("REQ-0204: resume returns the same step on another device", () => {
 
 describe("REQ-0210, REQ-0212: a task left unanswered stays the first attempt", () => {
   it("counts the resumed answer as the first attempt and marks it interrupted", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("tablet");
     const shown = await w.next("tablet", a);
     await w.leave("tablet", a);
@@ -260,14 +267,14 @@ describe("REQ-0210, REQ-0212: a task left unanswered stays the first attempt", (
     );
 
     expect(reply.outcome).toBe("clean");
-    const [attempt] = w.events("attempt_submitted");
+    const [attempt] = await w.events("attempt_submitted");
     expect(attempt).toMatchObject({
       itemId: shown.itemId,
       attemptNo: 1,
       interrupted: true,
       crossDevice: false,
     });
-    expect(w.events("verdict")[0]).toMatchObject({
+    expect((await w.events("verdict"))[0]).toMatchObject({
       itemId: shown.itemId,
       attemptNo: 1,
       outcome: "clean",
@@ -275,24 +282,24 @@ describe("REQ-0210, REQ-0212: a task left unanswered stays the first attempt", (
   });
 
   it("marks an uninterrupted attempt not interrupted", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("tablet");
     const shown = await w.next("tablet", a);
     await w.answer("tablet", a, shown.itemId);
-    expect(w.events("attempt_submitted")[0]).toMatchObject({
+    expect((await w.events("attempt_submitted"))[0]).toMatchObject({
       interrupted: false,
       crossDevice: false,
     });
   });
 
   it("marks an attempt split by a rest stop as not interrupted (REQ-2412)", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("tablet");
     const shown = await w.next("tablet", a);
     await w.post("tablet", `/api/session/${a}/break`, { action: "start" });
     await w.post("tablet", `/api/session/${a}/break`, { action: "end" });
     await w.answer("tablet", a, shown.itemId);
-    expect(w.events("attempt_submitted")[0]).toMatchObject({
+    expect((await w.events("attempt_submitted"))[0]).toMatchObject({
       interrupted: false,
     });
   });
@@ -300,7 +307,7 @@ describe("REQ-0210, REQ-0212: a task left unanswered stays the first attempt", (
 
 describe("REQ-0214: a paid action repeated after a resume charges nothing", () => {
   it("spends no thread and returns the same result for a hint, an explanation and a second attempt", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("tablet");
     const shown = await w.next("tablet", a);
     const hint = HintOut.parse(
@@ -320,7 +327,7 @@ describe("REQ-0214: a paid action repeated after a resume charges nothing", () =
       ).json(),
     );
     await w.leave("tablet", a);
-    const spent = w.events("thread_spent").length;
+    const spent = (await w.events("thread_spent")).length;
 
     const b = await w.resume("computer");
     expect(b.sessionId).toBeTruthy();
@@ -340,8 +347,8 @@ describe("REQ-0214: a paid action repeated after a resume charges nothing", () =
       ).json(),
     );
 
-    expect(w.events("thread_spent").length).toBe(spent);
-    expect(w.events("hint_shown")).toHaveLength(1);
+    expect((await w.events("thread_spent")).length).toBe(spent);
+    expect(await w.events("hint_shown")).toHaveLength(1);
     // The same rung and text, and the stock as it stands after both payments.
     expect(hintAgain).toEqual({ ...hint, threads: explained.threads });
     expect(explainAgain.threads).toBe(explained.threads);
@@ -351,23 +358,23 @@ describe("REQ-0214: a paid action repeated after a resume charges nothing", () =
 
 describe("REQ-0224: an attempt from another kind of device is flagged", () => {
   it("sets crossDevice when a computer submits a task a tablet showed", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("tablet");
     const shown = await w.next("tablet", a);
     await w.leave("tablet", a);
     const b = await w.resume("computer");
     await w.answer("computer", b.sessionId, shown.itemId);
-    expect(w.events("attempt_submitted")[0]).toMatchObject({
+    expect((await w.events("attempt_submitted"))[0]).toMatchObject({
       crossDevice: true,
     });
   });
 
   it("leaves crossDevice false on the device that showed the task", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("computer");
     const shown = await w.next("computer", a);
     await w.answer("computer", a, shown.itemId);
-    expect(w.events("attempt_submitted")[0]).toMatchObject({
+    expect((await w.events("attempt_submitted"))[0]).toMatchObject({
       crossDevice: false,
     });
   });
@@ -398,7 +405,7 @@ describe("ADR-0020: attempt_submitted gains a version with the two flags", () =>
 
 describe("REQ-0204: next shows an open second attempt again", () => {
   it("returns the parallel task a device left open, not the next first attempt", async () => {
-    const w = world();
+    const w = await world();
     const a = await w.start("tablet");
     const first = await w.next("tablet", a);
     await w.answer("tablet", a, first.itemId);

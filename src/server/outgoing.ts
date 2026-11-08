@@ -3,7 +3,7 @@
 // fallback line, and the counters per source and game day feed the `text_blocked_high` notice. The
 // player's own words are exempt. The client holds no copy of the check.
 import { mkdirSync } from "node:fs";
-import type Database from "better-sqlite3";
+import type { Statement } from "./db/index.js";
 import { gameDayOf } from "../shared/game-day.js";
 import { t } from "../shared/i18n.js";
 import { lang } from "../shared/i18n.js";
@@ -43,9 +43,9 @@ export interface LineContext {
 
 export interface Outgoing {
   /** The line itself when it passes, and the fallback line when it is blocked. */
-  line(text: string, context: LineContext): string;
+  line(text: string, context: LineContext): Promise<string>;
   /** A copy of `body` with every text field gated. */
-  body<T>(body: T, source?: Source): T;
+  body<T>(body: T, source?: Source): Promise<T>;
 }
 
 export function createOutgoing(
@@ -57,10 +57,10 @@ export function createOutgoing(
   // and /health can say so.
   let statements:
     | {
-        count: Database.Statement<unknown[]>;
-        share: Database.Statement<unknown[]>;
-        insert: Database.Statement<unknown[]>;
-        trim: Database.Statement<unknown[]>;
+        count: Statement;
+        share: Statement;
+        insert: Statement;
+        trim: Statement;
       }
     | undefined;
   const sql = () =>
@@ -104,7 +104,7 @@ export function createOutgoing(
     }
   };
 
-  const line = (text: string, context: LineContext): string => {
+  const line = async (text: string, context: LineContext): Promise<string> => {
     if (context.source === "player") return text;
     const kind = context.kind ?? "story";
     const result = textGate(text, {
@@ -115,10 +115,10 @@ export function createOutgoing(
     });
     const day = gameDayOf(now(), zone);
     try {
-      db.transaction(() => {
-        sql().count.run(day, context.source, result.ok ? 0 : 1);
+      await db.transaction(async () => {
+        await sql().count.run(day, context.source, result.ok ? 0 : 1);
         if (!result.ok) {
-          sql().insert.run(
+          await sql().insert.run(
             new Date(now()).toISOString(),
             context.source,
             kind,
@@ -126,7 +126,7 @@ export function createOutgoing(
             result.match,
             text,
           );
-          sql().trim.run(KEEP_ROWS);
+          await sql().trim.run(KEEP_ROWS);
         }
       })();
     } catch (error) {
@@ -135,7 +135,7 @@ export function createOutgoing(
     }
     if (result.ok) return text;
     try {
-      const row = sql().share.get(day, context.source) as
+      const row = (await sql().share.get(day, context.source)) as
         { checked: number; blocked: number } | undefined;
       if (row && row.blocked / row.checked > HIGH_SHARE)
         report(context.source, row.blocked / row.checked);
@@ -145,21 +145,33 @@ export function createOutgoing(
     return t("system.fallback.line");
   };
 
-  const walk = (value: unknown, source: Source, key?: string): unknown => {
+  const walk = async (
+    value: unknown,
+    source: Source,
+    key?: string,
+  ): Promise<unknown> => {
     if (typeof value === "string")
       return key !== undefined && TEXT_KEYS.has(key)
-        ? line(value, { source })
+        ? await line(value, { source })
         : value;
-    if (Array.isArray(value)) return value.map((v) => walk(v, source, key));
+    if (Array.isArray(value))
+      return await Promise.all(
+        value.map(async (v) => await walk(v, source, key)),
+      );
     if (value && typeof value === "object")
       return Object.fromEntries(
-        Object.entries(value).map(([k, v]) => [k, walk(v, source, k)]),
+        await Promise.all(
+          Object.entries(value).map(
+            async ([k, v]) => [k, await walk(v, source, k)] as const,
+          ),
+        ),
       );
     return value;
   };
 
   return {
     line,
-    body: <T>(body: T, source: Source = "fixed") => walk(body, source) as T,
+    body: async <T>(body: T, source: Source = "fixed") =>
+      (await walk(body, source)) as T,
   };
 }

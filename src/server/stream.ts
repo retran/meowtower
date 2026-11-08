@@ -40,10 +40,10 @@ export function createStream(): Stream {
 export function mountStream(
   app: Hono,
   stream: Stream,
-  authorise: (c: Context) => Response | null,
+  authorise: (c: Context) => Promise<Response | null>,
 ): void {
-  app.get("/api/session/:id/events", (c) => {
-    const refused = authorise(c);
+  app.get("/api/session/:id/events", async (c) => {
+    const refused = await authorise(c);
     if (refused) return refused;
     const sessionId = c.req.param("id");
     return streamSSE(c, async (sse) => {
@@ -59,13 +59,13 @@ export function mountStream(
     });
   });
 
-  app.get("/api/session/:id/poll", (c) => {
-    const refused = authorise(c);
+  app.get("/api/session/:id/poll", async (c) => {
+    const refused = await authorise(c);
     if (refused) return refused;
     const after = Number(c.req.query("after") ?? 0);
     if (!Number.isInteger(after) || after < 0)
       return c.json({ error: "bad_request" }, 400);
-    return send(c, PollOut, {
+    return await send(c, PollOut, {
       messages: stream.after(c.req.param("id"), after),
     });
   });

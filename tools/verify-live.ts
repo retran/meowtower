@@ -16,7 +16,7 @@ import { templates } from "../src/templates/index.js";
 const config = readConfig(process.env);
 if (!config) throw new Error("model_config_invalid: a role is unset");
 const budget = Number(process.env["VERIFY_LIVE_BUDGET_USD"] ?? 2);
-const db = openDatabase(
+const db = await openDatabase(
   join(mkdtempSync(join(tmpdir(), "meowtower-live-")), "live.sqlite"),
 );
 const queue = createFrameQueue({
@@ -43,7 +43,7 @@ await Promise.all(
       const { lang, template } = job;
       const base = baseSeed("verify-live", template.id, 0);
       await queue.prepare({ template, base, bucket: "verify", lang });
-      const frame = queue.take({ template, base, lang });
+      const frame = await queue.take({ template, base, lang });
       console.log(`${lang} ${template.id}: ${frame?.text ?? "no frame"}`);
     }
   }),
@@ -55,11 +55,11 @@ interface Judged {
 }
 const statusOf = db.prepare("SELECT status FROM frames WHERE text = ? LIMIT 1");
 const tasks = new Map<string, { score: number; line: string }[]>();
-for (const row of db
+for (const row of (await db
   .prepare(
     "SELECT request, response FROM llm_log WHERE role = 'FRAME_JUDGE_MODEL' AND outcome = 'ok'",
   )
-  .all() as Judged[]) {
+  .all()) as Judged[]) {
   const { messages } = JSON.parse(row.request) as {
     messages: { content: string }[];
   };
@@ -69,7 +69,7 @@ for (const row of db
   const text = story.slice(story.indexOf("\n") + 1);
   const answers = Answers.parse(JSON.parse(row.response));
   const score = scoreOf(answers) ?? -9;
-  const { status } = (statusOf.get(text) ?? { status: "?" }) as {
+  const { status } = ((await statusOf.get(text)) ?? { status: "?" }) as {
     status: string;
   };
   const marks = Object.entries(answers)
@@ -86,7 +86,7 @@ for (const [original, variants] of tasks) {
     console.log(v.line);
 }
 console.table(
-  db
+  await db
     .prepare(
       `SELECT lang, status, COALESCE(step, '') AS step, COUNT(*) AS count
        FROM frames GROUP BY lang, status, step`,
@@ -94,7 +94,7 @@ console.table(
     .all(),
 );
 console.table(
-  db
+  await db
     .prepare(
       `SELECT role, outcome, COUNT(*) AS calls, SUM(cost_usd) AS usd,
          AVG(latency_ms) AS ms, MAX(CASE WHEN outcome != 'ok' THEN response END) AS fault

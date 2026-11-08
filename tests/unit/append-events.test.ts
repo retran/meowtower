@@ -15,10 +15,10 @@ afterEach(() => {
   for (const dir of dirs.splice(0))
     rmSync(dir, { recursive: true, force: true });
 });
-function db(): Db {
+async function db(): Promise<Db> {
   const dir = mkdtempSync(join(tmpdir(), "meowtower-append-"));
   dirs.push(dir);
-  return openDatabase(join(dir, "meowtower.sqlite"));
+  return await openDatabase(join(dir, "meowtower.sqlite"));
 }
 
 interface Row {
@@ -34,8 +34,8 @@ interface Row {
   payload: string;
   idem_key: string | null;
 }
-const all = (d: Db): Row[] =>
-  d.prepare("SELECT * FROM events ORDER BY seq").all() as Row[];
+const all = async (d: Db): Promise<Row[]> =>
+  (await d.prepare("SELECT * FROM events ORDER BY seq").all()) as Row[];
 
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/;
 const UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
@@ -50,17 +50,17 @@ const fromDevice = (i: number): NewEvent => ({
 });
 
 describe("REQ-3800, REQ-2202: the event envelope", () => {
-  it("gives 1,000 events appended in batches a unique ULID, one increasing seq and every envelope field", () => {
-    const d = db();
+  it("gives 1,000 events appended in batches a unique ULID, one increasing seq and every envelope field", async () => {
+    const d = await db();
     const returned = [];
     for (let b = 0; b < 10; b++)
       returned.push(
-        ...appendEvents(
+        ...(await appendEvents(
           d,
           Array.from({ length: 100 }, (_, i) => fromDevice(b * 100 + i)),
-        ),
+        )),
       );
-    const events = all(d);
+    const events = await all(d);
     expect(events).toHaveLength(1000);
     expect(returned).toEqual(events.map((e) => ({ seq: e.seq, id: e.id })));
     expect(new Set(events.map((e) => e.id)).size).toBe(1000);
@@ -76,12 +76,12 @@ describe("REQ-3800, REQ-2202: the event envelope", () => {
       expect(e.adventure_id).toBe("a1");
       expect(JSON.parse(e.payload)).toEqual({ raw: String(i) });
     });
-    d.close();
+    await d.close();
   });
 
-  it("marks an event the server writes on its own with device 'server' and the server time", () => {
-    const d = db();
-    appendEvents(d, [
+  it("marks an event the server writes on its own with device 'server' and the server time", async () => {
+    const d = await db();
+    await appendEvents(d, [
       {
         type: "attempt_submitted",
         v: 0,
@@ -89,34 +89,34 @@ describe("REQ-3800, REQ-2202: the event envelope", () => {
         origin: "server",
       },
     ]);
-    const [e] = all(d);
+    const [e] = await all(d);
     expect(e?.device_id).toBe("server");
     expect(e?.client_ms).toBe(Date.parse(e?.ts ?? ""));
     expect(e?.session_id).toBeNull();
     expect(e?.adventure_id).toBeNull();
-    d.close();
+    await d.close();
   });
 
-  it("keeps idem_key unique where present", () => {
-    const d = db();
-    appendEvents(d, [{ ...fromDevice(0), idemKey: "k" }, fromDevice(1)]);
-    appendEvents(d, [fromDevice(2)]);
-    expect(() => appendEvents(d, [{ ...fromDevice(3), idemKey: "k" }])).toThrow(
-      LogWriteFailed,
-    );
-    expect(all(d)).toHaveLength(3);
-    d.close();
+  it("keeps idem_key unique where present", async () => {
+    const d = await db();
+    await appendEvents(d, [{ ...fromDevice(0), idemKey: "k" }, fromDevice(1)]);
+    await appendEvents(d, [fromDevice(2)]);
+    await expect(
+      appendEvents(d, [{ ...fromDevice(3), idemKey: "k" }]),
+    ).rejects.toThrow(LogWriteFailed);
+    expect(await all(d)).toHaveLength(3);
+    await d.close();
   });
 
-  it("writes nothing of a batch when one insert fails", () => {
-    const d = db();
-    expect(() =>
+  it("writes nothing of a batch when one insert fails", async () => {
+    const d = await db();
+    await expect(
       appendEvents(d, [
         { ...fromDevice(0), idemKey: "k" },
         { ...fromDevice(1), idemKey: "k" },
       ]),
-    ).toThrow(LogWriteFailed);
-    expect(all(d)).toHaveLength(0);
-    d.close();
+    ).rejects.toThrow(LogWriteFailed);
+    expect(await all(d)).toHaveLength(0);
+    await d.close();
   });
 });

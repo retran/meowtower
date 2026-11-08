@@ -67,9 +67,9 @@ describe("REQ-2508: no answer whose reply was sent is lost when the process dies
   it(
     `keeps the answer ${RUNS} times out of ${RUNS}`,
     async () => {
-      const seed = openDatabase(env.MEOWTOWER_DB);
-      const token = registerDevice(seed, "tablet");
-      seed.close();
+      const seed = await openDatabase(env.MEOWTOWER_DB);
+      const token = await registerDevice(seed, "tablet");
+      await seed.close();
       const headers = {
         cookie: `meowtower_device=${token}`,
         "content-type": "application/json",

@@ -14,16 +14,20 @@ import { setLang } from "../../src/shared/i18n.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-registry-"));
 const path = join(dir, "meowtower.sqlite");
-const db = openDatabase(path);
+const db = await openDatabase(path);
 let clock = 0;
-const app = createApp({ db, now: () => (clock += 100), tasks: "registry" });
+const app = await createApp({
+  db,
+  now: () => (clock += 100),
+  tasks: "registry",
+});
 let seq = 0;
-const token = registerDevice(db, "tablet");
+const token = await registerDevice(db, "tablet");
 const cookie = { cookie: `meowtower_device=${token}` };
 const second = new Database(path, { readonly: true });
-afterAll(() => {
+afterAll(async () => {
   second.close();
-  db.close();
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 

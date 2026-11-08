@@ -52,28 +52,28 @@ const SettingsIn = z
   .strict();
 
 /** The parent settings as they stand: each setting's latest value, or its default. */
-export function parentSettings(db: Db): {
+export async function parentSettings(db: Db): Promise<{
   threeDayLimit: number | null;
   language: Lang;
   creepiness: 0 | 1 | 2;
   gender: "f" | "m";
   hideRankFalls: boolean;
-} {
-  const stored = (key: string): { value: string } | undefined =>
-    db
+}> {
+  const stored = async (key: string): Promise<{ value: string } | undefined> =>
+    (await db
       .prepare(
         "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parent_settings'",
       )
-      .get()
-      ? (db
+      .get())
+      ? ((await db
           .prepare("SELECT value FROM parent_settings WHERE key = ?")
-          .get(key) as { value: string } | undefined)
+          .get(key)) as { value: string } | undefined)
       : undefined;
-  const limit = stored("threeDayLimit");
-  const language = stored("language");
-  const creepiness = stored("creepiness");
-  const gender = stored("gender");
-  const hideRankFalls = stored("hideRankFalls");
+  const limit = await stored("threeDayLimit");
+  const language = await stored("language");
+  const creepiness = await stored("creepiness");
+  const gender = await stored("gender");
+  const hideRankFalls = await stored("hideRankFalls");
   return {
     threeDayLimit: limit
       ? (JSON.parse(limit.value) as number | null)
@@ -91,21 +91,21 @@ export function parentSettings(db: Db): {
   };
 }
 
-export function mountParentRoom(
+export async function mountParentRoom(
   app: Hono,
   db: Db,
   now: () => number,
   sessions = new ParentSessions(),
-): void {
+): Promise<void> {
   // A closed database still has to answer the health page, so the language stays as it was.
-  if (db.open) setLang(parentSettings(db).language);
-  const deviceOf = (c: Context): string | null => {
-    const found = deviceForToken(db, getCookie(c, DEVICE_COOKIE));
+  if (db.open) setLang((await parentSettings(db)).language);
+  const deviceOf = async (c: Context): Promise<string | null> => {
+    const found = await deviceForToken(db, getCookie(c, DEVICE_COOKIE));
     return found.ok ? found.deviceId : null;
   };
   /** The calling device when it holds a parent session, or a 401 reply. */
-  const parent = (c: Context): string | Response => {
-    const deviceId = deviceOf(c);
+  const parent = async (c: Context): Promise<string | Response> => {
+    const deviceId = await deviceOf(c);
     if (!deviceId) return c.json({ error: "device_token_missing" }, 401);
     const held = sessions.hold(getCookie(c, PARENT_COOKIE), deviceId, now());
     if (held === "ok") return deviceId;
@@ -121,15 +121,15 @@ export function mountParentRoom(
   };
 
   app.post("/api/parent/login", async (c) => {
-    const deviceId = deviceOf(c);
+    const deviceId = await deviceOf(c);
     if (!deviceId) return c.json({ error: "device_token_missing" }, 401);
-    if (!pinIsSet(db)) return c.json({ error: "pin_not_set" }, 409);
+    if (!(await pinIsSet(db))) return c.json({ error: "pin_not_set" }, 409);
     const body = LoginIn.safeParse(await c.req.json().catch(() => null));
-    const tried = attempt(
+    const tried = await attempt(
       db,
       "pin",
       now(),
-      () => body.success && pinMatches(db, body.data.pin),
+      async () => body.success && (await pinMatches(db, body.data.pin)),
     );
     if (tried.result === "locked")
       return c.json(
@@ -146,45 +146,45 @@ export function mountParentRoom(
     return c.json({ ok: true });
   });
 
-  app.get("/api/parent/devices", (c) => {
-    const deviceId = parent(c);
+  app.get("/api/parent/devices", async (c) => {
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
     return c.json({
-      devices: listDevices(db).map((d) => ({
+      devices: (await listDevices(db)).map((d) => ({
         ...d,
         current: d.id === deviceId,
       })),
     });
   });
 
-  app.post("/api/parent/devices/:id/revoke", (c) => {
-    const deviceId = parent(c);
+  app.post("/api/parent/devices/:id/revoke", async (c) => {
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
-    return revokeDevice(db, c.req.param("id"))
+    return (await revokeDevice(db, c.req.param("id")))
       ? c.json({ revoked: true })
       : c.json({ error: "device_unknown" }, 404);
   });
 
-  app.get("/api/parent/settings", (c) => {
-    const deviceId = parent(c);
+  app.get("/api/parent/settings", async (c) => {
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
-    return c.json(parentSettings(db));
+    return c.json(await parentSettings(db));
   });
 
   // Each change logs settings_changed, and the next read returns it (REQ-0234).
-  app.get("/api/parent/falls", (c) => {
-    const deviceId = parent(c);
+  app.get("/api/parent/falls", async (c) => {
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
-    return c.json({ falls: fallsRead(db) });
+    return c.json({ falls: await fallsRead(db) });
   });
 
   app.put("/api/parent/settings", async (c) => {
-    const deviceId = parent(c);
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
     const body = SettingsIn.safeParse(await c.req.json().catch(() => null));
     if (!body.success) return c.json({ error: "settings_invalid" }, 400);
     const origin = { deviceId, clientMs: now() };
-    appendEvents(
+    await appendEvents(
       db,
       Object.entries(body.data).map(([key, value]) => ({
         type: "settings_changed",
@@ -193,17 +193,17 @@ export function mountParentRoom(
         origin,
       })),
     );
-    const settings = parentSettings(db);
+    const settings = await parentSettings(db);
     setLang(settings.language);
     return c.json(settings);
   });
 
   // the finish-today action: the rest of the game day plays no further task
   // and takes no extension (REQ-2444).
-  app.post("/api/parent/finish-today", (c) => {
-    const deviceId = parent(c);
+  app.post("/api/parent/finish-today", async (c) => {
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
-    appendEvents(db, [
+    await appendEvents(db, [
       {
         type: "finish_today",
         v: 1,
@@ -217,13 +217,13 @@ export function mountParentRoom(
   // The reset of the statistics (REQ-8386): the log stays append-only, so a reset is an event,
   // and it needs a second press, which the body's `confirm` carries.
   app.post("/api/parent/reset-stats", async (c) => {
-    const deviceId = parent(c);
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
     const body = (await c.req.json().catch(() => ({}))) as {
       confirm?: unknown;
     };
     if (body.confirm !== true) return c.json({ error: "confirm_needed" }, 400);
-    appendEvents(db, [
+    await appendEvents(db, [
       {
         type: "stats_reset",
         v: 1,
@@ -231,17 +231,17 @@ export function mountParentRoom(
         origin: { deviceId, clientMs: now() },
       },
     ]);
-    refreshKnowledge(db, new Date(now()).toISOString());
+    await refreshKnowledge(db, new Date(now()).toISOString());
     return c.json({ status: "ok" });
   });
 
   // The Parent Room's entry point for a pairing code, beside ./meowtower pair.
-  app.post("/api/parent/pair-code", (c) => {
-    const deviceId = parent(c);
+  app.post("/api/parent/pair-code", async (c) => {
+    const deviceId = await parent(c);
     if (deviceId instanceof Response) return deviceId;
     const issued = now();
     return c.json({
-      code: issuePairingCode(db, issued),
+      code: await issuePairingCode(db, issued),
       expiresAt: new Date(issued + CODE_LIFETIME_MS).toISOString(),
     });
   });

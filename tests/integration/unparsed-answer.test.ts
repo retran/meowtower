@@ -12,20 +12,20 @@ import { openDatabase } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-unparsed-"));
-const db = openDatabase(join(dir, "live.sqlite"));
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "live.sqlite"));
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 
 it("refuses 3,,5 without logging an attempt, then logs the next parseable answer", async () => {
   let clock = 0;
-  const app = createApp({
+  const app = await createApp({
     db,
     now: () => (clock += 100),
-    explainer: () => Promise.resolve("Объяснение."),
+    explainer: async () => Promise.resolve("Объяснение."),
   });
-  const cookie = `meowtower_device=${registerDevice(db, "tablet")}`;
+  const cookie = `meowtower_device=${await registerDevice(db, "tablet")}`;
   const call = (path: string, init: RequestInit = {}) =>
     app.request(path, {
       ...init,
@@ -50,7 +50,7 @@ it("refuses 3,,5 without logging an attempt, then logs the next parseable answer
   const room = (await (
     await call(`/api/session/${started.sessionId}/next`)
   ).json()) as { itemId: string };
-  const shownBefore = itemEvents(db, room.itemId).map((e) => e.type);
+  const shownBefore = (await itemEvents(db, room.itemId)).map((e) => e.type);
   expect(shownBefore).toEqual(["item_shown"]);
 
   const refused = await call(`/api/session/${started.sessionId}/answer`, {
@@ -65,12 +65,12 @@ it("refuses 3,,5 without logging an attempt, then logs the next parseable answer
   });
   expect(refused.status).toBe(422);
   expect(await refused.json()).toEqual({ error: "unparsed_input" });
-  const afterRefusal = itemEvents(db, room.itemId).map((e) => e.type);
+  const afterRefusal = (await itemEvents(db, room.itemId)).map((e) => e.type);
   expect(afterRefusal).toEqual(["item_shown"]);
   expect(afterRefusal).not.toContain("attempt_submitted");
   expect(afterRefusal).not.toContain("verdict");
 
-  const shown = itemEvents(db, room.itemId)[0];
+  const shown = (await itemEvents(db, room.itemId))[0];
   const correct = (shown?.payload as { correctAnswer: string }).correctAnswer;
   const accepted = await call(`/api/session/${started.sessionId}/answer`, {
     method: "POST",
@@ -83,7 +83,7 @@ it("refuses 3,,5 without logging an attempt, then logs the next parseable answer
     }),
   });
   expect(accepted.status).toBe(200);
-  const afterAnswer = itemEvents(db, room.itemId).map((e) => e.type);
+  const afterAnswer = (await itemEvents(db, room.itemId)).map((e) => e.type);
   expect(
     afterAnswer.filter((type) => type === "attempt_submitted"),
   ).toHaveLength(1);

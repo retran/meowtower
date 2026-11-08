@@ -20,30 +20,30 @@ import { snapshotName } from "../../src/server/snapshots.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-backups-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
 let worlds = 0;
-function world(start = Date.parse("2026-07-01T09:00:00Z")) {
+async function world(start = Date.parse("2026-07-01T09:00:00Z")) {
   const base = join(root, `w${++worlds}`);
   mkdirSync(base, { recursive: true });
   const live = join(base, "live.sqlite");
   const dir = join(base, "snapshots");
-  const db = openDatabase(live);
+  const db = await openDatabase(live);
   opened.push(db);
   const clock = { ms: start };
   const now = () => clock.ms;
   let pending: Promise<void> = Promise.resolve();
-  const app = createApp({
+  const app = await createApp({
     db,
     now,
-    onSessionEnded: () => {
+    onSessionEnded: async () => {
       pending = backupAfterSession({ live, dir, dataRoot: base, now });
     },
   });
-  const cookie = `meowtower_device=${registerDevice(db, "tablet")}`;
+  const cookie = `meowtower_device=${await registerDevice(db, "tablet")}`;
   let seq = 0;
   const post = (path: string, body: object) =>
     app.request(path, {
@@ -70,7 +70,7 @@ function world(start = Date.parse("2026-07-01T09:00:00Z")) {
 
 describe("REQ-2526: a snapshot when a session ends", () => {
   it("writes a new snapshot after the leave that ends the session", async () => {
-    const w = world();
+    const w = await world();
     expect(snapshotFiles(w.dir)).toEqual([]);
     await w.session();
     expect(snapshotFiles(w.dir)).toEqual([snapshotName(new Date(w.clock.ms))]);
@@ -83,7 +83,7 @@ describe("REQ-2526: a snapshot when a session ends", () => {
 
 describe("REQ-2530: the newest 30 and the first of each month", () => {
   it("keeps them after 40 sessions over three months, each one readable", async () => {
-    const w = world();
+    const w = await world();
     const taken: string[] = [];
     const step = Math.round((91 * 24 * 60 * 60 * 1000) / 40);
     for (let i = 0; i < 40; i++) {
@@ -120,7 +120,7 @@ describe("REQ-2530: the newest 30 and the first of each month", () => {
 
 describe("the parent's notices", () => {
   it("raises backup_failed once, shows it in the Parent Room, and clears it on the next good snapshot", async () => {
-    const w = world();
+    const w = await world();
     const errors = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
@@ -142,7 +142,7 @@ describe("the parent's notices", () => {
     ).toHaveLength(1);
 
     const page = async () =>
-      (
+      await (
         await createParentApp({
           db: opened.at(-1) as Db,
           snapshots: w.dir,
@@ -160,7 +160,7 @@ describe("the parent's notices", () => {
   });
 
   it("gives a second session ending in the same second its own snapshot", async () => {
-    const w = world();
+    const w = await world();
     await w.session();
     await w.session();
     expect(snapshotFiles(w.dir)).toEqual([
@@ -178,7 +178,7 @@ describe("the parent's notices", () => {
     mkdirSync(data, { recursive: true });
     const live = join(base, "volume", "live.sqlite");
     mkdirSync(join(base, "volume"), { recursive: true });
-    opened.push(openDatabase(live));
+    opened.push(await openDatabase(live));
     const dir = join(data, "snapshots");
     const errors = vi
       .spyOn(console, "error")
@@ -250,7 +250,7 @@ describe("the parent's notices", () => {
     const base = join(root, "jump");
     mkdirSync(base, { recursive: true });
     const live = join(base, "live.sqlite");
-    opened.push(openDatabase(live));
+    opened.push(await openDatabase(live));
     const dir = join(base, "snapshots");
     const errors = vi
       .spyOn(console, "error")
@@ -281,7 +281,7 @@ describe("the parent's notices", () => {
     const base = join(root, "inside");
     mkdirSync(base, { recursive: true });
     const live = join(base, "live.sqlite");
-    opened.push(openDatabase(live));
+    opened.push(await openDatabase(live));
     const dir = join(base, "snapshots");
     await backupAfterSession({
       live,

@@ -16,7 +16,9 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 let now = Date.UTC(2026, 8, 27, 12, 0, 0);
 const clock = (): number => now;
 
-async function issueCode(db: ReturnType<typeof openDatabase>): Promise<string> {
+async function issueCode(
+  db: Awaited<ReturnType<typeof openDatabase>>,
+): Promise<string> {
   const res = await createParentApp({ db, now: clock }).request("/pair-code", {
     method: "POST",
   });
@@ -25,7 +27,7 @@ async function issueCode(db: ReturnType<typeof openDatabase>): Promise<string> {
 }
 
 async function pair(
-  app: ReturnType<typeof createApp>,
+  app: Awaited<ReturnType<typeof createApp>>,
   code: string,
 ): Promise<Response> {
   return app.request("/api/pair", {
@@ -35,9 +37,9 @@ async function pair(
   });
 }
 
-describe("REQ-2516: pairing by a 6-digit code that lives 5 minutes", () => {
-  const db = openDatabase(path);
-  const app = createApp({ db, now: clock });
+describe("REQ-2516: pairing by a 6-digit code that lives 5 minutes", async () => {
+  const db = await openDatabase(path);
+  const app = await createApp({ db, now: clock });
 
   it("pairs within 5 minutes and sets a lasting cookie holding a token whose hash alone is stored", async () => {
     const code = await issueCode(db);
@@ -52,7 +54,9 @@ describe("REQ-2516: pairing by a 6-digit code that lives 5 minutes", () => {
     expect(cookie).toContain("SameSite=Strict");
     expect(cookie).not.toMatch(/Expires|Max-Age/i);
     const token = /^meowtower_device=([^;]+)/.exec(cookie)?.[1] ?? "";
-    const hashes = db.prepare("SELECT token_hash FROM devices").all() as {
+    const hashes = (await db
+      .prepare("SELECT token_hash FROM devices")
+      .all()) as {
       token_hash: string;
     }[];
     expect(hashes.map((h) => h.token_hash)).toContain(hashToken(token));
@@ -116,17 +120,16 @@ describe("REQ-2516: pairing by a 6-digit code that lives 5 minutes", () => {
     const cookie =
       ((await pair(app, code)).headers.get("set-cookie") ?? "").split(";")[0] ??
       "";
-    db.close();
-    const reopened = openDatabase(path);
-    const res = await createApp({ db: reopened, now: clock }).request(
-      "/api/session/start",
-      {
-        method: "POST",
-        headers: { cookie, "content-type": "application/json" },
-        body: JSON.stringify({ mode: "daily", clientSeq: 1 }),
-      },
-    );
+    await db.close();
+    const reopened = await openDatabase(path);
+    const res = await (
+      await createApp({ db: reopened, now: clock })
+    ).request("/api/session/start", {
+      method: "POST",
+      headers: { cookie, "content-type": "application/json" },
+      body: JSON.stringify({ mode: "daily", clientSeq: 1 }),
+    });
     expect(res.status).toBe(200);
-    reopened.close();
+    await reopened.close();
   });
 });

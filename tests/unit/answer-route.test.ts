@@ -12,17 +12,17 @@ import { AnswerOut, Room } from "../../src/shared/api.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-answer-"));
 const path = join(dir, "meowtower.sqlite");
-const db = openDatabase(path);
+const db = await openDatabase(path);
 // A clock that moves 100 ms a request keeps the long runs under the rate cap.
 let clock = 0;
-const app = createApp({ db, now: () => (clock += 100) });
+const app = await createApp({ db, now: () => (clock += 100) });
 let seq = 0;
-const token = registerDevice(db, "tablet");
+const token = await registerDevice(db, "tablet");
 const cookie = { cookie: `meowtower_device=${token}` };
 const second = new Database(path, { readonly: true });
-afterAll(() => {
+afterAll(async () => {
   second.close();
-  db.close();
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 

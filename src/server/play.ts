@@ -184,8 +184,8 @@ const payloadOf = <T>(e: StoredEvent): T => e.payload as T;
 const keyed = (events: NewEvent[], key: string): NewEvent[] =>
   events.map((e, i) => ({ ...e, idemKey: i === 0 ? key : `${key}#${i}` }));
 
-function device(db: Db, c: Context): string | Response {
-  const found = deviceForToken(db, getCookie(c, DEVICE_COOKIE));
+async function device(db: Db, c: Context): Promise<string | Response> {
+  const found = await deviceForToken(db, getCookie(c, DEVICE_COOKIE));
   return found.ok ? found.deviceId : c.json({ error: found.error }, 401);
 }
 
@@ -325,37 +325,37 @@ export function mountPlay(
 ): void {
   const allowed = createRateCap(now);
   /** Tasks go on with no end for now: the ladder is walked again, with other seeds, each lap (ADR-3210). */
-  const endlessTask = (key: string, index: number) => {
+  const endlessTask = async (key: string, index: number) => {
     const { template, base } = pick(
       `${key}/${Math.floor(index / STANDIN_ADVENTURE_TASKS).toString()}`,
       index % STANDIN_ADVENTURE_TASKS,
       STANDIN_ADVENTURE_TASKS,
     );
-    const level = db
-      .prepare<[string], { level: number }>(
-        "SELECT level FROM node_levels WHERE node = ?",
-      )
-      .get(template.node)?.level;
+    const level = (
+      (await db
+        .prepare("SELECT level FROM node_levels WHERE node = ?")
+        .get(template.node)) as { level: number } | undefined
+    )?.level;
     return {
       template: level === undefined ? template : atLevel(template, level, base),
       base,
     };
   };
   /** What a task is drawn from and spends from: a reload starts a session, and the adventure goes on. */
-  const adventureKey = (sessionId: string): string =>
-    sessionRow(db, sessionId)?.adventureId ?? sessionId;
+  const adventureKey = async (sessionId: string): Promise<string> =>
+    (await sessionRow(db, sessionId))?.adventureId ?? sessionId;
   /** Waits for the story of the task about to show, while the client shows its loader (REQ-7890). */
   const nextFrame = async (sessionId: string): Promise<void> => {
     if (!frames || tasks !== "registry") return;
-    const played = playLog(sessionId);
+    const played = await playLog(sessionId);
     const answered = answeredIn(played);
     const open = played
       .filter((e) => e.type === "item_shown")
       .some((e) => !answered.has(payloadOf<ItemShown>(e).itemId));
     const index = firstsOf(played).length;
     if (open) return;
-    const key = adventureKey(sessionId);
-    const { template, base } = endlessTask(key, index);
+    const key = await adventureKey(sessionId);
+    const { template, base } = await endlessTask(key, index);
     await frames.ready({ template, base, bucket: key, lang }, FRAME_WAIT_MS);
   };
 
@@ -366,12 +366,12 @@ export function mountPlay(
   let tick = 0;
 
   /** Ends a session as the server, the way a leave does, with the reason `lease_expired`. */
-  function endSession(sessionId: string): void {
-    const session = sessionRow(db, sessionId);
+  async function endSession(sessionId: string): Promise<void> {
+    const session = await sessionRow(db, sessionId);
     if (!session || session.state === "ended") return;
     const finished = session.adventureId
       ? ["complete", "wrapped_up"].includes(
-          adventureState(db, session.adventureId)?.state ?? "",
+          (await adventureState(db, session.adventureId))?.state ?? "",
         )
       : false;
     const at = session.adventureId ? { adventureId: session.adventureId } : {};
@@ -393,18 +393,18 @@ export function mountPlay(
       sessionId,
       ...at,
     });
-    appendEvents(db, events);
+    await appendEvents(db, events);
     onSessionEnded?.(sessionId);
   }
 
   /** Ends the holder's session when 45 seconds have passed without a sign of life. */
-  function expireLease(): void {
+  async function expireLease(): Promise<void> {
     if (!lease) return;
     tick = now();
     if (tick - lease.beatAt < LEASE_MS) return;
     const held = lease;
     lease = null;
-    endSession(held.sessionId);
+    await endSession(held.sessionId);
   }
 
   /** True when another device holds the lease; the holder's own request keeps it alive. */
@@ -419,39 +419,39 @@ export function mountPlay(
     c.json({ error: "lease_moved" }, 409);
 
   if (sweepLeasesMs)
-    setInterval(() => {
+    setInterval(async () => {
       try {
-        expireLease();
+        await expireLease();
       } catch {
         // The database closed under the timer, at shutdown.
       }
     }, sweepLeasesMs).unref();
 
   app.use("/api/*", async (_c, next) => {
-    expireLease();
+    await expireLease();
     await next();
   });
 
   /** A session's envelope: the session and, for a daily one, its adventure. */
-  function within(sessionId: string): {
+  async function within(sessionId: string): Promise<{
     sessionId: string;
     adventureId?: string;
-  } {
-    const adventureId = sessionRow(db, sessionId)?.adventureId;
+  }> {
+    const adventureId = (await sessionRow(db, sessionId))?.adventureId;
     return adventureId ? { sessionId, adventureId } : { sessionId };
   }
 
   /** The log play counts in: the adventure's, or the session's for Session 0. */
-  const playLog = (sessionId: string): StoredEvent[] => {
-    const adventureId = sessionRow(db, sessionId)?.adventureId;
+  const playLog = async (sessionId: string): Promise<StoredEvent[]> => {
+    const adventureId = (await sessionRow(db, sessionId))?.adventureId;
     return adventureId
-      ? adventureEvents(db, adventureId)
-      : sessionEvents(db, sessionId);
+      ? await adventureEvents(db, adventureId)
+      : await sessionEvents(db, sessionId);
   };
 
   /** A paired device under the rate cap, for a request that changes state. */
-  function writer(c: Context): string | Response {
-    const deviceId = device(db, c);
+  async function writer(c: Context): Promise<string | Response> {
+    const deviceId = await device(db, c);
     if (deviceId instanceof Response) return deviceId;
     return allowed(deviceId)
       ? deviceId
@@ -459,10 +459,10 @@ export function mountPlay(
   }
 
   /** The item's shown event and its session's log, or a 404. */
-  function item(
+  async function item(
     c: Context,
     itemId: string,
-  ):
+  ): Promise<
     | {
         shown: ItemShown;
         sessionId: string;
@@ -470,13 +470,16 @@ export function mountPlay(
         shownBy: string;
         shownSeq: number;
       }
-    | Response {
-    const event = itemEvents(db, itemId).find((e) => e.type === "item_shown");
+    | Response
+  > {
+    const event = (await itemEvents(db, itemId)).find(
+      (e) => e.type === "item_shown",
+    );
     if (!event?.sessionId) return c.json({ error: "item_unknown" }, 404);
     return {
       shown: shownOf(event),
       sessionId: event.sessionId,
-      log: sessionEvents(db, event.sessionId),
+      log: await sessionEvents(db, event.sessionId),
       shownBy: event.deviceId,
       shownSeq: event.seq,
     };
@@ -493,7 +496,7 @@ export function mountPlay(
       timer = setTimeout(() => resolve(null), EXPLAIN_TIMEOUT_MS);
     });
     const written = explainer
-      ? explainer(itemId).catch(() => null)
+      ? await explainer(itemId).catch(() => null)
       : new Promise<null>(() => undefined);
     const text = await Promise.race([written, timeout]);
     clearTimeout(timer);
@@ -506,8 +509,8 @@ export function mountPlay(
     });
   }
 
-  mountStream(app, stream, (c) => {
-    const deviceId = device(db, c);
+  mountStream(app, stream, async (c) => {
+    const deviceId = await device(db, c);
     return deviceId instanceof Response ? deviceId : null;
   });
 
@@ -516,24 +519,24 @@ export function mountPlay(
    * session ends first. A daily session continues the open adventure and plans
    * one only when none is open (REQ-0226); Session 0 belongs to no adventure.
    */
-  function openSession(
+  async function openSession(
     deviceId: string,
     mode: "zero" | "daily",
     key: string,
     zone: string | null,
-  ): string {
+  ): Promise<string> {
     const sessionId = randomUUID();
     const origin = { deviceId, clientMs: Date.now() };
     // Another device's tap takes the lease: the old session ends first, then
     // the lease moves (SPC-0030).
     const left = lease && lease.deviceId !== deviceId ? lease : null;
-    if (left) endSession(left.sessionId);
+    if (left) await endSession(left.sessionId);
     // A daily session continues the open adventure and plans one only when
     // none is open (REQ-0226). Session 0 belongs to no adventure.
     const events: NewEvent[] = [];
     let adventureId: string | undefined;
     if (mode === "daily") {
-      adventureId = openAdventure(db)?.adventureId;
+      adventureId = (await openAdventure(db))?.adventureId;
       if (!adventureId) {
         adventureId = randomUUID();
         events.push({
@@ -561,7 +564,7 @@ export function mountPlay(
       sessionId,
       ...(adventureId ? { adventureId } : {}),
     });
-    const written = appendEvents(db, keyed(events, key));
+    const written = await appendEvents(db, keyed(events, key));
     tick = now();
     lease = { deviceId, sessionId, beatAt: tick };
     const taken = written[written.length - 1];
@@ -571,7 +574,7 @@ export function mountPlay(
   }
 
   app.post("/api/session/start", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = SessionStartIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
@@ -579,37 +582,46 @@ export function mountPlay(
     const { zone } = body.data;
     if (zone !== undefined && !isZone(zone))
       return c.json({ error: "bad_request" }, 400);
-    const prior = requestEvents(db, key).find(
+    const prior = (await requestEvents(db, key)).find(
       (e) => e.type === "session_started",
     );
     const sessionId = prior
       ? payloadOf<{ sessionId: string }>(prior).sessionId
-      : openSession(deviceId, body.data.mode, key, zone ?? null);
-    return send(c, SessionStartOut, {
+      : await openSession(deviceId, body.data.mode, key, zone ?? null);
+    return await send(c, SessionStartOut, {
       sessionId,
-      adventureId: sessionRow(db, sessionId)?.adventureId ?? null,
-      wrapUp: wrapUpOf(sessionId),
+      adventureId: (await sessionRow(db, sessionId))?.adventureId ?? null,
+      wrapUp: await wrapUpOf(sessionId),
     });
   });
 
   /** True when the session's adventure wraps up today (REQ-0228, REQ-0236). */
-  function wrapUpOf(sessionId: string): boolean {
-    const adventureId = sessionRow(db, sessionId)?.adventureId;
+  async function wrapUpOf(sessionId: string): Promise<boolean> {
+    const adventureId = (await sessionRow(db, sessionId))?.adventureId;
     if (!adventureId) return false;
-    const state = adventureState(db, adventureId)?.state;
+    const state = (await adventureState(db, adventureId))?.state;
     if (state === "complete" || state === "wrapped_up") return false;
-    return wrapUpDue(db, adventureId, sessionZone(db, sessionId), Date.now());
+    return await wrapUpDue(
+      db,
+      adventureId,
+      await sessionZone(db, sessionId),
+      Date.now(),
+    );
   }
 
   /** Where play stopped, as `ResumeOut` carries it (REQ-0204). */
-  function resumeOut(sessionId: string): z.input<typeof ResumeOut> | null {
-    const adventureId = sessionRow(db, sessionId)?.adventureId;
+  async function resumeOut(
+    sessionId: string,
+  ): Promise<z.input<typeof ResumeOut> | null> {
+    const adventureId = (await sessionRow(db, sessionId))?.adventureId;
     if (!adventureId) return null;
-    const point = resumePoint(db, adventureId);
+    const point = await resumePoint(db, adventureId);
     const index = point?.index ?? 0;
     const roomIndex = Math.floor(index / ROOM_LENGTH);
     const openEvent = point?.open
-      ? itemEvents(db, point.open.itemId).find((e) => e.type === "item_shown")
+      ? (await itemEvents(db, point.open.itemId)).find(
+          (e) => e.type === "item_shown",
+        )
       : undefined;
     return {
       sessionId,
@@ -628,41 +640,46 @@ export function mountPlay(
       scene: point?.scene ? { kind: "scene", ...point.scene } : null,
       chest: point?.chest ? { kind: "chest", ...point.chest } : null,
       rewards: point?.rewards ?? [],
-      wrapUp: wrapUpOf(sessionId),
+      wrapUp: await wrapUpOf(sessionId),
     };
   }
 
   app.post("/api/adventure/resume", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = ResumeIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     const key = `adventure-resume:${deviceId}:${body.data.clientSeq}`;
     // A repeat opens no second session and gets the point as it stands.
-    const prior = requestEvents(db, key).find(
+    const prior = (await requestEvents(db, key)).find(
       (e) => e.type === "session_started",
     );
     let sessionId = prior && payloadOf<{ sessionId: string }>(prior).sessionId;
     if (body.data.zone !== undefined && !isZone(body.data.zone))
       return c.json({ error: "bad_request" }, 400);
     if (!sessionId) {
-      if (!openAdventure(db))
+      if (!(await openAdventure(db)))
         return c.json({ error: "no_open_adventure" }, 404);
-      sessionId = openSession(deviceId, "daily", key, body.data.zone ?? null);
+      sessionId = await openSession(
+        deviceId,
+        "daily",
+        key,
+        body.data.zone ?? null,
+      );
     }
-    const out = resumeOut(sessionId);
+    const out = await resumeOut(sessionId);
     return out
-      ? send(c, ResumeOut, out)
+      ? await send(c, ResumeOut, out)
       : c.json({ error: "no_open_adventure" }, 404);
   });
 
   app.post("/api/session/:id/heartbeat", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = HeartbeatIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     const sessionId = c.req.param("id");
-    const session = sessionRow(db, sessionId);
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
       return c.json({ error: "session_ended" }, 409);
@@ -671,27 +688,27 @@ export function mountPlay(
     // live session takes it back without a tap.
     lease ??= { deviceId, sessionId, beatAt: tick };
     lease.beatAt = tick;
-    return send(c, HeartbeatOut, { status: "ok" });
+    return await send(c, HeartbeatOut, { status: "ok" });
   });
 
-  app.get("/api/player/skills", (c) => {
-    const deviceId = device(db, c);
+  app.get("/api/player/skills", async (c) => {
+    const deviceId = await device(db, c);
     if (deviceId instanceof Response) return deviceId;
-    return send(c, SkillsOut, { skills: skillsRead(db) });
+    return await send(c, SkillsOut, { skills: await skillsRead(db) });
   });
 
-  app.get("/api/adventure/current", (c) => {
-    const deviceId = device(db, c);
+  app.get("/api/adventure/current", async (c) => {
+    const deviceId = await device(db, c);
     if (deviceId instanceof Response) return deviceId;
-    const open = openAdventure(db);
-    if (!open) return send(c, AdventureCurrentOut, { adventure: null });
-    const played = adventureEvents(db, open.adventureId);
+    const open = await openAdventure(db);
+    if (!open) return await send(c, AdventureCurrentOut, { adventure: null });
+    const played = await adventureEvents(db, open.adventureId);
     const firsts = firstsOf(played);
     const answered = answeredIn(played);
     const openAt = firsts.findIndex((s) => !answered.has(s.itemId));
     const index = openAt === -1 ? firsts.length : openAt;
     const room = Math.floor(index / ROOM_LENGTH);
-    return send(c, AdventureCurrentOut, {
+    return await send(c, AdventureCurrentOut, {
       adventure: {
         adventureId: open.adventureId,
         state: open.state,
@@ -703,34 +720,34 @@ export function mountPlay(
   });
 
   app.get("/api/session/:id/next", async (c) => {
-    const deviceId = device(db, c);
+    const deviceId = await device(db, c);
     if (deviceId instanceof Response) return deviceId;
     const sessionId = c.req.param("id");
-    const waiting = sessionRow(db, sessionId);
+    const waiting = await sessionRow(db, sessionId);
     if (waiting && waiting.state !== "ended" && !displaced(deviceId))
       await nextFrame(sessionId);
     // The wait can outlive the session, so everything is read after it.
     if (displaced(deviceId)) return leaseMoved(c);
-    const session = sessionRow(db, sessionId);
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
       return c.json({ error: "session_ended" }, 409);
     const origin = { deviceId, clientMs: Date.now() };
     const adventure = session.adventureId
-      ? adventureState(db, session.adventureId)
+      ? await adventureState(db, session.adventureId)
       : undefined;
     if (adventure?.state === "wrapped_up" && session.adventureId) {
       // The short ending stays on the screen until she leaves it (REQ-0228).
       const ending = resumeFromLog(
-        adventureEvents(db, session.adventureId),
+        await adventureEvents(db, session.adventureId),
       )?.scene;
-      if (ending) return send(c, Scene, { kind: "scene", ...ending });
+      if (ending) return await send(c, Scene, { kind: "scene", ...ending });
     }
     if (
       adventure &&
       (adventure.state === "complete" || adventure.state === "wrapped_up")
     )
-      return send(c, End, { kind: "end" });
+      return await send(c, End, { kind: "end" });
 
     // Play on a planned adventure starts it, and on a paused one resumes it.
     const lifecycle: NewEvent[] = [];
@@ -755,7 +772,7 @@ export function mountPlay(
         sessionId,
       });
 
-    const played = playLog(sessionId);
+    const played = await playLog(sessionId);
     const firsts = firstsOf(played);
     const answered = answeredIn(played);
     // An open task is shown again as it was, never replaced: a first attempt
@@ -765,20 +782,24 @@ export function mountPlay(
       .map(shownOf)
       .find((s) => !answered.has(s.itemId));
     if (open) {
-      if (lifecycle.length) appendEvents(db, lifecycle);
-      return send(c, Room, roomFor(open, sessionEvents(db, sessionId), played));
+      if (lifecycle.length) await appendEvents(db, lifecycle);
+      return await send(
+        c,
+        Room,
+        roomFor(open, await sessionEvents(db, sessionId), played),
+      );
     }
 
     const index = firsts.length;
     // After the finish-today action the next boundary is the stop offer, once an
     // open scene or chest is done, and it takes no extension (REQ-2444).
-    if (finishedToday(db, Date.now(), sessionZone(db, sessionId))) {
+    if (await finishedToday(db, Date.now(), await sessionZone(db, sessionId))) {
       const point = resumeFromLog(played);
       if (point?.scene)
-        return send(c, Scene, { kind: "scene", ...point.scene });
+        return await send(c, Scene, { kind: "scene", ...point.scene });
       if (point?.chest)
-        return send(c, Chest, { kind: "chest", ...point.chest });
-      return send(c, StopOffer, { kind: "stop_offer", canExtend: false });
+        return await send(c, Chest, { kind: "chest", ...point.chest });
+      return await send(c, StopOffer, { kind: "stop_offer", canExtend: false });
     }
     // The three-day rule: the open task is done and, with the room finished,
     // the stand-in short ending plays and the adventure wraps up, queueing the
@@ -788,10 +809,10 @@ export function mountPlay(
       tasks !== "registry" &&
       session.adventureId &&
       index % ROOM_LENGTH === 0 &&
-      wrapUpOf(sessionId)
+      (await wrapUpOf(sessionId))
     ) {
       const ending = standinEnding();
-      appendEvents(db, [
+      await appendEvents(db, [
         ...lifecycle,
         {
           type: "scene_prepared",
@@ -813,7 +834,7 @@ export function mountPlay(
           adventureId: session.adventureId,
         },
       ]);
-      return send(c, Scene, { kind: "scene", ...ending, draft: null });
+      return await send(c, Scene, { kind: "scene", ...ending, draft: null });
     }
     // The stand-in adventure's finale: its scene, then its chest, then the end.
     // An open scene or chest is shown again as it was, never prepared anew
@@ -825,17 +846,17 @@ export function mountPlay(
     ) {
       const point = resumeFromLog(played);
       if (point?.scene) {
-        if (lifecycle.length) appendEvents(db, lifecycle);
-        return send(c, Scene, { kind: "scene", ...point.scene });
+        if (lifecycle.length) await appendEvents(db, lifecycle);
+        return await send(c, Scene, { kind: "scene", ...point.scene });
       }
       if (point?.chest) {
-        if (lifecycle.length) appendEvents(db, lifecycle);
-        return send(c, Chest, { kind: "chest", ...point.chest });
+        if (lifecycle.length) await appendEvents(db, lifecycle);
+        return await send(c, Chest, { kind: "chest", ...point.chest });
       }
       const at = { sessionId, adventureId: session.adventureId };
       if (!played.some((e) => e.type === "scene_prepared")) {
         const scene = standinScene();
-        appendEvents(db, [
+        await appendEvents(db, [
           ...lifecycle,
           {
             type: "scene_prepared",
@@ -845,11 +866,11 @@ export function mountPlay(
             ...at,
           },
         ]);
-        return send(c, Scene, { kind: "scene", ...scene, draft: null });
+        return await send(c, Scene, { kind: "scene", ...scene, draft: null });
       }
       if (!played.some((e) => e.type === "chest_offered")) {
         const options = [...STANDIN_CHEST_OPTIONS];
-        appendEvents(db, [
+        await appendEvents(db, [
           ...lifecycle,
           {
             type: "chest_offered",
@@ -859,13 +880,13 @@ export function mountPlay(
             ...at,
           },
         ]);
-        return send(c, Chest, {
+        return await send(c, Chest, {
           kind: "chest",
           chestId: STANDIN_CHEST_ID,
           options,
         });
       }
-      appendEvents(db, [
+      await appendEvents(db, [
         ...lifecycle,
         {
           type: "adventure_completed",
@@ -876,13 +897,16 @@ export function mountPlay(
           sessionId,
         },
       ]);
-      return send(c, End, { kind: "end" });
+      return await send(c, End, { kind: "end" });
     }
     if (tasks === "registry") {
-      const chosen = endlessTask(adventureKey(sessionId), index);
+      const chosen = await endlessTask(await adventureKey(sessionId), index);
       const frame =
-        frames?.take({ template: chosen.template, base: chosen.base, lang }) ??
-        null;
+        (await frames?.take({
+          template: chosen.template,
+          base: chosen.base,
+          lang,
+        })) ?? null;
       const made = chosen.template.make(chosen.base, lang);
       const seed = hexOf(chosen.base);
       const shape = frame
@@ -905,7 +929,7 @@ export function mountPlay(
         templateId: chosen.template.id,
         ...(frame ? { frameId: frame.id } : {}),
       };
-      appendEvents(db, [
+      await appendEvents(db, [
         ...lifecycle,
         {
           type: "item_shown",
@@ -921,13 +945,17 @@ export function mountPlay(
             frameSource: frame ? "live" : "template",
           },
           origin,
-          ...within(sessionId),
+          ...(await within(sessionId)),
         },
       ]);
-      return send(
+      return await send(
         c,
         Room,
-        roomFor(shown, sessionEvents(db, sessionId), playLog(sessionId)),
+        roomFor(
+          shown,
+          await sessionEvents(db, sessionId),
+          await playLog(sessionId),
+        ),
       );
     }
     const task = STANDIN_TASKS[index % STANDIN_TASKS.length];
@@ -950,7 +978,7 @@ export function mountPlay(
       subtype: `task-${task.n}`,
       seed: Buffer.from(base).toString("hex"),
     };
-    appendEvents(db, [
+    await appendEvents(db, [
       ...lifecycle,
       {
         type: "item_shown",
@@ -966,27 +994,31 @@ export function mountPlay(
           candidate: drawn.candidate,
         },
         origin,
-        ...within(sessionId),
+        ...(await within(sessionId)),
       },
     ]);
-    return send(
+    return await send(
       c,
       Room,
-      roomFor(shown, sessionEvents(db, sessionId), playLog(sessionId)),
+      roomFor(
+        shown,
+        await sessionEvents(db, sessionId),
+        await playLog(sessionId),
+      ),
     );
   });
 
   app.post("/api/session/:id/pause", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = PauseIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
     const key = `pause:${deviceId}:${body.data.clientSeq}`;
-    if (requestEvents(db, key).length)
-      return send(c, PauseOut, { status: "paused" });
-    const session = sessionRow(db, sessionId);
+    if ((await requestEvents(db, key)).length)
+      return await send(c, PauseOut, { status: "paused" });
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
       return c.json({ error: "session_ended" }, 409);
@@ -999,7 +1031,7 @@ export function mountPlay(
     // session, and only an automatic pause meets the guard (REQ-2404).
     const finished = session.adventureId
       ? ["complete", "wrapped_up"].includes(
-          adventureState(db, session.adventureId)?.state ?? "",
+          (await adventureState(db, session.adventureId))?.state ?? "",
         )
       : false;
     if (session.adventureId && !(reason === "leave" && finished))
@@ -1016,21 +1048,21 @@ export function mountPlay(
       v: 1,
       payload: { sessionId, reason },
       origin,
-      ...within(sessionId),
+      ...(await within(sessionId)),
     });
     try {
-      appendEvents(db, keyed(events, key));
+      await appendEvents(db, keyed(events, key));
     } catch (err) {
       if (err instanceof AdventureClosed)
         return c.json({ error: "adventure_closed" }, 409);
       throw err;
     }
     onSessionEnded?.(sessionId);
-    return send(c, PauseOut, { status: "paused" });
+    return await send(c, PauseOut, { status: "paused" });
   });
 
   app.post("/api/session/:id/break", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = BreakIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
@@ -1039,21 +1071,22 @@ export function mountPlay(
     const { action, clientSeq } = body.data;
     const key = `break:${deviceId}:${clientSeq}`;
     const status = action === "start" ? "resting" : "playing";
-    if (requestEvents(db, key).length) return send(c, BreakOut, { status });
-    const session = sessionRow(db, sessionId);
+    if ((await requestEvents(db, key)).length)
+      return await send(c, BreakOut, { status });
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
       return c.json({ error: "session_ended" }, 409);
     // A rest stop logs its own events and pauses nothing (REQ-2412).
-    const stops = sessionEvents(db, sessionId).filter(
+    const stops = (await sessionEvents(db, sessionId)).filter(
       (e) => e.type === "rest_stop_started" || e.type === "rest_stop_ended",
     );
     const last = stops[stops.length - 1];
     const resting = last?.type === "rest_stop_started";
     if (action === "start" ? resting : !resting)
-      return send(c, BreakOut, { status });
+      return await send(c, BreakOut, { status });
     const origin = { deviceId, clientMs: Date.now() };
-    appendEvents(
+    await appendEvents(
       db,
       keyed(
         [
@@ -1063,7 +1096,7 @@ export function mountPlay(
                 v: 1,
                 payload: { trigger: "button" },
                 origin,
-                ...within(sessionId),
+                ...(await within(sessionId)),
               }
             : {
                 type: "rest_stop_ended",
@@ -1075,13 +1108,13 @@ export function mountPlay(
                   ),
                 },
                 origin,
-                ...within(sessionId),
+                ...(await within(sessionId)),
               },
         ],
         key,
       ),
     );
-    return send(c, BreakOut, { status });
+    return await send(c, BreakOut, { status });
   });
 
   /** The reply a scene input or a chest pick gets: its grants, as the log holds them. */
@@ -1094,7 +1127,7 @@ export function mountPlay(
       .map(({ rewardId, kind, amount }) => ({ rewardId, kind, amount }));
 
   app.post("/api/session/:id/scene/input", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = SceneInputIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
@@ -1102,21 +1135,21 @@ export function mountPlay(
     const sessionId = c.req.param("id");
     const input = body.data;
     const key = `scene-input:${deviceId}:${input.clientSeq}`;
-    const prior = requestEvents(db, key);
+    const prior = await requestEvents(db, key);
     if (prior.length)
-      return send(c, SceneInputOut, {
+      return await send(c, SceneInputOut, {
         status: input.kind === "draft" ? "saved" : "done",
         grants: grantsOf(prior),
       });
-    const session = sessionRow(db, sessionId);
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
       return c.json({ error: "session_ended" }, 409);
-    const scene = resumeFromLog(playLog(sessionId))?.scene;
+    const scene = resumeFromLog(await playLog(sessionId))?.scene;
     if (!scene || scene.sceneId !== input.sceneId)
       return c.json({ error: "scene_not_open" }, 409);
     const origin = { deviceId, clientMs: Date.now() };
-    const at = within(sessionId);
+    const at = await within(sessionId);
     const events: NewEvent[] = [];
     if (input.kind === "draft") {
       events.push({
@@ -1164,8 +1197,8 @@ export function mountPlay(
           ...at,
         });
     }
-    appendEvents(db, keyed(events, key));
-    return send(c, SceneInputOut, {
+    await appendEvents(db, keyed(events, key));
+    return await send(c, SceneInputOut, {
       status: input.kind === "draft" ? "saved" : "done",
       grants: !events.some((e) => e.type === "reward_granted")
         ? []
@@ -1179,27 +1212,28 @@ export function mountPlay(
   });
 
   app.post("/api/session/:id/chest", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = ChestIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
     const key = `chest:${deviceId}:${body.data.clientSeq}`;
-    const prior = requestEvents(db, key);
-    if (prior.length) return send(c, ChestOut, { grants: grantsOf(prior) });
-    const session = sessionRow(db, sessionId);
+    const prior = await requestEvents(db, key);
+    if (prior.length)
+      return await send(c, ChestOut, { grants: grantsOf(prior) });
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
       return c.json({ error: "session_ended" }, 409);
-    const chest = resumeFromLog(playLog(sessionId))?.chest;
+    const chest = resumeFromLog(await playLog(sessionId))?.chest;
     if (!chest || chest.chestId !== body.data.chestId)
       return c.json({ error: "chest_not_open" }, 409);
     const picked = chest.options.find((o) => o.rewardId === body.data.rewardId);
     if (!picked) return c.json({ error: "bad_request" }, 400);
     const origin = { deviceId, clientMs: Date.now() };
-    const at = within(sessionId);
-    appendEvents(
+    const at = await within(sessionId);
+    await appendEvents(
       db,
       keyed(
         [
@@ -1226,33 +1260,35 @@ export function mountPlay(
         key,
       ),
     );
-    return send(c, ChestOut, {
+    return await send(c, ChestOut, {
       grants: [{ rewardId: picked.rewardId, kind: picked.kind, amount: 1 }],
     });
   });
 
   app.post("/api/session/:id/rewards/delivered", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = RewardsDeliveredIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
     const key = `rewards-delivered:${deviceId}:${body.data.clientSeq}`;
-    if (requestEvents(db, key).length)
-      return send(c, RewardsDeliveredOut, { status: "ok" });
-    const session = sessionRow(db, sessionId);
+    if ((await requestEvents(db, key)).length)
+      return await send(c, RewardsDeliveredOut, { status: "ok" });
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     // Only a grant still pending counts, so a repeat under a new clientSeq
     // appends nothing.
     const pending = new Set(
-      (resumeFromLog(playLog(sessionId))?.rewards ?? []).map((r) => r.rewardId),
+      (resumeFromLog(await playLog(sessionId))?.rewards ?? []).map(
+        (r) => r.rewardId,
+      ),
     );
     const rewardIds = [...new Set(body.data.rewardIds)].filter((id) =>
       pending.has(id),
     );
     if (rewardIds.length)
-      appendEvents(
+      await appendEvents(
         db,
         keyed(
           [
@@ -1261,33 +1297,33 @@ export function mountPlay(
               v: 1,
               payload: { rewardIds },
               origin: { deviceId, clientMs: Date.now() },
-              ...within(sessionId),
+              ...(await within(sessionId)),
             },
           ],
           key,
         ),
       );
-    return send(c, RewardsDeliveredOut, { status: "ok" });
+    return await send(c, RewardsDeliveredOut, { status: "ok" });
   });
 
   app.post("/api/session/:id/extend", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = ItemActionIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     if (displaced(deviceId)) return leaseMoved(c);
     const sessionId = c.req.param("id");
     const key = `extend:${deviceId}:${body.data.clientSeq}`;
-    if (requestEvents(db, key).length)
-      return send(c, ExtendOut, { status: "extended" });
-    const session = sessionRow(db, sessionId);
+    if ((await requestEvents(db, key)).length)
+      return await send(c, ExtendOut, { status: "extended" });
+    const session = await sessionRow(db, sessionId);
     if (!session) return c.json({ error: "session_unknown" }, 404);
     if (session.state === "ended")
       return c.json({ error: "session_ended" }, 409);
-    if (finishedToday(db, Date.now(), sessionZone(db, sessionId)))
+    if (await finishedToday(db, Date.now(), await sessionZone(db, sessionId)))
       return c.json({ error: "day_finished" }, 409);
     // Until ADR-0090's epic adds the soft stop, an extension is only logged.
-    appendEvents(
+    await appendEvents(
       db,
       keyed(
         [
@@ -1296,18 +1332,18 @@ export function mountPlay(
             v: 1,
             payload: { minutes: 20 },
             origin: { deviceId, clientMs: Date.now() },
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
         ],
         key,
       ),
     );
-    return send(c, ExtendOut, { status: "extended" });
+    return await send(c, ExtendOut, { status: "extended" });
   });
 
   app.post("/api/session/:id/answer", async (c) => {
     const started = performance.now();
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const sessionId = c.req.param("id");
     const body = AnswerIn.safeParse(await c.req.json());
@@ -1316,19 +1352,25 @@ export function mountPlay(
     const key = `answer:${deviceId}:${a.clientSeq}`;
 
     // A repeat appends nothing and gets the first reply (REQ-2432).
-    const prior = requestEvents(db, key).find((e) => e.type === "verdict");
+    const prior = (await requestEvents(db, key)).find(
+      (e) => e.type === "verdict",
+    );
     if (prior?.sessionId) {
       const { itemId } = payloadOf<{ itemId: string }>(prior);
-      const found = item(c, itemId);
+      const found = await item(c, itemId);
       if (found instanceof Response) return found;
-      return send(
+      return await send(
         c,
         AnswerOut,
-        answerReply(sessionEvents(db, prior.sessionId), prior.seq, found.shown),
+        answerReply(
+          await sessionEvents(db, prior.sessionId),
+          prior.seq,
+          found.shown,
+        ),
       );
     }
 
-    const found = item(c, a.itemId);
+    const found = await item(c, a.itemId);
     if (found instanceof Response) return found;
     const { shown } = found;
 
@@ -1338,14 +1380,15 @@ export function mountPlay(
     // lease the reply is 409; when the lease only expired, the answer gets
     // its outcome as usual (REQ-2434, REQ-2438).
     const lost = displaced(deviceId);
-    const expired = !lost && sessionRow(db, found.sessionId)?.state === "ended";
+    const expired =
+      !lost && (await sessionRow(db, found.sessionId))?.state === "ended";
     const earlier = found.log.find(
       (e) =>
         e.type === "verdict" &&
         payloadOf<{ itemId: string }>(e).itemId === a.itemId,
     );
     if ((lost || expired) && earlier) {
-      appendEvents(
+      await appendEvents(
         db,
         keyed(
           [
@@ -1354,7 +1397,7 @@ export function mountPlay(
               v: 1,
               payload: { itemId: a.itemId, raw: a.raw },
               origin: { deviceId, clientMs: Date.now() },
-              ...within(found.sessionId),
+              ...(await within(found.sessionId)),
             },
           ],
           key,
@@ -1362,7 +1405,11 @@ export function mountPlay(
       );
       return lost
         ? leaseMoved(c)
-        : send(c, AnswerOut, answerReply(found.log, earlier.seq, found.shown));
+        : await send(
+            c,
+            AnswerOut,
+            answerReply(found.log, earlier.seq, found.shown),
+          );
     }
 
     // The server checks `raw` itself and ignores the client's `parsed`.
@@ -1381,15 +1428,16 @@ export function mountPlay(
     // A pause between showing the task and this answer, or a device of another
     // kind than the one that showed it, keeps the attempt's time out of every
     // measure (REQ-0212, REQ-0224). A rest stop pauses nothing (REQ-2412).
-    const interrupted = playLog(sessionId).some(
+    const interrupted = (await playLog(sessionId)).some(
       (e) =>
         e.seq > found.shownSeq &&
         (e.type === "adventure_paused" || e.type === "session_ended"),
     );
     const crossDevice =
-      deviceInterface(db, found.shownBy) !== deviceInterface(db, deviceId);
+      (await deviceInterface(db, found.shownBy)) !==
+      (await deviceInterface(db, deviceId));
     const origin = { deviceId, clientMs: Date.now() };
-    const [, written] = appendEvents(
+    const [, written] = await appendEvents(
       db,
       keyed(
         [
@@ -1410,7 +1458,7 @@ export function mountPlay(
               crossDevice,
             },
             origin,
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
           {
             type: "verdict",
@@ -1428,7 +1476,7 @@ export function mountPlay(
               steps: [],
             },
             origin,
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
         ],
         key,
@@ -1436,7 +1484,7 @@ export function mountPlay(
     );
 
     const reply = answerReply(
-      sessionEvents(db, sessionId),
+      await sessionEvents(db, sessionId),
       written?.seq ?? Infinity,
       shown,
     );
@@ -1444,18 +1492,18 @@ export function mountPlay(
       "Server-Timing",
       `app;dur=${(performance.now() - started).toFixed(2)}`,
     );
-    return lost ? leaseMoved(c) : send(c, AnswerOut, reply);
+    return lost ? leaseMoved(c) : await send(c, AnswerOut, reply);
   });
 
   app.post("/api/item/:itemId/hint", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = HintIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     if (displaced(deviceId)) return leaseMoved(c);
     const { level, clientSeq } = body.data;
     const itemId = c.req.param("itemId");
-    const found = item(c, itemId);
+    const found = await item(c, itemId);
     if (found instanceof Response) return found;
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
@@ -1472,11 +1520,11 @@ export function mountPlay(
     const key = `hint:${deviceId}:${clientSeq}`;
 
     // A repeat gets the rung it bought and the stock as it was then.
-    const prior = requestEvents(db, key);
+    const prior = await requestEvents(db, key);
     const first = prior.find((e) => e.type === "hint_shown");
     if (first) {
       const bought = payloadOf<{ level: number }>(first).level;
-      return send(c, HintOut, {
+      return await send(c, HintOut, {
         level: bought,
         text: hintText(bought),
         threads: stockAt(log, prior[prior.length - 1]?.seq),
@@ -1485,7 +1533,7 @@ export function mountPlay(
     // A rung already paid for, under any clientSeq, is shown again free (REQ-2422).
     const levels = hintLevels(log, itemId);
     if (levels.includes(level))
-      return send(c, HintOut, {
+      return await send(c, HintOut, {
         level,
         text: hintText(level),
         threads: stockAt(log),
@@ -1494,7 +1542,7 @@ export function mountPlay(
       return c.json({ error: "hint_level_skipped" }, 400);
     if (stockAt(log) < 1) return c.json({ error: "no_threads" }, 409);
     const origin = { deviceId, clientMs: Date.now() };
-    appendEvents(
+    await appendEvents(
       db,
       keyed(
         [
@@ -1503,34 +1551,34 @@ export function mountPlay(
             v: 1,
             payload: { itemId, attemptNo: shown.attemptNo, level },
             origin,
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
           {
             type: "thread_spent",
             v: 1,
             payload: { itemId, reason: "hint", count: 1 },
             origin,
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
         ],
         key,
       ),
     );
-    return send(c, HintOut, {
+    return await send(c, HintOut, {
       level,
       text: hintText(level),
-      threads: stockAt(sessionEvents(db, sessionId)),
+      threads: stockAt(await sessionEvents(db, sessionId)),
     });
   });
 
   app.post("/api/item/:itemId/explain", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = ItemActionIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     if (displaced(deviceId)) return leaseMoved(c);
     const itemId = c.req.param("itemId");
-    const found = item(c, itemId);
+    const found = await item(c, itemId);
     if (found instanceof Response) return found;
     const { shown, sessionId, log } = found;
     const task = taskOf(shown.subtype);
@@ -1540,9 +1588,9 @@ export function mountPlay(
     if (!task && !registry) return c.json({ error: "item_unknown" }, 404);
     const key = `explain:${deviceId}:${body.data.clientSeq}`;
 
-    const prior = requestEvents(db, key);
+    const prior = await requestEvents(db, key);
     if (prior.length)
-      return send(c, ExplainOut, {
+      return await send(c, ExplainOut, {
         status: "pending",
         threads: stockAt(log, prior[prior.length - 1]?.seq),
       });
@@ -1553,10 +1601,13 @@ export function mountPlay(
         payloadOf<{ itemId: string }>(e).itemId === itemId,
     );
     if (bought)
-      return send(c, ExplainOut, { status: "pending", threads: stockAt(log) });
+      return await send(c, ExplainOut, {
+        status: "pending",
+        threads: stockAt(log),
+      });
     if (stockAt(log) < 1) return c.json({ error: "no_threads" }, 409);
     const origin = { deviceId, clientMs: Date.now() };
-    const [, written] = appendEvents(
+    const [, written] = await appendEvents(
       db,
       keyed(
         [
@@ -1565,14 +1616,14 @@ export function mountPlay(
             v: 1,
             payload: { itemId, reason: "explanation", count: 1 },
             origin,
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
           {
             type: "explanation_bought",
             v: 1,
             payload: { itemId, attemptNo: shown.attemptNo },
             origin,
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
         ],
         key,
@@ -1590,20 +1641,20 @@ export function mountPlay(
             ? taskExplanation(task)
             : "",
       );
-    return send(c, ExplainOut, {
+    return await send(c, ExplainOut, {
       status: "pending",
-      threads: stockAt(sessionEvents(db, sessionId)),
+      threads: stockAt(await sessionEvents(db, sessionId)),
     });
   });
 
   app.post("/api/item/:itemId/second-attempt", async (c) => {
-    const deviceId = writer(c);
+    const deviceId = await writer(c);
     if (deviceId instanceof Response) return deviceId;
     const body = ItemActionIn.safeParse(await c.req.json());
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     if (displaced(deviceId)) return leaseMoved(c);
     const itemId = c.req.param("itemId");
-    const found = item(c, itemId);
+    const found = await item(c, itemId);
     if (found instanceof Response) return found;
     const { shown, sessionId, log } = found;
 
@@ -1614,7 +1665,11 @@ export function mountPlay(
       .map(shownOf)
       .find((s) => s.parentItemId === itemId);
     if (created)
-      return send(c, Room, roomFor(created, log, playLog(sessionId)));
+      return await send(
+        c,
+        Room,
+        roomFor(created, log, await playLog(sessionId)),
+      );
 
     if (shown.attemptNo !== 1)
       return c.json({ error: "not_a_first_attempt" }, 409);
@@ -1640,18 +1695,18 @@ export function mountPlay(
         {
           template: other.template,
           base: Uint8Array.from(Buffer.from(other.seed, "hex")),
-          bucket: adventureKey(sessionId),
+          bucket: await adventureKey(sessionId),
           lang,
           ...(shown.frameId === undefined ? {} : { previous: shown.view.text }),
         },
         FRAME_WAIT_MS,
       );
       const twinFrame =
-        frames?.take({
+        (await frames?.take({
           template: other.template,
           base: Uint8Array.from(Buffer.from(other.seed, "hex")),
           lang,
-        }) ?? null;
+        })) ?? null;
       const shape = twinFrame
         ? presentFramed(other, twinFrame.text)
         : present(other);
@@ -1673,7 +1728,7 @@ export function mountPlay(
         templateId: shown.templateId,
         ...(twinFrame ? { frameId: twinFrame.id } : {}),
       };
-      appendEvents(
+      await appendEvents(
         db,
         keyed(
           [
@@ -1690,16 +1745,20 @@ export function mountPlay(
                 candidate: 0,
               },
               origin: { deviceId, clientMs: Date.now() },
-              ...within(sessionId),
+              ...(await within(sessionId)),
             },
           ],
           `second-attempt:${deviceId}:${body.data.clientSeq}`,
         ),
       );
-      return send(
+      return await send(
         c,
         Room,
-        roomFor(twin, sessionEvents(db, sessionId), playLog(sessionId)),
+        roomFor(
+          twin,
+          await sessionEvents(db, sessionId),
+          await playLog(sessionId),
+        ),
       );
     }
     if (!task) return c.json({ error: "item_unknown" }, 404);
@@ -1716,7 +1775,7 @@ export function mountPlay(
       seed: Buffer.from(twinBase).toString("hex"),
       parentItemId: itemId,
     };
-    appendEvents(
+    await appendEvents(
       db,
       keyed(
         [
@@ -1734,16 +1793,20 @@ export function mountPlay(
               candidate: drawnTwin.candidate,
             },
             origin: { deviceId, clientMs: Date.now() },
-            ...within(sessionId),
+            ...(await within(sessionId)),
           },
         ],
         `second-attempt:${deviceId}:${body.data.clientSeq}`,
       ),
     );
-    return send(
+    return await send(
       c,
       Room,
-      roomFor(twin, sessionEvents(db, sessionId), playLog(sessionId)),
+      roomFor(
+        twin,
+        await sessionEvents(db, sessionId),
+        await playLog(sessionId),
+      ),
     );
   });
 }

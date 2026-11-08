@@ -3,6 +3,7 @@
 //   tsx tools/eval-model.ts report                        formats the server's activation reply on stdin
 import { readFileSync } from "node:fs";
 import Database from "better-sqlite3";
+import { SqliteDb } from "../src/server/db/index.js";
 import { allEvents } from "../src/engine/events/read.js";
 import { GRAPH_FILE, openGraph } from "../src/engine/graph.js";
 import { evaluateModel, type Figures } from "../src/engine/model/evaluate.js";
@@ -49,14 +50,14 @@ async function main(): Promise<number> {
     return 2;
   }
   const params = loadParams(readFileSync(first, "utf8"));
-  const db = new Database(second, { readonly: true });
+  const db = new SqliteDb(new Database(second, { readonly: true }));
   const figures = evaluateModel(
     openGraph(readFileSync(GRAPH_FILE, "utf8")),
-    [...allEvents(db)],
+    [...(await allEvents(db))],
     params,
     process.env["MEOWTOWER_ZONE"] ?? "UTC",
   );
-  db.close();
+  await db.close();
   console.log(`model ${params.version}: ${fmt(figures)}`);
   return 0;
 }

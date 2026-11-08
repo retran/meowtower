@@ -40,7 +40,9 @@ export function createParentApp({
 }): Hono {
   const app = new Hono();
   // Only the Mac reaches this listener, so only the Mac issues pairing codes.
-  app.post("/pair-code", (c) => c.json({ code: issuePairingCode(db, now()) }));
+  app.post("/pair-code", async (c) =>
+    c.json({ code: await issuePairingCode(db, now()) }),
+  );
   // ./meowtower set-pin: only the Mac sets the Parent Room PIN.
   app.post("/pin", async (c) => {
     const body = (await c.req.json().catch(() => null)) as {
@@ -48,7 +50,7 @@ export function createParentApp({
     } | null;
     const pin = typeof body?.pin === "string" ? body.pin : "";
     if (!PIN_PATTERN.test(pin)) return c.json({ error: "pin_format" }, 400);
-    setPin(db, pin, new Date(now()));
+    await setPin(db, pin, new Date(now()));
     return c.json({ set: true });
   });
   // The export, only on this Mac-only listener (REQ-2240, REQ-2238).
@@ -88,7 +90,7 @@ export function createParentApp({
     if (!model) return c.json({ error: "model_unavailable" }, 500);
     const text = await c.req.text();
     try {
-      const result = activateModel(db, text, model);
+      const result = await activateModel(db, text, model);
       return c.json(result, result.accepted ? 200 : 409);
     } catch (err) {
       if (err instanceof ModelParamsInvalid)
@@ -121,7 +123,7 @@ export function createParentApp({
   });
   // The parent's notices (SPC-0010): a failed backup until the next good
   // one, and the storage ceiling once data/ passes it.
-  app.get("/", (c) => {
+  app.get("/", async (c) => {
     const notices = snapshots ? readNotices(snapshots) : null;
     const lines = [
       notices?.backup_failed
@@ -148,14 +150,14 @@ export function createParentApp({
         ? t("parent.notice.logWriteFailed", { at: notices.log_write_failed.at })
         : null,
     ].filter((l): l is string => l !== null);
-    return c.html(adminPage(db, new Date(now()), lines));
+    return await c.html(await adminPage(db, new Date(now()), lines));
   });
   // The two audits as data (ADR-3100), for anything the page doesn't show.
-  app.get("/audit/llm", (c) =>
-    c.json(llmAudit(db, limitOf(c.req.query("limit")))),
+  app.get("/audit/llm", async (c) =>
+    c.json(await llmAudit(db, limitOf(c.req.query("limit")))),
   );
-  app.get("/audit/play", (c) =>
-    c.json(playAudit(db, limitOf(c.req.query("limit")))),
+  app.get("/audit/play", async (c) =>
+    c.json(await playAudit(db, limitOf(c.req.query("limit")))),
   );
   return app;
 }

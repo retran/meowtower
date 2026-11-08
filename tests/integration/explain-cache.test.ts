@@ -13,16 +13,16 @@ import { openDatabase } from "../../src/server/database.js";
 import { writeSyntheticLog } from "../helpers/synthetic-log.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-explain-cache-"));
-const db = openDatabase(join(dir, "live.sqlite"));
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "live.sqlite"));
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 
 /** A table's rows, `computed_at` left out, in a fixed order. */
-function rows(table: string): string {
+async function rows(table: string): Promise<string> {
   const columns = (
-    db.prepare("SELECT name FROM pragma_table_info(?)").all(table) as {
+    (await db.prepare("SELECT name FROM pragma_table_info(?)").all(table)) as {
       name: string;
     }[]
   )
@@ -30,14 +30,18 @@ function rows(table: string): string {
     .filter((c) => c !== "computed_at")
     .join(", ");
   return JSON.stringify(
-    db.prepare(`SELECT ${columns} FROM ${table} ORDER BY ${columns}`).all(),
+    await db
+      .prepare(`SELECT ${columns} FROM ${table} ORDER BY ${columns}`)
+      .all(),
   );
 }
 
-const events = (): string =>
+const events = async (): Promise<string> =>
   createHash("sha256")
     .update(
-      JSON.stringify(db.prepare("SELECT * FROM events ORDER BY seq").all()),
+      JSON.stringify(
+        await db.prepare("SELECT * FROM events ORDER BY seq").all(),
+      ),
     )
     .digest("hex");
 
@@ -48,34 +52,36 @@ it("leaves every event and projection row as it was after the cache is emptied a
      VALUES (?, ?, ?, 'visible', 'p1', '{}', 0, '2026-09-28T00:00:00Z')`,
   );
   for (let i = 0; i < 40; i++)
-    fill.run(`v-${i}`, `A1.sum:${i % 8}`, `Разбор ${i}.`);
+    await fill.run(`v-${i}`, `A1.sum:${i % 8}`, `Разбор ${i}.`);
 
-  const written = writeSyntheticLog(db, {
+  const written = await writeSyntheticLog(db, {
     days: 30,
     tasksPerDay: 20,
     seed: 5,
     explanations: true,
   });
   const shown = (
-    db
+    (await db
       .prepare(
         "SELECT count(*) AS n FROM events WHERE type = 'explanation_shown'",
       )
-      .get() as { n: number }
+      .get()) as { n: number }
   ).n;
   expect(shown).toBeGreaterThan(0);
   const tables = PROJECTIONS.map((p) => p.table);
-  const before = Object.fromEntries(tables.map((t) => [t, rows(t)]));
-  const log = events();
+  const before = Object.fromEntries(
+    await Promise.all(tables.map(async (t) => [t, await rows(t)] as const)),
+  );
+  const log = await events();
 
-  db.exec("DELETE FROM explain_cache");
+  await db.exec("DELETE FROM explain_cache");
   await recompute(db, { computedAt: "after-emptying" });
 
-  expect(events()).toBe(log);
-  for (const t of tables) expect(rows(t), t).toBe(before[t]);
+  expect(await events()).toBe(log);
+  for (const t of tables) expect(await rows(t), t).toBe(before[t]);
   expect(
     (
-      db.prepare("SELECT count(*) AS n FROM explain_cache").get() as {
+      (await db.prepare("SELECT count(*) AS n FROM explain_cache").get()) as {
         n: number;
       }
     ).n,

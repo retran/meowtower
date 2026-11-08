@@ -4,7 +4,7 @@ import { ESLint } from "eslint";
 import { describe, expect, it } from "vitest";
 
 const lint = async (code: string, filePath: string) =>
-  new ESLint().lintText(code, { filePath });
+  await new ESLint().lintText(code, { filePath });
 
 describe("REQ-1202: Math.random is reported under src", () => {
   it("fails a fixture that calls it", async () => {

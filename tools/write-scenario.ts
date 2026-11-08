@@ -18,7 +18,7 @@ if (!config) throw new Error("model_config_invalid: a role is unset");
 if (!config.roles.SHOWRUNNER_MODEL)
   throw new Error("SHOWRUNNER_MODEL is unset in .env");
 const budget = Number(process.env["SCENARIO_BUDGET_USD"] ?? 2);
-const db = openDatabase(
+const db = await openDatabase(
   join(mkdtempSync(join(tmpdir(), "meowtower-scenario-")), "scenario.sqlite"),
 );
 const gateway = createGateway({
@@ -38,7 +38,9 @@ interface Row {
   readonly costUsd: number;
 }
 const spent = (
-  db.prepare("SELECT role, cost_usd AS costUsd FROM llm_log").all() as Row[]
+  (await db
+    .prepare("SELECT role, cost_usd AS costUsd FROM llm_log")
+    .all()) as Row[]
 ).reduce((sum, row) => sum + row.costUsd, 0);
 console.log(`spent: $${spent.toFixed(3)}`);
 if (!done) {

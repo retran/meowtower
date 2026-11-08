@@ -1,6 +1,4 @@
-import type Database from "better-sqlite3";
-
-type Db = Database.Database;
+import type { Db } from "../../server/db/index.js";
 
 export interface StoredEvent {
   seq: number;
@@ -44,13 +42,13 @@ const toEvent = (r: Row): StoredEvent => ({
   idemKey: r.idem_key,
 });
 
-export function eventByIdemKey(
+export async function eventByIdemKey(
   db: Db,
   idemKey: string,
-): StoredEvent | undefined {
-  const row = db
+): Promise<StoredEvent | undefined> {
+  const row = (await db
     .prepare("SELECT * FROM events WHERE idem_key = ?")
-    .get(idemKey) as Row | undefined;
+    .get(idemKey)) as Row | undefined;
   return row && toEvent(row);
 }
 
@@ -58,125 +56,143 @@ export function eventByIdemKey(
  * The events one request logged: the first carries the request's key, the
  * rest the key and `#1`, `#2` and so on, because idem_key is unique per event.
  */
-export function requestEvents(db: Db, idemKey: string): StoredEvent[] {
+export async function requestEvents(
+  db: Db,
+  idemKey: string,
+): Promise<StoredEvent[]> {
   return (
-    db
+    (await db
       .prepare(
         "SELECT * FROM events WHERE idem_key = ? OR (idem_key >= ? AND idem_key < ?) ORDER BY seq",
       )
-      .all(idemKey, `${idemKey}#`, `${idemKey}$`) as Row[]
+      .all(idemKey, `${idemKey}#`, `${idemKey}$`)) as Row[]
   ).map(toEvent);
 }
 
 /** Each distinct type and payload version in the log, for the start-up schema check. */
-export function storedTypeVersions(db: Db): { type: string; v: number }[] {
-  return db.prepare("SELECT DISTINCT type, v FROM events").all() as {
+export async function storedTypeVersions(
+  db: Db,
+): Promise<{ type: string; v: number }[]> {
+  return (await db.prepare("SELECT DISTINCT type, v FROM events").all()) as {
     type: string;
     v: number;
   }[];
 }
 
 /** Every event of a session, in log order. */
-export function sessionEvents(db: Db, sessionId: string): StoredEvent[] {
+export async function sessionEvents(
+  db: Db,
+  sessionId: string,
+): Promise<StoredEvent[]> {
   return (
-    db
+    (await db
       .prepare("SELECT * FROM events WHERE session_id = ? ORDER BY seq")
-      .all(sessionId) as Row[]
+      .all(sessionId)) as Row[]
   ).map(toEvent);
 }
 
 /** Every event of an adventure, across its sessions, in log order. */
-export function adventureEvents(db: Db, adventureId: string): StoredEvent[] {
+export async function adventureEvents(
+  db: Db,
+  adventureId: string,
+): Promise<StoredEvent[]> {
   return (
-    db
+    (await db
       .prepare("SELECT * FROM events WHERE adventure_id = ? ORDER BY seq")
-      .all(adventureId) as Row[]
+      .all(adventureId)) as Row[]
   ).map(toEvent);
 }
 
 /** Every event naming a task by its itemId, in log order. */
-export function itemEvents(db: Db, itemId: string): StoredEvent[] {
+export async function itemEvents(
+  db: Db,
+  itemId: string,
+): Promise<StoredEvent[]> {
   return (
-    db
+    (await db
       .prepare(
         "SELECT * FROM events WHERE json_extract(payload, '$.itemId') = ? ORDER BY seq",
       )
-      .all(itemId) as Row[]
+      .all(itemId)) as Row[]
   ).map(toEvent);
 }
 
 /** Every event of one type, in log order. */
-export function eventsOfType(db: Db, type: string): StoredEvent[] {
+export async function eventsOfType(
+  db: Db,
+  type: string,
+): Promise<StoredEvent[]> {
   return (
-    db
+    (await db
       .prepare("SELECT * FROM events WHERE type = ? ORDER BY seq")
-      .all(type) as Row[]
+      .all(type)) as Row[]
   ).map(toEvent);
 }
 
-/**
- * Every event in log order, for a replay. Pages of 1,000 rows, because a
- * replay writes between reads and better-sqlite3 allows no other statement
- * while a query is being iterated.
- */
-export function* allEvents(db: Db): Generator<StoredEvent> {
+/** Every event in log order, for a replay, read in pages of 1,000 rows. */
+export async function allEvents(db: Db): Promise<StoredEvent[]> {
   const page = db.prepare(
     "SELECT * FROM events WHERE seq > ? ORDER BY seq LIMIT 1000",
   );
+  const out: StoredEvent[] = [];
   let after = 0;
   for (;;) {
-    const rows = page.all(after) as Row[];
-    if (!rows.length) return;
-    for (const row of rows) yield toEvent(row);
+    const rows = (await page.all(after)) as Row[];
+    if (!rows.length) return out;
+    for (const row of rows) out.push(toEvent(row));
     after = rows[rows.length - 1]?.seq ?? after;
   }
 }
 
 /** Up to `limit` events after `after`, in log order. */
-export function eventsAfter(
+export async function eventsAfter(
   db: Db,
   after: number,
   limit: number,
-): StoredEvent[] {
+): Promise<StoredEvent[]> {
   return (
-    db
+    (await db
       .prepare("SELECT * FROM events WHERE seq > ? ORDER BY seq LIMIT ?")
-      .all(after, limit) as Row[]
+      .all(after, limit)) as Row[]
   ).map(toEvent);
 }
 
 /** The log's last seq, 0 when it's empty. */
-export function headSeq(db: Db): number {
+export async function headSeq(db: Db): Promise<number> {
   return (
-    db.prepare("SELECT coalesce(max(seq), 0) AS seq FROM events").get() as {
+    (await db
+      .prepare("SELECT coalesce(max(seq), 0) AS seq FROM events")
+      .get()) as {
       seq: number;
     }
   ).seq;
 }
 
 /** The bytes the log's table takes in the file, for the `log_large` notice. */
-export function eventsBytes(db: Db): number {
+export async function eventsBytes(db: Db): Promise<number> {
   return (
-    db
+    (await db
       .prepare(
         "SELECT coalesce(sum(pgsize), 0) AS bytes FROM dbstat WHERE name = 'events'",
       )
-      .get() as { bytes: number }
+      .get()) as { bytes: number }
   ).bytes;
 }
 
 /** Every event row as stored, in log order, for the export. */
-export function eventRows(db: Db): Record<string, unknown>[] {
-  return db.prepare("SELECT * FROM events ORDER BY seq").all() as Record<
-    string,
-    unknown
-  >[];
+export async function eventRows(db: Db): Promise<Record<string, unknown>[]> {
+  return (await db
+    .prepare("SELECT * FROM events ORDER BY seq")
+    .all()) as Record<string, unknown>[];
 }
 
 /** The newest event of a type, or undefined where the log holds none. */
-export function latestEvent(db: Db, type: string): StoredEvent | undefined {
-  const row = db
+export async function latestEvent(
+  db: Db,
+  type: string,
+): Promise<StoredEvent | undefined> {
+  const row = (await db
     .prepare("SELECT * FROM events WHERE type = ? ORDER BY seq DESC LIMIT 1")
-    .get(type) as Row | undefined;
+    .get(type)) as Row | undefined;
   return row && toEvent(row);
 }

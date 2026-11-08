@@ -11,11 +11,11 @@ import { openDatabase } from "../../src/server/database.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-model-choice-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
-const db = openDatabase(join(dir, "live.sqlite"));
+const db = await openDatabase(join(dir, "live.sqlite"));
 
 describe("REQ-0713: the event log records the model choice apart from the answer", () => {
-  it("reads a version 3 attempt back with the model choice and the answer both kept", () => {
-    appendEvents(db, [
+  it("reads a version 3 attempt back with the model choice and the answer both kept", async () => {
+    await appendEvents(db, [
       {
         type: "attempt_submitted",
         v: 3,
@@ -43,7 +43,7 @@ describe("REQ-0713: the event log records the model choice apart from the answer
         },
       },
     ]);
-    const stored = eventByIdemKey(db, "model-choice-1");
+    const stored = await eventByIdemKey(db, "model-choice-1");
     expect(stored).toBeDefined();
     expect(stored?.v).toBe(3);
     expect(stored?.payload).toMatchObject({

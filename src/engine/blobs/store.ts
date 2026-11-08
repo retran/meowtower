@@ -13,10 +13,8 @@ import {
   writeSync,
 } from "node:fs";
 import { join } from "node:path";
-import type Database from "better-sqlite3";
 import { appendEvents, type NewEvent } from "../events/append.js";
-
-type Db = Database.Database;
+import type { Db } from "../../server/db/index.js";
 
 export const BLOB_LIMIT_BYTES = 512 * 1024;
 
@@ -32,19 +30,20 @@ const isWebp = (b: Buffer): boolean =>
   b.toString("ascii", 0, 4) === "RIFF" &&
   b.toString("ascii", 8, 12) === "WEBP";
 
-const hasRow = (db: Db, sha256: string): boolean =>
-  db.prepare("SELECT 1 FROM blobs WHERE sha256 = ?").get(sha256) !== undefined;
+const hasRow = async (db: Db, sha256: string): Promise<boolean> =>
+  (await db.prepare("SELECT 1 FROM blobs WHERE sha256 = ?").get(sha256)) !==
+  undefined;
 
 /**
  * At start-up, inserts the row of every `.webp` file in `dir` that has none
  * and hashes to its name, and reports the one that doesn't through `onChanged`
  * without a row. A file of another extension is left as it is.
  */
-export function recoverBlobs(
+export async function recoverBlobs(
   db: Db,
   dir: string,
   onChanged: (file: string) => void,
-): { inserted: string[]; changed: string[] } {
+): Promise<{ inserted: string[]; changed: string[] }> {
   const done = { inserted: [] as string[], changed: [] as string[] };
   if (!existsSync(dir)) return done;
   const insert = db.prepare(
@@ -53,10 +52,10 @@ export function recoverBlobs(
   for (const file of readdirSync(dir).sort()) {
     if (!file.endsWith(".webp")) continue;
     const name = file.slice(0, -".webp".length);
-    if (hasRow(db, name)) continue;
+    if (await hasRow(db, name)) continue;
     const bytes = readFileSync(join(dir, file));
     if (createHash("sha256").update(bytes).digest("hex") === name) {
-      insert.run(name, bytes.length, new Date().toISOString());
+      await insert.run(name, bytes.length, new Date().toISOString());
       done.inserted.push(file);
     } else {
       done.changed.push(file);
@@ -81,13 +80,13 @@ export interface ScratchContext {
  * one with no row is hashed, and refused with `blob_changed` when it no longer
  * hashes to its name (a crash between sync and insert leaves such a file).
  */
-export function storeScratch(
+export async function storeScratch(
   db: Db,
   dir: string,
   image: Buffer,
   ctx: ScratchContext,
   hooks: { afterFileSynced?: () => void } = {},
-): string {
+): Promise<string> {
   if (image.length > BLOB_LIMIT_BYTES) throw new BlobRefused("blob_too_large");
   if (!isWebp(image)) throw new BlobRefused("blob_not_webp");
   const sha256 = createHash("sha256").update(image).digest("hex");
@@ -115,16 +114,18 @@ export function storeScratch(
     }
   }
   hooks.afterFileSynced?.();
-  if (fd === undefined && !hasRow(db, sha256)) {
+  if (fd === undefined && !(await hasRow(db, sha256))) {
     const onDisk = createHash("sha256")
       .update(readFileSync(join(dir, `${sha256}.webp`)))
       .digest("hex");
     if (onDisk !== sha256) throw new BlobRefused("blob_changed");
   }
-  db.prepare(
-    "INSERT OR IGNORE INTO blobs (sha256, bytes, created_at) VALUES (?, ?, ?)",
-  ).run(sha256, image.length, new Date().toISOString());
-  appendEvents(db, [
+  await db
+    .prepare(
+      "INSERT OR IGNORE INTO blobs (sha256, bytes, created_at) VALUES (?, ?, ?)",
+    )
+    .run(sha256, image.length, new Date().toISOString());
+  await appendEvents(db, [
     {
       type: "scratch_snapshot",
       v: 1,

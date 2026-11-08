@@ -55,13 +55,13 @@ export async function runRecompute(
 }
 
 /** Raises `log_large` once, when the log's table passes the limit. */
-export function checkLogSize(
+export async function checkLogSize(
   db: Db,
   dir: string,
   now: () => number,
   limit = LOG_LARGE_BYTES,
-): boolean {
-  const bytes = eventsBytes(db);
+): Promise<boolean> {
+  const bytes = await eventsBytes(db);
   if (bytes <= limit) return false;
   mkdirSync(dir, { recursive: true });
   const notices = readNotices(dir);
@@ -73,14 +73,14 @@ export function checkLogSize(
 }
 
 /** Raises `snapshot_ceiling` once when `node_snapshots` passes the ceiling; deletes no row. */
-export function checkSnapshotCeiling(
+export async function checkSnapshotCeiling(
   db: Db,
   dir: string,
   now: () => number,
   ceiling = SNAPSHOT_CEILING_ROWS,
-): boolean {
+): Promise<boolean> {
   const rows = (
-    db.prepare("SELECT count(*) AS n FROM node_snapshots").get() as {
+    (await db.prepare("SELECT count(*) AS n FROM node_snapshots").get()) as {
       n: number;
     }
   ).n;

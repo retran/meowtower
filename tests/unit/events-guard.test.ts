@@ -24,10 +24,10 @@ const fresh = (): string => {
   return join(dir, "meowtower.sqlite");
 };
 
-function seeded(): { path: string; db: Db } {
+async function seeded(): Promise<{ path: string; db: Db }> {
   const path = fresh();
-  const db = openDatabase(path);
-  appendEvents(db, [
+  const db = await openDatabase(path);
+  await appendEvents(db, [
     {
       type: "attempt_submitted",
       v: 0,
@@ -44,34 +44,36 @@ function seeded(): { path: string; db: Db } {
   return { path, db };
 }
 
-const rows = (db: Db): unknown[] =>
-  db.prepare("SELECT * FROM events ORDER BY seq").all();
+const rows = async (db: Db): Promise<unknown[]> =>
+  await db.prepare("SELECT * FROM events ORDER BY seq").all();
 
-function refusesChange(db: Db): void {
-  const before = rows(db);
+async function refusesChange(db: Db): Promise<void> {
+  const before = await rows(db);
   expect(before).toHaveLength(2);
-  expect(() => db.exec("UPDATE events SET type = type")).toThrow(
+  await expect(db.exec("UPDATE events SET type = type")).rejects.toThrow(
     "events are append-only",
   );
-  expect(() => db.exec("DELETE FROM events")).toThrow("events are append-only");
-  expect(rows(db)).toEqual(before);
+  await expect(db.exec("DELETE FROM events")).rejects.toThrow(
+    "events are append-only",
+  );
+  expect(await rows(db)).toEqual(before);
 }
 
 describe("REQ-2226: the log is append-only at the database", () => {
-  it("refuses UPDATE and DELETE and leaves every row unchanged", () => {
-    const { db } = seeded();
-    refusesChange(db);
-    db.close();
+  it("refuses UPDATE and DELETE and leaves every row unchanged", async () => {
+    const { db } = await seeded();
+    await refusesChange(db);
+    await db.close();
   });
 
-  it("refuses them from a second connection that skips meowtower's code", () => {
-    const { path, db } = seeded();
+  it("refuses them from a second connection that skips meowtower's code", async () => {
+    const { path, db } = await seeded();
     const raw = new Database(path);
     expect(() => raw.exec("DELETE FROM events WHERE seq = 1")).toThrow(
       "events are append-only",
     );
     raw.close();
-    db.close();
+    await db.close();
   });
 
   // ADR-0020's third reversal condition: a VACUUM or a schema change the
@@ -86,26 +88,26 @@ describe("REQ-2226: the log is append-only at the database", () => {
     ["rename another table", "ALTER TABLE other RENAME TO other2"],
     ["REINDEX", "REINDEX"],
     ["ANALYZE", "ANALYZE"],
-  ])("keeps both triggers after %s", (_name, sql) => {
-    const { db } = seeded();
+  ])("keeps both triggers after %s", async (_name, sql) => {
+    const { db } = await seeded();
     if (sql.includes("DROP COLUMN"))
-      db.exec("ALTER TABLE events ADD COLUMN note TEXT");
+      await db.exec("ALTER TABLE events ADD COLUMN note TEXT");
     if (sql.includes("DROP INDEX"))
-      db.exec("CREATE INDEX events_type ON events (type)");
-    if (sql.includes("RENAME")) db.exec("CREATE TABLE other (x INTEGER)");
-    db.exec(sql);
-    refusesChange(db);
-    db.close();
+      await db.exec("CREATE INDEX events_type ON events (type)");
+    if (sql.includes("RENAME")) await db.exec("CREATE TABLE other (x INTEGER)");
+    await db.exec(sql);
+    await refusesChange(db);
+    await db.close();
   });
 
-  it("keeps both triggers in a VACUUM INTO copy", () => {
-    const { db } = seeded();
+  it("keeps both triggers in a VACUUM INTO copy", async () => {
+    const { db } = await seeded();
     const copy = fresh();
-    db.prepare("VACUUM INTO ?").run(copy);
-    db.close();
-    const reopened = openDatabase(copy);
-    refusesChange(reopened);
-    reopened.close();
+    await db.prepare("VACUUM INTO ?").run(copy);
+    await db.close();
+    const reopened = await openDatabase(copy);
+    await refusesChange(reopened);
+    await reopened.close();
   });
 });
 
@@ -113,8 +115,8 @@ describe("REQ-2226: meowtower refuses to start without the guard", () => {
   it.each(GUARDED_TRIGGERS.map((g) => g.name))(
     "exits with log_guard_missing when %s is dropped",
     async (trigger) => {
-      const { path, db } = seeded();
-      db.close();
+      const { path, db } = await seeded();
+      await db.close();
       const copy = fresh();
       copyFileSync(path, copy);
       const raw = new Database(copy);

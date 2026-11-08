@@ -14,8 +14,8 @@ import { Room } from "../../src/shared/api.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-lease-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
@@ -30,14 +30,14 @@ const input = {
 };
 
 let worlds = 0;
-function world() {
-  const db = openDatabase(join(root, `w${++worlds}.sqlite`));
+async function world() {
+  const db = await openDatabase(join(root, `w${++worlds}.sqlite`));
   opened.push(db);
   let clock = 1_000_000;
-  const app = createApp({ db, now: () => clock });
-  const device = (kind: "tablet" | "computer") => {
+  const app = await createApp({ db, now: () => clock });
+  const device = async (kind: "tablet" | "computer") => {
     const headers = {
-      cookie: `meowtower_device=${registerDevice(db, kind)}`,
+      cookie: `meowtower_device=${await registerDevice(db, kind)}`,
       "content-type": "application/json",
     };
     let seq = 0;
@@ -51,32 +51,38 @@ function world() {
       get: (path: string) => app.request(path, { headers }),
     };
   };
-  const rows = (
+  const rows = async (
     type: string,
-  ): { device_id: string; session_id: string; payload: unknown }[] =>
+  ): Promise<{ device_id: string; session_id: string; payload: unknown }[]> =>
     (
-      db
+      (await db
         .prepare(
           "SELECT device_id, session_id, payload FROM events WHERE type = ? ORDER BY seq",
         )
-        .all(type) as {
+        .all(type)) as {
         device_id: string;
         session_id: string;
         payload: string;
       }[]
     ).map((r) => ({ ...r, payload: JSON.parse(r.payload) as unknown }));
-  const count = (): number =>
-    (db.prepare("SELECT COUNT(*) AS n FROM events").get() as { n: number }).n;
-  const sequence = (): {
-    type: string;
-    session_id: string;
-    device_id: string;
-  }[] =>
-    db
+  const count = async (): Promise<number> =>
+    (
+      (await db.prepare("SELECT COUNT(*) AS n FROM events").get()) as {
+        n: number;
+      }
+    ).n;
+  const sequence = async (): Promise<
+    {
+      type: string;
+      session_id: string;
+      device_id: string;
+    }[]
+  > =>
+    (await db
       .prepare("SELECT type, session_id, device_id FROM events ORDER BY seq")
-      .all() as { type: string; session_id: string; device_id: string }[];
-  const adventureState = (): unknown =>
-    db.prepare("SELECT * FROM adventures").all();
+      .all()) as { type: string; session_id: string; device_id: string }[];
+  const adventureState = async (): Promise<unknown> =>
+    await db.prepare("SELECT * FROM adventures").all();
   return {
     device,
     rows,
@@ -87,7 +93,7 @@ function world() {
   };
 }
 
-type Player = ReturnType<ReturnType<typeof world>["device"]>;
+type Player = Awaited<ReturnType<Awaited<ReturnType<typeof world>>["device"]>>;
 
 async function start(p: Player): Promise<string> {
   const res = await p.post("/api/session/start", { mode: "daily" });
@@ -111,26 +117,26 @@ const answer = (p: Player, sessionId: string, itemId: string) =>
 
 describe("REQ-0202: 45 seconds without a heartbeat leave the state a leave leaves", () => {
   it("logs adventure_paused with lease_expired and session_ended as device server, and equals a leave's projection", async () => {
-    const left = world();
-    const a = left.device("tablet");
+    const left = await world();
+    const a = await left.device("tablet");
     const leftSession = await start(a);
     await room(a, leftSession);
     await a.post(`/api/session/${leftSession}/pause`, { reason: "leave" });
 
-    const lapsed = world();
-    const b = lapsed.device("tablet");
+    const lapsed = await world();
+    const b = await lapsed.device("tablet");
     const lapsedSession = await start(b);
     await room(b, lapsedSession);
     lapsed.advance(45_000);
     // Any request after the 45 seconds finds the lease expired.
     await b.get("/api/adventure/current");
 
-    const paused = lapsed.rows("adventure_paused");
+    const paused = await lapsed.rows("adventure_paused");
     expect(paused).toHaveLength(1);
     expect(paused[0]?.payload).toMatchObject({ reason: "lease_expired" });
-    expect(lapsed.rows("session_ended")).toHaveLength(1);
+    expect(await lapsed.rows("session_ended")).toHaveLength(1);
     expect(paused[0]?.device_id).toBe("server");
-    expect(lapsed.rows("session_ended")[0]?.device_id).toBe("server");
+    expect((await lapsed.rows("session_ended"))[0]?.device_id).toBe("server");
 
     // The two worlds differ in ids and times only, so compare what the
     // adventure holds: its state, floor, room and slot.
@@ -138,12 +144,14 @@ describe("REQ-0202: 45 seconds without a heartbeat leave the state a leave leave
       (rows as Record<string, unknown>[]).map(
         ({ state, floor, room, slot }) => ({ state, floor, room, slot }),
       );
-    expect(pick(lapsed.adventureState())).toEqual(pick(left.adventureState()));
+    expect(pick(await lapsed.adventureState())).toEqual(
+      pick(await left.adventureState()),
+    );
   });
 
   it("keeps the lease while the heartbeat comes every 15 seconds", async () => {
-    const w = world();
-    const p = w.device("tablet");
+    const w = await world();
+    const p = await w.device("tablet");
     const sessionId = await start(p);
     for (let i = 0; i < 6; i++) {
       w.advance(15_000);
@@ -152,54 +160,54 @@ describe("REQ-0202: 45 seconds without a heartbeat leave the state a leave leave
       );
     }
     await p.get("/api/adventure/current");
-    expect(w.rows("adventure_paused")).toHaveLength(0);
+    expect(await w.rows("adventure_paused")).toHaveLength(0);
   });
 });
 
 describe("REQ-0220: a device that lost the lease still has its answer logged", () => {
   it("logs the answer as the attempt when the item has none, and the new holder's next packet carries the outcome", async () => {
-    const w = world();
-    const old = w.device("tablet");
+    const w = await world();
+    const old = await w.device("tablet");
     const sessionId = await start(old);
     const { itemId } = await room(old, sessionId);
 
-    const fresh = w.device("computer");
+    const fresh = await w.device("computer");
     await start(fresh);
 
     const res = await answer(old, sessionId, itemId);
     expect(res.status).toBe(409);
     expect(((await res.json()) as { error: string }).error).toBe("lease_moved");
-    expect(w.rows("attempt_submitted")).toHaveLength(1);
-    expect(w.rows("attempt_late")).toHaveLength(0);
+    expect(await w.rows("attempt_submitted")).toHaveLength(1);
+    expect(await w.rows("attempt_late")).toHaveLength(0);
   });
 
   it("logs attempt_late with no verdict when the item already has its attempt", async () => {
-    const w = world();
-    const old = w.device("tablet");
+    const w = await world();
+    const old = await w.device("tablet");
     const sessionId = await start(old);
     const r = await room(old, sessionId);
     const { itemId } = r;
     expect((await answer(old, sessionId, itemId)).status).toBe(200);
 
-    const fresh = w.device("computer");
+    const fresh = await w.device("computer");
     await start(fresh);
 
     const res = await answer(old, sessionId, itemId);
     expect(res.status).toBe(409);
-    expect(w.rows("attempt_late")).toHaveLength(1);
-    expect(w.rows("attempt_submitted")).toHaveLength(1);
-    expect(w.rows("verdict")).toHaveLength(1);
+    expect(await w.rows("attempt_late")).toHaveLength(1);
+    expect(await w.rows("attempt_submitted")).toHaveLength(1);
+    expect(await w.rows("verdict")).toHaveLength(1);
   });
 });
 
 describe("REQ-0220: a displaced device's other requests are refused and log nothing", () => {
   it("answers next, a hint and a pause with 409 lease_moved and adds no event", async () => {
-    const w = world();
-    const old = w.device("tablet");
+    const w = await world();
+    const old = await w.device("tablet");
     const sessionId = await start(old);
     const { itemId } = await room(old, sessionId);
-    await start(w.device("computer"));
-    const before = w.count();
+    await start(await w.device("computer"));
+    const before = await w.count();
 
     const replies = [
       await old.get(`/api/session/${sessionId}/next`),
@@ -212,21 +220,21 @@ describe("REQ-0220: a displaced device's other requests are refused and log noth
         "lease_moved",
       );
     }
-    expect(w.count()).toBe(before);
+    expect(await w.count()).toBe(before);
   });
 });
 
 describe("REQ-0202: a change of device within 45 seconds ends the old session first", () => {
   it("logs the old session's pause and end with lease_expired, as the server, before device_lease_taken", async () => {
-    const w = world();
-    const old = w.device("tablet");
+    const w = await world();
+    const old = await w.device("tablet");
     const oldSession = await start(old);
     await room(old, oldSession);
     w.advance(10_000);
-    const fresh = w.device("computer");
+    const fresh = await w.device("computer");
     const newSession = await start(fresh);
 
-    const order = w.sequence();
+    const order = await w.sequence();
     const paused = order.findIndex(
       (e) => e.type === "adventure_paused" && e.session_id === oldSession,
     );
@@ -241,10 +249,10 @@ describe("REQ-0202: a change of device within 45 seconds ends the old session fi
     expect(ended).toBeLessThan(taken);
     expect(order[paused]?.device_id).toBe("server");
     expect(order[ended]?.device_id).toBe("server");
-    expect(w.rows("adventure_paused")[0]?.payload).toMatchObject({
+    expect((await w.rows("adventure_paused"))[0]?.payload).toMatchObject({
       reason: "lease_expired",
     });
-    expect(w.rows("session_ended")[0]?.payload).toMatchObject({
+    expect((await w.rows("session_ended"))[0]?.payload).toMatchObject({
       reason: "lease_expired",
     });
   });
@@ -252,17 +260,17 @@ describe("REQ-0202: a change of device within 45 seconds ends the old session fi
 
 describe("REQ-2434: an answer after the lease only expired is logged and gets its reply", () => {
   it("records the attempt, then attempt_late with the first outcome, both with 200", async () => {
-    const w = world();
-    const p = w.device("tablet");
+    const w = await world();
+    const p = await w.device("tablet");
     const sessionId = await start(p);
     const { itemId } = await room(p, sessionId);
     w.advance(45_000);
     await p.get("/api/adventure/current");
 
     expect((await answer(p, sessionId, itemId)).status).toBe(200);
-    expect(w.rows("attempt_submitted")).toHaveLength(1);
+    expect(await w.rows("attempt_submitted")).toHaveLength(1);
     expect((await answer(p, sessionId, itemId)).status).toBe(200);
-    expect(w.rows("attempt_late")).toHaveLength(1);
-    expect(w.rows("verdict")).toHaveLength(1);
+    expect(await w.rows("attempt_late")).toHaveLength(1);
+    expect(await w.rows("verdict")).toHaveLength(1);
   });
 });

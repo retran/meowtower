@@ -14,8 +14,8 @@ import { LOCK_MS } from "../../src/server/parent-access.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-parent-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
@@ -23,11 +23,11 @@ const PIN = "4821";
 let worlds = 0;
 
 async function world() {
-  const db = openDatabase(join(root, `w${++worlds}.sqlite`));
+  const db = await openDatabase(join(root, `w${++worlds}.sqlite`));
   opened.push(db);
   const clock = { ms: Date.parse("2026-09-27T12:00:00Z") };
   const now = () => clock.ms;
-  const app = createApp({ db, now });
+  const app = await createApp({ db, now });
   const mac = createParentApp({ db, now });
   const json = { "content-type": "application/json" };
   const setPin = (pin: string) =>
@@ -53,27 +53,32 @@ async function world() {
       headers: { ...json, cookie: device },
       body: JSON.stringify({ pin }),
     });
-  const lockout = (kind: string) =>
-    (db
+  const lockout = async (kind: string) =>
+    ((await db
       .prepare("SELECT wrong, locked_until_ms FROM lockouts WHERE kind = ?")
-      .get(kind) as { wrong: number; locked_until_ms: number } | undefined) ?? {
+      .get(kind)) as
+      { wrong: number; locked_until_ms: number } | undefined) ?? {
       wrong: 0,
       locked_until_ms: 0,
     };
-  const device = () => `meowtower_device=${registerDevice(db, "computer")}`;
+  const device = async () =>
+    `meowtower_device=${await registerDevice(db, "computer")}`;
   return { db, clock, app, setPin, cookieOf, pair, login, lockout, device };
 }
 
 describe("the PIN guards the Parent Room", () => {
   it("sets the PIN only over the Mac's listener, with 4 to 8 digits", async () => {
     const w = await world();
-    const phone = w.device();
+    const phone = await w.device();
     expect((await w.login(phone, PIN)).status).toBe(409);
     expect((await w.setPin("12a4")).status).toBe(400);
     expect((await w.setPin(PIN)).status).toBe(200);
     expect(
-      (w.db.prepare("SELECT hash FROM parent_pin").get() as { hash: string })
-        .hash,
+      (
+        (await w.db.prepare("SELECT hash FROM parent_pin").get()) as {
+          hash: string;
+        }
+      ).hash,
     ).not.toContain(PIN);
     expect((await w.login(phone, PIN)).status).toBe(200);
   });
@@ -81,8 +86,8 @@ describe("the PIN guards the Parent Room", () => {
   it("opens the devices page only with a parent session of the same device", async () => {
     const w = await world();
     await w.setPin(PIN);
-    const mine = w.device();
-    const other = w.device();
+    const mine = await w.device();
+    const other = await w.device();
     const page = (cookie: string) =>
       w.app.request("/api/parent/devices", { headers: { cookie } });
     expect(await (await page(mine)).json()).toEqual({
@@ -103,8 +108,8 @@ describe("REQ-2520: a revoked device gets 401 device_revoked on every request", 
   it("refuses the revoked device and keeps the parent's device", async () => {
     const w = await world();
     await w.setPin(PIN);
-    const parent = w.device();
-    const tablet = w.device();
+    const parent = await w.device();
+    const tablet = await w.device();
     const session = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
     const { devices } = (await (
       await w.app.request("/api/parent/devices", {
@@ -139,22 +144,22 @@ describe("REQ-2520: a revoked device gets 401 device_revoked on every request", 
     ).toBe(200);
     expect(
       (
-        w.db
+        (await w.db
           .prepare("SELECT revoked FROM devices WHERE id = ?")
-          .get(target?.id) as { revoked: number }
+          .get(target?.id)) as { revoked: number }
       ).revoked,
     ).toBe(1);
   });
 
   it("refuses the revoked device on every /api route the app registers", async () => {
     const w = await world();
-    const tablet = w.device();
+    const tablet = await w.device();
     const id = (
-      w.db
+      (await w.db
         .prepare("SELECT id FROM devices ORDER BY created_at DESC LIMIT 1")
-        .get() as { id: string }
+        .get()) as { id: string }
     ).id;
-    w.db.prepare("UPDATE devices SET revoked = 1 WHERE id = ?").run(id);
+    await w.db.prepare("UPDATE devices SET revoked = 1 WHERE id = ?").run(id);
     // Every route the app has, read from the router, so a route added later
     // is covered too; pairing is the one /api route that needs no token.
     const routes = w.app.routes.filter(
@@ -188,7 +193,7 @@ describe("REQ-2520: a revoked device gets 401 device_revoked on every request", 
   it("issues a pairing code from the Parent Room that pairs a device", async () => {
     const w = await world();
     await w.setPin(PIN);
-    const parent = w.device();
+    const parent = await w.device();
     const session = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
     const issued = (await (
       await w.app.request("/api/parent/pair-code", {
@@ -211,7 +216,7 @@ describe("REQ-2522: 5 wrong entries in a row lock that kind for 15 minutes", () 
       expect(res.status).toBe(403);
     }
     const lockedAt = w.clock.ms;
-    const code = issuePairingCode(w.db, w.clock.ms);
+    const code = await issuePairingCode(w.db, w.clock.ms);
     const sixth = await w.pair(code);
     expect(sixth.status).toBe(429);
     expect(await sixth.json()).toEqual({
@@ -219,21 +224,23 @@ describe("REQ-2522: 5 wrong entries in a row lock that kind for 15 minutes", () 
       retryAt: new Date(lockedAt + LOCK_MS).toISOString(),
     });
     // The PIN's count is untouched: a login still works.
-    expect(w.lockout("pin")).toEqual({ wrong: 0, locked_until_ms: 0 });
-    expect((await w.login(w.device(), PIN)).status).toBe(200);
+    expect(await w.lockout("pin")).toEqual({ wrong: 0, locked_until_ms: 0 });
+    expect((await w.login(await w.device(), PIN)).status).toBe(200);
 
     w.clock.ms = lockedAt + LOCK_MS - 1;
     expect((await w.pair(code)).status).toBe(429);
     w.clock.ms = lockedAt + LOCK_MS;
-    expect((await w.pair(issuePairingCode(w.db, w.clock.ms))).status).toBe(200);
+    expect(
+      (await w.pair(await issuePairingCode(w.db, w.clock.ms))).status,
+    ).toBe(200);
   });
 
   it("refuses the sixth PIN, a correct one included, and leaves the pairing count unchanged", async () => {
     const w = await world();
     await w.setPin(PIN);
-    const parent = w.device();
+    const parent = await w.device();
     await w.pair("000000");
-    const pairing = w.lockout("pairing");
+    const pairing = await w.lockout("pairing");
     expect(pairing.wrong).toBe(1);
     for (let i = 0; i < 5; i++)
       expect((await w.login(parent, "0000")).status).toBe(403);
@@ -244,7 +251,7 @@ describe("REQ-2522: 5 wrong entries in a row lock that kind for 15 minutes", () 
       error: "pin_locked",
       retryAt: new Date(lockedAt + LOCK_MS).toISOString(),
     });
-    expect(w.lockout("pairing")).toEqual(pairing);
+    expect(await w.lockout("pairing")).toEqual(pairing);
     w.clock.ms = lockedAt + LOCK_MS;
     expect((await w.login(parent, PIN)).status).toBe(200);
   });
@@ -252,19 +259,19 @@ describe("REQ-2522: 5 wrong entries in a row lock that kind for 15 minutes", () 
   it("returns a kind's count to 0 on a correct entry after 4 wrong ones", async () => {
     const w = await world();
     await w.setPin(PIN);
-    const parent = w.device();
+    const parent = await w.device();
     for (let round = 0; round < 2; round++) {
       for (let i = 0; i < 4; i++) await w.login(parent, "0000");
-      expect(w.lockout("pin").wrong).toBe(4);
+      expect((await w.lockout("pin")).wrong).toBe(4);
       expect((await w.login(parent, PIN)).status).toBe(200);
-      expect(w.lockout("pin").wrong).toBe(0);
+      expect((await w.lockout("pin")).wrong).toBe(0);
 
       for (let i = 0; i < 4; i++) await w.pair("000000");
-      expect(w.lockout("pairing").wrong).toBe(4);
-      expect((await w.pair(issuePairingCode(w.db, w.clock.ms))).status).toBe(
-        200,
-      );
-      expect(w.lockout("pairing").wrong).toBe(0);
+      expect((await w.lockout("pairing")).wrong).toBe(4);
+      expect(
+        (await w.pair(await issuePairingCode(w.db, w.clock.ms))).status,
+      ).toBe(200);
+      expect((await w.lockout("pairing")).wrong).toBe(0);
     }
   });
 });
@@ -273,7 +280,7 @@ describe("REQ-2440: a parent session ends 30 minutes after its last request", ()
   it("expires at 30 and 31 minutes, and a request at 29 minutes restarts the 30", async () => {
     const w = await world();
     await w.setPin(PIN);
-    const parent = w.device();
+    const parent = await w.device();
     const session = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
     const page = () =>
       w.app.request("/api/parent/devices", {
@@ -321,7 +328,7 @@ describe("TSK-0390 criterion 2: a parent session cookie on an unpaired device op
     const w = await world();
     await w.setPin(PIN);
     const session = w.cookieOf(
-      await w.login(w.device(), PIN),
+      await w.login(await w.device(), PIN),
       "meowtower_parent",
     );
     for (const device of ["", "meowtower_device=not-a-paired-token; "])
@@ -346,7 +353,7 @@ describe("TSK-0390 criterion 2: a parent session cookie on an unpaired device op
         );
       }
     expect(
-      w.db
+      await w.db
         .prepare(
           "SELECT COUNT(*) AS n FROM events WHERE type = 'settings_changed'",
         )
@@ -359,7 +366,7 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
   it("reads 3 by default, and logs each change that the next read returns", async () => {
     const w = await world();
     await w.setPin(PIN);
-    const parent = w.device();
+    const parent = await w.device();
     const session = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
     const cookie = `${parent}; ${session}`;
     const read = async () =>
@@ -372,13 +379,13 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
         headers: { "content-type": "application/json", cookie },
         body: JSON.stringify({ threeDayLimit }),
       });
-    const logged = () =>
+    const logged = async () =>
       (
-        w.db
+        (await w.db
           .prepare(
             "SELECT payload FROM events WHERE type = 'settings_changed' ORDER BY seq",
           )
-          .all() as { payload: string }[]
+          .all()) as { payload: string }[]
       ).map((r) => JSON.parse(r.payload));
 
     expect(await read()).toEqual({
@@ -404,14 +411,14 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
       gender: "f",
       hideRankFalls: false,
     });
-    expect(logged()).toEqual([
+    expect(await logged()).toEqual([
       { key: "threeDayLimit", value: 5 },
       { key: "threeDayLimit", value: null },
     ]);
     // Anything but a whole number of days from 1 to 7, or off, is refused unlogged.
     for (const bad of [0, 8, 2.5, "5"])
       expect((await save(bad)).status).toBe(400);
-    expect(logged()).toHaveLength(2);
+    expect(await logged()).toHaveLength(2);
     // Without a parent session the settings stay shut.
     expect(
       (

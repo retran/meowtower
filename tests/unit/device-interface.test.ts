@@ -11,23 +11,23 @@ import { openDatabase } from "../../src/server/database.js";
 import { hashToken, registerDevice } from "../../src/server/devices.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-interface-"));
-const db = openDatabase(join(dir, "live.sqlite"));
-const app = createApp({ db });
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "live.sqlite"));
+const app = await createApp({ db });
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 
-const token = registerDevice(db, "tablet");
+const token = await registerDevice(db, "tablet");
 const headers = {
   cookie: `meowtower_device=${token}`,
   "content-type": "application/json",
 };
-const row = (): string =>
+const row = async (): Promise<string> =>
   (
-    db
+    (await db
       .prepare("SELECT kind FROM devices WHERE token_hash = ?")
-      .get(hashToken(token)) as { kind: string }
+      .get(hashToken(token))) as { kind: string }
   ).kind;
 
 describe("REQ-2538: the interface switch is kept in the device's row", () => {
@@ -43,7 +43,7 @@ describe("REQ-2538: the interface switch is kept in the device's row", () => {
       body: JSON.stringify({ kind: "computer" }),
     });
     expect(res.status).toBe(200);
-    expect(row()).toBe("computer");
+    expect(await row()).toBe("computer");
     const again = await app.request("/api/device", { headers });
     expect(await again.json()).toEqual({ kind: "computer" });
   });
@@ -55,7 +55,7 @@ describe("REQ-2538: the interface switch is kept in the device's row", () => {
       body: JSON.stringify({ kind: "phone" }),
     });
     expect(bad.status).toBe(400);
-    expect(row()).toBe("computer");
+    expect(await row()).toBe("computer");
     const unpaired = await app.request("/api/device", {
       method: "PUT",
       headers: { "content-type": "application/json" },

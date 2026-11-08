@@ -17,7 +17,7 @@ const dir = mkdtempSync(join(tmpdir(), "meowtower-export-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 const live = join(dir, "live.sqlite");
 const exports = join(dir, "exports");
-const db = openDatabase(live);
+const db = await openDatabase(live);
 
 // A synthetic 30-day log: 30 sessions of 20 tasks, each answered.
 const day = (d: number): NewEvent[] =>
@@ -91,7 +91,7 @@ const day = (d: number): NewEvent[] =>
       },
     ];
   }).flat();
-for (let d = 0; d < 30; d++) appendEvents(db, day(d));
+for (let d = 0; d < 30; d++) await appendEvents(db, day(d));
 
 async function duckCount(file: string): Promise<number> {
   const duck = await DuckDBInstance.create(":memory:");
@@ -110,9 +110,13 @@ describe("the export writes seven files from a copy taken at its start", () => {
   let counts = { events: 0, attempts: 0, items: 0 };
 
   it("writes every file into data/exports/<UTC timestamp>/", async () => {
-    const running = exportAll(live, exports, new Date("2026-09-27T12:00:00Z"));
+    const running = await exportAll(
+      live,
+      exports,
+      new Date("2026-09-27T12:00:00Z"),
+    );
     // Play goes on during the export; the export must not see it.
-    appendEvents(db, day(99));
+    await appendEvents(db, day(99));
     const result = await running;
     out = result.dir;
     counts = result.counts;
@@ -159,13 +163,12 @@ describe("the export writes seven files from a copy taken at its start", () => {
 
 describe("REQ-2240: the export is offered only on the Mac's loopback listener", () => {
   it("answers 404 on the game listener and serves the file on the Parent Room listener", async () => {
-    const token = registerDevice(db, "computer");
-    const game = await createApp({ db }).request(
-      "/api/parent/export/events.jsonl",
-      {
-        headers: { cookie: `meowtower_device=${token}` },
-      },
-    );
+    const token = await registerDevice(db, "computer");
+    const game = await (
+      await createApp({ db })
+    ).request("/api/parent/export/events.jsonl", {
+      headers: { cookie: `meowtower_device=${token}` },
+    });
     expect(game.status).toBe(404);
     const parent = createParentApp({ db, dbPath: live, exports });
     expect(

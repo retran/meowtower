@@ -26,21 +26,25 @@ import { webp } from "../helpers/webp.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-recompute-"));
 const opened: Db[] = [];
-afterAll(() => {
-  for (const db of opened) db.close();
+afterAll(async () => {
+  for (const db of opened) await db.close();
   rmSync(root, { recursive: true, force: true });
 });
 
 let worlds = 0;
 /** A database holding the synthetic 30-day log, a device and a stored image. */
-function world() {
+async function world() {
   const base = join(root, `w${++worlds}`);
   mkdirSync(base, { recursive: true });
-  const db = openDatabase(join(base, "live.sqlite"));
+  const db = await openDatabase(join(base, "live.sqlite"));
   opened.push(db);
-  const events = writeSyntheticLog(db, { days: 30, tasksPerDay: 20, seed: 7 });
-  registerDevice(db, "tablet");
-  storeScratch(db, join(base, "blobs"), webp("pad"), {
+  const events = await writeSyntheticLog(db, {
+    days: 30,
+    tasksPerDay: 20,
+    seed: 7,
+  });
+  await registerDevice(db, "tablet");
+  await storeScratch(db, join(base, "blobs"), webp("pad"), {
     itemId: "item-7-0-0",
     attemptNo: 1,
     origin: "server",
@@ -49,9 +53,9 @@ function world() {
 }
 
 /** Every row of a table, `computed_at` left out, in a fixed order. */
-function rows(db: Db, table: string): string {
+async function rows(db: Db, table: string): Promise<string> {
   const columns = (
-    db.prepare("SELECT name FROM pragma_table_info(?)").all(table) as {
+    (await db.prepare("SELECT name FROM pragma_table_info(?)").all(table)) as {
       name: string;
     }[]
   )
@@ -59,7 +63,9 @@ function rows(db: Db, table: string): string {
     .filter((c) => c !== "computed_at")
     .join(", ");
   return JSON.stringify(
-    db.prepare(`SELECT ${columns} FROM ${table} ORDER BY ${columns}`).all(),
+    await db
+      .prepare(`SELECT ${columns} FROM ${table} ORDER BY ${columns}`)
+      .all(),
   );
 }
 
@@ -74,82 +80,85 @@ const SERVICE_TABLES = [
 ];
 
 /** Each service table's row count and a hash of its rows, or "absent". */
-function services(db: Db): Record<string, string> {
+async function services(db: Db): Promise<Record<string, string>> {
   return Object.fromEntries(
-    SERVICE_TABLES.map((t) => {
-      const there = db
-        .prepare(
-          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
-        )
-        .get(t);
-      if (!there) return [t, "absent"];
-      const all = db.prepare(`SELECT * FROM ${t} ORDER BY rowid`).all();
-      return [
-        t,
-        `${all.length} ${createHash("sha256").update(JSON.stringify(all)).digest("hex")}`,
-      ];
-    }),
+    await Promise.all(
+      SERVICE_TABLES.map(async (t) => {
+        const there = await db
+          .prepare(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+          )
+          .get(t);
+        if (!there) return [t, "absent"] as const;
+        const all = await db.prepare(`SELECT * FROM ${t} ORDER BY rowid`).all();
+        return [
+          t,
+          `${all.length} ${createHash("sha256").update(JSON.stringify(all)).digest("hex")}`,
+        ] as const;
+      }),
+    ),
   );
 }
 
-const shadowsLeft = (db: Db): string[] =>
+const shadowsLeft = async (db: Db): Promise<string[]> =>
   (
-    db
+    (await db
       .prepare(
         "SELECT name FROM sqlite_master WHERE name LIKE '%\\_\\_next' ESCAPE '\\'",
       )
-      .all() as { name: string }[]
+      .all()) as { name: string }[]
   ).map((r) => r.name);
 
 describe("REQ-2200: each projection rebuilds identical from the log alone", () => {
   it("rebuilds every table after it is deleted, the same in every column but computed_at", async () => {
-    const w = world();
+    const w = await world();
     const report: string[] = [];
     for (const p of PROJECTIONS) {
-      const before = rows(w.db, p.table);
+      const before = await rows(w.db, p.table);
       const count = (
-        w.db.prepare(`SELECT count(*) AS n FROM ${p.table}`).get() as {
+        (await w.db.prepare(`SELECT count(*) AS n FROM ${p.table}`).get()) as {
           n: number;
         }
       ).n;
-      w.db.exec(`DROP TABLE ${p.table}`);
+      await w.db.exec(`DROP TABLE ${p.table}`);
       const result = await recompute(w.db, { computedAt: "later" });
-      expect(rows(w.db, p.table)).toEqual(before);
+      expect(await rows(w.db, p.table)).toEqual(before);
       report.push(`${p.table} ${count} rows`);
       expect(result.tables).toContain(p.table);
     }
-    expect(shadowsLeft(w.db)).toEqual([]);
+    expect(await shadowsLeft(w.db)).toEqual([]);
     console.log(`rebuild: ${w.events} events; ${report.join(", ")}`);
   });
 });
 
 describe("REQ-2242: the seven service tables stay as they were", () => {
   it("leaves the row counts and a hash of each unchanged", async () => {
-    const w = world();
-    const before = services(w.db);
+    const w = await world();
+    const before = await services(w.db);
     expect(before["blobs"]).not.toBe("absent");
     expect(before["devices"]).not.toBe("absent");
     await recompute(w.db, { computedAt: "later" });
-    expect(services(w.db)).toEqual(before);
+    expect(await services(w.db)).toEqual(before);
     console.log(`services: ${JSON.stringify(before)}`);
   });
 });
 
 describe("appends go on while a recompute runs", () => {
   it("waits no append beyond one chunk, and the swapped tables hold the appended events", async () => {
-    const w = world();
+    const w = await world();
     let done = false;
     let worst = 0;
     let appended = 0;
-    const running = recompute(w.db, { computedAt: "later", chunk: 200 }).then(
-      (r) => {
-        done = true;
-        return r;
-      },
-    );
+    const running = recompute(w.db, {
+      computedAt: "later",
+      chunk: 200,
+    }).then((r) => {
+      done = true;
+      return r;
+    });
     while (!done) {
       const t0 = performance.now();
-      appendEvents(w.db, [
+      await appendEvents(w.db, [
         {
           type: "item_shown",
           v: 1,
@@ -183,11 +192,11 @@ describe("appends go on while a recompute runs", () => {
     }
     const result = await running;
     const shown = (
-      w.db
+      (await w.db
         .prepare(
           "SELECT count(*) AS n FROM items_view WHERE item_id LIKE 'during-%'",
         )
-        .get() as { n: number }
+        .get()) as { n: number }
     ).n;
     expect(appended).toBeGreaterThan(1);
     expect(shown).toBe(appended);
@@ -200,14 +209,14 @@ describe("appends go on while a recompute runs", () => {
 
 describe("projection_diverged", () => {
   it("names the table and the first differing row, and nothing on a clean database", async () => {
-    const w = world();
-    expect(checkProjections(w.db)).toEqual([]);
-    w.db
+    const w = await world();
+    expect(await checkProjections(w.db)).toEqual([]);
+    await w.db
       .prepare(
         "UPDATE attempts_view SET verdict = 'wrong' WHERE item_id = 'item-7-3-4' AND attempt_no = 1",
       )
       .run();
-    const found = checkProjections(w.db);
+    const found = await checkProjections(w.db);
     expect(found).toHaveLength(1);
     expect(found[0]?.check).toBe("projection_diverged");
     expect(found[0]?.table).toBe("attempts_view");
@@ -222,9 +231,13 @@ describe("projection_diverged", () => {
 
 describe("recompute_failed", () => {
   it("keeps the old projections, leaves no shadow table, and tells the parent the version and time", async () => {
-    const w = world();
+    const w = await world();
     const before = Object.fromEntries(
-      PROJECTIONS.map((p) => [p.table, rows(w.db, p.table)]),
+      await Promise.all(
+        PROJECTIONS.map(
+          async (p) => [p.table, await rows(w.db, p.table)] as const,
+        ),
+      ),
     );
     const errors = vi
       .spyOn(console, "error")
@@ -241,8 +254,8 @@ describe("recompute_failed", () => {
       }),
     ).rejects.toThrow("disk full");
     for (const p of PROJECTIONS)
-      expect(rows(w.db, p.table)).toEqual(before[p.table]);
-    expect(shadowsLeft(w.db)).toEqual([]);
+      expect(await rows(w.db, p.table)).toEqual(before[p.table]);
+    expect(await shadowsLeft(w.db)).toEqual([]);
     expect(PROJECTIONS.map((p) => shadowOf(p.table))).not.toContain(undefined);
     expect(readNotices(w.dir).recompute_failed).toEqual({
       at: "2026-09-27T21:00:00.000Z",
@@ -262,7 +275,7 @@ describe("recompute_failed", () => {
 
 describe("recompute_slow and log_large", () => {
   it("raises recompute_slow once when a recompute passes the budget", async () => {
-    const w = world();
+    const w = await world();
     const errors = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
@@ -279,15 +292,15 @@ describe("recompute_slow and log_large", () => {
     errors.mockRestore();
   });
 
-  it("raises log_large once when the log passes the limit", () => {
-    const w = world();
+  it("raises log_large once when the log passes the limit", async () => {
+    const w = await world();
     const errors = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
-    expect(checkLogSize(w.db, w.dir, Date.now)).toBe(false);
+    expect(await checkLogSize(w.db, w.dir, Date.now)).toBe(false);
     expect(readNotices(w.dir).log_large ?? null).toBeNull();
-    expect(checkLogSize(w.db, w.dir, Date.now, 1024)).toBe(true);
-    expect(checkLogSize(w.db, w.dir, Date.now, 1024)).toBe(false);
+    expect(await checkLogSize(w.db, w.dir, Date.now, 1024)).toBe(true);
+    expect(await checkLogSize(w.db, w.dir, Date.now, 1024)).toBe(false);
     expect(readNotices(w.dir).log_large?.bytes).toBeGreaterThan(1024);
     errors.mockRestore();
   });

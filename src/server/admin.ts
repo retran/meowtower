@@ -80,12 +80,12 @@ const playRow = (r: PlayRow): string =>
     .join("")}</tr>`;
 
 /** The admin page, with the parent's notices above the figures. */
-export function adminPage(
+export async function adminPage(
   db: Db,
   now: Date,
   notices: readonly string[],
-): string {
-  const d = dashboard(db, now);
+): Promise<string> {
+  const d = await dashboard(db, now);
   const share =
     d.answered === 0 ? 0 : Math.round((d.correct / d.answered) * 100);
   const frameRows = d.frames.map(
@@ -128,7 +128,7 @@ export function adminPage(
         t("parent.admin.verdict"),
         t("parent.admin.hints"),
       ],
-      playAudit(db, ROWS).map(playRow),
+      (await playAudit(db, ROWS)).map(playRow),
     ) +
     `<h2 id="llm">${escape(t("parent.admin.llmAudit"))}</h2>` +
     table(
@@ -143,7 +143,7 @@ export function adminPage(
         t("parent.admin.latency"),
         t("parent.admin.body"),
       ],
-      llmAudit(db, ROWS).map(llmRow),
+      (await llmAudit(db, ROWS)).map(llmRow),
     ) +
     `</main></body></html>`
   );

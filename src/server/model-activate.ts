@@ -30,14 +30,14 @@ export interface Activation {
 }
 
 /** Evaluates the candidate file text and writes `model_activated` when it passes. */
-export function activateModel(
+export async function activateModel(
   db: Db,
   candidateText: string,
   context: ActivationContext,
-): Activation {
+): Promise<Activation> {
   const candidate = loadParams(candidateText);
   const active = context.active();
-  const log = [...allEvents(db)];
+  const log = [...(await allEvents(db))];
   const figures = (p: ModelParamsT): Figures =>
     evaluateModel(context.graph, log, p, context.zone);
   const candidateFigures = figures(candidate);
@@ -65,7 +65,7 @@ export function activateModel(
     candidateFigures,
   );
   if (!decision.accepted) return result(false, decision.reasons, activeFigures);
-  appendEvents(db, [
+  await appendEvents(db, [
     {
       type: "model_activated",
       v: 1,

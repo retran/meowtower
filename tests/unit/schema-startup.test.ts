@@ -13,7 +13,7 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 it("exits with event_schema_unknown, naming the type and version", async () => {
   const path = join(dir, "meowtower.sqlite");
-  openDatabase(path).close();
+  await (await openDatabase(path)).close();
   // Bypass appendEvents, as a log written by another version of the code would.
   const raw = new Database(path);
   raw

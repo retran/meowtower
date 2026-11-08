@@ -8,7 +8,7 @@ import { takeSnapshot } from "../../src/server/snapshots.js";
 const dir = process.argv[2] ?? "/tmp/meowtower-perf";
 mkdirSync(dir, { recursive: true });
 const live = `${dir}/live.sqlite`;
-const db = openDatabase(live);
+const db = await openDatabase(live);
 const batch = Array.from({ length: 1000 }, (_, i) => ({
   type: "attempt_submitted",
   v: 0,
@@ -18,11 +18,11 @@ const batch = Array.from({ length: 1000 }, (_, i) => ({
 const size = (): number =>
   statSync(live).size +
   (statSync(`${live}-wal`, { throwIfNoEntry: false })?.size ?? 0);
-while (size() < 1024 ** 3) appendEvents(db, batch);
-db.pragma("wal_checkpoint(TRUNCATE)");
+while (size() < 1024 ** 3) await appendEvents(db, batch);
+await db.pragma("wal_checkpoint(TRUNCATE)");
 console.log(
   `live database: ${(statSync(live).size / 1024 ** 3).toFixed(2)} GB`,
 );
 const taken = await takeSnapshot(live, `${dir}/snaps`, new Date());
 console.log(`snapshot of 1 GB: ${taken.ms} ms`);
-db.close();
+await db.close();

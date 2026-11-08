@@ -25,10 +25,10 @@ const PairIn = z
 
 export function mountPairing(app: Hono, db: Db, now: () => number): void {
   app.use("/api/*", async (c, next) => {
-    if (c.req.path === "/api/pair") return next();
-    const found = deviceForToken(db, getCookie(c, DEVICE_COOKIE));
+    if (c.req.path === "/api/pair") return await next();
+    const found = await deviceForToken(db, getCookie(c, DEVICE_COOKIE));
     if (!found.ok) return c.json({ error: found.error }, 401);
-    return next();
+    return await next();
   });
 
   app.post("/api/pair", async (c) => {
@@ -36,9 +36,9 @@ export function mountPairing(app: Hono, db: Db, now: () => number): void {
     // A malformed code counts as a wrong one, and a lockout refuses even a
     // correct code (REQ-2522).
     let token: string | null = null;
-    const tried = attempt(db, "pairing", now(), () => {
+    const tried = await attempt(db, "pairing", now(), async () => {
       if (!body.success) return false;
-      token = pairDevice(db, body.data.code, body.data.kind, now());
+      token = await pairDevice(db, body.data.code, body.data.kind, now());
       return token !== null;
     });
     if (tried.result === "locked")
@@ -62,21 +62,21 @@ export function mountPairing(app: Hono, db: Db, now: () => number): void {
 
   // The device's interface: the pairing request set it from the device, and
   // the settings switch it; it holds on this device until switched (REQ-2538).
-  const self = (token: string | undefined): string | null => {
-    const found = deviceForToken(db, token);
+  const self = async (token: string | undefined): Promise<string | null> => {
+    const found = await deviceForToken(db, token);
     return found.ok ? found.deviceId : null;
   };
-  app.get("/api/device", (c) => {
-    const id = self(getCookie(c, DEVICE_COOKIE));
+  app.get("/api/device", async (c) => {
+    const id = await self(getCookie(c, DEVICE_COOKIE));
     if (!id) return c.json({ error: "device_token_missing" }, 401);
-    return c.json({ kind: deviceInterface(db, id) });
+    return c.json({ kind: await deviceInterface(db, id) });
   });
   app.put("/api/device", async (c) => {
-    const id = self(getCookie(c, DEVICE_COOKIE));
+    const id = await self(getCookie(c, DEVICE_COOKIE));
     if (!id) return c.json({ error: "device_token_missing" }, 401);
     const body = DeviceIn.safeParse(await c.req.json().catch(() => null));
     if (!body.success) return c.json({ error: "bad_request" }, 400);
-    setDeviceInterface(db, id, body.data.kind);
+    await setDeviceInterface(db, id, body.data.kind);
     return c.json({ kind: body.data.kind });
   });
 }

@@ -10,7 +10,7 @@ import { mountShell } from "./shell.js";
 import { createStream, type Stream } from "./stream.js";
 import { raise, writeSucceeded } from "./failures.js";
 
-export function createApp({
+export async function createApp({
   db,
   now = Date.now,
   stream = createStream(),
@@ -31,7 +31,7 @@ export function createApp({
   tasks?: "standin" | "registry";
   /** The live story frames (ADR-3100); absent while no model is configured. */
   frames?: FrameQueue;
-}): Hono {
+}): Promise<Hono> {
   const app = new Hono();
   // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
   const outgoing = createOutgoing(
@@ -55,7 +55,7 @@ export function createApp({
     if (c.req.method !== "GET" && c.res.status < 500) writeSucceeded();
   });
   mountPairing(app, db, now);
-  mountParentRoom(app, db, now);
+  await mountParentRoom(app, db, now);
   app.get("/health", (c) =>
     isOpen(db)
       ? c.json({ status: "ok", database: "ok" })

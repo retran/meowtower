@@ -10,9 +10,9 @@ import { writeSyntheticLog } from "../helpers/synthetic-log.js";
 const dir = process.argv[2] ?? "/tmp/meowtower-perf-recompute";
 rmSync(dir, { recursive: true, force: true });
 mkdirSync(dir, { recursive: true });
-const db = openDatabase(`${dir}/live.sqlite`);
+const db = await openDatabase(`${dir}/live.sqlite`);
 const t0 = performance.now();
-const events = writeSyntheticLog(db, {
+const events = await writeSyntheticLog(db, {
   days: 365,
   tasksPerDay: 155,
   seed: 2026,
@@ -23,15 +23,15 @@ const wrote = performance.now() - t0;
 let done = false;
 let worst = 0;
 let appended = 0;
-const running = recompute(db, { computedAt: new Date().toISOString() }).then(
-  (r) => {
-    done = true;
-    return r;
-  },
-);
+const running = await recompute(db, {
+  computedAt: new Date().toISOString(),
+}).then((r) => {
+  done = true;
+  return r;
+});
 while (!done) {
   const a = performance.now();
-  appendEvents(db, [
+  await appendEvents(db, [
     {
       type: "session_started",
       v: 1,
@@ -48,5 +48,5 @@ const result = await running;
 console.log(
   `recompute-year: ${events} events written in ${(wrote / 1000).toFixed(1)} s; full recompute of ${result.tables.length} tables in ${result.ms} ms against the 60,000 ms budget; ${appended} appends during it, the longest waiting ${worst.toFixed(2)} ms`,
 );
-db.close();
+await db.close();
 process.exit(result.ms <= 60_000 ? 0 : 1);

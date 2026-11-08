@@ -56,10 +56,14 @@ export function takeSnapshot(
 }
 
 /** A snapshot taken on the given connection, for the migration hook at start-up. */
-export function snapshotNow(db: Db, dir: string, at: Date): string {
+export async function snapshotNow(
+  db: Db,
+  dir: string,
+  at: Date,
+): Promise<string> {
   mkdirSync(dir, { recursive: true });
   const file = join(dir, snapshotName(at));
-  db.prepare("VACUUM INTO ?").run(file);
+  await db.prepare("VACUUM INTO ?").run(file);
   return file;
 }
 

@@ -1,12 +1,10 @@
 // resume_snapshot (SPC-0030, SPC-0020): where an adventure's play stands, kept
 // per adventure and folded from its events, so the resume reads one row and
 // `resumeFromLog` derives the same point from the log alone (REQ-0206).
-import type Database from "better-sqlite3";
 import type { StoredEvent } from "../events/read.js";
 import type { Projection } from "./registry.js";
 import { prepared } from "./statements.js";
-
-type Db = Database.Database;
+import type { Db } from "../../server/db/index.js";
 
 export interface ResumeView {
   locale: string;
@@ -200,16 +198,21 @@ const resumeSnapshot: Projection = {
     changed_seq INTEGER NOT NULL,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string, table = "resume_snapshot") {
+  async apply(
+    db: Db,
+    e: StoredEvent,
+    computedAt: string,
+    table = "resume_snapshot",
+  ) {
     if (!e.adventureId) return;
-    const row = prepared(
+    const row = (await prepared(
       db,
       `SELECT point FROM ${table} WHERE adventure_id = ?`,
-    ).get(e.adventureId) as { point: string } | undefined;
+    ).get(e.adventureId)) as { point: string } | undefined;
     const before = row ? (JSON.parse(row.point) as ResumePoint) : null;
     const after = foldResume(before, e);
     if (!after) return;
-    prepared(
+    await prepared(
       db,
       `INSERT INTO ${table} (adventure_id, point, changed_seq, computed_at)
        VALUES (?, ?, ?, ?)

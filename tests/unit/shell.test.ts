@@ -7,10 +7,10 @@ import { openDatabase } from "../../src/server/database.js";
 import { t } from "../../src/shared/i18n.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-"));
-const db = openDatabase(join(dir, "meowtower.sqlite"));
-const app = createApp({ db });
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "meowtower.sqlite"));
+const app = await createApp({ db });
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 

@@ -13,13 +13,17 @@ import {
 } from "../../src/shared/events.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-schemas-"));
-const db = openDatabase(join(dir, "meowtower.sqlite"));
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "meowtower.sqlite"));
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
-const count = (): number =>
-  (db.prepare("SELECT count(*) AS n FROM events").get() as { n: number }).n;
+const count = async (): Promise<number> =>
+  (
+    (await db.prepare("SELECT count(*) AS n FROM events").get()) as {
+      n: number;
+    }
+  ).n;
 
 const valid: Record<string, Record<string, unknown>> = {
   item_shown: {
@@ -144,16 +148,16 @@ const without = (o: object, key: string): Record<string, unknown> =>
 const input = valid["attempt_submitted"]?.["input"] as object;
 const view = valid["item_shown"]?.["view"] as object;
 
-function append(type: string, payload: unknown): void {
-  appendEvents(db, [{ type, v: 1, payload, origin: "server" }]);
+async function append(type: string, payload: unknown): Promise<void> {
+  await appendEvents(db, [{ type, v: 1, payload, origin: "server" }]);
 }
 
 describe("each schema accepts a payload with every required fact", () => {
   for (const [type, payload] of Object.entries(valid)) {
-    it(type, () => {
-      const before = count();
-      append(type, payload);
-      expect(count()).toBe(before + 1);
+    it(type, async () => {
+      const before = await count();
+      await append(type, payload);
+      expect(await count()).toBe(before + 1);
     });
   }
 });
@@ -161,43 +165,43 @@ describe("each schema accepts a payload with every required fact", () => {
 describe("a payload missing a required fact is refused and names the field", () => {
   for (const [type, payload] of Object.entries(valid)) {
     for (const field of Object.keys(payload)) {
-      it(`${type} without ${field}`, () => {
-        const before = count();
+      it(`${type} without ${field}`, async () => {
+        const before = await count();
         const rest = without(payload, field);
-        expect(() => append(type, rest)).toThrow(EventInvalid);
-        expect(() => append(type, rest)).toThrow(field);
-        expect(count()).toBe(before);
+        await expect(append(type, rest)).rejects.toThrow(EventInvalid);
+        await expect(append(type, rest)).rejects.toThrow(field);
+        expect(await count()).toBe(before);
       });
     }
   }
   for (const part of Object.keys(input)) {
-    it(`attempt_submitted without input.${part}`, () => {
-      expect(() =>
+    it(`attempt_submitted without input.${part}`, async () => {
+      await expect(
         append("attempt_submitted", {
           ...valid["attempt_submitted"],
           input: without(input, part),
         }),
-      ).toThrow(`input.${part}`);
+      ).rejects.toThrow(`input.${part}`);
     });
   }
-  it("item_shown whose view lacks its locale", () => {
-    expect(() =>
+  it("item_shown whose view lacks its locale", async () => {
+    await expect(
       append("item_shown", {
         ...valid["item_shown"],
         view: without(view, "locale"),
       }),
-    ).toThrow("view.locale");
+    ).rejects.toThrow("view.locale");
   });
 });
 
 describe("REQ-2206: a second attempt links the task it follows", () => {
-  it("refuses a second attempt without parentItemId", () => {
-    expect(() =>
+  it("refuses a second attempt without parentItemId", async () => {
+    await expect(
       append("item_shown", { ...valid["item_shown"], attemptNo: 2 }),
-    ).toThrow("parentItemId");
+    ).rejects.toThrow("parentItemId");
   });
-  it("accepts a second attempt with parentItemId", () => {
-    append("item_shown", {
+  it("accepts a second attempt with parentItemId", async () => {
+    await append("item_shown", {
       ...valid["item_shown"],
       itemId: "i-2",
       attemptNo: 2,
@@ -207,20 +211,20 @@ describe("REQ-2206: a second attempt links the task it follows", () => {
 });
 
 describe("REQ-2208: the explanation's dwell time is logged, never its text", () => {
-  it("refuses an explanation_shown carrying text", () => {
-    expect(() =>
+  it("refuses an explanation_shown carrying text", async () => {
+    await expect(
       append("explanation_shown", {
         ...valid["explanation_shown"],
         text: "Сначала…",
       }),
-    ).toThrow(EventInvalid);
+    ).rejects.toThrow(EventInvalid);
   });
 });
 
 describe("a batch is written whole or not at all", () => {
-  it("writes nothing when one event of the batch is invalid", () => {
-    const before = count();
-    expect(() =>
+  it("writes nothing when one event of the batch is invalid", async () => {
+    const before = await count();
+    await expect(
       appendEvents(db, [
         {
           type: "hint_shown",
@@ -230,11 +234,11 @@ describe("a batch is written whole or not at all", () => {
         },
         { type: "hint_shown", v: 1, payload: {}, origin: "server" },
       ]),
-    ).toThrow(EventInvalid);
-    expect(count()).toBe(before);
+    ).rejects.toThrow(EventInvalid);
+    expect(await count()).toBe(before);
   });
-  it("refuses a type or version with no schema", () => {
-    expect(() => append("made_up", {})).toThrow("event_schema_unknown");
+  it("refuses a type or version with no schema", async () => {
+    await expect(append("made_up", {})).rejects.toThrow("event_schema_unknown");
   });
 });
 
@@ -247,19 +251,21 @@ describe("the field dictionary", () => {
 });
 
 describe("REQ-2214: her free text is logged only in its cleaned form", () => {
-  it("free_text has no field for the text before cleaning", () => {
-    expect(() =>
+  it("free_text has no field for the text before cleaning", async () => {
+    await expect(
       append("free_text", {
         ...valid["free_text"],
         raw: "text before cleaning",
       }),
-    ).toThrow(EventInvalid);
+    ).rejects.toThrow(EventInvalid);
   });
 });
 
 describe("REQ-2222: every model call points to its llm_log row", () => {
-  it("refuses llm_call without llmLogId", () => {
-    expect(() => append("llm_call", { role: "master" })).toThrow("llmLogId");
+  it("refuses llm_call without llmLogId", async () => {
+    await expect(append("llm_call", { role: "master" })).rejects.toThrow(
+      "llmLogId",
+    );
   });
 });
 
@@ -271,8 +277,8 @@ describe("REQ-2220: parent actions outside a session keep the device and both ti
     "parent_tag_removed",
     "settings_changed",
   ]) {
-    it(type, () => {
-      const [appended] = appendEvents(db, [
+    it(type, async () => {
+      const [appended] = await appendEvents(db, [
         {
           type,
           v: 1,
@@ -280,7 +286,7 @@ describe("REQ-2220: parent actions outside a session keep the device and both ti
           origin: { deviceId: "parent-mac", clientMs: 1000 },
         },
       ]);
-      const row = db
+      const row = await db
         .prepare(
           "SELECT device_id, ts, client_ms, session_id, adventure_id FROM events WHERE seq = ?",
         )

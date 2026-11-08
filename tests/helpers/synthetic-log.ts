@@ -38,20 +38,20 @@ export interface SyntheticLog {
 }
 
 /** Writes the log and returns how many events it appended. */
-export function writeSyntheticLog(
+export async function writeSyntheticLog(
   db: Db,
   { days, tasksPerDay, seed, batch = 200, explanations = false }: SyntheticLog,
-): number {
+): Promise<number> {
   const r = random(seed);
   let pending: NewEvent[] = [];
   let written = 0;
-  const push = (e: NewEvent): void => {
+  const push = async (e: NewEvent): Promise<void> => {
     pending.push(e);
-    if (pending.length >= batch) flush();
+    if (pending.length >= batch) await flush();
   };
-  const flush = (): void => {
+  const flush = async (): Promise<void> => {
     if (!pending.length) return;
-    appendEvents(db, pending);
+    await appendEvents(db, pending);
     written += pending.length;
     pending = [];
   };
@@ -62,14 +62,14 @@ export function writeSyntheticLog(
   for (let day = 0; day < days; day++) {
     if (!adventureId) {
       adventureId = `adv-${seed}-${++adventure}`;
-      push({
+      await push({
         type: "adventure_planned",
         v: 1,
         payload: { adventureId },
         origin,
         adventureId,
       });
-      push({
+      await push({
         type: "adventure_started",
         v: 1,
         payload: { adventureId },
@@ -77,7 +77,7 @@ export function writeSyntheticLog(
         adventureId,
       });
     } else {
-      push({
+      await push({
         type: "adventure_resumed",
         v: 1,
         payload: { pausedMs: 20 * 60 * 60 * 1000 },
@@ -86,7 +86,7 @@ export function writeSyntheticLog(
       });
     }
     const sessionId = `ses-${seed}-${day}`;
-    push({
+    await push({
       type: "session_started",
       v: 1,
       payload: { sessionId, mode: "daily" },
@@ -99,7 +99,7 @@ export function writeSyntheticLog(
       const a = 1 + Math.floor(r() * 9);
       const b = 1 + Math.floor(r() * 9);
       const envelope = { origin, sessionId, adventureId };
-      push({
+      await push({
         type: "item_shown",
         v: 1,
         payload: {
@@ -126,13 +126,13 @@ export function writeSyntheticLog(
       });
       const hinted = r() < 0.1;
       if (hinted) {
-        push({
+        await push({
           type: "hint_shown",
           v: 1,
           payload: { itemId, attemptNo: 1, level: 1 },
           ...envelope,
         });
-        push({
+        await push({
           type: "thread_spent",
           v: 1,
           payload: { itemId, reason: "hint", count: 1 },
@@ -140,7 +140,7 @@ export function writeSyntheticLog(
         });
       }
       const right = r() < 0.75;
-      push({
+      await push({
         type: "attempt_submitted",
         v: 1,
         payload: {
@@ -156,7 +156,7 @@ export function writeSyntheticLog(
         },
         ...envelope,
       });
-      push({
+      await push({
         type: "verdict",
         v: 1,
         payload: {
@@ -171,19 +171,19 @@ export function writeSyntheticLog(
         ...envelope,
       });
       if (explanations && !right && r() < 0.25) {
-        push({
+        await push({
           type: "thread_spent",
           v: 1,
           payload: { itemId, reason: "explanation", count: 1 },
           ...envelope,
         });
-        push({
+        await push({
           type: "explanation_bought",
           v: 1,
           payload: { itemId, attemptNo: 1 },
           ...envelope,
         });
-        push({
+        await push({
           type: "explanation_shown",
           v: 1,
           payload: {
@@ -196,7 +196,7 @@ export function writeSyntheticLog(
         });
       }
       if (r() < 0.01)
-        push({
+        await push({
           type: "item_flagged",
           v: 1,
           payload: { itemId, note: null },
@@ -204,7 +204,7 @@ export function writeSyntheticLog(
         });
       tasksInAdventure++;
     }
-    push({
+    await push({
       type: "session_ended",
       v: 1,
       payload: { sessionId, reason: "leave" },
@@ -214,7 +214,7 @@ export function writeSyntheticLog(
     });
     // An adventure ends after about 60 tasks; otherwise it pauses overnight.
     if (tasksInAdventure >= 60) {
-      push({
+      await push({
         type: "adventure_completed",
         v: 1,
         payload: { adventureId },
@@ -224,7 +224,7 @@ export function writeSyntheticLog(
       adventureId = "";
       tasksInAdventure = 0;
     } else {
-      push({
+      await push({
         type: "adventure_paused",
         v: 1,
         payload: { reason: "leave" },
@@ -233,6 +233,6 @@ export function writeSyntheticLog(
       });
     }
   }
-  flush();
+  await flush();
   return written;
 }

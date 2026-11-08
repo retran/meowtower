@@ -2,12 +2,10 @@
 // secrets the three-day rule queued to return later. Both only fold what the
 // log holds, so a rebuild gives the same rows; ADR-0140's epic gives the
 // inventory its rules for forging, spending and returning queued secrets.
-import type Database from "better-sqlite3";
 import type { StoredEvent } from "../events/read.js";
 import type { Projection } from "./registry.js";
 import { prepared } from "./statements.js";
-
-type Db = Database.Database;
+import type { Db } from "../../server/db/index.js";
 
 /** One row per grant, never removed: a wrap-up keeps everything she earned (REQ-0230). */
 const inventory: Projection = {
@@ -24,7 +22,7 @@ const inventory: Projection = {
     source TEXT NOT NULL,
     computed_at TEXT NOT NULL
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string, table = "inventory") {
+  async apply(db: Db, e: StoredEvent, computedAt: string, table = "inventory") {
     if (e.type !== "reward_granted") return;
     const p = e.payload as {
       rewardId: string;
@@ -32,7 +30,7 @@ const inventory: Projection = {
       amount: number;
       source: string;
     };
-    prepared(
+    await prepared(
       db,
       `INSERT INTO ${table} (seq, adventure_id, reward_id, kind, amount, source, computed_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -62,11 +60,16 @@ const rewardQueue: Projection = {
     computed_at TEXT NOT NULL,
     PRIMARY KEY (adventure_id, secret_id)
   ) STRICT`,
-  apply(db: Db, e: StoredEvent, computedAt: string, table = "reward_queue") {
+  async apply(
+    db: Db,
+    e: StoredEvent,
+    computedAt: string,
+    table = "reward_queue",
+  ) {
     if (e.type !== "adventure_wrapped_up") return;
     const p = e.payload as { adventureId: string; unopenedSecrets: string[] };
     for (const secret of p.unopenedSecrets)
-      prepared(
+      await prepared(
         db,
         `INSERT INTO ${table} (adventure_id, secret_id, queued_seq, computed_at)
          VALUES (?, ?, ?, ?)

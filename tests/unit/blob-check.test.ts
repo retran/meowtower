@@ -10,25 +10,25 @@ import { webp } from "../helpers/webp.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-blobcheck-"));
 const blobs = join(dir, "blobs");
-const db = openDatabase(join(dir, "meowtower.sqlite"));
-afterAll(() => {
-  db.close();
+const db = await openDatabase(join(dir, "meowtower.sqlite"));
+afterAll(async () => {
+  await db.close();
   rmSync(dir, { recursive: true, force: true });
 });
 const ctx = { itemId: "i-9", attemptNo: 1 as const, origin: "server" as const };
 
 describe("verifyBlobs", () => {
-  it("passes when every file hashes to its name and every event's file exists", () => {
-    storeScratch(db, blobs, webp("kept"), ctx);
-    expect(verifyBlobs(db, blobs)).toEqual([]);
+  it("passes when every file hashes to its name and every event's file exists", async () => {
+    await storeScratch(db, blobs, webp("kept"), ctx);
+    expect(await verifyBlobs(db, blobs)).toEqual([]);
   });
 
-  it("reports blob_changed for a file whose bytes changed", () => {
-    const hash = storeScratch(db, blobs, webp("tampered"), ctx);
+  it("reports blob_changed for a file whose bytes changed", async () => {
+    const hash = await storeScratch(db, blobs, webp("tampered"), ctx);
     // Tampering from outside the server must lift the read-only mode first.
     chmodSync(join(blobs, `${hash}.webp`), 0o644);
     writeFileSync(join(blobs, `${hash}.webp`), webp("something else"));
-    expect(verifyBlobs(db, blobs)).toEqual([
+    expect(await verifyBlobs(db, blobs)).toEqual([
       { failure: "blob_changed", file: `${hash}.webp` },
     ]);
   });
