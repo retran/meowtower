@@ -6,9 +6,11 @@
 import Database from "better-sqlite3";
 import { copyEvents, eventCount, logHash } from "../engine/events/transfer.js";
 import { checkProjections, recompute } from "../engine/recompute.js";
-import { PROJECTIONS } from "../engine/projections/registry.js";
+import { PROJECTIONS, useVersions } from "../engine/projections/registry.js";
 import { type Db, SqliteDb } from "./db/index.js";
 import { openProfile } from "./database.js";
+import { startKnowledge } from "./knowledge-start.js";
+import { readContentVersions } from "./versions.js";
 
 const BATCH = 500;
 
@@ -85,7 +87,11 @@ async function derivedRows(db: Db, table: string): Promise<string> {
  * dialect, rebuilds the target's projections from the copied log, and compares the two: the event
  * count, one hash over the log, the projections against a fresh rebuild, and each derived table.
  */
-export async function transfer(source: Db, target: Db): Promise<MoveReport> {
+export async function transfer(
+  source: Db,
+  target: Db,
+  beforeRebuild?: () => Promise<void>,
+): Promise<MoveReport> {
   if ((await eventCount(target)) > 0)
     throw new MoveRefused("the target already holds events");
   const events = await eventCount(source);
@@ -95,6 +101,7 @@ export async function transfer(source: Db, target: Db): Promise<MoveReport> {
   for (const t of SERVICE_TABLES)
     tables[t] = await copyTable(source, target, t);
 
+  await beforeRebuild?.();
   await recompute(target, { computedAt: new Date().toISOString() });
 
   if ((await eventCount(target)) !== events)
@@ -108,6 +115,9 @@ export async function transfer(source: Db, target: Db): Promise<MoveReport> {
     );
   let derivedTables = 0;
   for (const p of PROJECTIONS) {
+    // The knowledge tables are computed by the model in use from the whole log, so the file's copy
+    // can be a pass behind; the target's are rebuilt, and checkProjections has compared them above.
+    if (p.class === "knowledge") continue;
     if (
       (await derivedRows(source, p.table)) !==
       (await derivedRows(target, p.table))
@@ -130,9 +140,13 @@ export async function moveToPostgres(
   const source: Db = new SqliteDb(
     new Database(sqlitePath, { readonly: true, fileMustExist: true }),
   );
+  useVersions(readContentVersions());
   const target = await openProfile(url, schema);
   try {
-    return await transfer(source, target);
+    // The model starts after the copy, so the graph versions it stores meet the copied ones.
+    return await transfer(source, target, async () => {
+      await startKnowledge(target);
+    });
   } catch (err) {
     if (err instanceof MoveRefused && /already holds events/.test(err.message))
       throw new MoveRefused(`${schema} already holds events`);

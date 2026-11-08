@@ -7,6 +7,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { Worker } from "node:worker_threads";
 import type { Db } from "./database.js";
+import { snapshotProfileTo } from "./pg-backup.js";
 
 export const snapshotName = (at: Date): string =>
   `meowtower-${at
@@ -63,7 +64,8 @@ export async function snapshotNow(
 ): Promise<string> {
   mkdirSync(dir, { recursive: true });
   const file = join(dir, snapshotName(at));
-  await db.prepare("VACUUM INTO ?").run(file);
+  if (db.dialect === "postgres") await snapshotProfileTo(db, file);
+  else await db.prepare("VACUUM INTO ?").run(file);
   return file;
 }
 
