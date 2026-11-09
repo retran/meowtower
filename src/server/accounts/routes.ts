@@ -6,6 +6,10 @@ import type { Context, Hono } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
 import { openProfile } from "../database.js";
+import {
+  CODE_LIFETIME_MS as PAIRING_LIFETIME_MS,
+  issuePairingCode,
+} from "../devices.js";
 import type { Db } from "../db/index.js";
 import type { Mailer } from "./mailer.js";
 import {
@@ -171,6 +175,41 @@ export function mountAccounts(
         new Date(now()).toISOString(),
       );
     return c.json({ id, label: body.data.label }, 201);
+  });
+
+  // A pairing code for a child's device: the profile's own code, and a line in the accounts that
+  // names the profile, so the code finds it from any browser (REQ-8508).
+  app.post("/api/account/profiles/:id/pair-code", async (c) => {
+    const account = await signedIn(c);
+    if (account instanceof Response) return account;
+    const found = await ownedProfile(env.db, account.id, c.req.param("id"));
+    if (!found) return c.json({ error: "profile_unknown" }, 404);
+    const at = now();
+    const profile = await openProfile(env.url, found.schema);
+    try {
+      await env.db
+        .prepare("DELETE FROM device_codes WHERE issued_at_ms < ?")
+        .run(at - PAIRING_LIFETIME_MS);
+      for (let tries = 0; tries < 5; tries++) {
+        const code = await issuePairingCode(profile, at);
+        const taken = await env.db
+          .prepare("SELECT 1 FROM device_codes WHERE code = ?")
+          .get(code);
+        if (taken) continue;
+        await env.db
+          .prepare(
+            "INSERT INTO device_codes (code, profile_id, issued_at_ms) VALUES (?, ?, ?)",
+          )
+          .run(code, found.id, at);
+        return c.json({
+          code,
+          expiresAt: new Date(at + PAIRING_LIFETIME_MS).toISOString(),
+        });
+      }
+      return c.json({ error: "pairing_code_unavailable" }, 503);
+    } finally {
+      await profile.close();
+    }
   });
 
   app.get("/api/account/profiles/:id", async (c) => {

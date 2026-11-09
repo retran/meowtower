@@ -8,6 +8,7 @@ import { createApp } from "./app.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 import { logMailer } from "./accounts/mailer.js";
+import { createRoot } from "./accounts/router.js";
 import { openAccounts } from "./accounts/store.js";
 import { snapshotNow } from "./snapshots.js";
 import { snapshotProfile } from "./pg-backup.js";
@@ -163,28 +164,34 @@ const accounts = databaseUrl
       mailer: logMailer(),
     }
   : undefined;
-const game = serve({
-  fetch: (
-    await createApp({
-      db,
-      ...(accounts ? { accounts } : {}),
-      onSessionEnded,
-      sweepLeasesMs: 5000,
-      tasks:
-        process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry",
-      frames: {
-        prepare: async (task) => {
-          await live.current?.prepare(task);
-        },
-        ready: async (task, ms) => {
-          await live.current?.ready(task, ms);
-        },
-        take: async (task) => (await live.current?.take(task)) ?? null,
-      },
-    })
-  ).fetch,
-  port,
+const tasks =
+  process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry";
+const firstApp = await createApp({
+  db,
+  onSessionEnded,
+  sweepLeasesMs: 5000,
+  tasks,
+  frames: {
+    prepare: async (task) => {
+      await live.current?.prepare(task);
+    },
+    ready: async (task, ms) => {
+      await live.current?.ready(task, ms);
+    },
+    take: async (task) => (await live.current?.take(task)) ?? null,
+  },
 });
+// With accounts, a root app sends each request to the app of the profile its device belongs to
+// (ADR-3320). The profiles after the first have no live frames yet.
+const gameApp = accounts
+  ? createRoot({
+      first: firstApp,
+      accounts,
+      appFor: (d) => createApp({ db: d, sweepLeasesMs: 5000, tasks }),
+      now: Date.now,
+    })
+  : firstApp;
+const game = serve({ fetch: gameApp.fetch, port });
 const parent = serve({
   fetch: createParentApp({
     db,
