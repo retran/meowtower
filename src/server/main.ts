@@ -3,6 +3,7 @@ import { parentSettings } from "./parent-room.js";
 import { createFrameQueue, type FrameQueue } from "./frames/queue.js";
 import { ConfigInvalid, readConfig } from "./gateway/config.js";
 import { createGateway, verifyModels } from "./gateway/gateway.js";
+import { createLedger } from "./gateway/household.js";
 import { liveRoutes } from "./gateway/routes.js";
 import { createApp } from "./app.js";
 import { openDatabase, type Db } from "./database.js";
@@ -101,6 +102,18 @@ const onSessionEnded = async (): Promise<void> => {
       : {}),
   });
 };
+// The parents' accounts live beside the profiles in Postgres (ADR-3320); until a mail provider is
+// chosen, the sign-in code goes to the server's output.
+const databaseUrl = process.env["MEOWTOWER_DATABASE_URL"];
+const accounts = databaseUrl
+  ? {
+      db: await openAccounts(databaseUrl),
+      url: databaseUrl,
+      mailer: logMailer(),
+    }
+  : undefined;
+// One key serves every profile, so the gateway counts the month's spend of all of them (REQ-8510).
+const ledger = accounts ? createLedger(accounts.db, [db.name]) : undefined;
 // Live frames run once the roles are set (ADR-3100). A bad value or a missing model stops the start;
 // an unreachable service leaves frames off, and the check retries every 10 minutes.
 let frames: FrameQueue | undefined;
@@ -121,6 +134,7 @@ try {
     const queue = createFrameQueue({
       db,
       gateway: createGateway({
+        ...(ledger ? { household: ledger.forProfile(db.name) } : {}),
         db,
         config,
         routes,
@@ -154,16 +168,6 @@ try {
   process.exit(1);
 }
 const live: { current: FrameQueue | undefined } = { current: frames };
-// The parents' accounts live beside the profiles in Postgres (ADR-3320); until a mail provider is
-// chosen, the sign-in code goes to the server's output.
-const databaseUrl = process.env["MEOWTOWER_DATABASE_URL"];
-const accounts = databaseUrl
-  ? {
-      db: await openAccounts(databaseUrl),
-      url: databaseUrl,
-      mailer: logMailer(),
-    }
-  : undefined;
 const tasks =
   process.env["MEOWTOWER_TASKS"] === "standin" ? "standin" : "registry";
 const firstApp = await createApp({
