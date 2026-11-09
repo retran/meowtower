@@ -113,7 +113,7 @@ const accounts = databaseUrl
     }
   : undefined;
 // One key serves every profile, so the gateway counts the month's spend of all of them (REQ-8510).
-const ledger = accounts ? createLedger(accounts.db, [db.name]) : undefined;
+const ledger = accounts ? createLedger(accounts.db) : undefined;
 // Live frames run once the roles are set (ADR-3100). A bad value or a missing model stops the start;
 // an unreachable service leaves frames off, and the check retries every 10 minutes.
 let frames: FrameQueue | undefined;

@@ -2,8 +2,8 @@
 id: SPC-0480
 artifact: spec
 status: live
-revised: 2026-11-08
-states: [REQ-8500, REQ-8502, REQ-8504, REQ-8508, REQ-8510, REQ-8512]
+revised: 2026-11-09
+states: [REQ-8500, REQ-8502, REQ-8504, REQ-8508, REQ-8512, REQ-8514, REQ-8516, REQ-8518]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -22,7 +22,7 @@ Four tables in the schema `acct`, apart from every profile's: `accounts`, `profi
 
 Every child has a profile of her own, owned by one parent account (REQ-8500). An account is an email address the parent proved by entering a code sent to it (REQ-8502). A signed-in parent reaches the Parent Room of each profile her account owns and of no other (REQ-8504).
 
-A child's device opens one profile through a pairing code that the profile's Parent Room issued (REQ-8508). A signed-in parent asks `POST /api/account/profiles/<id>/pair-code`, which issues the profile's own code and records in `device_codes` which profile it belongs to; the device that enters it receives the cookie `meowtower_device=<profile id>.<token>`, and the cookie of the first profile keeps its bare token. A request goes to the app of the profile its cookie names, so a device reaches that profile and no other, and a prefix naming another profile finds no such token. A child holds no email, password or login (REQ-8512). The model spend of all profiles sums to no more than the play-key limit of the month (REQ-8510): a profile's gateway adds to its own spend what the other profiles logged since the start of the month and what their calls in flight have reserved, and refuses a call whose worst case does not fit in the rest.
+A child's device opens one profile through a pairing code that the profile's Parent Room issued (REQ-8508). A signed-in parent asks `POST /api/account/profiles/<id>/pair-code`, which issues the profile's own code and records in `device_codes` which profile it belongs to; the device that enters it receives the cookie `meowtower_device=<profile id>.<token>`, and the cookie of the first profile keeps its bare token. A request goes to the app of the profile its cookie names, so a device reaches that profile and no other, and a prefix naming another profile finds no such token. A child holds no email, password or login (REQ-8512). The model spend of the profiles of one account counts against a monthly budget of that account alone (REQ-8514): a profile's gateway adds to its own spend what the other profiles of its account logged since the start of the month and what their calls that are still running have reserved, and refuses a call whose worst case does not fit in the rest of the account's limit. The game records the spend of each account and of each of its profiles by month, in the `llm_log` of each profile, and `GET /api/account/spend` gives the signed-in account its total and the total of each profile (REQ-8516). The parent sets her account's monthly budget with `PUT /api/account/budget`, up to the limit of the play key (REQ-8518).
 
 ## Failure paths
 

@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-68 decisions in all: 54 approved, 14 done.
+69 decisions in all: 55 approved, 14 done.
 
 | Identifier                                                                                    | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -74,5 +74,6 @@
 | [ADR-3310](ADR-3310-all-game-data-lives-in-postgres-on-the-mac-one-schema-a-profile.md)       | All game data lives in Postgres on the Mac, one schema a profile, and the log's rules stay as ADR-0020 wrote them                                                                                                                                                                                                                                 | done     |
 | [ADR-3320](ADR-3320-a-parent-account-on-a-verified-email-owns-one-profile-a-child.md)         | A parent account on a verified email owns one profile a child, and a child's device opens a profile through a pairing and holds no login                                                                                                                                                                                                          | approved |
 | [ADR-3330](ADR-3330-the-game-is-an-installable-web-app-that-needs-its-server.md)              | The game is an installable web app that needs its server, and a device with no connection says so                                                                                                                                                                                                                                                 | done     |
+| [ADR-3340](ADR-3340-each-account-has-its-own-budget-and-spend-record.md)                      | Each account has a monthly budget and a spend record of its own, and the gateway counts only the profiles of one account                                                                                                                                                                                                                          | approved |
 
 <!-- /meow-flow index -->

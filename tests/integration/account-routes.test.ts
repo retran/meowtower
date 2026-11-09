@@ -54,6 +54,12 @@ const post = (path: string, body: object, cookie = "") =>
     headers: { "content-type": "application/json", cookie },
     body: JSON.stringify(body),
   });
+const put = (path: string, body: object, cookie = "") =>
+  app.request(path, {
+    method: "PUT",
+    headers: { "content-type": "application/json", cookie },
+    body: JSON.stringify(body),
+  });
 const get = (path: string, cookie = "") =>
   app.request(path, { headers: { cookie } });
 
@@ -169,5 +175,65 @@ oncePerRun("the parent's account routes", () => {
       (await post("/api/account/login", { email: "a@b.org", code: "12" }))
         .status,
     ).toBe(400);
+  });
+
+  it("gives an account its own spend by profile, and never another account's", async () => {
+    const mine = await signIn("spender@example.org");
+    const other = await signIn("quiet@example.org");
+    const made = await post("/api/account/profiles", { label: "Kid" }, mine);
+    const { id } = (await made.json()) as { id: string };
+    const theirs = await post(
+      "/api/account/profiles",
+      { label: "Other" },
+      other,
+    );
+    const row = (await accounts
+      .prepare("SELECT schema_name AS schema FROM profiles WHERE id = ?")
+      .get(id)) as { schema: string };
+    const otherRow = (await accounts
+      .prepare("SELECT schema_name AS schema FROM profiles WHERE id = ?")
+      .get(((await theirs.json()) as { id: string }).id)) as { schema: string };
+    created.push(row.schema, otherRow.schema);
+    const log = (schema: string, usd: number) =>
+      accounts
+        .prepare(
+          `INSERT INTO ${schema}.llm_log (at, role, route, model, tier, bucket, input_tokens, output_tokens,
+             cost_usd, latency_ms, outcome, request, response)
+           VALUES (?, 'r', 'anthropic', 'm', 'content', 'b', 1, 1, ?, 1, 'ok', '{}', '')`,
+        )
+        .run(new Date(clock).toISOString(), usd);
+    await log(row.schema, 1.25);
+    await log(otherRow.schema, 9);
+    const spend = (await (await get("/api/account/spend", mine)).json()) as {
+      usd: number;
+      limitUsd: number;
+      profiles: { id: string; usd: number }[];
+    };
+    expect(spend.usd).toBeCloseTo(1.25);
+    expect(spend.limitUsd).toBe(200);
+    expect(spend.profiles).toEqual([
+      expect.objectContaining({ id, usd: 1.25 }),
+    ]);
+    expect((await get("/api/account/spend")).status).toBe(401);
+  });
+
+  it("sets the account's budget up to the key's limit and no higher", async () => {
+    const cookie = await signIn("budget@example.org");
+    const set = await put("/api/account/budget", { monthUsd: 40 }, cookie);
+    expect(set.status).toBe(200);
+    expect(
+      (
+        (await (await get("/api/account/spend", cookie)).json()) as {
+          limitUsd: number;
+        }
+      ).limitUsd,
+    ).toBe(40);
+    for (const bad of [0, 0.5, 201, "40"])
+      expect(
+        (await put("/api/account/budget", { monthUsd: bad }, cookie)).status,
+      ).toBe(400);
+    expect((await put("/api/account/budget", { monthUsd: 40 })).status).toBe(
+      401,
+    );
   });
 });

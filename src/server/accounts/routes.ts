@@ -20,6 +20,7 @@ import {
   SESSION_IDLE_MS,
 } from "./session.js";
 import { type Account, checkCode, issueCode } from "./store.js";
+import { MONTH_LIMIT_USD } from "../gateway/gateway.js";
 
 /** What the account routes need: the accounts' database, the Postgres to open profiles in, a mailer. */
 export interface AccountsEnv {
@@ -37,6 +38,9 @@ export interface ProfileRow {
 const CodeIn = z.object({ email: z.string().max(254) }).strict();
 const LoginIn = z
   .object({ email: z.string().max(254), code: z.string().regex(/^\d{6}$/) })
+  .strict();
+const BudgetIn = z
+  .object({ monthUsd: z.number().min(1).max(MONTH_LIMIT_USD) })
   .strict();
 const ProfileIn = z
   .object({ label: z.string().trim().min(1).max(40) })
@@ -68,6 +72,14 @@ export async function ownedProfile(
     )
     .get(profileId, accountId)) as ProfileRow | undefined;
   return row ?? null;
+}
+
+/** The account's own monthly budget, or null where it kept the default. */
+async function accountLimit(db: Db, accountId: string): Promise<number | null> {
+  const row = (await db
+    .prepare("SELECT month_limit_usd AS limit FROM accounts WHERE id = ?")
+    .get(accountId)) as { limit: number | null } | undefined;
+  return row?.limit ?? null;
 }
 
 export function mountAccounts(
@@ -210,6 +222,42 @@ export function mountAccounts(
     } finally {
       await profile.close();
     }
+  });
+
+  // What the account spent this month, in all and per profile, from the profiles' own call logs
+  // (REQ-8516). It reads the schemas of the signed-in account's profiles and no others.
+  app.get("/api/account/spend", async (c) => {
+    const account = await signedIn(c);
+    if (account instanceof Response) return account;
+    const month = new Date(now()).toISOString().slice(0, 7);
+    const profiles = await profilesOf(env.db, account.id);
+    const byProfile: { id: string; label: string; usd: number }[] = [];
+    for (const p of profiles) {
+      const row = (await env.db
+        .prepare(
+          `SELECT COALESCE(SUM(cost_usd), 0) AS s FROM ${p.schema}.llm_log WHERE at >= ?`,
+        )
+        .get(`${month}-01`)) as { s: number };
+      byProfile.push({ id: p.id, label: p.label, usd: row.s });
+    }
+    const limit = (await accountLimit(env.db, account.id)) ?? MONTH_LIMIT_USD;
+    return c.json({
+      month,
+      usd: byProfile.reduce((sum, p) => sum + p.usd, 0),
+      limitUsd: limit,
+      profiles: byProfile,
+    });
+  });
+
+  app.put("/api/account/budget", async (c) => {
+    const account = await signedIn(c);
+    if (account instanceof Response) return account;
+    const body = BudgetIn.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "budget_invalid" }, 400);
+    await env.db
+      .prepare("UPDATE accounts SET month_limit_usd = ? WHERE id = ?")
+      .run(body.data.monthUsd, account.id);
+    return c.json({ limitUsd: body.data.monthUsd });
   });
 
   app.get("/api/account/profiles/:id", async (c) => {
