@@ -6,6 +6,7 @@ import type { Db } from "../database.js";
 import { ROLES, type GatewayConfig, type RoleName } from "./config.js";
 import { cleanEgress } from "./egress.js";
 import { costOf } from "./prices.js";
+import type { Household } from "./household.js";
 import type { RouteReply, Routes } from "./routes.js";
 
 export const ADVENTURE_LIMIT_USD = 5;
@@ -41,6 +42,7 @@ export function createGateway({
   now = Date.now,
   limits = { adventure: ADVENTURE_LIMIT_USD, month: MONTH_LIMIT_USD },
   names = [],
+  household,
 }: {
   db: Db;
   config: GatewayConfig;
@@ -49,6 +51,8 @@ export function createGateway({
   limits?: { readonly adventure: number; readonly month: number };
   /** The names the parent set, which the egress guard cleans. */
   names?: readonly string[];
+  /** The other profiles that share the month's limit (REQ-8510). */
+  household?: Household;
 }): Gateway {
   let monthSpent: string | null = null;
   const held = new Map<string, number>();
@@ -101,8 +105,12 @@ export function createGateway({
         tokensIn(system) + tokensIn(user),
         spec.maxTokens,
       );
+      const others = household
+        ? (await household.spentByOthers(month)) + household.heldByOthers()
+        : 0;
       const monthOver =
-        (await spentSince(month)) + heldOn("month") + worst > limits.month;
+        (await spentSince(month)) + heldOn("month") + others + worst >
+        limits.month;
       const row = async (
         outcome: string,
         reply: RouteReply | null,
@@ -160,6 +168,7 @@ export function createGateway({
       }
       hold(bucket, worst);
       hold("month", worst);
+      household?.hold(worst);
       try {
         const reply = await route.call(request);
         const finished = reply.stopReason !== "refusal" && reply.text !== "";
@@ -177,6 +186,7 @@ export function createGateway({
       } finally {
         hold(bucket, -worst);
         hold("month", -worst);
+        household?.hold(-worst);
       }
     },
   };
