@@ -7,6 +7,8 @@ import { liveRoutes } from "./gateway/routes.js";
 import { createApp } from "./app.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
+import { logMailer } from "./accounts/mailer.js";
+import { openAccounts } from "./accounts/store.js";
 import { snapshotNow } from "./snapshots.js";
 import { snapshotProfile } from "./pg-backup.js";
 import { backupAfterSession } from "./backups.js";
@@ -151,10 +153,21 @@ try {
   process.exit(1);
 }
 const live: { current: FrameQueue | undefined } = { current: frames };
+// The parents' accounts live beside the profiles in Postgres (ADR-3320); until a mail provider is
+// chosen, the sign-in code goes to the server's output.
+const databaseUrl = process.env["MEOWTOWER_DATABASE_URL"];
+const accounts = databaseUrl
+  ? {
+      db: await openAccounts(databaseUrl),
+      url: databaseUrl,
+      mailer: logMailer(),
+    }
+  : undefined;
 const game = serve({
   fetch: (
     await createApp({
       db,
+      ...(accounts ? { accounts } : {}),
       onSessionEnded,
       sweepLeasesMs: 5000,
       tasks:
@@ -187,6 +200,7 @@ const stop = (): void => {
   parent.close();
   game.close(async () => {
     await db.close();
+    await accounts?.db.close();
     process.exit(0);
   });
 };

@@ -16,7 +16,7 @@ This document covers the parent's account, the profiles it owns, sign-in, and ho
 
 ## Boundary
 
-Three tables in the schema `acct`, apart from every profile's: `accounts`, `profiles` and `sign_in_codes`. The routes sign a parent in with an email and a six-digit code, list her profiles, and open the Parent Room of one. A child's device holds a device cookie for one profile.
+Four tables in the schema `acct`, apart from every profile's: `accounts`, `profiles`, `sign_in_codes` and `account_sessions`. The routes under `/api/account/` need no paired device. A parent asks for a code, signs in with it (a cookie holds the session, kept as a hash and valid while used within 30 days), lists her profiles and adds one, which creates a schema with the game's tables. A profile of another account answers 404. The routes sign a parent in with an email and a six-digit code, list her profiles, and open the Parent Room of one. A child's device holds a device cookie for one profile.
 
 ## Behaviour
 

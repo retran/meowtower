@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { LogWriteFailed } from "../engine/events/append.js";
 import { isOpen, type Db } from "./database.js";
 import type { FrameQueue } from "./frames/queue.js";
+import { type AccountsEnv, mountAccounts } from "./accounts/routes.js";
 import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
 import { createOutgoing } from "./outgoing.js";
@@ -19,6 +20,7 @@ export async function createApp({
   sweepLeasesMs,
   tasks,
   frames,
+  accounts,
 }: {
   db: Db;
   now?: () => number;
@@ -31,6 +33,8 @@ export async function createApp({
   tasks?: "standin" | "registry";
   /** The live story frames (ADR-3100); absent while no model is configured. */
   frames?: FrameQueue;
+  /** The parents' accounts (ADR-3320); absent where the game runs on SQLite. */
+  accounts?: AccountsEnv;
 }): Promise<Hono> {
   const app = new Hono();
   // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
@@ -55,6 +59,7 @@ export async function createApp({
     if (c.req.method !== "GET" && c.res.status < 500) writeSucceeded();
   });
   mountPairing(app, db, now);
+  if (accounts) mountAccounts(app, accounts, now);
   await mountParentRoom(app, db, now);
   app.get("/health", (c) =>
     isOpen(db)
