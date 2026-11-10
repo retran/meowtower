@@ -190,6 +190,7 @@ const firstApp = await createApp({
 const gameApp = accounts
   ? createRoot({
       first: firstApp,
+      firstSchema: db.name,
       accounts,
       appFor: (d) => createApp({ db: d, sweepLeasesMs: 5000, tasks }),
       now: Date.now,

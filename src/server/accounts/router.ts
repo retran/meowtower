@@ -14,6 +14,8 @@ import { type AccountsEnv, mountAccounts } from "./routes.js";
 export interface RootOptions {
   /** The first profile's app, which serves a device whose cookie has no prefix. */
   readonly first: Hono;
+  /** The schema of the first profile, so a claim of it keeps one app and one lease. */
+  readonly firstSchema?: string;
   readonly accounts: AccountsEnv;
   /** Builds the app of a profile from its database. */
   readonly appFor: (db: Db) => Promise<Hono>;
@@ -84,6 +86,8 @@ export function createRoot(o: RootOptions): Hono {
           .prepare("SELECT schema_name AS schema FROM profiles WHERE id = ?")
           .get(profileId)) as { schema: string } | undefined;
         if (!row) return null;
+        // The claimed first profile is served by the app that already runs it.
+        if (row.schema === o.firstSchema) return o.first;
         return await o.appFor(await openProfile(o.accounts.url, row.schema));
       })();
       apps.set(profileId, found);
