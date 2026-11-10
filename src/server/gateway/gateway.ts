@@ -106,11 +106,14 @@ export function createGateway({
         spec.maxTokens,
       );
       const others = household
-        ? (await household.spentByOthers(month)) + household.heldByOthers()
+        ? (await household.spentByOthers(month)) +
+          (await household.heldByOthers())
         : 0;
+      // The account's own limit where it set one (REQ-8514).
+      const monthLimit = (await household?.monthLimit()) ?? limits.month;
       const monthOver =
         (await spentSince(month)) + heldOn("month") + others + worst >
-        limits.month;
+        monthLimit;
       const row = async (
         outcome: string,
         reply: RouteReply | null,
