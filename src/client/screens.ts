@@ -1,6 +1,15 @@
 // The shell's screens. ADR-0150 adds the game's and the Parent Room's; each
 // registers here, so the keyboard test walks it too.
 import {
+  accountCode,
+  accountLogin,
+  accountLogout,
+  accountMe,
+  accountSpend,
+  addProfile,
+  profilePairCode,
+  setBudget,
+  type AccountReply,
   newPairingCode,
   pair,
   parentDevices,
@@ -66,6 +75,7 @@ const home: Screen = {
       );
     if (shell.paired) nav.append(link("ui.nav.sheet", "open-sheet", "/sheet"));
     nav.append(link("ui.nav.settings", "open-settings", "/settings"));
+    nav.append(link("ui.nav.account", "open-account", "/account"));
     if (shell.paired)
       nav.append(link("ui.nav.parent", "open-parent", "/parent"));
     else nav.append(link("ui.nav.pair", "open-pair", "/pair"));
@@ -597,6 +607,183 @@ const parentSettingsScreen: Screen = {
   },
 };
 
+/** The text for a refused account request, with the time it may be tried again where there is one. */
+function accountError(
+  result: Extract<AccountReply<unknown>, { ok: false }>,
+): string {
+  const key = `ui.account.error.${result.error}`;
+  const known = [
+    "email_invalid",
+    "code_invalid",
+    "code_expired",
+    "code_locked",
+    "code_too_soon",
+    "unavailable",
+  ].includes(result.error);
+  return t(
+    (known ? key : "ui.account.error.failed") as UiKey,
+    result.retryAt === undefined
+      ? {}
+      : { time: clock(new Date(result.retryAt)) },
+  );
+}
+
+/**
+ * The parent's account (ADR-3320, REQ-8500, REQ-8502): sign in with the code sent to an email, then
+ * the children of the account, a pairing code for each child's device, and what the account spent.
+ */
+const accountScreen: Screen = {
+  path: "/account",
+  render() {
+    const note = status();
+    const body = el("div", {});
+    const section = el(
+      "section",
+      {},
+      heading("ui.account.title"),
+      body,
+      note,
+      el("nav", { className: "actions" }, link("ui.nav.back", "back", "/")),
+    );
+    section.dataset["busy"] = "1";
+
+    const field = (id: string, label: UiKey, action: string, type = "text") => {
+      const input = el("input", { id, type, autocomplete: "off" });
+      input.dataset["action"] = action;
+      input.addEventListener("input", () => act(action));
+      return { input, label: el("label", { htmlFor: id }, t(label)) };
+    };
+
+    const showSignIn = (): void => {
+      const email = field(
+        "account-email",
+        "ui.account.email",
+        "account-email",
+        "email",
+      );
+      const code = field("account-code", "ui.account.code", "account-code");
+      (code.input as HTMLInputElement).inputMode = "numeric";
+      (code.input as HTMLInputElement).maxLength = 6;
+      const send = button("ui.account.sendCode", "account-send", async () => {
+        const sent = await accountCode((email.input as HTMLInputElement).value);
+        note.textContent = sent.ok
+          ? t("ui.account.codeSent")
+          : accountError(sent);
+      });
+      const enter = button("ui.account.signIn", "account-login", async () => {
+        const done = await accountLogin(
+          (email.input as HTMLInputElement).value,
+          (code.input as HTMLInputElement).value.trim(),
+        );
+        if (done.ok) void showAccount();
+        else note.textContent = accountError(done);
+      });
+      const form = el(
+        "form",
+        {},
+        email.label,
+        email.input,
+        send,
+        code.label,
+        code.input,
+        enter,
+      );
+      form.addEventListener("submit", enterPresses(enter));
+      body.replaceChildren(form);
+    };
+
+    const showAccount = async (): Promise<void> => {
+      const me = await accountMe();
+      if (!me.ok) {
+        if (me.error === "account_session_missing") showSignIn();
+        else note.textContent = accountError(me);
+        delete section.dataset["busy"];
+        return;
+      }
+      const list = el("ul", { className: "profiles" });
+      for (const p of me.value.profiles) {
+        const shown = status();
+        const pair = button(
+          "ui.account.pairCode",
+          `pair-code-${p.id}`,
+          async () => {
+            const issued = await profilePairCode(p.id);
+            shown.textContent = issued.ok
+              ? t("ui.account.pairCodeShown", { code: issued.value })
+              : accountError(issued);
+          },
+        );
+        list.append(el("li", {}, el("strong", {}, p.label), pair, shown));
+      }
+      const label = field(
+        "profile-label",
+        "ui.account.addLabel",
+        "profile-label",
+      );
+      const add = button("ui.account.add", "profile-add", async () => {
+        const made = await addProfile((label.input as HTMLInputElement).value);
+        if (made.ok) {
+          note.textContent = t("ui.account.added");
+          void showAccount();
+        } else note.textContent = accountError(made);
+      });
+      const budget = field(
+        "account-budget",
+        "ui.account.budget",
+        "account-budget",
+        "number",
+      );
+      (budget.input as HTMLInputElement).min = "1";
+      (budget.input as HTMLInputElement).max = "200";
+      const spendLine = status();
+      const spend = await accountSpend();
+      if (spend.ok) {
+        spendLine.textContent = t("ui.account.spend", {
+          usd: spend.value.usd.toFixed(2),
+          limit: String(spend.value.limitUsd),
+        });
+        (budget.input as HTMLInputElement).value = String(spend.value.limitUsd);
+      }
+      const save = button("ui.account.budgetSave", "budget-save", async () => {
+        const amount = Number((budget.input as HTMLInputElement).value);
+        if (!(amount >= 1 && amount <= 200)) {
+          note.textContent = t("ui.account.budgetInvalid");
+          return;
+        }
+        const saved = await setBudget(amount);
+        note.textContent = saved.ok
+          ? t("ui.account.budgetSaved")
+          : accountError(saved);
+        if (saved.ok) void showAccount();
+      });
+      const out = button("ui.account.signOut", "account-logout", async () => {
+        await accountLogout();
+        note.textContent = "";
+        showSignIn();
+      });
+      body.replaceChildren(
+        status(t("ui.account.signedIn", { email: me.value.email })),
+        el("h2", {}, t("ui.account.profiles")),
+        me.value.profiles.length === 0
+          ? status(t("ui.account.noProfiles"))
+          : list,
+        label.label,
+        label.input,
+        add,
+        spendLine,
+        budget.label,
+        budget.input,
+        save,
+        out,
+      );
+      delete section.dataset["busy"];
+    };
+
+    void showAccount();
+    return section;
+  },
+};
+
 const sheet: Screen = {
   path: "/sheet",
   render() {
@@ -651,5 +838,6 @@ export const SCREENS: readonly Screen[] = [
   parentLoginScreen,
   parentDevicesScreen,
   parentSettingsScreen,
+  accountScreen,
   playScreen,
 ];
