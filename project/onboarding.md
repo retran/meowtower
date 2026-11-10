@@ -109,6 +109,7 @@ text the parent approves.
 | `docs/how-to/export-the-game-data.md` | cited | User documentation for the parent, written by EPC-0020's document step after onboarding and kept |
 | `docs/how-to/recompute-the-derived-tables.md` | cited | User documentation for the parent, written by EPC-0020's document step after onboarding and kept |
 | `docs/how-to/move-the-game-to-postgres.md` | cited | User documentation for the parent, written with ADR-3310 and kept |
+| `docs/how-to/sign-in-and-add-a-child.md` | cited | User documentation for the parent, written with ADR-3320 and kept |
 | `docs/reference/parent-notices.md` | cited | User documentation for the parent, written by EPC-0020's document step after onboarding and kept |
 
 Amended by EPC-0020, whose document step added the four `docs/` pages above.
