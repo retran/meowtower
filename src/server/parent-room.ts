@@ -3,6 +3,7 @@
 // pairing code, and the settings. Every route needs a paired device, which the
 // /api middleware checks, and all but the login need a parent session opened
 // on that device and used within the last 30 minutes (REQ-2440).
+import { mountStudio } from "./studio/routes.js";
 import { refreshKnowledge } from "../engine/projections/knowledge.js";
 import type { Context, Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
@@ -230,6 +231,8 @@ export async function mountParentRoom(
     await refreshKnowledge(db, new Date(now()).toISOString());
     return c.json({ status: "ok" });
   });
+
+  mountStudio(app, db, now, parent);
 
   // The Parent Room's entry point for a pairing code, beside ./meowtower pair.
   app.post("/api/parent/pair-code", async (c) => {
