@@ -1,7 +1,8 @@
 ---
 id: ADR-3320
 artifact: adr
-status: approved
+status: done
+pr: 111
 revised: 2026-11-08
 addresses: [REQ-8500, REQ-8502, REQ-8504, REQ-8508, REQ-8510, REQ-8512]
 supersedes: []
@@ -79,4 +80,4 @@ A parent without a mail account reads codes from the server log or the Mac comma
 4. The claim of the first profile on the loopback listener (REQ-8500).
 5. The sum of the budget over profiles in the gateway (REQ-8510).
 6. The sign-in and profile screens in three languages, `./meowtower code` and `./meowtower profiles`.
-7. The `smtp` mailer, behind the environment setting, once the owner has chosen a provider.
+7. The `smtp` mailer, behind the environment setting, once the owner has chosen a provider. The owner decided on 2026-11-10 to leave it out for now: the `log` mailer stays, and the code goes to the server's output.
