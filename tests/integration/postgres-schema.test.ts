@@ -36,7 +36,7 @@ const append = async (db: Db, id: string): Promise<void> => {
 };
 
 describe("a profile's schema in Postgres", () => {
-  it("applies the thirteen migrations once and keeps them across a reopen", async () => {
+  it("applies the fourteen migrations once and keeps them across a reopen", async () => {
     const schema = schemaName();
     const first = await open(schema);
     const versions = async (db: Db) =>
@@ -46,11 +46,11 @@ describe("a profile's schema in Postgres", () => {
           .all()) as { version: number }[]
       ).map((r) => r.version);
     expect(await versions(first)).toEqual(
-      Array.from({ length: 13 }, (_, i) => i + 1),
+      Array.from({ length: 14 }, (_, i) => i + 1),
     );
     await first.close();
     const again = await open(schema);
-    expect(await versions(again)).toHaveLength(13);
+    expect(await versions(again)).toHaveLength(14);
   });
 
   it("refuses to change or remove an event or a blob", async () => {
