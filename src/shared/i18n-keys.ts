@@ -306,6 +306,34 @@ export interface StringParams {
   "ui.offline.retry": NoParams;
   "ui.account.mail.subject": NoParams;
   "ui.account.mail.body": { code: string | number; minutes: string | number };
+  "ui.nav.account": NoParams;
+  "ui.account.title": NoParams;
+  "ui.account.email": NoParams;
+  "ui.account.sendCode": NoParams;
+  "ui.account.code": NoParams;
+  "ui.account.signIn": NoParams;
+  "ui.account.signOut": NoParams;
+  "ui.account.codeSent": NoParams;
+  "ui.account.error.email_invalid": NoParams;
+  "ui.account.error.code_invalid": NoParams;
+  "ui.account.error.code_expired": NoParams;
+  "ui.account.error.code_locked": { time: string | number };
+  "ui.account.error.code_too_soon": { time: string | number };
+  "ui.account.error.failed": NoParams;
+  "ui.account.error.unavailable": NoParams;
+  "ui.account.signedIn": { email: string | number };
+  "ui.account.profiles": NoParams;
+  "ui.account.noProfiles": NoParams;
+  "ui.account.addLabel": NoParams;
+  "ui.account.add": NoParams;
+  "ui.account.added": NoParams;
+  "ui.account.pairCode": NoParams;
+  "ui.account.pairCodeShown": { code: string | number };
+  "ui.account.spend": { limit: string | number; usd: string | number };
+  "ui.account.budget": NoParams;
+  "ui.account.budgetSave": NoParams;
+  "ui.account.budgetSaved": NoParams;
+  "ui.account.budgetInvalid": NoParams;
 }
 
 export type Key = keyof StringParams;

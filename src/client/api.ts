@@ -393,3 +393,60 @@ export async function extend(
   if (status === 409 && body["error"] === "day_finished") return "day_finished";
   return status === 200 ? "ok" : null;
 }
+
+/** The reply of an account route: the value, or the error and the time it may be tried again. */
+export type AccountReply<T> =
+  { ok: true; value: T } | { ok: false; error: string; retryAt?: number };
+
+async function account<T>(
+  path: string,
+  init: RequestInit | undefined,
+  value: (body: Record<string, unknown>) => T,
+): Promise<AccountReply<T>> {
+  const { status, body } = await call(path, init);
+  if (status === UNREACHABLE) return { ok: false, error: "unreachable" };
+  if (status >= 200 && status < 300) return { ok: true, value: value(body) };
+  const retryAt =
+    typeof body["retryAt"] === "number" ? body["retryAt"] : undefined;
+  return {
+    ok: false,
+    error:
+      status === 404 && !body["error"] ? "unavailable" : String(body["error"]),
+    ...(retryAt === undefined ? {} : { retryAt }),
+  };
+}
+
+const jsonBody = (method: string, body: object): RequestInit => ({
+  method,
+  body: JSON.stringify(body),
+});
+
+export interface AccountView {
+  email: string;
+  profiles: { id: string; label: string }[];
+}
+export interface SpendView {
+  usd: number;
+  limitUsd: number;
+}
+
+export const accountCode = (email: string) =>
+  account("/api/account/code", jsonBody("POST", { email }), () => true);
+export const accountLogin = (email: string, code: string) =>
+  account("/api/account/login", jsonBody("POST", { email, code }), () => true);
+export const accountLogout = () =>
+  account("/api/account/logout", jsonBody("POST", {}), () => true);
+export const accountMe = () =>
+  account("/api/account/me", undefined, (b) => b as unknown as AccountView);
+export const accountSpend = () =>
+  account("/api/account/spend", undefined, (b) => b as unknown as SpendView);
+export const addProfile = (label: string) =>
+  account("/api/account/profiles", jsonBody("POST", { label }), () => true);
+export const profilePairCode = (id: string) =>
+  account(
+    `/api/account/profiles/${encodeURIComponent(id)}/pair-code`,
+    jsonBody("POST", {}),
+    (b) => String(b["code"]),
+  );
+export const setBudget = (monthUsd: number) =>
+  account("/api/account/budget", jsonBody("PUT", { monthUsd }), () => true);

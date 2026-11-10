@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The one operator command on the Mac (SPC-0010, names from ADR-0200). Each task adds the
-# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, watch, pair, db-snapshot, restore, move and export.
+# subcommands it needs; these are up, down, status, ipad-setup, set-home-network, watch, pair, db-snapshot, restore, move, code, profiles and export.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -347,6 +347,24 @@ cmd_restore() {
   compose up -d meowtower
 }
 
+# The sign-in code that the game last "sent" (ADR-3320): until a mail provider is set up, the
+# message goes to the server's output, and this prints the newest one.
+cmd_code() {
+  local out
+  out="$(compose logs --no-log-prefix --tail 400 meowtower 2>/dev/null | awk '/^mail to /{block=$0; next} block!="" && NF{block=block "\n" $0; print block; block=""}' | tail -2)"
+  [[ -n $out ]] || { echo "no_code: no sign-in code was sent yet; ask for one on the account screen."; exit 1; }
+  echo "$out"
+}
+
+# The accounts and the children (profiles) each one owns.
+cmd_profiles() {
+  local have
+  have="$(compose exec -T postgres psql -U postgres -d meowtower -At -c "SELECT to_regclass('acct.profiles') IS NOT NULL")"
+  [[ $have == t ]] || { echo "no_accounts: nobody has signed in yet."; return 0; }
+  compose exec -T postgres psql -U postgres -d meowtower -At -F ' | ' -c \
+    "SELECT a.email, p.label, p.schema_name FROM acct.profiles p JOIN acct.accounts a ON a.id = p.account_id ORDER BY a.email, p.created_at"
+}
+
 # Once, when the game moves from SQLite to Postgres (ADR-3310): the log in the old file of the
 # volume is copied into the Postgres profile, the tables are rebuilt and compared, and the file
 # stays where it is. Play stops while it runs. A profile that holds events is left alone.
@@ -456,6 +474,8 @@ case "${1:-}" in
   db-snapshot) cmd_db_snapshot ;;
   restore) cmd_restore ;;
   move) cmd_move ;;
+  code) cmd_code ;;
+  profiles) cmd_profiles ;;
   export) cmd_export ;;
   model)
     case "${2:-}" in
@@ -466,5 +486,5 @@ case "${1:-}" in
   graph)
     if [[ "${2:-}" == check ]]; then shift 2; npx tsx tools/graph-check.ts "$@"
     else echo "usage: ./meowtower graph check [file]" >&2; exit 2; fi ;;
-  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|move|export|graph check|model check|model activate" >&2; exit 2 ;;
+  *) echo "usage: ./meowtower up|down|status|ipad-setup|set-home-network|watch|pair|set-pin|recompute|db-snapshot|restore|move|code|profiles|export|graph check|model check|model activate" >&2; exit 2 ;;
 esac
