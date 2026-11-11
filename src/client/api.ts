@@ -450,3 +450,98 @@ export const profilePairCode = (id: string) =>
   );
 export const setBudget = (monthUsd: number) =>
   account("/api/account/budget", jsonBody("PUT", { monthUsd }), () => true);
+
+/** A node of the studio's graphs (ADR-3280). */
+export interface StudioNode {
+  id: string;
+  level: "campaign" | "arc" | "adventure" | "encounter";
+  parentId: string | null;
+  title: string;
+  status: "draft" | "approved" | "playing" | "played";
+  version: number;
+  /** The ids of the sibling nodes this one leads to. */
+  links: string[];
+}
+
+export async function studioNodes(
+  parent: string | null,
+): Promise<ParentReply<StudioNode[]>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes${parent ? `?parent=${encodeURIComponent(parent)}` : ""}`,
+  );
+  return parentReply(status, body, () => body["nodes"] as StudioNode[]);
+}
+
+/** A node's body, from which the graph reads its links. */
+export async function studioNode(
+  id: string,
+): Promise<
+  ParentReply<{ node: StudioNode; body: Record<string, unknown> | null }>
+> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}`,
+  );
+  return parentReply(
+    status,
+    body,
+    () =>
+      body as unknown as {
+        node: StudioNode;
+        body: Record<string, unknown> | null;
+      },
+  );
+}
+
+export async function studioCreate(input: {
+  level: StudioNode["level"];
+  parentId: string | null;
+  title: string;
+}): Promise<ParentReply<StudioNode>> {
+  const { status, body } = await call("/api/parent/studio/nodes", {
+    method: "POST",
+    body: JSON.stringify({ ...input, body: {} }),
+  });
+  return status === 201
+    ? { ok: true, value: body as unknown as StudioNode }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
+}
+
+export async function studioStatus(
+  id: string,
+  next: StudioNode["status"],
+): Promise<ParentReply<StudioNode>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/status`,
+    { method: "POST", body: JSON.stringify({ status: next }) },
+  );
+  return status === 200
+    ? { ok: true, value: body as unknown as StudioNode }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
+}
+
+export interface AdventureLogEntry {
+  adventureId: string;
+  events: number;
+}
+
+export async function studioLogs(): Promise<ParentReply<AdventureLogEntry[]>> {
+  const { status, body } = await call("/api/parent/studio/logs/adventures");
+  return parentReply(
+    status,
+    body,
+    () => body["adventures"] as AdventureLogEntry[],
+  );
+}
+
+export async function studioLog(
+  adventureId: string,
+): Promise<ParentReply<{ seq: number; ts: string; type: string }[]>> {
+  const { status, body } = await call(
+    `/api/parent/studio/logs/adventures/${encodeURIComponent(adventureId)}`,
+  );
+  return parentReply(
+    status,
+    body,
+    () => body["events"] as { seq: number; ts: string; type: string }[],
+  );
+}

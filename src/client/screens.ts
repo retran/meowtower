@@ -1,6 +1,12 @@
 // The shell's screens. ADR-0150 adds the game's and the Parent Room's; each
 // registers here, so the keyboard test walks it too.
 import {
+  studioCreate,
+  studioLog,
+  studioLogs,
+  studioNodes,
+  studioStatus,
+  type StudioNode,
   accountCode,
   accountLogin,
   accountLogout,
@@ -35,6 +41,7 @@ import {
   link,
   status,
 } from "./controls.js";
+import { layoutGraph, DEFAULT_SIZE } from "./graph-layout.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
 import { clock, t, uiKey, type UiKey } from "./strings.js";
@@ -400,6 +407,7 @@ const parentDevicesScreen: Screen = {
           "open-parent-settings",
           "/parent/settings",
         ),
+        link("ui.nav.studio", "open-studio", "/studio"),
         link("ui.nav.back", "back", "/"),
       );
       delete section.dataset["busy"];
@@ -784,6 +792,281 @@ const accountScreen: Screen = {
   },
 };
 
+/** The level a node of `level` holds inside it, or null for an encounter. */
+const INNER: Readonly<Record<StudioNode["level"], StudioNode["level"] | null>> =
+  {
+    campaign: "arc",
+    arc: "adventure",
+    adventure: "encounter",
+    encounter: null,
+  };
+
+/**
+ * The studio (ADR-3280, REQ-8258): the graph of one level, a breadcrumb up to the campaigns, a
+ * panel for the selected node, and the logs of the adventures that were played. Opening a node
+ * opens the graph inside it.
+ */
+const studioScreen: Screen = {
+  path: "/studio",
+  render() {
+    const note = status();
+    const crumbs = el("nav", { className: "crumbs" });
+    const graph = el("div", { className: "graph" });
+    graph.setAttribute("aria-label", t("ui.studio.graph"));
+    const panel = el("div", { className: "panel" });
+    const logs = el("div", { className: "logs" });
+    const nav = el("nav", { className: "actions" });
+    const section = el(
+      "section",
+      {},
+      heading("ui.studio.title"),
+      crumbs,
+      graph,
+      panel,
+      note,
+      logs,
+      nav,
+    );
+    section.dataset["busy"] = "1";
+    /** The nodes opened so far, from the first campaign to the one whose graph shows. */
+    const trail: StudioNode[] = [];
+    let selected: StudioNode | null = null;
+
+    const drawCrumbs = (): void => {
+      crumbs.replaceChildren(
+        el(
+          "button",
+          { type: "button", className: "control" },
+          t("ui.studio.root"),
+        ),
+      );
+      (crumbs.firstChild as HTMLElement).dataset["action"] = "crumb-root";
+      crumbs.firstChild?.addEventListener("click", () => {
+        act("crumb-root");
+        trail.length = 0;
+        void show();
+      });
+      trail.forEach((n, i) => {
+        const b = el(
+          "button",
+          { type: "button", className: "control" },
+          n.title,
+        );
+        b.dataset["action"] = `crumb-${String(i)}`;
+        b.addEventListener("click", () => {
+          act(`crumb-${String(i)}`);
+          trail.length = i + 1;
+          void show();
+        });
+        crumbs.append(" › ", b);
+      });
+    };
+
+    const drawPanel = (level: StudioNode["level"]): void => {
+      panel.replaceChildren();
+      const title = el("input", {
+        id: "studio-title",
+        type: "text",
+        maxLength: 120,
+      });
+      title.dataset["action"] = "studio-title";
+      title.addEventListener("input", () => act("studio-title"));
+      const add = button("ui.studio.add", "studio-add", async () => {
+        const made = await studioCreate({
+          level,
+          parentId: trail.at(-1)?.id ?? null,
+          title: title.value,
+        });
+        if (made.ok) {
+          note.textContent = t("ui.studio.added");
+          void show();
+        } else
+          note.textContent = t("ui.studio.refused", { reason: made.error });
+      });
+      add.textContent = t("ui.studio.add", {
+        level: t(`ui.studio.level.${level}` as UiKey),
+      });
+      panel.append(
+        el("label", { htmlFor: "studio-title" }, t("ui.studio.addTitle")),
+        title,
+        add,
+      );
+      if (!selected) return;
+      const node = selected;
+      panel.append(
+        status(t("ui.studio.selected", { title: node.title })),
+        status(
+          `${t(`ui.studio.status.${node.status}` as UiKey)} · ${t("ui.studio.version", { n: String(node.version) })}`,
+        ),
+      );
+      if (INNER[node.level])
+        panel.append(
+          button("ui.studio.open", "studio-open", () => {
+            trail.push(node);
+            void show();
+          }),
+        );
+      if (node.level !== "encounter" && node.status === "draft")
+        panel.append(
+          button("ui.studio.approve", "studio-approve", async () => {
+            const done = await studioStatus(node.id, "approved");
+            if (done.ok) void show();
+            else
+              note.textContent = t("ui.studio.refused", { reason: done.error });
+          }),
+        );
+      if (node.level !== "encounter" && node.status === "approved")
+        panel.append(
+          button("ui.studio.toDraft", "studio-draft", async () => {
+            const done = await studioStatus(node.id, "draft");
+            if (done.ok) void show();
+            else
+              note.textContent = t("ui.studio.refused", { reason: done.error });
+          }),
+        );
+    };
+
+    const drawGraph = (nodes: StudioNode[]): void => {
+      graph.replaceChildren();
+      if (nodes.length === 0) {
+        graph.append(status(t("ui.studio.empty")));
+        return;
+      }
+      const placed = layoutGraph(
+        nodes.map((n) => ({ id: n.id, links: n.links })),
+      );
+      graph.style.position = "relative";
+      graph.style.width = `${String(placed.width)}px`;
+      graph.style.height = `${String(placed.height)}px`;
+      graph.style.overflow = "auto";
+      const at = new Map(placed.nodes.map((p) => [p.id, p]));
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("width", String(placed.width));
+      svg.setAttribute("height", String(placed.height));
+      svg.setAttribute("aria-hidden", "true");
+      svg.style.position = "absolute";
+      for (const e of placed.edges) {
+        const a = at.get(e.from);
+        const b = at.get(e.to);
+        if (!a || !b) continue;
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line",
+        );
+        line.setAttribute("x1", String(a.x + DEFAULT_SIZE.nodeWidth));
+        line.setAttribute("y1", String(a.y + DEFAULT_SIZE.nodeHeight / 2));
+        line.setAttribute("x2", String(b.x));
+        line.setAttribute("y2", String(b.y + DEFAULT_SIZE.nodeHeight / 2));
+        line.setAttribute("stroke", "currentColor");
+        svg.append(line);
+      }
+      graph.append(svg);
+      for (const n of nodes) {
+        const p = at.get(n.id);
+        if (!p) continue;
+        const b = el(
+          "button",
+          { type: "button", className: "control node" },
+          el("strong", {}, n.title),
+          el("small", {}, t(`ui.studio.status.${n.status}` as UiKey)),
+        );
+        b.dataset["action"] = `node-${n.id}`;
+        b.dataset["node"] = n.id;
+        b.style.position = "absolute";
+        b.style.left = `${String(p.x)}px`;
+        b.style.top = `${String(p.y)}px`;
+        b.style.width = `${String(DEFAULT_SIZE.nodeWidth)}px`;
+        b.style.height = `${String(DEFAULT_SIZE.nodeHeight)}px`;
+        b.setAttribute(
+          "aria-pressed",
+          selected?.id === n.id ? "true" : "false",
+        );
+        b.addEventListener("click", () => {
+          act(`node-${n.id}`);
+          selected = n;
+          drawGraph(nodes);
+          drawPanel(
+            n.level === "encounter"
+              ? "encounter"
+              : (INNER[n.level] as StudioNode["level"]),
+          );
+        });
+        b.addEventListener("dblclick", () => {
+          if (INNER[n.level]) {
+            trail.push(n);
+            void show();
+          }
+        });
+        graph.append(b);
+      }
+    };
+
+    const show = async (): Promise<void> => {
+      selected = null;
+      drawCrumbs();
+      const here = trail.at(-1) ?? null;
+      const level: StudioNode["level"] = here
+        ? (INNER[here.level] ?? "encounter")
+        : "campaign";
+      const nodes = await asParent(section, note, () =>
+        studioNodes(here?.id ?? null),
+      );
+      if (!nodes) {
+        loginNeeded(note, nav);
+        delete section.dataset["busy"];
+        return;
+      }
+      drawGraph(nodes);
+      drawPanel(level);
+      delete section.dataset["busy"];
+    };
+
+    const showLogs = async (): Promise<void> => {
+      const list = await asParent(section, note, studioLogs);
+      logs.replaceChildren(el("h2", {}, t("ui.studio.logs")));
+      if (!list || list.length === 0) {
+        logs.append(status(t("ui.studio.noLogs")));
+        return;
+      }
+      const items = el("ul", {});
+      for (const a of list) {
+        const detail = el("ol", { className: "log" });
+        const open = button(
+          "ui.studio.logOpen",
+          `log-${a.adventureId}`,
+          async () => {
+            const events = await asParent(section, note, () =>
+              studioLog(a.adventureId),
+            );
+            detail.replaceChildren(
+              ...(events ?? []).map((e) =>
+                el("li", {}, `${String(e.seq)} ${e.type}`),
+              ),
+            );
+          },
+        );
+        items.append(
+          el(
+            "li",
+            {},
+            status(t("ui.studio.logEvents", { n: String(a.events) })),
+            open,
+            detail,
+          ),
+        );
+      }
+      logs.append(items);
+    };
+
+    nav.append(
+      link("ui.nav.parent", "open-parent", "/parent"),
+      link("ui.nav.back", "back", "/"),
+    );
+    void show().then(showLogs);
+    return section;
+  },
+};
+
 const sheet: Screen = {
   path: "/sheet",
   render() {
@@ -839,5 +1122,6 @@ export const SCREENS: readonly Screen[] = [
   parentDevicesScreen,
   parentSettingsScreen,
   accountScreen,
+  studioScreen,
   playScreen,
 ];

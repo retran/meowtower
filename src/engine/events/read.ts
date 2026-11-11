@@ -194,3 +194,36 @@ export async function latestEvent(
     .get(type)) as Row | undefined;
   return row && toEvent(row);
 }
+
+/** The adventures that have events, each with how many, newest first: the list of the played games. */
+export async function adventureEventCounts(
+  db: Db,
+): Promise<{ adventureId: string; events: number; lastSeq: number }[]> {
+  const rows = (await db
+    .prepare(
+      `SELECT adventure_id AS id, COUNT(*) AS n, MAX(seq) AS last
+         FROM events WHERE adventure_id IS NOT NULL
+        GROUP BY adventure_id ORDER BY MAX(seq) DESC`,
+    )
+    .all()) as { id: string; n: number; last: number }[];
+  return rows.map((r) => ({
+    adventureId: r.id,
+    events: Number(r.n),
+    lastSeq: Number(r.last),
+  }));
+}
+
+/** The events of one adventure in log order, at most `limit`, for its own log beside the general one. */
+export async function eventsOfAdventure(
+  db: Db,
+  adventureId: string,
+  limit = 500,
+): Promise<StoredEvent[]> {
+  return (
+    (await db
+      .prepare(
+        "SELECT * FROM events WHERE adventure_id = ? ORDER BY seq LIMIT ?",
+      )
+      .all(adventureId, limit)) as Row[]
+  ).map(toEvent);
+}
