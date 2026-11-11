@@ -11,6 +11,9 @@ import type { Db } from "../../src/server/db/index.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
 import { startJob } from "../../src/server/studio/store.js";
+import { dropSchema } from "../../src/server/db/index.js";
+import { sandboxSchemaOf } from "../../src/server/sandbox/sandbox.js";
+import { onlyOnPostgres, onPostgres } from "../helpers/backend.js";
 
 const root = mkdtempSync(join(tmpdir(), "meowtower-studio-routes-"));
 const PIN = "4821";
@@ -286,4 +289,40 @@ it("gives each node of a level the ids it leads to, for the graph's edges", asyn
   };
   expect(list.nodes.find((n) => n.id === a.id)?.links).toEqual([b.id, "ghost"]);
   expect(list.nodes.find((n) => n.id === b.id)?.links).toEqual([]);
+});
+
+it("answers 409 for the sandbox where the game runs on SQLite", async () => {
+  if (onPostgres) return;
+  expect((await call("GET", "/sandbox")).status).toBe(409);
+  expect((await call("POST", "/sandbox/reset", { from: "empty" })).status).toBe(
+    409,
+  );
+});
+
+onlyOnPostgres("the sandbox routes", () => {
+  it("reads the sandbox, makes it from a copy and from nothing, and refuses a bad body", async () => {
+    const before = (await (await call("GET", "/sandbox")).json()) as {
+      exists: boolean;
+      limitUsd: number;
+    };
+    expect(before.exists).toBe(false);
+    const copied = (await (
+      await call("POST", "/sandbox/reset", { from: "copy" })
+    ).json()) as { exists: boolean };
+    expect(copied.exists).toBe(true);
+    const empty = (await (
+      await call("POST", "/sandbox/reset", { from: "empty" })
+    ).json()) as { events: number };
+    expect(empty.events).toBe(0);
+    expect(
+      (await call("POST", "/sandbox/reset", { from: "elsewhere" })).status,
+    ).toBe(400);
+    expect(
+      (await call("GET", "/sandbox", undefined, deviceCookie)).status,
+    ).toBe(401);
+    await dropSchema(
+      process.env["MEOWTOWER_DATABASE_URL"] as string,
+      sandboxSchemaOf(db.name),
+    );
+  });
 });

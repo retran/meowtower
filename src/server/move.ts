@@ -91,6 +91,8 @@ export async function transfer(
   source: Db,
   target: Db,
   beforeRebuild?: () => Promise<void>,
+  /** Service tables to leave out of the copy, such as credentials. */
+  omit: readonly string[] = [],
 ): Promise<MoveReport> {
   if ((await eventCount(target)) > 0)
     throw new MoveRefused("the target already holds events");
@@ -99,7 +101,7 @@ export async function transfer(
 
   const tables: Record<string, number> = {};
   for (const t of SERVICE_TABLES)
-    tables[t] = await copyTable(source, target, t);
+    if (!omit.includes(t)) tables[t] = await copyTable(source, target, t);
 
   await beforeRebuild?.();
   await recompute(target, { computedAt: new Date().toISOString() });

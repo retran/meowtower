@@ -11,3 +11,6 @@ export const sqliteOnlyIt = onPostgres ? it.skip : it;
 
 /** A test that opens Postgres by itself runs once, in the first pass, not again in the second. */
 export const oncePerRun = sqliteOnly;
+
+/** A test of what only Postgres has, such as a sandbox schema: it runs in the Postgres pass alone. */
+export const onlyOnPostgres = onPostgres ? describe : describe.skip;
