@@ -334,6 +334,33 @@ export interface StringParams {
   "ui.account.budgetSave": NoParams;
   "ui.account.budgetSaved": NoParams;
   "ui.account.budgetInvalid": NoParams;
+  "ui.nav.studio": NoParams;
+  "ui.studio.title": NoParams;
+  "ui.studio.root": NoParams;
+  "ui.studio.level.campaign": NoParams;
+  "ui.studio.level.arc": NoParams;
+  "ui.studio.level.adventure": NoParams;
+  "ui.studio.level.encounter": NoParams;
+  "ui.studio.status.draft": NoParams;
+  "ui.studio.status.approved": NoParams;
+  "ui.studio.status.playing": NoParams;
+  "ui.studio.status.played": NoParams;
+  "ui.studio.empty": NoParams;
+  "ui.studio.inner": NoParams;
+  "ui.studio.selected": { title: string | number };
+  "ui.studio.version": { n: string | number };
+  "ui.studio.open": NoParams;
+  "ui.studio.approve": NoParams;
+  "ui.studio.toDraft": NoParams;
+  "ui.studio.add": { level: string | number };
+  "ui.studio.addTitle": NoParams;
+  "ui.studio.added": NoParams;
+  "ui.studio.refused": { reason: string | number };
+  "ui.studio.logs": NoParams;
+  "ui.studio.noLogs": NoParams;
+  "ui.studio.logEvents": { n: string | number };
+  "ui.studio.logOpen": NoParams;
+  "ui.studio.graph": NoParams;
 }
 
 export type Key = keyof StringParams;

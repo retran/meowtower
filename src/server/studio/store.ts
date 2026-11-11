@@ -225,6 +225,30 @@ export async function versionsOf(db: Db, id: string): Promise<StoryVersion[]> {
   }));
 }
 
+/**
+ * The ids a node's current body leads to: a `links` array of ids or of `{ to }` objects, which is
+ * how the graph of a level draws its edges (ADR-3280). A body with none leads nowhere.
+ */
+export async function linksOf(db: Db, id: string): Promise<string[]> {
+  const row = (await db
+    .prepare(
+      `SELECT v.body AS body FROM story_nodes n
+         JOIN story_versions v ON v.node_id = n.id AND v.version = n.current_version
+        WHERE n.id = ?`,
+    )
+    .get(id)) as { body: string } | undefined;
+  if (!row) return [];
+  const body = JSON.parse(row.body) as { links?: unknown } | null;
+  if (!Array.isArray(body?.links)) return [];
+  return (body.links as unknown[]).flatMap((l) =>
+    typeof l === "string"
+      ? [l]
+      : typeof (l as { to?: unknown } | null)?.to === "string"
+        ? [(l as { to: string }).to]
+        : [],
+  );
+}
+
 export async function versionOf(
   db: Db,
   id: string,

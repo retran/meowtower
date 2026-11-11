@@ -224,3 +224,66 @@ it("keeps a library, shows where an entry is used, and lists the jobs", async ()
     ).progress,
   ).toBe(0);
 });
+
+it("lists the adventures that have events and reads one adventure's log in order", async () => {
+  const started = await app.request("/api/session/start", {
+    method: "POST",
+    headers: { ...json, cookie: deviceCookie },
+    body: JSON.stringify({ mode: "daily", clientSeq: 1 }),
+  });
+  const { adventureId } = (await started.json()) as { adventureId: string };
+  const list = (await (await call("GET", "/logs/adventures")).json()) as {
+    adventures: { adventureId: string; events: number }[];
+  };
+  expect(list.adventures.map((a) => a.adventureId)).toContain(adventureId);
+  const log = (await (
+    await call("GET", `/logs/adventures/${adventureId}`)
+  ).json()) as {
+    events: { seq: number; type: string }[];
+  };
+  expect(log.events.length).toBeGreaterThan(0);
+  expect(log.events.map((e) => e.seq)).toEqual(
+    [...log.events.map((e) => e.seq)].sort((a, b) => a - b),
+  );
+  expect((await call("GET", "/logs/adventures/missing")).status).toBe(404);
+  expect(
+    (await call("GET", "/logs/adventures", undefined, deviceCookie)).status,
+  ).toBe(401);
+});
+
+it("gives each node of a level the ids it leads to, for the graph's edges", async () => {
+  const campaign = (await (
+    await call("POST", "/nodes", {
+      level: "campaign",
+      parentId: null,
+      title: "E",
+      body: {},
+    })
+  ).json()) as { id: string };
+  const a = (await (
+    await call("POST", "/nodes", {
+      level: "arc",
+      parentId: campaign.id,
+      title: "First",
+      body: {},
+    })
+  ).json()) as { id: string };
+  const b = (await (
+    await call("POST", "/nodes", {
+      level: "arc",
+      parentId: campaign.id,
+      title: "Second",
+      body: { links: [] },
+    })
+  ).json()) as { id: string };
+  await call("PUT", `/nodes/${a.id}`, {
+    body: { links: [b.id, { to: "ghost" }, 7] },
+  });
+  const list = (await (
+    await call("GET", `/nodes?parent=${campaign.id}`)
+  ).json()) as {
+    nodes: { id: string; links: string[] }[];
+  };
+  expect(list.nodes.find((n) => n.id === a.id)?.links).toEqual([b.id, "ghost"]);
+  expect(list.nodes.find((n) => n.id === b.id)?.links).toEqual([]);
+});

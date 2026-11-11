@@ -2,6 +2,10 @@
 // the room hands in as `guard`.
 import type { Context, Hono } from "hono";
 import { z } from "zod";
+import {
+  adventureEventCounts,
+  eventsOfAdventure,
+} from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
 import {
   addEntry,
@@ -15,6 +19,7 @@ import {
   jobsOf,
   KINDS,
   LEVELS,
+  linksOf,
   listEntries,
   setStatus,
   STATUSES,
@@ -73,7 +78,12 @@ export function mountStudio(
     const who = await guard(c);
     if (who instanceof Response) return who;
     const parent = c.req.query("parent");
-    return c.json({ nodes: await childrenOf(db, parent ? parent : null) });
+    const nodes = await childrenOf(db, parent ? parent : null);
+    return c.json({
+      nodes: await Promise.all(
+        nodes.map(async (n) => ({ ...n, links: await linksOf(db, n.id) })),
+      ),
+    });
   });
 
   app.post(`${base}/nodes`, async (c) => {
@@ -208,6 +218,30 @@ export function mountStudio(
     if (who instanceof Response) return who;
     await unuseEntry(db, c.req.param("id"), c.req.param("node"));
     return c.json({ uses: await usesOf(db, c.req.param("id")) });
+  });
+
+  // The log of each adventure beside the general log (REQ-8276): the adventures that have events,
+  // and one adventure's events in order.
+  app.get(`${base}/logs/adventures`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    return c.json({ adventures: await adventureEventCounts(db) });
+  });
+
+  app.get(`${base}/logs/adventures/:id`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const events = await eventsOfAdventure(db, c.req.param("id"));
+    if (events.length === 0) return c.json({ error: "adventure_unknown" }, 404);
+    return c.json({
+      events: events.map((e) => ({
+        seq: e.seq,
+        ts: e.ts,
+        type: e.type,
+        sessionId: e.sessionId,
+        payload: e.payload,
+      })),
+    });
   });
 
   app.get(`${base}/jobs`, async (c) => {
