@@ -361,7 +361,6 @@ export interface StringParams {
   "ui.studio.lever.kind.language": NoParams;
   "ui.studio.lever.kind.gender": NoParams;
   "ui.studio.lever.kind.creepiness": NoParams;
-  "ui.studio.lever.kind.playerLevel": NoParams;
   "ui.studio.lever.kind.friendship": NoParams;
   "ui.studio.lever.kind.item": NoParams;
   "ui.studio.lever.kind.nodeLevel": NoParams;
