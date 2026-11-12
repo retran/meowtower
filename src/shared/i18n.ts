@@ -138,9 +138,9 @@ export type { Key, PluralKey, LinesKey };
 
 /** The strings the client shell shows: the `ui.` keys only, because the file
  *  also holds task texts and short solutions no client may read early. */
-export function uiStrings(): Record<string, string> {
+export function uiStrings(language: Lang = lang): Record<string, string> {
   return Object.fromEntries(
-    Object.entries({ ...files.ru, ...files[lang] }).filter(
+    Object.entries({ ...files.ru, ...files[language] }).filter(
       (entry): entry is [string, string] =>
         entry[0].startsWith("ui.") && typeof entry[1] === "string",
     ),

@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Hono } from "hono";
-import { isShipped, lang, t, uiStrings } from "../shared/i18n.js";
+import { isShipped, type Lang, lang, t, uiStrings } from "../shared/i18n.js";
 import { iconPng } from "./icon.js";
 
 const escape = (s: string): string =>
@@ -64,6 +64,8 @@ export function mountShell(app: Hono): void {
     if (file === `${lang}.json`) return c.json(uiStrings());
     const code = /^([a-z]{2,3})\.json$/.exec(file)?.[1];
     if (code && !isShipped(code)) return c.json(uiStrings(), 400);
+    // The studio's screen lab shows a child's screen in another shipped language (REQ-8300).
+    if (code) return c.json(uiStrings(code as Lang));
     return c.notFound();
   });
   app.get("/", (c) => c.html(page()));

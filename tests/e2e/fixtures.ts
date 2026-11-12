@@ -39,8 +39,13 @@ export const test = base.extend<{ leaks: string[] }>({
             // A body the browser didn't keep, such as a redirect's, is empty.
             if (body.length === 0) return;
             const json: unknown = JSON.parse(body.toString("utf8"));
-            for (const field of forbiddenFields(json))
-              leaks.push(`${res.url()}: ${field}`);
+            // The task lab is the parent's own page and shows a task's design by purpose (REQ-8298).
+            const parentLab = new URL(res.url()).pathname.startsWith(
+              "/api/parent/studio/tasks",
+            );
+            if (!parentLab)
+              for (const field of forbiddenFields(json))
+                leaks.push(`${res.url()}: ${field}`);
             if (
               body.includes("correctAnswer") &&
               !new URL(res.url()).pathname.endsWith("/answer")

@@ -53,6 +53,10 @@ async function boot(): Promise<void> {
   const style = document.createElement("style");
   style.textContent = STYLE;
   document.head.append(style);
+  // The screen lab opens a child's screen in another language with `?lang=` (REQ-8300).
+  const asked = new URLSearchParams(location.search).get("lang");
+  if (asked && /^(ru|en|nl)$/.test(asked))
+    document.documentElement.lang = asked;
   await loadStrings(document.documentElement.lang || "ru");
 
   const found = await device();

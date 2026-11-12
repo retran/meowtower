@@ -326,3 +326,25 @@ onlyOnPostgres("the sandbox routes", () => {
     );
   });
 });
+
+it("lists the templates and opens one for a seed and a language, for the parent only", async () => {
+  const list = (await (await call("GET", "/tasks")).json()) as {
+    templates: { id: string }[];
+  };
+  expect(list.templates.length).toBeGreaterThan(100);
+  const id = list.templates[0]?.id ?? "";
+  const opened = (await (
+    await call("GET", `/tasks/${id}?seed=0a&lang=nl`)
+  ).json()) as {
+    lang: string;
+    text: string;
+    answer: string;
+    seed: string;
+  };
+  expect(opened).toMatchObject({ lang: "nl", seed: "0a" });
+  expect(opened.text.length).toBeGreaterThan(0);
+  expect((await call("GET", "/tasks/missing")).status).toBe(404);
+  expect(
+    (await call("GET", `/tasks/${id}`, undefined, deviceCookie)).status,
+  ).toBe(401);
+});
