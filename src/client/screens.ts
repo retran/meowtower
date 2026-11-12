@@ -849,16 +849,13 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
   return box;
 }
 
-/** What each state lever asks for: a field is a choice among values, a number or a text. */
+/** What each state lever asks for: a field is a number or a text, and the server checks the value. */
 const LEVERS: Readonly<
-  Record<
-    string,
-    readonly { name: string; choices?: readonly string[]; number?: boolean }[]
-  >
+  Record<string, readonly { name: string; number?: boolean }[]>
 > = {
-  language: [{ name: "value", choices: ["ru", "en", "nl"] }],
-  gender: [{ name: "value", choices: ["f", "m"] }],
-  creepiness: [{ name: "value", choices: ["0", "1", "2"] }],
+  language: [{ name: "value" }],
+  gender: [{ name: "value" }],
+  creepiness: [{ name: "value", number: true }],
   friendship: [
     { name: "familiarId" },
     { name: "points", number: true },
@@ -870,7 +867,7 @@ const LEVERS: Readonly<
     { name: "amount", number: true },
   ],
   nodeLevel: [{ name: "node" }, { name: "level", number: true }],
-  rank: [{ name: "rank", choices: ["E", "D", "C", "B", "A", "S"] }],
+  rank: [{ name: "rank" }],
 };
 
 /**
@@ -885,25 +882,17 @@ function leverPanel(note: HTMLElement): HTMLElement {
       el("option", { value: k }, t(`ui.studio.lever.kind.${k}` as UiKey)),
     );
   const fields = el("span", { className: "lever-fields" });
-  const inputs = new Map<string, HTMLInputElement | HTMLSelectElement>();
+  const inputs = new Map<string, HTMLInputElement>();
   const draw = (): void => {
     inputs.clear();
     fields.replaceChildren();
     for (const f of LEVERS[kind.value] ?? []) {
-      const input = f.choices
-        ? el("select", { id: `lever-${f.name}` })
-        : el("input", {
-            id: `lever-${f.name}`,
-            type: f.number ? "number" : "text",
-          });
-      if (f.choices)
-        for (const c of f.choices) input.append(el("option", { value: c }, c));
+      const input = el("input", {
+        id: `lever-${f.name}`,
+        type: f.number ? "number" : "text",
+      });
       input.dataset["action"] = `lever-${f.name}`;
       input.addEventListener("input", () => act(`lever-${f.name}`));
-      if (f.choices)
-        input.addEventListener("keydown", (e) => {
-          if ((e as KeyboardEvent).key === "Enter") act(`lever-${f.name}`);
-        });
       inputs.set(f.name, input);
       fields.append(
         el(
@@ -930,8 +919,7 @@ function leverPanel(note: HTMLElement): HTMLElement {
     const lever: Record<string, unknown> = { kind: kind.value };
     for (const f of LEVERS[kind.value] ?? []) {
       const raw = inputs.get(f.name)?.value ?? "";
-      lever[f.name] =
-        f.number || kind.value === "creepiness" ? Number(raw) : raw;
+      lever[f.name] = f.number ? Number(raw) : raw;
     }
     const done = await studioLever(lever);
     note.textContent = done.ok
