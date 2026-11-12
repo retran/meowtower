@@ -237,7 +237,7 @@ test("REQ-8288: a state is picked, filled in and set in the sandbox", async ({
   await page.locator('[data-action="lever-set"]').click();
   await expect(page.getByText("Задано в песочнице.")).toBeVisible();
   await page.locator("#lever-kind").selectOption("creepiness");
-  await page.locator("#lever-value").selectOption("2");
+  await page.locator("#lever-value").fill("2");
   await page.locator('[data-action="lever-set"]').click();
   await expect.poll(() => levers.length).toBe(2);
   expect(levers).toEqual([
