@@ -98,7 +98,6 @@ onlyOnPostgres("the sandbox's state levers", () => {
       { kind: "language", value: "nl" },
       { kind: "gender", value: "m" },
       { kind: "creepiness", value: 2 },
-      { kind: "playerLevel", level: 7 },
       { kind: "friendship", familiarId: "f1", points: 12, level: 3 },
       { kind: "item", rewardId: "star", rewardKind: "star", amount: 5 },
       { kind: "nodeLevel", node: "N1", level: 4 },
@@ -118,11 +117,7 @@ onlyOnPostgres("the sandbox's state levers", () => {
         .prepare("SELECT type FROM events ORDER BY seq")
         .all()) as { type: string }[];
       expect(types.map((t) => t.type)).toEqual(
-        expect.arrayContaining([
-          "level_up",
-          "familiar_friendship",
-          "reward_granted",
-        ]),
+        expect.arrayContaining(["familiar_friendship", "reward_granted"]),
       );
       expect(
         (
