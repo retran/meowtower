@@ -85,6 +85,8 @@ import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
 import { createRateCap } from "./rate.js";
 import { send } from "./send.js";
 import { skillsRead } from "./skills.js";
+import type { Forced } from "./sandbox/force.js";
+import { moveLevel } from "./sandbox/levers.js";
 import { mountStream, type Stream } from "./stream.js";
 import {
   adventureState,
@@ -118,7 +120,7 @@ import {
   type Verdict,
 } from "./standin.js";
 
-type Outcome = "clean" | "alt";
+type Outcome = "clean" | "partial" | "alt";
 
 /** How long the server waits for a written explanation before the template. */
 export const EXPLAIN_TIMEOUT_MS = 10_000;
@@ -136,6 +138,8 @@ export interface PlayOptions {
   tasks?: "standin" | "registry";
   /** The live story frames (ADR-3100); without it every task shows its template text. */
   frames?: FrameQueue;
+  /** Takes the one thing forced on the next answer, for the sandbox (REQ-8290); the game has none. */
+  forced?: () => Forced | null;
 }
 
 /** The candidate a task was drawn at, read from its effective seed `base/k`. */
@@ -321,6 +325,7 @@ export function mountPlay(
     sweepLeasesMs,
     tasks,
     frames,
+    forced,
   }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
@@ -1432,7 +1437,13 @@ export function mountPlay(
     // is not an attempt, so nothing is logged and the task's time keeps running
     // (REQ-0734, REQ-0736, REQ-0740).
     if (verdict === "unparsed") return c.json({ error: "unparsed_input" }, 422);
-    const outcome: Outcome = verdict === "correct" ? "clean" : "alt";
+    const force = forced?.() ?? null;
+    const outcome: Outcome =
+      force === "clean" || force === "partial" || force === "alt"
+        ? force
+        : verdict === "correct"
+          ? "clean"
+          : "alt";
     const hints = hintLevels(found.log, a.itemId);
     // A pause between showing the task and this answer, or a device of another
     // kind than the one that showed it, keeps the attempt's time out of every
@@ -1491,6 +1502,17 @@ export function mountPlay(
         key,
       ),
     );
+
+    if (force === "fall" || force === "rise") {
+      const node = (
+        found.log
+          .filter((e) => e.type === "item_shown")
+          .find((e) => payloadOf<{ itemId: string }>(e).itemId === a.itemId)
+          ?.payload as { node?: string } | undefined
+      )?.node;
+      if (node)
+        await moveLevel(db, node, force === "rise" ? 1 : -1, Date.now());
+    }
 
     const reply = answerReply(
       await sessionEvents(db, sessionId),

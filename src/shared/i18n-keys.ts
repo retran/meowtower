@@ -374,6 +374,14 @@ export interface StringParams {
   "ui.studio.lever.field.amount": NoParams;
   "ui.studio.lever.field.node": NoParams;
   "ui.studio.lever.field.rank": NoParams;
+  "ui.studio.force.title": NoParams;
+  "ui.studio.force.next": NoParams;
+  "ui.studio.force.set": NoParams;
+  "ui.studio.force.clean": NoParams;
+  "ui.studio.force.partial": NoParams;
+  "ui.studio.force.alt": NoParams;
+  "ui.studio.force.fall": NoParams;
+  "ui.studio.force.rise": NoParams;
   "ui.studio.approve": NoParams;
   "ui.studio.toDraft": NoParams;
   "ui.studio.add": { level: string | number };

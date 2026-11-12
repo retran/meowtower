@@ -7,6 +7,7 @@ import {
   type TemplateRow,
   studioCreate,
   studioEncounters,
+  studioForce,
   studioLever,
   studioPlayStart,
   studioLog,
@@ -937,6 +938,39 @@ function leverPanel(note: HTMLElement): HTMLElement {
   );
 }
 
+/** What the parent can force on the next check; each is a key, so the screen shows no stray text. */
+const FORCES = ["clean", "partial", "alt", "fall", "rise"] as const;
+
+/**
+ * The force of the sandbox (ADR-3280, REQ-8290): choose what the next check gives, an outcome, a fall
+ * or a rise, and force it once. An open gate waits for the gates of the world, which are not built.
+ */
+function forcePanel(note: HTMLElement): HTMLElement {
+  const next = el("select", { id: "force-next" });
+  next.dataset["action"] = "force-next";
+  for (const f of FORCES)
+    next.append(el("option", { value: f }, t(`ui.studio.force.${f}` as UiKey)));
+  next.addEventListener("change", () => act("force-next"));
+  // Enter confirms a choice from the keyboard, as it does on a button.
+  next.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") act("force-next");
+  });
+  const set = button("ui.studio.force.set", "force-set", async () => {
+    const done = await studioForce(next.value);
+    note.textContent = done.ok
+      ? t("ui.studio.lever.done")
+      : t("ui.studio.refused", { reason: done.error });
+  });
+  return el(
+    "section",
+    { className: "force" },
+    el("h2", {}, t("ui.studio.force.title")),
+    el("label", { htmlFor: "force-next" }, t("ui.studio.force.next")),
+    next,
+    set,
+  );
+}
+
 const INNER: Readonly<Record<StudioNode["level"], StudioNode["level"] | null>> =
   {
     campaign: "arc",
@@ -969,6 +1003,7 @@ const studioScreen: Screen = {
       panel,
       note,
       leverPanel(note),
+      forcePanel(note),
       logs,
       nav,
     );
