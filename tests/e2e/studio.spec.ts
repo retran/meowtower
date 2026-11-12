@@ -21,6 +21,9 @@ interface Fake {
   links: string[];
 }
 
+/** What the sandbox was asked to force, in order. */
+const forces: object[] = [];
+
 /** What the sandbox was asked to set, in order. */
 const levers: object[] = [];
 
@@ -116,6 +119,10 @@ async function stub(page: Page): Promise<Fake[]> {
     if (path === "/sandbox/play/start" && method === "POST") {
       started.push(route.request().postDataJSON() as object);
       return json(200, { sessionId: "s1", scene: {} });
+    }
+    if (path === "/sandbox/force" && method === "POST") {
+      forces.push(route.request().postDataJSON() as object);
+      return json(200, { status: "ok" });
     }
     if (path === "/sandbox/levers" && method === "POST") {
       levers.push(route.request().postDataJSON() as object);
@@ -244,4 +251,19 @@ test("REQ-8288: a state is picked, filled in and set in the sandbox", async ({
     { kind: "friendship", familiarId: "f1", points: 12, level: 3 },
     { kind: "creepiness", value: 2 },
   ]);
+});
+
+test("REQ-8290: the next outcome is chosen and forced in the sandbox", async ({
+  page,
+}) => {
+  forces.length = 0;
+  await stub(page);
+  await ready(page);
+  await page.locator("#force-next").selectOption("partial");
+  await page.locator('[data-action="force-set"]').click();
+  await expect(page.getByText("Задано в песочнице.")).toBeVisible();
+  await page.locator("#force-next").selectOption("fall");
+  await page.locator('[data-action="force-set"]').click();
+  await expect.poll(() => forces.length).toBe(2);
+  expect(forces).toEqual([{ next: "partial" }, { next: "fall" }]);
 });
