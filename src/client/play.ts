@@ -21,6 +21,7 @@ import {
   secondAttempt,
   nextSeq,
   buyHint,
+  gamePath,
   pause,
   pickChest,
   resumeAdventure,
@@ -167,7 +168,9 @@ export const playScreen: Screen = {
           if (state === MOVED && sessionId === id) viewOnly();
         });
       }, HEARTBEAT_MS);
-      events = new EventSource(`/api/session/${encodeURIComponent(id)}/events`);
+      events = new EventSource(
+        gamePath(`/api/session/${encodeURIComponent(id)}/events`),
+      );
       events.addEventListener("lease_moved", () => {
         if (sessionId === id) viewOnly();
       });

@@ -789,6 +789,15 @@ export function mountPlay(
         roomFor(open, await sessionEvents(db, sessionId), played),
       );
     }
+    // A scene prepared for the session and not yet answered shows before the next task, in the
+    // registry's flow too: the sandbox starts play at an encounter this way (REQ-8286).
+    if (tasks === "registry") {
+      const point = resumeFromLog(played);
+      if (point?.scene) {
+        if (lifecycle.length) await appendEvents(db, lifecycle);
+        return await send(c, Scene, { kind: "scene", ...point.scene });
+      }
+    }
 
     const index = firsts.length;
     // After the finish-today action the next boundary is the stop offer, once an

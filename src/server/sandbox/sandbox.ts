@@ -91,7 +91,7 @@ export async function sandboxState(
   }
 }
 
-async function openPostgresIfExists(
+export async function openPostgresIfExists(
   url: string,
   schema: string,
 ): Promise<Db | null> {

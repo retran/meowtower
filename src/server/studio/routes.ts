@@ -1,13 +1,26 @@
 // The studio's routes in the Parent Room (ADR-3280): every one needs the parent's session, which
 // the room hands in as `guard`.
 import type { Context, Hono } from "hono";
+import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
 import {
   adventureEventCounts,
   eventsOfAdventure,
 } from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
-import { createSandbox, sandboxState } from "../sandbox/sandbox.js";
+import { DEVICE_COOKIE } from "../devices.js";
+import {
+  createSandboxPlay,
+  encountersOf,
+  enterEncounter,
+  SANDBOX_COOKIE,
+  startAt,
+} from "../sandbox/play.js";
+import {
+  createSandbox,
+  sandboxSchemaOf,
+  sandboxState,
+} from "../sandbox/sandbox.js";
 import { listTemplates, openTask } from "./tasks.js";
 import {
   addEntry,
@@ -60,6 +73,9 @@ const EntryEditIn = z
   .object({ name: z.string(), body: z.string().max(20000) })
   .strict();
 const ResetIn = z.object({ from: z.enum(["empty", "copy"]) }).strict();
+const PlayStartIn = z
+  .object({ adventureId: z.string(), encounterId: z.string() })
+  .strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
 
 export function mountStudio(
@@ -254,6 +270,12 @@ export function mountStudio(
       ? (process.env["MEOWTOWER_DATABASE_URL"] ?? null)
       : null;
 
+  /** The sandbox kept open for play, one for the profile; made on first use. */
+  let playing: ReturnType<typeof createSandboxPlay> | null = null;
+  const sandboxPlay = (at: string): ReturnType<typeof createSandboxPlay> =>
+    (playing ??= createSandboxPlay(at, sandboxSchemaOf(db.name), now));
+  const playBase = `${base}/sandbox/play`;
+
   app.get(`${base}/sandbox`, async (c) => {
     const who = await guard(c);
     if (who instanceof Response) return who;
@@ -269,9 +291,78 @@ export function mountStudio(
     if (!at) return c.json({ error: "sandbox_unavailable" }, 409);
     const body = ResetIn.safeParse(await c.req.json().catch(() => null));
     if (!body.success) return c.json({ error: "bad_request" }, 400);
+    await sandboxPlay(at).release();
     const made = await createSandbox(at, db, body.data.from);
     await made.db.close();
     return c.json(await sandboxState(at, db, now()));
+  });
+
+  // The play surface (REQ-8286): the encounters of any adventure, a start at one of them, and the
+  // child's own routes on the sandbox, which answer the parent only.
+  app.get(`${playBase}/adventures/:id/encounters`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    try {
+      return c.json({
+        encounters: await encountersOf(db, c.req.param("id")),
+      });
+    } catch (err) {
+      if (err instanceof StudioRefused)
+        return c.json({ error: "adventure_unknown" }, 404);
+      throw err;
+    }
+  });
+
+  app.post(`${playBase}/start`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    if (!at) return c.json({ error: "sandbox_unavailable" }, 409);
+    const body = PlayStartIn.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const open = await sandboxPlay(at).open();
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    let scene;
+    try {
+      scene = await enterEncounter(
+        db,
+        body.data.adventureId,
+        body.data.encounterId,
+      );
+    } catch (err) {
+      return refused(c, err);
+    }
+    const started = await startAt(open, scene);
+    setCookie(c, SANDBOX_COOKIE, started.deviceToken, {
+      httpOnly: true,
+      sameSite: "Strict",
+      path: playBase,
+    });
+    return c.json({ sessionId: started.sessionId, scene });
+  });
+
+  app.all(`${playBase}/child/*`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    const open = at ? await sandboxPlay(at).open() : null;
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    const target = new URL(c.req.url);
+    target.pathname = target.pathname.slice(`${playBase}/child`.length);
+    // The sandbox's own device stands in for the game's device cookie on the child's routes.
+    const headers = new Headers(c.req.raw.headers);
+    headers.set(
+      "cookie",
+      `${DEVICE_COOKIE}=${getCookie(c, SANDBOX_COOKIE) ?? ""}`,
+    );
+    const bare = c.req.method === "GET" || c.req.method === "HEAD";
+    return open.app.fetch(
+      new Request(target, {
+        method: c.req.method,
+        headers,
+        ...(bare ? {} : { body: await c.req.arrayBuffer() }),
+      }),
+    );
   });
 
   // The task lab: the templates, and one of them opened for a seed and a language (REQ-8298).
