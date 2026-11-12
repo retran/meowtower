@@ -363,7 +363,7 @@
   "ui.studio.force.set": "Подтолкнуть",
   "ui.studio.force.clean": "Чистый успех",
   "ui.studio.force.partial": "Успех с ценой",
-  "ui.studio.force.alt": "Неудача с поворотом",
+  "ui.studio.force.alt": "Сорвалось, но с поворотом",
   "ui.studio.force.fall": "Падение",
   "ui.studio.force.rise": "Подъём",
   "ui.studio.approve": "Одобрить",
