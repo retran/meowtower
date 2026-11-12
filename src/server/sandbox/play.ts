@@ -5,6 +5,7 @@ import { Hono } from "hono";
 import { appendEvents } from "../../engine/events/append.js";
 import { registerDevice } from "../devices.js";
 import type { Db } from "../db/index.js";
+import type { Forced } from "./force.js";
 import { mountPairing } from "../pairing.js";
 import { mountPlay } from "../play.js";
 import { createStream } from "../stream.js";
@@ -96,6 +97,8 @@ export async function enterEncounter(
 export interface SandboxPlay {
   readonly db: Db;
   readonly app: Hono;
+  /** Holds one thing for the next answer; the answer takes it, so it holds once. */
+  force(next: Forced | null): void;
 }
 
 /**
@@ -114,10 +117,26 @@ export function createSandboxPlay(
       const db = await openPostgresIfExists(url, schema);
       if (!db) return null;
       const app = new Hono();
+      let pending: Forced | null = null;
       // The game's page asks who the device is before it shows anything, so the sandbox answers too.
       mountPairing(app, db, now);
-      mountPlay(app, db, { now, stream: createStream(), tasks: "registry" });
-      held = { db, app };
+      mountPlay(app, db, {
+        now,
+        stream: createStream(),
+        tasks: "registry",
+        forced: () => {
+          const taken = pending;
+          pending = null;
+          return taken;
+        },
+      });
+      held = {
+        db,
+        app,
+        force(next) {
+          pending = next;
+        },
+      };
       return held;
     },
     async release() {

@@ -645,3 +645,12 @@ export async function studioLever(
   });
   return parentReply(status, body, () => null);
 }
+
+/** Forces the outcome, a fall or a rise of the next check in the sandbox (REQ-8290). */
+export async function studioForce(next: string): Promise<ParentReply<null>> {
+  const { status, body } = await call("/api/parent/studio/sandbox/force", {
+    method: "POST",
+    body: JSON.stringify({ next }),
+  });
+  return parentReply(status, body, () => null);
+}
