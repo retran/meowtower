@@ -127,16 +127,22 @@ async function playOne(force?: object): Promise<{
   };
   if (force)
     expect((await studio("POST", "/sandbox/force", force)).status).toBe(200);
-  const answered = await child(`/api/session/${out.sessionId}/answer`, {
-    method: "POST",
-    body: JSON.stringify({
-      itemId: room.itemId,
-      raw: "0",
-      dontKnow: false,
-      input,
-      clientSeq: ++seq,
-    }),
-  });
+  // The task is drawn at random, so the first entry that parses is the answer; a refused entry is
+  // no attempt and logs nothing, and the force waits for the one that counts.
+  let answered = new Response(null, { status: 422 });
+  for (const raw of ["0", "1", "1/2", "a", "0,5", "yes", "x"]) {
+    answered = await child(`/api/session/${out.sessionId}/answer`, {
+      method: "POST",
+      body: JSON.stringify({
+        itemId: room.itemId,
+        raw,
+        dontKnow: false,
+        input,
+        clientSeq: ++seq,
+      }),
+    });
+    if (answered.status !== 422) break;
+  }
   expect(answered.status).toBe(200);
   const sandbox = await openPostgresIfExists(URL, sandboxSchemaOf(schema));
   if (!sandbox) throw new Error("no sandbox");
