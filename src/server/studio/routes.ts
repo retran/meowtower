@@ -9,6 +9,7 @@ import {
 } from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
+import { Lever, setLever } from "../sandbox/levers.js";
 import {
   createSandboxPlay,
   encountersOf,
@@ -339,6 +340,20 @@ export function mountStudio(
       path: playBase,
     });
     return c.json({ sessionId: started.sessionId, scene });
+  });
+
+  // The levers (REQ-8288): one state set in the sandbox, never in her game.
+  app.post(`${base}/sandbox/levers`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    if (!at) return c.json({ error: "sandbox_unavailable" }, 409);
+    const body = Lever.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const open = await sandboxPlay(at).open();
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    await setLever(open.db, body.data, new Date(now()));
+    return c.json({ status: "ok" });
   });
 
   app.all(`${playBase}/child/*`, async (c) => {
