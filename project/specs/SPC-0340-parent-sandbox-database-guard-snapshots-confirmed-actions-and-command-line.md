@@ -2,8 +2,8 @@
 id: SPC-0340
 artifact: spec
 status: live
-revised: 2026-09-29
-states: [REQ-6300, REQ-6302, REQ-6304, REQ-6306, REQ-6308, REQ-6310, REQ-6312, REQ-6314, REQ-6316, REQ-6318, REQ-6320, REQ-6322, REQ-6324, REQ-6326, REQ-6328, REQ-6330, REQ-6336, REQ-6340, REQ-6342, REQ-6344, REQ-6346, REQ-6348, REQ-6350, REQ-6352, REQ-6354, REQ-6356, REQ-6358, REQ-6360, REQ-6362, REQ-6364, REQ-6366, REQ-6368, REQ-6370, REQ-6372, REQ-6374, REQ-6376, REQ-6378]
+revised: 2026-11-11
+states: [REQ-6300, REQ-6302, REQ-6304, REQ-6306, REQ-6308, REQ-6310, REQ-6312, REQ-6314, REQ-6316, REQ-6318, REQ-6320, REQ-6322, REQ-6324, REQ-6326, REQ-6328, REQ-6330, REQ-6336, REQ-6340, REQ-6342, REQ-6344, REQ-6346, REQ-6348, REQ-6350, REQ-6352, REQ-6354, REQ-6356, REQ-6358, REQ-6360, REQ-6362, REQ-6364, REQ-6366, REQ-6368, REQ-6370, REQ-6372, REQ-6374, REQ-6376, REQ-6378, REQ-8284, REQ-8314]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -199,6 +199,10 @@ The commands print their output and write it to no file; a copy in a file exists
 - `sandbox-spend.sqlite`: a nightly job deletes rows older than 13 months, keeping the current month and the same month a year earlier (REQ-6374).
 - The sandbox's `llm_log` bodies: SPC-0100's nightly deletion after 90 days runs on `sandbox.sqlite` as on her file (REQ-6328).
 - Tokens: 20 a parent session and 5 minutes each (REQ-6350).
+
+### The sandbox on Postgres
+
+Since the game keeps each profile in a Postgres schema, the sandbox of a profile is the schema `s_<name>` beside the profile's own, and where the text above names a file it means this schema. It is made empty, or as a copy of the game that carries the log, the blobs and the graph versions and rebuilds the projections; the copy leaves out the PIN, its lockouts, the device tokens and the model call log, so no credential is in it and its spend is its own (REQ-6322, REQ-8284). Nothing done in it reaches the profile's schema. The sandbox's gateway keeps its log in the sandbox schema and counts against the testing limit, $50 a month unless the owner sets `MEOWTOWER_SANDBOX_MONTH_USD`, and never against an account's budget (REQ-8314). The studio's routes read the sandbox's state and reset it, and answer 409 where the game runs on SQLite.
 
 ## Failure paths
 

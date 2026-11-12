@@ -7,6 +7,7 @@ import {
   eventsOfAdventure,
 } from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
+import { createSandbox, sandboxState } from "../sandbox/sandbox.js";
 import {
   addEntry,
   childrenOf,
@@ -57,6 +58,7 @@ const EntryIn = z
 const EntryEditIn = z
   .object({ name: z.string(), body: z.string().max(20000) })
   .strict();
+const ResetIn = z.object({ from: z.enum(["empty", "copy"]) }).strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
 
 export function mountStudio(
@@ -242,6 +244,33 @@ export function mountStudio(
         payload: e.payload,
       })),
     });
+  });
+
+  // The sandbox (ADR-3350): its state, and a reset from nothing or from a copy of her game. It lives
+  // in Postgres beside the profile's schema, so the routes answer 409 where the game runs on SQLite.
+  const url = (): string | null =>
+    db.dialect === "postgres"
+      ? (process.env["MEOWTOWER_DATABASE_URL"] ?? null)
+      : null;
+
+  app.get(`${base}/sandbox`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    if (!at) return c.json({ error: "sandbox_unavailable" }, 409);
+    return c.json(await sandboxState(at, db, now()));
+  });
+
+  app.post(`${base}/sandbox/reset`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    if (!at) return c.json({ error: "sandbox_unavailable" }, 409);
+    const body = ResetIn.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const made = await createSandbox(at, db, body.data.from);
+    await made.db.close();
+    return c.json(await sandboxState(at, db, now()));
   });
 
   app.get(`${base}/jobs`, async (c) => {
