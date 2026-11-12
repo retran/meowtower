@@ -545,3 +545,44 @@ export async function studioLog(
     () => body["events"] as { seq: number; ts: string; type: string }[],
   );
 }
+
+export interface TemplateRow {
+  id: string;
+  node: string;
+  subtype: string;
+  form: string;
+  groups: [number, number];
+  answerKind: string;
+}
+
+export interface OpenedTask {
+  template: TemplateRow;
+  seed: string;
+  lang: string;
+  text: string;
+  svg: string | null;
+  options: string[] | null;
+  answer: string;
+  solution: string[];
+  hints: string[];
+  traps: { id: string; kind: string; entry: string; explanation: string }[];
+  blank: string;
+  storyEstimateUsd: number;
+}
+
+export async function studioTemplates(): Promise<ParentReply<TemplateRow[]>> {
+  const { status, body } = await call("/api/parent/studio/tasks");
+  return parentReply(status, body, () => body["templates"] as TemplateRow[]);
+}
+
+export async function studioTask(
+  id: string,
+  seed: string,
+  lang: string,
+): Promise<ParentReply<OpenedTask>> {
+  const query = new URLSearchParams({ lang, ...(seed ? { seed } : {}) });
+  const { status, body } = await call(
+    `/api/parent/studio/tasks/${encodeURIComponent(id)}?${query.toString()}`,
+  );
+  return parentReply(status, body, () => body as unknown as OpenedTask);
+}

@@ -8,6 +8,7 @@ import {
 } from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
 import { createSandbox, sandboxState } from "../sandbox/sandbox.js";
+import { listTemplates, openTask } from "./tasks.js";
 import {
   addEntry,
   childrenOf,
@@ -271,6 +272,24 @@ export function mountStudio(
     const made = await createSandbox(at, db, body.data.from);
     await made.db.close();
     return c.json(await sandboxState(at, db, now()));
+  });
+
+  // The task lab: the templates, and one of them opened for a seed and a language (REQ-8298).
+  app.get(`${base}/tasks`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    return c.json({ templates: listTemplates() });
+  });
+
+  app.get(`${base}/tasks/:id`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const opened = openTask(
+      c.req.param("id"),
+      c.req.query("seed"),
+      c.req.query("lang") ?? "ru",
+    );
+    return opened ? c.json(opened) : c.json({ error: "template_unknown" }, 404);
   });
 
   app.get(`${base}/jobs`, async (c) => {

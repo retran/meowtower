@@ -361,6 +361,35 @@ export interface StringParams {
   "ui.studio.logEvents": { n: string | number };
   "ui.studio.logOpen": NoParams;
   "ui.studio.graph": NoParams;
+  "ui.studio.navTasks": NoParams;
+  "ui.studio.navScreens": NoParams;
+  "ui.tasks.title": NoParams;
+  "ui.tasks.filter": NoParams;
+  "ui.tasks.count": { n: string | number };
+  "ui.tasks.seed": NoParams;
+  "ui.tasks.nextSeed": NoParams;
+  "ui.tasks.lang": NoParams;
+  "ui.tasks.answer": { answer: string | number };
+  "ui.tasks.solution": NoParams;
+  "ui.tasks.hints": NoParams;
+  "ui.tasks.traps": NoParams;
+  "ui.tasks.blank": NoParams;
+  "ui.tasks.cost": { usd: string | number };
+  "ui.tasks.meta": {
+    from: string | number;
+    node: string | number;
+    subtype: string | number;
+    to: string | number;
+  };
+  "ui.tasks.none": NoParams;
+  "ui.screens.title": NoParams;
+  "ui.screens.intro": NoParams;
+  "ui.screens.screen.home": NoParams;
+  "ui.screens.screen.sheet": NoParams;
+  "ui.screens.screen.pair": NoParams;
+  "ui.screens.screen.settings": NoParams;
+  "ui.screens.open": { lang: string | number; screen: string | number };
+  "ui.screens.frame": NoParams;
 }
 
 export type Key = keyof StringParams;

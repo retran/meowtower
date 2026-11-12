@@ -148,6 +148,28 @@ describe("REQ-3810: a request for a language outside the shipped set gets Russia
     expect((await app.request("/i18n/ru.json")).status).toBe(200);
     expect((await app.request("/i18n/x.txt")).status).toBe(404);
   });
+
+  it("serves the strings of any shipped language, not only the one the server speaks", async () => {
+    for (const code of ["ru", "en", "nl"]) {
+      const res = await app.request(`/i18n/${code}.json`);
+      expect(res.status).toBe(200);
+      expect(
+        Object.keys((await res.json()) as object).every((k) =>
+          k.startsWith("ui."),
+        ),
+      ).toBe(true);
+    }
+    const nl = (await (await app.request("/i18n/nl.json")).json()) as Record<
+      string,
+      string
+    >;
+    const en = (await (await app.request("/i18n/en.json")).json()) as Record<
+      string,
+      string
+    >;
+    expect(nl["ui.app.name"]).toBe("Nevelwade");
+    expect(en["ui.app.name"]).toBe("Misty Ford");
+  });
 });
 
 describe("TSK-0676: the generated key file is current", () => {

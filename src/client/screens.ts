@@ -1,6 +1,10 @@
 // The shell's screens. ADR-0150 adds the game's and the Parent Room's; each
 // registers here, so the keyboard test walks it too.
 import {
+  studioTask,
+  studioTemplates,
+  type OpenedTask,
+  type TemplateRow,
   studioCreate,
   studioLog,
   studioLogs,
@@ -1059,11 +1063,247 @@ const studioScreen: Screen = {
     };
 
     nav.append(
+      link("ui.studio.navTasks", "open-task-lab", "/studio/tasks"),
+      link("ui.studio.navScreens", "open-screen-lab", "/studio/screens"),
       link("ui.nav.parent", "open-parent", "/parent"),
       link("ui.nav.back", "back", "/"),
     );
     void show().then(showLogs);
     return section;
+  },
+};
+
+const LANGS = ["ru", "en", "nl"] as const;
+
+/**
+ * The task lab (ADR-3280, REQ-8298): any template opened as a task, in any language and for any
+ * seed, with its answer, solution, hints, typical mistakes and what a story for it would cost.
+ */
+const taskLabScreen: Screen = {
+  path: "/studio/tasks",
+  render() {
+    const note = status();
+    const nav = el("nav", { className: "actions" });
+    const filter = el("input", { id: "task-filter", type: "text" });
+    filter.dataset["action"] = "task-filter";
+    filter.addEventListener("input", () => act("task-filter"));
+    const count = status();
+    const list = el("ul", { className: "templates" });
+    const detail = el("div", { className: "task-detail" });
+    const section = el(
+      "section",
+      {},
+      heading("ui.tasks.title"),
+      el("label", { htmlFor: "task-filter" }, t("ui.tasks.filter")),
+      filter,
+      count,
+      list,
+      detail,
+      note,
+      nav,
+    );
+    section.dataset["busy"] = "1";
+    let all: TemplateRow[] = [];
+    let chosen: TemplateRow | null = null;
+    let lang: string = "ru";
+    let seed = "";
+
+    const openChosen = async (): Promise<void> => {
+      if (!chosen) return;
+      const task = await asParent(section, note, () =>
+        studioTask(chosen?.id ?? "", seed, lang),
+      );
+      detail.replaceChildren();
+      if (!task) return;
+      seed = task.seed;
+      showTask(task);
+    };
+
+    const showTask = (task: OpenedTask): void => {
+      const seedBox = el("input", {
+        id: "task-seed",
+        type: "text",
+        value: task.seed,
+      });
+      seedBox.dataset["action"] = "task-seed";
+      seedBox.addEventListener("input", () => {
+        act("task-seed");
+        seed = (seedBox as HTMLInputElement).value.trim().toLowerCase();
+      });
+      const apply = button("ui.tasks.nextSeed", "task-next-seed", async () => {
+        const next = BigInt(`0x${task.seed || "0"}`) + 1n;
+        seed = next.toString(16);
+        await openChosen();
+      });
+      const langs = el(
+        "div",
+        { className: "langs" },
+        el("span", {}, t("ui.tasks.lang")),
+        ...LANGS.map((code) => {
+          const b = el(
+            "button",
+            { type: "button", className: "control" },
+            code,
+          );
+          b.dataset["action"] = `task-lang-${code}`;
+          b.setAttribute("aria-pressed", String(code === lang));
+          b.addEventListener("click", () => {
+            act(`task-lang-${code}`);
+            lang = code;
+            void openChosen();
+          });
+          return b;
+        }),
+      );
+      const picture = el("div", { className: "picture" });
+      if (task.svg) picture.innerHTML = task.svg;
+      detail.replaceChildren(
+        el("h2", {}, task.template.id),
+        status(
+          t("ui.tasks.meta", {
+            node: task.template.node,
+            subtype: task.template.subtype,
+            from: String(task.template.groups[0]),
+            to: String(task.template.groups[1]),
+          }),
+        ),
+        langs,
+        el("label", { htmlFor: "task-seed" }, t("ui.tasks.seed")),
+        seedBox,
+        apply,
+        el("p", { className: "task-text" }, task.text),
+        picture,
+        ...(task.options ? [el("p", {}, task.options.join(" · "))] : []),
+        el(
+          "p",
+          { className: "task-answer" },
+          t("ui.tasks.answer", { answer: task.answer }),
+        ),
+        el("h3", {}, t("ui.tasks.solution")),
+        el("ol", {}, ...task.solution.map((line) => el("li", {}, line))),
+        el("h3", {}, t("ui.tasks.hints")),
+        el("ol", {}, ...task.hints.map((line) => el("li", {}, line))),
+        el("h3", {}, t("ui.tasks.traps")),
+        el(
+          "ul",
+          {},
+          ...task.traps.map((trap) =>
+            el("li", {}, `${trap.entry}: ${trap.explanation}`),
+          ),
+        ),
+        el("h3", {}, t("ui.tasks.blank")),
+        el("p", { className: "task-blank" }, task.blank),
+        status(t("ui.tasks.cost", { usd: task.storyEstimateUsd.toFixed(4) })),
+      );
+    };
+
+    const drawList = (): void => {
+      const needle = (filter as HTMLInputElement).value.trim().toLowerCase();
+      const shown = all
+        .filter(
+          (r) =>
+            needle === "" ||
+            `${r.id} ${r.node} ${r.subtype}`.toLowerCase().includes(needle),
+        )
+        .slice(0, 60);
+      count.textContent = t("ui.tasks.count", { n: String(shown.length) });
+      list.replaceChildren(
+        ...(shown.length === 0
+          ? [el("li", {}, t("ui.tasks.none"))]
+          : shown.map((r) => {
+              const b = el(
+                "button",
+                { type: "button", className: "control" },
+                r.id,
+              );
+              b.dataset["action"] = `task-${r.id}`;
+              b.addEventListener("click", () => {
+                act(`task-${r.id}`);
+                chosen = r;
+                seed = "";
+                void openChosen();
+              });
+              return el("li", {}, b);
+            })),
+      );
+    };
+    filter.addEventListener("input", drawList);
+
+    nav.append(
+      link("ui.studio.title", "open-studio", "/studio"),
+      link("ui.nav.back", "back", "/"),
+    );
+    void (async () => {
+      const rows = await asParent(section, note, studioTemplates);
+      if (!rows) loginNeeded(note, nav);
+      else {
+        all = rows;
+        drawList();
+      }
+      delete section.dataset["busy"];
+    })();
+    return section;
+  },
+};
+
+const CHILD_SCREENS = [
+  ["home", "/"],
+  ["sheet", "/sheet"],
+  ["pair", "/pair"],
+  ["settings", "/settings"],
+] as const;
+
+/**
+ * The screen lab (ADR-3280, REQ-8300): a child's screen in a frame, in any shipped language. The
+ * frame is the game's own page with the language asked for in its address, so what shows is what
+ * the child sees. The play screen opens in the sandbox, which comes with the turn loop.
+ */
+const screenLabScreen: Screen = {
+  path: "/studio/screens",
+  render() {
+    const stage = el("div", { className: "screen-stage" });
+    // The frame is made on the first choice, so a page that only shows the buttons holds no frame.
+    const show = (code: string, route: string): void => {
+      let frame = stage.querySelector("iframe");
+      if (!frame) {
+        frame = el("iframe", {
+          className: "screen-frame",
+          title: t("ui.screens.frame"),
+        });
+        frame.dataset["action"] = "screen-frame";
+        frame.tabIndex = -1;
+        frame.style.width = "100%";
+        frame.style.height = "480px";
+        stage.append(frame);
+      }
+      frame.setAttribute("src", `/?lang=${code}#${route}`);
+    };
+    const buttons = el("div", { className: "screens" });
+    for (const [name, route] of CHILD_SCREENS)
+      for (const code of LANGS) {
+        const b = button("ui.screens.open", `screen-${name}-${code}`, () => {
+          show(code, route);
+        });
+        b.textContent = t("ui.screens.open", {
+          screen: t(`ui.screens.screen.${name}` as UiKey),
+          lang: code,
+        });
+        buttons.append(b);
+      }
+    return el(
+      "section",
+      {},
+      heading("ui.screens.title"),
+      status(t("ui.screens.intro")),
+      buttons,
+      stage,
+      el(
+        "nav",
+        { className: "actions" },
+        link("ui.studio.title", "open-studio", "/studio"),
+        link("ui.nav.back", "back", "/"),
+      ),
+    );
   },
 };
 
@@ -1123,5 +1363,7 @@ export const SCREENS: readonly Screen[] = [
   parentSettingsScreen,
   accountScreen,
   studioScreen,
+  taskLabScreen,
+  screenLabScreen,
   playScreen,
 ];
