@@ -859,7 +859,6 @@ const LEVERS: Readonly<
   language: [{ name: "value", choices: ["ru", "en", "nl"] }],
   gender: [{ name: "value", choices: ["f", "m"] }],
   creepiness: [{ name: "value", choices: ["0", "1", "2"] }],
-  playerLevel: [{ name: "level", number: true }],
   friendship: [
     { name: "familiarId" },
     { name: "points", number: true },

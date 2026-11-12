@@ -23,12 +23,6 @@ export const Lever = z.discriminatedUnion("kind", [
     .strict(),
   z
     .object({
-      kind: z.literal("playerLevel"),
-      level: z.number().int().min(1).max(1000),
-    })
-    .strict(),
-  z
-    .object({
       kind: z.literal("friendship"),
       familiarId: text,
       points: count,
@@ -64,9 +58,6 @@ export async function setLever(db: Db, lever: Lever, now: Date): Promise<void> {
     case "gender":
     case "creepiness":
       await event("settings_changed", { key: lever.kind, value: lever.value });
-      return;
-    case "playerLevel":
-      await event("level_up", { level: lever.level });
       return;
     case "friendship":
       await event("familiar_friendship", {
