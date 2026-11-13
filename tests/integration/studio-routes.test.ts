@@ -348,3 +348,16 @@ it("lists the templates and opens one for a seed and a language, for the parent 
     (await call("GET", `/tasks/${id}`, undefined, deviceCookie)).status,
   ).toBe(401);
 });
+
+it("REQ-8304: serves the checklist to the parent only", async () => {
+  expect(
+    (await call("GET", "/checklist", undefined, deviceCookie)).status,
+  ).toBe(401);
+  const res = await call("GET", "/checklist");
+  expect(res.status).toBe(200);
+  const body = (await res.json()) as {
+    features: { id: string; tests: string[] }[];
+  };
+  expect(body.features.length).toBeGreaterThan(10);
+  expect(body.features.every((f) => f.tests.length > 0)).toBe(true);
+});
