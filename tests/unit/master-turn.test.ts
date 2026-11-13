@@ -5,7 +5,6 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { appendEvents } from "../../src/engine/events/append.js";
 import { openDatabase } from "../../src/server/database.js";
 import { MASTER_TOOL_NAMES } from "../../src/story/master-tools.js";
 import {
@@ -169,7 +168,7 @@ describe("REQ-8218: each turn is in the log", () => {
           },
         ]),
       );
-      await recordTurn(db, out, appendEvents);
+      await recordTurn(db, out);
       const rows = (await db
         .prepare("SELECT type FROM events ORDER BY seq")
         .all()) as { type: string }[];
