@@ -1,0 +1,173 @@
+{
+  "features": [
+    {
+      "id": "screen:/play",
+      "tests": ["tests/e2e/play.spec.ts"]
+    },
+    {
+      "id": "screen:/",
+      "tests": ["tests/e2e/shell.spec.ts"]
+    },
+    {
+      "id": "screen:/settings",
+      "tests": ["tests/e2e/interface.spec.ts"]
+    },
+    {
+      "id": "screen:/pair",
+      "tests": ["tests/unit/pairing.test.ts"]
+    },
+    {
+      "id": "screen:/parent",
+      "tests": ["tests/e2e/parent.spec.ts"]
+    },
+    {
+      "id": "screen:/parent/devices",
+      "tests": ["tests/e2e/parent.spec.ts"]
+    },
+    {
+      "id": "screen:/parent/settings",
+      "tests": ["tests/e2e/parent.spec.ts"]
+    },
+    {
+      "id": "screen:/account",
+      "tests": ["tests/e2e/account.spec.ts"]
+    },
+    {
+      "id": "screen:/studio",
+      "tests": ["tests/e2e/studio.spec.ts"]
+    },
+    {
+      "id": "screen:/studio/tasks",
+      "tests": ["tests/e2e/studio-labs.spec.ts"]
+    },
+    {
+      "id": "screen:/studio/screens",
+      "tests": ["tests/e2e/studio-labs.spec.ts"]
+    },
+    {
+      "id": "screen:/sheet",
+      "tests": ["tests/e2e/sheet.spec.ts"]
+    },
+    {
+      "id": "screen:/studio/checklist",
+      "tests": ["tests/e2e/studio-checklist.spec.ts"]
+    },
+    {
+      "id": "api:GET /nodes",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /nodes",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /nodes/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:PUT /nodes/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /nodes/:id/versions",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /nodes/:id/versions/:v",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /nodes/:id/status",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /library",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /library",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /library/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:PUT /library/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /library/:id/uses",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:DELETE /library/:id/uses/:node",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /logs/adventures",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /logs/adventures/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /sandbox",
+      "tests": [
+        "tests/integration/studio-routes.test.ts",
+        "tests/integration/sandbox.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /sandbox/reset",
+      "tests": [
+        "tests/integration/studio-routes.test.ts",
+        "tests/integration/sandbox.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /sandbox/play/adventures/:id/encounters",
+      "tests": ["tests/integration/sandbox-play.test.ts"]
+    },
+    {
+      "id": "api:POST /sandbox/play/start",
+      "tests": ["tests/integration/sandbox-play.test.ts"]
+    },
+    {
+      "id": "api:POST /sandbox/levers",
+      "tests": ["tests/integration/sandbox-levers.test.ts"]
+    },
+    {
+      "id": "api:POST /sandbox/force",
+      "tests": ["tests/integration/sandbox-force.test.ts"]
+    },
+    {
+      "id": "api:ALL /sandbox/play/child/*",
+      "tests": ["tests/integration/sandbox-play.test.ts"]
+    },
+    {
+      "id": "api:GET /tasks",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /tasks/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /checklist",
+      "tests": [
+        "tests/integration/studio-routes.test.ts",
+        "tests/unit/checklist.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /jobs",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /jobs/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    }
+  ]
+}

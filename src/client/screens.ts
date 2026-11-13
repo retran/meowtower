@@ -5,6 +5,7 @@ import {
   studioTemplates,
   type OpenedTask,
   type TemplateRow,
+  studioChecklist,
   studioCreate,
   studioEncounters,
   studioForce,
@@ -1242,6 +1243,7 @@ const studioScreen: Screen = {
     nav.append(
       link("ui.studio.navTasks", "open-task-lab", "/studio/tasks"),
       link("ui.studio.navScreens", "open-screen-lab", "/studio/screens"),
+      link("ui.studio.navChecklist", "open-checklist", "/studio/checklist"),
       link("ui.nav.parent", "open-parent", "/parent"),
       link("ui.nav.back", "back", "/"),
     );
@@ -1530,6 +1532,43 @@ const sheet: Screen = {
   },
 };
 
+/**
+ * The checklist page (ADR-3280, REQ-8304): each game feature and the tests that cover it. The list
+ * shows when the parent asks for it, so the page itself holds no data text until then.
+ */
+const checklistScreen: Screen = {
+  path: "/studio/checklist",
+  render() {
+    const note = status();
+    const list = el("ul", { className: "checklist" });
+    const show = button("ui.checklist.show", "checklist-show", async () => {
+      const got = await studioChecklist();
+      if (!got.ok) {
+        note.textContent = t("ui.studio.refused", { reason: got.error });
+        return;
+      }
+      list.replaceChildren(
+        ...got.value.map((f) => el("li", {}, `${f.id}: ${f.tests.join(", ")}`)),
+      );
+    });
+    return el(
+      "section",
+      {},
+      heading("ui.checklist.title"),
+      status(t("ui.checklist.intro")),
+      show,
+      note,
+      list,
+      el(
+        "nav",
+        { className: "actions" },
+        link("ui.nav.studio", "open-studio", "/studio"),
+        link("ui.nav.back", "back", "/"),
+      ),
+    );
+  },
+};
+
 export const SCREENS: readonly Screen[] = [
   home,
   settings,
@@ -1542,5 +1581,6 @@ export const SCREENS: readonly Screen[] = [
   studioScreen,
   taskLabScreen,
   screenLabScreen,
+  checklistScreen,
   playScreen,
 ];
