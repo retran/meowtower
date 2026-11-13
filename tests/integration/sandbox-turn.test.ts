@@ -17,7 +17,7 @@ import { MasterFailed } from "../../src/story/master-gateway.js";
 import type { MasterModel, MasterRequest } from "../../src/story/turn.js";
 import { onlyOnPostgres } from "../helpers/backend.js";
 
-const URL =
+const DB_URL =
   process.env["MEOWTOWER_TEST_DATABASE_URL"] ??
   "postgres://postgres@127.0.0.1:55432/postgres";
 const schema = `t_${String(process.pid)}_sbxturn`;
@@ -56,8 +56,8 @@ const cookieOf = (res: Response, name: string): string =>
     .find((c) => c.startsWith(`${name}=`)) ?? "";
 
 beforeAll(async () => {
-  process.env["MEOWTOWER_DATABASE_URL"] = URL;
-  db = await openProfile(URL, schema);
+  process.env["MEOWTOWER_DATABASE_URL"] = DB_URL;
+  db = await openProfile(DB_URL, schema);
   const now = () => Date.parse("2026-11-10T12:00:00Z");
   app = await createApp({ db, now, tasks: "registry", master });
   bare = await createApp({ db, now, tasks: "registry" });
@@ -76,8 +76,8 @@ beforeAll(async () => {
 });
 afterAll(async () => {
   await db.close();
-  await dropSchema(URL, schema);
-  await dropSchema(URL, sandboxSchemaOf(schema));
+  await dropSchema(DB_URL, schema);
+  await dropSchema(DB_URL, sandboxSchemaOf(schema));
   if (previous === undefined) delete process.env["MEOWTOWER_DATABASE_URL"];
   else process.env["MEOWTOWER_DATABASE_URL"] = previous;
 });
@@ -125,7 +125,7 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
       situation: "A gate in the fog.",
     });
     const ask = { adventureId: adventure, encounterId: encounter, said: "x" };
-    await dropSchema(URL, sandboxSchemaOf(schema));
+    await dropSchema(DB_URL, sandboxSchemaOf(schema));
     expect((await studio("POST", "/sandbox/play/turn", ask)).status).toBe(409);
     await studio("POST", "/sandbox/reset", { from: "empty" });
     expect(
@@ -186,7 +186,7 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     expect(seen[0]?.said).toBe("I step onto the bridge");
     expect(seen[0]?.encounter).toBe(encounter);
 
-    const sandbox = await openPostgresIfExists(URL, sandboxSchemaOf(schema));
+    const sandbox = await openPostgresIfExists(DB_URL, sandboxSchemaOf(schema));
     if (!sandbox) throw new Error("no sandbox");
     try {
       await sandbox
