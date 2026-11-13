@@ -658,6 +658,7 @@ export async function studioForce(next: string): Promise<ParentReply<null>> {
 export interface ChecklistFeature {
   id: string;
   tests: string[];
+  untested?: string;
 }
 
 /** Where each game feature is tested (REQ-8304). */
