@@ -131,11 +131,17 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     expect(
       (await studio("POST", "/sandbox/play/turn", ask, deviceCookie)).status,
     ).toBe(401);
+    const loginBare = await bare.request("/api/parent/login", {
+      method: "POST",
+      headers: { ...json, cookie: deviceCookie },
+      body: JSON.stringify({ pin: PIN }),
+    });
+    const bareCookie = `${deviceCookie}; ${cookieOf(loginBare, "meowtower_parent")}`;
     const none = await studio(
       "POST",
       "/sandbox/play/turn",
       ask,
-      parentCookie,
+      bareCookie,
       bare,
     );
     expect(none.status).toBe(409);
