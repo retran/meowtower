@@ -354,6 +354,7 @@ export interface StringParams {
   "ui.studio.playFrom": { title: string | number };
   "ui.studio.playNone": NoParams;
   "ui.studio.playFrame": NoParams;
+  "ui.studio.reached": NoParams;
   "ui.studio.lever.title": NoParams;
   "ui.studio.lever.set": NoParams;
   "ui.studio.lever.done": NoParams;

@@ -338,6 +338,7 @@
   "ui.studio.playFrom": "Играть с места: {title}",
   "ui.studio.playNone": "В этом приключении пока нет энкаунтеров.",
   "ui.studio.playFrame": "Игра в песочнице",
+  "ui.studio.reached": "Достигнуто",
   "ui.studio.lever.title": "Рычаги песочницы",
   "ui.studio.lever.set": "Задать",
   "ui.studio.lever.done": "Задано в песочнице.",

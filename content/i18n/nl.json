@@ -338,6 +338,7 @@
   "ui.studio.playFrom": "Spelen vanaf: {title}",
   "ui.studio.playNone": "Dit avontuur heeft nog geen ontmoetingen.",
   "ui.studio.playFrame": "Het spel in de zandbak",
+  "ui.studio.reached": "Bereikt",
   "ui.studio.lever.title": "Zandbak-hendels",
   "ui.studio.lever.set": "Instellen",
   "ui.studio.lever.done": "Ingesteld in de zandbak.",

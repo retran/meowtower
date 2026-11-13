@@ -16,6 +16,7 @@ import {
   createSandboxPlay,
   encountersOf,
   enterEncounter,
+  reachedIn,
   SANDBOX_COOKIE,
   startAt,
 } from "../sandbox/play.js";
@@ -314,6 +315,16 @@ export function mountStudio(
         return c.json({ error: "adventure_unknown" }, 404);
       throw err;
     }
+  });
+
+  // What a test has reached (REQ-8296): the encounters shown and the exits taken in the sandbox.
+  app.get(`${playBase}/reached`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    const open = at ? await sandboxPlay(at).open() : null;
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    return c.json(await reachedIn(open.db));
   });
 
   app.post(`${playBase}/start`, async (c) => {

@@ -14,6 +14,7 @@ import {
   studioLog,
   studioLogs,
   studioNodes,
+  studioReached,
   studioStatus,
   type StudioNode,
   accountCode,
@@ -1012,6 +1013,8 @@ const studioScreen: Screen = {
     /** The nodes opened so far, from the first campaign to the one whose graph shows. */
     const trail: StudioNode[] = [];
     let selected: StudioNode | null = null;
+    /** What a test has reached in the sandbox, drawn on the encounters of an adventure (REQ-8296). */
+    let reached = { encounters: new Set<string>(), exits: new Set<string>() };
 
     const drawCrumbs = (): void => {
       crumbs.replaceChildren(
@@ -1140,6 +1143,10 @@ const studioScreen: Screen = {
         line.setAttribute("x2", String(b.x));
         line.setAttribute("y2", String(b.y + DEFAULT_SIZE.nodeHeight / 2));
         line.setAttribute("stroke", "currentColor");
+        if (reached.exits.has(`${e.from}>${e.to}`)) {
+          line.setAttribute("stroke-width", "4");
+          line.dataset["reached"] = "1";
+        }
         svg.append(line);
       }
       graph.append(svg);
@@ -1151,7 +1158,11 @@ const studioScreen: Screen = {
           { type: "button", className: "control node" },
           el("strong", {}, n.title),
           el("small", {}, t(`ui.studio.status.${n.status}` as UiKey)),
+          ...(reached.encounters.has(n.id)
+            ? [el("small", {}, t("ui.studio.reached"))]
+            : []),
         );
+        if (reached.encounters.has(n.id)) b.dataset["reached"] = "1";
         b.dataset["action"] = `node-${n.id}`;
         b.dataset["node"] = n.id;
         b.style.position = "absolute";
@@ -1197,6 +1208,16 @@ const studioScreen: Screen = {
         loginNeeded(note, nav);
         delete section.dataset["busy"];
         return;
+      }
+      reached = { encounters: new Set(), exits: new Set() };
+      if (level === "encounter") {
+        // The sandbox may not exist, and then nothing is marked.
+        const got = await studioReached();
+        if (got.ok)
+          reached = {
+            encounters: new Set(got.value.encounters),
+            exits: new Set(got.value.exits.map((x) => `${x.from}>${x.to}`)),
+          };
       }
       drawGraph(nodes);
       drawPanel(level);
