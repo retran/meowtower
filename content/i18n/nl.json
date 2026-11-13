@@ -405,5 +405,6 @@
   "ui.screens.screen.pair": "Koppelen",
   "ui.screens.screen.settings": "Apparaatinstellingen",
   "ui.screens.open": "Toon: {screen} in het {lang}",
-  "ui.screens.frame": "Het scherm van het kind"
+  "ui.screens.frame": "Het scherm van het kind",
+  "story.master.blocked": "De mist wordt dikker en het tafereel vervaagt even."
 }
