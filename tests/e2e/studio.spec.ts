@@ -69,6 +69,24 @@ async function stub(page: Page): Promise<Fake[]> {
       version: 1,
       links: [],
     },
+    {
+      id: "e1",
+      level: "encounter",
+      parentId: "d1",
+      title: "The gate",
+      status: "draft",
+      version: 1,
+      links: ["e2"],
+    },
+    {
+      id: "e2",
+      level: "encounter",
+      parentId: "d1",
+      title: "The bridge",
+      status: "draft",
+      version: 1,
+      links: [],
+    },
   ];
   await page.route("**/api/parent/studio/**", async (route) => {
     const url = new URL(route.request().url());
@@ -120,6 +138,11 @@ async function stub(page: Page): Promise<Fake[]> {
       started.push(route.request().postDataJSON() as object);
       return json(200, { sessionId: "s1", scene: {} });
     }
+    if (path === "/sandbox/play/reached")
+      return json(200, {
+        encounters: ["e1"],
+        exits: [{ from: "e1", to: "e2" }],
+      });
     if (path === "/sandbox/force" && method === "POST") {
       forces.push(route.request().postDataJSON() as object);
       return json(200, { status: "ok" });
@@ -168,13 +191,13 @@ test("REQ-8274: a node is added, approved and sent back to draft from the panel"
   await page.locator("#studio-title").fill("Another year");
   await page.locator('[data-action="studio-add"]').click();
   await expect(page.getByText("Добавлено.")).toBeVisible();
-  await page.locator('button[data-node="n4"]').click();
+  await page.locator('button[data-node="n6"]').click();
   await expect(page.getByText("черновик").first()).toBeVisible();
   await page.locator('[data-action="studio-approve"]').click();
-  await page.locator('button[data-node="n4"]').click();
+  await page.locator('button[data-node="n6"]').click();
   await expect(page.locator('[data-action="studio-draft"]')).toBeVisible();
   await page.locator('[data-action="studio-draft"]').click();
-  await page.locator('button[data-node="n4"]').click();
+  await page.locator('button[data-node="n6"]').click();
   await expect(page.locator('[data-action="studio-approve"]')).toBeVisible();
 });
 
@@ -266,4 +289,29 @@ test("REQ-8290: the next outcome is chosen and forced in the sandbox", async ({
   await page.locator('[data-action="force-set"]').click();
   await expect.poll(() => forces.length).toBe(2);
   expect(forces).toEqual([{ next: "partial" }, { next: "fall" }]);
+});
+
+test("REQ-8296: the encounters and exits a test reached are marked on the graph", async ({
+  page,
+}) => {
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="d1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await expect(page.locator('button[data-node="e1"]')).toHaveAttribute(
+    "data-reached",
+    "1",
+  );
+  await expect(page.locator('button[data-node="e2"]')).not.toHaveAttribute(
+    "data-reached",
+    "1",
+  );
+  await expect(page.locator("svg line[data-reached]")).toHaveCount(1);
+  await expect(page.locator('button[data-node="e1"]')).toContainText(
+    "Достигнуто",
+  );
 });
