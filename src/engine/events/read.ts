@@ -227,3 +227,16 @@ export async function eventsOfAdventure(
       .all(adventureId, limit)) as Row[]
   ).map(toEvent);
 }
+
+/** The events of the given types, in order; the sandbox reads what a test reached from them. */
+export async function eventsOfTypes(
+  db: Db,
+  types: readonly string[],
+): Promise<StoredEvent[]> {
+  const marks = types.map(() => "?").join(", ");
+  return (
+    (await db
+      .prepare(`SELECT * FROM events WHERE type IN (${marks}) ORDER BY seq`)
+      .all(...types)) as Row[]
+  ).map(toEvent);
+}

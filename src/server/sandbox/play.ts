@@ -3,6 +3,7 @@
 // Nothing here writes to a profile's own schema: the studio is only read for the encounter.
 import { Hono } from "hono";
 import { appendEvents } from "../../engine/events/append.js";
+import { eventsOfTypes } from "../../engine/events/read.js";
 import { registerDevice } from "../devices.js";
 import type { Db } from "../db/index.js";
 import type { Forced } from "./force.js";
@@ -218,15 +219,5 @@ export function reachedOf(
 
 /** What a test has reached in the sandbox's database. */
 export async function reachedIn(db: Db): Promise<Reached> {
-  const rows = (await db
-    .prepare(
-      "SELECT type, payload FROM events WHERE type IN ('scene_prepared', 'choice_made') ORDER BY seq",
-    )
-    .all()) as { type: string; payload: string }[];
-  return reachedOf(
-    rows.map((r) => ({
-      type: r.type,
-      payload: JSON.parse(r.payload) as unknown,
-    })),
-  );
+  return reachedOf(await eventsOfTypes(db, ["scene_prepared", "choice_made"]));
 }
