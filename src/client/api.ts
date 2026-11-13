@@ -685,3 +685,43 @@ export async function studioReached(): Promise<ParentReply<Reached>> {
   );
   return parentReply(status, body, () => body as unknown as Reached);
 }
+
+export interface TurnReply {
+  reply: string;
+  blocked: boolean;
+}
+
+/** Sends her words to the Master of the sandbox at an encounter (REQ-8168). */
+export async function studioTurn(
+  adventureId: string,
+  encounterId: string,
+  said: string,
+): Promise<ParentReply<TurnReply>> {
+  const { status, body } = await call("/api/parent/studio/sandbox/play/turn", {
+    method: "POST",
+    body: JSON.stringify({ adventureId, encounterId, said }),
+  });
+  return parentReply(status, body, () => body as unknown as TurnReply);
+}
+
+export interface TurnsView {
+  turns: {
+    encounter: string;
+    said: string;
+    reply: string;
+    changes: { kind: string; name: string; note: string }[];
+  }[];
+  modelCalls: {
+    at: string;
+    costUsd: number;
+    latencyMs: number;
+    request: string;
+    response: string;
+  }[];
+}
+
+/** Each turn of the sandbox and each call of the Master's model (REQ-8292). */
+export async function studioTurns(): Promise<ParentReply<TurnsView>> {
+  const { status, body } = await call("/api/parent/studio/sandbox/play/turns");
+  return parentReply(status, body, () => body as unknown as TurnsView);
+}

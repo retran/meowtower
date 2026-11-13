@@ -21,6 +21,9 @@ interface Fake {
   links: string[];
 }
 
+/** What the Master was asked in a turn, in order. */
+const turned: object[] = [];
+
 /** What the sandbox was asked to force, in order. */
 const forces: object[] = [];
 
@@ -138,6 +141,35 @@ async function stub(page: Page): Promise<Fake[]> {
       started.push(route.request().postDataJSON() as object);
       return json(200, { sessionId: "s1", scene: {} });
     }
+    if (path === "/sandbox/play/turn" && method === "POST") {
+      turned.push(route.request().postDataJSON() as object);
+      return json(200, {
+        reply: "The bridge sways.",
+        blocked: false,
+        calls: [],
+        refused: [],
+      });
+    }
+    if (path === "/sandbox/play/turns")
+      return json(200, {
+        turns: [
+          {
+            encounter: "e2",
+            said: "I step onto the bridge",
+            reply: "The bridge sways.",
+            changes: [{ kind: "place", name: "bridge", note: "it sways" }],
+          },
+        ],
+        modelCalls: [
+          {
+            at: "t",
+            costUsd: 0.0123,
+            latencyMs: 456,
+            request: "REQ-TEXT",
+            response: "RESP-TEXT",
+          },
+        ],
+      });
     if (path === "/sandbox/play/reached")
       return json(200, {
         encounters: ["e1"],
@@ -314,4 +346,36 @@ test("REQ-8296: the encounters and exits a test reached are marked on the graph"
   await expect(page.locator('button[data-node="e1"]')).toContainText(
     "Достигнуто",
   );
+});
+
+test("REQ-8168, REQ-8292: a turn is taken at the encounter that was started, and the inspector shows it", async ({
+  page,
+}) => {
+  turned.length = 0;
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="d1"]').click();
+  await page.locator('[data-action="studio-play"]').click();
+  // Nothing is asked of the Master before an encounter is started.
+  await expect(page.locator("#turn-said")).toHaveCount(0);
+  await page.locator('[data-action="studio-play-from"]').nth(1).click();
+  await page.locator("#turn-said").fill("I step onto the bridge");
+  await page.locator('[data-action="turn-take"]').click();
+  await expect(page.locator(".turn-reply")).toContainText("The bridge sways.");
+  expect(turned).toEqual([
+    { adventureId: "d1", encounterId: "e2", said: "I step onto the bridge" },
+  ]);
+  await expect(page.locator("ol.turns li")).toHaveCount(0);
+  await page.locator('[data-action="turn-inspect"]').click();
+  await expect(page.locator("ol.turns li")).toHaveCount(1);
+  await expect(page.locator("ol.turns")).toContainText(
+    "I step onto the bridge",
+  );
+  await expect(page.locator("ol.turns")).toContainText("bridge: it sways");
+  await expect(page.locator("ul.model-calls li")).toContainText("0.0123");
+  await expect(page.locator("ul.model-calls li")).toContainText("RESP-TEXT");
 });
