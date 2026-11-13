@@ -119,12 +119,15 @@ export function createSandboxGateway(options: {
   routes: Routes;
   now?: () => number;
   limit?: number;
+  /** The names the egress guard keeps out of a player-tier request, as the game's gateway has them. */
+  names?: readonly string[];
 }): Gateway {
   return createGateway({
     db: options.db,
     config: options.config,
     routes: options.routes,
     ...(options.now ? { now: options.now } : {}),
+    ...(options.names ? { names: options.names } : {}),
     limits: {
       adventure: options.limit ?? sandboxLimit(),
       month: options.limit ?? sandboxLimit(),

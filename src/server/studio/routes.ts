@@ -3,6 +3,10 @@
 import type { Context, Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
+import { type Lang, translator } from "../../shared/i18n.js";
+import { MasterFailed } from "../../story/master-gateway.js";
+import { recordTurn, takeTurn } from "../../story/turn.js";
+import { parentSettings } from "../parent-room.js";
 import {
   adventureEventCounts,
   eventsOfAdventure,
@@ -15,10 +19,13 @@ import { Lever, setLever } from "../sandbox/levers.js";
 import {
   createSandboxPlay,
   encountersOf,
+  type MasterFactory,
   enterEncounter,
   reachedIn,
+  scenarioOf,
   SANDBOX_COOKIE,
   startAt,
+  turnsIn,
 } from "../sandbox/play.js";
 import {
   createSandbox,
@@ -80,6 +87,13 @@ const ResetIn = z.object({ from: z.enum(["empty", "copy"]) }).strict();
 const PlayStartIn = z
   .object({ adventureId: z.string(), encounterId: z.string() })
   .strict();
+const TurnIn = z
+  .object({
+    adventureId: z.string(),
+    encounterId: z.string(),
+    said: z.string().trim().min(1).max(2000),
+  })
+  .strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
 
 export function mountStudio(
@@ -87,6 +101,7 @@ export function mountStudio(
   db: Db,
   now: () => number,
   guard: (c: Context) => Promise<string | Response>,
+  master?: MasterFactory,
 ): void {
   const base = "/api/parent/studio";
 
@@ -318,6 +333,59 @@ export function mountStudio(
   });
 
   // What a test has reached (REQ-8296): the encounters shown and the exits taken in the sandbox.
+  // A turn of the Master (REQ-8168): her words go to the Master, which answers in story text and tool
+  // calls, and the turn is logged in the sandbox. It needs a Master to be configured.
+  app.post(`${playBase}/turn`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    if (!at) return c.json({ error: "sandbox_unavailable" }, 409);
+    const body = TurnIn.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (!master) return c.json({ error: "master_not_configured" }, 409);
+    const open = await sandboxPlay(at).open();
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    let scenario: string;
+    try {
+      await enterEncounter(db, body.data.adventureId, body.data.encounterId);
+      scenario = await scenarioOf(db, body.data.adventureId);
+    } catch (err) {
+      return refused(c, err);
+    }
+    const lang: Lang = (await parentSettings(open.db)).language;
+    try {
+      const turn = await takeTurn({
+        model: master(open.db, body.data.adventureId),
+        scenario,
+        encounter: body.data.encounterId,
+        said: body.data.said,
+        lang,
+        blockedText: translator(lang).t("story.master.blocked"),
+      });
+      await recordTurn(open.db, turn);
+      return c.json({
+        reply: turn.reply,
+        blocked: turn.blocked,
+        calls: turn.calls,
+        refused: turn.refused,
+      });
+    } catch (err) {
+      if (err instanceof MasterFailed)
+        return c.json({ error: "master_failed", reason: err.reason }, 502);
+      throw err;
+    }
+  });
+
+  // The inspector (REQ-8292): each turn with its world changes, and each call of the Master's model.
+  app.get(`${playBase}/turns`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    const open = at ? await sandboxPlay(at).open() : null;
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    return c.json(await turnsIn(open.db));
+  });
+
   app.get(`${playBase}/reached`, async (c) => {
     const who = await guard(c);
     if (who instanceof Response) return who;
