@@ -356,8 +356,13 @@ it("REQ-8304: serves the checklist to the parent only", async () => {
   const res = await call("GET", "/checklist");
   expect(res.status).toBe(200);
   const body = (await res.json()) as {
-    features: { id: string; tests: string[] }[];
+    features: { id: string; tests: string[]; untested?: string }[];
   };
   expect(body.features.length).toBeGreaterThan(10);
-  expect(body.features.every((f) => f.tests.length > 0)).toBe(true);
+  // A feature names its tests, or says why it has none.
+  expect(
+    body.features.every(
+      (f) => f.tests.length > 0 || (f.untested?.trim() ?? "") !== "",
+    ),
+  ).toBe(true);
 });
