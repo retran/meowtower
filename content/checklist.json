@@ -131,6 +131,13 @@
       "tests": ["tests/integration/sandbox-play.test.ts"]
     },
     {
+      "id": "api:GET /sandbox/play/reached",
+      "tests": [
+        "tests/integration/sandbox-play.test.ts",
+        "tests/e2e/studio.spec.ts"
+      ]
+    },
+    {
       "id": "api:POST /sandbox/play/start",
       "tests": ["tests/integration/sandbox-play.test.ts"]
     },
