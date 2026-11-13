@@ -1569,7 +1569,13 @@ const checklistScreen: Screen = {
         return;
       }
       list.replaceChildren(
-        ...got.value.map((f) => el("li", {}, `${f.id}: ${f.tests.join(", ")}`)),
+        ...got.value.map((f) =>
+          el(
+            "li",
+            {},
+            `${f.id}: ${f.tests.length ? f.tests.join(", ") : (f.untested ?? "")}`,
+          ),
+        ),
       );
     });
     return el(

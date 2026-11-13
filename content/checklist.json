@@ -175,6 +175,301 @@
     {
       "id": "api:GET /jobs/:id",
       "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /api/session/start",
+      "tests": [
+        "tests/integration/repeats.test.ts",
+        "tests/integration/lease.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/adventure/resume",
+      "tests": [
+        "tests/e2e/scene-resume.spec.ts",
+        "tests/integration/resume.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/session/:id/heartbeat",
+      "tests": ["tests/integration/lease.test.ts"]
+    },
+    {
+      "id": "api:GET /api/player/skills",
+      "tests": ["tests/integration/sheet.test.ts"]
+    },
+    {
+      "id": "api:GET /api/adventure/current",
+      "tests": [
+        "tests/integration/lease.test.ts",
+        "tests/integration/parent-room.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /api/session/:id/next",
+      "tests": ["tests/e2e/play.spec.ts", "tests/e2e/scene-resume.spec.ts"]
+    },
+    {
+      "id": "api:POST /api/session/:id/pause",
+      "tests": [
+        "tests/integration/scene-resume.test.ts",
+        "tests/integration/lifecycle.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/session/:id/break",
+      "tests": [
+        "tests/integration/lifecycle.test.ts",
+        "tests/integration/resume.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/session/:id/scene/input",
+      "tests": [
+        "tests/integration/scene-resume.test.ts",
+        "tests/e2e/scene-resume.spec.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/session/:id/chest",
+      "tests": [
+        "tests/integration/scene-resume.test.ts",
+        "tests/integration/lifecycle.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/session/:id/rewards/delivered",
+      "tests": [
+        "tests/integration/scene-resume.test.ts",
+        "tests/e2e/scene-resume.spec.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/session/:id/extend",
+      "tests": [
+        "tests/e2e/stop-offer.spec.ts",
+        "tests/integration/finish-today.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/session/:id/answer",
+      "tests": [
+        "tests/unit/answer-route.test.ts",
+        "tests/e2e/answer-queue.spec.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/item/:itemId/hint",
+      "tests": [
+        "tests/integration/repeats.test.ts",
+        "tests/integration/resume.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/item/:itemId/explain",
+      "tests": [
+        "tests/integration/repeats.test.ts",
+        "tests/integration/resume.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/item/:itemId/second-attempt",
+      "tests": [
+        "tests/integration/resume.test.ts",
+        "tests/integration/repeats.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /api/session/:id/events",
+      "tests": ["tests/integration/repeats.test.ts"]
+    },
+    {
+      "id": "api:GET /api/session/:id/poll",
+      "tests": [
+        "tests/integration/repeats.test.ts",
+        "tests/integration/packet-recorder.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/pair",
+      "tests": [
+        "tests/integration/profile-devices.test.ts",
+        "tests/integration/parent-room.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /api/device",
+      "tests": [
+        "tests/unit/device-interface.test.ts",
+        "tests/integration/parent-room.test.ts"
+      ]
+    },
+    {
+      "id": "api:PUT /api/device",
+      "tests": [
+        "tests/unit/device-interface.test.ts",
+        "tests/integration/parent-room.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/parent/login",
+      "tests": [
+        "tests/integration/parent-room.test.ts",
+        "tests/integration/sandbox-force.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /api/parent/devices",
+      "tests": ["tests/integration/parent-room.test.ts"]
+    },
+    {
+      "id": "api:POST /api/parent/devices/:id/revoke",
+      "tests": ["tests/integration/parent-room.test.ts"]
+    },
+    {
+      "id": "api:GET /api/parent/settings",
+      "tests": [
+        "tests/integration/parent-room.test.ts",
+        "tests/e2e/parent.spec.ts"
+      ]
+    },
+    {
+      "id": "api:GET /api/parent/falls",
+      "tests": [
+        "tests/integration/falls-list.test.ts",
+        "tests/unit/falls.test.ts"
+      ]
+    },
+    {
+      "id": "api:PUT /api/parent/settings",
+      "tests": [
+        "tests/integration/parent-room.test.ts",
+        "tests/e2e/parent.spec.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/parent/finish-today",
+      "tests": ["tests/integration/finish-today.test.ts"]
+    },
+    {
+      "id": "api:POST /api/parent/reset-stats",
+      "tests": ["tests/integration/finish-today.test.ts"]
+    },
+    {
+      "id": "api:POST /api/parent/pair-code",
+      "tests": ["tests/integration/parent-room.test.ts"]
+    },
+    {
+      "id": "api:POST /api/account/code",
+      "tests": [
+        "tests/integration/account-routes.test.ts",
+        "tests/integration/claim-first-profile.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/account/login",
+      "tests": [
+        "tests/integration/account-routes.test.ts",
+        "tests/integration/claim-first-profile.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/account/logout",
+      "tests": ["tests/integration/account-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /api/account/me",
+      "tests": [
+        "tests/integration/account-routes.test.ts",
+        "tests/integration/claim-first-profile.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/account/profiles",
+      "tests": [
+        "tests/integration/account-routes.test.ts",
+        "tests/integration/profile-devices.test.ts"
+      ]
+    },
+    {
+      "id": "api:POST /api/account/profiles/:id/pair-code",
+      "tests": [
+        "tests/integration/profile-devices.test.ts",
+        "tests/integration/parent-room.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /api/account/spend",
+      "tests": ["tests/integration/account-routes.test.ts"]
+    },
+    {
+      "id": "api:PUT /api/account/budget",
+      "tests": ["tests/integration/account-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /api/account/profiles/:id",
+      "tests": [
+        "tests/integration/profile-devices.test.ts",
+        "tests/integration/account-routes.test.ts"
+      ]
+    },
+    {
+      "id": "api:GET /health",
+      "tests": ["tests/unit/health.test.ts"]
+    },
+    {
+      "id": "parent-app:POST /pair-code",
+      "tests": [
+        "tests/integration/profile-devices.test.ts",
+        "tests/unit/pairing.test.ts"
+      ]
+    },
+    {
+      "id": "parent-app:POST /pin",
+      "tests": [
+        "tests/integration/parent-room.test.ts",
+        "tests/e2e/parent.spec.ts"
+      ]
+    },
+    {
+      "id": "parent-app:POST /api/parent/export",
+      "tests": ["tests/integration/export.test.ts"]
+    },
+    {
+      "id": "parent-app:GET /api/parent/export/:file",
+      "tests": ["tests/integration/export.test.ts"]
+    },
+    {
+      "id": "parent-app:POST /recompute",
+      "tests": [
+        "tests/integration/rebuild.test.ts",
+        "tests/integration/knowledge-recompute.test.ts"
+      ]
+    },
+    {
+      "id": "parent-app:POST /model/activate",
+      "tests": ["tests/integration/model-activate.test.ts"]
+    },
+    {
+      "id": "parent-app:POST /snapshot",
+      "tests": [
+        "tests/integration/backups.test.ts",
+        "tests/unit/snapshots.test.ts"
+      ]
+    },
+    {
+      "id": "parent-app:GET /",
+      "tests": ["tests/unit/parent-listener.test.ts"]
+    },
+    {
+      "id": "parent-app:GET /audit/llm",
+      "tests": [],
+      "untested": "No test names the route; the model call log of the parent app is read by hand."
+    },
+    {
+      "id": "parent-app:GET /audit/play",
+      "tests": [],
+      "untested": "No test names the route; the audit pages of the parent app are read by hand."
     }
   ]
 }

@@ -4,7 +4,12 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 export interface Checklist {
-  readonly features: readonly { id: string; tests: readonly string[] }[];
+  readonly features: readonly {
+    id: string;
+    tests: readonly string[];
+    /** Why a feature with no test has none; a feature with neither is unplaced. */
+    untested?: string;
+  }[];
 }
 
 export interface Gaps {
@@ -16,6 +21,17 @@ export interface Gaps {
   readonly missingFiles: string[];
 }
 
+/** The files that mount the game's own routes, and what each route is called on the checklist. */
+const ROUTE_FILES: readonly (readonly [string, string])[] = [
+  ["play.ts", "api"],
+  ["stream.ts", "api"],
+  ["pairing.ts", "api"],
+  ["parent-room.ts", "api"],
+  ["accounts/routes.ts", "api"],
+  ["app.ts", "api"],
+  ["parent.ts", "parent-app"],
+];
+
 /** The checklist as the repository keeps it; `root` is the repository's root, for the tests. */
 export function readChecklist(root?: string): Checklist {
   const file = root
@@ -24,7 +40,10 @@ export function readChecklist(root?: string): Checklist {
   return JSON.parse(readFileSync(file, "utf8")) as Checklist;
 }
 
-/** The screens of the client and the routes of the studio, as `screen:/path` and `api:METHOD /path`. */
+/**
+ * The screens of the client and the routes of the studio and of the game, as `screen:/path` and
+ * `api:METHOD /path`; a route of the parent app on the owner's computer reads `parent-app:`.
+ */
 export function featuresOf(root: string): string[] {
   const screens: string[] = [];
   for (const name of readdirSync(join(root, "src", "client")).sort()) {
@@ -44,6 +63,13 @@ export function featuresOf(root: string): string[] {
     api.push(
       `api:${(m[1] as string).toUpperCase()} ${m[2] === "playBase" ? "/sandbox/play" : ""}${m[3] as string}`,
     );
+  for (const [file, prefix] of ROUTE_FILES) {
+    const source = readFileSync(join(root, "src", "server", file), "utf8");
+    for (const m of source.matchAll(
+      /\bapp\.(get|post|put|delete|all)\(\s*"(\/[^"]*)"/g,
+    ))
+      api.push(`${prefix}:${(m[1] as string).toUpperCase()} ${m[2] as string}`);
+  }
   return [...screens, ...api];
 }
 
@@ -53,9 +79,14 @@ export function gaps(
   checklist: Checklist,
   exists: (path: string) => boolean,
 ): Gaps {
-  const placed = new Map(checklist.features.map((f) => [f.id, f.tests]));
+  const placed = new Map(
+    checklist.features.map((f) => [
+      f.id,
+      f.tests.length > 0 || (f.untested?.trim() ?? "") !== "",
+    ]),
+  );
   return {
-    unplaced: features.filter((f) => (placed.get(f)?.length ?? 0) === 0),
+    unplaced: features.filter((f) => placed.get(f) !== true),
     stale: checklist.features
       .map((f) => f.id)
       .filter((id) => !features.includes(id)),
