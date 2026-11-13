@@ -61,6 +61,20 @@ describe("REQ-8304: this repository's checklist", () => {
     expect(features).toContain("api:POST /sandbox/play/start");
   });
 
+  it("reads the routes of the child's game, the pairing, the Parent Room, the accounts and the parent app", () => {
+    for (const feature of [
+      "api:POST /api/session/:id/answer",
+      "api:GET /api/session/:id/next",
+      "api:GET /api/device",
+      "api:POST /api/pair",
+      "api:PUT /api/parent/settings",
+      "api:POST /api/account/login",
+      "api:GET /health",
+      "parent-app:POST /pin",
+    ])
+      expect(features, feature).toContain(feature);
+  });
+
   it("places every feature, keeps no stale entry and names only tests that exist", () => {
     const found = gaps(features, readChecklist(root), (p) =>
       existsSync(join(root, p)),
