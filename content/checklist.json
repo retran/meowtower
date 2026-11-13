@@ -138,6 +138,14 @@
       ]
     },
     {
+      "id": "api:POST /sandbox/play/turn",
+      "tests": ["tests/integration/sandbox-turn.test.ts"]
+    },
+    {
+      "id": "api:GET /sandbox/play/turns",
+      "tests": ["tests/integration/sandbox-turn.test.ts"]
+    },
+    {
       "id": "api:POST /sandbox/play/start",
       "tests": ["tests/integration/sandbox-play.test.ts"]
     },

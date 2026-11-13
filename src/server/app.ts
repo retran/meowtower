@@ -7,6 +7,7 @@ import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
 import { createOutgoing } from "./outgoing.js";
 import { mountPlay } from "./play.js";
+import type { MasterFactory } from "./sandbox/play.js";
 import { mountShell } from "./shell.js";
 import { createStream, type Stream } from "./stream.js";
 import { raise, writeSucceeded } from "./failures.js";
@@ -21,6 +22,7 @@ export async function createApp({
   tasks,
   frames,
   accounts,
+  master,
 }: {
   db: Db;
   now?: () => number;
@@ -35,6 +37,8 @@ export async function createApp({
   frames?: FrameQueue;
   /** The parents' accounts (ADR-3320); absent where the game runs on SQLite. */
   accounts?: AccountsEnv;
+  /** Makes the Master for a turn in the sandbox (ADR-3270); absent while no Master is configured or switched on. */
+  master?: MasterFactory;
 }): Promise<Hono> {
   const app = new Hono();
   // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
@@ -60,7 +64,7 @@ export async function createApp({
   });
   mountPairing(app, db, now);
   if (accounts) mountAccounts(app, accounts, now);
-  await mountParentRoom(app, db, now);
+  await mountParentRoom(app, db, now, undefined, master);
   app.get("/health", (c) =>
     isOpen(db)
       ? c.json({ status: "ok", database: "ok" })

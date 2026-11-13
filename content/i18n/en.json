@@ -405,5 +405,6 @@
   "ui.screens.screen.pair": "Pairing",
   "ui.screens.screen.settings": "Device settings",
   "ui.screens.open": "Show: {screen} in {lang}",
-  "ui.screens.frame": "The child's screen"
+  "ui.screens.frame": "The child's screen",
+  "story.master.blocked": "The fog thickens, and for a moment the scene fades."
 }
