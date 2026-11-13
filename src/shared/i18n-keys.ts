@@ -395,6 +395,10 @@ export interface StringParams {
   "ui.studio.graph": NoParams;
   "ui.studio.navTasks": NoParams;
   "ui.studio.navScreens": NoParams;
+  "ui.studio.navChecklist": NoParams;
+  "ui.checklist.title": NoParams;
+  "ui.checklist.intro": NoParams;
+  "ui.checklist.show": NoParams;
   "ui.tasks.title": NoParams;
   "ui.tasks.filter": NoParams;
   "ui.tasks.count": { n: string | number };

@@ -654,3 +654,20 @@ export async function studioForce(next: string): Promise<ParentReply<null>> {
   });
   return parentReply(status, body, () => null);
 }
+
+export interface ChecklistFeature {
+  id: string;
+  tests: string[];
+}
+
+/** Where each game feature is tested (REQ-8304). */
+export async function studioChecklist(): Promise<
+  ParentReply<ChecklistFeature[]>
+> {
+  const { status, body } = await call("/api/parent/studio/checklist");
+  return parentReply(
+    status,
+    body,
+    () => body["features"] as ChecklistFeature[],
+  );
+}
