@@ -13,6 +13,11 @@ test("REQ-8304: the checklist page lists each feature with the tests that cover 
             id: "api:POST /sandbox/force",
             tests: ["tests/integration/sandbox-force.test.ts"],
           },
+          {
+            id: "parent-app:GET /audit/play",
+            tests: [],
+            untested: "No test names the route.",
+          },
         ],
       },
     }),
@@ -25,8 +30,11 @@ test("REQ-8304: the checklist page lists each feature with the tests that cover 
   );
   await expect(page.locator("ul.checklist li")).toHaveCount(0);
   await page.locator('[data-action="checklist-show"]').click();
-  await expect(page.locator("ul.checklist li")).toHaveCount(2);
+  await expect(page.locator("ul.checklist li")).toHaveCount(3);
   await expect(page.locator("ul.checklist")).toContainText("screen:/play");
+  await expect(page.locator("ul.checklist li").nth(2)).toContainText(
+    "No test names the route.",
+  );
   await expect(page.locator("ul.checklist")).toContainText(
     "tests/integration/sandbox-force.test.ts",
   );
