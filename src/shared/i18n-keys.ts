@@ -458,6 +458,12 @@ export interface StringParams {
   "ui.studio.versions.restore": NoParams;
   "ui.studio.versions.restored": { n: string | number };
   "ui.studio.versions.currentMark": NoParams;
+  "ui.studio.versions.waiting": NoParams;
+  "ui.studio.versions.keep": NoParams;
+  "ui.studio.versions.discard": NoParams;
+  "ui.studio.versions.kept": { n: string | number };
+  "ui.studio.versions.discarded": NoParams;
+  "ui.studio.versions.discardedMark": NoParams;
   "ui.studio.refusal.alreadyCurrent": NoParams;
   "ui.studio.logs": NoParams;
   "ui.studio.noLogs": NoParams;

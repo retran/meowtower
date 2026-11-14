@@ -7,6 +7,7 @@ import type { Hono } from "hono";
 import { createApp } from "../../src/server/app.js";
 import { appendEvents } from "../../src/engine/events/append.js";
 import { openProfile } from "../../src/server/database.js";
+import { proposeVersion } from "../../src/server/studio/store.js";
 import { dropSchema, type Db } from "../../src/server/db/index.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
@@ -522,5 +523,39 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
       hard: "it is wet",
     });
     expect((await tryOnce(`climb, ${forbidden}`))?.situation).toBeUndefined();
+  });
+  it("REQ-8604: the Master and the scene read the current version and never a waiting one", async () => {
+    const campaign = await node("campaign", null, "c9");
+    const arc = await node("arc", campaign, "a9");
+    const adventure = await node("adventure", arc, "Mill");
+    const encounter = await node("encounter", adventure, "Wheel", {
+      situation: "The wheel turns.",
+    });
+    await proposeVersion(
+      db,
+      Date.parse("2026-11-10T12:00:00Z"),
+      encounter,
+      { situation: "A GENERATED SITUATION" },
+      {},
+    );
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    seen.length = 0;
+    next = () => Promise.resolve({ text: "It creaks.", calls: [] });
+    await studio("POST", "/sandbox/play/turn", {
+      adventureId: adventure,
+      encounterId: encounter,
+      said: "I look",
+    });
+    expect(seen[0]?.system).toContain("The wheel turns.");
+    expect(seen[0]?.system).not.toContain("A GENERATED SITUATION");
+    const started = (await (
+      await studio("POST", "/sandbox/play/start", {
+        adventureId: adventure,
+        encounterId: encounter,
+      })
+    ).json()) as { scene: { lines: { text: string }[] } };
+    expect(started.scene.lines.map((l) => l.text)).toEqual([
+      "The wheel turns.",
+    ]);
   });
 });

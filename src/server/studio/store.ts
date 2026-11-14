@@ -48,13 +48,23 @@ export interface StoryNode {
   readonly parentId: string | null;
   readonly title: string;
   readonly status: Status;
+  /** The current version, which play and the graph read. */
   readonly version: number;
+  /** The newest version the parent discarded, or 0 where none was. */
+  readonly discardedTo: number;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
 
+/**
+ * Where a version stands against its node: the current one, an older one, one that waits for the
+ * parent (numbered above the current version) or one the parent discarded (ADR-3360).
+ */
+export type VersionState = "history" | "current" | "pending" | "discarded";
+
 export interface StoryVersion {
   readonly version: number;
+  readonly state: VersionState;
   readonly body: unknown;
   readonly prompt: string | null;
   readonly author: "parent" | "generator";
@@ -68,6 +78,7 @@ interface NodeRow {
   title: string;
   status: Status;
   current_version: number;
+  discarded_to: number;
   created_at: string;
   updated_at: string;
 }
@@ -79,6 +90,7 @@ const nodeOfRow = (r: NodeRow): StoryNode => ({
   title: r.title,
   status: r.status,
   version: Number(r.current_version),
+  discardedTo: Number(r.discarded_to),
   createdAt: r.created_at,
   updatedAt: r.updated_at,
 });
@@ -181,7 +193,7 @@ export async function editNode(
   if (title === "" || title.length > 120)
     throw new StudioRefused("the title is 1 to 120 characters");
   const at = stamp(now);
-  const version = node.version + 1;
+  const version = (await newestVersion(db, id)) + 1;
   await db.transaction(async () => {
     await db
       .prepare(
@@ -223,7 +235,106 @@ export async function restoreVersion(
   return editNode(db, now, id, old.body, { prompt: old.prompt });
 }
 
+/** The highest version number a node has, whatever its state; the next version is one above it. */
+async function newestVersion(db: Db, id: string): Promise<number> {
+  const row = (await db
+    .prepare("SELECT MAX(version) AS v FROM story_versions WHERE node_id = ?")
+    .get(id)) as { v: number | null };
+  return Number(row.v ?? 0);
+}
+
+const stateOf = (
+  version: number,
+  node: { current: number; discardedTo: number },
+): VersionState =>
+  version === node.current
+    ? "current"
+    : version < node.current
+      ? "history"
+      : version <= node.discardedTo
+        ? "discarded"
+        : "pending";
+
+/** The version that waits for the parent, or null: the newest one above the current and the discarded. */
+export async function pendingOf(db: Db, id: string): Promise<number | null> {
+  const node = await getNode(db, id);
+  if (!node) return null;
+  const newest = await newestVersion(db, id);
+  return newest > Math.max(node.version, node.discardedTo) ? newest : null;
+}
+
+/**
+ * A version a generator writes (ADR-3360, REQ-8604): stored numbered above the current version, which
+ * it leaves as it is, so nothing plays it until the parent keeps it. One waits at a time.
+ */
+export async function proposeVersion(
+  db: Db,
+  now: number,
+  id: string,
+  body: unknown,
+  options: { prompt?: string | null } = {},
+): Promise<{ version: number }> {
+  const node = await getNode(db, id);
+  if (!node) throw new StudioRefused("no such node");
+  if (node.status === "playing" || node.status === "played")
+    throw new StudioRefused(`a ${node.status} node is not edited`);
+  if ((await pendingOf(db, id)) !== null)
+    throw new StudioRefused("a version already waits");
+  const version = (await newestVersion(db, id)) + 1;
+  await db
+    .prepare(
+      "INSERT INTO story_versions (node_id, version, body, prompt, author, created_at) VALUES (?, ?, ?, ?, 'generator', ?)",
+    )
+    .run(id, version, JSON.stringify(body), options.prompt ?? null, stamp(now));
+  return { version };
+}
+
+/** Makes the waiting version the current one; the node goes back to draft, as after any edit. */
+export async function keepPending(
+  db: Db,
+  now: number,
+  id: string,
+): Promise<StoryNode> {
+  const waiting = await pendingOf(db, id);
+  if (waiting === null) throw new StudioRefused("no version waits");
+  await db
+    .prepare(
+      "UPDATE story_nodes SET current_version = ?, status = 'draft', updated_at = ? WHERE id = ?",
+    )
+    .run(waiting, stamp(now), id);
+  return (await getNode(db, id)) as StoryNode;
+}
+
+/** Sets the waiting version aside; it stays in the history and the current version is unchanged. */
+export async function discardPending(
+  db: Db,
+  now: number,
+  id: string,
+): Promise<StoryNode> {
+  const waiting = await pendingOf(db, id);
+  if (waiting === null) throw new StudioRefused("no version waits");
+  await db
+    .prepare(
+      "UPDATE story_nodes SET discarded_to = ?, updated_at = ? WHERE id = ?",
+    )
+    .run(waiting, stamp(now), id);
+  return (await getNode(db, id)) as StoryNode;
+}
+
+/** The body play and the graph read: the current version's, never a waiting one. */
+export async function currentBodyOf(db: Db, id: string): Promise<unknown> {
+  const row = (await db
+    .prepare(
+      `SELECT v.body AS body FROM story_nodes n
+         JOIN story_versions v ON v.node_id = n.id AND v.version = n.current_version
+        WHERE n.id = ?`,
+    )
+    .get(id)) as { body: string } | undefined;
+  return row ? (JSON.parse(row.body) as unknown) : null;
+}
+
 export async function versionsOf(db: Db, id: string): Promise<StoryVersion[]> {
+  const node = await getNode(db, id);
   const rows = (await db
     .prepare(
       "SELECT version, body, prompt, author, created_at FROM story_versions WHERE node_id = ? ORDER BY version",
@@ -237,6 +348,10 @@ export async function versionsOf(db: Db, id: string): Promise<StoryVersion[]> {
   }[];
   return rows.map((r) => ({
     version: Number(r.version),
+    state: stateOf(Number(r.version), {
+      current: node?.version ?? 0,
+      discardedTo: node?.discardedTo ?? 0,
+    }),
     body: JSON.parse(r.body) as unknown,
     prompt: r.prompt,
     author: r.author,

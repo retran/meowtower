@@ -1,6 +1,7 @@
 // The studio's form for an encounter (ADR-3360, REQ-8306): the body is edited field by field, one save
 // stores one new version, and the code's check names the field it refused beside that field (REQ-8600).
 import {
+  studioDecide,
   studioNode,
   studioRestore,
   studioSave,
@@ -296,7 +297,6 @@ export function versionsPanel(
 ): HTMLElement {
   const box = el("div", { className: "versions-panel" });
   const list = el("ol", { className: "versions" });
-  let current = node.version;
   const load = async (): Promise<void> => {
     const got = await studioVersions(node.id);
     if (!got.ok) {
@@ -317,9 +317,38 @@ export function versionsPanel(
             time: when,
           }),
         );
-        if (v.version === current)
+        if (v.state === "current")
           row.append(" ", t("ui.studio.versions.currentMark"));
-        else
+        else if (v.state === "pending")
+          row.append(
+            " ",
+            t("ui.studio.versions.waiting"),
+            " ",
+            ...(["keep", "discard"] as const).map((action) =>
+              button(
+                action === "keep"
+                  ? "ui.studio.versions.keep"
+                  : "ui.studio.versions.discard",
+                `version-${action}`,
+                async () => {
+                  const done = await studioDecide(node.id, action);
+                  if (!done.ok) {
+                    note.textContent = refusalText(done.error);
+                    return;
+                  }
+                  note.textContent =
+                    action === "keep"
+                      ? t("ui.studio.versions.kept", { n: done.value.version })
+                      : t("ui.studio.versions.discarded");
+                  await load();
+                  onRestored();
+                },
+              ),
+            ),
+          );
+        else {
+          if (v.state === "discarded")
+            row.append(" ", t("ui.studio.versions.discardedMark"));
           row.append(
             " ",
             button(
@@ -331,7 +360,6 @@ export function versionsPanel(
                   note.textContent = refusalText(done.error);
                   return;
                 }
-                current = done.value.version;
                 note.textContent = t("ui.studio.versions.restored", {
                   n: done.value.version,
                 });
@@ -340,6 +368,7 @@ export function versionsPanel(
               },
             ),
           );
+        }
         return row;
       }),
     );

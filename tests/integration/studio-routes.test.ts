@@ -3,14 +3,18 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, beforeAll, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Hono } from "hono";
 import { createApp } from "../../src/server/app.js";
 import { openDatabase } from "../../src/server/database.js";
 import type { Db } from "../../src/server/db/index.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
-import { startJob } from "../../src/server/studio/store.js";
+import {
+  proposeVersion,
+  startJob,
+  StudioRefused,
+} from "../../src/server/studio/store.js";
 import { dropSchema } from "../../src/server/db/index.js";
 import { sandboxSchemaOf } from "../../src/server/sandbox/sandbox.js";
 import { onlyOnPostgres, onPostgres } from "../helpers/backend.js";
@@ -458,4 +462,117 @@ it("REQ-8602: an earlier version is restored as a new version, and every version
       )
     ).status,
   ).toBe(401);
+});
+
+describe("a generated version waits for the parent", () => {
+  const now = Date.parse("2026-11-10T12:00:00Z");
+  const arcOf = async (title: string) => {
+    const made = async (level: string, parentId: string | null, name: string) =>
+      (await (
+        await call("POST", "/nodes", { level, parentId, title: name, body: {} })
+      ).json()) as { id: string };
+    const campaign = await made("campaign", null, `${title} campaign`);
+    const arc = await made("arc", campaign.id, `${title} arc`);
+    await call("PUT", `/nodes/${arc.id}`, { body: { note: "mine" } });
+    return arc.id;
+  };
+  const read = async (id: string) =>
+    (await (await call("GET", `/nodes/${id}`)).json()) as {
+      node: { version: number; status: string };
+      body: unknown;
+    };
+  const states = async (id: string) =>
+    (
+      (await (await call("GET", `/nodes/${id}/versions`)).json()) as {
+        versions: { state: string }[];
+      }
+    ).versions.map((v) => v.state);
+
+  it("REQ-8604: a proposed version is not the current one, and only one waits", async () => {
+    const id = await arcOf("wait");
+    const waiting = await proposeVersion(
+      db,
+      now,
+      id,
+      { note: "generated" },
+      {
+        prompt: "make it longer",
+      },
+    );
+    expect(waiting.version).toBe(3);
+    const seen = await read(id);
+    expect(seen.node.version).toBe(2);
+    expect(seen.body).toEqual({ note: "mine" });
+    expect(await states(id)).toEqual(["history", "current", "pending"]);
+    await expect(
+      proposeVersion(db, now, id, { note: "another" }, {}),
+    ).rejects.toThrow(StudioRefused);
+    await expect(
+      proposeVersion(db, now, id, { note: "another" }, {}),
+    ).rejects.toMatchObject({ reason: "a version already waits" });
+  });
+
+  it("REQ-8604: a hand edit while one waits takes the next number and passes the waiting one", async () => {
+    const id = await arcOf("pass");
+    await proposeVersion(db, now, id, { note: "generated" }, {});
+    const edited = await call("PUT", `/nodes/${id}`, {
+      body: { note: "later" },
+    });
+    expect(((await edited.json()) as { version: number }).version).toBe(4);
+    expect(await states(id)).toEqual([
+      "history",
+      "history",
+      "history",
+      "current",
+    ]);
+  });
+
+  it("REQ-8604: keeping makes the waiting version the current one, and none waits then", async () => {
+    const id = await arcOf("keep");
+    await proposeVersion(db, now, id, { note: "generated" }, {});
+    const kept = await call("POST", `/nodes/${id}/pending/keep`);
+    expect(kept.status).toBe(200);
+    const seen = await read(id);
+    expect(seen.node.version).toBe(3);
+    expect(seen.body).toEqual({ note: "generated" });
+    expect(await states(id)).toEqual(["history", "history", "current"]);
+    const again = await call("POST", `/nodes/${id}/pending/keep`);
+    expect(again.status).toBe(404);
+    expect(await again.json()).toEqual({ error: "no_pending_version" });
+  });
+
+  it("REQ-8606: a discarded version stays in the history, and another can wait after it", async () => {
+    const id = await arcOf("drop");
+    await proposeVersion(db, now, id, { note: "generated" }, {});
+    const dropped = await call("POST", `/nodes/${id}/pending/discard`);
+    expect(dropped.status).toBe(200);
+    const seen = await read(id);
+    expect(seen.node.version).toBe(2);
+    expect(seen.body).toEqual({ note: "mine" });
+    expect(await states(id)).toEqual(["history", "current", "discarded"]);
+    const next = await proposeVersion(db, now, id, { note: "second" }, {});
+    expect(next.version).toBe(4);
+    expect(await states(id)).toEqual([
+      "history",
+      "current",
+      "discarded",
+      "pending",
+    ]);
+  });
+
+  it("needs the parent's session to keep or discard", async () => {
+    const id = await arcOf("auth");
+    await proposeVersion(db, now, id, { note: "generated" }, {});
+    for (const action of ["keep", "discard"])
+      expect(
+        (
+          await call(
+            "POST",
+            `/nodes/${id}/pending/${action}`,
+            undefined,
+            deviceCookie,
+          )
+        ).status,
+      ).toBe(401);
+  });
 });

@@ -553,6 +553,8 @@ export async function studioSave(
 
 export interface StudioVersion {
   version: number;
+  /** `pending` waits for the parent; `discarded` was set aside; `current` is what play reads. */
+  state: "history" | "current" | "pending" | "discarded";
   author: "parent" | "generator";
   createdAt: string;
 }
@@ -564,6 +566,20 @@ export async function studioVersions(
     `/api/parent/studio/nodes/${encodeURIComponent(id)}/versions`,
   );
   return parentReply(status, body, () => body["versions"] as StudioVersion[]);
+}
+
+/** Keeps or discards the version a generator wrote, which waits for the parent (REQ-8604). */
+export async function studioDecide(
+  id: string,
+  action: "keep" | "discard",
+): Promise<ParentReply<StudioNode>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/pending/${action}`,
+    { method: "POST", body: "{}" },
+  );
+  return status === 200
+    ? { ok: true, value: body as unknown as StudioNode }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
 }
 
 /** Stores an earlier version again as the next one (REQ-8602). */

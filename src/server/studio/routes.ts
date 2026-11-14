@@ -53,6 +53,10 @@ import {
   getJob,
   getNode,
   jobsOf,
+  keepPending,
+  discardPending,
+  pendingOf,
+  currentBodyOf,
   restoreVersion,
   KINDS,
   LEVELS,
@@ -155,8 +159,7 @@ export function mountStudio(
     if (who instanceof Response) return who;
     const node = await getNode(db, c.req.param("id"));
     if (!node) return c.json({ error: "node_unknown" }, 404);
-    const versions = await versionsOf(db, node.id);
-    return c.json({ node, body: versions.at(-1)?.body ?? null });
+    return c.json({ node, body: await currentBodyOf(db, node.id) });
   });
 
   app.put(`${base}/nodes/:id`, async (c) => {
@@ -197,6 +200,32 @@ export function mountStudio(
       return c.json({ error: "node_unknown" }, 404);
     return c.json({ versions: await versionsOf(db, c.req.param("id")) });
   });
+
+  // The waiting version of a node, which a generator wrote, is kept or discarded by the parent alone.
+  const decide =
+    (action: "keep" | "discard") =>
+    async (c: Context): Promise<Response> => {
+      const who = await guard(c);
+      if (who instanceof Response) return who;
+      const id = c.req.param("id") ?? "";
+      if (!(await getNode(db, id)))
+        return c.json({ error: "node_unknown" }, 404);
+      if ((await pendingOf(db, id)) === null)
+        return c.json({ error: "no_pending_version" }, 404);
+      try {
+        return c.json(
+          await (action === "keep" ? keepPending : discardPending)(
+            db,
+            now(),
+            id,
+          ),
+        );
+      } catch (err) {
+        return refused(c, err);
+      }
+    };
+  app.post(`${base}/nodes/:id/pending/keep`, decide("keep"));
+  app.post(`${base}/nodes/:id/pending/discard`, decide("discard"));
 
   app.post(`${base}/nodes/:id/versions/:v/restore`, async (c) => {
     const who = await guard(c);
