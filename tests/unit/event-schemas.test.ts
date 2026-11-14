@@ -98,6 +98,13 @@ const valid: Record<string, Record<string, unknown>> = {
     hard: "the boards are worn",
     itemId: "i-1",
   },
+  check_task_chosen: {
+    encounter: "e-1",
+    node: "N1",
+    subtype: "a",
+    purpose: "frontier",
+    corridor: true,
+  },
   world_changed: { kind: "place", name: "bridge", note: "its rope is cut" },
   name_given: { target: "familiar", targetId: "f-1", name: "Пуговка" },
   reward_granted: {

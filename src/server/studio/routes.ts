@@ -22,6 +22,7 @@ import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
 import { readChecklist } from "./checklist.js";
 import { Force } from "../sandbox/force.js";
+import { setCheckTask } from "../sandbox/director.js";
 import { Lever, setLever } from "../sandbox/levers.js";
 import {
   createSandboxPlay,
@@ -383,11 +384,18 @@ export function mountStudio(
         blockedText: translator(lang).t("story.master.blocked"),
       });
       await recordTurn(open.db, turn);
+      // The Director, and not the Master, sets the task of a check (REQ-8174).
+      const task = turn.calls.some((call) => call.tool === "request_check")
+        ? await setCheckTask(open.db, body.data.encounterId, now())
+        : null;
       return c.json({
         reply: turn.reply,
         blocked: turn.blocked,
         calls: turn.calls,
         refused: turn.refused,
+        check: task
+          ? { node: task.node, subtype: task.subtype, purpose: task.purpose }
+          : null,
       });
     } catch (err) {
       if (err instanceof MasterFailed)
