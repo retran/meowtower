@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { afterAll, beforeAll, expect, it } from "vitest";
 import type { Hono } from "hono";
 import { createApp } from "../../src/server/app.js";
+import { appendEvents } from "../../src/engine/events/append.js";
 import { openProfile } from "../../src/server/database.js";
 import { dropSchema, type Db } from "../../src/server/db/index.js";
 import { registerDevice } from "../../src/server/devices.js";
@@ -300,5 +301,54 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     ).toBe(400);
     await studio("POST", "/sandbox/play/turn", ask);
     expect(seen[1]?.checkResult).toBeUndefined();
+  });
+
+  it("REQ-8172: takes the outcome of the engine's latest verdict, once, and says when none is waiting", async () => {
+    const campaign = await node("campaign", null, "c5");
+    const arc = await node("arc", campaign, "a5");
+    const adventure = await node("adventure", arc, "Lock");
+    const encounter = await node("encounter", adventure, "Door");
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    next = () => Promise.resolve({ text: "The lock clicks.", calls: [] });
+    const ask = {
+      adventureId: adventure,
+      encounterId: encounter,
+      said: "I pick the lock",
+      outcome: "engine",
+    };
+    const none = await studio("POST", "/sandbox/play/turn", ask);
+    expect(none.status).toBe(409);
+    expect(((await none.json()) as { error: string }).error).toBe(
+      "no_check_answered",
+    );
+
+    const sandbox = await openPostgresIfExists(DB_URL, sandboxSchemaOf(schema));
+    if (!sandbox) throw new Error("no sandbox");
+    try {
+      await appendEvents(sandbox, [
+        {
+          type: "verdict",
+          v: 1,
+          payload: {
+            itemId: "i1",
+            attemptNo: 1,
+            verdict: "correct",
+            outcome: "partial",
+            trapId: null,
+            errorClass: null,
+            steps: [],
+          },
+          origin: "server",
+          sessionId: "s1",
+        },
+      ]);
+    } finally {
+      await sandbox.close();
+    }
+    seen.length = 0;
+    expect((await studio("POST", "/sandbox/play/turn", ask)).status).toBe(200);
+    expect(seen[0]?.checkResult).toBe("cost");
+    // The turn used the verdict, so the next one has none waiting.
+    expect((await studio("POST", "/sandbox/play/turn", ask)).status).toBe(409);
   });
 });

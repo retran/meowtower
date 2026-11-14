@@ -346,6 +346,7 @@
   "ui.studio.turn.blocked": "In plaats daarvan als verhaaltekst getoond.",
   "ui.studio.turn.outcome": "Uitkomst van de check",
   "ui.studio.turn.outcomeNone": "Geen check",
+  "ui.studio.turn.outcomeEngine": "Uit het antwoord in het kader",
   "ui.studio.turn.outcomeClean": "Zuiver antwoord",
   "ui.studio.turn.outcomePartial": "Gedeeltelijk antwoord",
   "ui.studio.turn.outcomeAlt": "Fout antwoord",

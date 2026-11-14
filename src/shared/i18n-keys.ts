@@ -362,6 +362,7 @@ export interface StringParams {
   "ui.studio.turn.blocked": NoParams;
   "ui.studio.turn.outcome": NoParams;
   "ui.studio.turn.outcomeNone": NoParams;
+  "ui.studio.turn.outcomeEngine": NoParams;
   "ui.studio.turn.outcomeClean": NoParams;
   "ui.studio.turn.outcomePartial": NoParams;
   "ui.studio.turn.outcomeAlt": NoParams;

@@ -26,3 +26,23 @@ export const ladder = (outcome: EngineOutcome): Outcome => LADDER[outcome];
 export const checkReply = (
   outcome: EngineOutcome,
 ): z.infer<typeof CheckReply> => CheckReply.parse({ outcome: ladder(outcome) });
+
+/**
+ * The outcome of the check her last action called for: the engine's latest verdict that no turn has
+ * used yet (REQ-8172). It reads the log in order, a turn closes the verdicts before it, and a verdict
+ * whose outcome is not one of the engine's is skipped. None where nothing waits.
+ */
+export function engineOutcomeOf(
+  events: readonly { type: string; payload: unknown }[],
+): EngineOutcome | null {
+  let waiting: EngineOutcome | null = null;
+  for (const e of events) {
+    if (e.type === "turn_taken") waiting = null;
+    else if (e.type === "verdict") {
+      const o = (e.payload as { outcome?: unknown }).outcome;
+      if (ENGINE_OUTCOMES.includes(o as EngineOutcome))
+        waiting = o as EngineOutcome;
+    }
+  }
+  return waiting;
+}

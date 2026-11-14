@@ -346,6 +346,7 @@
   "ui.studio.turn.blocked": "Shown as story text instead.",
   "ui.studio.turn.outcome": "Result of the check",
   "ui.studio.turn.outcomeNone": "No check",
+  "ui.studio.turn.outcomeEngine": "From the answer in the frame",
   "ui.studio.turn.outcomeClean": "Clean answer",
   "ui.studio.turn.outcomePartial": "Partial answer",
   "ui.studio.turn.outcomeAlt": "Failed answer",
