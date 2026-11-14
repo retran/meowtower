@@ -33,6 +33,9 @@ const levers: object[] = [];
 /** What the sandbox was asked to start, in order. */
 const started: object[] = [];
 
+/** The versions the studio was asked to restore, in order. */
+const restored: number[] = [];
+
 /** The edits the studio was asked to store, in order. */
 const saved: { id: string; body: Record<string, unknown> }[] = [];
 
@@ -63,7 +66,7 @@ async function stub(page: Page): Promise<Fake[]> {
       parentId: "c1",
       title: "The lock",
       status: "draft",
-      version: 1,
+      version: 3,
       links: [],
     },
     {
@@ -155,6 +158,26 @@ async function stub(page: Page): Promise<Fake[]> {
         });
       saved.push({ id: one[1] ?? "", body: b.body });
       const n = nodes.find((x) => x.id === one[1]);
+      if (n) n.version += 1;
+      return json(200, n ?? {});
+    }
+    const versions = /^\/nodes\/([^/]+)\/versions$/.exec(path);
+    if (versions && method === "GET") {
+      const n = nodes.find((x) => x.id === versions[1]);
+      return json(200, {
+        versions: Array.from({ length: n?.version ?? 1 }, (_, i) => ({
+          version: i + 1,
+          body: {},
+          prompt: null,
+          author: i === 1 ? "generator" : "parent",
+          createdAt: "2026-11-10T12:00:00.000Z",
+        })),
+      });
+    }
+    const restore = /^\/nodes\/([^/]+)\/versions\/(\d+)\/restore$/.exec(path);
+    if (restore && method === "POST") {
+      restored.push(Number(restore[2]));
+      const n = nodes.find((x) => x.id === restore[1]);
       if (n) n.version += 1;
       return json(200, n ?? {});
     }
@@ -497,4 +520,24 @@ test("REQ-8624: on the tablet every control of the form is at least 56 px tall",
     const box = await page.locator(selector).boundingBox();
     expect(box?.height ?? 0, selector).toBeGreaterThanOrEqual(56);
   }
+});
+
+test("REQ-8602: the versions of a node are listed and an earlier one is restored as a new version", async ({
+  page,
+}) => {
+  restored.length = 0;
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a2"]').click();
+  await page.locator('[data-action="studio-versions"]').click();
+  await expect(page.locator("ol.versions li")).toHaveCount(3);
+  // The current version is not offered for a restore over itself.
+  await expect(page.locator('[data-action="version-restore-3"]')).toHaveCount(
+    0,
+  );
+  await page.locator('[data-action="version-restore-1"]').click();
+  await expect.poll(() => restored).toEqual([1]);
+  await expect(page.locator("ol.versions li")).toHaveCount(4);
 });

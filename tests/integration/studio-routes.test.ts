@@ -413,3 +413,49 @@ it("REQ-8306, REQ-8600: an edit of an encounter is checked before it is stored, 
   });
   expect(loose.status).toBe(200);
 });
+
+it("REQ-8602: an earlier version is restored as a new version, and every version stays", async () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string; version: number };
+  const campaign = await make("campaign", null, "restore campaign");
+  const arc = await make("arc", campaign.id, "restore arc");
+  await call("PUT", `/nodes/${arc.id}`, { body: { note: "first" } });
+  await call("PUT", `/nodes/${arc.id}`, { body: { note: "second" } });
+
+  const restored = await call("POST", `/nodes/${arc.id}/versions/2/restore`);
+  expect(restored.status).toBe(200);
+  expect(((await restored.json()) as { version: number }).version).toBe(4);
+
+  const listed = (await (
+    await call("GET", `/nodes/${arc.id}/versions`)
+  ).json()) as { versions: { version: number; body: unknown }[] };
+  expect(listed.versions.map((v) => v.version)).toEqual([1, 2, 3, 4]);
+  expect(listed.versions[3]?.body).toEqual({ note: "first" });
+  expect(listed.versions[2]?.body).toEqual({ note: "second" });
+
+  // The current version is not restored over itself, and a missing one is unknown.
+  const same = await call("POST", `/nodes/${arc.id}/versions/4/restore`);
+  expect(same.status).toBe(400);
+  expect(await same.json()).toEqual({
+    error: "studio_refused",
+    reason: "that is the current version",
+  });
+  expect(
+    (await call("POST", `/nodes/${arc.id}/versions/9/restore`)).status,
+  ).toBe(404);
+  expect((await call("POST", `/nodes/nope/versions/1/restore`)).status).toBe(
+    404,
+  );
+  expect(
+    (
+      await call(
+        "POST",
+        `/nodes/${arc.id}/versions/1/restore`,
+        undefined,
+        deviceCookie,
+      )
+    ).status,
+  ).toBe(401);
+});
