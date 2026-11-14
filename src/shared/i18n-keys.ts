@@ -400,6 +400,53 @@ export interface StringParams {
   "ui.studio.addTitle": NoParams;
   "ui.studio.added": NoParams;
   "ui.studio.refused": { reason: string | number };
+  "ui.studio.form.title": NoParams;
+  "ui.studio.field.place": NoParams;
+  "ui.studio.field.situation": NoParams;
+  "ui.studio.field.goal": NoParams;
+  "ui.studio.field.pressure": NoParams;
+  "ui.studio.field.checks": NoParams;
+  "ui.studio.field.people": NoParams;
+  "ui.studio.field.exits": NoParams;
+  "ui.studio.field.personName": NoParams;
+  "ui.studio.field.personAim": NoParams;
+  "ui.studio.field.exitWhen": NoParams;
+  "ui.studio.field.exitNext": NoParams;
+  "ui.studio.form.exitPick": NoParams;
+  "ui.studio.form.addPerson": NoParams;
+  "ui.studio.form.addExit": NoParams;
+  "ui.studio.form.remove": NoParams;
+  "ui.studio.form.save": NoParams;
+  "ui.studio.form.saved": { n: string | number };
+  "ui.studio.fault.row": {
+    label: string | number;
+    n: string | number;
+    part: string | number;
+  };
+  "ui.studio.fault.not_object": { label: string | number };
+  "ui.studio.fault.unknown_field": { held: string | number };
+  "ui.studio.fault.not_text": { held: string | number; label: string | number };
+  "ui.studio.fault.too_long": {
+    held: string | number;
+    label: string | number;
+    need: string | number;
+  };
+  "ui.studio.fault.out_of_range": {
+    held: string | number;
+    label: string | number;
+    max: string | number;
+    min: string | number;
+  };
+  "ui.studio.fault.not_whole_number": {
+    held: string | number;
+    label: string | number;
+  };
+  "ui.studio.fault.unknown_encounter": { label: string | number };
+  "ui.studio.fault.own_exit": { label: string | number };
+  "ui.studio.fault.empty": { label: string | number };
+  "ui.studio.emptyAdd": NoParams;
+  "ui.studio.refusal.notEdited": { status: string | number };
+  "ui.studio.refusal.title": NoParams;
   "ui.studio.logs": NoParams;
   "ui.studio.noLogs": NoParams;
   "ui.studio.logEvents": { n: string | number };

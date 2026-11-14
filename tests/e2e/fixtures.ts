@@ -40,9 +40,11 @@ export const test = base.extend<{ leaks: string[] }>({
             if (body.length === 0) return;
             const json: unknown = JSON.parse(body.toString("utf8"));
             // The task lab is the parent's own page and shows a task's design by purpose (REQ-8298).
-            const parentLab = new URL(res.url()).pathname.startsWith(
+            // A story node's reply has a field named `node` of its own, which is no task's design (REQ-8306).
+            const parentLab = [
               "/api/parent/studio/tasks",
-            );
+              "/api/parent/studio/nodes/",
+            ].some((path) => new URL(res.url()).pathname.startsWith(path));
             if (!parentLab)
               for (const field of forbiddenFields(json))
                 leaks.push(`${res.url()}: ${field}`);
