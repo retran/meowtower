@@ -358,6 +358,7 @@
   "ui.studio.generate.cause.check_failed": "No draft passed the code's check. Change what the adventure is about and try again.",
   "ui.studio.generate.cause.version_waits": "A version already waits. Keep or discard it first.",
   "ui.studio.generate.cause.failed": "The generation stopped. Try again.",
+  "ui.studio.generate.cause.interrupted": "The server stopped while this run was going. Last step: {step} Start it again.",
   "ui.studio.refusal.noGenerator": "No model is set for writing adventures, so nothing can be generated.",
   "ui.studio.turn.said": "Her words",
   "ui.studio.turn.take": "Take a turn",

@@ -358,6 +358,7 @@
   "ui.studio.generate.cause.check_failed": "Geen concept kwam door de controle van de code. Verander waar het avontuur over gaat en probeer opnieuw.",
   "ui.studio.generate.cause.version_waits": "Er wacht al een versie. Bewaar of gooi die eerst weg.",
   "ui.studio.generate.cause.failed": "De generatie stopte. Probeer het opnieuw.",
+  "ui.studio.generate.cause.interrupted": "De server stopte terwijl deze run bezig was. Laatste stap: {step} Start hem opnieuw.",
   "ui.studio.refusal.noGenerator": "Er is geen model ingesteld voor het schrijven van avonturen, dus er valt niets te genereren.",
   "ui.studio.turn.said": "Haar woorden",
   "ui.studio.turn.take": "Een beurt spelen",

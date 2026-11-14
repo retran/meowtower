@@ -85,16 +85,27 @@ export function generatePanel(
     }
     if (job.state === "failed") {
       progress.textContent = "";
-      const code = [
-        "budget_exhausted",
-        "provider_failed",
-        "check_failed",
-        "version_waits",
-      ].includes(job.message)
-        ? job.message
-        : "failed";
+      // A job the server's restart cut off keeps the step it was at after `interrupted:`.
+      const cut = job.message.startsWith("interrupted");
+      const code = cut
+        ? "interrupted"
+        : [
+              "budget_exhausted",
+              "provider_failed",
+              "check_failed",
+              "version_waits",
+            ].includes(job.message)
+          ? job.message
+          : "failed";
       cause.dataset["cause"] = code;
-      cause.textContent = t(uiKey(`ui.studio.generate.cause.${code}`));
+      cause.textContent = cut
+        ? t("ui.studio.generate.cause.interrupted", {
+            step: stepText({
+              ...job,
+              message: job.message.slice("interrupted:".length),
+            }),
+          })
+        : t(uiKey(`ui.studio.generate.cause.${code}`));
       start.disabled = false;
       return;
     }
