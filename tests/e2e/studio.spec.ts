@@ -37,6 +37,10 @@ const started: object[] = [];
 const waiting = new Set<string>();
 const decided: string[] = [];
 
+/** What the studio asked a generator to write, and the jobs it will read back in turn. */
+const generated: object[] = [];
+let jobFlow: { state: string; progress: number; message: string }[] = [];
+
 /** The versions the studio was asked to restore, in order. */
 const restored: number[] = [];
 
@@ -196,6 +200,18 @@ async function stub(page: Page): Promise<Fake[]> {
             : []),
         ],
       });
+    }
+    if (path === "/nodes/d1/generate/estimate")
+      return json(200, { calls: { min: 4, max: 17 }, spentUsd: 1.5 });
+    if (path === "/nodes/d1/generate" && method === "POST") {
+      generated.push(route.request().postDataJSON() as object);
+      return json(202, {
+        job: { id: "j1", state: "queued", progress: 0, message: "" },
+      });
+    }
+    if (path === "/jobs/j1") {
+      const next = jobFlow.length > 1 ? jobFlow.shift() : jobFlow[0];
+      return json(200, { id: "j1", kind: "generate", nodeId: "d1", ...next });
     }
     const decide = /^\/nodes\/([^/]+)\/pending\/(keep|discard)$/.exec(path);
     if (decide && method === "POST") {
@@ -684,4 +700,51 @@ test("REQ-8614: with no sandbox nothing is marked as unreached", async ({
   await expect(page.locator('button[data-node="e2"]')).toBeVisible();
   await expect(page.locator('[data-reached="0"]')).toHaveCount(0);
   await expect(page.locator("[data-left]")).toHaveCount(0);
+});
+
+/** Opens the adventure d1 of the stub, so its panel shows. */
+async function selectAdventure(page: Page): Promise<void> {
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="d1"]').click();
+}
+
+test("REQ-8608, REQ-8318: the page shows the calls and the spend before a generation, then its step", async ({
+  page,
+}) => {
+  generated.length = 0;
+  jobFlow = [
+    { state: "running", progress: 40, message: "draft:2" },
+    { state: "done", progress: 100, message: "version:3" },
+  ];
+  await selectAdventure(page);
+  const estimate = page.locator("[data-estimate]");
+  await expect(estimate).toContainText("4");
+  await expect(estimate).toContainText("17");
+  await expect(estimate).toContainText("1.5");
+  await page.locator("#gen-prompt").fill("autumn fog");
+  await page.locator('[data-action="gen-start"]').click();
+  expect(generated).toEqual([{ prompt: "autumn fog" }]);
+  const progress = page.locator("[data-job]");
+  await expect(progress).toHaveAttribute("data-state", "running");
+  await expect(progress).toContainText("2");
+  await expect(progress).toHaveAttribute("data-state", "done", {
+    timeout: 8000,
+  });
+});
+
+test("REQ-8610: a generation that stops names its cause beside the button", async ({
+  page,
+}) => {
+  jobFlow = [{ state: "failed", progress: 40, message: "budget_exhausted" }];
+  await selectAdventure(page);
+  await page.locator("#gen-prompt").fill("autumn fog");
+  await page.locator('[data-action="gen-start"]').click();
+  await expect(page.locator('[data-cause="budget_exhausted"]')).toBeVisible({
+    timeout: 8000,
+  });
 });
