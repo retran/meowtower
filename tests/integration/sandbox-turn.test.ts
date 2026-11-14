@@ -274,4 +274,31 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
       reason: "budget_exhausted",
     });
   });
+
+  it("REQ-8180: takes the engine outcome of a check on the ladder, and refuses an outcome that is none", async () => {
+    const campaign = await node("campaign", null, "c4");
+    const arc = await node("arc", campaign, "a4");
+    const adventure = await node("adventure", arc, "Cliff");
+    const encounter = await node("encounter", adventure, "Edge");
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    seen.length = 0;
+    next = () =>
+      Promise.resolve({ text: "She slips, but a ledge holds.", calls: [] });
+    const ask = {
+      adventureId: adventure,
+      encounterId: encounter,
+      said: "I jump",
+    };
+    expect(
+      (await studio("POST", "/sandbox/play/turn", { ...ask, outcome: "alt" }))
+        .status,
+    ).toBe(200);
+    expect(seen[0]?.checkResult).toBe("twist");
+    expect(
+      (await studio("POST", "/sandbox/play/turn", { ...ask, outcome: "win" }))
+        .status,
+    ).toBe(400);
+    await studio("POST", "/sandbox/play/turn", ask);
+    expect(seen[1]?.checkResult).toBeUndefined();
+  });
 });
