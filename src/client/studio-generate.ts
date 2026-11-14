@@ -43,13 +43,25 @@ export function generatePanel(
   cause.setAttribute("role", "alert");
 
   void studioGenerateEstimate(node.id).then((got) => {
-    estimate.textContent = got.ok
-      ? t("ui.studio.generate.estimate", {
-          min: got.value.calls.min,
-          max: got.value.calls.max,
-          spent: got.value.spentUsd.toFixed(2),
-        })
-      : "";
+    if (!got.ok) {
+      estimate.textContent = "";
+      return;
+    }
+    const v = got.value;
+    estimate.dataset["basis"] = v.basis;
+    estimate.textContent = t(
+      v.basis === "measured"
+        ? "ui.studio.generate.estimateMeasured"
+        : "ui.studio.generate.estimateDefault",
+      {
+        min: v.calls.min,
+        max: v.calls.max,
+        low: v.estimateUsd.min.toFixed(2),
+        high: v.estimateUsd.max.toFixed(2),
+        calls: v.measuredCalls,
+        spent: v.spentUsd.toFixed(2),
+      },
+    );
   });
 
   const follow = async (

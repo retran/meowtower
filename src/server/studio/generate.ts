@@ -59,6 +59,51 @@ export async function monthSpendUsd(db: Db, now: number): Promise<number> {
   return Number(row.usd);
 }
 
+/** The price of one call, in dollars, where fewer than `MEASURED_FROM` calls are logged; my choice, which traces to no log. */
+export const DEFAULT_CALL_USD = 0.05;
+/** From this many earlier calls the price is their mean, and the estimate says it is measured. */
+export const MEASURED_FROM = 10;
+/** The newest calls that make the mean. */
+export const MEASURED_WINDOW = 50;
+
+export interface DollarEstimate {
+  readonly minUsd: number;
+  readonly maxUsd: number;
+  /** What the price rests on: the mean of earlier calls, or the default (REQ-8632). */
+  readonly basis: "measured" | "default";
+  readonly measuredCalls: number;
+}
+
+const upToCent = (usd: number): number => Math.ceil(usd * 100 - 1e-6) / 100;
+
+/**
+ * The cost of a run in dollars (REQ-8630): the fewest and the most calls a run makes times the price of
+ * one call, each end rounded up to the cent. `costs` are the costs of earlier answered calls, oldest first.
+ */
+export function dollarEstimate(costs: readonly number[]): DollarEstimate {
+  const recent = costs.slice(-MEASURED_WINDOW);
+  const measured = recent.length >= MEASURED_FROM;
+  const price = measured
+    ? recent.reduce((sum, c) => sum + c, 0) / recent.length
+    : DEFAULT_CALL_USD;
+  return {
+    minUsd: upToCent(GENERATION_CALLS.min * price),
+    maxUsd: upToCent(GENERATION_CALLS.max * price),
+    basis: measured ? "measured" : "default",
+    measuredCalls: measured ? recent.length : 0,
+  };
+}
+
+/** The costs of the newest answered calls of the showrunner, oldest first. */
+export async function showrunnerCosts(db: Db): Promise<number[]> {
+  const rows = (await db
+    .prepare(
+      "SELECT cost_usd FROM llm_log WHERE role = 'SHOWRUNNER_MODEL' AND outcome = 'ok' ORDER BY id DESC LIMIT ?",
+    )
+    .all(MEASURED_WINDOW)) as { cost_usd: number }[];
+  return rows.map((r) => Number(r.cost_usd)).reverse();
+}
+
 /** How far along a step is, as a share of the run; the draft steps climb with each draft. */
 const progressOf = (name: string, n: number): number =>
   name === "plan"

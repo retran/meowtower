@@ -357,13 +357,23 @@ export interface StringParams {
   "ui.studio.reached": NoParams;
   "ui.studio.unreached": NoParams;
   "ui.studio.leftToTest": { exits: string | number; nodes: string | number };
-  "ui.studio.generate.estimate": {
+  "ui.studio.generate.prompt": NoParams;
+  "ui.studio.generate.start": NoParams;
+  "ui.studio.generate.estimateMeasured": {
+    calls: string | number;
+    high: string | number;
+    low: string | number;
     max: string | number;
     min: string | number;
     spent: string | number;
   };
-  "ui.studio.generate.prompt": NoParams;
-  "ui.studio.generate.start": NoParams;
+  "ui.studio.generate.estimateDefault": {
+    high: string | number;
+    low: string | number;
+    max: string | number;
+    min: string | number;
+    spent: string | number;
+  };
   "ui.studio.generate.promptEmpty": NoParams;
   "ui.studio.generate.step.start": NoParams;
   "ui.studio.generate.step.plan": { progress: string | number };

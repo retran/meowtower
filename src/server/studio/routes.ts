@@ -23,8 +23,10 @@ import { DEVICE_COOKIE } from "../devices.js";
 import { checkEncounterBody } from "./body-check.js";
 import {
   type AdventureWriter,
+  dollarEstimate,
   GENERATION_CALLS,
   monthSpendUsd,
+  showrunnerCosts,
   startGeneration,
 } from "./generate.js";
 import { readChecklist } from "./checklist.js";
@@ -243,9 +245,13 @@ export function mountStudio(
     if (who instanceof Response) return who;
     if (!(await getNode(db, c.req.param("id"))))
       return c.json({ error: "node_unknown" }, 404);
+    const range = dollarEstimate(await showrunnerCosts(db));
     return c.json({
       calls: GENERATION_CALLS,
       spentUsd: await monthSpendUsd(db, now()),
+      estimateUsd: { min: range.minUsd, max: range.maxUsd },
+      basis: range.basis,
+      measuredCalls: range.measuredCalls,
     });
   });
 
