@@ -825,6 +825,7 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
     outcome.dataset["action"] = "turn-outcome";
     for (const [value, key] of [
       ["", "ui.studio.turn.outcomeNone"],
+      ["engine", "ui.studio.turn.outcomeEngine"],
       ["clean", "ui.studio.turn.outcomeClean"],
       ["partial", "ui.studio.turn.outcomePartial"],
       ["alt", "ui.studio.turn.outcomeAlt"],

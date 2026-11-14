@@ -3,8 +3,14 @@
 import type { Context, Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
+import { eventsOfTypes } from "../../engine/events/read.js";
 import { type Lang, translator } from "../../shared/i18n.js";
-import { ENGINE_OUTCOMES, ladder } from "../../story/check.js";
+import {
+  ENGINE_OUTCOMES,
+  type EngineOutcome,
+  engineOutcomeOf,
+  ladder,
+} from "../../story/check.js";
 import { MasterFailed } from "../../story/master-gateway.js";
 import { recordTurn, takeTurn } from "../../story/turn.js";
 import { parentSettings } from "../parent-room.js";
@@ -94,7 +100,7 @@ const TurnIn = z
     encounterId: z.string(),
     said: z.string().trim().min(1).max(2000),
     /** The engine's outcome of a check, to test how the Master tells each result (REQ-8180). */
-    outcome: z.enum(ENGINE_OUTCOMES).optional(),
+    outcome: z.enum([...ENGINE_OUTCOMES, "engine"]).optional(),
   })
   .strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
@@ -355,6 +361,16 @@ export function mountStudio(
     } catch (err) {
       return refused(c, err);
     }
+    // "engine" takes the engine's latest verdict from the sandbox log, so the result is never typed (REQ-8172).
+    let outcome: EngineOutcome | undefined;
+    const asked = body.data.outcome;
+    if (asked === "engine") {
+      const found = engineOutcomeOf(
+        await eventsOfTypes(open.db, ["verdict", "turn_taken"]),
+      );
+      if (!found) return c.json({ error: "no_check_answered" }, 409);
+      outcome = found;
+    } else outcome = asked;
     const lang: Lang = (await parentSettings(open.db)).language;
     try {
       const turn = await takeTurn({
@@ -362,9 +378,7 @@ export function mountStudio(
         scenario,
         encounter: body.data.encounterId,
         said: body.data.said,
-        ...(body.data.outcome
-          ? { checkResult: ladder(body.data.outcome) }
-          : {}),
+        ...(outcome ? { checkResult: ladder(outcome) } : {}),
         lang,
         blockedText: translator(lang).t("story.master.blocked"),
       });
