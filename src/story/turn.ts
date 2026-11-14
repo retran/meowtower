@@ -7,6 +7,7 @@ import { appendEvents, type NewEvent } from "../engine/events/append.js";
 import type { Db } from "../server/db/index.js";
 import { type GateLang, textGate } from "../shared/voice/gate.js";
 import {
+  type Outcome,
   MASTER_TOOL_NAMES,
   parseToolCall,
   type ToolCall,
@@ -17,6 +18,8 @@ export interface MasterRequest {
   readonly system: string;
   readonly said: string;
   readonly encounter: string;
+  /** The result of the check her last action called for, as a fact; absent on an ordinary turn. */
+  readonly checkResult?: Outcome;
 }
 
 /** What comes back: plain story text and the tool calls the model made, unchecked. */
@@ -33,6 +36,8 @@ export interface TurnInput {
   readonly scenario: string;
   readonly encounter: string;
   readonly said: string;
+  /** The engine's result for the check this turn answers, on the Master's ladder (REQ-8172). */
+  readonly checkResult?: Outcome;
   readonly lang: GateLang;
   /** The story text a blocked reply becomes, in the player's language. */
   readonly blockedText: string;
@@ -70,6 +75,7 @@ export async function takeTurn(input: TurnInput): Promise<Turn> {
     system: masterSystemPrompt(input.scenario),
     said: input.said,
     encounter: input.encounter,
+    ...(input.checkResult ? { checkResult: input.checkResult } : {}),
   });
   const gate = textGate(asked.text, {
     lang: input.lang,
