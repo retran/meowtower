@@ -202,11 +202,12 @@ export function mountStudio(
   });
 
   // The waiting version of a node, which a generator wrote, is kept or discarded by the parent alone.
-  for (const action of ["keep", "discard"] as const)
-    app.post(`${base}/nodes/:id/pending/${action}`, async (c) => {
+  const decide =
+    (action: "keep" | "discard") =>
+    async (c: Context): Promise<Response> => {
       const who = await guard(c);
       if (who instanceof Response) return who;
-      const id = c.req.param("id");
+      const id = c.req.param("id") ?? "";
       if (!(await getNode(db, id)))
         return c.json({ error: "node_unknown" }, 404);
       if ((await pendingOf(db, id)) === null)
@@ -222,7 +223,9 @@ export function mountStudio(
       } catch (err) {
         return refused(c, err);
       }
-    });
+    };
+  app.post(`${base}/nodes/:id/pending/keep`, decide("keep"));
+  app.post(`${base}/nodes/:id/pending/discard`, decide("discard"));
 
   app.post(`${base}/nodes/:id/versions/:v/restore`, async (c) => {
     const who = await guard(c);

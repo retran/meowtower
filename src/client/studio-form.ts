@@ -297,7 +297,6 @@ export function versionsPanel(
 ): HTMLElement {
   const box = el("div", { className: "versions-panel" });
   const list = el("ol", { className: "versions" });
-  let current = node.version;
   const load = async (): Promise<void> => {
     const got = await studioVersions(node.id);
     if (!got.ok) {
@@ -337,7 +336,6 @@ export function versionsPanel(
                     note.textContent = refusalText(done.error);
                     return;
                   }
-                  current = done.value.version;
                   note.textContent =
                     action === "keep"
                       ? t("ui.studio.versions.kept", { n: done.value.version })
@@ -362,7 +360,6 @@ export function versionsPanel(
                   note.textContent = refusalText(done.error);
                   return;
                 }
-                current = done.value.version;
                 note.textContent = t("ui.studio.versions.restored", {
                   n: done.value.version,
                 });
