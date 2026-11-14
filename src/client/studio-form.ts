@@ -214,7 +214,7 @@ export async function encounterForm(
     const next: Record<string, unknown> = { ...stored };
     for (const f of TEXT_FIELDS) {
       const v = (values[f] ?? "").trim();
-      if (v === "") delete next[f];
+      if (v === "") Reflect.deleteProperty(next, f);
       else next[f] = v;
     }
     if (checks.trim() === "") delete next["checks"];
