@@ -41,6 +41,20 @@ describe("REQ-8304: the gaps of a checklist", () => {
     expect(found.unplaced).toEqual([]);
   });
 
+  it("takes a feature recorded as untested with a reason, and refuses one with none", () => {
+    const found = gaps(
+      ["screen:/a", "screen:/b"],
+      {
+        features: [
+          { id: "screen:/a", tests: [], untested: "no test names it yet" },
+          { id: "screen:/b", tests: [], untested: "  " },
+        ],
+      },
+      exists,
+    );
+    expect(found.unplaced).toEqual(["screen:/b"]);
+  });
+
   it("finds nothing wrong with a checklist that matches", () => {
     const found = gaps(
       ["screen:/a"],
@@ -59,6 +73,27 @@ describe("REQ-8304: this repository's checklist", () => {
     expect(features).toContain("screen:/studio");
     expect(features).toContain("api:POST /sandbox/levers");
     expect(features).toContain("api:POST /sandbox/play/start");
+  });
+
+  it("reads the routes of the child's game, the pairing, the Parent Room, the accounts and the parent app", () => {
+    for (const feature of [
+      "api:POST /api/session/:id/answer",
+      "api:GET /api/session/:id/next",
+      "api:GET /api/device",
+      "api:POST /api/pair",
+      "api:PUT /api/parent/settings",
+      "api:POST /api/account/login",
+      "api:GET /health",
+      "parent-app:POST /pin",
+    ])
+      expect(features, feature).toContain(feature);
+  });
+
+  it("says in words why each untested feature has no test", () => {
+    const untested = readChecklist(root).features.filter(
+      (f) => f.tests.length === 0,
+    );
+    for (const f of untested) expect(f.untested?.trim(), f.id).toBeTruthy();
   });
 
   it("places every feature, keeps no stale entry and names only tests that exist", () => {
