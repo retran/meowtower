@@ -339,6 +339,8 @@
   "ui.studio.playNone": "В этом приключении пока нет энкаунтеров.",
   "ui.studio.playFrame": "Игра в песочнице",
   "ui.studio.reached": "Достигнуто",
+  "ui.studio.unreached": "Не проверено",
+  "ui.studio.leftToTest": "Осталось проверить: энкаунтеров {nodes}, выходов {exits}.",
   "ui.studio.turn.said": "Её слова",
   "ui.studio.turn.take": "Сделать ход",
   "ui.studio.turn.inspect": "Показать ходы",

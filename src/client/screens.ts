@@ -1099,6 +1099,8 @@ const studioScreen: Screen = {
   path: "/studio",
   render() {
     const note = status();
+    /** What is left to test, written out beside the graph (REQ-8614). */
+    const leftLine = status();
     const crumbs = el("nav", { className: "crumbs" });
     const graph = el("div", { className: "graph" });
     graph.setAttribute("aria-label", t("ui.studio.graph"));
@@ -1110,6 +1112,7 @@ const studioScreen: Screen = {
       {},
       heading("ui.studio.title"),
       crumbs,
+      leftLine,
       graph,
       panel,
       note,
@@ -1123,7 +1126,12 @@ const studioScreen: Screen = {
     const trail: StudioNode[] = [];
     let selected: StudioNode | null = null;
     /** What a test has reached in the sandbox, drawn on the encounters of an adventure (REQ-8296). */
-    let reached = { encounters: new Set<string>(), exits: new Set<string>() };
+    let reached = {
+      /** Whether the sandbox answered, so that an encounter it did not reach is known to be untested. */
+      known: false,
+      encounters: new Set<string>(),
+      exits: new Set<string>(),
+    };
 
     /** The nodes of the level that shows, which an encounter's exits choose among. */
     let shown: StudioNode[] = [];
@@ -1239,6 +1247,20 @@ const studioScreen: Screen = {
     const drawGraph = (nodes: StudioNode[]): void => {
       shown = nodes;
       graph.replaceChildren();
+      if (reached.known) {
+        const open = nodes.filter((n) => !reached.encounters.has(n.id)).length;
+        const edges = nodes.flatMap((n) =>
+          n.links.filter((to) => !reached.exits.has(`${n.id}>${to}`)),
+        ).length;
+        leftLine.textContent = t("ui.studio.leftToTest", {
+          nodes: open,
+          exits: edges,
+        });
+        leftLine.dataset["left"] = `${String(open)},${String(edges)}`;
+      } else {
+        leftLine.textContent = "";
+        delete leftLine.dataset["left"];
+      }
       if (nodes.length === 0) {
         graph.append(status(t("ui.studio.empty")), addFirst());
         return;
@@ -1272,6 +1294,9 @@ const studioScreen: Screen = {
         if (reached.exits.has(`${e.from}>${e.to}`)) {
           line.setAttribute("stroke-width", "4");
           line.dataset["reached"] = "1";
+        } else if (reached.known) {
+          line.setAttribute("stroke-dasharray", "6 4");
+          line.dataset["reached"] = "0";
         }
         svg.append(line);
       }
@@ -1286,9 +1311,12 @@ const studioScreen: Screen = {
           el("small", {}, t(`ui.studio.status.${n.status}` as UiKey)),
           ...(reached.encounters.has(n.id)
             ? [el("small", {}, t("ui.studio.reached"))]
-            : []),
+            : reached.known
+              ? [el("small", {}, t("ui.studio.unreached"))]
+              : []),
         );
         if (reached.encounters.has(n.id)) b.dataset["reached"] = "1";
+        else if (reached.known) b.dataset["reached"] = "0";
         b.dataset["action"] = `node-${n.id}`;
         b.dataset["node"] = n.id;
         b.style.position = "absolute";
@@ -1335,12 +1363,13 @@ const studioScreen: Screen = {
         delete section.dataset["busy"];
         return;
       }
-      reached = { encounters: new Set(), exits: new Set() };
+      reached = { known: false, encounters: new Set(), exits: new Set() };
       if (level === "encounter") {
         // The sandbox may not exist, and then nothing is marked.
         const got = await studioReached();
         if (got.ok)
           reached = {
+            known: true,
             encounters: new Set(got.value.encounters),
             exits: new Set(got.value.exits.map((x) => `${x.from}>${x.to}`)),
           };

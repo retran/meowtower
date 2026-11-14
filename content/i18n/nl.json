@@ -339,6 +339,8 @@
   "ui.studio.playNone": "Dit avontuur heeft nog geen ontmoetingen.",
   "ui.studio.playFrame": "Het spel in de zandbak",
   "ui.studio.reached": "Bereikt",
+  "ui.studio.unreached": "Nog niet getest",
+  "ui.studio.leftToTest": "Nog te testen: {nodes} ontmoetingen, {exits} uitgangen.",
   "ui.studio.turn.said": "Haar woorden",
   "ui.studio.turn.take": "Een beurt spelen",
   "ui.studio.turn.inspect": "Toon de beurten",
