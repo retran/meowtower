@@ -366,8 +366,18 @@ test("REQ-8168, REQ-8292: a turn is taken at the encounter that was started, and
   await page.locator("#turn-said").fill("I step onto the bridge");
   await page.locator('[data-action="turn-take"]').click();
   await expect(page.locator(".turn-reply")).toContainText("The bridge sways.");
+  // The result of a check is sent only when the parent chooses one (REQ-8180).
+  await page.locator("#turn-outcome").selectOption("partial");
+  await page.locator('[data-action="turn-take"]').click();
+  await expect.poll(() => turned.length).toBe(2);
   expect(turned).toEqual([
     { adventureId: "d1", encounterId: "e2", said: "I step onto the bridge" },
+    {
+      adventureId: "d1",
+      encounterId: "e2",
+      said: "I step onto the bridge",
+      outcome: "partial",
+    },
   ]);
   await expect(page.locator("ol.turns li")).toHaveCount(0);
   await page.locator('[data-action="turn-inspect"]').click();
