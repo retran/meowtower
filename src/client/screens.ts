@@ -820,11 +820,26 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
     said.dataset["action"] = "turn-said";
     said.addEventListener("input", () => act("turn-said"));
     const reply = el("p", { className: "turn-reply" });
+    // The result of the check her action called for: the engine's outcome, which the Master gets as a fact.
+    const outcome = el("select", { id: "turn-outcome" });
+    outcome.dataset["action"] = "turn-outcome";
+    for (const [value, key] of [
+      ["", "ui.studio.turn.outcomeNone"],
+      ["clean", "ui.studio.turn.outcomeClean"],
+      ["partial", "ui.studio.turn.outcomePartial"],
+      ["alt", "ui.studio.turn.outcomeAlt"],
+    ] as const)
+      outcome.append(el("option", { value }, t(key)));
+    outcome.addEventListener("change", () => act("turn-outcome"));
+    outcome.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") act("turn-outcome");
+    });
     const take = button("ui.studio.turn.take", "turn-take", async () => {
       const done = await studioTurn(
         node.id,
         encounterId,
         (said as HTMLInputElement).value,
+        (outcome as HTMLSelectElement).value,
       );
       reply.textContent = done.ok
         ? `${done.value.reply}${done.value.blocked ? ` (${t("ui.studio.turn.blocked")})` : ""}`
@@ -868,6 +883,8 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
     turn.replaceChildren(
       el("label", { htmlFor: "turn-said" }, t("ui.studio.turn.said")),
       said,
+      el("label", { htmlFor: "turn-outcome" }, t("ui.studio.turn.outcome")),
+      outcome,
       take,
       reply,
       inspect,
