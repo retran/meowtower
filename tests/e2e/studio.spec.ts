@@ -634,3 +634,54 @@ test("REQ-8616: an encounter starts play at its current text in one action from 
   ).toHaveAttribute("src", /\?sandbox=1/);
   expect(started).toEqual([{ adventureId: "d1", encounterId: "e1" }]);
 });
+
+/** Opens the adventure's graph of encounters, with the reached marks the sandbox answers. */
+async function openEncounters(
+  page: Page,
+  reached: { status: number; body: object },
+): Promise<void> {
+  await stub(page);
+  await page.route("**/api/parent/studio/sandbox/play/reached", (route) =>
+    route.fulfill({ status: reached.status, json: reached.body }),
+  );
+  await ready(page);
+  for (const id of ["c1", "a1", "d1"]) {
+    await page.locator(`button[data-node="${id}"]`).click();
+    await page.locator('[data-action="studio-open"]').click();
+  }
+}
+
+test("REQ-8614: the graph marks an encounter and an exit that no test has reached", async ({
+  page,
+}) => {
+  await openEncounters(page, {
+    status: 200,
+    body: { encounters: ["e1"], exits: [] },
+  });
+  await expect(page.locator('button[data-node="e1"]')).toHaveAttribute(
+    "data-reached",
+    "1",
+  );
+  await expect(page.locator('button[data-node="e2"]')).toHaveAttribute(
+    "data-reached",
+    "0",
+  );
+  await expect(page.locator('button[data-node="e2"]')).toContainText(
+    "Не проверено",
+  );
+  await expect(page.locator('line[data-reached="0"]')).toHaveCount(1);
+  // The count of what is left is written out, for a reader of the page and not only of the picture.
+  await expect(page.locator("[data-left]")).toHaveAttribute("data-left", "1,1");
+});
+
+test("REQ-8614: with no sandbox nothing is marked as unreached", async ({
+  page,
+}) => {
+  await openEncounters(page, {
+    status: 409,
+    body: { error: "sandbox_unavailable" },
+  });
+  await expect(page.locator('button[data-node="e2"]')).toBeVisible();
+  await expect(page.locator('[data-reached="0"]')).toHaveCount(0);
+  await expect(page.locator("[data-left]")).toHaveCount(0);
+});
