@@ -64,6 +64,28 @@ const Critique = z.object({
 /** A ceiling so a critic that never settles can't spend the budget. */
 const MAX_REVISIONS = 6;
 
+/**
+ * The model calls one run makes: a plan, its critique, one draft and one critique of it at the least;
+ * at the most a second plan and a draft with its critique for each revision (REQ-8312).
+ */
+export const GENERATION_CALLS = {
+  min: 4,
+  max: 3 + 2 * (MAX_REVISIONS + 1),
+} as const;
+
+/** Why a run wrote no draft: the budget, the provider, or no version that passed code's check. */
+export type Cause = "budget_exhausted" | "provider_failed" | "check_failed";
+
+/** What a run tells the page while it works (REQ-8318, REQ-8610). */
+export interface Report {
+  /** A step is starting; `n` counts the draft for `draft` and `critic`, and is 0 for the others. */
+  step(
+    name: "plan" | "review" | "replan" | "draft" | "critic",
+    n: number,
+  ): void;
+  fault(cause: Cause): void;
+}
+
 export interface ScenarioAsk {
   readonly bucket: string;
   readonly lang: Lang;
@@ -73,6 +95,7 @@ export interface ScenarioAsk {
   readonly practise?: readonly PracticeItem[];
   /** What the player can do and is learning, as facts without numbers (REQ-8408). */
   readonly facts?: SkillFacts;
+  readonly report?: Report;
 }
 
 export interface WrittenScenario {
@@ -86,7 +109,29 @@ export interface WrittenScenario {
 /** A playable scenario, or null when no version passed code's check (REQ-8198, REQ-8204). */
 export async function writeScenario(
   gateway: Gateway,
-  { bucket, lang, brief, minChecks, practise, facts }: ScenarioAsk,
+  ask: ScenarioAsk,
+): Promise<WrittenScenario | null> {
+  let faulted = false;
+  const report: Report | undefined = ask.report && {
+    step: (name, n) => {
+      ask.report?.step(name, n);
+    },
+    fault: (cause) => {
+      faulted = true;
+      ask.report?.fault(cause);
+    },
+  };
+  const done = await runScenario(gateway, {
+    ...ask,
+    ...(report ? { report } : {}),
+  });
+  if (!done && !faulted) ask.report?.fault("check_failed");
+  return done;
+}
+
+async function runScenario(
+  gateway: Gateway,
+  { bucket, lang, brief, minChecks, practise, facts, report }: ScenarioAsk,
 ): Promise<WrittenScenario | null> {
   const prompt = promptOf(lang);
   const system = `${prompt.system}\n\n${worldOf(lang)}`;
@@ -117,7 +162,10 @@ export async function writeScenario(
       user,
       schema: z.toJSONSchema(schema),
     });
-    if (!reply.ok) return null;
+    if (!reply.ok) {
+      report?.fault(reply.reason);
+      return null;
+    }
     try {
       return {
         text: reply.text,
@@ -130,8 +178,10 @@ export async function writeScenario(
 
   // A hole found in the treatment costs far less than one found in a finished graph.
   let planAsk = `${task}\n${prompt.plan}`;
+  report?.step("plan", 0);
   let plan = await step(Plan, system, planAsk);
   if (!plan?.value) return null;
+  report?.step("review", 0);
   const read = await step(
     Critique,
     `${prompt.critic}\n\n${worldOf(lang)}`,
@@ -142,12 +192,14 @@ export async function writeScenario(
     planAsk = `${planAsk}\n${prompt.revise
       .replace("{scenario}", plan.text)
       .replace("{faults}", read.value.major.join("; "))}`;
+    report?.step("replan", 0);
     plan = await step(Plan, system, planAsk);
     if (!plan?.value) return null;
   }
   let user = `${task}\n${prompt.write.replace("{plan}", plan.text)}`;
   let kept: WrittenScenario | null = null;
   for (let revisions = 0; revisions <= MAX_REVISIONS; revisions += 1) {
+    report?.step("draft", revisions + 1);
     const draft = await step(Scenario, system, user);
     if (!draft) return kept;
     const faults = draft.value
@@ -161,6 +213,7 @@ export async function writeScenario(
       : ["schema"];
     let unresolved: readonly string[] = [];
     if (draft.value && faults.length === 0) {
+      report?.step("critic", revisions + 1);
       const review = await step(
         Critique,
         `${prompt.critic}\n\n${worldOf(lang)}`,

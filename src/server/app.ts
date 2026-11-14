@@ -8,6 +8,7 @@ import { mountParentRoom } from "./parent-room.js";
 import { createOutgoing } from "./outgoing.js";
 import { mountPlay } from "./play.js";
 import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
+import type { AdventureWriter } from "./studio/generate.js";
 import { mountShell } from "./shell.js";
 import { createStream, type Stream } from "./stream.js";
 import { raise, writeSucceeded } from "./failures.js";
@@ -24,6 +25,7 @@ export async function createApp({
   accounts,
   master,
   sandboxFrames,
+  generator,
 }: {
   db: Db;
   now?: () => number;
@@ -42,6 +44,8 @@ export async function createApp({
   master?: MasterFactory;
   /** Makes the frame queue of the sandbox, over its own database (ADR-3270); absent while no model is configured. */
   sandboxFrames?: SandboxFrames;
+  /** Writes a scenario for an adventure in the studio (ADR-3360); absent while no model is configured. */
+  generator?: AdventureWriter;
 }): Promise<Hono> {
   const app = new Hono();
   // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
@@ -67,7 +71,15 @@ export async function createApp({
   });
   mountPairing(app, db, now);
   if (accounts) mountAccounts(app, accounts, now);
-  await mountParentRoom(app, db, now, undefined, master, sandboxFrames);
+  await mountParentRoom(
+    app,
+    db,
+    now,
+    undefined,
+    master,
+    sandboxFrames,
+    generator,
+  );
   app.get("/health", (c) =>
     isOpen(db)
       ? c.json({ status: "ok", database: "ok" })

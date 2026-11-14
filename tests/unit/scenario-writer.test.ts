@@ -263,7 +263,11 @@ describe("REQ-8318, REQ-8610: the loop reports its steps and the cause of a fail
 
   it("names a failed code check when no version passed it", async () => {
     const r = reporting();
-    const { gateway } = replies(PLAN, OK, "not json", scenario(9), scenario(9));
+    const { gateway } = replies(
+      PLAN,
+      OK,
+      ...Array.from({ length: 7 }, () => scenario(9)),
+    );
     await writeScenario(gateway, { ...ask, report: r.report });
     expect(r.faults).toEqual(["check_failed"]);
   });

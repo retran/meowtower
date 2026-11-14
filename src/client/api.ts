@@ -597,6 +597,55 @@ export async function studioRestore(
     : { ok: false, error: String(body["reason"] ?? body["error"]) };
 }
 
+/** What a generation costs before it runs: the model calls it makes and this month's spend so far. */
+export async function studioGenerateEstimate(
+  id: string,
+): Promise<
+  ParentReply<{ calls: { min: number; max: number }; spentUsd: number }>
+> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate/estimate`,
+  );
+  return parentReply(
+    status,
+    body,
+    () =>
+      body as unknown as {
+        calls: { min: number; max: number };
+        spentUsd: number;
+      },
+  );
+}
+
+export interface StudioJob {
+  id: string;
+  state: "queued" | "running" | "done" | "failed";
+  progress: number;
+  /** The step as `name` or `name:n`, or the cause of a failure, which the page words. */
+  message: string;
+}
+
+/** Starts writing a version of an adventure as a background job. */
+export async function studioGenerate(
+  id: string,
+  prompt: string,
+): Promise<ParentReply<StudioJob>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate`,
+    { method: "POST", body: JSON.stringify({ prompt }) },
+  );
+  return status === 202
+    ? { ok: true, value: body["job"] as StudioJob }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
+}
+
+export async function studioJob(id: string): Promise<ParentReply<StudioJob>> {
+  const { status, body } = await call(
+    `/api/parent/studio/jobs/${encodeURIComponent(id)}`,
+  );
+  return parentReply(status, body, () => body as unknown as StudioJob);
+}
+
 export async function studioStatus(
   id: string,
   next: StudioNode["status"],

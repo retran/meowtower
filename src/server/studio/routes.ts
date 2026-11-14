@@ -21,6 +21,12 @@ import {
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
 import { checkEncounterBody } from "./body-check.js";
+import {
+  type AdventureWriter,
+  GENERATION_CALLS,
+  monthSpendUsd,
+  startGeneration,
+} from "./generate.js";
 import { readChecklist } from "./checklist.js";
 import { Force } from "../sandbox/force.js";
 import { setCheckTask } from "../sandbox/director.js";
@@ -112,6 +118,9 @@ const TurnIn = z
   })
   .strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
+const GenerateIn = z
+  .object({ prompt: z.string().trim().min(1).max(2000) })
+  .strict();
 
 export function mountStudio(
   app: Hono,
@@ -120,6 +129,7 @@ export function mountStudio(
   guard: (c: Context) => Promise<string | Response>,
   master?: MasterFactory,
   sandboxFrames?: SandboxFrames,
+  generator?: AdventureWriter,
 ): void {
   const base = "/api/parent/studio";
 
@@ -226,6 +236,45 @@ export function mountStudio(
     };
   app.post(`${base}/nodes/:id/pending/keep`, decide("keep"));
   app.post(`${base}/nodes/:id/pending/discard`, decide("discard"));
+
+  // What a generation costs before it runs: the calls it makes and the month's spend so far (REQ-8608).
+  app.get(`${base}/nodes/:id/generate/estimate`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    if (!(await getNode(db, c.req.param("id"))))
+      return c.json({ error: "node_unknown" }, 404);
+    return c.json({
+      calls: GENERATION_CALLS,
+      spentUsd: await monthSpendUsd(db, now()),
+    });
+  });
+
+  // A generation is a job: the answer is the job, and the result waits as a version (REQ-8318, REQ-8604).
+  app.post(`${base}/nodes/:id/generate`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const body = GenerateIn.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const node = await getNode(db, c.req.param("id"));
+    if (!node) return c.json({ error: "node_unknown" }, 404);
+    if (node.level !== "adventure")
+      return c.json(
+        { error: "studio_refused", reason: "only an adventure is generated" },
+        400,
+      );
+    if (!generator) return c.json({ error: "generator_not_configured" }, 409);
+    if ((await pendingOf(db, node.id)) !== null)
+      return c.json({ error: "version_waits" }, 409);
+    const started = await startGeneration(
+      db,
+      now,
+      node,
+      body.data.prompt,
+      generator,
+      (await parentSettings(db)).language,
+    );
+    return c.json({ job: started.job }, 202);
+  });
 
   app.post(`${base}/nodes/:id/versions/:v/restore`, async (c) => {
     const who = await guard(c);
