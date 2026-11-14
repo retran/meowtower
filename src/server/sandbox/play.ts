@@ -15,7 +15,7 @@ import {
   childrenOf,
   getNode,
   StudioRefused,
-  versionsOf,
+  currentBodyOf,
 } from "../studio/store.js";
 import type { MasterModel } from "../../story/turn.js";
 import type { FrameQueue } from "../frames/queue.js";
@@ -93,7 +93,7 @@ export async function enterEncounter(
   const node = await getNode(studio, encounterId);
   if (node?.level !== "encounter" || node.parentId !== adventureId)
     throw new StudioRefused("encounter_not_in_adventure");
-  const body = (await versionsOf(studio, encounterId)).at(-1)?.body ?? null;
+  const body = await currentBodyOf(studio, encounterId);
   return sceneOf(encounterId, node.title, body);
 }
 
@@ -246,7 +246,7 @@ export async function scenarioOf(
   if (adventure?.level !== "adventure")
     throw new StudioRefused("adventure_unknown");
   const bodyOf = async (id: string): Promise<unknown> =>
-    (await versionsOf(studio, id)).at(-1)?.body ?? null;
+    currentBodyOf(studio, id);
   return JSON.stringify({
     adventure: {
       id: adventure.id,

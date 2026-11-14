@@ -81,6 +81,14 @@
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
     {
+      "id": "api:POST /nodes/:id/pending/keep",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /nodes/:id/pending/discard",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
       "id": "api:POST /nodes/:id/status",
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
