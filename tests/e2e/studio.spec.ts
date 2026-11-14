@@ -202,7 +202,13 @@ async function stub(page: Page): Promise<Fake[]> {
       });
     }
     if (path === "/nodes/d1/generate/estimate")
-      return json(200, { calls: { min: 4, max: 17 }, spentUsd: 1.5 });
+      return json(200, {
+        calls: { min: 4, max: 17 },
+        spentUsd: 1.5,
+        estimateUsd: { min: 0.2, max: 0.85 },
+        basis: "default",
+        measuredCalls: 0,
+      });
     if (path === "/nodes/d1/generate" && method === "POST") {
       generated.push(route.request().postDataJSON() as object);
       return json(202, {
@@ -726,6 +732,10 @@ test("REQ-8608, REQ-8318: the page shows the calls and the spend before a genera
   await expect(estimate).toContainText("4");
   await expect(estimate).toContainText("17");
   await expect(estimate).toContainText("1.5");
+  // The estimate is in dollars and names its basis (REQ-8630, REQ-8632).
+  await expect(estimate).toContainText("0.20");
+  await expect(estimate).toContainText("0.85");
+  await expect(estimate).toHaveAttribute("data-basis", "default");
   await page.locator("#gen-prompt").fill("autumn fog");
   await page.locator('[data-action="gen-start"]').click();
   expect(generated).toEqual([{ prompt: "autumn fog" }]);
@@ -747,4 +757,31 @@ test("REQ-8610: a generation that stops names its cause beside the button", asyn
   await expect(page.locator('[data-cause="budget_exhausted"]')).toBeVisible({
     timeout: 8000,
   });
+});
+
+test("REQ-8632: an estimate measured over earlier calls says how many", async ({
+  page,
+}) => {
+  await stub(page);
+  await page.route("**/api/parent/studio/nodes/d1/generate/estimate", (route) =>
+    route.fulfill({
+      json: {
+        calls: { min: 4, max: 17 },
+        spentUsd: 3,
+        estimateUsd: { min: 0.08, max: 0.34 },
+        basis: "measured",
+        measuredCalls: 42,
+      },
+    }),
+  );
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="d1"]').click();
+  const estimate = page.locator("[data-estimate]");
+  await expect(estimate).toHaveAttribute("data-basis", "measured");
+  await expect(estimate).toContainText("42");
+  await expect(estimate).toContainText("0.08");
 });

@@ -597,24 +597,24 @@ export async function studioRestore(
     : { ok: false, error: String(body["reason"] ?? body["error"]) };
 }
 
-/** What a generation costs before it runs: the model calls it makes and this month's spend so far. */
+export interface GenerateEstimate {
+  calls: { min: number; max: number };
+  spentUsd: number;
+  /** The cost of a run in dollars (REQ-8630). */
+  estimateUsd: { min: number; max: number };
+  /** What the price of a call rests on (REQ-8632). */
+  basis: "measured" | "default";
+  measuredCalls: number;
+}
+
+/** What a generation costs before it runs: its calls, its cost in dollars and this month's spend. */
 export async function studioGenerateEstimate(
   id: string,
-): Promise<
-  ParentReply<{ calls: { min: number; max: number }; spentUsd: number }>
-> {
+): Promise<ParentReply<GenerateEstimate>> {
   const { status, body } = await call(
     `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate/estimate`,
   );
-  return parentReply(
-    status,
-    body,
-    () =>
-      body as unknown as {
-        calls: { min: number; max: number };
-        spentUsd: number;
-      },
-  );
+  return parentReply(status, body, () => body as unknown as GenerateEstimate);
 }
 
 export interface StudioJob {

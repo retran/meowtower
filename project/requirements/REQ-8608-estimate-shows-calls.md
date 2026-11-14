@@ -3,7 +3,7 @@ id: REQ-8608
 artifact: requirement
 topic: studio
 class: functional
-status: approved
+status: withdrawn
 revised: 2026-11-14
 elaborates: RES-4320
 verification: behavioural
@@ -13,6 +13,8 @@ verification: behavioural
 
 # REQ-8608
 
-Until a generator's spend has been measured across runs, its estimate MUST show the number of model calls and the spend so far, and no dollar figure for the run.
+**Withdrawn. Replaced by REQ-8630 and REQ-8632.**
 
-The one-run figures in the record trace to no log, and a figure shown as an estimate reads as a promise.
+It read: until a generator's spend has been measured across runs, its estimate MUST show the number of model calls and the spend so far, and no dollar figure for the run.
+
+Withdrawn by ADR-3370.
