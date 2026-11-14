@@ -447,6 +447,18 @@ export interface StringParams {
   "ui.studio.emptyAdd": NoParams;
   "ui.studio.refusal.notEdited": { status: string | number };
   "ui.studio.refusal.title": NoParams;
+  "ui.studio.versions.show": NoParams;
+  "ui.studio.versions.item": {
+    author: string | number;
+    n: string | number;
+    time: string | number;
+  };
+  "ui.studio.versions.author.parent": NoParams;
+  "ui.studio.versions.author.generator": NoParams;
+  "ui.studio.versions.restore": NoParams;
+  "ui.studio.versions.restored": { n: string | number };
+  "ui.studio.versions.currentMark": NoParams;
+  "ui.studio.refusal.alreadyCurrent": NoParams;
   "ui.studio.logs": NoParams;
   "ui.studio.noLogs": NoParams;
   "ui.studio.logEvents": { n: string | number };

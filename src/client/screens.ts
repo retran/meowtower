@@ -56,7 +56,7 @@ import {
 import { layoutGraph, DEFAULT_SIZE } from "./graph-layout.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
-import { encounterForm, refusalText } from "./studio-form.js";
+import { encounterForm, refusalText, versionsPanel } from "./studio-form.js";
 import { clock, t, uiKey, type UiKey } from "./strings.js";
 
 export interface Shell {
@@ -1187,10 +1187,16 @@ const studioScreen: Screen = {
           }),
         );
       if (node.level === "adventure") panel.append(playPanel(node, note));
-      if (node.level === "encounter")
+      // The form sits in its own slot, so a restore can load the restored body into it.
+      const formSlot = el("div", {});
+      const loadForm = (): void => {
+        if (node.level !== "encounter") return;
         void encounterForm(node, shown, note).then((form) => {
-          if (selected?.id === node.id) panel.append(form);
+          if (selected?.id === node.id) formSlot.replaceChildren(form);
         });
+      };
+      panel.append(versionsPanel(node, note, loadForm), formSlot);
+      loadForm();
       if (node.level !== "encounter" && node.status === "draft")
         panel.append(
           button("ui.studio.approve", "studio-approve", async () => {

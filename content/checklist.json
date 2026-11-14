@@ -77,6 +77,10 @@
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
     {
+      "id": "api:POST /nodes/:id/versions/:v/restore",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
       "id": "api:POST /nodes/:id/status",
       "tests": ["tests/integration/studio-routes.test.ts"]
     },

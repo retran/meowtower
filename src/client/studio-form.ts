@@ -2,7 +2,9 @@
 // stores one new version, and the code's check names the field it refused beside that field (REQ-8600).
 import {
   studioNode,
+  studioRestore,
   studioSave,
+  studioVersions,
   type StudioFault,
   type StudioNode,
 } from "./api.js";
@@ -22,6 +24,8 @@ export function refusalText(reason: string): string {
     return t("ui.studio.refusal.notEdited", {
       status: t(uiKey(`ui.studio.status.${edited[1] ?? "playing"}`)),
     });
+  if (reason === "that is the current version")
+    return t("ui.studio.refusal.alreadyCurrent");
   if (reason === "the title is 1 to 120 characters")
     return t("ui.studio.refusal.title");
   return t("ui.studio.refused", { reason });
@@ -279,4 +283,67 @@ export async function encounterForm(
     save,
   );
   return form;
+}
+
+/**
+ * The versions of a node, newest last, with a button that restores an earlier one as a new version
+ * (REQ-8602). `onRestored` runs after a restore, so a form showing the node reloads its body.
+ */
+export function versionsPanel(
+  node: StudioNode,
+  note: HTMLElement,
+  onRestored: () => void,
+): HTMLElement {
+  const box = el("div", { className: "versions-panel" });
+  const list = el("ol", { className: "versions" });
+  let current = node.version;
+  const load = async (): Promise<void> => {
+    const got = await studioVersions(node.id);
+    if (!got.ok) {
+      note.textContent = refusalText(got.error);
+      return;
+    }
+    list.replaceChildren(
+      ...got.value.map((v) => {
+        const when = new Date(v.createdAt).toLocaleString(
+          document.documentElement.lang || "ru",
+        );
+        const row = el(
+          "li",
+          {},
+          t("ui.studio.versions.item", {
+            n: v.version,
+            author: t(uiKey(`ui.studio.versions.author.${v.author}`)),
+            time: when,
+          }),
+        );
+        if (v.version === current)
+          row.append(" ", t("ui.studio.versions.currentMark"));
+        else
+          row.append(
+            " ",
+            button(
+              "ui.studio.versions.restore",
+              `version-restore-${String(v.version)}`,
+              async () => {
+                const done = await studioRestore(node.id, v.version);
+                if (!done.ok) {
+                  note.textContent = refusalText(done.error);
+                  return;
+                }
+                current = done.value.version;
+                note.textContent = t("ui.studio.versions.restored", {
+                  n: done.value.version,
+                });
+                await load();
+                onRestored();
+              },
+            ),
+          );
+        return row;
+      }),
+    );
+  };
+  box.append(button("ui.studio.versions.show", "studio-versions", load), list);
+  return box;
 }
