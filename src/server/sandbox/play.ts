@@ -18,6 +18,7 @@ import {
   versionsOf,
 } from "../studio/store.js";
 import type { MasterModel } from "../../story/turn.js";
+import type { FrameQueue } from "../frames/queue.js";
 import { openPostgresIfExists } from "./sandbox.js";
 
 /** The cookie that carries the sandbox's own device, apart from the game's device cookie. */
@@ -112,6 +113,7 @@ export function createSandboxPlay(
   url: string,
   schema: string,
   now: () => number,
+  frames?: SandboxFrames,
 ): { open(): Promise<SandboxPlay | null>; release(): Promise<void> } {
   let held: SandboxPlay | null = null;
   return {
@@ -130,6 +132,7 @@ export function createSandboxPlay(
         stream: createStream(),
         tasks: "registry",
         directed: () => directedFor(db),
+        ...(frames ? { frames: frames(db) } : {}),
         forced: () => {
           const taken = pending;
           pending = null;
@@ -227,6 +230,9 @@ export async function reachedIn(db: Db): Promise<Reached> {
 
 /** Makes the Master's model for one turn of the sandbox, from the sandbox's database and a spend bucket. */
 export type MasterFactory = (sandbox: Db, bucket: string) => MasterModel;
+
+/** Makes the frame queue of a sandbox, which writes its frames to the sandbox's own database. */
+export type SandboxFrames = (sandbox: Db) => FrameQueue;
 
 /**
  * The scenario as the Master reads it in its system prompt (REQ-8252): the adventure and its encounters,

@@ -10,7 +10,15 @@ import { templates } from "../../src/templates/index.js";
 const chosen = (seq: number, node = "N1", purpose = "frontier") => ({
   seq,
   type: "check_task_chosen",
-  payload: { encounter: "e", node, subtype: "a", purpose, corridor: true },
+  payload: {
+    encounter: "e",
+    node,
+    subtype: "a",
+    purpose,
+    corridor: true,
+    tried: "pick the lock",
+    hard: "it is stiff",
+  },
 });
 const shown = (seq: number, purpose: string) => ({
   seq,
@@ -30,6 +38,13 @@ describe("REQ-8174: the Director's choice waits for the child's screen", () => {
     expect(pendingCheck([chosen(1), shown(2, "frontier")])).toBeNull();
   });
 
+  it("holds what she tried and why it is hard", () => {
+    expect(pendingCheck([chosen(1)])?.situation).toEqual({
+      tried: "pick the lock",
+      hard: "it is stiff",
+    });
+  });
+
   it("is not met by a task the ladder drew", () => {
     expect(pendingCheck([chosen(1), shown(2, "ladder")])).not.toBeNull();
   });
@@ -46,12 +61,14 @@ describe("REQ-8174: a directed task is drawn from the node the Director named", 
     node,
     subtype: templates[0]?.subtype ?? "",
     purpose: "review" as const,
+    situation: { tried: "pick the lock", hard: "it is stiff" },
   };
 
   it("draws a template of the node, with the Director's purpose, the same way each time", () => {
     const a = directedTask(pending);
     expect(a?.template.node).toBe(node);
     expect(a?.purpose).toBe("review");
+    expect(a?.situation).toEqual(pending.situation);
     expect(directedTask(pending)?.template.id).toBe(a?.template.id);
     expect(Buffer.from(directedTask(pending)?.base ?? []).toString("hex")).toBe(
       Buffer.from(a?.base ?? []).toString("hex"),

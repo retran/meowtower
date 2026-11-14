@@ -397,6 +397,28 @@ const storyDefs: EventDef[] = [
     }),
   },
   {
+    type: "check_task_chosen",
+    v: 2,
+    schema: obj({
+      encounter: id("the encounter the check was asked for in"),
+      node: id("the node the Director chose"),
+      subtype: z.string().describe("the subtype it chose, empty with none"),
+      purpose: z
+        .enum(["review", "frontier"])
+        .describe("why the slot was filled"),
+      corridor: z
+        .boolean()
+        .describe("whether the success share was inside the flow corridor"),
+      tried: z
+        .string()
+        .describe("what she tried, as the Master named it; empty before v2"),
+      hard: z
+        .string()
+        .describe("why it is hard, as the Master named it; empty before v2"),
+    }),
+    upcastFrom: (payload) => ({ ...(payload as object), tried: "", hard: "" }),
+  },
+  {
     type: "world_changed",
     v: 1,
     schema: obj({

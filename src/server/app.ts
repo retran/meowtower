@@ -7,7 +7,7 @@ import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
 import { createOutgoing } from "./outgoing.js";
 import { mountPlay } from "./play.js";
-import type { MasterFactory } from "./sandbox/play.js";
+import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
 import { mountShell } from "./shell.js";
 import { createStream, type Stream } from "./stream.js";
 import { raise, writeSucceeded } from "./failures.js";
@@ -23,6 +23,7 @@ export async function createApp({
   frames,
   accounts,
   master,
+  sandboxFrames,
 }: {
   db: Db;
   now?: () => number;
@@ -39,6 +40,8 @@ export async function createApp({
   accounts?: AccountsEnv;
   /** Makes the Master for a turn in the sandbox (ADR-3270); absent while no Master is configured or switched on. */
   master?: MasterFactory;
+  /** Makes the frame queue of the sandbox, over its own database (ADR-3270); absent while no model is configured. */
+  sandboxFrames?: SandboxFrames;
 }): Promise<Hono> {
   const app = new Hono();
   // Every body leaves through `send`, which reads this gate from the context (ADR-0160).
@@ -64,7 +67,7 @@ export async function createApp({
   });
   mountPairing(app, db, now);
   if (accounts) mountAccounts(app, accounts, now);
-  await mountParentRoom(app, db, now, undefined, master);
+  await mountParentRoom(app, db, now, undefined, master, sandboxFrames);
   app.get("/health", (c) =>
     isOpen(db)
       ? c.json({ status: "ok", database: "ok" })

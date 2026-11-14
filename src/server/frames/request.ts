@@ -7,7 +7,8 @@ import type { AnswerKind, Lang } from "../../templates/spec.js";
 export interface StorySlots {
   readonly arc: null;
   readonly adventure: null;
-  readonly situation: null;
+  /** What she tried and why it is hard, in the prompt's words, set only for a check (REQ-8176). */
+  readonly situation: string | null;
 }
 
 export const NO_SLOTS: StorySlots = {
@@ -65,6 +66,8 @@ export interface FramePrompt {
   readonly rules: readonly string[];
   readonly variants: string;
   readonly continuation: string;
+  /** The lead-in for her action, with `{tried}` and `{hard}`. */
+  readonly situation: string;
   readonly formats: Readonly<
     Record<
       "number" | "fraction" | "mixed" | "pair" | "time" | "options",
@@ -123,6 +126,15 @@ export const frameSystem = (
     ),
   ].join("\n\n");
 };
+
+/** Her action as the situation slot reads it, in the game's language (REQ-8176). */
+export const situationOf = (
+  lang: Lang,
+  action: { readonly tried: string; readonly hard: string },
+): string =>
+  promptOf(lang)
+    .situation.replace("{tried}", () => action.tried)
+    .replace("{hard}", () => action.hard);
 
 const slot = (name: string, value: string | null): string =>
   `<${name}>${value ?? ""}</${name}>`;

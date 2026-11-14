@@ -15,6 +15,7 @@ import {
   frameSystem,
   frameUser,
   NO_SLOTS,
+  situationOf,
   VARIANTS,
 } from "./request.js";
 
@@ -27,6 +28,8 @@ export interface FrameTask {
   readonly lang: Lang;
   /** The story a second attempt continues. */
   readonly previous?: string;
+  /** What she tried and why it is hard, for a task that resolves a check (REQ-8176). */
+  readonly situation?: { readonly tried: string; readonly hard: string };
 }
 
 export interface TakenFrame {
@@ -156,7 +159,9 @@ export function createFrameQueue({
         task: filled,
         roles: template.roles,
         lang,
-        slots: NO_SLOTS,
+        slots: task.situation
+          ? { ...NO_SLOTS, situation: situationOf(lang, task.situation) }
+          : NO_SLOTS,
         answers,
         kind: template.answer,
         picture: plain.svg,
