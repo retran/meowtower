@@ -464,6 +464,14 @@ export interface StringParams {
   "ui.studio.versions.kept": { n: string | number };
   "ui.studio.versions.discarded": NoParams;
   "ui.studio.versions.discardedMark": NoParams;
+  "ui.studio.compare.title": { n: string | number };
+  "ui.studio.compare.current": NoParams;
+  "ui.studio.compare.waiting": NoParams;
+  "ui.studio.compare.added": NoParams;
+  "ui.studio.compare.removed": NoParams;
+  "ui.studio.compare.changed": NoParams;
+  "ui.studio.compare.same": NoParams;
+  "ui.studio.playHere": NoParams;
   "ui.studio.refusal.alreadyCurrent": NoParams;
   "ui.studio.logs": NoParams;
   "ui.studio.noLogs": NoParams;

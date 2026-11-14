@@ -8,7 +8,9 @@ import {
   studioVersions,
   type StudioFault,
   type StudioNode,
+  type StudioVersion,
 } from "./api.js";
+import { diffBodies } from "./body-diff.js";
 import { act, button, el } from "./controls.js";
 import { t, uiKey, type UiKey } from "./strings.js";
 
@@ -286,9 +288,72 @@ export async function encounterForm(
   return form;
 }
 
+/** The label of a field in a comparison: the form's own word where it has one, else the path as stored. */
+const fieldWord = (path: string): string => {
+  const top = path.split(".")[0] ?? path;
+  return ["place", "situation", "goal", "pressure", "checks"].includes(top) &&
+    top === path
+    ? t(uiKey(`ui.studio.field.${top}`))
+    : path;
+};
+
+/**
+ * A waiting version beside the current one, with each field that differs marked as added, removed or
+ * changed, and the parent's two decisions beside it (REQ-8308, REQ-8604, REQ-8606).
+ */
+function comparison(
+  node: StudioNode,
+  current: StudioVersion | undefined,
+  waiting: StudioVersion,
+  decide: (action: "keep" | "discard") => Promise<void>,
+): HTMLElement {
+  const box = el("div", { className: "compare" });
+  const diff = diffBodies(current?.body ?? null, waiting.body);
+  const rows =
+    diff.length === 0
+      ? [el("p", {}, t("ui.studio.compare.same"))]
+      : diff.map((d) => {
+          const row = el(
+            "div",
+            { className: "compare-row" },
+            el(
+              "strong",
+              {},
+              `${t(uiKey(`ui.studio.compare.${d.change}`))}: ${fieldWord(d.path)}`,
+            ),
+            el("div", { className: "before" }, d.before ?? ""),
+            el("div", { className: "after" }, d.after ?? ""),
+          );
+          row.dataset["change"] = d.change;
+          return row;
+        });
+  box.append(
+    el("h3", {}, t("ui.studio.compare.title", { n: waiting.version })),
+    el(
+      "div",
+      { className: "compare-head" },
+      el("span", {}, t("ui.studio.compare.current")),
+      el("span", {}, t("ui.studio.compare.waiting")),
+    ),
+    ...rows,
+    ...(["keep", "discard"] as const).map((action) =>
+      button(
+        action === "keep"
+          ? "ui.studio.versions.keep"
+          : "ui.studio.versions.discard",
+        `version-${action}`,
+        () => decide(action),
+      ),
+    ),
+  );
+  void node;
+  return box;
+}
+
 /**
  * The versions of a node, newest last, with a button that restores an earlier one as a new version
- * (REQ-8602). `onRestored` runs after a restore, so a form showing the node reloads its body.
+ * (REQ-8602), and, where a generated version waits, its comparison with the current one. `onRestored`
+ * runs after a restore or a decision, so a form showing the node reloads its body.
  */
 export function versionsPanel(
   node: StudioNode,
@@ -297,12 +362,39 @@ export function versionsPanel(
 ): HTMLElement {
   const box = el("div", { className: "versions-panel" });
   const list = el("ol", { className: "versions" });
+  const compare = el("div", {});
+  const decide = async (action: "keep" | "discard"): Promise<void> => {
+    const done = await studioDecide(node.id, action);
+    if (!done.ok) {
+      note.textContent = refusalText(done.error);
+      return;
+    }
+    note.textContent =
+      action === "keep"
+        ? t("ui.studio.versions.kept", { n: done.value.version })
+        : t("ui.studio.versions.discarded");
+    await load();
+    onRestored();
+  };
   const load = async (): Promise<void> => {
     const got = await studioVersions(node.id);
     if (!got.ok) {
       note.textContent = refusalText(got.error);
       return;
     }
+    const waiting = got.value.find((v) => v.state === "pending");
+    compare.replaceChildren(
+      ...(waiting
+        ? [
+            comparison(
+              node,
+              got.value.find((v) => v.state === "current"),
+              waiting,
+              decide,
+            ),
+          ]
+        : []),
+    );
     list.replaceChildren(
       ...got.value.map((v) => {
         const when = new Date(v.createdAt).toLocaleString(
@@ -320,32 +412,7 @@ export function versionsPanel(
         if (v.state === "current")
           row.append(" ", t("ui.studio.versions.currentMark"));
         else if (v.state === "pending")
-          row.append(
-            " ",
-            t("ui.studio.versions.waiting"),
-            " ",
-            ...(["keep", "discard"] as const).map((action) =>
-              button(
-                action === "keep"
-                  ? "ui.studio.versions.keep"
-                  : "ui.studio.versions.discard",
-                `version-${action}`,
-                async () => {
-                  const done = await studioDecide(node.id, action);
-                  if (!done.ok) {
-                    note.textContent = refusalText(done.error);
-                    return;
-                  }
-                  note.textContent =
-                    action === "keep"
-                      ? t("ui.studio.versions.kept", { n: done.value.version })
-                      : t("ui.studio.versions.discarded");
-                  await load();
-                  onRestored();
-                },
-              ),
-            ),
-          );
+          row.append(" ", t("ui.studio.versions.waiting"));
         else {
           if (v.state === "discarded")
             row.append(" ", t("ui.studio.versions.discardedMark"));
@@ -373,6 +440,10 @@ export function versionsPanel(
       }),
     );
   };
-  box.append(button("ui.studio.versions.show", "studio-versions", load), list);
+  box.append(
+    button("ui.studio.versions.show", "studio-versions", load),
+    compare,
+    list,
+  );
   return box;
 }

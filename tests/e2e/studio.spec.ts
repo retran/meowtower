@@ -173,7 +173,7 @@ async function stub(page: Page): Promise<Fake[]> {
           ...Array.from({ length: n?.version ?? 1 }, (_, i) => ({
             version: i + 1,
             state: i + 1 === (n?.version ?? 1) ? "current" : "history",
-            body: {},
+            body: { place: "A gate", goal: "Cross" },
             prompt: null,
             author: i === 1 ? "generator" : "parent",
             createdAt: "2026-11-10T12:00:00.000Z",
@@ -183,7 +183,11 @@ async function stub(page: Page): Promise<Fake[]> {
                 {
                   version: (n?.version ?? 1) + 1,
                   state: "pending",
-                  body: {},
+                  body: {
+                    place: "A new gate",
+                    goal: "Cross",
+                    pressure: "Dusk",
+                  },
                   prompt: "p",
                   author: "generator",
                   createdAt: "2026-11-10T12:00:00.000Z",
@@ -586,4 +590,47 @@ test("REQ-8604, REQ-8606: a generated version waits, and the parent keeps it or 
   await expect.poll(() => decided).toEqual(["discard a2"]);
   await expect(page.locator("ol.versions li")).toHaveCount(3);
   await expect(page.locator('[data-action="version-keep"]')).toHaveCount(0);
+});
+
+test("REQ-8308: a waiting version shows beside the current one with its changes marked", async ({
+  page,
+}) => {
+  decided.length = 0;
+  waiting.clear();
+  waiting.add("a2");
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a2"]').click();
+  await page.locator('[data-action="studio-versions"]').click();
+  const compare = page.locator(".compare");
+  await expect(compare).toBeVisible();
+  await expect(compare.locator('[data-change="changed"]')).toHaveCount(1);
+  await expect(compare.locator('[data-change="added"]')).toHaveCount(1);
+  await expect(compare.locator('[data-change="removed"]')).toHaveCount(0);
+  await expect(compare.locator('[data-change="changed"]')).toContainText(
+    "A gate",
+  );
+  await expect(compare.locator('[data-change="changed"]')).toContainText(
+    "A new gate",
+  );
+  // Keep and discard sit beside the comparison and nowhere else.
+  await expect(compare.locator('[data-action="version-keep"]')).toHaveCount(1);
+  await expect(page.locator('[data-action="version-keep"]')).toHaveCount(1);
+  await compare.locator('[data-action="version-keep"]').click();
+  await expect.poll(() => decided).toEqual(["keep a2"]);
+  await expect(page.locator(".compare")).toHaveCount(0);
+});
+
+test("REQ-8616: an encounter starts play at its current text in one action from its own panel", async ({
+  page,
+}) => {
+  started.length = 0;
+  await openGate(page);
+  await page.locator('[data-action="studio-play-here"]').click();
+  await expect(
+    page.locator('[data-action="studio-play-frame"]'),
+  ).toHaveAttribute("src", /\?sandbox=1/);
+  expect(started).toEqual([{ adventureId: "d1", encounterId: "e1" }]);
 });
