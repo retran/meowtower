@@ -129,7 +129,9 @@ input:not([type="radio"]) {
 [data-interface="tablet"] section { padding: var(--space-6); }
 [data-interface="tablet"] .option { flex: 1 1 auto; min-height: 64px; }
 [data-interface="tablet"] .control,
-[data-interface="tablet"] input:not([type="radio"]) { min-height: var(--touch-min); }
+[data-interface="tablet"] input:not([type="radio"]),
+[data-interface="tablet"] textarea,
+[data-interface="tablet"] select { min-height: var(--touch-min); }
 [data-interface="tablet"] form,
 [data-interface="tablet"] form > * { align-self: stretch; }
 [data-interface="tablet"] .choice { min-height: var(--touch-min); }
@@ -174,6 +176,11 @@ input:not([type="radio"]) {
 [data-interface="computer"] [data-action="play-leave"] { margin-left: auto; }
 [data-interface="computer"] section { padding: var(--space-7); }
 [data-interface="computer"] .control,
-[data-interface="computer"] input:not([type="radio"]) { min-height: 50px; }
+[data-interface="computer"] input:not([type="radio"]),
+[data-interface="computer"] textarea,
+[data-interface="computer"] select { min-height: 50px; }
+.encounter-form .field { display: flex; flex-direction: column; gap: var(--space-2); margin-block: var(--space-3); }
+.encounter-form .row { border-top: 1px solid currentColor; padding-block: var(--space-3); }
+.encounter-form .fault { color: var(--danger, #b00020); margin: 0; }
 [data-interface="computer"] .choice { min-height: 40px; }
 `;

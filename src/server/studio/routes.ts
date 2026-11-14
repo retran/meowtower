@@ -20,6 +20,7 @@ import {
 } from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
+import { checkEncounterBody } from "./body-check.js";
 import { readChecklist } from "./checklist.js";
 import { Force } from "../sandbox/force.js";
 import { setCheckTask } from "../sandbox/director.js";
@@ -163,6 +164,18 @@ export function mountStudio(
     const body = EditIn.safeParse(await c.req.json().catch(() => null));
     if (!body.success) return c.json({ error: "bad_request" }, 400);
     try {
+      // An encounter's body passes the code's check before it is stored (REQ-8306, REQ-8600).
+      const target = await getNode(db, c.req.param("id"));
+      if (target?.level === "encounter") {
+        const siblings = target.parentId
+          ? (await childrenOf(db, target.parentId)).map((n) => n.id)
+          : [];
+        const found = checkEncounterBody(body.data.body, {
+          self: target.id,
+          siblings,
+        });
+        if (found) return c.json({ error: "edit_refused", fault: found }, 400);
+      }
       return c.json(
         await editNode(db, now(), c.req.param("id"), body.data.body, {
           ...(body.data.title === undefined ? {} : { title: body.data.title }),

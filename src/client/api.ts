@@ -520,6 +520,37 @@ export async function studioCreate(input: {
     : { ok: false, error: String(body["reason"] ?? body["error"]) };
 }
 
+/** What the server's check found in an encounter's body (REQ-8600). */
+export interface StudioFault {
+  field: string;
+  code: string;
+  held: string;
+  need: string;
+}
+
+export type SaveReply =
+  | { ok: true; value: StudioNode }
+  | { ok: false; error: string; fault?: StudioFault };
+
+/** Stores a node's body as its next version; a fault names the field the code's check refused. */
+export async function studioSave(
+  id: string,
+  body: Record<string, unknown>,
+): Promise<SaveReply> {
+  const { status, body: reply } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}`,
+    { method: "PUT", body: JSON.stringify({ body }) },
+  );
+  if (status === 200)
+    return { ok: true, value: reply as unknown as StudioNode };
+  const fault = reply["fault"] as StudioFault | undefined;
+  return {
+    ok: false,
+    error: String(reply["reason"] ?? reply["error"]),
+    ...(fault ? { fault } : {}),
+  };
+}
+
 export async function studioStatus(
   id: string,
   next: StudioNode["status"],

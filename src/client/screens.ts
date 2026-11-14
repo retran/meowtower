@@ -56,6 +56,7 @@ import {
 import { layoutGraph, DEFAULT_SIZE } from "./graph-layout.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
+import { encounterForm, refusalText } from "./studio-form.js";
 import { clock, t, uiKey, type UiKey } from "./strings.js";
 
 export interface Shell {
@@ -844,7 +845,7 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
       );
       reply.textContent = done.ok
         ? `${done.value.reply}${done.value.blocked ? ` (${t("ui.studio.turn.blocked")})` : ""}`
-        : t("ui.studio.refused", { reason: done.error });
+        : refusalText(done.error);
     });
     const inspect = button(
       "ui.studio.turn.inspect",
@@ -852,7 +853,7 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
       async () => {
         const got = await studioTurns();
         if (!got.ok) {
-          inspector.textContent = t("ui.studio.refused", { reason: got.error });
+          inspector.textContent = refusalText(got.error);
           return;
         }
         const turns = el("ol", { className: "turns" });
@@ -894,18 +895,24 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
   const open = button("ui.studio.play", "studio-play", async () => {
     const listed = await studioEncounters(node.id);
     if (!listed.ok) {
-      note.textContent = t("ui.studio.refused", { reason: listed.error });
+      note.textContent = refusalText(listed.error);
       return;
     }
     if (listed.value.length === 0) {
       note.textContent = t("ui.studio.playNone");
+      box.replaceChildren(
+        open,
+        button("ui.studio.emptyAdd", "studio-empty-add", () => {
+          document.getElementById("studio-title")?.focus();
+        }),
+      );
       return;
     }
     const choices = listed.value.map((e) => {
       const b = button("ui.studio.playFrom", "studio-play-from", async () => {
         const started = await studioPlayStart(node.id, e.id);
         if (!started.ok) {
-          note.textContent = t("ui.studio.refused", { reason: started.error });
+          note.textContent = refusalText(started.error);
           return;
         }
         showTurn(e.id);
@@ -1009,7 +1016,7 @@ function leverPanel(note: HTMLElement): HTMLElement {
     const done = await studioLever(lever);
     note.textContent = done.ok
       ? t("ui.studio.lever.done")
-      : t("ui.studio.refused", { reason: done.error });
+      : refusalText(done.error);
   });
   return el(
     "section",
@@ -1043,7 +1050,7 @@ function forcePanel(note: HTMLElement): HTMLElement {
     const done = await studioForce(next.value);
     note.textContent = done.ok
       ? t("ui.studio.lever.done")
-      : t("ui.studio.refused", { reason: done.error });
+      : refusalText(done.error);
   });
   return el(
     "section",
@@ -1098,6 +1105,14 @@ const studioScreen: Screen = {
     /** What a test has reached in the sandbox, drawn on the encounters of an adventure (REQ-8296). */
     let reached = { encounters: new Set<string>(), exits: new Set<string>() };
 
+    /** The nodes of the level that shows, which an encounter's exits choose among. */
+    let shown: StudioNode[] = [];
+    /** The control an empty level offers: it takes the parent to the title field that adds one. */
+    const addFirst = (): HTMLButtonElement =>
+      button("ui.studio.emptyAdd", "studio-empty-add", () => {
+        document.getElementById("studio-title")?.focus();
+      });
+
     const drawCrumbs = (): void => {
       crumbs.replaceChildren(
         el(
@@ -1146,8 +1161,7 @@ const studioScreen: Screen = {
         if (made.ok) {
           note.textContent = t("ui.studio.added");
           void show();
-        } else
-          note.textContent = t("ui.studio.refused", { reason: made.error });
+        } else note.textContent = refusalText(made.error);
       });
       add.textContent = t("ui.studio.add", {
         level: t(`ui.studio.level.${level}` as UiKey),
@@ -1173,13 +1187,16 @@ const studioScreen: Screen = {
           }),
         );
       if (node.level === "adventure") panel.append(playPanel(node, note));
+      if (node.level === "encounter")
+        void encounterForm(node, shown, note).then((form) => {
+          if (selected?.id === node.id) panel.append(form);
+        });
       if (node.level !== "encounter" && node.status === "draft")
         panel.append(
           button("ui.studio.approve", "studio-approve", async () => {
             const done = await studioStatus(node.id, "approved");
             if (done.ok) void show();
-            else
-              note.textContent = t("ui.studio.refused", { reason: done.error });
+            else note.textContent = refusalText(done.error);
           }),
         );
       if (node.level !== "encounter" && node.status === "approved")
@@ -1187,16 +1204,16 @@ const studioScreen: Screen = {
           button("ui.studio.toDraft", "studio-draft", async () => {
             const done = await studioStatus(node.id, "draft");
             if (done.ok) void show();
-            else
-              note.textContent = t("ui.studio.refused", { reason: done.error });
+            else note.textContent = refusalText(done.error);
           }),
         );
     };
 
     const drawGraph = (nodes: StudioNode[]): void => {
+      shown = nodes;
       graph.replaceChildren();
       if (nodes.length === 0) {
-        graph.append(status(t("ui.studio.empty")));
+        graph.append(status(t("ui.studio.empty")), addFirst());
         return;
       }
       const placed = layoutGraph(
@@ -1647,7 +1664,7 @@ const checklistScreen: Screen = {
     const show = button("ui.checklist.show", "checklist-show", async () => {
       const got = await studioChecklist();
       if (!got.ok) {
-        note.textContent = t("ui.studio.refused", { reason: got.error });
+        note.textContent = refusalText(got.error);
         return;
       }
       list.replaceChildren(
