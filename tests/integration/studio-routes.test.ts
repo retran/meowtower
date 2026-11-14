@@ -366,3 +366,50 @@ it("REQ-8304: serves the checklist to the parent only", async () => {
     ),
   ).toBe(true);
 });
+
+it("REQ-8306, REQ-8600: an edit of an encounter is checked before it is stored, and a fault names its field", async () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string; version: number };
+  const campaign = await make("campaign", null, "form campaign");
+  const arc = await make("arc", campaign.id, "form arc");
+  const adventure = await make("adventure", arc.id, "form adventure");
+  const gate = await make("encounter", adventure.id, "Gate");
+  const bridge = await make("encounter", adventure.id, "Bridge");
+
+  const refused = await call("PUT", `/nodes/${gate.id}`, {
+    body: { exits: [{ when: "she runs", next: "elsewhere" }] },
+  });
+  expect(refused.status).toBe(400);
+  expect(await refused.json()).toEqual({
+    error: "edit_refused",
+    fault: {
+      field: "exits.0.next",
+      code: "unknown_encounter",
+      held: "elsewhere",
+      need: "an encounter of this adventure",
+    },
+  });
+  const unchanged = (await (await call("GET", `/nodes/${gate.id}`)).json()) as {
+    node: { version: number };
+  };
+  expect(unchanged.node.version).toBe(gate.version);
+
+  const kept = await call("PUT", `/nodes/${gate.id}`, {
+    body: {
+      situation: "A gate in the fog.",
+      exits: [{ when: "she opens it", next: bridge.id }],
+    },
+  });
+  expect(kept.status).toBe(200);
+  expect(((await kept.json()) as { version: number }).version).toBe(
+    gate.version + 1,
+  );
+
+  // The other levels keep the edit they had: a body of any shape is stored.
+  const loose = await call("PUT", `/nodes/${adventure.id}`, {
+    body: { anything: true },
+  });
+  expect(loose.status).toBe(200);
+});

@@ -33,6 +33,9 @@ const levers: object[] = [];
 /** What the sandbox was asked to start, in order. */
 const started: object[] = [];
 
+/** The edits the studio was asked to store, in order. */
+const saved: { id: string; body: Record<string, unknown> }[] = [];
+
 /** A tiny studio server with one campaign, two arcs that lead from the first to the second. */
 async function stub(page: Page): Promise<Fake[]> {
   const nodes: Fake[] = [
@@ -128,6 +131,31 @@ async function stub(page: Page): Promise<Fake[]> {
         n.status = (
           route.request().postDataJSON() as { status: string }
         ).status;
+      return json(200, n ?? {});
+    }
+    const one = /^\/nodes\/([^/]+)$/.exec(path);
+    if (one && method === "GET")
+      return json(200, {
+        node: nodes.find((x) => x.id === one[1]),
+        body: one[1] === "e1" ? { place: "A gate in the fog" } : null,
+      });
+    if (one && method === "PUT") {
+      const b = route.request().postDataJSON() as {
+        body: Record<string, unknown>;
+      };
+      if (b.body["situation"] === "FAULT")
+        return json(400, {
+          error: "edit_refused",
+          fault: {
+            field: "situation",
+            code: "too_long",
+            held: "700",
+            need: "600",
+          },
+        });
+      saved.push({ id: one[1] ?? "", body: b.body });
+      const n = nodes.find((x) => x.id === one[1]);
+      if (n) n.version += 1;
       return json(200, n ?? {});
     }
     if (path === "/sandbox/play/adventures/d1/encounters")
@@ -388,4 +416,85 @@ test("REQ-8168, REQ-8292: a turn is taken at the encounter that was started, and
   await expect(page.locator("ol.turns")).toContainText("bridge: it sways");
   await expect(page.locator("ul.model-calls li")).toContainText("0.0123");
   await expect(page.locator("ul.model-calls li")).toContainText("RESP-TEXT");
+});
+
+/** Opens the encounters of the stub's adventure and selects the first one. */
+async function openGate(page: Page): Promise<void> {
+  await stub(page);
+  await ready(page);
+  for (const id of ["c1", "a1", "d1"]) {
+    await page.locator(`button[data-node="${id}"]`).click();
+    if (id !== "d1") await page.locator('[data-action="studio-open"]').click();
+  }
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="e1"]').click();
+}
+
+test("REQ-8306: an encounter is edited in a form and one save stores one new version", async ({
+  page,
+}) => {
+  saved.length = 0;
+  await openGate(page);
+  await expect(page.locator("#enc-place")).toHaveValue("A gate in the fog");
+  await page.locator("#enc-situation").fill("The gate is stuck.");
+  await page.locator("#enc-checks").fill("2");
+  await page.locator('[data-action="enc-exit-add"]').click();
+  await page.locator("#enc-exit-when-0").fill("she opens it");
+  await page.locator("#enc-exit-next-0").selectOption("e2");
+  await page.locator('[data-action="studio-save"]').click();
+  await expect.poll(() => saved.length).toBe(1);
+  expect(saved[0]).toEqual({
+    id: "e1",
+    body: {
+      place: "A gate in the fog",
+      situation: "The gate is stuck.",
+      checks: 2,
+      exits: [{ when: "she opens it", next: "e2" }],
+    },
+  });
+});
+
+test("REQ-8600: a refused save names the field, what it holds and what it needs, beside the field", async ({
+  page,
+}) => {
+  saved.length = 0;
+  await openGate(page);
+  await page.locator("#enc-situation").fill("FAULT");
+  await page.locator('[data-action="studio-save"]').click();
+  const fault = page.locator('[data-fault="situation"]');
+  await expect(fault).toBeVisible();
+  await expect(fault).toContainText("700");
+  await expect(fault).toContainText("600");
+  expect(saved).toHaveLength(0);
+});
+
+test("REQ-8618: an empty graph offers the action that fills it", async ({
+  page,
+}) => {
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a2"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('[data-action="studio-empty-add"]').click();
+  await expect(page.locator("#studio-title")).toBeFocused();
+});
+
+test("REQ-8624: on the tablet every control of the form is at least 56 px tall", async ({
+  page,
+}) => {
+  await openGate(page);
+  await page.evaluate(() => {
+    document.documentElement.dataset["interface"] = "tablet";
+  });
+  for (const selector of [
+    "#enc-situation",
+    "#enc-checks",
+    '[data-action="enc-exit-add"]',
+    '[data-action="studio-save"]',
+  ]) {
+    const box = await page.locator(selector).boundingBox();
+    expect(box?.height ?? 0, selector).toBeGreaterThanOrEqual(56);
+  }
 });
