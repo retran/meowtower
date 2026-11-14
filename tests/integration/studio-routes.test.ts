@@ -678,29 +678,49 @@ describe("generating a version of an adventure", () => {
       job: { id: string };
     };
 
-  it("REQ-8608: shows the number of calls and this month's spend before it runs", async () => {
+  it("REQ-8630, REQ-8632: shows a range in dollars with its basis, and this month's spend, before it runs", async () => {
     const id = await adventureOf("estimate");
-    const before = (await (
-      await via("GET", `/nodes/${id}/generate/estimate`)
-    ).json()) as { calls: { min: number; max: number }; spentUsd: number };
-    expect(before.calls).toEqual({ min: 4, max: 17 });
-    const spent = (n: number) =>
+    await db
+      .prepare("DELETE FROM llm_log WHERE role = 'SHOWRUNNER_MODEL'")
+      .run();
+    const estimate = async () =>
+      (await (await via("GET", `/nodes/${id}/generate/estimate`)).json()) as {
+        calls: { min: number; max: number };
+        spentUsd: number;
+        estimateUsd: { min: number; max: number };
+        basis: string;
+        measuredCalls: number;
+      };
+    const logged = (at: string, cost: number, outcome = "ok") =>
       db
         .prepare(
           `INSERT INTO llm_log (at, role, route, model, tier, bucket, input_tokens, output_tokens,
              cost_usd, latency_ms, outcome, request, response)
-           VALUES (?, 'SHOWRUNNER_MODEL', 'r', 'm', 'planning', 'b', 1, 1, ?, 1, 'ok', '{}', '{}')`,
+           VALUES (?, 'SHOWRUNNER_MODEL', 'r', 'm', 'planning', 'b', 1, 1, ?, 1, ?, '{}', '{}')`,
         )
-        .run(
-          n === 0 ? "2026-10-02T00:00:00.000Z" : "2026-11-03T00:00:00.000Z",
-          n === 0 ? 9 : 0.25,
-        );
-    await spent(0);
-    await spent(1);
-    const after = (await (
-      await via("GET", `/nodes/${id}/generate/estimate`)
-    ).json()) as { spentUsd: number };
-    expect(after.spentUsd - before.spentUsd).toBeCloseTo(0.25, 5);
+        .run(at, cost, outcome);
+    const first = await estimate();
+    expect(first).toMatchObject({
+      calls: { min: 4, max: 17 },
+      spentUsd: 0,
+      estimateUsd: { min: 0.2, max: 0.85 },
+      basis: "default",
+      measuredCalls: 0,
+    });
+    // Ten answered calls measure it; a failed call and one of last month leave the mean alone.
+    for (let i = 0; i < 10; i += 1)
+      await logged("2026-11-03T00:00:00.000Z", 0.02);
+    await logged("2026-11-04T00:00:00.000Z", 5, "failed");
+    const after = await estimate();
+    expect(after).toMatchObject({
+      estimateUsd: { min: 0.08, max: 0.34 },
+      basis: "measured",
+      measuredCalls: 10,
+    });
+    // Only this month's calls count as spend; the failed call cost nothing the log can show as spend of ok calls.
+    expect(after.spentUsd).toBeCloseTo(0.2 + 5, 5);
+    await logged("2026-10-02T00:00:00.000Z", 9);
+    expect((await estimate()).spentUsd).toBeCloseTo(0.2 + 5, 5);
   });
 
   it("answers 409 with no generator, and refuses a node that is no adventure", async () => {
