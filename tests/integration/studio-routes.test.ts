@@ -576,3 +576,32 @@ describe("a generated version waits for the parent", () => {
       ).toBe(401);
   });
 });
+
+it("REQ-8614: an encounter's exits from the form are the edges of its graph", async () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string };
+  const campaign = await make("campaign", null, "edge campaign");
+  const arc = await make("arc", campaign.id, "edge arc");
+  const adventure = await make("adventure", arc.id, "edge adventure");
+  const gate = await make("encounter", adventure.id, "Gate");
+  const bridge = await make("encounter", adventure.id, "Bridge");
+  const tower = await make("encounter", adventure.id, "Tower");
+  await call("PUT", `/nodes/${gate.id}`, {
+    body: {
+      exits: [
+        { when: "she crosses", next: bridge.id },
+        { when: "she climbs", next: tower.id },
+        { when: "she crosses again", next: bridge.id },
+      ],
+    },
+  });
+  const listed = (await (
+    await call("GET", `/nodes?parent=${adventure.id}`)
+  ).json()) as { nodes: { id: string; links: string[] }[] };
+  const links = listed.nodes.find((n) => n.id === gate.id)?.links ?? [];
+  // Each target once, however many exits lead to it.
+  expect([...links].sort()).toEqual([bridge.id, tower.id].sort());
+  expect(listed.nodes.find((n) => n.id === bridge.id)?.links).toEqual([]);
+});

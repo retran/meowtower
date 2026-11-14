@@ -355,6 +355,8 @@ export interface StringParams {
   "ui.studio.playNone": NoParams;
   "ui.studio.playFrame": NoParams;
   "ui.studio.reached": NoParams;
+  "ui.studio.unreached": NoParams;
+  "ui.studio.leftToTest": { exits: string | number; nodes: string | number };
   "ui.studio.turn.said": NoParams;
   "ui.studio.turn.take": NoParams;
   "ui.studio.turn.inspect": NoParams;

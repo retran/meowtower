@@ -372,15 +372,28 @@ export async function linksOf(db: Db, id: string): Promise<string[]> {
     )
     .get(id)) as { body: string } | undefined;
   if (!row) return [];
-  const body = JSON.parse(row.body) as { links?: unknown } | null;
-  if (!Array.isArray(body?.links)) return [];
-  return (body.links as unknown[]).flatMap((l) =>
-    typeof l === "string"
-      ? [l]
-      : typeof (l as { to?: unknown } | null)?.to === "string"
-        ? [(l as { to: string }).to]
-        : [],
-  );
+  const body = JSON.parse(row.body) as {
+    links?: unknown;
+    exits?: unknown;
+  } | null;
+  const fromLinks = Array.isArray(body?.links)
+    ? (body.links as unknown[]).flatMap((l) =>
+        typeof l === "string"
+          ? [l]
+          : typeof (l as { to?: unknown } | null)?.to === "string"
+            ? [(l as { to: string }).to]
+            : [],
+      )
+    : [];
+  // An encounter's exits, written by the form, lead to the encounters they name (REQ-8614).
+  const fromExits = Array.isArray(body?.exits)
+    ? (body.exits as unknown[]).flatMap((x) =>
+        typeof (x as { next?: unknown } | null)?.next === "string"
+          ? [(x as { next: string }).next]
+          : [],
+      )
+    : [];
+  return [...new Set([...fromLinks, ...fromExits])];
 }
 
 export async function versionOf(
