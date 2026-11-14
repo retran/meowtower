@@ -9,6 +9,7 @@ import {
 } from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
+import { readChecklist } from "./checklist.js";
 import { Force } from "../sandbox/force.js";
 import { Lever, setLever } from "../sandbox/levers.js";
 import {
@@ -416,6 +417,13 @@ export function mountStudio(
       c.req.query("lang") ?? "ru",
     );
     return opened ? c.json(opened) : c.json({ error: "template_unknown" }, 404);
+  });
+
+  // The checklist (REQ-8304): where each game feature is tested.
+  app.get(`${base}/checklist`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    return c.json(readChecklist());
   });
 
   app.get(`${base}/jobs`, async (c) => {
