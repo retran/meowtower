@@ -355,6 +355,11 @@ export interface StringParams {
   "ui.studio.playNone": NoParams;
   "ui.studio.playFrame": NoParams;
   "ui.studio.reached": NoParams;
+  "ui.studio.turn.said": NoParams;
+  "ui.studio.turn.take": NoParams;
+  "ui.studio.turn.inspect": NoParams;
+  "ui.studio.turn.calls": NoParams;
+  "ui.studio.turn.blocked": NoParams;
   "ui.studio.lever.title": NoParams;
   "ui.studio.lever.set": NoParams;
   "ui.studio.lever.done": NoParams;

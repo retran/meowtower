@@ -14,6 +14,8 @@ import {
   studioLog,
   studioLogs,
   studioNodes,
+  studioTurn,
+  studioTurns,
   studioReached,
   studioStatus,
   type StudioNode,
@@ -810,6 +812,67 @@ const accountScreen: Screen = {
 function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
   const box = el("div", { className: "sandbox-play" });
   const stage = el("div", { className: "screen-stage" });
+  const turn = el("div", { className: "turn" });
+  const inspector = el("div", { className: "inspector" });
+  /** The Master's turn at the encounter that was started, and the inspector beside it (REQ-8168, REQ-8292). */
+  const showTurn = (encounterId: string): void => {
+    const said = el("input", { id: "turn-said", type: "text" });
+    said.dataset["action"] = "turn-said";
+    said.addEventListener("input", () => act("turn-said"));
+    const reply = el("p", { className: "turn-reply" });
+    const take = button("ui.studio.turn.take", "turn-take", async () => {
+      const done = await studioTurn(
+        node.id,
+        encounterId,
+        (said as HTMLInputElement).value,
+      );
+      reply.textContent = done.ok
+        ? `${done.value.reply}${done.value.blocked ? ` (${t("ui.studio.turn.blocked")})` : ""}`
+        : t("ui.studio.refused", { reason: done.error });
+    });
+    const inspect = button(
+      "ui.studio.turn.inspect",
+      "turn-inspect",
+      async () => {
+        const got = await studioTurns();
+        if (!got.ok) {
+          inspector.textContent = t("ui.studio.refused", { reason: got.error });
+          return;
+        }
+        const turns = el("ol", { className: "turns" });
+        for (const x of got.value.turns)
+          turns.append(
+            el(
+              "li",
+              {},
+              `${x.said} > ${x.reply}`,
+              ...x.changes.map((c) => el("div", {}, `${c.name}: ${c.note}`)),
+            ),
+          );
+        const calls = el("ul", { className: "model-calls" });
+        for (const c of got.value.modelCalls)
+          calls.append(
+            el(
+              "li",
+              {},
+              `${String(c.costUsd)} USD, ${String(c.latencyMs)} ms: ${c.request} > ${c.response}`,
+            ),
+          );
+        inspector.replaceChildren(
+          turns,
+          el("h3", {}, t("ui.studio.turn.calls")),
+          calls,
+        );
+      },
+    );
+    turn.replaceChildren(
+      el("label", { htmlFor: "turn-said" }, t("ui.studio.turn.said")),
+      said,
+      take,
+      reply,
+      inspect,
+    );
+  };
   const open = button("ui.studio.play", "studio-play", async () => {
     const listed = await studioEncounters(node.id);
     if (!listed.ok) {
@@ -827,6 +890,7 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
           note.textContent = t("ui.studio.refused", { reason: started.error });
           return;
         }
+        showTurn(e.id);
         let frame = stage.querySelector("iframe");
         if (!frame) {
           frame = el("iframe", {
@@ -846,9 +910,9 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
       b.textContent = t("ui.studio.playFrom", { title: e.title });
       return b;
     });
-    box.replaceChildren(open, ...choices, stage);
+    box.replaceChildren(open, ...choices, stage, turn, inspector);
   });
-  box.append(open, stage);
+  box.append(open, stage, turn, inspector);
   return box;
 }
 
