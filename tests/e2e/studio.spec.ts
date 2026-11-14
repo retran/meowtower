@@ -33,6 +33,10 @@ const levers: object[] = [];
 /** What the sandbox was asked to start, in order. */
 const started: object[] = [];
 
+/** The nodes that have a generated version waiting, and what the parent decided about them. */
+const waiting = new Set<string>();
+const decided: string[] = [];
+
 /** The versions the studio was asked to restore, in order. */
 const restored: number[] = [];
 
@@ -165,14 +169,35 @@ async function stub(page: Page): Promise<Fake[]> {
     if (versions && method === "GET") {
       const n = nodes.find((x) => x.id === versions[1]);
       return json(200, {
-        versions: Array.from({ length: n?.version ?? 1 }, (_, i) => ({
-          version: i + 1,
-          body: {},
-          prompt: null,
-          author: i === 1 ? "generator" : "parent",
-          createdAt: "2026-11-10T12:00:00.000Z",
-        })),
+        versions: [
+          ...Array.from({ length: n?.version ?? 1 }, (_, i) => ({
+            version: i + 1,
+            state: i + 1 === (n?.version ?? 1) ? "current" : "history",
+            body: {},
+            prompt: null,
+            author: i === 1 ? "generator" : "parent",
+            createdAt: "2026-11-10T12:00:00.000Z",
+          })),
+          ...(waiting.has(versions[1] ?? "")
+            ? [
+                {
+                  version: (n?.version ?? 1) + 1,
+                  state: "pending",
+                  body: {},
+                  prompt: "p",
+                  author: "generator",
+                  createdAt: "2026-11-10T12:00:00.000Z",
+                },
+              ]
+            : []),
+        ],
       });
+    }
+    const decide = /^\/nodes\/([^/]+)\/pending\/(keep|discard)$/.exec(path);
+    if (decide && method === "POST") {
+      decided.push(`${decide[2] ?? ""} ${decide[1] ?? ""}`);
+      waiting.delete(decide[1] ?? "");
+      return json(200, nodes.find((x) => x.id === decide[1]) ?? {});
     }
     const restore = /^\/nodes\/([^/]+)\/versions\/(\d+)\/restore$/.exec(path);
     if (restore && method === "POST") {
@@ -540,4 +565,25 @@ test("REQ-8602: the versions of a node are listed and an earlier one is restored
   await page.locator('[data-action="version-restore-1"]').click();
   await expect.poll(() => restored).toEqual([1]);
   await expect(page.locator("ol.versions li")).toHaveCount(4);
+});
+
+test("REQ-8604, REQ-8606: a generated version waits, and the parent keeps it or discards it", async ({
+  page,
+}) => {
+  decided.length = 0;
+  waiting.clear();
+  waiting.add("a2");
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a2"]').click();
+  await page.locator('[data-action="studio-versions"]').click();
+  // Three versions and the one that waits; only the waiting one offers a decision.
+  await expect(page.locator("ol.versions li")).toHaveCount(4);
+  await expect(page.locator('[data-action="version-keep"]')).toHaveCount(1);
+  await page.locator('[data-action="version-discard"]').click();
+  await expect.poll(() => decided).toEqual(["discard a2"]);
+  await expect(page.locator("ol.versions li")).toHaveCount(3);
+  await expect(page.locator('[data-action="version-keep"]')).toHaveCount(0);
 });
