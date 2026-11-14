@@ -90,3 +90,20 @@ export async function setLever(db: Db, lever: Lever, now: Date): Promise<void> {
       return;
   }
 }
+
+/**
+ * Moves a node's level by one, within one to five, for a forced fall or rise. Like the node level
+ * lever it writes the projection row, which a full recompute computes from the log again.
+ */
+export async function moveLevel(
+  db: Db,
+  node: string,
+  by: 1 | -1,
+  now: number,
+): Promise<void> {
+  const row = (await db
+    .prepare("SELECT level FROM node_levels WHERE node = ?")
+    .get(node)) as { level: number } | undefined;
+  const level = Math.min(5, Math.max(1, (row?.level ?? 1) + by));
+  await setLever(db, { kind: "nodeLevel", node, level }, new Date(now));
+}

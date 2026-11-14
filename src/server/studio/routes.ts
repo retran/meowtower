@@ -9,6 +9,7 @@ import {
 } from "../../engine/events/read.js";
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
+import { Force } from "../sandbox/force.js";
 import { Lever, setLever } from "../sandbox/levers.js";
 import {
   createSandboxPlay,
@@ -353,6 +354,25 @@ export function mountStudio(
     const open = await sandboxPlay(at).open();
     if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
     await setLever(open.db, body.data, new Date(now()));
+    return c.json({ status: "ok" });
+  });
+
+  // The force (REQ-8290): the outcome, a fall or a rise of the next answer, once. An open gate waits
+  // for the gates of ADR-3230, which are not built.
+  app.post(`${base}/sandbox/force`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const at = url();
+    if (!at) return c.json({ error: "sandbox_unavailable" }, 409);
+    const raw = (await c.req.json().catch(() => null)) as {
+      next?: unknown;
+    } | null;
+    if (raw?.next === "gate") return c.json({ error: "gates_not_built" }, 400);
+    const body = Force.safeParse(raw);
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    const open = await sandboxPlay(at).open();
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    open.force(body.data.next);
     return c.json({ status: "ok" });
   });
 
