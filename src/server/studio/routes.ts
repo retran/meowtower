@@ -4,6 +4,7 @@ import type { Context, Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
 import { type Lang, translator } from "../../shared/i18n.js";
+import { ENGINE_OUTCOMES, ladder } from "../../story/check.js";
 import { MasterFailed } from "../../story/master-gateway.js";
 import { recordTurn, takeTurn } from "../../story/turn.js";
 import { parentSettings } from "../parent-room.js";
@@ -92,6 +93,8 @@ const TurnIn = z
     adventureId: z.string(),
     encounterId: z.string(),
     said: z.string().trim().min(1).max(2000),
+    /** The engine's outcome of a check, to test how the Master tells each result (REQ-8180). */
+    outcome: z.enum(ENGINE_OUTCOMES).optional(),
   })
   .strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
@@ -359,6 +362,9 @@ export function mountStudio(
         scenario,
         encounter: body.data.encounterId,
         said: body.data.said,
+        ...(body.data.outcome
+          ? { checkResult: ladder(body.data.outcome) }
+          : {}),
         lang,
         blockedText: translator(lang).t("story.master.blocked"),
       });

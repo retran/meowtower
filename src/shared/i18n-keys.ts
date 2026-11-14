@@ -360,6 +360,11 @@ export interface StringParams {
   "ui.studio.turn.inspect": NoParams;
   "ui.studio.turn.calls": NoParams;
   "ui.studio.turn.blocked": NoParams;
+  "ui.studio.turn.outcome": NoParams;
+  "ui.studio.turn.outcomeNone": NoParams;
+  "ui.studio.turn.outcomeClean": NoParams;
+  "ui.studio.turn.outcomePartial": NoParams;
+  "ui.studio.turn.outcomeAlt": NoParams;
   "ui.studio.lever.title": NoParams;
   "ui.studio.lever.set": NoParams;
   "ui.studio.lever.done": NoParams;
