@@ -16,6 +16,7 @@ import {
 } from "../../src/server/sandbox/sandbox.js";
 import { MasterFailed } from "../../src/story/master-gateway.js";
 import type { MasterModel, MasterRequest } from "../../src/story/turn.js";
+import type { FrameQueue, FrameTask } from "../../src/server/frames/queue.js";
 import { onlyOnPostgres } from "../helpers/backend.js";
 
 const DB_URL =
@@ -45,6 +46,16 @@ let next: () => Promise<{
   text: string;
   calls: { tool: string; input: unknown }[];
 }> = () => Promise.resolve({ text: "The gate creaks.", calls: [] });
+/** The tasks the frame author was asked to set a story for. */
+const framed: FrameTask[] = [];
+const sandboxFrames = (): FrameQueue => ({
+  prepare: () => Promise.resolve(),
+  ready: (task) => {
+    framed.push(task);
+    return Promise.resolve();
+  },
+  take: () => Promise.resolve(null),
+});
 const master = (): MasterModel => (request) => {
   seen.push(request);
   return next();
@@ -60,7 +71,13 @@ beforeAll(async () => {
   process.env["MEOWTOWER_DATABASE_URL"] = DB_URL;
   db = await openProfile(DB_URL, schema);
   const now = () => Date.parse("2026-11-10T12:00:00Z");
-  app = await createApp({ db, now, tasks: "registry", master });
+  app = await createApp({
+    db,
+    now,
+    tasks: "registry",
+    master,
+    sandboxFrames,
+  });
   bare = await createApp({ db, now, tasks: "registry" });
   await createParentApp({ db, now }).request("/pin", {
     method: "POST",
@@ -467,5 +484,43 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     } finally {
       await sandbox.close();
     }
+  });
+  it("REQ-8176: the frame author is given what she tried, and a forbidden word keeps it out", async () => {
+    const campaign = await node("campaign", null, "c8");
+    const arc = await node("arc", campaign, "a8");
+    const adventure = await node("adventure", arc, "Well");
+    const encounter = await node("encounter", adventure, "Rope");
+    const tryOnce = async (tried: string) => {
+      await studio("POST", "/sandbox/reset", { from: "empty" });
+      const started = await studio("POST", "/sandbox/play/start", {
+        adventureId: adventure,
+        encounterId: encounter,
+      });
+      const { sessionId } = (await started.json()) as { sessionId: string };
+      const cookie = cookieOf(started, "meowtower_sandbox_device");
+      next = () =>
+        Promise.resolve({
+          text: "The rope is wet.",
+          calls: [
+            { tool: "request_check", input: { tried, hard: "it is wet" } },
+          ],
+        });
+      await studio("POST", "/sandbox/play/turn", {
+        adventureId: adventure,
+        encounterId: encounter,
+        said: "I climb",
+      });
+      framed.length = 0;
+      await app.request(
+        `/api/parent/studio/sandbox/play/child/api/session/${sessionId}/next`,
+        { headers: { ...json, cookie: `${parentCookie}; ${cookie}` } },
+      );
+      return framed[0];
+    };
+    expect((await tryOnce("climb the rope"))?.situation).toEqual({
+      tried: "climb the rope",
+      hard: "it is wet",
+    });
+    expect((await tryOnce(`climb, ${forbidden}`))?.situation).toBeUndefined();
   });
 });

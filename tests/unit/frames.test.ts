@@ -15,6 +15,7 @@ import { createFrameQueue } from "../../src/server/frames/queue.js";
 import {
   frameSystem,
   frameUser,
+  situationOf,
   NO_SLOTS,
 } from "../../src/server/frames/request.js";
 import type {
@@ -98,6 +99,40 @@ describe("the prompt", () => {
     expect(user).toContain("<story_arc></story_arc>");
     expect(user).toContain("<adventure></adventure>");
     expect(user).toContain("<game_situation></game_situation>");
+  });
+});
+
+describe("REQ-8176: the story is set in what she tried", () => {
+  const situation = { tried: "pick the lock", hard: "it is stiff" };
+  const request = (slots: Parameters<typeof frameUser>[0]["slots"]) =>
+    frameUser({
+      task: "x",
+      roles: {},
+      lang: "en",
+      slots,
+      told: [],
+      answers: [],
+      kind: "integer",
+    });
+
+  it("puts her action in the situation, in the game's language", () => {
+    for (const lang of ["ru", "en", "nl"] as const) {
+      const user = frameUser({
+        task: "x",
+        roles: {},
+        lang,
+        slots: { ...NO_SLOTS, situation: situationOf(lang, situation) },
+        told: [],
+        answers: [],
+        kind: "integer",
+      });
+      expect(user).toMatch(/<game_situation>[^<]*pick the lock[^<]*<\//u);
+      expect(user).toContain("it is stiff");
+    }
+  });
+
+  it("leaves the situation empty with no action", () => {
+    expect(request(NO_SLOTS)).toContain("<game_situation></game_situation>");
   });
 });
 
@@ -236,6 +271,17 @@ describe("the queue", () => {
     const gateway = writing(["Текст?"], () => ({}));
     await (await queueOf(gateway)).prepare({ ...task, template: drawn });
     expect(gateway.seen[0]?.user).toContain("<picture><svg");
+  });
+  it("gives the author her action when the task has one", async () => {
+    const gateway = writing(["Текст?"], () => ({}));
+    await (
+      await queueOf(gateway)
+    ).prepare({
+      ...task,
+      situation: { tried: "pick the lock", hard: "it is stiff" },
+    });
+    expect(gateway.seen[0]?.user).toContain("pick the lock");
+    expect(gateway.seen[0]?.user).toContain("it is stiff");
   });
   it("gives a second attempt the story it continues, and no other stories", async () => {
     const gateway = writing(["Старая?", "Новая?"], () => ({}));
