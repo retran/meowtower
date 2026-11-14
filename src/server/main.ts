@@ -6,7 +6,7 @@ import { createGateway, verifyModels } from "./gateway/gateway.js";
 import { createLedger } from "./gateway/household.js";
 import { liveRoutes } from "./gateway/routes.js";
 import { createApp } from "./app.js";
-import type { MasterFactory } from "./sandbox/play.js";
+import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
 import { createSandboxGateway } from "./sandbox/sandbox.js";
 import { gatewayMaster } from "../story/master-gateway.js";
 import { openDatabase, type Db } from "./database.js";
@@ -122,6 +122,8 @@ const ledger = accounts ? createLedger(accounts.db) : undefined;
 let frames: FrameQueue | undefined;
 /** Makes the Master of a sandbox turn; set once the role is configured and the switch is on (ADR-3270). */
 let master: MasterFactory | undefined;
+/** Makes the frame queue of a sandbox, so a check's task is told in what she tried (REQ-8176). */
+let sandboxFrames: SandboxFrames | undefined;
 try {
   const config = readConfig(process.env);
   // The game runs only in `play`: the tools start the other modes (ADR-3200).
@@ -150,6 +152,25 @@ try {
           }),
           bucket,
         );
+    if (
+      process.env["MEOWTOWER_MASTER"] === "on" &&
+      config.roles.TASK_TEXT_MODEL
+    )
+      sandboxFrames = (sandbox) =>
+        createFrameQueue({
+          db: sandbox,
+          gateway: createSandboxGateway({
+            db: sandbox,
+            config,
+            routes,
+            names: (process.env["MEOWTOWER_EGRESS_NAMES"] ?? "")
+              .split(",")
+              .filter((n) => n !== ""),
+          }),
+          zone,
+          level: async () => (await parentSettings(sandbox)).creepiness,
+          gender: async () => (await parentSettings(sandbox)).gender,
+        });
     const queue = createFrameQueue({
       db,
       gateway: createGateway({
@@ -192,6 +213,7 @@ const tasks =
 const firstApp = await createApp({
   db,
   ...(master ? { master } : {}),
+  ...(sandboxFrames ? { sandboxFrames } : {}),
   onSessionEnded,
   sweepLeasesMs: 5000,
   tasks,

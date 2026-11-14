@@ -3,7 +3,7 @@
 // pairing code, and the settings. Every route needs a paired device, which the
 // /api middleware checks, and all but the login need a parent session opened
 // on that device and used within the last 30 minutes (REQ-2440).
-import type { MasterFactory } from "./sandbox/play.js";
+import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
 import { mountStudio } from "./studio/routes.js";
 import { refreshKnowledge } from "../engine/projections/knowledge.js";
 import type { Context, Hono } from "hono";
@@ -95,6 +95,7 @@ export async function mountParentRoom(
   now: () => number,
   sessions = new ParentSessions(),
   master?: MasterFactory,
+  sandboxFrames?: SandboxFrames,
 ): Promise<void> {
   // A closed database still has to answer the health page, so the language stays as it was.
   if (db.open) setLang((await parentSettings(db)).language);
@@ -234,7 +235,7 @@ export async function mountParentRoom(
     return c.json({ status: "ok" });
   });
 
-  mountStudio(app, db, now, parent, master);
+  mountStudio(app, db, now, parent, master, sandboxFrames);
 
   // The Parent Room's entry point for a pairing code, beside ./meowtower pair.
   app.post("/api/parent/pair-code", async (c) => {

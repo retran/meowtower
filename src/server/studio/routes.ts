@@ -28,6 +28,7 @@ import {
   createSandboxPlay,
   encountersOf,
   type MasterFactory,
+  type SandboxFrames,
   enterEncounter,
   reachedIn,
   scenarioOf,
@@ -112,6 +113,7 @@ export function mountStudio(
   now: () => number,
   guard: (c: Context) => Promise<string | Response>,
   master?: MasterFactory,
+  sandboxFrames?: SandboxFrames,
 ): void {
   const base = "/api/parent/studio";
 
@@ -302,7 +304,12 @@ export function mountStudio(
   /** The sandbox kept open for play, one for the profile; made on first use. */
   let playing: ReturnType<typeof createSandboxPlay> | null = null;
   const sandboxPlay = (at: string): ReturnType<typeof createSandboxPlay> =>
-    (playing ??= createSandboxPlay(at, sandboxSchemaOf(db.name), now));
+    (playing ??= createSandboxPlay(
+      at,
+      sandboxSchemaOf(db.name),
+      now,
+      sandboxFrames,
+    ));
   const playBase = `${base}/sandbox/play`;
 
   app.get(`${base}/sandbox`, async (c) => {
@@ -385,9 +392,14 @@ export function mountStudio(
       });
       await recordTurn(open.db, turn);
       // The Director, and not the Master, sets the task of a check (REQ-8174).
-      const task = turn.calls.some((call) => call.tool === "request_check")
-        ? await setCheckTask(open.db, body.data.encounterId, now())
-        : null;
+      const asked = turn.calls.find((call) => call.tool === "request_check");
+      const task =
+        asked?.tool === "request_check"
+          ? await setCheckTask(open.db, body.data.encounterId, now(), {
+              tried: asked.input.tried,
+              hard: asked.input.hard,
+            })
+          : null;
       return c.json({
         reply: turn.reply,
         blocked: turn.blocked,

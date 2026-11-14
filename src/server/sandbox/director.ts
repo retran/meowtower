@@ -40,6 +40,7 @@ export async function setCheckTask(
   db: Db,
   encounter: string,
   now: number,
+  action: { readonly tried: string; readonly hard: string },
 ): Promise<ChosenTask | null> {
   const chosen = chooseCheckTask({
     ...setupOf(),
@@ -51,9 +52,11 @@ export async function setCheckTask(
   await appendEvents(db, [
     {
       type: "check_task_chosen",
-      v: 1,
+      v: 2,
       origin: "server",
       payload: {
+        tried: action.tried,
+        hard: action.hard,
         encounter,
         node: chosen.node,
         subtype: chosen.subtype,
@@ -71,6 +74,8 @@ export interface Pending {
   readonly node: string;
   readonly subtype: string;
   readonly purpose: "review" | "frontier";
+  /** What she tried and why it is hard; empty for a choice written before the action was kept. */
+  readonly situation: { readonly tried: string; readonly hard: string };
 }
 
 /**
@@ -86,6 +91,8 @@ export function pendingCheck(
       node?: string;
       subtype?: string;
       purpose?: string;
+      tried?: string;
+      hard?: string;
     };
     if (e.type === "check_task_chosen")
       waiting = {
@@ -93,6 +100,7 @@ export function pendingCheck(
         node: p.node ?? "",
         subtype: p.subtype ?? "",
         purpose: p.purpose === "review" ? "review" : "frontier",
+        situation: { tried: p.tried ?? "", hard: p.hard ?? "" },
       };
     else if (
       e.type === "item_shown" &&
@@ -122,6 +130,7 @@ export function directedTask(pending: Pending): Directed | null {
     template,
     base: baseSeed(key, template.id, 0),
     purpose: pending.purpose,
+    situation: pending.situation,
   };
 }
 

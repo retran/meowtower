@@ -27,6 +27,7 @@ import {
 } from "../engine/events/read.js";
 import { resumeFromLog } from "../engine/projections/resume.js";
 import { isZone } from "../shared/game-day.js";
+import { textGate } from "../shared/voice/gate.js";
 import { baseSeed } from "../math/rng.js";
 import { type Compiled, notation } from "../templates/spec.js";
 import {
@@ -149,6 +150,8 @@ export interface Directed {
   readonly template: Compiled;
   readonly base: Uint8Array;
   readonly purpose: "review" | "frontier";
+  /** What she tried and why it is hard; empty where the choice kept none (REQ-8176). */
+  readonly situation?: { readonly tried: string; readonly hard: string };
 }
 
 /** The candidate a task was drawn at, read from its effective seed `base/k`. */
@@ -361,7 +364,30 @@ export function mountPlay(
     (await sessionRow(db, sessionId))?.adventureId ?? sessionId;
   /** Waits for the story of the task about to show, while the client shows its loader (REQ-7890). */
   const nextFrame = async (sessionId: string): Promise<void> => {
-    if (!frames || tasks !== "registry" || (await directedOf?.())) return;
+    if (!frames || tasks !== "registry") return;
+    const directed = await directedOf?.();
+    if (directed) {
+      // Her action reaches the frame author only after the forbidden-word check, because the Master
+      // wrote it from her words and nothing else has checked it (REQ-8090, REQ-8176).
+      const a = directed.situation;
+      const clean =
+        a &&
+        a.tried !== "" &&
+        [a.tried, a.hard].every(
+          (t) => textGate(t, { lang, kind: "story", source: "master" }).ok,
+        );
+      await frames.ready(
+        {
+          template: directed.template,
+          base: directed.base,
+          bucket: await adventureKey(sessionId),
+          lang,
+          ...(clean && a ? { situation: a } : {}),
+        },
+        FRAME_WAIT_MS,
+      );
+      return;
+    }
     const played = await playLog(sessionId);
     const answered = answeredIn(played);
     const open = played

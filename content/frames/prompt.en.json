@@ -116,5 +116,6 @@
     "time": "Reply with a time such as 7:05.",
     "options": "Reply with the number of the right option alone. If several are right or an order is asked for, list the numbers separated by commas."
   },
-  "continuation": "This continues the story in the previous_story block: the first attempt failed. The same characters, place and events, and the story goes on. The last solution didn't work, so show that as an event and set the new task from the task block. Don't start a new story."
+  "continuation": "This continues the story in the previous_story block: the first attempt failed. The same characters, place and events, and the story goes on. The last solution didn't work, so show that as an event and set the new task from the task block. Don't start a new story.",
+  "situation": "The player's action in the story: {tried}. Why it is hard: {hard}. Set the task inside this action, so the story follows what the player tried; keep every number and the question as the task states them."
 }
