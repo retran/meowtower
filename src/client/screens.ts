@@ -6,6 +6,8 @@ import {
   type OpenedTask,
   type TemplateRow,
   studioCreate,
+  studioEncounters,
+  studioPlayStart,
   studioLog,
   studioLogs,
   studioNodes,
@@ -797,6 +799,55 @@ const accountScreen: Screen = {
 };
 
 /** The level a node of `level` holds inside it, or null for an encounter. */
+/**
+ * The play surface of the sandbox (ADR-3280, REQ-8286): one button for each encounter of the adventure,
+ * a draft included, and a frame with the game itself, opened on the sandbox, at that encounter.
+ */
+function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
+  const box = el("div", { className: "sandbox-play" });
+  const stage = el("div", { className: "screen-stage" });
+  const open = button("ui.studio.play", "studio-play", async () => {
+    const listed = await studioEncounters(node.id);
+    if (!listed.ok) {
+      note.textContent = t("ui.studio.refused", { reason: listed.error });
+      return;
+    }
+    if (listed.value.length === 0) {
+      note.textContent = t("ui.studio.playNone");
+      return;
+    }
+    const choices = listed.value.map((e) => {
+      const b = button("ui.studio.playFrom", "studio-play-from", async () => {
+        const started = await studioPlayStart(node.id, e.id);
+        if (!started.ok) {
+          note.textContent = t("ui.studio.refused", { reason: started.error });
+          return;
+        }
+        let frame = stage.querySelector("iframe");
+        if (!frame) {
+          frame = el("iframe", {
+            className: "screen-frame",
+            title: t("ui.studio.playFrame"),
+          });
+          frame.dataset["action"] = "studio-play-frame";
+          frame.style.width = "100%";
+          frame.style.height = "480px";
+          stage.append(frame);
+        }
+        frame.setAttribute(
+          "src",
+          `/?sandbox=1&lang=${document.documentElement.lang || "ru"}#/play`,
+        );
+      });
+      b.textContent = t("ui.studio.playFrom", { title: e.title });
+      return b;
+    });
+    box.replaceChildren(open, ...choices, stage);
+  });
+  box.append(open, stage);
+  return box;
+}
+
 const INNER: Readonly<Record<StudioNode["level"], StudioNode["level"] | null>> =
   {
     campaign: "arc",
@@ -910,6 +961,7 @@ const studioScreen: Screen = {
             void show();
           }),
         );
+      if (node.level === "adventure") panel.append(playPanel(node, note));
       if (node.level !== "encounter" && node.status === "draft")
         panel.append(
           button("ui.studio.approve", "studio-approve", async () => {

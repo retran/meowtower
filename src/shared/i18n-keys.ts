@@ -350,6 +350,10 @@ export interface StringParams {
   "ui.studio.selected": { title: string | number };
   "ui.studio.version": { n: string | number };
   "ui.studio.open": NoParams;
+  "ui.studio.play": NoParams;
+  "ui.studio.playFrom": { title: string | number };
+  "ui.studio.playNone": NoParams;
+  "ui.studio.playFrame": NoParams;
   "ui.studio.approve": NoParams;
   "ui.studio.toDraft": NoParams;
   "ui.studio.add": { level: string | number };

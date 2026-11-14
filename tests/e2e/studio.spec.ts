@@ -21,6 +21,9 @@ interface Fake {
   links: string[];
 }
 
+/** What the sandbox was asked to start, in order. */
+const started: object[] = [];
+
 /** A tiny studio server with one campaign, two arcs that lead from the first to the second. */
 async function stub(page: Page): Promise<Fake[]> {
   const nodes: Fake[] = [
@@ -47,6 +50,15 @@ async function stub(page: Page): Promise<Fake[]> {
       level: "arc",
       parentId: "c1",
       title: "The lock",
+      status: "draft",
+      version: 1,
+      links: [],
+    },
+    {
+      id: "d1",
+      level: "adventure",
+      parentId: "a1",
+      title: "The fog",
       status: "draft",
       version: 1,
       links: [],
@@ -91,6 +103,17 @@ async function stub(page: Page): Promise<Fake[]> {
         ).status;
       return json(200, n ?? {});
     }
+    if (path === "/sandbox/play/adventures/d1/encounters")
+      return json(200, {
+        encounters: [
+          { id: "e1", title: "The gate", status: "draft" },
+          { id: "e2", title: "The bridge", status: "approved" },
+        ],
+      });
+    if (path === "/sandbox/play/start" && method === "POST") {
+      started.push(route.request().postDataJSON() as object);
+      return json(200, { sessionId: "s1", scene: {} });
+    }
     if (path === "/logs/adventures")
       return json(200, { adventures: [{ adventureId: "adv-1", events: 3 }] });
     if (path === "/logs/adventures/adv-1")
@@ -131,13 +154,13 @@ test("REQ-8274: a node is added, approved and sent back to draft from the panel"
   await page.locator("#studio-title").fill("Another year");
   await page.locator('[data-action="studio-add"]').click();
   await expect(page.getByText("Добавлено.")).toBeVisible();
-  await page.locator('button[data-node="n3"]').click();
+  await page.locator('button[data-node="n4"]').click();
   await expect(page.getByText("черновик").first()).toBeVisible();
   await page.locator('[data-action="studio-approve"]').click();
-  await page.locator('button[data-node="n3"]').click();
+  await page.locator('button[data-node="n4"]').click();
   await expect(page.locator('[data-action="studio-draft"]')).toBeVisible();
   await page.locator('[data-action="studio-draft"]').click();
-  await page.locator('button[data-node="n3"]').click();
+  await page.locator('button[data-node="n4"]').click();
   await expect(page.locator('[data-action="studio-approve"]')).toBeVisible();
 });
 
@@ -150,4 +173,46 @@ test("REQ-8276: the logs of the played adventures are listed and one can be read
   await page.locator('[data-action="log-adv-1"]').click();
   await expect(page.locator("ol.log li")).toHaveCount(2);
   await expect(page.locator("ol.log")).toContainText("session_started");
+});
+
+test("REQ-8286: any encounter of a draft adventure starts play in the sandbox frame", async ({
+  page,
+}) => {
+  started.length = 0;
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="d1"]').click();
+  await page.locator('[data-action="studio-play"]').click();
+  const from = page.locator('[data-action="studio-play-from"]');
+  await expect(from).toHaveCount(2);
+  await from.nth(1).click();
+  await expect(
+    page.locator('[data-action="studio-play-frame"]'),
+  ).toHaveAttribute("src", /\?sandbox=1&lang=\w+#\/play/);
+  expect(started).toEqual([{ adventureId: "d1", encounterId: "e2" }]);
+});
+
+test("REQ-8286: the game opened with sandbox=1 asks the sandbox and never her game", async ({
+  page,
+}) => {
+  const asked: string[] = [];
+  await page.route("**/api/**", (route) => {
+    asked.push(new URL(route.request().url()).pathname);
+    return route.fulfill({
+      status: 401,
+      json: { error: "device_token_missing" },
+    });
+  });
+  await page.goto("about:blank");
+  await page.goto("/?sandbox=1#/play");
+  await expect.poll(() => asked.length).toBeGreaterThan(0);
+  expect(
+    asked.every((p) =>
+      p.startsWith("/api/parent/studio/sandbox/play/child/api/"),
+    ),
+  ).toBe(true);
 });

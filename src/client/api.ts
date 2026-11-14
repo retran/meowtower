@@ -22,12 +22,26 @@ export type DeviceState =
 /** The status of a request that got no usable reply: no connection, or no JSON. */
 export const UNREACHABLE = 0;
 
+/** Where the sandbox's play surface answers; the child's routes follow it (REQ-8286). */
+export const SANDBOX_CHILD = "/api/parent/studio/sandbox/play/child";
+
+/**
+ * The address of a game route. The sandbox frame opens the game with `?sandbox=1`, and then every
+ * route goes to the child's routes on the sandbox, so the frame plays the parent's sandbox and
+ * never her game.
+ */
+export const gamePath = (path: string): string =>
+  typeof location !== "undefined" &&
+  new URLSearchParams(location.search).get("sandbox") === "1"
+    ? `${SANDBOX_CHILD}${path}`
+    : path;
+
 async function call(
   path: string,
   init: RequestInit = {},
 ): Promise<{ status: number; body: Record<string, unknown> }> {
   try {
-    const res = await fetch(path, {
+    const res = await fetch(gamePath(path), {
       ...init,
       headers: { "content-type": "application/json" },
     });
@@ -585,4 +599,38 @@ export async function studioTask(
     `/api/parent/studio/tasks/${encodeURIComponent(id)}?${query.toString()}`,
   );
   return parentReply(status, body, () => body as unknown as OpenedTask);
+}
+
+export interface SandboxEncounter {
+  id: string;
+  title: string;
+  status: string;
+}
+
+/** The encounters of an adventure, of any status, for the sandbox to start at (REQ-8286). */
+export async function studioEncounters(
+  adventureId: string,
+): Promise<ParentReply<SandboxEncounter[]>> {
+  const { status, body } = await call(
+    `/api/parent/studio/sandbox/play/adventures/${encodeURIComponent(adventureId)}/encounters`,
+  );
+  return parentReply(
+    status,
+    body,
+    () => body["encounters"] as SandboxEncounter[],
+  );
+}
+
+/** Starts play in the sandbox at one encounter and sets the sandbox's device cookie. */
+export async function studioPlayStart(
+  adventureId: string,
+  encounterId: string,
+): Promise<ParentReply<{ sessionId: string }>> {
+  const { status, body } = await call("/api/parent/studio/sandbox/play/start", {
+    method: "POST",
+    body: JSON.stringify({ adventureId, encounterId }),
+  });
+  return parentReply(status, body, () => ({
+    sessionId: String(body["sessionId"]),
+  }));
 }
