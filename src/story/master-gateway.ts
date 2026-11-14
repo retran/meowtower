@@ -29,12 +29,16 @@ export class MasterFailed extends Error {
  * cache it; her words and the encounter are the turn's own message.
  */
 export function gatewayMaster(gateway: Gateway, bucket: string): MasterModel {
-  return async ({ system, said, encounter }) => {
+  return async ({ system, said, encounter, checkResult }) => {
     const reply = await gateway.call({
       role: "MASTER_MODEL",
       bucket,
       system,
-      user: `Encounter: ${encounter}\nShe says: ${said}`,
+      user:
+        `Encounter: ${encounter}\nShe says: ${said}` +
+        (checkResult
+          ? `\nCheck result: ${checkResult}. This is settled and you cannot change it; tell what happens.`
+          : ""),
       schema: z.toJSONSchema(Reply),
     });
     if (!reply.ok) throw new MasterFailed(reply.reason);

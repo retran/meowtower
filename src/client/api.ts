@@ -696,10 +696,16 @@ export async function studioTurn(
   adventureId: string,
   encounterId: string,
   said: string,
+  outcome?: string,
 ): Promise<ParentReply<TurnReply>> {
   const { status, body } = await call("/api/parent/studio/sandbox/play/turn", {
     method: "POST",
-    body: JSON.stringify({ adventureId, encounterId, said }),
+    body: JSON.stringify({
+      adventureId,
+      encounterId,
+      said,
+      ...(outcome ? { outcome } : {}),
+    }),
   });
   return parentReply(status, body, () => body as unknown as TurnReply);
 }
