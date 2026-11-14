@@ -9,6 +9,8 @@ import { createApp } from "./app.js";
 import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
 import { createSandboxGateway } from "./sandbox/sandbox.js";
 import { gatewayMaster } from "../story/master-gateway.js";
+import { writeScenario } from "../story/writer.js";
+import type { AdventureWriter } from "./studio/generate.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
 import { logMailer } from "./accounts/mailer.js";
@@ -124,6 +126,8 @@ let frames: FrameQueue | undefined;
 let master: MasterFactory | undefined;
 /** Makes the frame queue of a sandbox, so a check's task is told in what she tried (REQ-8176). */
 let sandboxFrames: SandboxFrames | undefined;
+/** Writes a scenario for an adventure in the studio, once the showrunner's role is configured (ADR-3360). */
+let generator: AdventureWriter | undefined;
 try {
   const config = readConfig(process.env);
   // The game runs only in `play`: the tools start the other modes (ADR-3200).
@@ -171,6 +175,18 @@ try {
           level: async () => (await parentSettings(sandbox)).creepiness,
           gender: async () => (await parentSettings(sandbox)).gender,
         });
+    if (config.roles.SHOWRUNNER_MODEL) {
+      const studioGateway = createGateway({
+        ...(ledger ? { household: ledger.forProfile(db.name) } : {}),
+        db,
+        config,
+        routes,
+        names: (process.env["MEOWTOWER_EGRESS_NAMES"] ?? "")
+          .split(",")
+          .filter((n) => n !== ""),
+      });
+      generator = (ask) => writeScenario(studioGateway, ask);
+    }
     const queue = createFrameQueue({
       db,
       gateway: createGateway({
@@ -214,6 +230,7 @@ const firstApp = await createApp({
   db,
   ...(master ? { master } : {}),
   ...(sandboxFrames ? { sandboxFrames } : {}),
+  ...(generator ? { generator } : {}),
   onSessionEnded,
   sweepLeasesMs: 5000,
   tasks,

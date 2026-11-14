@@ -27,6 +27,10 @@ export function refusalText(reason: string): string {
     return t("ui.studio.refusal.notEdited", {
       status: t(uiKey(`ui.studio.status.${edited[1] ?? "playing"}`)),
     });
+  if (reason === "generator_not_configured")
+    return t("ui.studio.refusal.noGenerator");
+  if (reason === "version_waits")
+    return t("ui.studio.generate.cause.version_waits");
   if (reason === "that is the current version")
     return t("ui.studio.refusal.alreadyCurrent");
   if (reason === "the title is 1 to 120 characters")

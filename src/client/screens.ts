@@ -57,6 +57,7 @@ import { layoutGraph, DEFAULT_SIZE } from "./graph-layout.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
 import { encounterForm, refusalText, versionsPanel } from "./studio-form.js";
+import { generatePanel } from "./studio-generate.js";
 import { clock, t, uiKey, type UiKey } from "./strings.js";
 
 export interface Shell {
@@ -1224,6 +1225,15 @@ const studioScreen: Screen = {
         });
       };
       panel.append(versionsPanel(node, note, loadForm), formSlot);
+      // A finished generation leaves a waiting version, so the versions open beside the comparison.
+      if (node.level === "adventure")
+        panel.append(
+          generatePanel(node, note, () => {
+            panel
+              .querySelector<HTMLElement>('[data-action="studio-versions"]')
+              ?.click();
+          }),
+        );
       if (node.level === "encounter") panel.append(playPanel(node, note, node));
       loadForm();
       if (node.level !== "encounter" && node.status === "draft")

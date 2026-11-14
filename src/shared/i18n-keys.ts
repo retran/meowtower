@@ -357,6 +357,33 @@ export interface StringParams {
   "ui.studio.reached": NoParams;
   "ui.studio.unreached": NoParams;
   "ui.studio.leftToTest": { exits: string | number; nodes: string | number };
+  "ui.studio.generate.estimate": {
+    max: string | number;
+    min: string | number;
+    spent: string | number;
+  };
+  "ui.studio.generate.prompt": NoParams;
+  "ui.studio.generate.start": NoParams;
+  "ui.studio.generate.promptEmpty": NoParams;
+  "ui.studio.generate.step.start": NoParams;
+  "ui.studio.generate.step.plan": { progress: string | number };
+  "ui.studio.generate.step.review": { progress: string | number };
+  "ui.studio.generate.step.replan": { progress: string | number };
+  "ui.studio.generate.step.draft": {
+    n: string | number;
+    progress: string | number;
+  };
+  "ui.studio.generate.step.critic": {
+    n: string | number;
+    progress: string | number;
+  };
+  "ui.studio.generate.done": NoParams;
+  "ui.studio.generate.cause.budget_exhausted": NoParams;
+  "ui.studio.generate.cause.provider_failed": NoParams;
+  "ui.studio.generate.cause.check_failed": NoParams;
+  "ui.studio.generate.cause.version_waits": NoParams;
+  "ui.studio.generate.cause.failed": NoParams;
+  "ui.studio.refusal.noGenerator": NoParams;
   "ui.studio.turn.said": NoParams;
   "ui.studio.turn.take": NoParams;
   "ui.studio.turn.inspect": NoParams;

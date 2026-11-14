@@ -10,6 +10,7 @@ import { openDatabase } from "../../src/server/database.js";
 import type { Db } from "../../src/server/db/index.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
+import type { AdventureWriter } from "../../src/server/studio/generate.js";
 import {
   proposeVersion,
   startJob,
@@ -604,4 +605,195 @@ it("REQ-8614: an encounter's exits from the form are the edges of its graph", as
   // Each target once, however many exits lead to it.
   expect([...links].sort()).toEqual([bridge.id, tower.id].sort());
   expect(listed.nodes.find((n) => n.id === bridge.id)?.links).toEqual([]);
+});
+
+describe("generating a version of an adventure", () => {
+  const now = () => Date.parse("2026-11-10T12:00:00Z");
+  let generating: Hono;
+  let cookie = "";
+  let writer: AdventureWriter;
+  let release: () => void = () => undefined;
+  const fake = (over: Partial<Awaited<ReturnType<AdventureWriter>>> = {}) => ({
+    scenario: {
+      id: "s1",
+      premise: "A fog over the canal",
+      logline: "Free the boats",
+      encounters: [],
+    },
+    revisions: 0,
+    unresolved: [],
+    minor: [],
+    ...over,
+  });
+
+  beforeAll(async () => {
+    generating = await createApp({
+      db,
+      now,
+      generator: (ask) => writer(ask),
+    });
+    const login = await generating.request("/api/parent/login", {
+      method: "POST",
+      headers: { ...json, cookie: deviceCookie },
+      body: JSON.stringify({ pin: PIN }),
+    });
+    cookie = `${deviceCookie}; ${cookieOf(login, "meowtower_parent")}`;
+  });
+
+  const via = (method: string, path: string, body?: object, to = generating) =>
+    to.request(`/api/parent/studio${path}`, {
+      method,
+      headers: { ...json, cookie: to === generating ? cookie : parentCookie },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+  const adventureOf = async (name: string) => {
+    const made = async (
+      level: string,
+      parentId: string | null,
+      title: string,
+    ) =>
+      (await (
+        await via("POST", "/nodes", { level, parentId, title, body: {} })
+      ).json()) as { id: string };
+    const campaign = await made("campaign", null, `${name} c`);
+    const arc = await made("arc", campaign.id, `${name} a`);
+    return (await made("adventure", arc.id, `${name} adventure`)).id;
+  };
+  const job = async (id: string) =>
+    (await (await via("GET", `/jobs/${id}`)).json()) as {
+      state: string;
+      progress: number;
+      message: string;
+    };
+  const finished = async (id: string) => {
+    for (let i = 0; i < 100; i += 1) {
+      const j = await job(id);
+      if (j.state === "done" || j.state === "failed") return j;
+      await new Promise((r) => setTimeout(r, 20));
+    }
+    throw new Error("job_never_finished");
+  };
+  const start = async (id: string, prompt = "autumn fog") =>
+    (await (await via("POST", `/nodes/${id}/generate`, { prompt })).json()) as {
+      job: { id: string };
+    };
+
+  it("REQ-8608: shows the number of calls and this month's spend before it runs", async () => {
+    const id = await adventureOf("estimate");
+    const before = (await (
+      await via("GET", `/nodes/${id}/generate/estimate`)
+    ).json()) as { calls: { min: number; max: number }; spentUsd: number };
+    expect(before.calls).toEqual({ min: 4, max: 17 });
+    const spent = (n: number) =>
+      db
+        .prepare(
+          `INSERT INTO llm_log (at, role, route, model, tier, bucket, input_tokens, output_tokens,
+             cost_usd, latency_ms, outcome, request, response)
+           VALUES (?, 'SHOWRUNNER_MODEL', 'r', 'm', 'planning', 'b', 1, 1, ?, 1, 'ok', '{}', '{}')`,
+        )
+        .run(
+          n === 0 ? "2026-10-02T00:00:00.000Z" : "2026-11-03T00:00:00.000Z",
+          n === 0 ? 9 : 0.25,
+        );
+    await spent(0);
+    await spent(1);
+    const after = (await (
+      await via("GET", `/nodes/${id}/generate/estimate`)
+    ).json()) as { spentUsd: number };
+    expect(after.spentUsd - before.spentUsd).toBeCloseTo(0.25, 5);
+  });
+
+  it("answers 409 with no generator, and refuses a node that is no adventure", async () => {
+    const id = await adventureOf("refuse");
+    const none = await via(
+      "POST",
+      `/nodes/${id}/generate`,
+      { prompt: "x" },
+      app,
+    );
+    expect(none.status).toBe(409);
+    expect(((await none.json()) as { error: string }).error).toBe(
+      "generator_not_configured",
+    );
+    const arc = (await (
+      await via("POST", "/nodes", {
+        level: "campaign",
+        parentId: null,
+        title: "lone",
+        body: {},
+      })
+    ).json()) as { id: string };
+    const wrong = await via("POST", `/nodes/${arc.id}/generate`, {
+      prompt: "x",
+    });
+    expect(wrong.status).toBe(400);
+  });
+
+  it("REQ-8318, REQ-8604: runs as a job with a visible step and leaves the result waiting", async () => {
+    const id = await adventureOf("run");
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    writer = async ({ report }) => {
+      report.step("plan", 0);
+      report.step("draft", 1);
+      await gate;
+      return fake();
+    };
+    const started = await start(id);
+    for (
+      let i = 0;
+      i < 50 && (await job(started.job.id)).message !== "draft:1";
+      i += 1
+    )
+      await new Promise((r) => setTimeout(r, 20));
+    const mid = await job(started.job.id);
+    expect(mid.state).toBe("running");
+    expect(mid.message).toBe("draft:1");
+    expect(mid.progress).toBeGreaterThan(0);
+    release();
+    const done = await finished(started.job.id);
+    expect(done.state).toBe("done");
+    const listed = (await (
+      await via("GET", `/nodes/${id}/versions`)
+    ).json()) as { versions: { state: string; body: { premise?: string } }[] };
+    expect(listed.versions.map((v) => v.state)).toEqual(["current", "pending"]);
+    expect(listed.versions[1]?.body.premise).toBe("A fog over the canal");
+    // The current version is as it was.
+    const seen = (await (await via("GET", `/nodes/${id}`)).json()) as {
+      body: unknown;
+    };
+    expect(seen.body).toEqual({});
+  });
+
+  it("REQ-8610: names the cause when no draft is written", async () => {
+    const id = await adventureOf("cause");
+    for (const cause of ["budget_exhausted", "provider_failed"] as const) {
+      writer = ({ report }) => {
+        report.fault(cause);
+        return Promise.resolve(null);
+      };
+      const failed = await finished((await start(id)).job.id);
+      expect(failed).toMatchObject({ state: "failed", message: cause });
+    }
+    writer = () => Promise.resolve(null);
+    expect((await finished((await start(id)).job.id)).message).toBe(
+      "check_failed",
+    );
+    writer = () => Promise.reject(new Error("boom"));
+    expect((await finished((await start(id)).job.id)).message).toBe("failed");
+  });
+
+  it("REQ-8604: refuses a generation while a version already waits", async () => {
+    const id = await adventureOf("waits");
+    writer = () => Promise.resolve(fake());
+    await finished((await start(id)).job.id);
+    const again = await via("POST", `/nodes/${id}/generate`, {
+      prompt: "more",
+    });
+    expect(again.status).toBe(409);
+    expect(((await again.json()) as { error: string }).error).toBe(
+      "version_waits",
+    );
+  });
 });

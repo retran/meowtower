@@ -214,3 +214,61 @@ describe("the plan of practice in the loop", () => {
     expect(users[3]).toContain("skill_unaccepted:trade");
   });
 });
+
+describe("REQ-8318, REQ-8610: the loop reports its steps and the cause of a failure", () => {
+  const reporting = () => {
+    const steps: [string, number][] = [];
+    const faults: string[] = [];
+    return {
+      steps,
+      faults,
+      report: {
+        step: (name: string, n: number) => {
+          steps.push([name, n]);
+        },
+        fault: (cause: string) => {
+          faults.push(cause);
+        },
+      },
+    };
+  };
+
+  it("reports each step in order, with the draft's number", async () => {
+    const r = reporting();
+    const { gateway } = replies(PLAN, OK, scenario(10), GOOD);
+    await writeScenario(gateway, { ...ask, report: r.report });
+    expect(r.steps).toEqual([
+      ["plan", 0],
+      ["review", 0],
+      ["draft", 1],
+      ["critic", 1],
+    ]);
+    expect(r.faults).toEqual([]);
+  });
+
+  it("names a provider failure", async () => {
+    const r = reporting();
+    await writeScenario(replies().gateway, { ...ask, report: r.report });
+    expect(r.faults).toEqual(["provider_failed"]);
+  });
+
+  it("names an exhausted budget", async () => {
+    const r = reporting();
+    const gateway = {
+      call: () => Promise.resolve({ ok: false, reason: "budget_exhausted" }),
+    } as unknown as Gateway;
+    await writeScenario(gateway, { ...ask, report: r.report });
+    expect(r.faults).toEqual(["budget_exhausted"]);
+  });
+
+  it("names a failed code check when no version passed it", async () => {
+    const r = reporting();
+    const { gateway } = replies(
+      PLAN,
+      OK,
+      ...Array.from({ length: 7 }, () => scenario(9)),
+    );
+    await writeScenario(gateway, { ...ask, report: r.report });
+    expect(r.faults).toEqual(["check_failed"]);
+  });
+});

@@ -81,6 +81,14 @@
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
     {
+      "id": "api:GET /nodes/:id/generate/estimate",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /nodes/:id/generate",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
       "id": "api:POST /nodes/:id/pending/keep",
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
