@@ -671,3 +671,16 @@ export async function studioChecklist(): Promise<
     () => body["features"] as ChecklistFeature[],
   );
 }
+
+export interface Reached {
+  encounters: string[];
+  exits: { from: string; to: string }[];
+}
+
+/** The encounters and exits a test has reached in the sandbox (REQ-8296). */
+export async function studioReached(): Promise<ParentReply<Reached>> {
+  const { status, body } = await call(
+    "/api/parent/studio/sandbox/play/reached",
+  );
+  return parentReply(status, body, () => body as unknown as Reached);
+}

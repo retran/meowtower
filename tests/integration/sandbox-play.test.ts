@@ -210,4 +210,57 @@ onlyOnPostgres("the sandbox play surface", () => {
     expect(bare.status).toBe(401);
     expect(await count("events")).toBe(gameEvents);
   });
+
+  it("REQ-8296: reports the encounters and exits a test has reached, for the parent only", async () => {
+    const campaign = await node("campaign", null, "Year 3", {});
+    const arc = await node("arc", campaign, "Arc 3", {});
+    const adventure = await node("adventure", arc, "Dune", {});
+    const next = await node("encounter", adventure, "Oasis", {});
+    const first = await node("encounter", adventure, "Dune top", {
+      situation: "Sand.",
+      exits: [{ when: "She descends", next }],
+    });
+    await call("POST", "/sandbox/reset", { from: "empty" });
+    const empty = (await (
+      await call("GET", "/sandbox/play/reached")
+    ).json()) as {
+      encounters: string[];
+      exits: unknown[];
+    };
+    expect(empty).toEqual({ encounters: [], exits: [] });
+
+    const started = await call("POST", "/sandbox/play/start", {
+      adventureId: adventure,
+      encounterId: first,
+    });
+    const out = (await started.json()) as { sessionId: string };
+    const sandboxCookie = cookieOf(started, "meowtower_sandbox_device");
+    await app.request(
+      `/api/parent/studio/sandbox/play/child/api/session/${out.sessionId}/scene/input`,
+      {
+        method: "POST",
+        headers: { ...json, cookie: `${parentCookie}; ${sandboxCookie}` },
+        body: JSON.stringify({
+          clientSeq: 7,
+          kind: "choice",
+          sceneId: first,
+          choiceId: next,
+        }),
+      },
+    );
+    const reached = (await (
+      await call("GET", "/sandbox/play/reached")
+    ).json()) as {
+      encounters: string[];
+      exits: { from: string; to: string }[];
+    };
+    expect(reached.encounters).toEqual([first]);
+    expect(reached.exits).toEqual([{ from: first, to: next }]);
+    expect(
+      (await call("GET", "/sandbox/play/reached", undefined, deviceCookie))
+        .status,
+    ).toBe(401);
+    await dropSchema(URL, sandboxSchemaOf(schema));
+    expect((await call("GET", "/sandbox/play/reached")).status).toBe(409);
+  });
 });

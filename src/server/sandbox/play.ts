@@ -3,6 +3,7 @@
 // Nothing here writes to a profile's own schema: the studio is only read for the encounter.
 import { Hono } from "hono";
 import { appendEvents } from "../../engine/events/append.js";
+import { eventsOfTypes } from "../../engine/events/read.js";
 import { registerDevice } from "../devices.js";
 import type { Db } from "../db/index.js";
 import type { Forced } from "./force.js";
@@ -113,7 +114,9 @@ export function createSandboxPlay(
   let held: SandboxPlay | null = null;
   return {
     async open() {
-      if (held) return held;
+      // A sandbox dropped from outside leaves a handle with no tables, so the handle goes with it.
+      if (held && (await held.db.tableExists("events"))) return held;
+      if (held) await this.release();
       const db = await openPostgresIfExists(url, schema);
       if (!db) return null;
       const app = new Hono();
@@ -179,4 +182,42 @@ export async function startAt(
     },
   ]);
   return { sessionId: started.sessionId, deviceToken };
+}
+
+export interface Reached {
+  /** The encounters a test showed, in the order first shown. */
+  readonly encounters: string[];
+  /** The exits a test took: the encounter left and the one the choice led to. */
+  readonly exits: { from: string; to: string }[];
+}
+
+/**
+ * What a test has reached, read from the sandbox's log (REQ-8296): each scene shown is an
+ * encounter reached, and each choice made is an exit taken. Each shows once, in order.
+ */
+export function reachedOf(
+  events: readonly { type: string; payload: unknown }[],
+): Reached {
+  const encounters: string[] = [];
+  const exits: { from: string; to: string }[] = [];
+  for (const e of events) {
+    const p = (e.payload ?? {}) as Record<string, unknown>;
+    const id = typeof p["sceneId"] === "string" ? p["sceneId"] : "";
+    if (!id) continue;
+    if (e.type === "scene_prepared" && !encounters.includes(id))
+      encounters.push(id);
+    const to = typeof p["choiceId"] === "string" ? p["choiceId"] : "";
+    if (
+      e.type === "choice_made" &&
+      to &&
+      !exits.some((x) => x.from === id && x.to === to)
+    )
+      exits.push({ from: id, to });
+  }
+  return { encounters, exits };
+}
+
+/** What a test has reached in the sandbox's database. */
+export async function reachedIn(db: Db): Promise<Reached> {
+  return reachedOf(await eventsOfTypes(db, ["scene_prepared", "choice_made"]));
 }

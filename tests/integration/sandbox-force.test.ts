@@ -130,7 +130,22 @@ async function playOne(force?: object): Promise<{
   // The task is drawn at random, so the first entry that parses is the answer; a refused entry is
   // no attempt and logs nothing, and the force waits for the one that counts.
   let answered = new Response(null, { status: 422 });
-  for (const raw of ["0", "1", "1/2", "a", "0,5", "yes", "x"]) {
+  for (const raw of [
+    "0",
+    "1",
+    "2",
+    "10",
+    "-1",
+    "1/2",
+    "3/4",
+    "0,5",
+    "1.5",
+    "a",
+    "b",
+    "yes",
+    "no",
+    "x",
+  ]) {
     answered = await child(`/api/session/${out.sessionId}/answer`, {
       method: "POST",
       body: JSON.stringify({
