@@ -555,6 +555,7 @@ export interface StudioVersion {
   version: number;
   /** `pending` waits for the parent; `discarded` was set aside; `current` is what play reads. */
   state: "history" | "current" | "pending" | "discarded";
+  body: unknown;
   author: "parent" | "generator";
   createdAt: string;
 }

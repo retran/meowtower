@@ -810,7 +810,13 @@ const accountScreen: Screen = {
  * The play surface of the sandbox (ADR-3280, REQ-8286): one button for each encounter of the adventure,
  * a draft included, and a frame with the game itself, opened on the sandbox, at that encounter.
  */
-function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
+function playPanel(
+  node: StudioNode,
+  note: HTMLElement,
+  here?: StudioNode,
+): HTMLElement {
+  /** The adventure that plays: the node itself, or the one an encounter sits in. */
+  const adventureId = here ? (here.parentId ?? node.id) : node.id;
   const box = el("div", { className: "sandbox-play" });
   const stage = el("div", { className: "screen-stage" });
   const turn = el("div", { className: "turn" });
@@ -838,7 +844,7 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
     });
     const take = button("ui.studio.turn.take", "turn-take", async () => {
       const done = await studioTurn(
-        node.id,
+        adventureId,
         encounterId,
         (said as HTMLInputElement).value,
         (outcome as HTMLSelectElement).value,
@@ -892,8 +898,42 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
       inspect,
     );
   };
+  /** Starts play in the sandbox at one encounter and shows its frame, the turn and the inspector. */
+  const startAt = async (encounterId: string): Promise<void> => {
+    const started = await studioPlayStart(adventureId, encounterId);
+    if (!started.ok) {
+      note.textContent = refusalText(started.error);
+      return;
+    }
+    showTurn(encounterId);
+    let frame = stage.querySelector("iframe");
+    if (!frame) {
+      frame = el("iframe", {
+        className: "screen-frame",
+        title: t("ui.studio.playFrame"),
+      });
+      frame.dataset["action"] = "studio-play-frame";
+      frame.style.width = "100%";
+      frame.style.height = "480px";
+      stage.append(frame);
+    }
+    frame.setAttribute(
+      "src",
+      `/?sandbox=1&lang=${document.documentElement.lang || "ru"}#/play`,
+    );
+  };
+  // On an encounter's own panel one button starts play from it, at its current text (REQ-8616).
+  if (here) {
+    box.append(
+      button("ui.studio.playHere", "studio-play-here", () => startAt(here.id)),
+      stage,
+      turn,
+      inspector,
+    );
+    return box;
+  }
   const open = button("ui.studio.play", "studio-play", async () => {
-    const listed = await studioEncounters(node.id);
+    const listed = await studioEncounters(adventureId);
     if (!listed.ok) {
       note.textContent = refusalText(listed.error);
       return;
@@ -909,29 +949,9 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
       return;
     }
     const choices = listed.value.map((e) => {
-      const b = button("ui.studio.playFrom", "studio-play-from", async () => {
-        const started = await studioPlayStart(node.id, e.id);
-        if (!started.ok) {
-          note.textContent = refusalText(started.error);
-          return;
-        }
-        showTurn(e.id);
-        let frame = stage.querySelector("iframe");
-        if (!frame) {
-          frame = el("iframe", {
-            className: "screen-frame",
-            title: t("ui.studio.playFrame"),
-          });
-          frame.dataset["action"] = "studio-play-frame";
-          frame.style.width = "100%";
-          frame.style.height = "480px";
-          stage.append(frame);
-        }
-        frame.setAttribute(
-          "src",
-          `/?sandbox=1&lang=${document.documentElement.lang || "ru"}#/play`,
-        );
-      });
+      const b = button("ui.studio.playFrom", "studio-play-from", () =>
+        startAt(e.id),
+      );
       b.textContent = t("ui.studio.playFrom", { title: e.title });
       return b;
     });
@@ -1196,6 +1216,7 @@ const studioScreen: Screen = {
         });
       };
       panel.append(versionsPanel(node, note, loadForm), formSlot);
+      if (node.level === "encounter") panel.append(playPanel(node, note, node));
       loadForm();
       if (node.level !== "encounter" && node.status === "draft")
         panel.append(
