@@ -16,6 +16,7 @@ import {
   StudioRefused,
   versionsOf,
 } from "../studio/store.js";
+import type { MasterModel } from "../../story/turn.js";
 import { openPostgresIfExists } from "./sandbox.js";
 
 /** The cookie that carries the sandbox's own device, apart from the game's device cookie. */
@@ -220,4 +221,100 @@ export function reachedOf(
 /** What a test has reached in the sandbox's database. */
 export async function reachedIn(db: Db): Promise<Reached> {
   return reachedOf(await eventsOfTypes(db, ["scene_prepared", "choice_made"]));
+}
+
+/** Makes the Master's model for one turn of the sandbox, from the sandbox's database and a spend bucket. */
+export type MasterFactory = (sandbox: Db, bucket: string) => MasterModel;
+
+/**
+ * The scenario as the Master reads it in its system prompt (REQ-8252): the adventure and its encounters,
+ * drafts included, each with the body the parent wrote.
+ */
+export async function scenarioOf(
+  studio: Db,
+  adventureId: string,
+): Promise<string> {
+  const adventure = await getNode(studio, adventureId);
+  if (adventure?.level !== "adventure")
+    throw new StudioRefused("adventure_unknown");
+  const bodyOf = async (id: string): Promise<unknown> =>
+    (await versionsOf(studio, id)).at(-1)?.body ?? null;
+  return JSON.stringify({
+    adventure: {
+      id: adventure.id,
+      title: adventure.title,
+      body: await bodyOf(adventure.id),
+    },
+    encounters: await Promise.all(
+      (await childrenOf(studio, adventureId)).map(async (n) => ({
+        id: n.id,
+        title: n.title,
+        body: await bodyOf(n.id),
+      })),
+    ),
+  });
+}
+
+export interface TurnView {
+  readonly encounter: string;
+  readonly said: string;
+  readonly reply: string;
+  /** The world changes the turn made, in order. */
+  readonly changes: { kind: string; name: string; note: string }[];
+}
+
+export interface ModelCallView {
+  readonly at: string;
+  readonly costUsd: number;
+  readonly latencyMs: number;
+  readonly request: string;
+  readonly response: string;
+}
+
+/**
+ * What the inspector shows (REQ-8292): each turn of the sandbox with the world changes it made, and
+ * each call of the Master's model with its request, reply, cost and time, in order.
+ */
+export async function turnsIn(
+  db: Db,
+): Promise<{ turns: TurnView[]; modelCalls: ModelCallView[] }> {
+  const turns: TurnView[] = [];
+  for (const e of await eventsOfTypes(db, ["turn_taken", "world_changed"])) {
+    const p = e.payload as Record<string, string>;
+    if (e.type === "turn_taken")
+      turns.push({
+        encounter: p["encounter"] ?? "",
+        said: p["said"] ?? "",
+        reply: p["reply"] ?? "",
+        changes: [],
+      });
+    else
+      turns.at(-1)?.changes.push({
+        kind: p["kind"] ?? "",
+        name: p["name"] ?? "",
+        note: p["note"] ?? "",
+      });
+  }
+  const rows = (await db
+    .prepare(
+      `SELECT at, cost_usd, latency_ms, request, response FROM llm_log
+       WHERE role = 'MASTER_MODEL' ORDER BY id`,
+    )
+    .all()) as {
+    at: string;
+    cost_usd: number;
+    latency_ms: number;
+    request: string;
+    response: string;
+  }[];
+  return {
+    turns,
+    modelCalls: rows.map((r) => ({
+      at: r.at,
+      costUsd: Number(r.cost_usd),
+      latencyMs: Number(r.latency_ms),
+      request: r.request,
+      response: r.response,
+    })),
+  };
 }
