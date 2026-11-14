@@ -351,4 +351,56 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     // The turn used the verdict, so the next one has none waiting.
     expect((await studio("POST", "/sandbox/play/turn", ask)).status).toBe(409);
   });
+  it("REQ-8174: a request_check call gets its task from the Director, and the choice is logged and shown", async () => {
+    const campaign = await node("campaign", null, "c6");
+    const arc = await node("arc", campaign, "a6");
+    const adventure = await node("adventure", arc, "Ford");
+    const encounter = await node("encounter", adventure, "Stones");
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    next = () =>
+      Promise.resolve({
+        text: "The stones are slick.",
+        calls: [
+          {
+            tool: "request_check",
+            input: { tried: "hop across", hard: "the stones are slick" },
+          },
+        ],
+      });
+    const ask = {
+      adventureId: adventure,
+      encounterId: encounter,
+      said: "I hop across",
+    };
+    const out = (await (
+      await studio("POST", "/sandbox/play/turn", ask)
+    ).json()) as {
+      check: { node: string; subtype: string; purpose: string } | null;
+    };
+    expect(out.check).toMatchObject({
+      node: expect.any(String) as string,
+      subtype: expect.any(String) as string,
+      purpose: expect.stringMatching(/^(review|frontier)$/) as string,
+    });
+    const sandbox = await openPostgresIfExists(DB_URL, sandboxSchemaOf(schema));
+    if (!sandbox) throw new Error("no sandbox");
+    try {
+      const rows = (await sandbox
+        .prepare("SELECT payload FROM events WHERE type = 'check_task_chosen'")
+        .all()) as { payload: string | object }[];
+      expect(rows).toHaveLength(1);
+      const logged =
+        typeof rows[0]?.payload === "string"
+          ? (JSON.parse(rows[0].payload) as object)
+          : rows[0]?.payload;
+      expect(logged).toMatchObject({ encounter, ...out.check });
+    } finally {
+      await sandbox.close();
+    }
+    next = () => Promise.resolve({ text: "She hops.", calls: [] });
+    const plain = (await (
+      await studio("POST", "/sandbox/play/turn", ask)
+    ).json()) as { check: unknown };
+    expect(plain.check).toBeNull();
+  });
 });
