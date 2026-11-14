@@ -21,6 +21,9 @@ interface Fake {
   links: string[];
 }
 
+/** What the sandbox was asked to set, in order. */
+const levers: object[] = [];
+
 /** What the sandbox was asked to start, in order. */
 const started: object[] = [];
 
@@ -113,6 +116,10 @@ async function stub(page: Page): Promise<Fake[]> {
     if (path === "/sandbox/play/start" && method === "POST") {
       started.push(route.request().postDataJSON() as object);
       return json(200, { sessionId: "s1", scene: {} });
+    }
+    if (path === "/sandbox/levers" && method === "POST") {
+      levers.push(route.request().postDataJSON() as object);
+      return json(200, { status: "ok" });
     }
     if (path === "/logs/adventures")
       return json(200, { adventures: [{ adventureId: "adv-1", events: 3 }] });
@@ -215,4 +222,26 @@ test("REQ-8286: the game opened with sandbox=1 asks the sandbox and never her ga
       p.startsWith("/api/parent/studio/sandbox/play/child/api/"),
     ),
   ).toBe(true);
+});
+
+test("REQ-8288: a state is picked, filled in and set in the sandbox", async ({
+  page,
+}) => {
+  levers.length = 0;
+  await stub(page);
+  await ready(page);
+  await page.locator("#lever-kind").selectOption("friendship");
+  await page.locator("#lever-familiarId").fill("f1");
+  await page.locator("#lever-points").fill("12");
+  await page.locator("#lever-level").fill("3");
+  await page.locator('[data-action="lever-set"]').click();
+  await expect(page.getByText("Задано в песочнице.")).toBeVisible();
+  await page.locator("#lever-kind").selectOption("creepiness");
+  await page.locator("#lever-value").fill("2");
+  await page.locator('[data-action="lever-set"]').click();
+  await expect.poll(() => levers.length).toBe(2);
+  expect(levers).toEqual([
+    { kind: "friendship", familiarId: "f1", points: 12, level: 3 },
+    { kind: "creepiness", value: 2 },
+  ]);
 });

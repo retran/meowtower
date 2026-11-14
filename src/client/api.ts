@@ -634,3 +634,14 @@ export async function studioPlayStart(
     sessionId: String(body["sessionId"]),
   }));
 }
+
+/** Sets one state of the game in the sandbox (REQ-8288). */
+export async function studioLever(
+  lever: Record<string, unknown>,
+): Promise<ParentReply<null>> {
+  const { status, body } = await call("/api/parent/studio/sandbox/levers", {
+    method: "POST",
+    body: JSON.stringify(lever),
+  });
+  return parentReply(status, body, () => null);
+}

@@ -7,6 +7,7 @@ import {
   type TemplateRow,
   studioCreate,
   studioEncounters,
+  studioLever,
   studioPlayStart,
   studioLog,
   studioLogs,
@@ -848,6 +849,94 @@ function playPanel(node: StudioNode, note: HTMLElement): HTMLElement {
   return box;
 }
 
+/** What each state lever asks for: a field is a number or a text, and the server checks the value. */
+const LEVERS: Readonly<
+  Record<string, readonly { name: string; number?: boolean }[]>
+> = {
+  language: [{ name: "value" }],
+  gender: [{ name: "value" }],
+  creepiness: [{ name: "value", number: true }],
+  friendship: [
+    { name: "familiarId" },
+    { name: "points", number: true },
+    { name: "level", number: true },
+  ],
+  item: [
+    { name: "rewardId" },
+    { name: "rewardKind" },
+    { name: "amount", number: true },
+  ],
+  nodeLevel: [{ name: "node" }, { name: "level", number: true }],
+  rank: [{ name: "rank" }],
+};
+
+/**
+ * The state levers of the sandbox (ADR-3280, REQ-8288): pick a state, fill what it asks for and set
+ * it. The sandbox takes it and her game never does.
+ */
+function leverPanel(note: HTMLElement): HTMLElement {
+  const kind = el("select", { id: "lever-kind" });
+  kind.dataset["action"] = "lever-kind";
+  for (const k of Object.keys(LEVERS))
+    kind.append(
+      el("option", { value: k }, t(`ui.studio.lever.kind.${k}` as UiKey)),
+    );
+  const fields = el("span", { className: "lever-fields" });
+  const inputs = new Map<string, HTMLInputElement>();
+  const draw = (): void => {
+    inputs.clear();
+    fields.replaceChildren();
+    for (const f of LEVERS[kind.value] ?? []) {
+      const input = el("input", {
+        id: `lever-${f.name}`,
+        type: f.number ? "number" : "text",
+      });
+      input.dataset["action"] = `lever-${f.name}`;
+      input.addEventListener("input", () => act(`lever-${f.name}`));
+      inputs.set(f.name, input);
+      fields.append(
+        el(
+          "label",
+          { htmlFor: `lever-${f.name}` },
+          t(`ui.studio.lever.field.${f.name}` as UiKey),
+        ),
+        input,
+      );
+    }
+  };
+  kind.addEventListener("change", () => {
+    act("lever-kind");
+    draw();
+  });
+  // Enter confirms a choice from the keyboard, as it does on a button.
+  kind.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    act("lever-kind");
+    draw();
+  });
+  draw();
+  const set = button("ui.studio.lever.set", "lever-set", async () => {
+    const lever: Record<string, unknown> = { kind: kind.value };
+    for (const f of LEVERS[kind.value] ?? []) {
+      const raw = inputs.get(f.name)?.value ?? "";
+      lever[f.name] = f.number ? Number(raw) : raw;
+    }
+    const done = await studioLever(lever);
+    note.textContent = done.ok
+      ? t("ui.studio.lever.done")
+      : t("ui.studio.refused", { reason: done.error });
+  });
+  return el(
+    "section",
+    { className: "levers" },
+    el("h2", {}, t("ui.studio.lever.title")),
+    el("label", { htmlFor: "lever-kind" }, t("ui.studio.lever.kind")),
+    kind,
+    fields,
+    set,
+  );
+}
+
 const INNER: Readonly<Record<StudioNode["level"], StudioNode["level"] | null>> =
   {
     campaign: "arc",
@@ -879,6 +968,7 @@ const studioScreen: Screen = {
       graph,
       panel,
       note,
+      leverPanel(note),
       logs,
       nav,
     );
