@@ -204,6 +204,25 @@ export async function editNode(
   return (await getNode(db, id)) as StoryNode;
 }
 
+/**
+ * Restores an earlier version as the next one (REQ-8602): the old body is stored again as a new
+ * version, so every version stays and one restore can itself be undone by another.
+ */
+export async function restoreVersion(
+  db: Db,
+  now: number,
+  id: string,
+  version: number,
+): Promise<StoryNode> {
+  const node = await getNode(db, id);
+  if (!node) throw new StudioRefused("no such node");
+  if (node.version === version)
+    throw new StudioRefused("that is the current version");
+  const old = await versionOf(db, id, version);
+  if (!old) throw new StudioRefused("no such version");
+  return editNode(db, now, id, old.body, { prompt: old.prompt });
+}
+
 export async function versionsOf(db: Db, id: string): Promise<StoryVersion[]> {
   const rows = (await db
     .prepare(

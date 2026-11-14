@@ -53,6 +53,7 @@ import {
   getJob,
   getNode,
   jobsOf,
+  restoreVersion,
   KINDS,
   LEVELS,
   linksOf,
@@ -195,6 +196,21 @@ export function mountStudio(
     if (!(await getNode(db, c.req.param("id"))))
       return c.json({ error: "node_unknown" }, 404);
     return c.json({ versions: await versionsOf(db, c.req.param("id")) });
+  });
+
+  app.post(`${base}/nodes/:id/versions/:v/restore`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const id = c.req.param("id");
+    if (!(await getNode(db, id))) return c.json({ error: "node_unknown" }, 404);
+    const version = Number(c.req.param("v"));
+    if (!Number.isInteger(version) || !(await versionOf(db, id, version)))
+      return c.json({ error: "version_unknown" }, 404);
+    try {
+      return c.json(await restoreVersion(db, now(), id, version));
+    } catch (err) {
+      return refused(c, err);
+    }
   });
 
   app.get(`${base}/nodes/:id/versions/:v`, async (c) => {

@@ -551,6 +551,35 @@ export async function studioSave(
   };
 }
 
+export interface StudioVersion {
+  version: number;
+  author: "parent" | "generator";
+  createdAt: string;
+}
+
+export async function studioVersions(
+  id: string,
+): Promise<ParentReply<StudioVersion[]>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/versions`,
+  );
+  return parentReply(status, body, () => body["versions"] as StudioVersion[]);
+}
+
+/** Stores an earlier version again as the next one (REQ-8602). */
+export async function studioRestore(
+  id: string,
+  version: number,
+): Promise<ParentReply<StudioNode>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/versions/${String(version)}/restore`,
+    { method: "POST", body: "{}" },
+  );
+  return status === 200
+    ? { ok: true, value: body as unknown as StudioNode }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
+}
+
 export async function studioStatus(
   id: string,
   next: StudioNode["status"],
