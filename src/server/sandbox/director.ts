@@ -3,13 +3,16 @@
 // log and written back to it as `check_task_chosen`, so the next choice counts it.
 import { readFileSync } from "node:fs";
 import { appendEvents } from "../../engine/events/append.js";
-import { allEvents } from "../../engine/events/read.js";
+import { allEvents, eventsOfTypes } from "../../engine/events/read.js";
 import type { DirectorConfig } from "../../engine/director/nextTask.js";
 import { GRAPH_FILE, type Graph, openGraph } from "../../engine/graph.js";
 import { loadParams, type ModelParamsT } from "../../engine/model/params.js";
+import { baseSeed } from "../../math/rng.js";
 import { templates } from "../../templates/index.js";
 import { type ChosenTask, chooseCheckTask } from "../../story/check-task.js";
 import type { Db } from "../db/index.js";
+import { type Directed } from "../play.js";
+import { atLevel } from "../task-source.js";
 
 interface Setup {
   readonly graph: Graph;
@@ -60,4 +63,81 @@ export async function setCheckTask(
     },
   ]);
   return chosen;
+}
+
+/** A choice of the Director that no task has met yet. */
+export interface Pending {
+  readonly seq: number;
+  readonly node: string;
+  readonly subtype: string;
+  readonly purpose: "review" | "frontier";
+}
+
+/**
+ * The Director's latest choice that no task has met: a task shown with the purpose `review` or
+ * `frontier` meets it, and a ladder task does not, so a ladder task shown meanwhile leaves it waiting.
+ */
+export function pendingCheck(
+  events: readonly { seq: number; type: string; payload: unknown }[],
+): Pending | null {
+  let waiting: Pending | null = null;
+  for (const e of events) {
+    const p = e.payload as {
+      node?: string;
+      subtype?: string;
+      purpose?: string;
+    };
+    if (e.type === "check_task_chosen")
+      waiting = {
+        seq: e.seq,
+        node: p.node ?? "",
+        subtype: p.subtype ?? "",
+        purpose: p.purpose === "review" ? "review" : "frontier",
+      };
+    else if (
+      e.type === "item_shown" &&
+      (p.purpose === "review" || p.purpose === "frontier")
+    )
+      waiting = null;
+  }
+  return waiting;
+}
+
+/**
+ * The task a pending choice draws: a template of its node and subtype, or of the node where none
+ * has the subtype, picked and seeded from the choice's own number so a replay draws the same one.
+ * None where the node has no template.
+ */
+export function directedTask(pending: Pending): Directed | null {
+  const ofNode = templates.filter((t) => t.node === pending.node);
+  const exact = ofNode.filter((t) => t.subtype === pending.subtype);
+  const pool = [...(exact.length > 0 ? exact : ofNode)].sort((a, b) =>
+    a.id < b.id ? -1 : 1,
+  );
+  const key = `check/${String(pending.seq)}`;
+  const at = baseSeed(key, "directed", 0)[0] ?? 0;
+  const template = pool[at % Math.max(1, pool.length)];
+  if (!template) return null;
+  return {
+    template,
+    base: baseSeed(key, template.id, 0),
+    purpose: pending.purpose,
+  };
+}
+
+/** The directed task the sandbox's child screen draws next, at the node's level where one is set. */
+export async function directedFor(db: Db): Promise<Directed | null> {
+  const pending = pendingCheck(
+    await eventsOfTypes(db, ["check_task_chosen", "item_shown"]),
+  );
+  const drawn = pending ? directedTask(pending) : null;
+  if (!drawn) return null;
+  const level = (
+    (await db
+      .prepare("SELECT level FROM node_levels WHERE node = ?")
+      .get(drawn.template.node)) as { level: number } | undefined
+  )?.level;
+  return level === undefined
+    ? drawn
+    : { ...drawn, template: atLevel(drawn.template, level, drawn.base) };
 }

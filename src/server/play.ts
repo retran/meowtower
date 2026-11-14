@@ -28,7 +28,7 @@ import {
 import { resumeFromLog } from "../engine/projections/resume.js";
 import { isZone } from "../shared/game-day.js";
 import { baseSeed } from "../math/rng.js";
-import { notation } from "../templates/spec.js";
+import { type Compiled, notation } from "../templates/spec.js";
 import {
   hexOf,
   inputOf,
@@ -140,6 +140,15 @@ export interface PlayOptions {
   frames?: FrameQueue;
   /** Takes the one thing forced on the next answer, for the sandbox (REQ-8290); the game has none. */
   forced?: () => Forced | null;
+  /** The task the Director chose for a check, waiting to be drawn; the sandbox has one, the game none (REQ-8174). */
+  directed?: () => Promise<Directed | null>;
+}
+
+/** A task the Director chose: the template, the seed it draws at and why the slot was filled. */
+export interface Directed {
+  readonly template: Compiled;
+  readonly base: Uint8Array;
+  readonly purpose: "review" | "frontier";
 }
 
 /** The candidate a task was drawn at, read from its effective seed `base/k`. */
@@ -326,6 +335,7 @@ export function mountPlay(
     tasks,
     frames,
     forced,
+    directed: directedOf,
   }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
@@ -351,7 +361,7 @@ export function mountPlay(
     (await sessionRow(db, sessionId))?.adventureId ?? sessionId;
   /** Waits for the story of the task about to show, while the client shows its loader (REQ-7890). */
   const nextFrame = async (sessionId: string): Promise<void> => {
-    if (!frames || tasks !== "registry") return;
+    if (!frames || tasks !== "registry" || (await directedOf?.())) return;
     const played = await playLog(sessionId);
     const answered = answeredIn(played);
     const open = played
@@ -795,8 +805,11 @@ export function mountPlay(
       );
     }
     // A scene prepared for the session and not yet answered shows before the next task, in the
-    // registry's flow too: the sandbox starts play at an encounter this way (REQ-8286).
-    if (tasks === "registry") {
+    // registry's flow too: the sandbox starts play at an encounter this way (REQ-8286). A task the
+    // Director chose for a check comes first, because her action in the scene asked for it (REQ-8174).
+    const directed =
+      tasks === "registry" ? ((await directedOf?.()) ?? null) : null;
+    if (tasks === "registry" && !directed) {
       const point = resumeFromLog(played);
       if (point?.scene) {
         if (lifecycle.length) await appendEvents(db, lifecycle);
@@ -914,7 +927,8 @@ export function mountPlay(
       return await send(c, End, { kind: "end" });
     }
     if (tasks === "registry") {
-      const chosen = await endlessTask(await adventureKey(sessionId), index);
+      const chosen =
+        directed ?? (await endlessTask(await adventureKey(sessionId), index));
       const frame =
         (await frames?.take({
           template: chosen.template,
@@ -953,7 +967,7 @@ export function mountPlay(
             templateVersion: 1,
             params: { drawn: made.paramsKey },
             node: chosen.template.node,
-            purpose: "ladder",
+            purpose: directed?.purpose ?? "ladder",
             effectiveSeed: `${seed}/0`,
             candidate: 0,
             frameSource: frame ? "live" : "template",
