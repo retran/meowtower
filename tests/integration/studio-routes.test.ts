@@ -593,15 +593,15 @@ it("REQ-8614: an encounter's exits from the form are the edges of its graph", as
       exits: [
         { when: "she crosses", next: bridge.id },
         { when: "she climbs", next: tower.id },
+        { when: "she crosses again", next: bridge.id },
       ],
-      links: [tower.id],
     },
   });
   const listed = (await (
     await call("GET", `/nodes?parent=${adventure.id}`)
   ).json()) as { nodes: { id: string; links: string[] }[] };
   const links = listed.nodes.find((n) => n.id === gate.id)?.links ?? [];
-  // Each target once, whether it comes from an exit or from a link.
+  // Each target once, however many exits lead to it.
   expect([...links].sort()).toEqual([bridge.id, tower.id].sort());
   expect(listed.nodes.find((n) => n.id === bridge.id)?.links).toEqual([]);
 });
