@@ -83,7 +83,7 @@ A large interface. The parent's time: a scenario can't play until it is read. Sp
 3. The graph page with nested levels, reads and logs (REQ-8258, REQ-8276).
 4. Levers, task lab and screen lab (REQ-8288, REQ-8290, REQ-8298, REQ-8300).
 5. Play from any encounter and the turn inspector, with ADR-3270's turn loop (REQ-8286, REQ-8292, REQ-8296).
-6. Generators, prompts, plain edits, comparison and scope (REQ-8260, REQ-8262, REQ-8306, REQ-8308, REQ-8310, REQ-8312).
+6. Generators, prompts, plain edits, comparison and scope (REQ-8260, REQ-8262, REQ-8306, REQ-8308, REQ-8310, REQ-8312). ADR-3360 carries the form, the versions, the comparison and the generator button, and this step keeps what they leave: a prompt that reworks a selected level or everything inside it (REQ-8262, REQ-8310), and an estimate before each spending action elsewhere in the studio (REQ-8312).
 7. Approval, review marks and the fallback (REQ-8266, REQ-8268, REQ-8270, REQ-8272).
 8. Simulated player and prompt lab (REQ-8294, REQ-8302).
 9. The Master's facts, events, summaries and retrieval, with the parent's corrections and attachments (REQ-8336, REQ-8320, REQ-8322, REQ-8324, REQ-8326).
