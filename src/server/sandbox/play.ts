@@ -10,6 +10,7 @@ import type { Forced } from "./force.js";
 import { mountPairing } from "../pairing.js";
 import { mountPlay } from "../play.js";
 import { createStream } from "../stream.js";
+import { directedFor } from "./director.js";
 import {
   childrenOf,
   getNode,
@@ -128,6 +129,7 @@ export function createSandboxPlay(
         now,
         stream: createStream(),
         tasks: "registry",
+        directed: () => directedFor(db),
         forced: () => {
           const taken = pending;
           pending = null;

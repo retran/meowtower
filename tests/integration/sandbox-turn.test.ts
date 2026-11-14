@@ -403,4 +403,69 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     ).json()) as { check: unknown };
     expect(plain.check).toBeNull();
   });
+  it("REQ-8174: the task the Director chose is the next one on the child's screen, with its purpose", async () => {
+    const campaign = await node("campaign", null, "c7");
+    const arc = await node("arc", campaign, "a7");
+    const adventure = await node("adventure", arc, "Gate");
+    const encounter = await node("encounter", adventure, "Lock", {
+      situation: "A lock.",
+    });
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    const started = await studio("POST", "/sandbox/play/start", {
+      adventureId: adventure,
+      encounterId: encounter,
+    });
+    const { sessionId } = (await started.json()) as { sessionId: string };
+    const sandboxCookie = cookieOf(started, "meowtower_sandbox_device");
+    const child = (path: string) =>
+      app.request(`/api/parent/studio/sandbox/play/child${path}`, {
+        headers: { ...json, cookie: `${parentCookie}; ${sandboxCookie}` },
+      });
+    next = () =>
+      Promise.resolve({
+        text: "The lock is stiff.",
+        calls: [
+          {
+            tool: "request_check",
+            input: { tried: "pick it", hard: "it is stiff" },
+          },
+        ],
+      });
+    const turn = (await (
+      await studio("POST", "/sandbox/play/turn", {
+        adventureId: adventure,
+        encounterId: encounter,
+        said: "I pick the lock",
+      })
+    ).json()) as { check: { node: string; purpose: string } };
+    const shown = (await (
+      await child(`/api/session/${sessionId}/next`)
+    ).json()) as { kind: string; itemId?: string };
+    expect(shown.kind).not.toBe("scene");
+    const again = (await (
+      await child(`/api/session/${sessionId}/next`)
+    ).json()) as { itemId?: string };
+    expect(again.itemId).toBe(shown.itemId);
+
+    const sandbox = await openPostgresIfExists(DB_URL, sandboxSchemaOf(schema));
+    if (!sandbox) throw new Error("no sandbox");
+    try {
+      const rows = (await sandbox
+        .prepare("SELECT payload FROM events WHERE type = 'item_shown'")
+        .all()) as { payload: string | object }[];
+      expect(rows).toHaveLength(1);
+      const logged = (
+        typeof rows[0]?.payload === "string"
+          ? JSON.parse(rows[0].payload)
+          : rows[0]?.payload
+      ) as { node: string; purpose: string; itemId: string };
+      expect(logged).toMatchObject({
+        node: turn.check.node,
+        purpose: turn.check.purpose,
+        itemId: shown.itemId,
+      });
+    } finally {
+      await sandbox.close();
+    }
+  });
 });
