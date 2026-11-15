@@ -308,3 +308,26 @@ describe("REQ-8310: a prompt on a node reworks its level with one call", () => {
     expect(faults).toEqual(["provider_failed", "check_failed"]);
   });
 });
+
+describe("REQ-8280: the writer reads the child's profile", () => {
+  it("puts the profile in the brief of a plan and of a scenario, and nothing where there is none", async () => {
+    const withProfile = replies(PLAN);
+    await writePlan(withProfile.gateway, {
+      ...ask,
+      profile: "loves cats and boats",
+    });
+    expect(withProfile.users[0]).toContain("loves cats and boats");
+
+    const full = replies(PLAN, OK, scenario(10), GOOD);
+    await writeScenario(full.gateway, {
+      ...ask,
+      profile: "loves cats and boats",
+    });
+    expect(full.users[0]).toContain("loves cats and boats");
+    expect(full.users[2]).toContain("loves cats and boats");
+
+    const none = replies(PLAN);
+    await writePlan(none.gateway, ask);
+    expect(none.users[0]).not.toContain("loves cats");
+  });
+});

@@ -158,3 +158,19 @@ describe("BUG-0020: the schema the Master asks the provider for", () => {
     expect(reply.calls).toEqual([{ tool: "set_level", input: { level: 9 } }]);
   });
 });
+
+describe("ADR-3420: the showrunner runs in the player tier, because it reads the child's profile", () => {
+  it("is a player-tier role, which the direct route takes only with the attestation", () => {
+    expect(ROLES.SHOWRUNNER_MODEL.tier).toBe("player");
+    expect(() =>
+      readConfig({ ...base, SHOWRUNNER_MODEL: "anthropic:claude-opus-5-5" }),
+    ).toThrow(ConfigInvalid);
+    expect(
+      readConfig({
+        ...base,
+        SHOWRUNNER_MODEL: "anthropic:claude-opus-5-5",
+        ANTHROPIC_ZDR_ATTESTED: "true",
+      })?.roles.SHOWRUNNER_MODEL,
+    ).toEqual({ route: "anthropic", model: "claude-opus-5-5" });
+  });
+});
