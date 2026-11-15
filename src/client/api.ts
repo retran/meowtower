@@ -479,9 +479,14 @@ export interface StudioNode {
 
 export async function studioNodes(
   parent: string | null,
+  archived = false,
 ): Promise<ParentReply<StudioNode[]>> {
+  const query = [
+    ...(parent ? [`parent=${encodeURIComponent(parent)}`] : []),
+    ...(archived ? ["archived=1"] : []),
+  ].join("&");
   const { status, body } = await call(
-    `/api/parent/studio/nodes${parent ? `?parent=${encodeURIComponent(parent)}` : ""}`,
+    `/api/parent/studio/nodes${query ? `?${query}` : ""}`,
   );
   return parentReply(status, body, () => body["nodes"] as StudioNode[]);
 }
@@ -644,6 +649,20 @@ export async function studioJob(id: string): Promise<ParentReply<StudioJob>> {
     `/api/parent/studio/jobs/${encodeURIComponent(id)}`,
   );
   return parentReply(status, body, () => body as unknown as StudioJob);
+}
+
+/** Archives a node, hiding it from its level and from play, or brings it back (ADR-3390). */
+export async function studioArchive(
+  id: string,
+  action: "archive" | "unarchive",
+): Promise<ParentReply<StudioNode>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/${action}`,
+    { method: "POST", body: "{}" },
+  );
+  return status === 200
+    ? { ok: true, value: body as unknown as StudioNode }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
 }
 
 export async function studioStatus(

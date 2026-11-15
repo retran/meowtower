@@ -6,6 +6,7 @@ import {
   type OpenedTask,
   type TemplateRow,
   studioChecklist,
+  studioArchive,
   studioCreate,
   studioEncounters,
   studioForce,
@@ -1131,6 +1132,8 @@ const studioScreen: Screen = {
     graph.setAttribute("aria-label", t("ui.studio.graph"));
     const panel = el("div", { className: "panel" });
     const logs = el("div", { className: "logs" });
+    /** The archived nodes of the level that shows, listed on request with a way back (REQ-8638). */
+    const archivedBox = el("div", { className: "archived" });
     const nav = el("nav", { className: "actions" });
     const section = el(
       "section",
@@ -1143,6 +1146,7 @@ const studioScreen: Screen = {
       note,
       leverPanel(note),
       forcePanel(note),
+      archivedBox,
       logs,
       nav,
     );
@@ -1263,6 +1267,15 @@ const studioScreen: Screen = {
         );
       if (node.level === "encounter") panel.append(playPanel(node, note, node));
       loadForm();
+      panel.append(
+        button("ui.studio.archive", "studio-archive", async () => {
+          const done = await studioArchive(node.id, "archive");
+          if (done.ok) {
+            note.textContent = t("ui.studio.archived.done");
+            void show();
+          } else note.textContent = refusalText(done.error);
+        }),
+      );
       if (node.level !== "encounter" && node.status === "draft")
         panel.append(
           button("ui.studio.approve", "studio-approve", async () => {
@@ -1384,6 +1397,43 @@ const studioScreen: Screen = {
         graph.append(b);
       }
     };
+
+    /** Lists the archived nodes of the level that shows, each with a button that brings it back. */
+    const showArchived = async (): Promise<void> => {
+      const got = await studioNodes(trail.at(-1)?.id ?? null, true);
+      if (!got.ok) {
+        note.textContent = refusalText(got.error);
+        return;
+      }
+      archivedBox.replaceChildren(
+        el("h2", {}, t("ui.studio.archived.title")),
+        ...(got.value.length === 0
+          ? [status(t("ui.studio.archived.none"))]
+          : got.value.map((n) => {
+              const back = button(
+                "ui.studio.archived.bringBack",
+                `studio-unarchive-${n.id}`,
+                async () => {
+                  const done = await studioArchive(n.id, "unarchive");
+                  if (!done.ok) {
+                    note.textContent = refusalText(done.error);
+                    return;
+                  }
+                  note.textContent = t("ui.studio.archived.back");
+                  await showArchived();
+                  void show();
+                },
+              );
+              back.textContent = t("ui.studio.archived.bringBack", {
+                title: n.title,
+              });
+              return back;
+            })),
+      );
+    };
+    archivedBox.append(
+      button("ui.studio.archived.show", "studio-archived", showArchived),
+    );
 
     const show = async (): Promise<void> => {
       selected = null;

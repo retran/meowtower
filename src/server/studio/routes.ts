@@ -62,6 +62,8 @@ import {
   getEntry,
   getJob,
   getNode,
+  archiveNode,
+  unarchiveNode,
   jobsOf,
   keepPending,
   discardPending,
@@ -156,13 +158,43 @@ export function mountStudio(
     const who = await guard(c);
     if (who instanceof Response) return who;
     const parent = c.req.query("parent");
-    const nodes = await childrenOf(db, parent ? parent : null);
+    const archived = c.req.query("archived") === "1";
+    const nodes = await childrenOf(db, parent ? parent : null, { archived });
+    // A link to a node that is archived is not an edge; it stays in the body (REQ-8634).
+    const hidden = new Set(
+      archived
+        ? []
+        : (
+            await childrenOf(db, parent ? parent : null, { archived: true })
+          ).map((n) => n.id),
+    );
     return c.json({
       nodes: await Promise.all(
-        nodes.map(async (n) => ({ ...n, links: await linksOf(db, n.id) })),
+        nodes.map(async (n) => ({
+          ...n,
+          links: (await linksOf(db, n.id)).filter((id) => !hidden.has(id)),
+        })),
       ),
     });
   });
+
+  // A node is archived and brought back, never deleted: its versions stay (ADR-3390).
+  const archiving =
+    (change: typeof archiveNode) =>
+    async (c: Context): Promise<Response> => {
+      const who = await guard(c);
+      if (who instanceof Response) return who;
+      const id = c.req.param("id") ?? "";
+      if (!(await getNode(db, id)))
+        return c.json({ error: "node_unknown" }, 404);
+      try {
+        return c.json(await change(db, now(), id));
+      } catch (err) {
+        return refused(c, err);
+      }
+    };
+  app.post(`${base}/nodes/:id/archive`, archiving(archiveNode));
+  app.post(`${base}/nodes/:id/unarchive`, archiving(unarchiveNode));
 
   app.post(`${base}/nodes`, async (c) => {
     const who = await guard(c);

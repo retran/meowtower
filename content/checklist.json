@@ -89,6 +89,14 @@
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
     {
+      "id": "api:POST /nodes/:id/archive",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /nodes/:id/unarchive",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
       "id": "api:POST /nodes/:id/pending/keep",
       "tests": ["tests/integration/studio-routes.test.ts"]
     },

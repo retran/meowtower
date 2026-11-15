@@ -31,6 +31,8 @@ export function refusalText(reason: string): string {
     return t("ui.studio.refusal.noGenerator");
   if (reason === "version_waits")
     return t("ui.studio.generate.cause.version_waits");
+  if (reason === "an archived node is not edited")
+    return t("ui.studio.refusal.archived");
   if (reason === "that is the current version")
     return t("ui.studio.refusal.alreadyCurrent");
   if (reason === "the title is 1 to 120 characters")
