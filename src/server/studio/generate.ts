@@ -59,8 +59,11 @@ export async function monthSpendUsd(db: Db, now: number): Promise<number> {
   return Number(row.usd);
 }
 
-/** The price of one call, in dollars, where fewer than `MEASURED_FROM` calls are logged; my choice, which traces to no log. */
-export const DEFAULT_CALL_USD = 0.05;
+/**
+ * The price of one call, in dollars, where fewer than `MEASURED_FROM` calls are logged (ADR-3410): a live run
+ * of the scenario writer on 2026-11-15 made 14 calls for 0.9222 dollars, 0.066 a call, rounded up.
+ */
+export const DEFAULT_CALL_USD = 0.07;
 /** From this many earlier calls the price is their mean, and the estimate says it is measured. */
 export const MEASURED_FROM = 10;
 /** The newest calls that make the mean. */
