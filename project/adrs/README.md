@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-76 decisions in all: 59 approved, 17 done.
+77 decisions in all: 60 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -82,5 +82,6 @@
 | [ADR-3390](ADR-3390-a-node-is-archived-and-never-deleted-and-the-parent-can-bring-it-back.md)                       | A node is archived and never deleted, and the parent can bring it back                                                                                                                                                                                                                                                                            | approved |
 | [ADR-3400](ADR-3400-a-generated-version-carries-the-critics-remaining-findings.md)                                  | A generated version carries the critic's remaining findings, and the page shows them beside the comparison                                                                                                                                                                                                                                        | approved |
 | [ADR-3410](ADR-3410-the-default-price-of-a-model-call-is-seven-cents-from-a-live-run.md)                            | The default price of a model call is seven cents, from a live run                                                                                                                                                                                                                                                                                 | approved |
+| [ADR-3420](ADR-3420-the-showrunner-and-the-master-read-the-childs-profile-in-the-player-tier.md)                    | The showrunner and the Master read the child's profile, and both run in the player tier                                                                                                                                                                                                                                                           | approved |
 
 <!-- /meow-flow index -->
