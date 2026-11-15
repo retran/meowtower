@@ -842,6 +842,7 @@ export interface TurnsView {
     said: string;
     reply: string;
     changes: { kind: string; name: string; note: string }[];
+    check: { node: string; subtype: string; purpose: string } | null;
   }[];
   modelCalls: {
     at: string;

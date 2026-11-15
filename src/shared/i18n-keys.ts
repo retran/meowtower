@@ -399,6 +399,13 @@ export interface StringParams {
   "ui.studio.turn.take": NoParams;
   "ui.studio.turn.inspect": NoParams;
   "ui.studio.turn.calls": NoParams;
+  "ui.studio.turn.director": {
+    node: string | number;
+    purpose: string | number;
+    subtype: string | number;
+  };
+  "ui.studio.turn.purpose.review": NoParams;
+  "ui.studio.turn.purpose.frontier": NoParams;
   "ui.studio.turn.blocked": NoParams;
   "ui.studio.turn.outcome": NoParams;
   "ui.studio.turn.outcomeNone": NoParams;

@@ -811,6 +811,28 @@ const accountScreen: Screen = {
  * The play surface of the sandbox (ADR-3280, REQ-8286): one button for each encounter of the adventure,
  * a draft included, and a frame with the game itself, opened on the sandbox, at that encounter.
  */
+/** The Director's task for a check, in a line of the turn inspector (REQ-8292). */
+function directorLine(check: {
+  node: string;
+  subtype: string;
+  purpose: string;
+}): HTMLElement {
+  const known = check.purpose === "review" || check.purpose === "frontier";
+  const line = el(
+    "div",
+    {},
+    t("ui.studio.turn.director", {
+      node: check.node,
+      subtype: check.subtype,
+      purpose: known
+        ? t(uiKey(`ui.studio.turn.purpose.${check.purpose}`))
+        : check.purpose,
+    }),
+  );
+  line.dataset["check"] = check.purpose;
+  return line;
+}
+
 function playPanel(
   node: StudioNode,
   note: HTMLElement,
@@ -871,6 +893,7 @@ function playPanel(
               {},
               `${x.said} > ${x.reply}`,
               ...x.changes.map((c) => el("div", {}, `${c.name}: ${c.note}`)),
+              ...(x.check ? [directorLine(x.check)] : []),
             ),
           );
         const calls = el("ul", { className: "model-calls" });
