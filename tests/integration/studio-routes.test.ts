@@ -1413,3 +1413,41 @@ describe("REQ-8270: a change above approved work marks it for review", () => {
     ).toBe(401);
   });
 });
+
+describe("REQ-8302: the prompt lab's routes", () => {
+  it("lists each prompt with its version, reads the text of one, and needs the parent's session", async () => {
+    const listed = (await (await call("GET", "/lab/prompts")).json()) as {
+      prompts: { id: string; version: string; fields: string[] }[];
+    };
+    expect(listed.prompts.map((p) => p.id)).toContain("frames.ru");
+    expect(listed.prompts.find((p) => p.id === "frames.ru")?.version).toMatch(
+      /^[0-9a-f]{12}$/,
+    );
+    const one = (await (
+      await call("GET", "/lab/prompts/frames.ru")
+    ).json()) as {
+      version: string;
+      texts: Record<string, string>;
+    };
+    expect(one.texts["intro"]?.length).toBeGreaterThan(0);
+    expect(one.version).toBe(
+      listed.prompts.find((p) => p.id === "frames.ru")?.version,
+    );
+    expect((await call("GET", "/lab/prompts/nope.xx")).status).toBe(404);
+    expect(
+      (await call("GET", "/lab/prompts", undefined, deviceCookie)).status,
+    ).toBe(401);
+  });
+
+  it("answers 409 for a run while no model is set, and 400 for a body that is not a run", async () => {
+    const run = await call("POST", "/lab/run", {
+      lang: "ru",
+      templateId: "A1.sum",
+    });
+    expect(run.status).toBe(409);
+    expect(((await run.json()) as { error: string }).error).toBe(
+      "lab_not_configured",
+    );
+    expect((await call("POST", "/lab/run", { lang: "xx" })).status).toBe(400);
+  });
+});
