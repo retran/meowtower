@@ -92,3 +92,35 @@ describe("REQ-8600: a fault names the field, what it holds and what it needs", (
     });
   });
 });
+
+describe("REQ-8306: a value that was stored is not refused again for its size", () => {
+  const stored = {
+    situation: "S".repeat(900),
+    checks: 9,
+    exits: [{ when: "x".repeat(900), next: "e2" }],
+  };
+  const save = (body: unknown) =>
+    checkEncounterBody(body, { ...around, stored });
+
+  it("accepts the stored long text, count and exit unchanged beside an edit of another field", () => {
+    expect(save({ ...stored, goal: "run" })).toBeNull();
+  });
+
+  it("refuses the same field once it is changed and is still too long", () => {
+    expect(save({ ...stored, situation: "S".repeat(901) })).toMatchObject({
+      field: "situation",
+      code: "too_long",
+      held: "901",
+    });
+    expect(save({ ...stored, checks: 8 })).toMatchObject({
+      field: "checks",
+      code: "out_of_range",
+    });
+  });
+
+  it("still refuses a long text where nothing was stored", () => {
+    expect(
+      checkEncounterBody({ situation: "S".repeat(900) }, around),
+    ).toMatchObject({ code: "too_long" });
+  });
+});

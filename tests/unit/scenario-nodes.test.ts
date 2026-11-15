@@ -90,14 +90,14 @@ describe("REQ-8260: the nodes a generated scenario makes", () => {
     });
   });
 
-  it("makes bodies that pass the check a save of the form passes", () => {
+  it("keeps every text and number as the writer gave it, and shortens only the title", () => {
     const planned = planEncounters(
       {
         ...scenario,
         start: "n0",
         encounters: [
           encounter("n0", {
-            place: "P".repeat(300),
+            place: "word ".repeat(60).trim(),
             situation: "S".repeat(900),
             checks: 9,
             exits: [{ when: "x".repeat(900), next: "n1" }],
@@ -107,14 +107,47 @@ describe("REQ-8260: the nodes a generated scenario makes", () => {
       },
       counter(),
     );
+    const first = planned[0];
+    expect(first?.body["situation"]).toBe("S".repeat(900));
+    expect(first?.body["place"]).toBe("word ".repeat(60).trim());
+    expect(first?.body["checks"]).toBe(9);
+    expect((first?.body["exits"] as { when: string }[])[0]?.when).toBe(
+      "x".repeat(900),
+    );
+    // The title is a label of at most 120 characters, cut at a word and marked; the place keeps its text.
+    expect(first?.title.length).toBeLessThanOrEqual(120);
+    expect(first?.title.endsWith("\u2026")).toBe(true);
+    expect(
+      first?.title
+        .slice(0, -1)
+        .trimEnd()
+        .split(" ")
+        .every((w) => w === "word"),
+    ).toBe(true);
+  });
+
+  it("makes bodies that a save of the form accepts, because they are what is stored", () => {
+    const planned = planEncounters(
+      {
+        ...scenario,
+        start: "n0",
+        encounters: [
+          encounter("n0", { situation: "S".repeat(900), checks: 9 }),
+          encounter("n1"),
+        ],
+      },
+      counter(),
+    );
     const ids = planned.map((p) => p.id);
     for (const p of planned)
       expect(
-        checkEncounterBody(p.body, { self: p.id, siblings: ids }),
+        checkEncounterBody(p.body, {
+          self: p.id,
+          siblings: ids,
+          stored: p.body,
+        }),
         p.title,
       ).toBeNull();
-    expect(planned[0]?.title.length).toBeLessThanOrEqual(120);
-    expect(planned[0]?.body["checks"]).toBe(6);
   });
 
   it("makes nothing from a scenario that is not one", () => {
