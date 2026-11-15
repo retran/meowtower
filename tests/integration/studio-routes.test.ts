@@ -1149,8 +1149,8 @@ describe("archiving a node", () => {
       },
     });
     expect((await titles(adventure)).map((n) => n.title)).toEqual([
-      "Gate",
       "Bridge",
+      "Gate",
     ]);
 
     const archived = await call("POST", `/nodes/${bridge.id}/archive`);
@@ -1182,10 +1182,12 @@ describe("archiving a node", () => {
     const back = await call("POST", `/nodes/${bridge.id}/unarchive`);
     expect(back.status).toBe(200);
     expect((await titles(adventure)).map((n) => n.title)).toEqual([
-      "Gate",
       "Bridge",
+      "Gate",
     ]);
-    expect((await titles(adventure))[0]?.links).toEqual([bridge.id]);
+    expect(
+      (await titles(adventure)).find((n) => n.title === "Gate")?.links,
+    ).toEqual([bridge.id]);
     expect((await titles(adventure, "&archived=1")).length).toBe(0);
     const notArchived = await call("POST", `/nodes/${bridge.id}/unarchive`);
     expect(notArchived.status).toBe(400);
