@@ -193,10 +193,12 @@ export function mountStudio(
       // An encounter's body passes the code's check before it is stored (REQ-8306, REQ-8600).
       const target = await getNode(db, c.req.param("id"));
       if (target && target.level !== "encounter") {
+        const beside = (await childrenOf(db, target.parentId)).map((n) => n.id);
         const found = checkLevelBody(
           target.level,
           body.data.body,
           await currentBodyOf(db, target.id),
+          { self: target.id, siblings: beside },
         );
         if (found) return c.json({ error: "edit_refused", fault: found }, 400);
       }

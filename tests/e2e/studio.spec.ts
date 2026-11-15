@@ -887,3 +887,21 @@ test("REQ-8306: a campaign shows its own fields and not an adventure's", async (
   await expect(page.locator("#lf-theme")).toBeVisible();
   await expect(page.locator("#lf-kind")).toHaveCount(0);
 });
+
+test("REQ-8258: an arc is linked to the arcs beside it from its form", async ({
+  page,
+}) => {
+  saved.length = 0;
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await page.locator('[data-action="studio-open"]').click();
+  await page.locator('button[data-node="a1"]').click();
+  // Only the arc beside it is offered, and a1 leads to a2 in the stub already.
+  await expect(page.locator('input[data-action="lf-link-a2"]')).toBeVisible();
+  await expect(page.locator('input[data-action="lf-link-a1"]')).toHaveCount(0);
+  await page.locator('input[data-action="lf-link-a2"]').check();
+  await page.locator('[data-action="level-save"]').click();
+  await expect.poll(() => saved.length).toBe(1);
+  expect(saved[0]).toEqual({ id: "a1", body: { links: ["a2"] } });
+});

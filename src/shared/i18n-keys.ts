@@ -513,6 +513,10 @@ export interface StringParams {
   "ui.studio.levelForm.jsonHelp": NoParams;
   "ui.studio.levelForm.jsonSave": NoParams;
   "ui.studio.levelForm.badJson": NoParams;
+  "ui.studio.lf.links": NoParams;
+  "ui.studio.levelForm.linksNone": NoParams;
+  "ui.studio.fault.unknown_sibling": { label: string | number };
+  "ui.studio.fault.own_link": { label: string | number };
   "ui.studio.fault.unknown_kind": {
     held: string | number;
     label: string | number;

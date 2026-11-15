@@ -76,3 +76,43 @@ describe("REQ-8306: what a body above the encounters may hold", () => {
     });
   });
 });
+
+describe("REQ-8258, REQ-8306: the links of an arc or an adventure lead to the nodes beside it", () => {
+  const around = { self: "a1", siblings: ["a1", "a2", "a3"] };
+  const check = (body: unknown) =>
+    checkLevelBody("arc", body, undefined, around);
+
+  it("accepts links to siblings, written as ids or as objects with `to`", () => {
+    expect(check({ links: ["a2", { to: "a3" }] })).toBeNull();
+    expect(check({ links: [] })).toBeNull();
+  });
+
+  it("names a link that leads nowhere on this level, and one that leads to the node itself", () => {
+    expect(check({ links: ["a2", "zz"] })).toEqual({
+      field: "links.1",
+      code: "unknown_sibling",
+      held: "zz",
+      need: "a node of this level",
+    });
+    expect(check({ links: ["a1"] })).toMatchObject({
+      field: "links.0",
+      code: "own_link",
+    });
+  });
+
+  it("names links that are not a list, and an entry that is not an id", () => {
+    expect(check({ links: "a2" })).toMatchObject({
+      field: "links",
+      code: "not_object",
+      need: "a list",
+    });
+    expect(check({ links: [5] })).toMatchObject({
+      field: "links.0",
+      code: "not_text",
+    });
+  });
+
+  it("does not check links where no siblings are given", () => {
+    expect(checkLevelBody("arc", { links: ["zz"] })).toBeNull();
+  });
+});

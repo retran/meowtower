@@ -12,6 +12,7 @@ import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
 import type { AdventureWriter } from "../../src/server/studio/generate.js";
 import {
+  editNode,
   getJob,
   proposeVersion,
   reportJob,
@@ -288,8 +289,9 @@ it("gives each node of a level the ids it leads to, for the graph's edges", asyn
       body: { links: [] },
     })
   ).json()) as { id: string };
-  await call("PUT", `/nodes/${a.id}`, {
-    body: { links: [b.id, { to: "ghost" }, 7] },
+  // The reader tolerates what the form's check now refuses, because a body can arrive by another path.
+  await editNode(db, Date.parse("2026-11-10T12:00:00Z"), a.id, {
+    links: [b.id, { to: "ghost" }, 7],
   });
   const list = (await (
     await call("GET", `/nodes?parent=${campaign.id}`)
@@ -1084,4 +1086,37 @@ it("REQ-8306: an edit of an adventure is checked before it is stored, and the fi
     body: { logline: "L".repeat(4001) },
   });
   expect(long.status).toBe(400);
+});
+
+it("REQ-8258: the links an arc is saved with are the edges of its level, and a link must lead to a sibling", async () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string };
+  const campaign = await make("campaign", null, "links campaign");
+  const first = await make("arc", campaign.id, "First arc");
+  const second = await make("arc", campaign.id, "Second arc");
+  const stranger = await make("campaign", null, "stranger campaign");
+  const strangerArc = await make("arc", stranger.id, "Stranger arc");
+  const ok = await call("PUT", `/nodes/${first.id}`, {
+    body: { links: [second.id] },
+  });
+  expect(ok.status).toBe(200);
+  const listed = (await (
+    await call("GET", `/nodes?parent=${campaign.id}`)
+  ).json()) as { nodes: { id: string; links: string[] }[] };
+  expect(listed.nodes.find((n) => n.id === first.id)?.links).toEqual([
+    second.id,
+  ]);
+  const refused = await call("PUT", `/nodes/${first.id}`, {
+    body: { links: [strangerArc.id] },
+  });
+  expect(refused.status).toBe(400);
+  expect(
+    ((await refused.json()) as { fault: { code: string } }).fault.code,
+  ).toBe("unknown_sibling");
+  expect(
+    (await call("PUT", `/nodes/${first.id}`, { body: { links: [first.id] } }))
+      .status,
+  ).toBe(400);
 });
