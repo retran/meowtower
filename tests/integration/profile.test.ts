@@ -115,7 +115,16 @@ it("REQ-8280: gives the profile to the writer of a generation", async () => {
     },
   );
   expect(res.status).toBe(202);
-  for (let i = 0; i < 100 && asked === null; i += 1)
+  const { job } = (await res.json()) as { job: { id: string } };
+  // The job runs in the background, so the test waits for it to end before it closes the database.
+  for (let i = 0; i < 200; i += 1) {
+    const read = (await (
+      await app.request(`/api/parent/studio/jobs/${job.id}`, {
+        headers: { cookie },
+      })
+    ).json()) as { state: string };
+    if (read.state === "done" || read.state === "failed") break;
     await new Promise((r) => setTimeout(r, 20));
+  }
   expect(asked?.profile).toBe("Loves cats, the canal and riddles.");
 });
