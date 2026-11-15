@@ -1136,7 +1136,7 @@ describe("archiving a node", () => {
       (await (await call("GET", `/nodes?parent=${parent}${query}`)).json()) as {
         nodes: { title: string; links: string[]; id: string }[];
       }
-    ).nodes;
+    ).nodes.sort((x, y) => x.title.localeCompare(y.title));
 
   it("REQ-8634, REQ-8636, REQ-8640: hides a node from its level, keeps its versions and brings it back as it was", async () => {
     const adventure = await adventureOf("hide");
