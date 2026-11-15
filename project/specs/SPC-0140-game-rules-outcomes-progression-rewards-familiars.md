@@ -2,8 +2,8 @@
 id: SPC-0140
 artifact: spec
 status: live
-revised: 2026-11-01
-states: [REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1760, REQ-1762, REQ-1764, REQ-1900, REQ-1902, REQ-1904, REQ-1906, REQ-1908, REQ-1910, REQ-1912, REQ-1914, REQ-1916, REQ-1918, REQ-1920, REQ-1922, REQ-1924, REQ-1926, REQ-1928, REQ-1930, REQ-1932, REQ-1934, REQ-1936, REQ-1938, REQ-1940, REQ-1942, REQ-1944, REQ-1946, REQ-1948, REQ-1950, REQ-1952, REQ-1954, REQ-2006, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2022, REQ-2024, REQ-2028, REQ-2030, REQ-2032, REQ-2036, REQ-2038, REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2118, REQ-2120, REQ-2122, REQ-2126, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2138, REQ-2140, REQ-2142, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2182, REQ-2184, REQ-2186, REQ-3532, REQ-3534, REQ-5018, REQ-5020, REQ-5416, REQ-5418, REQ-5422, REQ-6414, REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8390, REQ-8012, REQ-8022, REQ-8030, REQ-8032, REQ-8034, REQ-8036, REQ-8038, REQ-8040, REQ-8042, REQ-8044, REQ-8046, REQ-8048, REQ-8050, REQ-8054, REQ-8056, REQ-8068, REQ-8386, REQ-8388, REQ-8394, REQ-8396, REQ-8398, REQ-8400, REQ-8402, REQ-8404, REQ-8406, REQ-8408]
+revised: 2026-11-15
+states: [REQ-1700, REQ-1702, REQ-1704, REQ-1706, REQ-1708, REQ-1710, REQ-1712, REQ-1714, REQ-1716, REQ-1718, REQ-1720, REQ-1722, REQ-1724, REQ-1726, REQ-1728, REQ-1730, REQ-1732, REQ-1734, REQ-1736, REQ-1738, REQ-1740, REQ-1742, REQ-1744, REQ-1746, REQ-1748, REQ-1750, REQ-1752, REQ-1754, REQ-1756, REQ-1758, REQ-1764, REQ-1904, REQ-1906, REQ-1908, REQ-1910, REQ-1912, REQ-1914, REQ-1916, REQ-1918, REQ-1920, REQ-1922, REQ-1924, REQ-1926, REQ-1928, REQ-1930, REQ-1932, REQ-1934, REQ-1936, REQ-1938, REQ-1940, REQ-1942, REQ-1944, REQ-1946, REQ-1948, REQ-1950, REQ-1952, REQ-1954, REQ-2008, REQ-2010, REQ-2012, REQ-2014, REQ-2016, REQ-2022, REQ-2024, REQ-2028, REQ-2030, REQ-2032, REQ-2036, REQ-2038, REQ-2100, REQ-2102, REQ-2104, REQ-2106, REQ-2108, REQ-2110, REQ-2112, REQ-2114, REQ-2118, REQ-2120, REQ-2122, REQ-2126, REQ-2130, REQ-2132, REQ-2134, REQ-2136, REQ-2140, REQ-2144, REQ-2146, REQ-2148, REQ-2150, REQ-2152, REQ-2154, REQ-2156, REQ-2158, REQ-2160, REQ-2162, REQ-2164, REQ-2166, REQ-2168, REQ-2170, REQ-2172, REQ-2174, REQ-2176, REQ-2178, REQ-2182, REQ-2184, REQ-2186, REQ-3532, REQ-3534, REQ-5018, REQ-5020, REQ-5416, REQ-5418, REQ-5422, REQ-7960, REQ-7962, REQ-7964, REQ-7966, REQ-7968, REQ-7970, REQ-7978, REQ-7980, REQ-8158, REQ-7986, REQ-7988, REQ-7990, REQ-7992, REQ-7994, REQ-7996, REQ-7998, REQ-8000, REQ-8004, REQ-8006, REQ-8008, REQ-8390, REQ-8012, REQ-8022, REQ-8030, REQ-8032, REQ-8034, REQ-8036, REQ-8038, REQ-8040, REQ-8042, REQ-8044, REQ-8046, REQ-8048, REQ-8050, REQ-8054, REQ-8056, REQ-8068, REQ-8386, REQ-8388, REQ-8394, REQ-8396, REQ-8398, REQ-8400, REQ-8402, REQ-8404, REQ-8406, REQ-8408, REQ-1956, REQ-1958, REQ-1960, REQ-1962, REQ-1964, REQ-1966, REQ-1968, REQ-1970, REQ-7284, REQ-7286, REQ-7288, REQ-7290, REQ-7292, REQ-7380, REQ-8436, REQ-8438, REQ-8700, REQ-8704, REQ-8706, REQ-8708, REQ-8710, REQ-8712, REQ-8714, REQ-8716, REQ-8718, REQ-8720, REQ-8722]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -96,17 +96,17 @@ A spell has exactly three outcomes, judged on the first attempt's verdict: `clea
 
 A task's outcome and every bonus depend on the unassisted first attempt alone (REQ-1702). A second attempt never enters the outcome, the streak, a bonus or the room branch (REQ-1704). An assisted first attempt, one answered after a thread opened its hint ladder, gets its outcome and badge from its verdict, counts the smaller of its slot value and 0.5 in the room and floor shares, leaves the streak unchanged and earns no shard, as ADR-0140 sets.
 
-The badge is a view of the outcome (REQ-1760):
+The badge is a view of the outcome (REQ-7290):
 
 | Outcome | Badge |
 | --- | --- |
 | `clean` that brings the streak to 3 or to any multiple of 5, closing a clean row | `crit` |
 | any other `clean` | `clean` |
 | `partial` | `partial` |
-| `alt` after a wrong answer, `false_insufficient` included | `soft`, «Узел ослаблен» (Knot loosened) |
-| `alt` after «Не знаю» | `unknown`, «Принято» (Accepted) |
+| `alt` after a wrong answer, `false_insufficient` included | `miss`, «Не получилось» (It didn't work) |
+| `alt` after «Не знаю» | `skipped`, «Пропущено» (Skipped) |
 
-The badge labels are string keys whose Russian values are the two texts above (REQ-1762). A rapid guess gets the same outcome and badge as any answer with its verdict, so the screen draws it the same way (REQ-1714). Every outcome, `alt` included, moves the story on to the next step, and no outcome ends the adventure (REQ-1706).
+The badge labels are string keys whose Russian values are the two texts above (REQ-7292). A clean outcome makes the action succeed, a partial one makes it succeed at a cost the story names, and `alt` makes it fail, with the story going on by another way (REQ-8438). A rapid guess gets the same outcome and badge as any answer with its verdict, so the screen draws it the same way (REQ-1714). Every outcome, `alt` included, moves the story on to the next step, and no outcome ends the adventure (REQ-1706).
 
 The canon and the line pool name the outcomes clean, almost and loosened, and nothing else (REQ-1744). The canon describes the room's branch rule in words and states no threshold value (REQ-1764). A content check fails when `canon.ru.md` or `lines.ru.json` names another outcome, or states a share as a number beside the words for a room's branch.
 
@@ -178,7 +178,7 @@ A node with no evidence of its own takes a level from the nodes that build on it
 
 Daily quests and daily rewards come every game day once their system has opened, as ADR-0330 states, and no setting or rule switches them off (REQ-5018). The module picks the day's 3 daily quests by the day's seed. They show beside «В прошлый раз…» (Last time…), the opening scene ADR-0110 orders from the planner's latest session summary, or beside the library opening that replaces it when that order fails. The daily rewards are the grants of a met quest: 10 buttons (REQ-2132) and the guiding thread SPC-0080 states. The choice of two routes of the day comes beside the 3 quests and never takes a quest's place (REQ-5020).
 
-Every quest template counts an act of play, such as clearing floors or picking from a chest, and none counts a correct answer, so every quest can be met without answering any task correctly (REQ-2006). A content check rejects a template whose counter reads a verdict. The module logs `quest_progress` as a quest counts an act and when it is met. A quest unmet when the game day ends disappears with no penalty and no event she sees (REQ-2008).
+Every quest template counts tasks she solved clean or partial, alone or together with an act of play, such as solving with a given pet on the team (REQ-8436). A content check rejects a template whose counter reads no verdict. The module logs `quest_progress` as a quest counts an act and when it is met. A quest unmet when the game day ends disappears with no penalty and no event she sees (REQ-2008).
 
 The optional pattern row comes at most once in 3 days, from a `success` branch, and gives 2 star yarn and nothing else (REQ-2144).
 
@@ -196,11 +196,13 @@ Every amount is a starting value in `content/economy.json`, and `reward_granted`
 
 | Source | Buttons | Shards | Yarn | Material |
 | --- | --- | --- | --- | --- |
-| First attempt, any outcome; a Volley counts as the 2 first attempts it replaces | 1 (REQ-6414) | - | - | - |
+| First attempt, clean and unassisted; a Volley counts as the 2 first attempts it replaces | 2 (REQ-7284) | - | - | - |
+| First attempt, clean with help or partial | 1 (REQ-7284) | - | - | - |
+| First attempt, wrong, «Не знаю» or a rapid guess | 0 (REQ-7284) | - | - | - |
 | Second attempt | 0 (REQ-2130) | - | - | - |
 | Clean unassisted scored first attempt, not a rapid guess | - | 1 (REQ-2136) | - | - |
-| Floor finished, any state | - | 2 (REQ-2138) | - | - |
-| Guardian problem finished, any ending | - | - | 3 (REQ-2142) | - |
+| Adventure finished with at least half its checks clean or partial | - | 2 (REQ-7286) | - | - |
+| Guardian problem: success, success at a cost, failure | - | - | 3, 1, 0 (REQ-7288) | - |
 | Clean row | - | - | 1 | - |
 | Big clean row, each | - | - | 1 | - |
 | Daily quest met | 10 (REQ-2132) | - | - | - |
@@ -261,11 +263,24 @@ The same naming rule holds for every familiar that hatches. The hatching screen 
 
 ### Friendship and evolution
 
-Friendship grows from shared play and reads no verdict, so it grows by the same amount whether her answers are right, wrong or «Не знаю» (REQ-1902). A familiar in the active team gains 1 point for each scene it shares, 2 for each rest stop and 3 for a campfire talk, and each friendship level costs 10 points; all are starting values in `familiars.yaml`, and a stage or threshold changes with the file alone (REQ-1930). A planned friendship with a roster familiar has one scene outcome, success, whatever she answered (REQ-1900); ADR-0330 states the day the second familiar's friendship comes.
+Friendship grows mostly from the checks a familiar shares with her: a familiar in the active team gains 3 points for a clean check, 1 for a partial one and 0 for a failed one or «Не знаю», and 1 for each scene, rest stop or camp talk it shares (REQ-1956), and each friendship level costs 10 points; all are starting values in `familiars.yaml`, and a stage or threshold changes with the file alone (REQ-1930). A planned friendship with a roster familiar is decided by a check, as the section on catching a pet says (REQ-1958); ADR-0330 states the day the second familiar's friendship comes.
 
 A starter evolves at friendship levels 5 and 12, and any other familiar evolves to its second stage at level 5 (REQ-1934). The evolution plays in its own scene at the next rest stop after the threshold, and its moment reads no verdict (REQ-1904). A familiar past level 12 whose third stage hasn't shipped stays at its second stage (REQ-1938). When a content update adds that stage, the familiar evolves in its own scene at the next rest stop, keeping all the friendship it earned (REQ-1936).
 
 The familiar state has no value for dead, ill or lost, and no rule removes a familiar from the roster (REQ-1908).
+
+
+### Catching a pet
+
+A pet joins her in three ways: the starter, a planned friendship and a catch scene. A check decides a planned friendship: a clean or partial outcome makes it, and a failed one moves it to a later scene of the same arc (REQ-1958). Before a catch scene's check the game shows the bestiary's clue for the creature and lets her choose what she brings, an item, a pet of her team or an approach the clue suggests (REQ-1966). The check catches the creature on a clean or partial outcome and lets it escape on a failed one or «Не знаю» (REQ-1960), with no random draw (REQ-1964). An escaped creature stays in its habitat and is offered again as a catch scene in a later adventure (REQ-1962). She keeps an active team of at most three, chosen at the camp or in the room (REQ-1968), and each of a pet's stages opens one perk the roster names (REQ-1970).
+
+### Equipment, perks and keys
+
+She wears at most one item of each kind, an outfit, an accessory, a focus and a curiosity (REQ-8708), and changes them only at the camp or in the room between adventures (REQ-8710). A perk of an item or a pet is a story perk, which changes what she finds, opens or chooses, or a tool perk, a maths tool she can use on a task. No item, perk or pet changes which task is drawn, its numbers, how her answer is checked or its outcome (REQ-8700). A tool perk's use is logged as `perk_used` and the model reads the attempt as assisted (REQ-8702), the report shows those attempts apart (REQ-8704), and the Director keeps at least a third of each adventure's checks free of tools (REQ-8706). A tool perk has uses for each adventure that the camp restores (REQ-8712), the same perk from two sources applies once (REQ-8714), and every perk's strength and uses are values in the items catalogue (REQ-8716). No item, pet or perk is shown that play can't reach, and no item is cursed (REQ-8718). A key opens exits, gates and secrets, every lock has another way on (REQ-8720), and a key can open a secret the three-day rule queued (REQ-8722).
+
+### The floors as the world map
+
+Each floor holds its element's habitats, its material and its gates, and no floor sets the order of a day's play, which belongs to the adventure (REQ-7380).
 
 ### The element ring and battles
 

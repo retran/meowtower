@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-78 decisions in all: 61 approved, 17 done.
+79 decisions in all: 62 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -84,5 +84,6 @@
 | [ADR-3410](ADR-3410-the-default-price-of-a-model-call-is-seven-cents-from-a-live-run.md)                            | The default price of a model call is seven cents, from a live run                                                                                                                                                                                                                                                                                 | approved |
 | [ADR-3420](ADR-3420-the-showrunner-and-the-master-read-the-childs-profile-in-the-player-tier.md)                    | The showrunner and the Master read the child's profile, and both run in the player tier                                                                                                                                                                                                                                                           | approved |
 | [ADR-3430](ADR-3430-the-childs-game-plays-approved-adventures-with-the-master.md)                                   | The child's game plays approved adventures with the Master, and the log carries every step                                                                                                                                                                                                                                                        | approved |
+| [ADR-3440](ADR-3440-rewards-pets-and-results-succeed-or-fail-by-how-she-solves-and-equipment-gives-perks.md)        | Rewards, pets and results succeed or fail by how she solves, and equipment and pets give perks that are maths tools or story                                                                                                                                                                                                                      | approved |
 
 <!-- /meow-flow index -->

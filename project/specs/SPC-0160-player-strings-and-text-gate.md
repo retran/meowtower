@@ -2,8 +2,8 @@
 id: SPC-0160
 artifact: spec
 status: live
-revised: 2026-10-31
-states: [REQ-7730, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-7920, REQ-3312, REQ-3314, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-7172, REQ-5470]
+revised: 2026-11-15
+states: [REQ-7730, REQ-3300, REQ-3302, REQ-3304, REQ-3306, REQ-3308, REQ-7920, REQ-3318, REQ-3322, REQ-3324, REQ-3326, REQ-3328, REQ-3810, REQ-5082, REQ-5086, REQ-7172, REQ-5470, REQ-7922, REQ-7924]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -91,7 +91,7 @@ The key `ui.voice.dictation` holds one line that names the Mac's dictation key, 
 
 The key `ui.task.thread` holds «Путеводная нить · {n}», and code fills `n` with the current thread count (REQ-3322). At zero threads the button reads «Путеводная нить · 0».
 
-No `ui.*` value equals a rejected label, compared after trimming and folding case: «Правильный ответ» (the correct answer), «Решение» (the solution), «Твой ответ» (your answer), «Проверить» (Check), «Подсказка» (Hint), «Сдаться» (Give up), «Верно» (correct), «Выйти» (Exit), «Пауза» (Pause), «Осталось N минут» (N minutes left), «Серия» (Streak) or «Дней подряд» (Days in a row) (REQ-3312). The same check refuses a time phrase, such as «через 5 минут» (in 5 minutes), or a form from the time-word section of the forbidden list in any `ui.*` value.
+No `ui.*` value equals a rejected label, compared after trimming and folding case: «Решение» (the solution), «Твой ответ» (your answer), «Проверить» (Check), «Подсказка» (Hint), «Сдаться» (Give up), «Выйти» (Exit), «Пауза» (Pause), «Осталось N минут» (N minutes left), «Серия» (Streak) or «Дней подряд» (Days in a row) (REQ-7922). The same check refuses a time phrase, such as «через 5 минут» (in 5 minutes), or a form from the time-word section of the forbidden list in any `ui.*` value.
 
 ### Fixed System lines
 
@@ -103,10 +103,10 @@ The parent reads the whole `system.*` section at the stage 0.3 acceptance and si
 
 `content/shaming.ru.json` is the one forbidden list, and every check against forbidden words reads it, so a word added once is blocked in every kind of text (REQ-3328). It holds:
 
-- the verdict and shame words, school words and praise of intelligence REQ-3314 names, from «неправильно» (wrong) and «ошибка» (mistake) to «ты самая умная» (you're the cleverest), each entry a lemma with every inflected form written out, diminutives such as «задачка» and «ошибочка» included (REQ-3314);
+- the words that judge her, the school words and the praise of intelligence REQ-7924 names, from «ошибка» (mistake) and «плохо» (bad) to «ты самая умная» (you're the cleverest), each entry a lemma with every inflected form written out, diminutives such as «задачка» and «ошибочка» included; words that only state a result, such as «неверно», «мимо» and «не получилось», are allowed (REQ-7924);
 - the test words ADR-0290 states, among them the Latin phrases «Cito», «LVS» and «Leerling in beeld», which the gate matches on the raw text;
 - phrases matched as runs of tokens, among them «не получилось» (didn't work), «ты не поняла» (you didn't understand), «это же просто» (it's easy) and the shortage phrases «нити закончились» (the threads have run out), «нитей не осталось» (no threads are left), «нет нитей» (no threads) and their forms (REQ-3324);
-- the rejected labels of REQ-3312, in a section of their own that the set of forbidden forms leaves out, each matched only against a whole `label` value after trimming and folding case;
+- the rejected labels of REQ-7922, in a section of their own that the set of forbidden forms leaves out, each matched only against a whole `label` value after trimming and folding case;
 - the forms of «узелок», in a section of their own that the set of forbidden forms leaves out, which the content test reads for every `content/*.ru.json` file and every string file;
 - a time-word section, such as «минута», «секунда» and «час», with every inflected form, which the set of forbidden forms leaves out and the verify checks on `ui.*` values and the timed-event pools read;
 - after the MVP, under the condition in "The text gate", a section `nl` of Dutch forms that a person writes by hand, which the set of Russian forms leaves out and `textGate` reads for `lang: "nl"`;
@@ -120,7 +120,7 @@ A tool script generates the inflected forms once from the OpenCorpora dictionary
 
 For `lang: "nl"`, `textGate` applies the same normalisation apart from the fold to Cyrillic, splits the text into Latin-script word tokens, and looks each token up in the section `nl`. The Dutch probe of ADR-0430 is the only caller that passes `lang: "nl"`. The section `nl`, this Dutch branch of `textGate` and the string check's allowance for probe text come after the MVP, with the probe, and only once the owner has amended the rule in `CLAUDE.md` that text the player sees is in Russian only. Until that amendment, none of the three is built.
 
-The server calls `textGate` on every line before the line leaves for the client, whichever source wrote it: the Master, the line pool, the Explainer, a task template or a fixed string (REQ-3326). For a fixed `system` line, the server passes the value to the gate before `t()` fills its fields, so a number from a field never fails the digit check. Fixed strings and template seeds pass the same gate at build, so the client receives no heroine-facing text the gate hasn't passed. Her own words shown back as she wrote them, `source: "player"`, skip the gate, and so does every key under `parent.*`, since REQ-3314 exempts both. When she types a forbidden word, the Master's reply still passes the gate, so the reply can't repeat the word to her.
+The server calls `textGate` on every line before the line leaves for the client, whichever source wrote it: the Master, the line pool, the Explainer, a task template or a fixed string (REQ-3326). For a fixed `system` line, the server passes the value to the gate before `t()` fills its fields, so a number from a field never fails the digit check. Fixed strings and template seeds pass the same gate at build, so the client receives no heroine-facing text the gate hasn't passed. Her own words shown back as she wrote them, `source: "player"`, skip the gate, and so does every key under `parent.*`, since REQ-7924 exempts both. When she types a forbidden word, the Master's reply still passes the gate, so the reply can't repeat the word to her.
 
 A blocked line is never shown. The source's own fallback replaces it: the Master regenerates or takes a pool line, the Explainer falls back to its template, a template draws another seed, and a pool line that fails is retired from the pool. A source with no fallback yet gets the neutral `system.fallback.line` in place of the line. The gate takes under 1 ms per line, the budget ADR-0190's Baselines table holds.
 

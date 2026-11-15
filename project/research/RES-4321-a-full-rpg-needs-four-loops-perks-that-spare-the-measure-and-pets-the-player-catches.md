@@ -1,7 +1,7 @@
 ---
 id: RES-4321
 artifact: research
-status: draft
+status: approved
 revised: 2026-11-15
 elaborates: RES-4314
 ---
@@ -141,7 +141,7 @@ The owner decided the second and third comparisons on 2026-11-15. The design ste
 14. An encounter may declare finds, which name catalogue items or a material kind, locks, which name a key or a perk and the other way on, a creature for a catch scene, and a camp. Code checks every declaration before she plays: a find or a creature exists in the content, a creature lives in the place's element, every lock has another way on, and an adventure holds no more catch scenes than the content allows.
 15. The Master grants only the finds and creatures the scenario declares, through a tool that names them, and tells of her items and team from the facts it is given. It never invents a perk.
 16. She sees what she holds: a bag with equipment, keys and materials, a team screen with each pet's stage and perks, the bestiary, and the sheet of nine skills with rank. Each screen works by touch on a tablet and by the keyboard on a computer.
-17. The design step amends the approved rules that conclusions 3, 5, 9, 10, 11, 21, 22 and 23 contradict, among them the rules that stats never affect tasks, that the first version offers no stats, that a reward or friendship comes whatever she answered, that the heroine takes no damage, that a failure is told as a twist, and that a screen shows no mark or word of right and wrong. It states the replacement beside each and keeps the rules that guard the measure: no pay for speed, nothing for a rapid guess or a second attempt, and no loss of what she holds.
+17. The design step withdraws and replaces the approved rules that conclusions 9, 10, 11, 21, 22 and 23 contradict: those that pay or grow the same whatever she answered, that a planned friendship succeeds whatever she answered, that a quest needs no correct answer, that the heroine takes no damage, that a Guardian is never beaten, that a failure is told as a twist, that a badge softens a failure, and that a screen shows no mark or word of right and wrong. It keeps the rules that stats never affect tasks and that the first version offers no stats, because a perk is not a stat and a tool perk changes no task, and it keeps every rule that guards the measure: no pay for speed, nothing for a rapid guess or a second attempt, and no loss of what she holds.
 18. Content decides what ships. The six familiars with three stages, the shop's 20 items and the forge's six recipes need names, perks, pictures and the owner's approval before they load, so content and pictures sit on the critical path ahead of the screens.
 19. Battles stay deferred until the roster and the pictures exist. Whether a battle's result follows her checks, as the owner's decision suggests, or tactics alone, as the record requires now, is the owner's to settle before then.
 20. The design step reads the full texts of Habgood and Ainsworth (2011) and Ryan, Rigby and Przybylski (2006) before it cites them, because this record holds only an abstract of the first and nothing of the second.

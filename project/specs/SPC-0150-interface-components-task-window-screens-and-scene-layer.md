@@ -2,8 +2,8 @@
 id: SPC-0150
 artifact: spec
 status: live
-revised: 2026-10-31
-states: [REQ-7910, REQ-7680, REQ-0712, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0738, REQ-0764, REQ-0840, REQ-0842, REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148, REQ-3200, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246, REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3514, REQ-3516, REQ-3522, REQ-3526, REQ-3528, REQ-3530]
+revised: 2026-11-15
+states: [REQ-7910, REQ-7680, REQ-0712, REQ-0714, REQ-0716, REQ-0718, REQ-0720, REQ-0722, REQ-0724, REQ-0738, REQ-0764, REQ-0840, REQ-0842, REQ-3100, REQ-3102, REQ-3104, REQ-3106, REQ-3108, REQ-3110, REQ-3112, REQ-3114, REQ-3116, REQ-3118, REQ-3120, REQ-3122, REQ-3124, REQ-3126, REQ-3128, REQ-3130, REQ-3132, REQ-3134, REQ-3136, REQ-3138, REQ-3140, REQ-3142, REQ-3144, REQ-3146, REQ-3148, REQ-3202, REQ-3204, REQ-3206, REQ-3208, REQ-3210, REQ-3212, REQ-3214, REQ-3216, REQ-3220, REQ-3222, REQ-3224, REQ-3226, REQ-3228, REQ-3230, REQ-3232, REQ-3234, REQ-3238, REQ-3240, REQ-3242, REQ-3244, REQ-3246, REQ-3500, REQ-3502, REQ-3504, REQ-3506, REQ-3508, REQ-3510, REQ-3514, REQ-3516, REQ-3522, REQ-3526, REQ-3528, REQ-3530, REQ-7294, REQ-8724]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -190,7 +190,7 @@ A one-finger contact that moves less than 10 CSS px from its start before it lif
 
 ### Outcomes and the review
 
-Every outcome shows an `OutcomeBadge` with an icon and a word together (REQ-3214). The badge maps the three game outcomes to five views: `crit` for `clean` with `critical` true, `clean`, `partial`, `soft` for `alt` after a wrong answer or a wrong «Нельзя узнать», and `unknown`, «Принято» (Accepted), for `alt` after «Не знаю». No player screen shows a tick or a cross to mark an answer or a result, and the character scan holds it (REQ-3200).
+Every outcome shows an `OutcomeBadge` with an icon and a word together (REQ-3214). The badge maps the three game outcomes to five views: `crit` for `clean` with `critical` true, `clean`, `partial`, `miss`, «Не получилось» (It didn't work), for `alt` after a wrong answer or a wrong «Нельзя узнать», and `skipped`, «Пропущено» (Skipped), for `alt` after «Не знаю». The task window marks each answer with a tick or a cross beside the word (REQ-7294).
 
 After a multiple-choice answer, every option keeps the colours it had before the answer, and none turns right or wrong (REQ-3212). The `KnotScheme` shows her own answer as «Твоё заклинание» (Your spell) beside the steps the code builds, or «—» when she gave none (REQ-3216).
 
@@ -207,6 +207,11 @@ The root holds one live region with `aria-live="polite"`, present from the first
 ### The scene layer
 
 PixiJS draws the scene picture, sprites and effects inside the scene column and nothing else. It keeps textures for the current floor and destroys them on a floor change. Text, buttons and the input line stay in the DOM, where a screen reader and the focus ring reach them.
+
+
+### The bag and the team
+
+The bag shows what she holds on three shelves: the four items she wears and the others she has, her keys, and her materials. The team screen shows each pet of her team and of her collection with its stage, its friendship level and the perks its stages opened. She chooses her equipment and her team of three on these screens at the camp or in the room, by touch on a tablet and by the keyboard on a computer, with controls of the touch minimum (REQ-8724).
 
 ## Failure paths
 
