@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-72 decisions in all: 55 approved, 17 done.
+73 decisions in all: 56 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -78,5 +78,6 @@
 | [ADR-3350](ADR-3350-the-sandbox-is-a-postgres-schema-per-profile-with-no-credentials-and-its-own-limit.md)          | The parent's sandbox is a Postgres schema beside each profile, copied with no credential, and testing has its own monthly limit                                                                                                                                                                                                                   | approved |
 | [ADR-3360](ADR-3360-the-parent-assembles-an-adventure-in-forms-and-a-generated-version-waits-until-she-keeps-it.md) | The parent assembles an adventure in forms beside the graph, and a generated version waits until she keeps it                                                                                                                                                                                                                                     | done     |
 | [ADR-3370](ADR-3370-the-studio-shows-a-generations-cost-in-dollars-and-says-what-it-rests-on.md)                    | The studio shows a generation's cost in dollars and says what the figure rests on                                                                                                                                                                                                                                                                 | approved |
+| [ADR-3380](ADR-3380-the-studio-runs-no-simulated-player-and-tests-a-scenario-in-the-sandbox.md)                     | The studio runs no simulated player, and the parent tests a scenario in the sandbox                                                                                                                                                                                                                                                               | approved |
 
 <!-- /meow-flow index -->
