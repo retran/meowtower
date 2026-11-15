@@ -10,7 +10,7 @@ import { createApp } from "../../src/server/app.js";
 import { openDatabase } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { useNoticesDir } from "../../src/server/failures.js";
-import { createParentApp } from "../../src/server/parent.js";
+import { noticeLines } from "../../src/server/notices.js";
 
 const dir = mkdtempSync(join(tmpdir(), "meowtower-log-write-"));
 const notices = join(dir, "snapshots");
@@ -50,10 +50,6 @@ it.skipIf(Boolean(process.env["MEOWTOWER_DATABASE_URL"]))(
           n: number;
         }
       ).n;
-    const page = async () =>
-      await (
-        await createParentApp({ db, snapshots: notices }).request("/")
-      ).text();
 
     // A database that refuses writes makes appendEvents fail, as a full disk would.
     const before = await count();
@@ -66,14 +62,14 @@ it.skipIf(Boolean(process.env["MEOWTOWER_DATABASE_URL"]))(
     expect(readNotices(notices).log_write_failed?.at).toBe(
       "2026-09-27T23:40:00.000Z",
     );
-    const shown = await page();
-    expect(shown.match(/role="alert"/g)).toHaveLength(1);
-    expect(shown).toContain("Игра не смогла записать событие");
+    const shown = noticeLines(notices);
+    expect(shown).toHaveLength(1);
+    expect(shown[0]).toContain("Игра не смогла записать событие");
 
     const ok = await start(2);
     expect(ok.status).toBe(200);
     expect(readNotices(notices).log_write_failed).toBeNull();
-    expect(await page()).not.toContain('role="alert"');
+    expect(noticeLines(notices)).toEqual([]);
     errors.mockRestore();
   },
 );

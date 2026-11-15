@@ -14,6 +14,9 @@ import { type Lang, setLang, SHIPPED } from "../shared/i18n.js";
 import { appendEvents } from "../engine/events/append.js";
 import type { Db } from "./database.js";
 import { fallsRead } from "./falls.js";
+import { dashboard, llmAudit, playAudit } from "./audit.js";
+import { noticesDirectory } from "./failures.js";
+import { noticeLines } from "./notices.js";
 import {
   CODE_LIFETIME_MS,
   DEVICE_COOKIE,
@@ -30,6 +33,9 @@ import {
 } from "./parent-access.js";
 
 export const PARENT_COOKIE = "meowtower_parent";
+
+/** The rows a log shows unless the parent asks for more, up to 1000. */
+const AUDIT_ROWS = 200;
 
 const LoginIn = z.object({ pin: z.string() }).strict();
 
@@ -227,6 +233,38 @@ export async function mountParentRoom(
       },
     ]);
     return c.json({ status: "ok" });
+  });
+  // The overview's figures and the parent's notices, which the Mac's loopback page showed before
+  // (ADR-3470, REQ-7678).
+  app.get("/api/parent/overview", async (c) => {
+    const deviceId = await parent(c);
+    if (deviceId instanceof Response) return deviceId;
+    const d = await dashboard(db, new Date(now()));
+    return c.json({
+      tasks: d.tasks,
+      answered: d.answered,
+      correct: d.correct,
+      live: d.live,
+      calls: d.calls,
+      failed: d.failed,
+      monthUsd: d.monthUsd,
+      notices: noticeLines(noticesDirectory()),
+    });
+  });
+  // The logs: each task played and each model call in full, newest first (REQ-7682, REQ-7650).
+  const rows = (raw: string | undefined): number => {
+    const n = Number(raw ?? AUDIT_ROWS);
+    return Number.isInteger(n) && n > 0 ? Math.min(n, 1000) : AUDIT_ROWS;
+  };
+  app.get("/api/parent/audit/play", async (c) => {
+    const deviceId = await parent(c);
+    if (deviceId instanceof Response) return deviceId;
+    return c.json(await playAudit(db, rows(c.req.query("limit"))));
+  });
+  app.get("/api/parent/audit/llm", async (c) => {
+    const deviceId = await parent(c);
+    if (deviceId instanceof Response) return deviceId;
+    return c.json(await llmAudit(db, rows(c.req.query("limit"))));
   });
 
   // The reset of the statistics (REQ-8386): the log stays append-only, so a reset is an event,

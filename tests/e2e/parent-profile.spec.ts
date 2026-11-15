@@ -24,9 +24,10 @@ async function settings(page: Page): Promise<void> {
   await ready(page, "/parent");
   await page.locator("#parent-pin").fill(PIN);
   await page.locator('[data-action="parent-login"]').click();
+  // The PIN opens the overview (REQ-7676).
   await expect(page.locator("body")).toHaveAttribute(
     "data-screen",
-    "/parent/devices",
+    "/parent/home",
   );
   await ready(page, "/parent/settings");
 }

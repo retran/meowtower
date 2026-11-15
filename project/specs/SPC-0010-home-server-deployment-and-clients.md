@@ -2,8 +2,8 @@
 id: SPC-0010
 artifact: spec
 status: live
-revised: 2026-11-08
-states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-7930, REQ-6508, REQ-6510]
+revised: 2026-11-15
+states: [REQ-2500, REQ-2502, REQ-2504, REQ-2506, REQ-2508, REQ-2510, REQ-2512, REQ-2514, REQ-2516, REQ-2518, REQ-2520, REQ-2522, REQ-2524, REQ-2526, REQ-2528, REQ-2530, REQ-2532, REQ-2534, REQ-2536, REQ-2538, REQ-2540, REQ-6506, REQ-2544, REQ-2546, REQ-7930, REQ-6508, REQ-6510, REQ-7682, REQ-7684]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -23,7 +23,7 @@ The system consists of two containers, one command and, when `LOCAL_JUDGES` name
 | Surface | What it is |
 | --- | --- |
 | `https://<mac-name>.local` | Caddy in `proxy`, listening on 8443 inside the container and published by the Mac as port 443. It terminates HTTPS with its own local certificate authority (`tls internal`) and forwards to `meowtower`. |
-| `http://localhost:8080` | The Parent Room over plain HTTP, published on `127.0.0.1` only, from port 3001 in `meowtower`. `MEOWTOWER_PARENT_PORT`, in the environment or `.env`, moves it to another loopback port. It is the only listener that carries the export routes ADR-0020 states. |
+| `http://localhost:8080` | The operator's listener over plain HTTP, published on `127.0.0.1` only, from port 3001 in `meowtower`. It serves no page, only the routes `./meowtower` calls: pairing codes, the PIN, snapshots, recompute, model activation and the export routes ADR-0020 states, of which it is the only carrier (REQ-7684). The Parent Room's figures, notices and logs are on the game's own address behind the PIN (ADR-3470). `MEOWTOWER_PARENT_PORT`, in the environment or `.env`, moves it to another loopback port. |
 | `./meowtower setup` | Run once with administrator rights: creates the dedicated standard macOS account, without administrator rights, that the local judges run as. |
 | `./meowtower up` | Checks the network, runs `docker compose up -d` and `caffeinate`, starts the launchd daemon of each judge in `LOCAL_JUDGES`, loads the network watch, sets the containers' time zone to the Mac's, and prints the QR code for the iPad. ADR-0350 states what it checks and writes for the judges. |
 | `./meowtower down` | Stops the containers, stops each local judge's launchd daemon and unloads the network watch. It never passes `-v`, so the volume `meowtower-db` survives. |

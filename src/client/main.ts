@@ -9,6 +9,7 @@ import {
   detectInterface,
   type Interface,
 } from "./interface.js";
+import { inRoom, roomDoor, roomFrame, useRoomLook } from "./room.js";
 import { SCREENS, type Shell } from "./screens.js";
 import { loadStrings, t } from "./strings.js";
 import { STYLE } from "./style.js";
@@ -95,7 +96,15 @@ async function boot(): Promise<void> {
     const path = location.hash.replace(/^#/, "") || "/";
     const screen = SCREENS.find((s) => s.path === path) ?? SCREENS[0];
     if (!screen) return;
-    const shown = screen.render(shell);
+    // The Parent Room wears its own look, and its screens behind the PIN sit in its frame (ADR-3470).
+    const door = screen.path === "/parent";
+    useRoomLook(door || inRoom(screen.path), style);
+    const rendered = screen.render(shell);
+    const shown = door
+      ? roomDoor(rendered)
+      : inRoom(screen.path)
+        ? roomFrame(screen.path, rendered)
+        : rendered;
     main.replaceChildren(shown);
     focusField(shown);
     document.title = t("ui.app.name");

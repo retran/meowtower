@@ -1,6 +1,7 @@
 // TSK-0080: a snapshot when a session ends (REQ-2526), retention of the
 // newest 30 and the first of each month (REQ-2530), and the parent's
 // `backup_failed` and `storage_ceiling` notices.
+import { noticeLines } from "../../src/server/notices.js";
 import { mkdirSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -15,7 +16,6 @@ import {
 import { createApp } from "../../src/server/app.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
-import { createParentApp } from "../../src/server/parent.js";
 import { snapshotName } from "../../src/server/snapshots.js";
 import { sqliteOnly } from "../helpers/backend.js";
 
@@ -142,21 +142,14 @@ sqliteOnly("the parent's notices", () => {
       errors.mock.calls.filter((c) => String(c[0]).startsWith("backup_failed")),
     ).toHaveLength(1);
 
-    const page = async () =>
-      await (
-        await createParentApp({
-          db: opened.at(-1) as Db,
-          snapshots: w.dir,
-        }).request("/")
-      ).text();
-    const shown = await page();
-    expect(shown.match(/role="alert"/g)).toHaveLength(1);
-    expect(shown).toContain("Резервная копия не получилась");
+    const shown = noticeLines(w.dir);
+    expect(shown).toHaveLength(1);
+    expect(shown[0]).toContain("Резервная копия не получилась");
 
     w.clock.ms += 60_000;
     await w.session();
     expect(readNotices(w.dir).backup_failed).toBeNull();
-    expect(await page()).not.toContain('role="alert"');
+    expect(noticeLines(w.dir)).toEqual([]);
     errors.mockRestore();
   });
 
@@ -213,13 +206,7 @@ sqliteOnly("the parent's notices", () => {
       raised.push(readNotices(dir).storage_ceiling?.gb ?? null);
       // TSK-0450 criterion 2: the page names the threshold reached at 30.
       if (raised.at(-1) === 30 && raised.at(-2) !== 30) {
-        const at30 = await (
-          await createParentApp({
-            db: opened.at(-1) as Db,
-            snapshots: dir,
-          }).request("/")
-        ).text();
-        expect(at30).toContain(
+        expect(noticeLines(dir)).toContain(
           "Папка data/ и база данных заняли больше 30 ГБ.",
         );
       }
@@ -233,13 +220,9 @@ sqliteOnly("the parent's notices", () => {
     expect(logged[0]).toBe(
       "storage_ceiling: data/ and the database hold 21.0 GB",
     );
-    const page = await (
-      await createParentApp({
-        db: opened.at(-1) as Db,
-        snapshots: dir,
-      }).request("/")
-    ).text();
-    expect(page).toContain("Папка data/ и база данных заняли больше 40 ГБ.");
+    expect(noticeLines(dir)).toContain(
+      "Папка data/ и база данных заняли больше 40 ГБ.",
+    );
     errors.mockRestore();
     // Each session still took its snapshot.
     expect(readdirSync(dir).filter((f) => f.endsWith(".sqlite"))).toHaveLength(
