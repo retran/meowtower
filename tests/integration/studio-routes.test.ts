@@ -929,6 +929,36 @@ describe("generating a version of an adventure", () => {
     expect((await finished((await start(id)).job.id)).message).toBe("failed");
   });
 
+  it("REQ-8642: keeps the critic's remaining findings with the waiting version", async () => {
+    const id = await adventureOf("review");
+    writer = () =>
+      Promise.resolve(
+        fake({
+          revisions: 6,
+          unresolved: ["no turn in encounter 3"],
+          minor: ["a small thing", "another"],
+        }),
+      );
+    await finished((await start(id)).job.id);
+    const listed = (await (
+      await via("GET", `/nodes/${id}/versions`)
+    ).json()) as {
+      versions: {
+        state: string;
+        body: {
+          review?: { revisions: number; unresolved: string[]; minor: string[] };
+        };
+      }[];
+    };
+    expect(
+      listed.versions.find((v) => v.state === "pending")?.body.review,
+    ).toEqual({
+      revisions: 6,
+      unresolved: ["no turn in encounter 3"],
+      minor: ["a small thing", "another"],
+    });
+  });
+
   it("REQ-8604: refuses a generation while a version already waits", async () => {
     const id = await adventureOf("waits");
     writer = () => Promise.resolve(fake());

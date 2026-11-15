@@ -64,3 +64,39 @@ describe("REQ-8308: the changes between two bodies", () => {
     ]);
   });
 });
+
+describe("REQ-8308, REQ-8642: a generated version's scenario and review are not listed leaf by leaf", () => {
+  const was = { logline: "a", scenario: { encounters: [{ id: "n0" }] } };
+  const now = {
+    logline: "b",
+    scenario: { encounters: [{ id: "n0" }, { id: "n1" }] },
+    review: { unresolved: ["x"] },
+  };
+
+  it("shows one row for a collapsed field that changed, with a summary of each side", () => {
+    expect(
+      diffBodies(was, now, { collapse: ["scenario"], skip: ["review"] }),
+    ).toEqual([
+      { path: "logline", before: "a", after: "b", change: "changed" },
+      {
+        path: "scenario",
+        before: "1 encounters",
+        after: "2 encounters",
+        change: "changed",
+      },
+    ]);
+  });
+
+  it("shows no row for a collapsed field that is the same, and leaves a skipped field out", () => {
+    expect(
+      diffBodies(
+        was,
+        { ...was, review: { unresolved: [] } },
+        {
+          collapse: ["scenario"],
+          skip: ["review"],
+        },
+      ),
+    ).toEqual([]);
+  });
+});
