@@ -34,6 +34,50 @@ export interface Route {
 
 export type Routes = Readonly<Record<RouteName, Route>>;
 
+/** What the provider refuses in a schema it is asked to follow (BUG-0010): limits on numbers and lengths. */
+const REFUSED_KEYWORDS = new Set([
+  "minimum",
+  "maximum",
+  "exclusiveMinimum",
+  "exclusiveMaximum",
+  "multipleOf",
+  "minLength",
+  "maxLength",
+  "maxItems",
+]);
+/** A keyword that holds a map of names, whose keys are field names and not keywords. */
+const NAME_MAPS = new Set([
+  "properties",
+  "$defs",
+  "definitions",
+  "patternProperties",
+]);
+
+/**
+ * The schema without the limits the provider refuses: a reply is validated by code after it comes back,
+ * so the model gets the shape and not the ranges. A list may still ask for one item or none.
+ */
+export function forStructuredOutput<T>(schema: T): T {
+  const clean = (value: unknown, names = false): unknown => {
+    if (Array.isArray(value)) return value.map((v) => clean(v));
+    if (typeof value !== "object" || value === null) return value;
+    const out: Record<string, unknown> = {};
+    for (const [key, inner] of Object.entries(value)) {
+      if (!names && REFUSED_KEYWORDS.has(key)) continue;
+      if (
+        !names &&
+        key === "minItems" &&
+        typeof inner === "number" &&
+        inner > 1
+      )
+        continue;
+      out[key] = clean(inner, !names && NAME_MAPS.has(key));
+    }
+    return out;
+  };
+  return clean(schema) as T;
+}
+
 /** Effort stays low: reasoning takes most of the time, and a player waits for each story. */
 const anthropicBody = ({
   model,
@@ -55,7 +99,14 @@ const anthropicBody = ({
   messages: [{ role: "user" as const, content: user }],
   output_config: {
     effort: "low" as const,
-    ...(schema ? { format: { type: "json_schema" as const, schema } } : {}),
+    ...(schema
+      ? {
+          format: {
+            type: "json_schema" as const,
+            schema: forStructuredOutput(schema),
+          },
+        }
+      : {}),
   },
 });
 
@@ -133,7 +184,7 @@ export function openRouterRoute(
             json_schema: {
               name: "reply",
               strict: true,
-              schema: request.schema,
+              schema: forStructuredOutput(request.schema),
             },
           },
         }
