@@ -15,6 +15,7 @@ import { createFrameQueue } from "../../src/server/frames/queue.js";
 import {
   frameSystem,
   frameUser,
+  promptOf,
   situationOf,
   NO_SLOTS,
 } from "../../src/server/frames/request.js";
@@ -57,7 +58,7 @@ const clean = {
 /** The judge's answers: `other` scores higher unless a test says otherwise. */
 const answering =
   (
-    of: (variant: string) => Partial<typeof clean>,
+    of: (variant: string) => Partial<typeof clean & { ignores: number }>,
   ): ((r: GatewayRequest) => string) =>
   (r) =>
     JSON.stringify({
@@ -146,7 +147,7 @@ describe("the queue", () => {
   /** An author that writes `stories` in turn, and a judge that scores each by `of`. */
   const writing = (
     stories: readonly string[],
-    of: (story: string) => Partial<typeof clean>,
+    of: (story: string) => Partial<typeof clean & { ignores: number }>,
     solve: (r: GatewayRequest) => string = (r) =>
       r.user.length > 0 ? rightAnswer : "",
   ): Gateway & { seen: GatewayRequest[] } => {
@@ -283,6 +284,40 @@ describe("the queue", () => {
     expect(gateway.seen[0]?.user).toContain("pick the lock");
     expect(gateway.seen[0]?.user).toContain("it is stiff");
   });
+  const acting = { tried: "pick the lock", hard: "it is stiff" };
+  it("REQ-8214: asks the judge whether the story ignores her action, and shows it the action", async () => {
+    const gateway = writing(["Текст?"], () => ({ ignores: 0 }));
+    await (await queueOf(gateway)).prepare({ ...task, situation: acting });
+    const judge = gateway.seen.find((r) => r.role === "FRAME_JUDGE_MODEL");
+    expect(judge?.system).toContain("ignores:");
+    expect(judge?.user).toContain("pick the lock");
+    expect(judge?.user).toContain("it is stiff");
+    expect(
+      (judge?.schema as { properties: Record<string, unknown> }).properties,
+    ).toHaveProperty("ignores");
+  });
+  it("REQ-8214: does not ask it for a task with no action", async () => {
+    const gateway = writing(["Текст?"], () => ({}));
+    await (await queueOf(gateway)).prepare(task);
+    const judge = gateway.seen.find((r) => r.role === "FRAME_JUDGE_MODEL");
+    expect(judge?.system).not.toContain("ignores:");
+    expect(
+      (judge?.schema as { properties: Record<string, unknown> }).properties,
+    ).not.toHaveProperty("ignores");
+  });
+  it("REQ-8214: writes again when the story ignores her action", async () => {
+    const gateway = writing(["Мимо действия?", "По действию?"], (v) => ({
+      ignores: v === "Мимо действия?" ? 1 : 0,
+    }));
+    const queue = await queueOf(gateway);
+    await queue.prepare({ ...task, situation: acting });
+    expect(
+      gateway.seen.filter((r) => r.role === "TASK_TEXT_MODEL"),
+    ).toHaveLength(2);
+    expect((await queue.take({ ...task, situation: acting }))?.text).toBe(
+      "По действию?",
+    );
+  });
   it("gives a second attempt the story it continues, and no other stories", async () => {
     const gateway = writing(["Старая?", "Новая?"], () => ({}));
     const queue = await queueOf(gateway);
@@ -380,5 +415,31 @@ describe("the admin page", () => {
     expect(page).toContain("$0.50");
     expect(page).toContain("&lt;x&gt;");
     expect(page).toContain("reply");
+  });
+});
+
+describe("REQ-8214: what the judge's answer about her action costs", () => {
+  it("lowers the score of a story that ignores the action, by the whole answer", () => {
+    const base = scoreOf(clean) ?? 0;
+    expect((scoreOf({ ...clean, ignores: 0 }) ?? 0) - base).toBeCloseTo(0, 5);
+    expect((scoreOf({ ...clean, ignores: 1 }) ?? 0) - base).toBeCloseTo(-1, 5);
+  });
+
+  it("has the question and the label of the action in every language", () => {
+    for (const lang of ["ru", "en", "nl"] as const) {
+      const judge = promptOf(lang).judge;
+      expect(judge.questions.ignores.instructions.length, lang).toBeGreaterThan(
+        0,
+      );
+      expect(
+        judge.questions.ignores.criteria.true.length,
+        lang,
+      ).toBeGreaterThan(0);
+      expect(
+        judge.questions.ignores.criteria.false.length,
+        lang,
+      ).toBeGreaterThan(0);
+      expect(judge.action.length, lang).toBeGreaterThan(0);
+    }
   });
 });

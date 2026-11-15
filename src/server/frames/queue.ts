@@ -197,6 +197,7 @@ export function createFrameQueue({
       answers,
       lang,
       await level(),
+      task.situation,
     );
     if (!verdict) return null;
     for (const frame of verdict.rejected)

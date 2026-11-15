@@ -18,6 +18,7 @@
   "judge": {
     "story": "Story",
     "task": "Original task",
+    "action": "The player's action",
     "answers": "Answer options",
     "questions": {
       "unsafe": {
@@ -74,6 +75,13 @@
         "criteria": {
           "true": "A number from the task is missing or different, or means something else.",
           "false": "Every number of the task is in the story, with the same value and unit, and means the same as in the task."
+        }
+      },
+      "ignores": {
+        "instructions": "Does the story ignore what the player tried to do?",
+        "criteria": {
+          "true": "The story is about something else: the player's action and why it is hard play no part in the scene.",
+          "false": "The story is built on the action: what the player tried and why it was hard shape the scene."
         }
       }
     },
