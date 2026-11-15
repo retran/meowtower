@@ -1085,3 +1085,36 @@ it("REQ-8306: an edit of an adventure is checked before it is stored, and the fi
   });
   expect(long.status).toBe(400);
 });
+
+it("REQ-8258: the links an arc is saved with are the edges of its level, and a link must lead to a sibling", async () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string };
+  const campaign = await make("campaign", null, "links campaign");
+  const first = await make("arc", campaign.id, "First arc");
+  const second = await make("arc", campaign.id, "Second arc");
+  const stranger = await make("campaign", null, "stranger campaign");
+  const strangerArc = await make("arc", stranger.id, "Stranger arc");
+  const ok = await call("PUT", `/nodes/${first.id}`, {
+    body: { links: [second.id] },
+  });
+  expect(ok.status).toBe(200);
+  const listed = (await (
+    await call("GET", `/nodes?parent=${campaign.id}`)
+  ).json()) as { nodes: { id: string; links: string[] }[] };
+  expect(listed.nodes.find((n) => n.id === first.id)?.links).toEqual([
+    second.id,
+  ]);
+  const refused = await call("PUT", `/nodes/${first.id}`, {
+    body: { links: [strangerArc.id] },
+  });
+  expect(refused.status).toBe(400);
+  expect(
+    ((await refused.json()) as { fault: { code: string } }).fault.code,
+  ).toBe("unknown_sibling");
+  expect(
+    (await call("PUT", `/nodes/${first.id}`, { body: { links: [first.id] } }))
+      .status,
+  ).toBe(400);
+});
