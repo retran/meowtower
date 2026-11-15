@@ -55,10 +55,17 @@ const fault = (
   need: string,
 ): Fault => ({ field, code, held: shown(held), need });
 
-/** A text field: text of at most `TEXT_MAX` characters, which may be empty. */
-function textFault(field: string, value: unknown): Fault | null {
+/**
+ * A text field: text of at most `TEXT_MAX` characters, which may be empty. A text that is as stored is
+ * not refused for its length, so a long text a generator wrote never blocks an edit of another field.
+ */
+function textFault(
+  field: string,
+  value: unknown,
+  stored: boolean,
+): Fault | null {
   if (typeof value !== "string") return fault(field, "not_text", value, "text");
-  if (value.length > TEXT_MAX)
+  if (value.length > TEXT_MAX && !stored)
     return {
       field,
       code: "too_long",
@@ -73,11 +80,33 @@ const objectOf = (value: unknown): Record<string, unknown> | null =>
     ? (value as Record<string, unknown>)
     : null;
 
-/** The first fault in an encounter's body, or null where it can be stored. */
+/** The value at a path of the stored body, or undefined where it holds none. */
+const storedAt = (
+  stored: unknown,
+  path: readonly (string | number)[],
+): unknown =>
+  path.reduce<unknown>(
+    (at, key) =>
+      typeof at === "object" && at !== null
+        ? (at as Record<string | number, unknown>)[key]
+        : undefined,
+    stored,
+  );
+
+/**
+ * The first fault in an encounter's body, or null where it can be stored. `stored` is the body as it
+ * is stored now: a text or a count that is the same as there is not refused for its size.
+ */
 export function checkEncounterBody(
   body: unknown,
-  around: { readonly self: string; readonly siblings: readonly string[] },
+  around: {
+    readonly self: string;
+    readonly siblings: readonly string[];
+    readonly stored?: unknown;
+  },
 ): Fault | null {
+  const same = (path: readonly (string | number)[], value: unknown): boolean =>
+    around.stored !== undefined && storedAt(around.stored, path) === value;
   const b = objectOf(body);
   if (!b) return fault("body", "not_object", body, "an object");
   for (const key of Object.keys(b))
@@ -85,14 +114,14 @@ export function checkEncounterBody(
       return fault(key, "unknown_field", key, "a field of the form");
   for (const field of TEXTS) {
     if (b[field] === undefined) continue;
-    const found = textFault(field, b[field]);
+    const found = textFault(field, b[field], same([field], b[field]));
     if (found) return found;
   }
   const checks = b["checks"];
   if (checks !== undefined) {
     if (typeof checks !== "number" || !Number.isInteger(checks))
       return fault("checks", "not_whole_number", checks, "a whole number");
-    if (checks < 0 || checks > CHECKS_MAX)
+    if ((checks < 0 || checks > CHECKS_MAX) && !same(["checks"], checks))
       return fault(
         "checks",
         "out_of_range",
@@ -106,15 +135,24 @@ export function checkEncounterBody(
       return fault("people", "not_object", people, "a list");
     for (const [i, raw] of people.entries()) {
       const p = objectOf(raw) ?? {};
+      const at = `people.${String(i)}`;
       const name = p["name"];
       if (typeof name !== "string" || name.trim() === "")
-        return fault(`people.${String(i)}.name`, "empty", name ?? "", "text");
-      const long = textFault(`people.${String(i)}.name`, name);
+        return fault(`${at}.name`, "empty", name ?? "", "text");
+      const long = textFault(
+        `${at}.name`,
+        name,
+        same(["people", i, "name"], name),
+      );
       if (long) return long;
       const aim =
         p["aim"] === undefined
           ? null
-          : textFault(`people.${String(i)}.aim`, p["aim"]);
+          : textFault(
+              `${at}.aim`,
+              p["aim"],
+              same(["people", i, "aim"], p["aim"]),
+            );
       if (aim) return aim;
     }
   }
@@ -128,7 +166,11 @@ export function checkEncounterBody(
       const when = x["when"];
       if (typeof when !== "string" || when.trim() === "")
         return fault(`${at}.when`, "empty", when ?? "", "text");
-      const long = textFault(`${at}.when`, when);
+      const long = textFault(
+        `${at}.when`,
+        when,
+        same(["exits", i, "when"], when),
+      );
       if (long) return long;
       const next = x["next"];
       if (next === around.self)

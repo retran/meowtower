@@ -447,6 +447,7 @@
   "ui.studio.versions.keep": "Bewaren",
   "ui.studio.versions.discard": "Weggooien",
   "ui.studio.versions.kept": "Bewaard als versie {n}.",
+  "ui.studio.versions.keptWith": "Bewaard als versie {n}. Er zijn {created} ontmoetingen aan het avontuur toegevoegd.",
   "ui.studio.versions.discarded": "Weggegooid. De versie blijft in de geschiedenis.",
   "ui.studio.versions.discardedMark": "(weggegooid)",
   "ui.studio.compare.title": "Versie {n} wacht op jou",

@@ -447,6 +447,7 @@
   "ui.studio.versions.keep": "Keep it",
   "ui.studio.versions.discard": "Discard it",
   "ui.studio.versions.kept": "Kept as version {n}.",
+  "ui.studio.versions.keptWith": "Kept as version {n}. {created} encounters were added to the adventure.",
   "ui.studio.versions.discarded": "Discarded. It stays in the history.",
   "ui.studio.versions.discardedMark": "(discarded)",
   "ui.studio.compare.title": "Version {n} is waiting for you",

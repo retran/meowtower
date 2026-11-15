@@ -134,6 +134,8 @@ export async function createNode(
     body: unknown;
     author?: "parent" | "generator";
     prompt?: string | null;
+    /** The node's id where the caller has made it already, so exits can name it before it exists. */
+    id?: string;
   },
 ): Promise<StoryNode> {
   const title = input.title.trim();
@@ -147,7 +149,7 @@ export async function createNode(
     if (parent?.level !== above)
       throw new StudioRefused(`a ${input.level} sits in a ${above}`);
   }
-  const id = randomUUID();
+  const id = input.id ?? randomUUID();
   const at = stamp(now);
   await db.transaction(async () => {
     await db

@@ -502,6 +502,10 @@ export interface StringParams {
   "ui.studio.versions.keep": NoParams;
   "ui.studio.versions.discard": NoParams;
   "ui.studio.versions.kept": { n: string | number };
+  "ui.studio.versions.keptWith": {
+    created: string | number;
+    n: string | number;
+  };
   "ui.studio.versions.discarded": NoParams;
   "ui.studio.versions.discardedMark": NoParams;
   "ui.studio.compare.title": { n: string | number };

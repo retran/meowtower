@@ -1,7 +1,8 @@
 ---
 id: ADR-3360
 artifact: adr
-status: approved
+status: done
+pr: 142
 revised: 2026-11-14
 addresses: [REQ-8306, REQ-8308, REQ-8600, REQ-8602, REQ-8604, REQ-8606, REQ-8608, REQ-8610, REQ-8612, REQ-8614, REQ-8616, REQ-8618, REQ-8620, REQ-8622, REQ-8624, REQ-8626, REQ-8628]
 supersedes: []
@@ -78,3 +79,4 @@ The store gains a pending state beside `draft`, `approved`, `playing` and `playe
 5. The graph marks each encounter and exit no test has reached (REQ-8614). It touches `src/client/screens.ts` and the reached route.
 6. A generator button with a prompt box wires `writeScenario` to pending versions, shows the number of calls and the spend so far, runs as a job with a visible step, and names a refusal's cause (REQ-8608, REQ-8610). It touches `src/story/writer.ts`, the studio routes and the page.
 7. The server marks a job found running at start-up as failed, and a test shows that a month with no parent loses nothing and blocks no game (REQ-8612, REQ-8626, REQ-8628). It touches `src/server/studio/store.ts` and `src/server/main.ts`.
+8. Keeping a generated adventure makes its encounters, and its endings as encounters, nodes of the studio with exits that lead to each other, so the parent can edit and play what was generated (REQ-8260). It touches `src/server/studio/materialize.ts`, the keep route in `src/server/studio/routes.ts` and the message of the versions list.

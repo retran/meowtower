@@ -565,6 +565,125 @@ describe("a generated version waits for the parent", () => {
     ]);
   });
 
+  it("REQ-8260: keeping a generated adventure makes its encounters nodes with exits that lead to each other", async () => {
+    const id = await arcOf("materialize");
+    const adventure = (await (
+      await call("POST", "/nodes", {
+        level: "adventure",
+        parentId: id,
+        title: "Generated",
+        body: {},
+      })
+    ).json()) as { id: string };
+    await proposeVersion(
+      db,
+      now,
+      adventure.id,
+      {
+        premise: "A fog over the canal",
+        scenario: {
+          start: "n0",
+          encounters: [
+            {
+              id: "n0",
+              place: "The Canal",
+              situation: "Fog on the water.",
+              goal: "cross",
+              people: [],
+              pressure: "dusk",
+              checks: 2,
+              exits: [{ when: "she crosses", next: "e0" }],
+            },
+          ],
+          endings: [{ id: "e0", outcome: "free" }],
+        },
+      },
+      {},
+    );
+    const kept = await call("POST", `/nodes/${adventure.id}/pending/keep`);
+    expect(kept.status).toBe(200);
+    expect(((await kept.json()) as { created: number }).created).toBe(2);
+    const listed = (await (
+      await call("GET", `/nodes?parent=${adventure.id}`)
+    ).json()) as {
+      nodes: {
+        id: string;
+        title: string;
+        level: string;
+        status: string;
+        links: string[];
+      }[];
+    };
+    expect(listed.nodes.map((n) => n.title)).toEqual(["The Canal", "free"]);
+    expect(
+      listed.nodes.every(
+        (n) => n.level === "encounter" && n.status === "draft",
+      ),
+    ).toBe(true);
+    expect(listed.nodes[0]?.links).toEqual([listed.nodes[1]?.id]);
+  });
+
+  it("REQ-8260: a generated encounter with a long text keeps it whole, and the form can still save beside it", async () => {
+    const id = await arcOf("long");
+    const adventure = (await (
+      await call("POST", "/nodes", {
+        level: "adventure",
+        parentId: id,
+        title: "Long",
+        body: {},
+      })
+    ).json()) as { id: string };
+    const long = "L".repeat(900);
+    await proposeVersion(
+      db,
+      now,
+      adventure.id,
+      {
+        scenario: {
+          start: "n0",
+          encounters: [
+            {
+              id: "n0",
+              place: "The Mill",
+              situation: long,
+              goal: "grind",
+              checks: 8,
+              exits: [],
+            },
+          ],
+          endings: [],
+        },
+      },
+      {},
+    );
+    await call("POST", `/nodes/${adventure.id}/pending/keep`);
+    const [mill] = (
+      (await (await call("GET", `/nodes?parent=${adventure.id}`)).json()) as {
+        nodes: { id: string }[];
+      }
+    ).nodes;
+    const seen = (await (await call("GET", `/nodes/${mill?.id}`)).json()) as {
+      body: { situation: string; checks: number };
+    };
+    expect(seen.body.situation).toBe(long);
+    expect(seen.body.checks).toBe(8);
+    const edited = await call("PUT", `/nodes/${mill?.id}`, {
+      body: { ...seen.body, goal: "grind slowly" },
+    });
+    expect(edited.status).toBe(200);
+    const longer = await call("PUT", `/nodes/${mill?.id}`, {
+      body: { ...seen.body, situation: `${long}L` },
+    });
+    expect(longer.status).toBe(400);
+  });
+
+  it("makes no encounter when the kept version holds no scenario", async () => {
+    const id = await arcOf("plain");
+    await proposeVersion(db, now, id, { note: "generated" }, {});
+    const kept = await call("POST", `/nodes/${id}/pending/keep`);
+    expect(((await kept.json()) as { created: number }).created).toBe(0);
+  });
+
   it("needs the parent's session to keep or discard", async () => {
     const id = await arcOf("auth");
     await proposeVersion(db, now, id, { note: "generated" }, {});
