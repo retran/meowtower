@@ -148,12 +148,27 @@ async function stub(page: Page): Promise<Fake[]> {
     if (one && method === "GET")
       return json(200, {
         node: nodes.find((x) => x.id === one[1]),
-        body: one[1] === "e1" ? { place: "A gate in the fog" } : null,
+        body:
+          one[1] === "e1"
+            ? { place: "A gate in the fog" }
+            : one[1] === "d1"
+              ? { premise: "A fog", scenario: { x: 1 } }
+              : null,
       });
     if (one && method === "PUT") {
       const b = route.request().postDataJSON() as {
         body: Record<string, unknown>;
       };
+      if (b.body["logline"] === "FAULT")
+        return json(400, {
+          error: "edit_refused",
+          fault: {
+            field: "logline",
+            code: "too_long",
+            held: "4001",
+            need: "4000",
+          },
+        });
       if (b.body["situation"] === "FAULT")
         return json(400, {
           error: "edit_refused",
@@ -810,4 +825,65 @@ test("REQ-8612: a job a restart cut off shows as failed with its last step, and 
   await expect(cause).toBeVisible({ timeout: 8000 });
   await expect(cause).toContainText("2");
   await expect(page.locator('[data-job][data-state="running"]')).toHaveCount(0);
+});
+
+test("REQ-8306: an adventure is edited in a form, and what the form lacks is kept", async ({
+  page,
+}) => {
+  saved.length = 0;
+  await selectAdventure(page);
+  await page.locator("#lf-logline").fill("A fog story");
+  await page.locator("#lf-kind").selectOption("case");
+  await page.locator("#lf-conflict-wants").fill("to cross");
+  await page.locator('[data-action="level-save"]').click();
+  await expect.poll(() => saved.length).toBe(1);
+  expect(saved[0]).toEqual({
+    id: "d1",
+    body: {
+      premise: "A fog",
+      scenario: { x: 1 },
+      logline: "A fog story",
+      kind: "case",
+      conflict: { wants: "to cross" },
+    },
+  });
+});
+
+test("REQ-8600: a refused save of an adventure names the field beside it", async ({
+  page,
+}) => {
+  saved.length = 0;
+  await selectAdventure(page);
+  await page.locator("#lf-logline").fill("FAULT");
+  await page.locator('[data-action="level-save"]').click();
+  const fault = page.locator('[data-fault="logline"]');
+  await expect(fault).toBeVisible();
+  await expect(fault).toContainText("4001");
+  expect(saved).toHaveLength(0);
+});
+
+test("REQ-8306: the whole body can be edited as text, and text that is not JSON is not saved", async ({
+  page,
+}) => {
+  saved.length = 0;
+  await selectAdventure(page);
+  await expect(page.locator("#lf-json")).toContainText("A fog");
+  await page.locator("#lf-json").fill("{ not json");
+  await page.locator('[data-action="level-json-save"]').click();
+  await expect(page.locator('[data-fault="json"]')).toBeVisible();
+  expect(saved).toHaveLength(0);
+  await page.locator("#lf-json").fill('{"logline":"raw"}');
+  await page.locator('[data-action="level-json-save"]').click();
+  await expect.poll(() => saved.length).toBe(1);
+  expect(saved[0]).toEqual({ id: "d1", body: { logline: "raw" } });
+});
+
+test("REQ-8306: a campaign shows its own fields and not an adventure's", async ({
+  page,
+}) => {
+  await stub(page);
+  await ready(page);
+  await page.locator('button[data-node="c1"]').click();
+  await expect(page.locator("#lf-theme")).toBeVisible();
+  await expect(page.locator("#lf-kind")).toHaveCount(0);
 });
