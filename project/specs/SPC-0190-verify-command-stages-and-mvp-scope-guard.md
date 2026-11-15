@@ -2,8 +2,8 @@
 id: SPC-0190
 artifact: spec
 status: live
-revised: 2026-11-01
-states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-5078, REQ-8160, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500, REQ-8020]
+revised: 2026-11-15
+states: [REQ-2900, REQ-2902, REQ-2904, REQ-2906, REQ-2908, REQ-2910, REQ-2912, REQ-2914, REQ-2916, REQ-2918, REQ-2920, REQ-2922, REQ-2924, REQ-2926, REQ-2928, REQ-2930, REQ-2932, REQ-2934, REQ-2936, REQ-2938, REQ-2940, REQ-2942, REQ-2944, REQ-2946, REQ-2948, REQ-2950, REQ-2952, REQ-3000, REQ-3002, REQ-3004, REQ-3006, REQ-3008, REQ-3010, REQ-3012, REQ-3014, REQ-3016, REQ-3018, REQ-3020, REQ-3708, REQ-8160, REQ-5088, REQ-5090, REQ-5092, REQ-5094, REQ-5098, REQ-6666, REQ-6670, REQ-6674, REQ-6676, REQ-6682, REQ-7402, REQ-7500, REQ-8020, REQ-7384, REQ-7386]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -238,7 +238,7 @@ The first version also holds the second addendum's parts that shape the log (REQ
 
 The owner judges both lists at the stage 0.3 acceptance.
 
-The first version holds none of the items deferred until after the MVP (REQ-5078): Ascents and anchor forms; story battles between familiars and the ring of elements; items and familiars made by AI, and live pictures; Diary ciphers, though the Keeper's Loops stay in; «Свободная прогулка» (Free Walk); characteristics, paths and story ranks by the calendar; room decor; the Dutch layer; the full roster of familiars with the full set of dreamcore; and snapshots of the school's learning system.
+The first version holds the battles between familiars with the ring of elements (REQ-7386) and none of the items deferred until after the MVP (REQ-7384): Ascents and anchor forms; items and familiars made by AI, and live pictures; Diary ciphers, though the Keeper's Loops stay in; «Свободная прогулка» (Free Walk); characteristics, paths and story ranks by the calendar; room decor; the Dutch layer; the full roster of familiars with the full set of dreamcore; and snapshots of the school's learning system.
 
 The first version holds no other part of the second addendum (REQ-6682): the profile, the weekly breakdown and trajectories, retention checks and their Director rules, the transfer report, the home-and-school quadrants, the Dutch probe, the extension of «Сплети загадку» (Weave a riddle), hypothesis statuses, and build checks 1 to 5. The owner judges this at the stage 0.3 acceptance.
 
