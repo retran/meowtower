@@ -221,6 +221,11 @@ async function stub(page: Page): Promise<Fake[]> {
                     place: "A new gate",
                     goal: "Cross",
                     pressure: "Dusk",
+                    review: {
+                      revisions: 6,
+                      unresolved: ["No turn in encounter 3"],
+                      minor: ["a small thing"],
+                    },
                   },
                   prompt: "p",
                   author: "generator",
@@ -669,6 +674,10 @@ test("REQ-8308: a waiting version shows beside the current one with its changes 
   await expect(compare).toBeVisible();
   await expect(compare.locator('[data-change="changed"]')).toHaveCount(1);
   await expect(compare.locator('[data-change="added"]')).toHaveCount(1);
+  // What the critic still found is shown beside the comparison, and is not a row of it (REQ-8642).
+  const review = compare.locator("[data-review]");
+  await expect(review).toContainText("No turn in encounter 3");
+  await expect(review).toContainText("1");
   await expect(compare.locator('[data-change="removed"]')).toHaveCount(0);
   await expect(compare.locator('[data-change="changed"]')).toContainText(
     "A gate",
