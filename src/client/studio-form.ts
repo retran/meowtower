@@ -319,6 +319,41 @@ const fieldWord = (path: string): string => {
     : path;
 };
 
+/** What the critic still found in a generated version, or nothing where the body holds no review (REQ-8642). */
+function reviewOf(body: unknown): HTMLElement | null {
+  const r = (body as { review?: unknown } | null)?.review;
+  if (typeof r !== "object" || r === null) return null;
+  const { revisions, unresolved, minor } = r as {
+    revisions?: unknown;
+    unresolved?: unknown;
+    minor?: unknown;
+  };
+  const major = Array.isArray(unresolved) ? (unresolved as string[]) : [];
+  const small = Array.isArray(minor) ? minor.length : 0;
+  const box = el("div", { className: "review" });
+  box.dataset["review"] = "1";
+  box.append(
+    el("h4", {}, t("ui.studio.review.title")),
+    el(
+      "p",
+      {},
+      t("ui.studio.review.revisions", {
+        n: typeof revisions === "number" ? revisions : 0,
+      }),
+    ),
+    major.length === 0
+      ? el("p", {}, t("ui.studio.review.clean"))
+      : el(
+          "div",
+          {},
+          el("p", {}, t("ui.studio.review.major", { n: major.length })),
+          el("ul", {}, ...major.map((m) => el("li", {}, m))),
+        ),
+    el("p", {}, t("ui.studio.review.minor", { n: small })),
+  );
+  return box;
+}
+
 /**
  * A waiting version beside the current one, with each field that differs marked as added, removed or
  * changed, and the parent's two decisions beside it (REQ-8308, REQ-8604, REQ-8606).
@@ -330,7 +365,10 @@ function comparison(
   decide: (action: "keep" | "discard") => Promise<void>,
 ): HTMLElement {
   const box = el("div", { className: "compare" });
-  const diff = diffBodies(current?.body ?? null, waiting.body);
+  const diff = diffBodies(current?.body ?? null, waiting.body, {
+    collapse: ["scenario"],
+    skip: ["review"],
+  });
   const rows =
     diff.length === 0
       ? [el("p", {}, t("ui.studio.compare.same"))]
@@ -349,8 +387,10 @@ function comparison(
           row.dataset["change"] = d.change;
           return row;
         });
+  const review = reviewOf(waiting.body);
   box.append(
     el("h3", {}, t("ui.studio.compare.title", { n: waiting.version })),
+    ...(review ? [review] : []),
     el(
       "div",
       { className: "compare-head" },

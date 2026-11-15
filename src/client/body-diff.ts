@@ -28,14 +28,47 @@ function leaves(value: unknown, path: string, into: Map<string, string>): void {
     into.set(path, typeof value === "string" ? value : String(value));
 }
 
+export interface DiffOptions {
+  /** Top-level fields shown as one row where they differ, with a summary of each side. */
+  readonly collapse?: readonly string[];
+  /** Top-level fields left out of the comparison. */
+  readonly skip?: readonly string[];
+}
+
+const objectOf = (v: unknown): Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v)
+    ? (v as Record<string, unknown>)
+    : {};
+
+/** A short account of a field that is too large to list: its encounters, or its size. */
+function summary(value: unknown): string | null {
+  if (value === undefined) return null;
+  const encounters = objectOf(value)["encounters"];
+  return Array.isArray(encounters)
+    ? `${String(encounters.length)} encounters`
+    : `${String(JSON.stringify(value)?.length ?? 0)} characters`;
+}
+
 /** The fields that differ between `before` and `after`; a field that is the same is left out. */
-export function diffBodies(before: unknown, after: unknown): Difference[] {
+export function diffBodies(
+  before: unknown,
+  after: unknown,
+  options: DiffOptions = {},
+): Difference[] {
+  const collapse = new Set(options.collapse ?? []);
+  const skip = new Set(options.skip ?? []);
+  const outer = (body: unknown): Record<string, unknown> =>
+    Object.fromEntries(
+      Object.entries(objectOf(body)).filter(
+        ([k]) => !collapse.has(k) && !skip.has(k),
+      ),
+    );
   const was = new Map<string, string>();
   const now = new Map<string, string>();
-  leaves(before, "", was);
-  leaves(after, "", now);
+  leaves(Array.isArray(before) ? before : outer(before), "", was);
+  leaves(Array.isArray(after) ? after : outer(after), "", now);
   const paths = [...new Set([...was.keys(), ...now.keys()])];
-  return paths.flatMap((path): Difference[] => {
+  const rows = paths.flatMap((path): Difference[] => {
     const b = was.get(path) ?? null;
     const a = now.get(path) ?? null;
     if (b === a) return [];
@@ -48,4 +81,19 @@ export function diffBodies(before: unknown, after: unknown): Difference[] {
       },
     ];
   });
+  const big = [...collapse].flatMap((key): Difference[] => {
+    const b = objectOf(before)[key];
+    const a = objectOf(after)[key];
+    if (JSON.stringify(b) === JSON.stringify(a)) return [];
+    return [
+      {
+        path: key,
+        before: summary(b),
+        after: summary(a),
+        change:
+          b === undefined ? "added" : a === undefined ? "removed" : "changed",
+      },
+    ];
+  });
+  return [...rows, ...big];
 }

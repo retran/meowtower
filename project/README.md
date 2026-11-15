@@ -57,7 +57,7 @@ The generated indexes live in [specs](specs/README.md) and [defects](bugs/README
 
 | Identifier | What it concluded | Status |
 | --- | --- | --- |
-| [BUG-0010](bugs/BUG-0010-a-scenario-reply-is-refused-by-the-direct-route-for-its-number-limits.md) | The direct route refuses the schema of a scenario reply, so no scenario can be written | approved |
+| [BUG-0010](bugs/BUG-0010-a-scenario-reply-is-refused-by-the-direct-route-for-its-number-limits.md) | The direct route refuses the schema of a scenario reply, so no scenario can be written | done |
 
 ## Epics
 

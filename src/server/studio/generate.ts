@@ -175,6 +175,12 @@ export async function startGeneration(
           premise: written.scenario.premise,
           logline: written.scenario.logline,
           scenario: written.scenario,
+          // What the critic still found, which the page shows beside the comparison (REQ-8642).
+          review: {
+            revisions: written.revisions,
+            unresolved: written.unresolved,
+            minor: written.minor,
+          },
         },
         { prompt },
       );
