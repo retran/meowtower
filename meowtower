@@ -88,10 +88,31 @@ cmd_ipad_setup() {
 HOME_GATEWAY_FILE="${MEOWTOWER_HOME_GATEWAY_FILE:-data/home-gateway}"
 
 # The router's hardware address for `ip`, or `unknown` when the ARP table has none.
+# macOS 27 hides hardware addresses from the ARP table, so a miss falls back to ra_mac.
 arp_mac() {
   local mac
   mac="$(arp -n "$1" 2>/dev/null | awk '{print $4}' || true)"
-  [[ $mac =~ ^[0-9a-f:]+$ ]] && echo "$mac" || echo unknown
+  if [[ $mac =~ ^[0-9a-f:]+$ ]]; then echo "$mac"; else ra_mac; fi
+}
+
+# The router's hardware address read back from the link-local source of its IPv6 router
+# advertisement, which embeds it in EUI-64 form (fe80::a255:1fff:fed5:ff36 is
+# a0:55:1f:d5:ff:36); `unknown` when the router sent none or uses another form.
+ra_mac() {
+  local src iface id hex x
+  iface="$(route -n get default 2>/dev/null | awk '/interface:/{print $2}' || true)"
+  src="$(ipconfig getsummary "$iface" 2>/dev/null | awk '/RouterAdvertisement : from/{print $4; exit}' | tr -d ',' || true)"
+  id="${src#fe80::}"; id="${id%%\%*}"
+  local -a g
+  IFS=: read -r -a g <<< "$id"
+  if [[ $src != fe80::* || ${#g[@]} -ne 4 ]]; then echo unknown; return; fi
+  hex=""
+  for x in "${g[@]}"; do
+    [[ $x =~ ^[0-9a-fA-F]{1,4}$ ]] || { echo unknown; return; }
+    hex+="$(printf '%04x' "0x$x")"
+  done
+  if [[ ${hex:6:4} != fffe ]]; then echo unknown; return; fi
+  printf '%02x:%s:%s:%s:%s:%s\n' $((0x${hex:0:2} ^ 2)) "${hex:2:2}" "${hex:4:2}" "${hex:10:2}" "${hex:12:2}" "${hex:14:2}"
 }
 
 # The current default gateway, as "IP hardware-address", or "IP unknown" when
