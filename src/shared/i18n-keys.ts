@@ -393,6 +393,7 @@ export interface StringParams {
   "ui.studio.generate.cause.check_failed": NoParams;
   "ui.studio.generate.cause.version_waits": NoParams;
   "ui.studio.generate.cause.failed": NoParams;
+  "ui.studio.generate.cause.interrupted": { step: string | number };
   "ui.studio.refusal.noGenerator": NoParams;
   "ui.studio.turn.said": NoParams;
   "ui.studio.turn.take": NoParams;

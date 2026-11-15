@@ -66,6 +66,7 @@ import {
   pendingOf,
   currentBodyOf,
   restoreVersion,
+  sweepJobs,
   KINDS,
   LEVELS,
   linksOf,
@@ -134,6 +135,13 @@ export function mountStudio(
   generator?: AdventureWriter,
 ): void {
   const base = "/api/parent/studio";
+
+  // A job lives in the process that started it, so one found running now was cut off (REQ-8612).
+  void sweepJobs(db, now()).catch((err: unknown) => {
+    console.error(
+      `jobs_sweep_failed: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  });
 
   /** A refusal of the store becomes a 400 with its reason; anything else is a fault. */
   const refused = (c: Context, err: unknown): Response => {

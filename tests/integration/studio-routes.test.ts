@@ -12,9 +12,13 @@ import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
 import type { AdventureWriter } from "../../src/server/studio/generate.js";
 import {
+  getJob,
   proposeVersion,
+  reportJob,
   startJob,
   StudioRefused,
+  sweepJobs,
+  versionsOf,
 } from "../../src/server/studio/store.js";
 import { dropSchema } from "../../src/server/db/index.js";
 import { sandboxSchemaOf } from "../../src/server/sandbox/sandbox.js";
@@ -814,6 +818,112 @@ describe("generating a version of an adventure", () => {
     expect(again.status).toBe(409);
     expect(((await again.json()) as { error: string }).error).toBe(
       "version_waits",
+    );
+  });
+});
+
+describe("a month with no parent", () => {
+  const start = Date.parse("2026-11-10T12:00:00Z");
+  const month = 31 * 24 * 60 * 60 * 1000;
+
+  it("REQ-8612: a job a restart cut off shows as failed with its last step, and a finished one stays", async () => {
+    const queued = await startJob(db, start, "generate", null);
+    const running = await startJob(db, start, "generate", null);
+    await reportJob(db, start, running.id, {
+      progress: 40,
+      message: "draft:2",
+    });
+    const done = await startJob(db, start, "generate", null);
+    await reportJob(db, start, done.id, {
+      state: "done",
+      message: "version:2",
+    });
+    const failed = await startJob(db, start, "generate", null);
+    await reportJob(db, start, failed.id, {
+      state: "failed",
+      message: "budget_exhausted",
+    });
+
+    const swept = await sweepJobs(db, start + 1000);
+    expect(swept).toBeGreaterThanOrEqual(2);
+    expect(await getJob(db, queued.id)).toMatchObject({
+      state: "failed",
+      message: "interrupted",
+    });
+    expect(await getJob(db, running.id)).toMatchObject({
+      state: "failed",
+      progress: 40,
+      message: "interrupted:draft:2",
+    });
+    expect(await getJob(db, done.id)).toMatchObject({
+      state: "done",
+      message: "version:2",
+    });
+    expect(await getJob(db, failed.id)).toMatchObject({
+      state: "failed",
+      message: "budget_exhausted",
+    });
+  });
+
+  it("REQ-8612: the server that starts again sweeps the jobs the last one left running", async () => {
+    const running = await startJob(db, start, "generate", null);
+    await reportJob(db, start, running.id, { message: "plan" });
+    const again = await createApp({ db, now: () => start + month });
+    const login = await again.request("/api/parent/login", {
+      method: "POST",
+      headers: { ...json, cookie: deviceCookie },
+      body: JSON.stringify({ pin: PIN }),
+    });
+    const cookie = `${deviceCookie}; ${cookieOf(login, "meowtower_parent")}`;
+    const read = (await (
+      await again.request(`/api/parent/studio/jobs/${running.id}`, {
+        headers: { ...json, cookie },
+      })
+    ).json()) as { state: string; message: string };
+    expect(read).toMatchObject({
+      state: "failed",
+      message: "interrupted:plan",
+    });
+  });
+
+  it("REQ-8626, REQ-8628: after a month the drafts, versions and a waiting version are as they were, and her game runs", async () => {
+    const make = async (
+      level: string,
+      parentId: string | null,
+      title: string,
+    ) =>
+      (await (
+        await call("POST", "/nodes", { level, parentId, title, body: {} })
+      ).json()) as { id: string };
+    const campaign = await make("campaign", null, "away campaign");
+    const arc = await make("arc", campaign.id, "away arc");
+    await call("PUT", `/nodes/${arc.id}`, { body: { note: "mine" } });
+    await proposeVersion(db, start, arc.id, { note: "generated" }, {});
+    const before = JSON.stringify(await versionsOf(db, arc.id));
+
+    const later = await createApp({
+      db,
+      now: () => start + month,
+      tasks: "registry",
+    });
+    expect(JSON.stringify(await versionsOf(db, arc.id))).toBe(before);
+    const states = (await versionsOf(db, arc.id)).map((v) => v.state);
+    expect(states).toEqual(["history", "current", "pending"]);
+
+    const token = await registerDevice(db, "tablet");
+    const begun = await later.request("/api/session/start", {
+      method: "POST",
+      headers: { ...json, cookie: `meowtower_device=${token}` },
+      body: JSON.stringify({ mode: "daily", clientSeq: 1 }),
+    });
+    expect(begun.status).toBe(200);
+    const { sessionId } = (await begun.json()) as { sessionId: string };
+    const next = await later.request(`/api/session/${sessionId}/next`, {
+      headers: { cookie: `meowtower_device=${token}` },
+    });
+    expect(next.status).toBe(200);
+    expect(typeof ((await next.json()) as { kind: string }).kind).toBe(
+      "string",
     );
   });
 });

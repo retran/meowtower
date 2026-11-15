@@ -620,6 +620,30 @@ export async function startJob(
   return (await getJob(db, id)) as Job;
 }
 
+/**
+ * Marks every job still queued or running as failed, with the step it was at (REQ-8612). A job lives in
+ * the process that started it, so one found at start-up was cut off; left as running it would hide the
+ * failure for ever. Returns how many it marked.
+ */
+export async function sweepJobs(db: Db, now: number): Promise<number> {
+  const open = (await db
+    .prepare(
+      "SELECT id, message FROM studio_jobs WHERE state IN ('queued', 'running')",
+    )
+    .all()) as { id: string; message: string }[];
+  for (const job of open)
+    await db
+      .prepare(
+        "UPDATE studio_jobs SET state = 'failed', message = ?, updated_at = ? WHERE id = ?",
+      )
+      .run(
+        job.message === "" ? "interrupted" : `interrupted:${job.message}`,
+        stamp(now),
+        job.id,
+      );
+  return open.length;
+}
+
 export async function getJob(db: Db, id: string): Promise<Job | null> {
   const row = (await db
     .prepare(

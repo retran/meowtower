@@ -785,3 +785,16 @@ test("REQ-8632: an estimate measured over earlier calls says how many", async ({
   await expect(estimate).toContainText("42");
   await expect(estimate).toContainText("0.08");
 });
+
+test("REQ-8612: a job a restart cut off shows as failed with its last step, and never as running", async ({
+  page,
+}) => {
+  jobFlow = [{ state: "failed", progress: 40, message: "interrupted:draft:2" }];
+  await selectAdventure(page);
+  await page.locator("#gen-prompt").fill("autumn fog");
+  await page.locator('[data-action="gen-start"]').click();
+  const cause = page.locator('[data-cause="interrupted"]');
+  await expect(cause).toBeVisible({ timeout: 8000 });
+  await expect(cause).toContainText("2");
+  await expect(page.locator('[data-job][data-state="running"]')).toHaveCount(0);
+});

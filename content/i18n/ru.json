@@ -358,6 +358,7 @@
   "ui.studio.generate.cause.check_failed": "Ни один черновик не прошёл проверку кода. Измените, о чём приключение, и попробуйте снова.",
   "ui.studio.generate.cause.version_waits": "Одна версия уже ждёт. Сначала оставьте её или отбросьте.",
   "ui.studio.generate.cause.failed": "Генерация остановилась. Попробуйте снова.",
+  "ui.studio.generate.cause.interrupted": "Сервер остановился, пока шёл этот запуск. Последний шаг: {step} Запустите его снова.",
   "ui.studio.refusal.noGenerator": "Для написания приключений не задана модель, поэтому генерировать нечего.",
   "ui.studio.turn.said": "Её слова",
   "ui.studio.turn.take": "Сделать ход",
