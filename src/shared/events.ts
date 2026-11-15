@@ -802,6 +802,37 @@ const sessionDefs: EventDef[] = [
     }),
   },
   {
+    type: "scene_prepared",
+    v: 2,
+    schema: obj({
+      sceneId: id("the scene prepared"),
+      lines: z
+        .array(
+          obj({
+            speaker: id("who speaks the line"),
+            text: z.string().describe("the line as it passed the checks"),
+          }),
+        )
+        .min(1)
+        .describe("the scene's lines"),
+      branches: z
+        .array(
+          obj({
+            choiceId: id("the option"),
+            text: z.string().describe("the option as it passed the checks"),
+          }),
+        )
+        .describe("the options the scene offers"),
+      starters: z
+        .array(z.string().min(1))
+        .max(3)
+        .describe(
+          "what she might write, which a tap inserts into the field and never sends (REQ-6210)",
+        ),
+    }),
+    upcastFrom: (payload) => ({ ...(payload as object), starters: [] }),
+  },
+  {
     type: "text_draft_saved",
     v: 1,
     schema: obj({
@@ -845,6 +876,14 @@ const sessionDefs: EventDef[] = [
     type: "adventure_completed",
     v: 1,
     schema: obj({ adventureId: id("the adventure that reached its finale") }),
+  },
+  {
+    type: "scenario_started",
+    v: 1,
+    schema: obj({
+      nodeId: id("the studio adventure the game plays from"),
+      encounter: id("the encounter the adventure opens at"),
+    }),
   },
   {
     type: "adventure_wrapped_up",
@@ -945,6 +984,7 @@ export const EVENT_CATALOGUE: readonly string[] = [
   "adventure_paused",
   "adventure_resumed",
   "adventure_completed",
+  "scenario_started",
   "adventure_wrapped_up",
   "session_started",
   "session_ended",

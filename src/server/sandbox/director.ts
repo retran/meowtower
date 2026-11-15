@@ -41,6 +41,7 @@ export async function setCheckTask(
   encounter: string,
   now: number,
   action: { readonly tried: string; readonly hard: string },
+  at: { adventureId?: string; sessionId?: string } = {},
 ): Promise<ChosenTask | null> {
   const chosen = chooseCheckTask({
     ...setupOf(),
@@ -54,6 +55,7 @@ export async function setCheckTask(
       type: "check_task_chosen",
       v: 2,
       origin: "server",
+      ...at,
       payload: {
         tried: action.tried,
         hard: action.hard,

@@ -74,6 +74,7 @@ describe("the gateway as the Master's model", () => {
     expect(reply).toEqual({
       text: "The gate creaks.",
       calls: [{ tool: "record_fact", input: { fact: "The gate is old" } }],
+      starters: [],
     });
     const sent = gateway.asked[0];
     expect(sent?.role).toBe("MASTER_MODEL");
@@ -89,7 +90,7 @@ describe("the gateway as the Master's model", () => {
       gatewayAnswering({ ok: true, text: JSON.stringify({ text: "Quiet." }) }),
       "b",
     )(ask);
-    expect(reply).toEqual({ text: "Quiet.", calls: [] });
+    expect(reply).toEqual({ text: "Quiet.", calls: [], starters: [] });
   });
 
   it("fails with a reason when the budget is spent, the provider fails or the reply is not the shape", async () => {

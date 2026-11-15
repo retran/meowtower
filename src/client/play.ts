@@ -569,7 +569,32 @@ export const playScreen: Screen = {
         value: scene.draft ?? "",
       });
       field.dataset["action"] = "scene-draft";
+      const starters = scene.starters ?? [];
+      /** A starter's words go in at the cursor and are never sent; none goes in where the text would pass the limit (REQ-6210). */
+      const insert = (words: string): void => {
+        const start = field.selectionStart;
+        const end = field.selectionEnd;
+        const before = field.value.slice(0, start);
+        const lead = before !== "" && !/\s$/.test(before) ? " " : "";
+        const added = lead + words;
+        if (field.value.length - (end - start) + added.length > 500) return;
+        field.value = before + added + field.value.slice(end);
+        field.setSelectionRange(
+          before.length + added.length,
+          before.length + added.length,
+        );
+        field.focus();
+        field.dispatchEvent(new Event("input"));
+      };
       field.addEventListener("keydown", (e) => {
+        const starter = /^[1-3]$/.test(e.key)
+          ? starters[Number(e.key) - 1]
+          : undefined;
+        if (starter !== undefined && field.value === "" && !e.isComposing) {
+          e.preventDefault();
+          insert(starter);
+          return;
+        }
         if (e.key !== "Enter" || e.shiftKey || e.isComposing) return;
         e.preventDefault();
         document
@@ -645,9 +670,34 @@ export const playScreen: Screen = {
         });
         return b;
       });
+      const ideas = starters.map((words, i) => {
+        const b = el("button", {
+          type: "button",
+          className: "control starter",
+        });
+        b.textContent = words;
+        b.dataset["action"] = `scene-starter-${String(i + 1)}`;
+        b.addEventListener("click", () => {
+          act(`scene-starter-${String(i + 1)}`);
+          insert(words);
+        });
+        return b;
+      });
       draw(
         lines,
         el("nav", { className: "actions" }, ...choices),
+        ...(ideas.length
+          ? [
+              el(
+                "nav",
+                {
+                  className: "actions starters",
+                  ariaLabel: t("ui.scene.starters"),
+                },
+                ...ideas,
+              ),
+            ]
+          : []),
         el("label", { htmlFor: "scene-draft" }, t("ui.scene.draft")),
         field,
         note,

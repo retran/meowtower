@@ -28,6 +28,8 @@ export interface OpenScene {
   lines: { speaker: string; text: string }[];
   branches: { choiceId: string; text: string }[];
   draft: string | null;
+  /** The starters of the scene, where it has any. */
+  starters?: string[];
 }
 
 /** The chest she has not yet picked from, with the three options it offered. */
@@ -142,6 +144,9 @@ export function foldResume(
         lines: p["lines"] as OpenScene["lines"],
         branches: p["branches"] as OpenScene["branches"],
         draft: null,
+        ...(Array.isArray(p["starters"]) && p["starters"].length > 0
+          ? { starters: p["starters"] as string[] }
+          : {}),
       };
       return next;
     case "text_draft_saved":

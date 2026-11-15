@@ -29,6 +29,8 @@ export interface Scene {
   readonly sceneId: string;
   readonly lines: { speaker: string; text: string }[];
   readonly branches: { choiceId: string; text: string }[];
+  /** What she might write, which the screen inserts into the field (REQ-6210). */
+  readonly starters?: string[];
 }
 
 const text = (v: unknown): string => (typeof v === "string" ? v.trim() : "");

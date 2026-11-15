@@ -7,6 +7,8 @@ import { mountPairing } from "./pairing.js";
 import { mountParentRoom } from "./parent-room.js";
 import { createOutgoing } from "./outgoing.js";
 import { mountPlay } from "./play.js";
+import { createMasterGame } from "./master-game.js";
+import { directedFor } from "./sandbox/director.js";
 import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
 import type { LabGateway } from "./studio/extras.js";
 import type { AdventureWriter } from "./studio/generate.js";
@@ -95,6 +97,13 @@ export async function createApp({
     ...(sweepLeasesMs ? { sweepLeasesMs } : {}),
     ...(tasks ? { tasks } : {}),
     ...(frames ? { frames } : {}),
+    // The child's game plays approved adventures with the Master where one is configured (REQ-8266).
+    ...(master && tasks === "registry"
+      ? {
+          masterGame: createMasterGame({ db, master, now }),
+          directed: () => directedFor(db),
+        }
+      : {}),
   });
   return app;
 }

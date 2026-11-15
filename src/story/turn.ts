@@ -26,6 +26,8 @@ export interface MasterRequest {
 export interface MasterReply {
   readonly text: string;
   readonly calls: readonly { tool: string; input: unknown }[];
+  /** Up to three short things she might do next, which the child's screen offers as buttons; may be absent. */
+  readonly starters?: readonly string[];
 }
 
 export type MasterModel = (request: MasterRequest) => Promise<MasterReply>;
@@ -52,6 +54,8 @@ export interface Turn {
   /** The calls that fit their contract; none where the reply was blocked. */
   readonly calls: readonly ToolCall[];
   readonly refused: readonly { tool: string; fault: string }[];
+  /** The next-action suggestions of the reply; none where it was blocked. */
+  readonly starters: readonly string[];
   /** The events this turn writes, for `recordTurn`. */
   readonly events: readonly Omit<NewEvent, "origin">[];
 }
@@ -63,7 +67,7 @@ export interface Turn {
 export function masterSystemPrompt(scenario: string, profile = ""): string {
   return [
     "You are the Master of a tabletop adventure for one child. Describe the scene, answer what she does at once, and keep to the prepared scenario and its setting; you may adapt encounters and their links to what she does.",
-    "Reply in plain story text. Signals and every technical act go through tool calls and never in the story.",
+    "Reply in plain story text. Signals and every technical act go through tool calls and never in the story. Offer up to three short things she might do next as starters, each one under 80 characters; she may always write her own.",
     "Guardrails: write nothing from the forbidden-content checklist, no word from the forbidden-word list, nothing that shames her for a mistake, and nothing that breaks the canon's rules or its truths. The canon fixes the world, its people and the Tower's secret.",
     "You never decide whether a check succeeds. Ask for one with request_check and tell what happened from its answer: success, cost or twist. Whatever you add to the world goes through change_world.",
     `Tools: ${MASTER_TOOL_NAMES.join(", ")}.`,
@@ -107,13 +111,18 @@ export async function takeTurn(input: TurnInput): Promise<Turn> {
         : [],
     ),
   ];
-  return { reply, blocked, calls, refused, events };
+  const starters = blocked ? [] : (asked.starters ?? []).slice(0, 3);
+  return { reply, blocked, calls, refused, starters, events };
 }
 
 /** Appends a turn's events to the log, in order, as the server's own. */
-export async function recordTurn(db: Db, turn: Turn): Promise<void> {
+export async function recordTurn(
+  db: Db,
+  turn: Turn,
+  at: { adventureId?: string; sessionId?: string } = {},
+): Promise<void> {
   await appendEvents(
     db,
-    turn.events.map((e) => ({ ...e, origin: "server" as const })),
+    turn.events.map((e) => ({ ...e, ...at, origin: "server" as const })),
   );
 }

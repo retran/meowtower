@@ -80,6 +80,8 @@ export const Scene = z
       z.object({ choiceId: z.string(), text: z.string() }).strict(),
     ),
     draft: z.string().nullable(),
+    /** What she might write, which a tap puts into the field and never sends (REQ-6210). */
+    starters: z.array(z.string()).max(3).optional(),
   })
   .strict();
 export type Scene = z.infer<typeof Scene>;
