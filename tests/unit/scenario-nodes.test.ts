@@ -94,6 +94,7 @@ describe("REQ-8260: the nodes a generated scenario makes", () => {
     const planned = planEncounters(
       {
         ...scenario,
+        start: "n0",
         encounters: [
           encounter("n0", {
             place: "P".repeat(300),
