@@ -1,7 +1,8 @@
 ---
 id: BUG-0020
 artifact: bug
-status: approved
+status: done
+pr: 155
 severity: major
 violates: REQ-8236
 enters: implement
