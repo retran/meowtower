@@ -375,7 +375,12 @@ export function versionsPanel(
     }
     note.textContent =
       action === "keep"
-        ? t("ui.studio.versions.kept", { n: done.value.version })
+        ? done.value.created > 0
+          ? t("ui.studio.versions.keptWith", {
+              n: done.value.version,
+              created: done.value.created,
+            })
+          : t("ui.studio.versions.kept", { n: done.value.version })
         : t("ui.studio.versions.discarded");
     await load();
     onRestored();

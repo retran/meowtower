@@ -447,6 +447,7 @@
   "ui.studio.versions.keep": "Оставить",
   "ui.studio.versions.discard": "Отбросить",
   "ui.studio.versions.kept": "Оставлено как версия {n}.",
+  "ui.studio.versions.keptWith": "Оставлено как версия {n}. В приключение добавлено энкаунтеров: {created}.",
   "ui.studio.versions.discarded": "Отброшено. Версия остаётся в истории.",
   "ui.studio.versions.discardedMark": "(отброшена)",
   "ui.studio.compare.title": "Версия {n} ждёт вашего решения",

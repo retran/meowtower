@@ -573,13 +573,13 @@ export async function studioVersions(
 export async function studioDecide(
   id: string,
   action: "keep" | "discard",
-): Promise<ParentReply<StudioNode>> {
+): Promise<ParentReply<StudioNode & { created: number }>> {
   const { status, body } = await call(
     `/api/parent/studio/nodes/${encodeURIComponent(id)}/pending/${action}`,
     { method: "POST", body: "{}" },
   );
   return status === 200
-    ? { ok: true, value: body as unknown as StudioNode }
+    ? { ok: true, value: body as unknown as StudioNode & { created: number } }
     : { ok: false, error: String(body["reason"] ?? body["error"]) };
 }
 

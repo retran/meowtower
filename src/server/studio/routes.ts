@@ -21,6 +21,7 @@ import {
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
 import { checkEncounterBody } from "./body-check.js";
+import { materializeScenario } from "./materialize.js";
 import {
   type AdventureWriter,
   dollarEstimate,
@@ -233,13 +234,17 @@ export function mountStudio(
       if ((await pendingOf(db, id)) === null)
         return c.json({ error: "no_pending_version" }, 404);
       try {
-        return c.json(
-          await (action === "keep" ? keepPending : discardPending)(
-            db,
-            now(),
-            id,
-          ),
+        const node = await (action === "keep" ? keepPending : discardPending)(
+          db,
+          now(),
+          id,
         );
+        // A kept generated adventure makes its encounters nodes (REQ-8260).
+        const created =
+          action === "keep" && node.level === "adventure"
+            ? await materializeScenario(db, now(), id)
+            : 0;
+        return c.json({ ...node, created });
       } catch (err) {
         return refused(c, err);
       }
