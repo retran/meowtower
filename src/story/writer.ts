@@ -231,3 +231,43 @@ async function runScenario(
   }
   return kept;
 }
+
+/** The plan of an adventure alone: the logline, the synopsis, the treatment and the beats. */
+export type PlanOnly = z.infer<typeof Plan>;
+
+/**
+ * Reworks the level of an adventure with one call (REQ-8310): the plan, without the scenario inside it.
+ * The prompt of the parent is the brief, and the cause of a failure goes to the report.
+ */
+export async function writePlan(
+  gateway: Gateway,
+  { bucket, lang, brief, minChecks, report }: ScenarioAsk,
+): Promise<PlanOnly | null> {
+  const prompt = promptOf(lang);
+  const system = `${prompt.system}\n\n${worldOf(lang)}`;
+  const task = [
+    prompt.brief.replace("{brief}", brief),
+    prompt.size
+      .replace("{min}", String(MIN_ENCOUNTERS))
+      .replace("{max}", String(MAX_ENCOUNTERS))
+      .replace("{checks}", String(minChecks)),
+  ].join("\n");
+  report?.step("plan", 0);
+  const reply = await gateway.call({
+    role: "SHOWRUNNER_MODEL",
+    bucket,
+    system,
+    user: `${task}\n${prompt.plan}`,
+    schema: z.toJSONSchema(Plan),
+  });
+  if (!reply.ok) {
+    report?.fault(reply.reason);
+    return null;
+  }
+  try {
+    return Plan.parse(JSON.parse(reply.text));
+  } catch {
+    report?.fault("check_failed");
+    return null;
+  }
+}

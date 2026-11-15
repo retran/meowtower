@@ -25,8 +25,8 @@ import { checkLevelBody } from "./level-check.js";
 import { materializeScenario } from "./materialize.js";
 import {
   type AdventureWriter,
+  callsOf,
   dollarEstimate,
-  GENERATION_CALLS,
   monthSpendUsd,
   showrunnerCosts,
   startGeneration,
@@ -127,7 +127,10 @@ const TurnIn = z
   .strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
 const GenerateIn = z
-  .object({ prompt: z.string().trim().min(1).max(2000) })
+  .object({
+    prompt: z.string().trim().min(1).max(2000),
+    scope: z.enum(["level", "inside"]).default("level"),
+  })
   .strict();
 
 export function mountStudio(
@@ -304,9 +307,11 @@ export function mountStudio(
     if (who instanceof Response) return who;
     if (!(await getNode(db, c.req.param("id"))))
       return c.json({ error: "node_unknown" }, 404);
-    const range = dollarEstimate(await showrunnerCosts(db));
+    const scope = c.req.query("scope") === "inside" ? "inside" : "level";
+    const calls = callsOf(scope);
+    const range = dollarEstimate(await showrunnerCosts(db), calls);
     return c.json({
-      calls: GENERATION_CALLS,
+      calls,
       spentUsd: await monthSpendUsd(db, now()),
       estimateUsd: { min: range.minUsd, max: range.maxUsd },
       basis: range.basis,
@@ -337,6 +342,7 @@ export function mountStudio(
       body.data.prompt,
       generator,
       (await parentSettings(db)).language,
+      body.data.scope,
     );
     return c.json({ job: started.job }, 202);
   });

@@ -9,7 +9,7 @@ import { createApp } from "./app.js";
 import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
 import { createSandboxGateway } from "./sandbox/sandbox.js";
 import { gatewayMaster } from "../story/master-gateway.js";
-import { writeScenario } from "../story/writer.js";
+import { writePlan, writeScenario } from "../story/writer.js";
 import type { AdventureWriter } from "./studio/generate.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
@@ -185,7 +185,12 @@ try {
           .split(",")
           .filter((n) => n !== ""),
       });
-      generator = (ask) => writeScenario(studioGateway, ask);
+      generator = async (ask) =>
+        ask.scope === "level"
+          ? ((plan) => (plan ? { plan } : null))(
+              await writePlan(studioGateway, ask),
+            )
+          : writeScenario(studioGateway, ask);
     }
     const queue = createFrameQueue({
       db,

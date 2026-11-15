@@ -358,6 +358,9 @@ export interface StringParams {
   "ui.studio.unreached": NoParams;
   "ui.studio.leftToTest": { exits: string | number; nodes: string | number };
   "ui.studio.generate.prompt": NoParams;
+  "ui.studio.generate.scope": NoParams;
+  "ui.studio.generate.scope.level": NoParams;
+  "ui.studio.generate.scope.inside": NoParams;
   "ui.studio.generate.start": NoParams;
   "ui.studio.generate.estimateMeasured": {
     calls: string | number;

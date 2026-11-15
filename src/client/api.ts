@@ -617,9 +617,10 @@ export interface GenerateEstimate {
 /** What a generation costs before it runs: its calls, its cost in dollars and this month's spend. */
 export async function studioGenerateEstimate(
   id: string,
+  scope: "level" | "inside" = "level",
 ): Promise<ParentReply<GenerateEstimate>> {
   const { status, body } = await call(
-    `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate/estimate`,
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate/estimate?scope=${scope}`,
   );
   return parentReply(status, body, () => body as unknown as GenerateEstimate);
 }
@@ -636,10 +637,11 @@ export interface StudioJob {
 export async function studioGenerate(
   id: string,
   prompt: string,
+  scope: "level" | "inside" = "level",
 ): Promise<ParentReply<StudioJob>> {
   const { status, body } = await call(
     `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate`,
-    { method: "POST", body: JSON.stringify({ prompt }) },
+    { method: "POST", body: JSON.stringify({ prompt, scope }) },
   );
   return status === 202
     ? { ok: true, value: body["job"] as StudioJob }
