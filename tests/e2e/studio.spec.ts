@@ -248,6 +248,17 @@ async function stub(page: Page): Promise<Fake[]> {
         ],
       });
     }
+    if (
+      path === "/nodes/d1/generate/estimate" &&
+      url.searchParams.get("scope") === "inside"
+    )
+      return json(200, {
+        calls: { min: 4, max: 17 },
+        spentUsd: 1.5,
+        estimateUsd: { min: 0.28, max: 1.19 },
+        basis: "default",
+        measuredCalls: 0,
+      });
     if (path === "/nodes/d1/generate/estimate")
       return json(200, {
         calls: { min: 4, max: 17 },
@@ -802,7 +813,7 @@ test("REQ-8608, REQ-8318: the page shows the calls and the spend before a genera
   await expect(estimate).toHaveAttribute("data-basis", "default");
   await page.locator("#gen-prompt").fill("autumn fog");
   await page.locator('[data-action="gen-start"]').click();
-  expect(generated).toEqual([{ prompt: "autumn fog" }]);
+  expect(generated).toEqual([{ prompt: "autumn fog", scope: "level" }]);
   const progress = page.locator("[data-job]");
   await expect(progress).toHaveAttribute("data-state", "running");
   await expect(progress).toContainText("2");
@@ -982,4 +993,20 @@ test("REQ-8270: an approved node a change above marked is labelled, and the pare
     "1",
   );
   await expect(page.locator('[data-action="studio-reviewed"]')).toHaveCount(0);
+});
+
+test("REQ-8310: a prompt reworks the level by default, and everything inside only when asked", async ({
+  page,
+}) => {
+  generated.length = 0;
+  jobFlow = [{ state: "done", progress: 100, message: "version:3" }];
+  await selectAdventure(page);
+  await expect(page.locator("#gen-scope-level")).toBeChecked();
+  await expect(page.locator("[data-estimate]")).toContainText("1");
+  await page.locator("#gen-scope-inside").check();
+  await expect(page.locator("[data-estimate]")).toContainText("17");
+  await page.locator("#gen-prompt").fill("more fog");
+  await page.locator('[data-action="gen-start"]').click();
+  await expect.poll(() => generated.length).toBe(1);
+  expect(generated[0]).toEqual({ prompt: "more fog", scope: "inside" });
 });

@@ -848,6 +848,81 @@ describe("generating a version of an adventure", () => {
     expect((await estimate()).spentUsd).toBeCloseTo(0.2 + 5, 5);
   });
 
+  it("REQ-8310: reworks the level of a node by default, with the plan alone, and keeps the scenario it has", async () => {
+    const id = await adventureOf("level");
+    await call("PUT", `/nodes/${id}`, {
+      body: {
+        logline: "old logline",
+        scenario: { encounters: [] },
+        premise: "old premise",
+      },
+    });
+    let asked: { scope?: string; brief?: string } = {};
+    writer = (ask) => {
+      asked = { scope: ask.scope, brief: ask.brief };
+      return Promise.resolve({
+        plan: {
+          logline: "new logline",
+          synopsis: "new synopsis",
+          treatment: "new treatment",
+          beats: ["catalyst"],
+        },
+      });
+    };
+    expect((await finished((await start(id)).job.id)).state).toBe("done");
+    expect(asked.scope).toBe("level");
+    // The model sees the prompt and what the level holds now, so it reworks and does not start over.
+    expect(asked.brief).toContain("autumn fog");
+    expect(asked.brief).toContain("old logline");
+    const listed = (await (
+      await via("GET", `/nodes/${id}/versions`)
+    ).json()) as {
+      versions: { state: string; body: Record<string, unknown> }[];
+    };
+    const waiting = listed.versions.find((v) => v.state === "pending")?.body;
+    expect(waiting).toMatchObject({
+      logline: "new logline",
+      synopsis: "new synopsis",
+      treatment: "new treatment",
+      beats: ["catalyst"],
+      premise: "old premise",
+      scenario: { encounters: [] },
+    });
+  });
+
+  it("REQ-8310: reworks everything inside it only when the parent asks", async () => {
+    const id = await adventureOf("inside");
+    let scope = "";
+    writer = (ask) => {
+      scope = ask.scope;
+      return Promise.resolve(fake());
+    };
+    const res = await via("POST", `/nodes/${id}/generate`, {
+      prompt: "more fog",
+      scope: "inside",
+    });
+    await finished(((await res.json()) as { job: { id: string } }).job.id);
+    expect(scope).toBe("inside");
+    expect(
+      (
+        await via("POST", `/nodes/${id}/generate`, {
+          prompt: "x",
+          scope: "all",
+        })
+      ).status,
+    ).toBe(400);
+  });
+
+  it("REQ-8312: estimates a level rework as one call, and the inside as a whole run", async () => {
+    const id = await adventureOf("estimate scope");
+    const get = async (scope: string) =>
+      (await (
+        await via("GET", `/nodes/${id}/generate/estimate?scope=${scope}`)
+      ).json()) as { calls: { min: number; max: number } };
+    expect((await get("level")).calls).toEqual({ min: 1, max: 1 });
+    expect((await get("inside")).calls).toEqual({ min: 4, max: 17 });
+  });
+
   it("answers 409 with no generator, and refuses a node that is no adventure", async () => {
     const id = await adventureOf("refuse");
     const none = await via(
