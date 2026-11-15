@@ -12,6 +12,7 @@ import { registerDevice } from "../../src/server/devices.js";
 import { createParentApp } from "../../src/server/parent.js";
 import type { AdventureWriter } from "../../src/server/studio/generate.js";
 import {
+  editNode,
   getJob,
   proposeVersion,
   reportJob,
@@ -288,8 +289,9 @@ it("gives each node of a level the ids it leads to, for the graph's edges", asyn
       body: { links: [] },
     })
   ).json()) as { id: string };
-  await call("PUT", `/nodes/${a.id}`, {
-    body: { links: [b.id, { to: "ghost" }, 7] },
+  // The reader tolerates what the form's check now refuses, because a body can arrive by another path.
+  await editNode(db, Date.parse("2026-11-10T12:00:00Z"), a.id, {
+    links: [b.id, { to: "ghost" }, 7],
   });
   const list = (await (
     await call("GET", `/nodes?parent=${campaign.id}`)
