@@ -21,10 +21,10 @@ import {
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
 import { checkEncounterBody } from "./body-check.js";
+import type { StudioExtras } from "./extras.js";
 import { checkLevelBody } from "./level-check.js";
 import { materializeScenario } from "./materialize.js";
 import {
-  type AdventureWriter,
   callsOf,
   dollarEstimate,
   monthSpendUsd,
@@ -38,8 +38,6 @@ import { Lever, setLever } from "../sandbox/levers.js";
 import {
   createSandboxPlay,
   encountersOf,
-  type MasterFactory,
-  type SandboxFrames,
   enterEncounter,
   reachedIn,
   scenarioOf,
@@ -52,7 +50,9 @@ import {
   sandboxSchemaOf,
   sandboxState,
 } from "../sandbox/sandbox.js";
-import { listTemplates, openTask } from "./tasks.js";
+import { promptTexts, promptVersions, runFrame } from "./lab.js";
+import { listTemplates, openTask, seedOf } from "./tasks.js";
+import { templates } from "../../templates/index.js";
 import {
   addEntry,
   childrenOf,
@@ -126,6 +126,27 @@ const TurnIn = z
   })
   .strict();
 const UseIn = z.object({ nodeId: z.string() }).strict();
+const LabRunIn = z
+  .object({
+    lang: z.enum(["ru", "en", "nl"]),
+    templateId: z.string().min(1),
+    seed: z
+      .string()
+      .regex(/^[0-9a-f]{1,64}$/)
+      .optional(),
+    action: z
+      .object({
+        tried: z.string().min(1).max(300),
+        hard: z.string().min(1).max(300),
+      })
+      .strict()
+      .optional(),
+    patch: z
+      .object({ field: z.string().min(1), text: z.string().max(20000) })
+      .strict()
+      .optional(),
+  })
+  .strict();
 const GenerateIn = z
   .object({
     prompt: z.string().trim().min(1).max(2000),
@@ -138,10 +159,9 @@ export function mountStudio(
   db: Db,
   now: () => number,
   guard: (c: Context) => Promise<string | Response>,
-  master?: MasterFactory,
-  sandboxFrames?: SandboxFrames,
-  generator?: AdventureWriter,
+  extras: StudioExtras = {},
 ): void {
+  const { master, sandboxFrames, generator, lab } = extras;
   const base = "/api/parent/studio";
 
   // A job lives in the process that started it, so one found running now was cut off (REQ-8612).
@@ -317,6 +337,48 @@ export function mountStudio(
       basis: range.basis,
       measuredCalls: range.measuredCalls,
     });
+  });
+
+  // The prompt lab (REQ-8302): the version of each prompt, and a run of a frame with a change tried for it.
+  app.get(`${base}/lab/prompts`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    return c.json({ prompts: promptVersions() });
+  });
+
+  app.get(`${base}/lab/prompts/:id`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const found = promptTexts(c.req.param("id"));
+    return found ? c.json(found) : c.json({ error: "prompt_unknown" }, 404);
+  });
+
+  app.post(`${base}/lab/run`, async (c) => {
+    const who = await guard(c);
+    if (who instanceof Response) return who;
+    const body = LabRunIn.safeParse(await c.req.json().catch(() => null));
+    if (!body.success) return c.json({ error: "bad_request" }, 400);
+    if (!lab) return c.json({ error: "lab_not_configured" }, 409);
+    const at = url();
+    const open = at ? await sandboxPlay(at).open() : null;
+    if (!open) return c.json({ error: "sandbox_unavailable" }, 409);
+    const template = templates.find((t) => t.id === body.data.templateId);
+    if (!template) return c.json({ error: "template_unknown" }, 404);
+    try {
+      return c.json(
+        await runFrame(lab(open.db), open.db, {
+          template,
+          base: seedOf(template.id, body.data.seed).bytes,
+          lang: body.data.lang,
+          ...(body.data.action ? { action: body.data.action } : {}),
+          ...(body.data.patch ? { patch: body.data.patch } : {}),
+        }),
+      );
+    } catch (err) {
+      if (err instanceof Error && err.message.startsWith("no text field"))
+        return c.json({ error: "bad_patch" }, 400);
+      throw err;
+    }
   });
 
   // A generation is a job: the answer is the job, and the result waits as a version (REQ-8318, REQ-8604).

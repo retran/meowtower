@@ -894,3 +894,63 @@ export async function studioTurns(): Promise<ParentReply<TurnsView>> {
   const { status, body } = await call("/api/parent/studio/sandbox/play/turns");
   return parentReply(status, body, () => body as unknown as TurnsView);
 }
+
+export interface PromptRow {
+  id: string;
+  file: string;
+  version: string;
+  fields: string[];
+}
+
+/** Each prompt with its version (REQ-8302). */
+export async function studioPrompts(): Promise<ParentReply<PromptRow[]>> {
+  const { status, body } = await call("/api/parent/studio/lab/prompts");
+  return parentReply(status, body, () => body["prompts"] as PromptRow[]);
+}
+
+/** The text of each text field of one prompt. */
+export async function studioPromptTexts(
+  id: string,
+): Promise<
+  ParentReply<{ id: string; version: string; texts: Record<string, string> }>
+> {
+  const { status, body } = await call(
+    `/api/parent/studio/lab/prompts/${encodeURIComponent(id)}`,
+  );
+  return parentReply(
+    status,
+    body,
+    () =>
+      body as unknown as {
+        id: string;
+        version: string;
+        texts: Record<string, string>;
+      },
+  );
+}
+
+export interface LabRun {
+  story: string | null;
+  score: number | null;
+  fault: string | null;
+  costUsd: number;
+  version: string;
+  patched: boolean;
+}
+
+/** Runs a frame for a task in the sandbox, with a change to one text of the prompt where one is given. */
+export async function studioLabRun(input: {
+  lang: string;
+  templateId: string;
+  seed?: string;
+  action?: { tried: string; hard: string };
+  patch?: { field: string; text: string };
+}): Promise<ParentReply<LabRun>> {
+  const { status, body } = await call("/api/parent/studio/lab/run", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return status === 200
+    ? { ok: true, value: body as unknown as LabRun }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
+}

@@ -93,6 +93,22 @@
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
     {
+      "id": "screen:/studio/prompts",
+      "tests": ["tests/e2e/studio-prompts.spec.ts"]
+    },
+    {
+      "id": "api:GET /lab/prompts",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:GET /lab/prompts/:id",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
+      "id": "api:POST /lab/run",
+      "tests": ["tests/integration/sandbox-turn.test.ts"]
+    },
+    {
       "id": "api:POST /nodes/:id/archive",
       "tests": ["tests/integration/studio-routes.test.ts"]
     },

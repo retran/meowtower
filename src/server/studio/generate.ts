@@ -130,12 +130,14 @@ export async function showrunnerCosts(db: Db): Promise<number[]> {
 }
 
 /** The body of a level without the scenario inside it, which a level rework does not need to read. */
+const omit = (
+  body: Record<string, unknown>,
+  key: string,
+): Record<string, unknown> =>
+  Object.fromEntries(Object.entries(body).filter(([k]) => k !== key));
 const withoutScenario = (
   body: Record<string, unknown>,
-): Record<string, unknown> => {
-  const { scenario: _scenario, ...rest } = body;
-  return rest;
-};
+): Record<string, unknown> => omit(body, "scenario");
 
 /** How far along a step is, as a share of the run; the draft steps climb with each draft. */
 const progressOf = (name: string, n: number): number =>
@@ -194,7 +196,7 @@ export async function startGeneration(
           : {};
       // The model reworks what the level holds now and does not start over: the prompt comes with the
       // current version, less the critic's notes of an earlier run (REQ-8262).
-      const { review: _review, ...held } = base;
+      const held = omit(base, "review");
       const brief =
         Object.keys(held).length === 0
           ? prompt

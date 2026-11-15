@@ -53,7 +53,7 @@ export const listTemplates = (): TemplateRow[] => templates.map(rowOf);
 const HEX = /^[0-9a-f]{1,64}$/;
 
 /** A seed the parent typed, as bytes; none gives the lab's first seed of that template. */
-function seedOf(
+export function seedOf(
   templateId: string,
   seed: string | undefined,
 ): { hex: string; bytes: Uint8Array } {
