@@ -45,6 +45,8 @@ const UNSAFE_VETO = 0.7;
 
 /** What each answer adds to a variant's score: faults subtract, and a soft code fault costs 0.15. */
 const WEIGHTS = {
+  /** 1 means the story ignores what the player tried, which costs the whole answer (REQ-8214). */
+  ignores: -1,
   fits: 0.3,
   flows: 0.2,
   clear: 0.2,
@@ -65,6 +67,8 @@ export const Answers = z.object({
   alive: z.number(),
   sense: z.number(),
   numbers: z.number(),
+  /** Asked only of a task that resolves a check; 1 means the story ignores the player's action. */
+  ignores: z.number().optional(),
   answer: z.string(),
 });
 export type Answers = z.infer<typeof Answers>;
@@ -76,7 +80,7 @@ export function scoreOf(
 ): number | null {
   if (answers.unsafe >= UNSAFE_VETO) return null;
   const score = (Object.keys(WEIGHTS) as (keyof typeof WEIGHTS)[]).reduce(
-    (sum, k) => sum + answers[k] * WEIGHTS[k],
+    (sum, k) => sum + (answers[k] ?? 0) * WEIGHTS[k],
     0,
   );
   return soft ? score - SOFT_COST : score;
@@ -105,17 +109,22 @@ const FORMAT: Readonly<Record<AnswerKind, keyof FramePrompt["formats"]>> = {
   order: "options",
 };
 
-const JUDGE_KEYS = Object.keys(Answers.shape).filter((k) => k !== "answer");
+/** The questions the judge answers: `ignores` only where the task has an action to follow. */
+const judgeKeys = (acting: boolean): string[] =>
+  Object.keys(Answers.shape).filter(
+    (k) => k !== "answer" && (acting || k !== "ignores"),
+  );
 
 /** The judge's prompt: each question with what yes and no mean. */
 const judgeSystem = (
   lang: Lang,
   level: Creepiness,
   kind: AnswerKind,
+  acting: boolean,
 ): string => {
   const { judge, formats } = promptOf(lang);
   const judge_format = formats[FORMAT[kind]];
-  const lines = JUDGE_KEYS.map((key) => {
+  const lines = judgeKeys(acting).map((key) => {
     const q = judge.questions[key as JudgeKey];
     const no = key === "unsafe" ? judge.safeAtLevel[level] : q.criteria.false;
     return `${key}: ${q.instructions}\n1: ${q.criteria.true}\n0: ${no}`;
@@ -123,15 +132,17 @@ const judgeSystem = (
   return [judge.intro, judge_format, ...lines].join("\n\n");
 };
 
-const JUDGE_SCHEMA = {
+const judgeSchema = (acting: boolean) => ({
   type: "object",
   properties: {
     answer: { type: "string" },
-    ...Object.fromEntries(JUDGE_KEYS.map((key) => [key, { type: "number" }])),
+    ...Object.fromEntries(
+      judgeKeys(acting).map((key) => [key, { type: "number" }]),
+    ),
   },
-  required: ["answer", ...JUDGE_KEYS],
+  required: ["answer", ...judgeKeys(acting)],
   additionalProperties: false,
-};
+});
 
 /** Whether the solver's answer is the engine's, read through the task's own checker (REQ-7950). */
 function solved(
@@ -160,6 +171,8 @@ export async function judged(
   answers: readonly string[],
   lang: Lang,
   level: Creepiness,
+  /** What the player tried, for a task that resolves a check: the judge asks whether the story follows it. */
+  action?: { readonly tried: string; readonly hard: string },
 ): Promise<Judged | null> {
   const { judge, answerForms } = promptOf(lang);
   const results = await Promise.all(
@@ -167,11 +180,19 @@ export async function judged(
       const reply = await gateway.call({
         role: "FRAME_JUDGE_MODEL",
         bucket,
-        system: judgeSystem(lang, level, item.template.answer),
+        system: judgeSystem(
+          lang,
+          level,
+          item.template.answer,
+          action !== undefined,
+        ),
         user: [
           `${judge.story}:\n${text}`,
           ...(item.made.svg ? [item.made.svg] : []),
           `${judge.task}:\n${item.made.text}`,
+          ...(action
+            ? [`${judge.action}:\n${action.tried}\n${action.hard}`]
+            : []),
           `${judge.form}:\n${answerForms[item.template.answer]}`,
           ...(answers.length > 0
             ? [
@@ -181,7 +202,7 @@ export async function judged(
               ]
             : []),
         ].join("\n\n"),
-        schema: JUDGE_SCHEMA,
+        schema: judgeSchema(action !== undefined),
       });
       if (!reply.ok) return { text, answered: false, score: null };
       let parsed: ReturnType<typeof Answers.safeParse>;

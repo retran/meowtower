@@ -58,7 +58,7 @@ export interface JudgeQuestion {
 }
 
 export type JudgeKey =
-  "unsafe" | "changed" | "fits" | "flows" | "clear" | "alive";
+  "unsafe" | "changed" | "fits" | "flows" | "clear" | "alive" | "ignores";
 
 export interface FramePrompt {
   readonly setting: string;
@@ -82,6 +82,8 @@ export interface FramePrompt {
     readonly intro: string;
     readonly story: string;
     readonly task: string;
+    /** The label of what the player tried, for a task that resolves a check (REQ-8214). */
+    readonly action: string;
     readonly answers: string;
     readonly form: string;
     readonly safeAtLevel: Levels;

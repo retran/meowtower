@@ -18,6 +18,7 @@
   "judge": {
     "story": "Verhaal",
     "task": "Oorspronkelijke opgave",
+    "action": "De handeling van de speler",
     "answers": "Antwoordkeuzes",
     "questions": {
       "unsafe": {
@@ -74,6 +75,13 @@
         "criteria": {
           "true": "Een getal uit de opgave ontbreekt of is anders, of betekent iets anders.",
           "false": "Elk getal uit de opgave staat in het verhaal, met dezelfde waarde en eenheid, en betekent hetzelfde als in de opgave."
+        }
+      },
+      "ignores": {
+        "instructions": "Negeert het verhaal wat de speler probeerde te doen?",
+        "criteria": {
+          "true": "Het verhaal gaat over iets anders: de handeling van de speler en waarom die moeilijk is, spelen geen rol in de scène.",
+          "false": "Het verhaal is op de handeling gebouwd: wat de speler probeerde en waarom het moeilijk was, bepalen de scène."
         }
       }
     },
