@@ -1,7 +1,8 @@
 ---
 id: ADR-3360
 artifact: adr
-status: approved
+status: done
+pr: 142
 revised: 2026-11-14
 addresses: [REQ-8306, REQ-8308, REQ-8600, REQ-8602, REQ-8604, REQ-8606, REQ-8608, REQ-8610, REQ-8612, REQ-8614, REQ-8616, REQ-8618, REQ-8620, REQ-8622, REQ-8624, REQ-8626, REQ-8628]
 supersedes: []
