@@ -223,7 +223,10 @@ async function stub(page: Page): Promise<Fake[]> {
     if (decide && method === "POST") {
       decided.push(`${decide[2] ?? ""} ${decide[1] ?? ""}`);
       waiting.delete(decide[1] ?? "");
-      return json(200, nodes.find((x) => x.id === decide[1]) ?? {});
+      return json(200, {
+        ...(nodes.find((x) => x.id === decide[1]) ?? {}),
+        created: decide[2] === "keep" ? 3 : 0,
+      });
     }
     const restore = /^\/nodes\/([^/]+)\/versions\/(\d+)\/restore$/.exec(path);
     if (restore && method === "POST") {
@@ -642,6 +645,10 @@ test("REQ-8308: a waiting version shows beside the current one with its changes 
   await expect(page.locator('[data-action="version-keep"]')).toHaveCount(1);
   await compare.locator('[data-action="version-keep"]').click();
   await expect.poll(() => decided).toEqual(["keep a2"]);
+  // A kept generated adventure says how many encounters it added (REQ-8260).
+  await expect(
+    page.locator("p.status").filter({ hasText: "3" }).first(),
+  ).toBeVisible();
   await expect(page.locator(".compare")).toHaveCount(0);
 });
 
