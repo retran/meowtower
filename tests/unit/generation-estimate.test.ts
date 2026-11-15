@@ -11,8 +11,8 @@ import {
 describe("REQ-8632: the estimate says what it rests on", () => {
   it("rests on the default with no earlier calls, and with fewer than ten", () => {
     expect(dollarEstimate([])).toEqual({
-      minUsd: 0.2,
-      maxUsd: 0.85,
+      minUsd: 0.28,
+      maxUsd: 1.19,
       basis: "default",
       measuredCalls: 0,
     });
@@ -20,7 +20,7 @@ describe("REQ-8632: the estimate says what it rests on", () => {
       basis: "default",
       measuredCalls: 0,
     });
-    expect(DEFAULT_CALL_USD).toBe(0.05);
+    expect(DEFAULT_CALL_USD).toBe(0.07);
   });
 
   it("rests on the mean of earlier calls from ten of them", () => {
