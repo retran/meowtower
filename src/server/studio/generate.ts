@@ -26,7 +26,24 @@ export interface GenerateAsk {
   readonly lang: Lang;
   readonly brief: string;
   readonly minChecks: number;
+  /** `level` reworks the adventure's own texts with a plan; `inside` writes the whole scenario (REQ-8310). */
+  readonly scope: Scope;
   readonly report: Report;
+  /** The child's profile, where the parent wrote one (REQ-8280). */
+  readonly profile?: string;
+}
+
+export type Scope = "level" | "inside";
+export const SCOPES: readonly Scope[] = ["level", "inside"];
+
+/** What a level rework returns: the plan alone. */
+export interface GeneratedPlan {
+  readonly plan: {
+    readonly logline: string;
+    readonly synopsis: string;
+    readonly treatment: string;
+    readonly beats: readonly string[];
+  };
 }
 
 /** The part of a written scenario the studio keeps: the whole scenario, and its premise and logline. */
@@ -40,7 +57,11 @@ export interface GeneratedScenario {
 /** Writes a scenario for an adventure, or returns null with the cause told to the report. */
 export type AdventureWriter = (
   ask: GenerateAsk,
-) => Promise<GeneratedScenario | null>;
+) => Promise<GeneratedScenario | GeneratedPlan | null>;
+
+/** The calls a run of each scope makes: a plan alone is one call, and the inside is a whole run. */
+export const callsOf = (scope: Scope): { min: number; max: number } =>
+  scope === "level" ? { min: 1, max: 1 } : GENERATION_CALLS;
 
 /** The checks a scenario must hold when the parent names none; a default that I chose. */
 export const DEFAULT_MIN_CHECKS = 5;
@@ -83,15 +104,18 @@ const upToCent = (usd: number): number => Math.ceil(usd * 100 - 1e-6) / 100;
  * The cost of a run in dollars (REQ-8630): the fewest and the most calls a run makes times the price of
  * one call, each end rounded up to the cent. `costs` are the costs of earlier answered calls, oldest first.
  */
-export function dollarEstimate(costs: readonly number[]): DollarEstimate {
+export function dollarEstimate(
+  costs: readonly number[],
+  calls: { min: number; max: number } = GENERATION_CALLS,
+): DollarEstimate {
   const recent = costs.slice(-MEASURED_WINDOW);
   const measured = recent.length >= MEASURED_FROM;
   const price = measured
     ? recent.reduce((sum, c) => sum + c, 0) / recent.length
     : DEFAULT_CALL_USD;
   return {
-    minUsd: upToCent(GENERATION_CALLS.min * price),
-    maxUsd: upToCent(GENERATION_CALLS.max * price),
+    minUsd: upToCent(calls.min * price),
+    maxUsd: upToCent(calls.max * price),
     basis: measured ? "measured" : "default",
     measuredCalls: measured ? recent.length : 0,
   };
@@ -106,6 +130,16 @@ export async function showrunnerCosts(db: Db): Promise<number[]> {
     .all(MEASURED_WINDOW)) as { cost_usd: number }[];
   return rows.map((r) => Number(r.cost_usd)).reverse();
 }
+
+/** The body of a level without the scenario inside it, which a level rework does not need to read. */
+const omit = (
+  body: Record<string, unknown>,
+  key: string,
+): Record<string, unknown> =>
+  Object.fromEntries(Object.entries(body).filter(([k]) => k !== key));
+const withoutScenario = (
+  body: Record<string, unknown>,
+): Record<string, unknown> => omit(body, "scenario");
 
 /** How far along a step is, as a share of the run; the draft steps climb with each draft. */
 const progressOf = (name: string, n: number): number =>
@@ -128,6 +162,8 @@ export async function startGeneration(
   prompt: string,
   write: AdventureWriter,
   lang: Lang,
+  scope: Scope = "level",
+  profile = "",
 ): Promise<{ job: Job; done: Promise<void> }> {
   const job = await startJob(db, now(), "generate", node.id);
   let cause: Cause | null = null;
@@ -154,37 +190,54 @@ export async function startGeneration(
   };
   const run = async (): Promise<void> => {
     try {
-      const written = await write({
-        bucket: node.id,
-        lang,
-        brief: prompt,
-        minChecks: DEFAULT_MIN_CHECKS,
-        report,
-      });
-      if (!written) return await fail(cause ?? "check_failed");
       const current = await currentBodyOf(db, node.id);
-      const base =
+      const base: Record<string, unknown> =
         typeof current === "object" &&
         current !== null &&
         !Array.isArray(current)
-          ? current
+          ? { ...(current as Record<string, unknown>) }
           : {};
+      // The model reworks what the level holds now and does not start over: the prompt comes with the
+      // current version, less the critic's notes of an earlier run (REQ-8262).
+      const held = omit(base, "review");
+      const brief =
+        Object.keys(held).length === 0
+          ? prompt
+          : `${prompt}\n\n---\n${JSON.stringify(scope === "level" ? withoutScenario(held) : held)}`;
+      const written = await write({
+        bucket: node.id,
+        lang,
+        brief,
+        minChecks: DEFAULT_MIN_CHECKS,
+        scope,
+        report,
+        ...(profile ? { profile } : {}),
+      });
+      if (!written) return await fail(cause ?? "check_failed");
       const waiting = await proposeVersion(
         db,
         now(),
         node.id,
-        {
-          ...base,
-          premise: written.scenario.premise,
-          logline: written.scenario.logline,
-          scenario: written.scenario,
-          // What the critic still found, which the page shows beside the comparison (REQ-8642).
-          review: {
-            revisions: written.revisions,
-            unresolved: written.unresolved,
-            minor: written.minor,
-          },
-        },
+        "plan" in written
+          ? {
+              ...base,
+              logline: written.plan.logline,
+              synopsis: written.plan.synopsis,
+              treatment: written.plan.treatment,
+              beats: written.plan.beats,
+            }
+          : {
+              ...base,
+              premise: written.scenario.premise,
+              logline: written.scenario.logline,
+              scenario: written.scenario,
+              // What the critic still found, which the page shows beside the comparison (REQ-8642).
+              review: {
+                revisions: written.revisions,
+                unresolved: written.unresolved,
+                minor: written.minor,
+              },
+            },
         { prompt },
       );
       await chain;

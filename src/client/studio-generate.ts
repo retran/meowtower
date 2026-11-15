@@ -42,27 +42,57 @@ export function generatePanel(
   const cause = el("p", { className: "fault" });
   cause.setAttribute("role", "alert");
 
-  void studioGenerateEstimate(node.id).then((got) => {
-    if (!got.ok) {
-      estimate.textContent = "";
-      return;
-    }
-    const v = got.value;
-    estimate.dataset["basis"] = v.basis;
-    estimate.textContent = t(
-      v.basis === "measured"
-        ? "ui.studio.generate.estimateMeasured"
-        : "ui.studio.generate.estimateDefault",
-      {
-        min: v.calls.min,
-        max: v.calls.max,
-        low: v.estimateUsd.min.toFixed(2),
-        high: v.estimateUsd.max.toFixed(2),
-        calls: v.measuredCalls,
-        spent: v.spentUsd.toFixed(2),
-      },
+  /** What a prompt reworks: the level by default, and everything inside it only when asked (REQ-8310). */
+  let scope: "level" | "inside" = "level";
+  const showEstimate = (): void => {
+    void studioGenerateEstimate(node.id, scope).then((got) => {
+      if (!got.ok) {
+        estimate.textContent = "";
+        return;
+      }
+      const v = got.value;
+      estimate.dataset["basis"] = v.basis;
+      estimate.textContent = t(
+        v.basis === "measured"
+          ? "ui.studio.generate.estimateMeasured"
+          : "ui.studio.generate.estimateDefault",
+        {
+          min: v.calls.min,
+          max: v.calls.max,
+          low: v.estimateUsd.min.toFixed(2),
+          high: v.estimateUsd.max.toFixed(2),
+          calls: v.measuredCalls,
+          spent: v.spentUsd.toFixed(2),
+        },
+      );
+    });
+  };
+  showEstimate();
+  const scopes = el("fieldset", { className: "scopes" });
+  scopes.append(el("legend", {}, t("ui.studio.generate.scope")));
+  for (const choice of ["level", "inside"] as const) {
+    const radio = el("input", {
+      id: `gen-scope-${choice}`,
+      type: "radio",
+      name: "gen-scope",
+      value: choice,
+      checked: choice === "level",
+    });
+    radio.dataset["action"] = `gen-scope-${choice}`;
+    radio.addEventListener("change", () => {
+      act(`gen-scope-${choice}`);
+      scope = choice;
+      showEstimate();
+    });
+    scopes.append(
+      el(
+        "label",
+        { className: "choice", htmlFor: radio.id },
+        radio,
+        t(uiKey(`ui.studio.generate.scope.${choice}`)),
+      ),
     );
-  });
+  }
 
   const follow = async (
     id: string,
@@ -126,7 +156,7 @@ export function generatePanel(
       return;
     }
     start.disabled = true;
-    const began = await studioGenerate(node.id, prompt.value.trim());
+    const began = await studioGenerate(node.id, prompt.value.trim(), scope);
     if (!began.ok) {
       cause.textContent = refusalText(began.error);
       start.disabled = false;
@@ -140,6 +170,7 @@ export function generatePanel(
     estimate,
     el("label", { htmlFor: "gen-prompt" }, t("ui.studio.generate.prompt")),
     prompt,
+    scopes,
     start,
     progress,
     cause,

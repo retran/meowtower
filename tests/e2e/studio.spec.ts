@@ -19,6 +19,7 @@ interface Fake {
   status: string;
   version: number;
   links: string[];
+  needsReview?: boolean;
 }
 
 /** What the Master was asked in a turn, in order. */
@@ -40,6 +41,9 @@ const decided: string[] = [];
 /** What the studio asked a generator to write, and the jobs it will read back in turn. */
 const generated: object[] = [];
 let jobFlow: { state: string; progress: number; message: string }[] = [];
+
+/** The nodes the studio was told were reviewed, in order. */
+const reviewedLog: string[] = [];
 
 /** The nodes the studio was asked to archive and to bring back, in order. */
 const archivedLog: string[] = [];
@@ -89,6 +93,7 @@ async function stub(page: Page): Promise<Fake[]> {
       status: "draft",
       version: 1,
       links: [],
+      needsReview: true,
     },
     {
       id: "e1",
@@ -124,6 +129,13 @@ async function stub(page: Page): Promise<Fake[]> {
             n.parentId === (parent ?? null) && hidden.has(n.id) === archived,
         ),
       });
+    }
+    const reviewed = /^\/nodes\/([^/]+)\/reviewed$/.exec(path);
+    if (reviewed && method === "POST") {
+      reviewedLog.push(reviewed[1] ?? "");
+      const n = nodes.find((x) => x.id === reviewed[1]);
+      if (n) n.needsReview = false;
+      return json(200, n ?? {});
     }
     const archive = /^\/nodes\/([^/]+)\/(archive|unarchive)$/.exec(path);
     if (archive && method === "POST") {
@@ -236,6 +248,17 @@ async function stub(page: Page): Promise<Fake[]> {
         ],
       });
     }
+    if (
+      path === "/nodes/d1/generate/estimate" &&
+      url.searchParams.get("scope") === "inside"
+    )
+      return json(200, {
+        calls: { min: 4, max: 17 },
+        spentUsd: 1.5,
+        estimateUsd: { min: 0.28, max: 1.19 },
+        basis: "default",
+        measuredCalls: 0,
+      });
     if (path === "/nodes/d1/generate/estimate")
       return json(200, {
         calls: { min: 4, max: 17 },
@@ -790,7 +813,7 @@ test("REQ-8608, REQ-8318: the page shows the calls and the spend before a genera
   await expect(estimate).toHaveAttribute("data-basis", "default");
   await page.locator("#gen-prompt").fill("autumn fog");
   await page.locator('[data-action="gen-start"]').click();
-  expect(generated).toEqual([{ prompt: "autumn fog" }]);
+  expect(generated).toEqual([{ prompt: "autumn fog", scope: "level" }]);
   const progress = page.locator("[data-job]");
   await expect(progress).toHaveAttribute("data-state", "running");
   await expect(progress).toContainText("2");
@@ -815,16 +838,18 @@ test("REQ-8632: an estimate measured over earlier calls says how many", async ({
   page,
 }) => {
   await stub(page);
-  await page.route("**/api/parent/studio/nodes/d1/generate/estimate", (route) =>
-    route.fulfill({
-      json: {
-        calls: { min: 4, max: 17 },
-        spentUsd: 3,
-        estimateUsd: { min: 0.08, max: 0.34 },
-        basis: "measured",
-        measuredCalls: 42,
-      },
-    }),
+  await page.route(
+    "**/api/parent/studio/nodes/d1/generate/estimate*",
+    (route) =>
+      route.fulfill({
+        json: {
+          calls: { min: 4, max: 17 },
+          spentUsd: 3,
+          estimateUsd: { min: 0.08, max: 0.34 },
+          basis: "measured",
+          measuredCalls: 42,
+        },
+      }),
   );
   await ready(page);
   await page.locator('button[data-node="c1"]').click();
@@ -948,4 +973,42 @@ test("REQ-8634, REQ-8638, REQ-8640: a node is archived from its panel, listed wi
   await back.click();
   await expect.poll(() => archivedLog).toEqual(["archive e1", "unarchive e1"]);
   await expect(page.locator('button[data-node="e1"]')).toBeVisible();
+});
+
+test("REQ-8270: an approved node a change above marked is labelled, and the parent says it was reviewed", async ({
+  page,
+}) => {
+  reviewedLog.length = 0;
+  await stub(page);
+  await ready(page);
+  for (const id of ["c1", "a1"]) {
+    await page.locator(`button[data-node="${id}"]`).click();
+    await page.locator('[data-action="studio-open"]').click();
+  }
+  const node = page.locator('button[data-node="d1"]');
+  await expect(node).toHaveAttribute("data-needs-review", "1");
+  await node.click();
+  await page.locator('[data-action="studio-reviewed"]').click();
+  await expect.poll(() => reviewedLog).toEqual(["d1"]);
+  await expect(page.locator('button[data-node="d1"]')).not.toHaveAttribute(
+    "data-needs-review",
+    "1",
+  );
+  await expect(page.locator('[data-action="studio-reviewed"]')).toHaveCount(0);
+});
+
+test("REQ-8310: a prompt reworks the level by default, and everything inside only when asked", async ({
+  page,
+}) => {
+  generated.length = 0;
+  jobFlow = [{ state: "done", progress: 100, message: "version:3" }];
+  await selectAdventure(page);
+  await expect(page.locator("#gen-scope-level")).toBeChecked();
+  await expect(page.locator("[data-estimate]")).toContainText("1");
+  await page.locator("#gen-scope-inside").check();
+  await expect(page.locator("[data-estimate]")).toContainText("17");
+  await page.locator("#gen-prompt").fill("more fog");
+  await page.locator('[data-action="gen-start"]').click();
+  await expect.poll(() => generated.length).toBe(1);
+  expect(generated[0]).toEqual({ prompt: "more fog", scope: "inside" });
 });

@@ -9,7 +9,8 @@ import { createApp } from "./app.js";
 import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
 import { createSandboxGateway } from "./sandbox/sandbox.js";
 import { gatewayMaster } from "../story/master-gateway.js";
-import { writeScenario } from "../story/writer.js";
+import { writePlan, writeScenario } from "../story/writer.js";
+import type { LabGateway } from "./studio/extras.js";
 import type { AdventureWriter } from "./studio/generate.js";
 import { openDatabase, type Db } from "./database.js";
 import { createParentApp } from "./parent.js";
@@ -128,6 +129,8 @@ let master: MasterFactory | undefined;
 let sandboxFrames: SandboxFrames | undefined;
 /** Writes a scenario for an adventure in the studio, once the showrunner's role is configured (ADR-3360). */
 let generator: AdventureWriter | undefined;
+/** Makes the gateway of the prompt lab, which spends from the sandbox's own limit (REQ-8302). */
+let lab: LabGateway | undefined;
 try {
   const config = readConfig(process.env);
   // The game runs only in `play`: the tools start the other modes (ADR-3200).
@@ -175,6 +178,16 @@ try {
           level: async () => (await parentSettings(sandbox)).creepiness,
           gender: async () => (await parentSettings(sandbox)).gender,
         });
+    if (config.roles.TASK_TEXT_MODEL)
+      lab = (sandbox) =>
+        createSandboxGateway({
+          db: sandbox,
+          config,
+          routes,
+          names: (process.env["MEOWTOWER_EGRESS_NAMES"] ?? "")
+            .split(",")
+            .filter((n) => n !== ""),
+        });
     if (config.roles.SHOWRUNNER_MODEL) {
       const studioGateway = createGateway({
         ...(ledger ? { household: ledger.forProfile(db.name) } : {}),
@@ -185,7 +198,12 @@ try {
           .split(",")
           .filter((n) => n !== ""),
       });
-      generator = (ask) => writeScenario(studioGateway, ask);
+      generator = async (ask) =>
+        ask.scope === "level"
+          ? ((plan) => (plan ? { plan } : null))(
+              await writePlan(studioGateway, ask),
+            )
+          : writeScenario(studioGateway, ask);
     }
     const queue = createFrameQueue({
       db,
@@ -231,6 +249,7 @@ const firstApp = await createApp({
   ...(master ? { master } : {}),
   ...(sandboxFrames ? { sandboxFrames } : {}),
   ...(generator ? { generator } : {}),
+  ...(lab ? { lab } : {}),
   onSessionEnded,
   sweepLeasesMs: 5000,
   tasks,

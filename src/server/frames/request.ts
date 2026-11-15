@@ -1,6 +1,7 @@
 // The request for a story frame (ADR-3100, ADR-3210). The template is filled once, and that one task
 // goes to the model on every attempt.
 // decision moves `TASK_TEXT_MODEL` to the player tier, because a summary is story material (REQ-7580).
+import { AsyncLocalStorage } from "node:async_hooks";
 import { readFileSync } from "node:fs";
 import type { AnswerKind, Lang } from "../../templates/spec.js";
 
@@ -93,8 +94,28 @@ export interface FramePrompt {
 
 const prompts = new Map<Lang, FramePrompt>();
 
+/** A change to one text of a prompt that holds for the run it wraps and for no other (REQ-8302). */
+export interface PromptPatch {
+  readonly lang: Lang;
+  readonly field: string;
+  readonly text: string;
+}
+const patched = new AsyncLocalStorage<PromptPatch>();
+
+/** Runs `fn` with a text of a prompt changed in memory; the file and every other run stay as they were. */
+export const runWithPromptPatch = <T>(patch: PromptPatch, fn: () => T): T =>
+  patched.run(patch, fn);
+
 /** Every prompt is in the game's language (ADR-3100), so it lives in a per-language file. */
 export function promptOf(lang: Lang): FramePrompt {
+  const base = loadedPrompt(lang);
+  const change = patched.getStore();
+  return change && change.lang === lang
+    ? { ...base, [change.field]: change.text }
+    : base;
+}
+
+function loadedPrompt(lang: Lang): FramePrompt {
   const hit = prompts.get(lang);
   if (hit) return hit;
   const file = new URL(

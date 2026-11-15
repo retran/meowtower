@@ -142,6 +142,8 @@ export interface ParentSettings {
   gender: "f" | "m";
   language: string;
   hideRankFalls: boolean;
+  /** The child's profile, which the writer and the Master read (REQ-8280). */
+  profile: string;
 }
 
 /** One fall the Parent Room lists (REQ-8006). */
@@ -174,6 +176,23 @@ export async function saveParentSettings(
     body: JSON.stringify(settings),
   });
   return parentReply(status, body, () => body as unknown as ParentSettings);
+}
+
+/** Saves the child's profile; a refusal names what is wrong with it (REQ-8282). */
+export async function saveProfile(
+  profile: string,
+): Promise<{ ok: true } | { ok: false; reason: string; held: string }> {
+  const { status, body } = await call("/api/parent/settings", {
+    method: "PUT",
+    body: JSON.stringify({ profile }),
+  });
+  return status === 200
+    ? { ok: true }
+    : {
+        ok: false,
+        reason: String(body["reason"] ?? body["error"]),
+        held: String(body["held"] ?? ""),
+      };
 }
 
 /** The statistics reset; the server wants `confirm` and refuses without it (REQ-8386). */
@@ -475,6 +494,8 @@ export interface StudioNode {
   version: number;
   /** The ids of the sibling nodes this one leads to. */
   links: string[];
+  /** True for an approved node that a change above it has left unreviewed (REQ-8270). */
+  needsReview?: boolean;
 }
 
 export async function studioNodes(
@@ -615,9 +636,10 @@ export interface GenerateEstimate {
 /** What a generation costs before it runs: its calls, its cost in dollars and this month's spend. */
 export async function studioGenerateEstimate(
   id: string,
+  scope: "level" | "inside" = "level",
 ): Promise<ParentReply<GenerateEstimate>> {
   const { status, body } = await call(
-    `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate/estimate`,
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate/estimate?scope=${scope}`,
   );
   return parentReply(status, body, () => body as unknown as GenerateEstimate);
 }
@@ -634,10 +656,11 @@ export interface StudioJob {
 export async function studioGenerate(
   id: string,
   prompt: string,
+  scope: "level" | "inside" = "level",
 ): Promise<ParentReply<StudioJob>> {
   const { status, body } = await call(
     `/api/parent/studio/nodes/${encodeURIComponent(id)}/generate`,
-    { method: "POST", body: JSON.stringify({ prompt }) },
+    { method: "POST", body: JSON.stringify({ prompt, scope }) },
   );
   return status === 202
     ? { ok: true, value: body["job"] as StudioJob }
@@ -658,6 +681,19 @@ export async function studioArchive(
 ): Promise<ParentReply<StudioNode>> {
   const { status, body } = await call(
     `/api/parent/studio/nodes/${encodeURIComponent(id)}/${action}`,
+    { method: "POST", body: "{}" },
+  );
+  return status === 200
+    ? { ok: true, value: body as unknown as StudioNode }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
+}
+
+/** Says an approved node still stands as it is, after a change above it (REQ-8270). */
+export async function studioReviewed(
+  id: string,
+): Promise<ParentReply<StudioNode>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/reviewed`,
     { method: "POST", body: "{}" },
   );
   return status === 200
@@ -876,4 +912,64 @@ export interface TurnsView {
 export async function studioTurns(): Promise<ParentReply<TurnsView>> {
   const { status, body } = await call("/api/parent/studio/sandbox/play/turns");
   return parentReply(status, body, () => body as unknown as TurnsView);
+}
+
+export interface PromptRow {
+  id: string;
+  file: string;
+  version: string;
+  fields: string[];
+}
+
+/** Each prompt with its version (REQ-8302). */
+export async function studioPrompts(): Promise<ParentReply<PromptRow[]>> {
+  const { status, body } = await call("/api/parent/studio/lab/prompts");
+  return parentReply(status, body, () => body["prompts"] as PromptRow[]);
+}
+
+/** The text of each text field of one prompt. */
+export async function studioPromptTexts(
+  id: string,
+): Promise<
+  ParentReply<{ id: string; version: string; texts: Record<string, string> }>
+> {
+  const { status, body } = await call(
+    `/api/parent/studio/lab/prompts/${encodeURIComponent(id)}`,
+  );
+  return parentReply(
+    status,
+    body,
+    () =>
+      body as unknown as {
+        id: string;
+        version: string;
+        texts: Record<string, string>;
+      },
+  );
+}
+
+export interface LabRun {
+  story: string | null;
+  score: number | null;
+  fault: string | null;
+  costUsd: number;
+  version: string;
+  patched: boolean;
+}
+
+/** Runs a frame for a task in the sandbox, with a change to one text of the prompt where one is given. */
+export async function studioLabRun(input: {
+  lang: string;
+  templateId: string;
+  seed?: string;
+  action?: { tried: string; hard: string };
+  patch?: { field: string; text: string };
+}): Promise<ParentReply<LabRun>> {
+  const { status, body } = await call("/api/parent/studio/lab/run", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return status === 200
+    ? { ok: true, value: body as unknown as LabRun }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
 }

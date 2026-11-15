@@ -4,8 +4,8 @@ import { defineConfig } from "vitest/config";
 // busy machine; alone the slowest takes under 2 s.
 //
 // Some tests measure time, or run a long job against a limit: the answer latency over 1,000 answers,
-// the wait of an append beside a rebuild, a recompute at start-up, and the kill of a process a hundred
-// times. Each passes alone in seconds and fails when it shares the machine with fifteen other workers,
+// the wait of an append beside a rebuild, a recompute at start-up, the kill of a process a hundred times,
+// and three simulations of 30 days or of a thousand rows. Each passes alone in seconds and fails when it shares the machine with fifteen other workers,
 // so they run one file at a time, after the parallel group has finished. Their limits are the ones the
 // requirements give; only the company they run in changes.
 const TIMED = [
@@ -14,6 +14,9 @@ const TIMED = [
   "tests/integration/version-change.test.ts",
   "tests/integration/explain-cache.test.ts",
   "tests/crash/crash.test.ts",
+  "tests/integration/outgoing.test.ts",
+  "tests/integration/packet-recorder.test.ts",
+  "tests/integration/resume.test.ts",
 ];
 
 const include = ["tests/{unit,smoke,crash,integration}/**/*.test.ts"];

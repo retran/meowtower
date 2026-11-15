@@ -178,3 +178,23 @@ describe("REQ-8218: each turn is in the log", () => {
     }
   });
 });
+
+describe("REQ-8280: the Master reads the child's profile", () => {
+  it("puts the profile in the system prompt where there is one, and not where there is none", async () => {
+    expect(masterSystemPrompt(SCENARIO, "loves cats and boats")).toContain(
+      "loves cats and boats",
+    );
+    expect(masterSystemPrompt(SCENARIO)).not.toContain("loves cats");
+    asked.length = 0;
+    await takeTurn({
+      model: modelSaying("The gate creaks."),
+      scenario: SCENARIO,
+      encounter: "e1",
+      said: "I open the gate",
+      profile: "loves cats and boats",
+      lang: "en",
+      blockedText: BLOCKED,
+    });
+    expect(asked[0]?.system).toContain("loves cats and boats");
+  });
+});

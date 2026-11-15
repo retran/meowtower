@@ -11,7 +11,11 @@ import type {
   GatewayRequest,
   GatewayResult,
 } from "../../src/server/gateway/gateway.js";
-import { gatewayMaster, MasterFailed } from "../../src/story/master-gateway.js";
+import {
+  gatewayMaster,
+  MASTER_REPLY_SCHEMA,
+  MasterFailed,
+} from "../../src/story/master-gateway.js";
 
 const base = {
   TASK_TEXT_MODEL: "anthropic:claude-haiku-5-5",
@@ -106,5 +110,67 @@ describe("the gateway as the Master's model", () => {
       expect(failed, reason).toBeInstanceOf(MasterFailed);
       expect((failed as MasterFailed).reason).toBe(reason);
     }
+  });
+});
+
+describe("BUG-0020: the schema the Master asks the provider for", () => {
+  it("is the one that names each tool and its input", async () => {
+    const seen: GatewayRequest[] = [];
+    const gateway: Gateway = {
+      call: (request) => {
+        seen.push(request);
+        return Promise.resolve({
+          ok: true,
+          text: JSON.stringify({ text: "x", calls: [] }),
+        } as GatewayResult);
+      },
+    };
+    await gatewayMaster(
+      gateway,
+      "b",
+    )({
+      system: "s",
+      said: "w",
+      encounter: "e",
+    });
+    expect(seen[0]?.schema).toEqual(MASTER_REPLY_SCHEMA);
+  });
+
+  it("still reads a reply that names a tool the Master does not have, so the turn can refuse it", async () => {
+    const gateway: Gateway = {
+      call: () =>
+        Promise.resolve({
+          ok: true,
+          text: JSON.stringify({
+            text: "x",
+            calls: [{ tool: "set_level", input: { level: 9 } }],
+          }),
+        } as GatewayResult),
+    };
+    const reply = await gatewayMaster(
+      gateway,
+      "b",
+    )({
+      system: "s",
+      said: "w",
+      encounter: "e",
+    });
+    expect(reply.calls).toEqual([{ tool: "set_level", input: { level: 9 } }]);
+  });
+});
+
+describe("ADR-3420: the showrunner runs in the player tier, because it reads the child's profile", () => {
+  it("is a player-tier role, which the direct route takes only with the attestation", () => {
+    expect(ROLES.SHOWRUNNER_MODEL.tier).toBe("player");
+    expect(() =>
+      readConfig({ ...base, SHOWRUNNER_MODEL: "anthropic:claude-opus-5-5" }),
+    ).toThrow(ConfigInvalid);
+    expect(
+      readConfig({
+        ...base,
+        SHOWRUNNER_MODEL: "anthropic:claude-opus-5-5",
+        ANTHROPIC_ZDR_ATTESTED: "true",
+      })?.roles.SHOWRUNNER_MODEL,
+    ).toEqual({ route: "anthropic", model: "claude-opus-5-5" });
   });
 });

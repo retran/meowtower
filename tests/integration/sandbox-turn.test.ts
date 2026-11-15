@@ -18,6 +18,10 @@ import {
 import { MasterFailed } from "../../src/story/master-gateway.js";
 import type { MasterModel, MasterRequest } from "../../src/story/turn.js";
 import type { FrameQueue, FrameTask } from "../../src/server/frames/queue.js";
+import type {
+  Gateway,
+  GatewayRequest,
+} from "../../src/server/gateway/gateway.js";
 import { onlyOnPostgres } from "../helpers/backend.js";
 
 const DB_URL =
@@ -57,6 +61,31 @@ const sandboxFrames = (): FrameQueue => ({
   },
   take: () => Promise.resolve(null),
 });
+/** What the lab's stand-in model was asked, in order. */
+const labSeen: GatewayRequest[] = [];
+const labGateway = (): Gateway => ({
+  async call(r) {
+    labSeen.push(r);
+    return Promise.resolve(
+      r.role === "TASK_TEXT_MODEL"
+        ? { ok: true, text: JSON.stringify({ story: "Страж просит число?" }) }
+        : {
+            ok: true,
+            text: JSON.stringify({
+              unsafe: 0,
+              changed: 0,
+              fits: 0.5,
+              flows: 0.5,
+              clear: 0.5,
+              alive: 0.5,
+              sense: 0.5,
+              numbers: 0,
+              answer: "none",
+            }),
+          },
+    );
+  },
+});
 const master = (): MasterModel => (request) => {
   seen.push(request);
   return next();
@@ -78,6 +107,7 @@ beforeAll(async () => {
     tasks: "registry",
     master,
     sandboxFrames,
+    lab: labGateway,
   });
   bare = await createApp({ db, now, tasks: "registry" });
   await createParentApp({ db, now }).request("/pin", {
@@ -644,5 +674,59 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     });
     expect(seen[0]?.system).toContain("A pier.");
     expect(seen[0]?.system).not.toContain("A SECRET CELLAR");
+  });
+  it("REQ-8302: a run of a frame in the sandbox reports its story, score and version, with the change in the author's prompt", async () => {
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    labSeen.length = 0;
+    const run = await studio("POST", "/lab/run", {
+      lang: "ru",
+      templateId: "N1.compare.16",
+      patch: { field: "intro", text: "PATCHED INTRO" },
+    });
+    expect(run.status).toBe(200);
+    const out = (await run.json()) as {
+      story: string;
+      score: number | null;
+      version: string;
+      patched: boolean;
+    };
+    expect(out.story).toBe("Страж просит число?");
+    expect(out.patched).toBe(true);
+    expect(out.version).toMatch(/^[0-9a-f]{12}$/);
+    expect(labSeen[0]?.system).toContain("PATCHED INTRO");
+    const bad = await studio("POST", "/lab/run", {
+      lang: "ru",
+      templateId: "N1.compare.16",
+      patch: { field: "rules", text: "x" },
+    });
+    expect(bad.status).toBe(400);
+    const unknown = await studio("POST", "/lab/run", {
+      lang: "ru",
+      templateId: "NOPE",
+    });
+    expect(unknown.status).toBe(404);
+  });
+  it("REQ-8280: the Master reads the child's profile in its system prompt", async () => {
+    const campaign = await node("campaign", null, "c12");
+    const arc = await node("arc", campaign, "a12");
+    const adventure = await node("adventure", arc, "Harbour");
+    const encounter = await node("encounter", adventure, "Quay", {
+      situation: "A quay.",
+    });
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    const saved = await app.request("/api/parent/settings", {
+      method: "PUT",
+      headers: { ...json, cookie: parentCookie },
+      body: JSON.stringify({ profile: "loves boats and riddles" }),
+    });
+    expect(saved.status).toBe(200);
+    seen.length = 0;
+    next = () => Promise.resolve({ text: "Ropes creak.", calls: [] });
+    await studio("POST", "/sandbox/play/turn", {
+      adventureId: adventure,
+      encounterId: encounter,
+      said: "I look around",
+    });
+    expect(seen[0]?.system).toContain("loves boats and riddles");
   });
 });

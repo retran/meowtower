@@ -17,5 +17,6 @@
       "practise": "de speler maakt het vast, dus een gewone hindernis",
       "use": "de speler beheerst het, dus laat haar het gebruiken en anderen helpen"
     }
-  }
+  },
+  "profile": "Over de speler en wat die leuk vindt: {profile}"
 }

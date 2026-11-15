@@ -17,5 +17,6 @@
       "practise": "the player is settling it, so an ordinary obstacle",
       "use": "the player has it, so let her use it and help others"
     }
-  }
+  },
+  "profile": "About the player and what they like: {profile}"
 }

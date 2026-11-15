@@ -7,6 +7,11 @@ import {
   type TemplateRow,
   studioChecklist,
   studioArchive,
+  studioLabRun,
+  studioPromptTexts,
+  studioPrompts,
+  type PromptRow,
+  studioReviewed,
   studioCreate,
   studioEncounters,
   studioForce,
@@ -20,6 +25,7 @@ import {
   studioReached,
   studioStatus,
   type StudioNode,
+  type LabRun,
   accountCode,
   accountLogin,
   accountLogout,
@@ -39,6 +45,7 @@ import {
   skills,
   revoke,
   saveParentSettings,
+  saveProfile,
   storeInterface,
   type ParentReply,
   type Tried,
@@ -449,6 +456,7 @@ const parentSettingsScreen: Screen = {
     const creepiness = el("fieldset", {});
     const gender = el("fieldset", {});
     const hideFalls = el("fieldset", {});
+    const profileBox = el("div", { className: "profile" });
     const falls = el("ul", { className: "falls" });
     const resetBox = el("fieldset", {});
     const nav = el("nav", { className: "actions" });
@@ -460,6 +468,7 @@ const parentSettingsScreen: Screen = {
       creepiness,
       gender,
       hideFalls,
+      profileBox,
       limits,
       heading("ui.parentFalls.title"),
       falls,
@@ -554,6 +563,43 @@ const parentSettingsScreen: Screen = {
             },
           ),
         ),
+      );
+      // The child's profile: one text for the whole campaign, which the writer and the Master read (REQ-8280).
+      const profile = el("textarea", {
+        id: "profile",
+        rows: 6,
+        value: current.profile,
+      });
+      profile.dataset["action"] = "profile";
+      profile.addEventListener("input", () => act("profile"));
+      const profileFault = el("p", { className: "fault" });
+      profileFault.dataset["fault"] = "profile";
+      profileFault.setAttribute("role", "alert");
+      profileBox.append(
+        el("label", { htmlFor: "profile" }, t("ui.parentSettings.profile")),
+        el("p", {}, t("ui.parentSettings.profile.help")),
+        profile,
+        profileFault,
+        button("ui.parentSettings.profile.save", "profile-save", async () => {
+          profileFault.textContent = "";
+          note.textContent = "";
+          const done = await saveProfile(
+            (profile as HTMLTextAreaElement).value,
+          );
+          if (done.ok) {
+            note.textContent = t("ui.settings.saved");
+            return;
+          }
+          profileFault.textContent =
+            done.reason === "name"
+              ? t("ui.parentSettings.profile.name", { held: done.held })
+              : done.reason === "too_long"
+                ? t("ui.parentSettings.profile.tooLong", {
+                    held: done.held,
+                    max: "2000",
+                  })
+                : t("ui.devices.failed");
+        }),
       );
       const listed = await asParent(section, note, parentFalls);
       if (listed && listed.length === 0)
@@ -1267,6 +1313,16 @@ const studioScreen: Screen = {
         );
       if (node.level === "encounter") panel.append(playPanel(node, note, node));
       loadForm();
+      if (node.needsReview)
+        panel.append(
+          button("ui.studio.review.mark", "studio-reviewed", async () => {
+            const done = await studioReviewed(node.id);
+            if (done.ok) {
+              note.textContent = t("ui.studio.review.done");
+              void show();
+            } else note.textContent = refusalText(done.error);
+          }),
+        );
       panel.append(
         button("ui.studio.archive", "studio-archive", async () => {
           const done = await studioArchive(node.id, "archive");
@@ -1359,12 +1415,16 @@ const studioScreen: Screen = {
           { type: "button", className: "control node" },
           el("strong", {}, n.title),
           el("small", {}, t(`ui.studio.status.${n.status}` as UiKey)),
+          ...(n.needsReview
+            ? [el("small", {}, t("ui.studio.review.needed"))]
+            : []),
           ...(reached.encounters.has(n.id)
             ? [el("small", {}, t("ui.studio.reached"))]
             : reached.known
               ? [el("small", {}, t("ui.studio.unreached"))]
               : []),
         );
+        if (n.needsReview) b.dataset["needsReview"] = "1";
         if (reached.encounters.has(n.id)) b.dataset["reached"] = "1";
         else if (reached.known) b.dataset["reached"] = "0";
         b.dataset["action"] = `node-${n.id}`;
@@ -1505,6 +1565,7 @@ const studioScreen: Screen = {
 
     nav.append(
       link("ui.studio.navTasks", "open-task-lab", "/studio/tasks"),
+      link("ui.lab.nav", "open-prompt-lab", "/studio/prompts"),
       link("ui.studio.navScreens", "open-screen-lab", "/studio/screens"),
       link("ui.studio.navChecklist", "open-checklist", "/studio/checklist"),
       link("ui.nav.parent", "open-parent", "/parent"),
@@ -1838,6 +1899,195 @@ const checklistScreen: Screen = {
   },
 };
 
+/**
+ * The prompt lab (ADR-3280, REQ-8302): each prompt with its version, a change to one text of a frame prompt, and
+ * two runs of the same task, one with the prompt as it is and one with the change, side by side.
+ */
+const promptLabScreen: Screen = {
+  path: "/studio/prompts",
+  render() {
+    const note = status();
+    const nav = el("nav", { className: "actions" });
+    const list = el("ul", { className: "prompts" });
+    const select = (id: string): HTMLSelectElement => {
+      const s = el("select", { id });
+      s.dataset["action"] = id;
+      s.addEventListener("change", () => act(id));
+      s.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") act(id);
+      });
+      return s;
+    };
+    const input = (
+      id: string,
+      area = false,
+    ): HTMLInputElement | HTMLTextAreaElement => {
+      const c = area
+        ? el("textarea", { id, rows: 8 })
+        : el("input", { id, type: "text" });
+      c.dataset["action"] = id;
+      c.addEventListener("input", () => act(id));
+      return c;
+    };
+    const promptSel = select("lab-prompt");
+    const fieldSel = select("lab-field");
+    const text = input("lab-text", true) as HTMLTextAreaElement;
+    const templateSel = select("lab-template");
+    const seed = input("lab-seed") as HTMLInputElement;
+    const tried = input("lab-tried") as HTMLInputElement;
+    const hard = input("lab-hard") as HTMLInputElement;
+    const fault = el("p", { className: "fault" });
+    fault.dataset["fault"] = "lab";
+    fault.setAttribute("role", "alert");
+    const results = el("div", { className: "lab-results" });
+    const field = (id: string, key: UiKey, control: HTMLElement): HTMLElement =>
+      el(
+        "div",
+        { className: "field" },
+        el("label", { htmlFor: id }, t(key)),
+        control,
+      );
+    const section = el(
+      "section",
+      {},
+      heading("ui.lab.title"),
+      el("h2", {}, t("ui.lab.versions")),
+      list,
+      field("lab-prompt", "ui.lab.prompt", promptSel),
+      field("lab-field", "ui.lab.field", fieldSel),
+      field("lab-text", "ui.lab.text", text),
+      field("lab-template", "ui.lab.template", templateSel),
+      field("lab-seed", "ui.lab.seed", seed),
+      field("lab-tried", "ui.lab.tried", tried),
+      field("lab-hard", "ui.lab.hard", hard),
+      fault,
+      results,
+      note,
+      nav,
+    );
+    section.dataset["busy"] = "1";
+    let texts: Record<string, string> = {};
+    let original = "";
+
+    const langOf = (): string => promptSel.value.split(".")[1] ?? "ru";
+    const pickField = (): void => {
+      original = texts[fieldSel.value] ?? "";
+      text.value = original;
+    };
+    const loadTexts = async (): Promise<void> => {
+      const got = await asParent(section, note, () =>
+        studioPromptTexts(promptSel.value),
+      );
+      if (!got) return;
+      texts = got.texts;
+      fieldSel.replaceChildren(
+        ...Object.keys(texts).map((k) => el("option", { value: k }, k)),
+      );
+      pickField();
+    };
+    promptSel.addEventListener("change", () => void loadTexts());
+    fieldSel.addEventListener("change", pickField);
+
+    const show = (box: HTMLElement, title: UiKey, run: LabRun): void => {
+      box.replaceChildren(
+        el("h3", {}, t(title)),
+        el("p", { className: "story" }, run.story ?? ""),
+        el(
+          "p",
+          {},
+          t("ui.lab.score", {
+            score: run.score === null ? "-" : run.score.toFixed(2),
+          }),
+        ),
+        el("p", {}, t("ui.lab.cost", { cost: run.costUsd.toFixed(4) })),
+        el("p", {}, t("ui.lab.version", { version: run.version })),
+        ...(run.fault
+          ? [
+              el(
+                "p",
+                { className: "fault" },
+                t("ui.lab.fault", { fault: run.fault }),
+              ),
+            ]
+          : []),
+      );
+    };
+    const run = button("ui.lab.run", "lab-run", async () => {
+      fault.textContent = "";
+      results.replaceChildren();
+      if (text.value === original) {
+        fault.textContent = t("ui.lab.nochange");
+        return;
+      }
+      const base = {
+        lang: langOf(),
+        templateId: templateSel.value,
+        ...(seed.value.trim() ? { seed: seed.value.trim().toLowerCase() } : {}),
+        ...(tried.value.trim() && hard.value.trim()
+          ? { action: { tried: tried.value.trim(), hard: hard.value.trim() } }
+          : {}),
+      };
+      const a = el("div", { className: "run" });
+      a.dataset["run"] = "a";
+      const b = el("div", { className: "run" });
+      b.dataset["run"] = "b";
+      results.append(a, b);
+      const first = await studioLabRun(base);
+      if (!first.ok) {
+        fault.textContent = refusalText(first.error);
+        return;
+      }
+      show(a, "ui.lab.asIs", first.value);
+      const second = await studioLabRun({
+        ...base,
+        patch: { field: fieldSel.value, text: text.value },
+      });
+      if (!second.ok) {
+        fault.textContent = refusalText(second.error);
+        return;
+      }
+      show(b, "ui.lab.withChange", second.value);
+    });
+    section.insertBefore(run, fault);
+
+    nav.append(
+      link("ui.nav.studio", "open-studio", "/studio"),
+      link("ui.nav.back", "back", "/"),
+    );
+    void (async () => {
+      const prompts = await asParent(section, note, studioPrompts);
+      const templates = await asParent(section, note, studioTemplates);
+      if (prompts) {
+        list.replaceChildren(
+          ...prompts.map((p: PromptRow) => {
+            const li = el(
+              "li",
+              {},
+              t("ui.lab.row", { id: p.id, version: p.version, file: p.file }),
+            );
+            li.dataset["prompt"] = p.id;
+            return li;
+          }),
+        );
+        promptSel.replaceChildren(
+          ...prompts
+            .filter((p: PromptRow) => p.id.startsWith("frames."))
+            .map((p: PromptRow) => el("option", { value: p.id }, p.id)),
+        );
+        if (promptSel.value) await loadTexts();
+      }
+      if (templates)
+        templateSel.replaceChildren(
+          ...templates.map((r: TemplateRow) =>
+            el("option", { value: r.id }, r.id),
+          ),
+        );
+      delete section.dataset["busy"];
+    })();
+    return section;
+  },
+};
+
 export const SCREENS: readonly Screen[] = [
   home,
   settings,
@@ -1849,6 +2099,7 @@ export const SCREENS: readonly Screen[] = [
   accountScreen,
   studioScreen,
   taskLabScreen,
+  promptLabScreen,
   screenLabScreen,
   checklistScreen,
   playScreen,

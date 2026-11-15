@@ -287,6 +287,14 @@ export interface StringParams {
   "ui.parentSettings.hideRankFalls": NoParams;
   "ui.parentSettings.hideRankFalls.no": NoParams;
   "ui.parentSettings.hideRankFalls.yes": NoParams;
+  "ui.parentSettings.profile": NoParams;
+  "ui.parentSettings.profile.help": NoParams;
+  "ui.parentSettings.profile.save": NoParams;
+  "ui.parentSettings.profile.name": { held: string | number };
+  "ui.parentSettings.profile.tooLong": {
+    held: string | number;
+    max: string | number;
+  };
   "ui.parentFalls.title": NoParams;
   "ui.parentFalls.none": NoParams;
   "ui.parentFalls.skill": {
@@ -358,6 +366,9 @@ export interface StringParams {
   "ui.studio.unreached": NoParams;
   "ui.studio.leftToTest": { exits: string | number; nodes: string | number };
   "ui.studio.generate.prompt": NoParams;
+  "ui.studio.generate.scope": NoParams;
+  "ui.studio.generate.scope.level": NoParams;
+  "ui.studio.generate.scope.inside": NoParams;
   "ui.studio.generate.start": NoParams;
   "ui.studio.generate.estimateMeasured": {
     calls: string | number;
@@ -562,6 +573,9 @@ export interface StringParams {
   "ui.studio.review.clean": NoParams;
   "ui.studio.review.major": { n: string | number };
   "ui.studio.review.minor": { n: string | number };
+  "ui.studio.review.needed": NoParams;
+  "ui.studio.review.mark": NoParams;
+  "ui.studio.review.done": NoParams;
   "ui.studio.playHere": NoParams;
   "ui.studio.refusal.alreadyCurrent": NoParams;
   "ui.studio.logs": NoParams;
@@ -570,6 +584,29 @@ export interface StringParams {
   "ui.studio.logOpen": NoParams;
   "ui.studio.graph": NoParams;
   "ui.studio.navTasks": NoParams;
+  "ui.lab.nav": NoParams;
+  "ui.lab.title": NoParams;
+  "ui.lab.versions": NoParams;
+  "ui.lab.row": {
+    file: string | number;
+    id: string | number;
+    version: string | number;
+  };
+  "ui.lab.prompt": NoParams;
+  "ui.lab.field": NoParams;
+  "ui.lab.text": NoParams;
+  "ui.lab.template": NoParams;
+  "ui.lab.seed": NoParams;
+  "ui.lab.tried": NoParams;
+  "ui.lab.hard": NoParams;
+  "ui.lab.run": NoParams;
+  "ui.lab.nochange": NoParams;
+  "ui.lab.asIs": NoParams;
+  "ui.lab.withChange": NoParams;
+  "ui.lab.score": { score: string | number };
+  "ui.lab.cost": { cost: string | number };
+  "ui.lab.version": { version: string | number };
+  "ui.lab.fault": { fault: string | number };
   "ui.studio.navScreens": NoParams;
   "ui.studio.navChecklist": NoParams;
   "ui.checklist.title": NoParams;

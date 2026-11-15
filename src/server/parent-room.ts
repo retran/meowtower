@@ -3,13 +3,13 @@
 // pairing code, and the settings. Every route needs a paired device, which the
 // /api middleware checks, and all but the login need a parent session opened
 // on that device and used within the last 30 minutes (REQ-2440).
-import type { MasterFactory, SandboxFrames } from "./sandbox/play.js";
-import type { AdventureWriter } from "./studio/generate.js";
+import type { StudioExtras } from "./studio/extras.js";
 import { mountStudio } from "./studio/routes.js";
 import { refreshKnowledge } from "../engine/projections/knowledge.js";
 import type { Context, Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { z } from "zod";
+import { egressNames, profileFault } from "./profile.js";
 import { type Lang, setLang, SHIPPED } from "../shared/i18n.js";
 import { appendEvents } from "../engine/events/append.js";
 import type { Db } from "./database.js";
@@ -51,6 +51,8 @@ const SettingsIn = z
     creepiness: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
     gender: z.enum(["f", "m"]).optional(),
     hideRankFalls: z.boolean().optional(),
+    /** The child's profile; its length and its names are checked below (REQ-8280, REQ-8282). */
+    profile: z.string().optional(),
   })
   .strict();
 
@@ -61,6 +63,7 @@ export async function parentSettings(db: Db): Promise<{
   creepiness: 0 | 1 | 2;
   gender: "f" | "m";
   hideRankFalls: boolean;
+  profile: string;
 }> {
   const stored = async (key: string): Promise<{ value: string } | undefined> =>
     (await db.tableExists("parent_settings"))
@@ -73,6 +76,7 @@ export async function parentSettings(db: Db): Promise<{
   const creepiness = await stored("creepiness");
   const gender = await stored("gender");
   const hideRankFalls = await stored("hideRankFalls");
+  const profile = await stored("profile");
   return {
     threeDayLimit: limit
       ? (JSON.parse(limit.value) as number | null)
@@ -87,6 +91,8 @@ export async function parentSettings(db: Db): Promise<{
     hideRankFalls: hideRankFalls
       ? (JSON.parse(hideRankFalls.value) as boolean)
       : false,
+    // The child's profile, which the writer and the Master read; none until the parent writes one.
+    profile: profile ? (JSON.parse(profile.value) as string) : "",
   };
 }
 
@@ -95,9 +101,7 @@ export async function mountParentRoom(
   db: Db,
   now: () => number,
   sessions = new ParentSessions(),
-  master?: MasterFactory,
-  sandboxFrames?: SandboxFrames,
-  generator?: AdventureWriter,
+  extras: StudioExtras = {},
 ): Promise<void> {
   // A closed database still has to answer the health page, so the language stays as it was.
   if (db.open) setLang((await parentSettings(db)).language);
@@ -185,6 +189,15 @@ export async function mountParentRoom(
     if (deviceId instanceof Response) return deviceId;
     const body = SettingsIn.safeParse(await c.req.json().catch(() => null));
     if (!body.success) return c.json({ error: "settings_invalid" }, 400);
+    // The profile holds no real name or school, and is no longer than its limit (REQ-8282).
+    if (body.data.profile !== undefined) {
+      const fault = profileFault(body.data.profile, egressNames());
+      if (fault)
+        return c.json(
+          { error: "profile_refused", reason: fault.code, held: fault.held },
+          400,
+        );
+    }
     const origin = { deviceId, clientMs: now() };
     await appendEvents(
       db,
@@ -237,7 +250,7 @@ export async function mountParentRoom(
     return c.json({ status: "ok" });
   });
 
-  mountStudio(app, db, now, parent, master, sandboxFrames, generator);
+  mountStudio(app, db, now, parent, extras);
 
   // The Parent Room's entry point for a pairing code, beside ./meowtower pair.
   app.post("/api/parent/pair-code", async (c) => {

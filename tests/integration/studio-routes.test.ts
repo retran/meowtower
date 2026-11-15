@@ -809,7 +809,9 @@ describe("generating a version of an adventure", () => {
       .prepare("DELETE FROM llm_log WHERE role = 'SHOWRUNNER_MODEL'")
       .run();
     const estimate = async () =>
-      (await (await via("GET", `/nodes/${id}/generate/estimate`)).json()) as {
+      (await (
+        await via("GET", `/nodes/${id}/generate/estimate?scope=inside`)
+      ).json()) as {
         calls: { min: number; max: number };
         spentUsd: number;
         estimateUsd: { min: number; max: number };
@@ -846,6 +848,81 @@ describe("generating a version of an adventure", () => {
     expect(after.spentUsd).toBeCloseTo(0.2 + 5, 5);
     await logged("2026-10-02T00:00:00.000Z", 9);
     expect((await estimate()).spentUsd).toBeCloseTo(0.2 + 5, 5);
+  });
+
+  it("REQ-8310: reworks the level of a node by default, with the plan alone, and keeps the scenario it has", async () => {
+    const id = await adventureOf("level");
+    await call("PUT", `/nodes/${id}`, {
+      body: {
+        logline: "old logline",
+        scenario: { encounters: [] },
+        premise: "old premise",
+      },
+    });
+    let asked: { scope?: string; brief?: string } = {};
+    writer = (ask) => {
+      asked = { scope: ask.scope, brief: ask.brief };
+      return Promise.resolve({
+        plan: {
+          logline: "new logline",
+          synopsis: "new synopsis",
+          treatment: "new treatment",
+          beats: ["catalyst"],
+        },
+      });
+    };
+    expect((await finished((await start(id)).job.id)).state).toBe("done");
+    expect(asked.scope).toBe("level");
+    // The model sees the prompt and what the level holds now, so it reworks and does not start over.
+    expect(asked.brief).toContain("autumn fog");
+    expect(asked.brief).toContain("old logline");
+    const listed = (await (
+      await via("GET", `/nodes/${id}/versions`)
+    ).json()) as {
+      versions: { state: string; body: Record<string, unknown> }[];
+    };
+    const waiting = listed.versions.find((v) => v.state === "pending")?.body;
+    expect(waiting).toMatchObject({
+      logline: "new logline",
+      synopsis: "new synopsis",
+      treatment: "new treatment",
+      beats: ["catalyst"],
+      premise: "old premise",
+      scenario: { encounters: [] },
+    });
+  });
+
+  it("REQ-8310: reworks everything inside it only when the parent asks", async () => {
+    const id = await adventureOf("inside");
+    let scope = "";
+    writer = (ask) => {
+      scope = ask.scope;
+      return Promise.resolve(fake());
+    };
+    const res = await via("POST", `/nodes/${id}/generate`, {
+      prompt: "more fog",
+      scope: "inside",
+    });
+    await finished(((await res.json()) as { job: { id: string } }).job.id);
+    expect(scope).toBe("inside");
+    expect(
+      (
+        await via("POST", `/nodes/${id}/generate`, {
+          prompt: "x",
+          scope: "all",
+        })
+      ).status,
+    ).toBe(400);
+  });
+
+  it("REQ-8312: estimates a level rework as one call, and the inside as a whole run", async () => {
+    const id = await adventureOf("estimate scope");
+    const get = async (scope: string) =>
+      (await (
+        await via("GET", `/nodes/${id}/generate/estimate?scope=${scope}`)
+      ).json()) as { calls: { min: number; max: number } };
+    expect((await get("level")).calls).toEqual({ min: 1, max: 1 });
+    expect((await get("inside")).calls).toEqual({ min: 4, max: 17 });
   });
 
   it("answers 409 with no generator, and refuses a node that is no adventure", async () => {
@@ -1262,5 +1339,115 @@ describe("archiving a node", () => {
           )
         ).status,
       ).toBe(401);
+  });
+});
+
+describe("REQ-8270: a change above approved work marks it for review", () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string };
+  const marked = async (parent: string, id: string) =>
+    (
+      (await (await call("GET", `/nodes?parent=${parent}`)).json()) as {
+        nodes: { id: string; needsReview: boolean }[];
+      }
+    ).nodes.find((n) => n.id === id)?.needsReview;
+  const approve = (id: string) =>
+    call("POST", `/nodes/${id}/status`, { status: "approved" });
+
+  it("marks the approved nodes below an edited one, and leaves a draft and the edited node alone", async () => {
+    const campaign = await make("campaign", null, "review campaign");
+    const arc = await make("arc", campaign.id, "review arc");
+    const approved = await make("adventure", arc.id, "Approved adventure");
+    const draft = await make("adventure", arc.id, "Draft adventure");
+    await approve(approved.id);
+    expect(await marked(arc.id, approved.id)).toBe(false);
+
+    await call("PUT", `/nodes/${arc.id}`, { body: { logline: "changed" } });
+    expect(await marked(arc.id, approved.id)).toBe(true);
+    expect(await marked(arc.id, draft.id)).toBe(false);
+    expect(await marked(campaign.id, arc.id)).toBe(false);
+
+    // A change two levels above marks it too.
+    await call("POST", `/nodes/${approved.id}/reviewed`);
+    expect(await marked(arc.id, approved.id)).toBe(false);
+    await call("PUT", `/nodes/${campaign.id}`, { body: { theme: "fog" } });
+    expect(await marked(arc.id, approved.id)).toBe(true);
+  });
+
+  it("clears the mark when the parent says it was reviewed, or approves again, and refuses a mark that is not there", async () => {
+    const campaign = await make("campaign", null, "clear campaign");
+    const arc = await make("arc", campaign.id, "clear arc");
+    const adventure = await make("adventure", arc.id, "Clear adventure");
+    await approve(adventure.id);
+    await call("PUT", `/nodes/${arc.id}`, { body: { logline: "x" } });
+    const reviewed = await call("POST", `/nodes/${adventure.id}/reviewed`);
+    expect(reviewed.status).toBe(200);
+    expect(await marked(arc.id, adventure.id)).toBe(false);
+    const again = await call("POST", `/nodes/${adventure.id}/reviewed`);
+    expect(again.status).toBe(400);
+    expect(((await again.json()) as { reason: string }).reason).toBe(
+      "nothing to review",
+    );
+    // Marked again, then sent back to draft and approved: the new approval is a review.
+    await call("PUT", `/nodes/${arc.id}`, { body: { logline: "y" } });
+    expect(await marked(arc.id, adventure.id)).toBe(true);
+    await call("POST", `/nodes/${adventure.id}/status`, { status: "draft" });
+    await approve(adventure.id);
+    expect(await marked(arc.id, adventure.id)).toBe(false);
+  });
+
+  it("answers 404 for an unknown node, and needs the parent's session", async () => {
+    expect((await call("POST", "/nodes/nope/reviewed")).status).toBe(404);
+    const campaign = await make("campaign", null, "auth review");
+    expect(
+      (
+        await call(
+          "POST",
+          `/nodes/${campaign.id}/reviewed`,
+          undefined,
+          deviceCookie,
+        )
+      ).status,
+    ).toBe(401);
+  });
+});
+
+describe("REQ-8302: the prompt lab's routes", () => {
+  it("lists each prompt with its version, reads the text of one, and needs the parent's session", async () => {
+    const listed = (await (await call("GET", "/lab/prompts")).json()) as {
+      prompts: { id: string; version: string; fields: string[] }[];
+    };
+    expect(listed.prompts.map((p) => p.id)).toContain("frames.ru");
+    expect(listed.prompts.find((p) => p.id === "frames.ru")?.version).toMatch(
+      /^[0-9a-f]{12}$/,
+    );
+    const one = (await (
+      await call("GET", "/lab/prompts/frames.ru")
+    ).json()) as {
+      version: string;
+      texts: Record<string, string>;
+    };
+    expect(one.texts["intro"]?.length).toBeGreaterThan(0);
+    expect(one.version).toBe(
+      listed.prompts.find((p) => p.id === "frames.ru")?.version,
+    );
+    expect((await call("GET", "/lab/prompts/nope.xx")).status).toBe(404);
+    expect(
+      (await call("GET", "/lab/prompts", undefined, deviceCookie)).status,
+    ).toBe(401);
+  });
+
+  it("answers 409 for a run while no model is set, and 400 for a body that is not a run", async () => {
+    const run = await call("POST", "/lab/run", {
+      lang: "ru",
+      templateId: "A1.sum",
+    });
+    expect(run.status).toBe(409);
+    expect(((await run.json()) as { error: string }).error).toBe(
+      "lab_not_configured",
+    );
+    expect((await call("POST", "/lab/run", { lang: "xx" })).status).toBe(400);
   });
 });

@@ -14,8 +14,9 @@ export interface RoleSpec {
 export const ROLES: Readonly<Record<RoleName, RoleSpec>> = {
   TASK_TEXT_MODEL: { tier: "content", timeoutMs: 90_000, maxTokens: 12_000 },
   FRAME_JUDGE_MODEL: { tier: "content", timeoutMs: 30_000, maxTokens: 4000 },
-  // Content tier while a brief holds no story material; ADR-3240 moves it once story memory enters.
-  SHOWRUNNER_MODEL: { tier: "content", timeoutMs: 180_000, maxTokens: 16_000 },
+  // The writer reads the child's profile, which is player material, so it runs in the player tier
+  // (ADR-3420, REQ-8282).
+  SHOWRUNNER_MODEL: { tier: "player", timeoutMs: 180_000, maxTokens: 16_000 },
   // The Master reads her own words, so it runs in the player tier (ADR-3270, ADR-3100). A turn is
   // short story text and a few tool calls, so a minute and 2,000 tokens leave room.
   MASTER_MODEL: { tier: "player", timeoutMs: 60_000, maxTokens: 2000 },
