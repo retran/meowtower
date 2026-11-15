@@ -838,16 +838,18 @@ test("REQ-8632: an estimate measured over earlier calls says how many", async ({
   page,
 }) => {
   await stub(page);
-  await page.route("**/api/parent/studio/nodes/d1/generate/estimate", (route) =>
-    route.fulfill({
-      json: {
-        calls: { min: 4, max: 17 },
-        spentUsd: 3,
-        estimateUsd: { min: 0.08, max: 0.34 },
-        basis: "measured",
-        measuredCalls: 42,
-      },
-    }),
+  await page.route(
+    "**/api/parent/studio/nodes/d1/generate/estimate*",
+    (route) =>
+      route.fulfill({
+        json: {
+          calls: { min: 4, max: 17 },
+          spentUsd: 3,
+          estimateUsd: { min: 0.08, max: 0.34 },
+          basis: "measured",
+          measuredCalls: 42,
+        },
+      }),
   );
   await ready(page);
   await page.locator('button[data-node="c1"]').click();

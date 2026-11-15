@@ -809,7 +809,9 @@ describe("generating a version of an adventure", () => {
       .prepare("DELETE FROM llm_log WHERE role = 'SHOWRUNNER_MODEL'")
       .run();
     const estimate = async () =>
-      (await (await via("GET", `/nodes/${id}/generate/estimate`)).json()) as {
+      (await (
+        await via("GET", `/nodes/${id}/generate/estimate?scope=inside`)
+      ).json()) as {
         calls: { min: number; max: number };
         spentUsd: number;
         estimateUsd: { min: number; max: number };
