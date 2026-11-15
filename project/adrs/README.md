@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-79 decisions in all: 62 approved, 17 done.
+80 decisions in all: 63 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -85,5 +85,6 @@
 | [ADR-3420](ADR-3420-the-showrunner-and-the-master-read-the-childs-profile-in-the-player-tier.md)                    | The showrunner and the Master read the child's profile, and both run in the player tier                                                                                                                                                                                                                                                           | approved |
 | [ADR-3430](ADR-3430-the-childs-game-plays-approved-adventures-with-the-master.md)                                   | The child's game plays approved adventures with the Master, and the log carries every step                                                                                                                                                                                                                                                        | approved |
 | [ADR-3440](ADR-3440-rewards-pets-and-results-succeed-or-fail-by-how-she-solves-and-equipment-gives-perks.md)        | Rewards, pets and results succeed or fail by how she solves, and equipment and pets give perks that are maths tools or story                                                                                                                                                                                                                      | approved |
+| [ADR-3450](ADR-3450-every-check-is-a-maths-task-battles-are-runs-of-checks-and-no-one-dies.md)                      | Every check is a maths task, a battle is a run of checks, and no one dies                                                                                                                                                                                                                                                                         | approved |
 
 <!-- /meow-flow index -->
