@@ -1246,7 +1246,7 @@ const studioScreen: Screen = {
         const made =
           node.level === "encounter"
             ? encounterForm(node, shown, note)
-            : levelForm(node, note);
+            : levelForm(node, shown, note);
         void made.then((form) => {
           if (selected?.id === node.id) formSlot.replaceChildren(form);
         });

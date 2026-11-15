@@ -47,6 +47,7 @@ export function checkLevelBody(
   level: UpperLevel,
   body: unknown,
   stored?: unknown,
+  around?: { readonly self: string; readonly siblings: readonly string[] },
 ): Fault | null {
   const b = objectOf(body);
   if (!b)
@@ -95,6 +96,31 @@ export function checkLevelBody(
         held: String(value.length),
         need: String(LEVEL_TEXT_MAX),
       };
+  }
+  const links = b["links"];
+  if (around && links !== undefined) {
+    if (!Array.isArray(links))
+      return {
+        field: "links",
+        code: "not_object",
+        held: shown(links),
+        need: "a list",
+      };
+    for (const [i, raw] of (links as unknown[]).entries()) {
+      const target = typeof raw === "string" ? raw : objectOf(raw)?.["to"];
+      const field = `links.${String(i)}`;
+      if (typeof target !== "string")
+        return { field, code: "not_text", held: shown(raw), need: "text" };
+      if (target === around.self)
+        return { field, code: "own_link", held: target, need: "another node" };
+      if (!around.siblings.includes(target))
+        return {
+          field,
+          code: "unknown_sibling",
+          held: target,
+          need: "a node of this level",
+        };
+    }
   }
   return null;
 }

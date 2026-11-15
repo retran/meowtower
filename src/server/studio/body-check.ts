@@ -15,6 +15,8 @@ export interface Fault {
     | "unknown_encounter"
     | "own_exit"
     | "unknown_kind"
+    | "unknown_sibling"
+    | "own_link"
     | "empty";
   readonly held: string;
   readonly need: string;

@@ -64,6 +64,7 @@ const keyOf = (path: readonly string[]): UiKey =>
 /** The form of one node above the encounters, loaded from its stored body. */
 export async function levelForm(
   node: StudioNode,
+  siblings: readonly StudioNode[],
   note: HTMLElement,
 ): Promise<HTMLElement> {
   const form = el("div", { className: "level-form" });
@@ -88,8 +89,12 @@ export async function levelForm(
     fault?: { field: string; code: string; held: string; need: string };
     error: string;
   }): void => {
+    // A fault in one link shows beside the list of links.
+    const at = done.fault?.field.startsWith("links.")
+      ? "links"
+      : done.fault?.field;
     const line = done.fault
-      ? form.querySelector<HTMLElement>(`[data-fault="${done.fault.field}"]`)
+      ? form.querySelector<HTMLElement>(`[data-fault="${at ?? ""}"]`)
       : null;
     if (done.fault && line) line.textContent = faultText(done.fault);
     else if (done.fault) note.textContent = faultText(done.fault);
@@ -136,6 +141,39 @@ export async function levelForm(
         faultLine(spec.path.join(".")),
       ];
     });
+    // The nodes beside this one it leads to, as the edges of its level's graph (REQ-8258).
+    const beside = siblings.filter((n) => n.id !== node.id);
+    const linked = (): string[] =>
+      (Array.isArray(current["links"])
+        ? (current["links"] as unknown[])
+        : []
+      ).flatMap((l) => {
+        const to = typeof l === "string" ? l : objectOf(l)?.["to"];
+        return typeof to === "string" ? [to] : [];
+      });
+    const links = el("fieldset", { className: "links" });
+    links.append(el("legend", {}, t("ui.studio.lf.links")));
+    if (beside.length === 0)
+      links.append(el("p", {}, t("ui.studio.levelForm.linksNone")));
+    for (const n of beside) {
+      const box = el("input", {
+        id: `lf-link-${n.id}`,
+        type: "checkbox",
+        checked: linked().includes(n.id),
+      });
+      box.dataset["action"] = `lf-link-${n.id}`;
+      box.addEventListener("change", () => {
+        act(`lf-link-${n.id}`);
+        const ids = linked().filter((id) => id !== n.id);
+        if (box.checked) ids.push(n.id);
+        current = { ...current };
+        if (ids.length === 0) Reflect.deleteProperty(current, "links");
+        else current["links"] = ids;
+      });
+      links.append(
+        el("label", { className: "choice", htmlFor: box.id }, box, n.title),
+      );
+    }
     const save = button("ui.studio.form.save", "level-save", async () => {
       clearFaults();
       const done = await studioSave(node.id, current);
@@ -195,6 +233,8 @@ export async function levelForm(
         }),
       ),
       ...fields,
+      links,
+      faultLine("links"),
       save,
       el("h3", {}, t("ui.studio.levelForm.jsonTitle")),
       el("p", {}, t("ui.studio.levelForm.jsonHelp")),

@@ -40,11 +40,15 @@ export function refusalText(reason: string): string {
 
 /** The label of a field of a campaign, an arc or an adventure, or null where the field is not one of them. */
 const levelLabel = (field: string): string | null =>
-  /^(logline|theme|closingQuestion|premise|question|kind|conflict\.(wants|against|stakes))$/.test(
-    field,
-  )
-    ? t(uiKey(`ui.studio.lf.${field.replace(".", "_")}`))
-    : null;
+  /^links(\.\d+)?$/.test(field)
+    ? field === "links"
+      ? t("ui.studio.lf.links")
+      : `${t("ui.studio.lf.links")} ${String(Number(field.slice(6)) + 1)}`
+    : /^(logline|theme|closingQuestion|premise|question|kind|conflict\.(wants|against|stakes))$/.test(
+          field,
+        )
+      ? t(uiKey(`ui.studio.lf.${field.replace(".", "_")}`))
+      : null;
 
 export const labelOf = (field: string): string => {
   const row = /^(people|exits)\.(\d+)\.(\w+)$/.exec(field);
