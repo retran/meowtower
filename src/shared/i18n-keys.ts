@@ -494,6 +494,29 @@ export interface StringParams {
   "ui.studio.emptyAdd": NoParams;
   "ui.studio.refusal.notEdited": { status: string | number };
   "ui.studio.refusal.title": NoParams;
+  "ui.studio.lf.logline": NoParams;
+  "ui.studio.lf.theme": NoParams;
+  "ui.studio.lf.closingQuestion": NoParams;
+  "ui.studio.lf.premise": NoParams;
+  "ui.studio.lf.question": NoParams;
+  "ui.studio.lf.kind": NoParams;
+  "ui.studio.lf.kind.mythology": NoParams;
+  "ui.studio.lf.kind.case": NoParams;
+  "ui.studio.lf.kind.character": NoParams;
+  "ui.studio.lf.kind.filler": NoParams;
+  "ui.studio.lf.conflict_wants": NoParams;
+  "ui.studio.lf.conflict_against": NoParams;
+  "ui.studio.lf.conflict_stakes": NoParams;
+  "ui.studio.levelForm.title": { level: string | number };
+  "ui.studio.levelForm.kindNone": NoParams;
+  "ui.studio.levelForm.jsonTitle": NoParams;
+  "ui.studio.levelForm.jsonHelp": NoParams;
+  "ui.studio.levelForm.jsonSave": NoParams;
+  "ui.studio.levelForm.badJson": NoParams;
+  "ui.studio.fault.unknown_kind": {
+    held: string | number;
+    label: string | number;
+  };
   "ui.studio.versions.show": NoParams;
   "ui.studio.versions.item": {
     author: string | number;

@@ -14,6 +14,7 @@ export interface Fault {
     | "out_of_range"
     | "unknown_encounter"
     | "own_exit"
+    | "unknown_kind"
     | "empty";
   readonly held: string;
   readonly need: string;

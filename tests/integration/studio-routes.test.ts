@@ -1046,3 +1046,42 @@ describe("a month with no parent", () => {
     );
   });
 });
+
+it("REQ-8306: an edit of an adventure is checked before it is stored, and the fields the form lacks are kept", async () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string };
+  const campaign = await make("campaign", null, "level campaign");
+  const arc = await make("arc", campaign.id, "level arc");
+  const adventure = await make("adventure", arc.id, "Level adventure");
+  const refused = await call("PUT", `/nodes/${adventure.id}`, {
+    body: { kind: "nope" },
+  });
+  expect(refused.status).toBe(400);
+  expect(await refused.json()).toEqual({
+    error: "edit_refused",
+    fault: {
+      field: "kind",
+      code: "unknown_kind",
+      held: "nope",
+      need: "mythology, case, character or filler",
+    },
+  });
+  const kept = await call("PUT", `/nodes/${adventure.id}`, {
+    body: { kind: "case", logline: "A fog", scenario: { encounters: [] } },
+  });
+  expect(kept.status).toBe(200);
+  const seen = (await (await call("GET", `/nodes/${adventure.id}`)).json()) as {
+    body: unknown;
+  };
+  expect(seen.body).toEqual({
+    kind: "case",
+    logline: "A fog",
+    scenario: { encounters: [] },
+  });
+  const long = await call("PUT", `/nodes/${arc.id}`, {
+    body: { logline: "L".repeat(4001) },
+  });
+  expect(long.status).toBe(400);
+});
