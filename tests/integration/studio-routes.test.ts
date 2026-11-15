@@ -1264,3 +1264,75 @@ describe("archiving a node", () => {
       ).toBe(401);
   });
 });
+
+describe("REQ-8270: a change above approved work marks it for review", () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string };
+  const marked = async (parent: string, id: string) =>
+    (
+      (await (await call("GET", `/nodes?parent=${parent}`)).json()) as {
+        nodes: { id: string; needsReview: boolean }[];
+      }
+    ).nodes.find((n) => n.id === id)?.needsReview;
+  const approve = (id: string) =>
+    call("POST", `/nodes/${id}/status`, { status: "approved" });
+
+  it("marks the approved nodes below an edited one, and leaves a draft and the edited node alone", async () => {
+    const campaign = await make("campaign", null, "review campaign");
+    const arc = await make("arc", campaign.id, "review arc");
+    const approved = await make("adventure", arc.id, "Approved adventure");
+    const draft = await make("adventure", arc.id, "Draft adventure");
+    await approve(approved.id);
+    expect(await marked(arc.id, approved.id)).toBe(false);
+
+    await call("PUT", `/nodes/${arc.id}`, { body: { logline: "changed" } });
+    expect(await marked(arc.id, approved.id)).toBe(true);
+    expect(await marked(arc.id, draft.id)).toBe(false);
+    expect(await marked(campaign.id, arc.id)).toBe(false);
+
+    // A change two levels above marks it too.
+    await call("POST", `/nodes/${approved.id}/reviewed`);
+    expect(await marked(arc.id, approved.id)).toBe(false);
+    await call("PUT", `/nodes/${campaign.id}`, { body: { theme: "fog" } });
+    expect(await marked(arc.id, approved.id)).toBe(true);
+  });
+
+  it("clears the mark when the parent says it was reviewed, or approves again, and refuses a mark that is not there", async () => {
+    const campaign = await make("campaign", null, "clear campaign");
+    const arc = await make("arc", campaign.id, "clear arc");
+    const adventure = await make("adventure", arc.id, "Clear adventure");
+    await approve(adventure.id);
+    await call("PUT", `/nodes/${arc.id}`, { body: { logline: "x" } });
+    const reviewed = await call("POST", `/nodes/${adventure.id}/reviewed`);
+    expect(reviewed.status).toBe(200);
+    expect(await marked(arc.id, adventure.id)).toBe(false);
+    const again = await call("POST", `/nodes/${adventure.id}/reviewed`);
+    expect(again.status).toBe(400);
+    expect(((await again.json()) as { reason: string }).reason).toBe(
+      "nothing to review",
+    );
+    // Marked again, then sent back to draft and approved: the new approval is a review.
+    await call("PUT", `/nodes/${arc.id}`, { body: { logline: "y" } });
+    expect(await marked(arc.id, adventure.id)).toBe(true);
+    await call("POST", `/nodes/${adventure.id}/status`, { status: "draft" });
+    await approve(adventure.id);
+    expect(await marked(arc.id, adventure.id)).toBe(false);
+  });
+
+  it("answers 404 for an unknown node, and needs the parent's session", async () => {
+    expect((await call("POST", "/nodes/nope/reviewed")).status).toBe(404);
+    const campaign = await make("campaign", null, "auth review");
+    expect(
+      (
+        await call(
+          "POST",
+          `/nodes/${campaign.id}/reviewed`,
+          undefined,
+          deviceCookie,
+        )
+      ).status,
+    ).toBe(401);
+  });
+});

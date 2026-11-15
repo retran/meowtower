@@ -19,6 +19,7 @@ interface Fake {
   status: string;
   version: number;
   links: string[];
+  needsReview?: boolean;
 }
 
 /** What the Master was asked in a turn, in order. */
@@ -40,6 +41,9 @@ const decided: string[] = [];
 /** What the studio asked a generator to write, and the jobs it will read back in turn. */
 const generated: object[] = [];
 let jobFlow: { state: string; progress: number; message: string }[] = [];
+
+/** The nodes the studio was told were reviewed, in order. */
+const reviewedLog: string[] = [];
 
 /** The nodes the studio was asked to archive and to bring back, in order. */
 const archivedLog: string[] = [];
@@ -89,6 +93,7 @@ async function stub(page: Page): Promise<Fake[]> {
       status: "draft",
       version: 1,
       links: [],
+      needsReview: true,
     },
     {
       id: "e1",
@@ -124,6 +129,13 @@ async function stub(page: Page): Promise<Fake[]> {
             n.parentId === (parent ?? null) && hidden.has(n.id) === archived,
         ),
       });
+    }
+    const reviewed = /^\/nodes\/([^/]+)\/reviewed$/.exec(path);
+    if (reviewed && method === "POST") {
+      reviewedLog.push(reviewed[1] ?? "");
+      const n = nodes.find((x) => x.id === reviewed[1]);
+      if (n) n.needsReview = false;
+      return json(200, n ?? {});
     }
     const archive = /^\/nodes\/([^/]+)\/(archive|unarchive)$/.exec(path);
     if (archive && method === "POST") {
@@ -948,4 +960,26 @@ test("REQ-8634, REQ-8638, REQ-8640: a node is archived from its panel, listed wi
   await back.click();
   await expect.poll(() => archivedLog).toEqual(["archive e1", "unarchive e1"]);
   await expect(page.locator('button[data-node="e1"]')).toBeVisible();
+});
+
+test("REQ-8270: an approved node a change above marked is labelled, and the parent says it was reviewed", async ({
+  page,
+}) => {
+  reviewedLog.length = 0;
+  await stub(page);
+  await ready(page);
+  for (const id of ["c1", "a1"]) {
+    await page.locator(`button[data-node="${id}"]`).click();
+    await page.locator('[data-action="studio-open"]').click();
+  }
+  const node = page.locator('button[data-node="d1"]');
+  await expect(node).toHaveAttribute("data-needs-review", "1");
+  await node.click();
+  await page.locator('[data-action="studio-reviewed"]').click();
+  await expect.poll(() => reviewedLog).toEqual(["d1"]);
+  await expect(page.locator('button[data-node="d1"]')).not.toHaveAttribute(
+    "data-needs-review",
+    "1",
+  );
+  await expect(page.locator('[data-action="studio-reviewed"]')).toHaveCount(0);
 });
