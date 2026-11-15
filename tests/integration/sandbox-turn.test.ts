@@ -558,4 +558,42 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
       "The wheel turns.",
     ]);
   });
+  it("REQ-8292: the inspector shows the Director's task beside the turn that asked for the check", async () => {
+    const campaign = await node("campaign", null, "c10");
+    const arc = await node("arc", campaign, "a10");
+    const adventure = await node("adventure", arc, "Barn");
+    const encounter = await node("encounter", adventure, "Loft");
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    const ask = {
+      adventureId: adventure,
+      encounterId: encounter,
+      said: "I climb",
+    };
+    next = () =>
+      Promise.resolve({
+        text: "The ladder shakes.",
+        calls: [
+          {
+            tool: "request_check",
+            input: { tried: "climb the ladder", hard: "it shakes" },
+          },
+        ],
+      });
+    const asked = (await (
+      await studio("POST", "/sandbox/play/turn", ask)
+    ).json()) as { check: { node: string; subtype: string; purpose: string } };
+    next = () => Promise.resolve({ text: "She reaches the top.", calls: [] });
+    await studio("POST", "/sandbox/play/turn", { ...ask, said: "I look" });
+    const listed = (await (
+      await studio("GET", "/sandbox/play/turns")
+    ).json()) as {
+      turns: {
+        said: string;
+        check: { node: string; subtype: string; purpose: string } | null;
+      }[];
+    };
+    expect(listed.turns.map((t) => t.said)).toEqual(["I climb", "I look"]);
+    expect(listed.turns[0]?.check).toEqual(asked.check);
+    expect(listed.turns[1]?.check).toBeNull();
+  });
 });
