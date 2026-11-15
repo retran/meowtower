@@ -867,7 +867,7 @@ test("REQ-8306: the whole body can be edited as text, and text that is not JSON 
 }) => {
   saved.length = 0;
   await selectAdventure(page);
-  await expect(page.locator("#lf-json")).toContainText("A fog");
+  await expect(page.locator("#lf-json")).toHaveValue(/A fog/);
   await page.locator("#lf-json").fill("{ not json");
   await page.locator('[data-action="level-json-save"]').click();
   await expect(page.locator('[data-fault="json"]')).toBeVisible();
