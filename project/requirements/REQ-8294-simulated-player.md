@@ -3,8 +3,8 @@ id: REQ-8294
 artifact: requirement
 topic: report
 class: functional
-status: approved
-revised: 2026-11-01
+status: withdrawn
+revised: 2026-11-15
 elaborates: RES-4315
 verification: behavioural
 ---
@@ -13,4 +13,8 @@ verification: behavioural
 
 # REQ-8294
 
-The parent MUST be able to run a simulated player under a persona through a scenario and read a report of its paths.
+**Withdrawn by ADR-3380. Nothing replaces it.**
+
+It read: the parent MUST be able to run a simulated player under a persona through a scenario and read a report of its paths.
+
+The owner does not want a simulated player, and the parent tests a scenario by playing it in the sandbox.
