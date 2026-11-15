@@ -38,6 +38,8 @@ export interface TurnInput {
   readonly said: string;
   /** The engine's result for the check this turn answers, on the Master's ladder (REQ-8172). */
   readonly checkResult?: Outcome;
+  /** The child's profile, which the Master reads in its system prompt (REQ-8280). */
+  readonly profile?: string;
   readonly lang: GateLang;
   /** The story text a blocked reply becomes, in the player's language. */
   readonly blockedText: string;
@@ -58,13 +60,14 @@ export interface Turn {
  * The Master's system prompt. It holds the scenario, the guardrails and the tools, and nothing of
  * the turn, so every turn of an adventure sends the same prefix.
  */
-export function masterSystemPrompt(scenario: string): string {
+export function masterSystemPrompt(scenario: string, profile = ""): string {
   return [
     "You are the Master of a tabletop adventure for one child. Describe the scene, answer what she does at once, and keep to the prepared scenario and its setting; you may adapt encounters and their links to what she does.",
     "Reply in plain story text. Signals and every technical act go through tool calls and never in the story.",
     "Guardrails: write nothing from the forbidden-content checklist, no word from the forbidden-word list, nothing that shames her for a mistake, and nothing that breaks the canon's rules or its truths. The canon fixes the world, its people and the Tower's secret.",
     "You never decide whether a check succeeds. Ask for one with request_check and tell what happened from its answer: success, cost or twist. Whatever you add to the world goes through change_world.",
     `Tools: ${MASTER_TOOL_NAMES.join(", ")}.`,
+    ...(profile ? [`About the player and what they like: ${profile}`] : []),
     `Scenario: ${scenario}`,
   ].join("\n\n");
 }
@@ -72,7 +75,7 @@ export function masterSystemPrompt(scenario: string): string {
 /** Takes one turn: asks the model, checks the reply and the calls, and lists the events to write. */
 export async function takeTurn(input: TurnInput): Promise<Turn> {
   const asked = await input.model({
-    system: masterSystemPrompt(input.scenario),
+    system: masterSystemPrompt(input.scenario, input.profile),
     said: input.said,
     encounter: input.encounter,
     ...(input.checkResult ? { checkResult: input.checkResult } : {}),

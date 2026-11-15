@@ -706,4 +706,27 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     });
     expect(unknown.status).toBe(404);
   });
+  it("REQ-8280: the Master reads the child's profile in its system prompt", async () => {
+    const campaign = await node("campaign", null, "c12");
+    const arc = await node("arc", campaign, "a12");
+    const adventure = await node("adventure", arc, "Harbour");
+    const encounter = await node("encounter", adventure, "Quay", {
+      situation: "A quay.",
+    });
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+    const saved = await app.request("/api/parent/settings", {
+      method: "PUT",
+      headers: { ...json, cookie: parentCookie },
+      body: JSON.stringify({ profile: "loves boats and riddles" }),
+    });
+    expect(saved.status).toBe(200);
+    seen.length = 0;
+    next = () => Promise.resolve({ text: "Ropes creak.", calls: [] });
+    await studio("POST", "/sandbox/play/turn", {
+      adventureId: adventure,
+      encounterId: encounter,
+      said: "I look around",
+    });
+    expect(seen[0]?.system).toContain("loves boats and riddles");
+  });
 });

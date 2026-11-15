@@ -394,6 +394,7 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
       creepiness: 2,
       gender: "f",
       hideRankFalls: false,
+      profile: "",
     });
     expect((await save(5)).status).toBe(200);
     expect(await read()).toEqual({
@@ -402,6 +403,7 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
       creepiness: 2,
       gender: "f",
       hideRankFalls: false,
+      profile: "",
     });
     expect((await save(null)).status).toBe(200);
     expect(await read()).toEqual({
@@ -410,6 +412,7 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
       creepiness: 2,
       gender: "f",
       hideRankFalls: false,
+      profile: "",
     });
     expect(await logged()).toEqual([
       { key: "threeDayLimit", value: 5 },

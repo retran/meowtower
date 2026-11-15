@@ -23,6 +23,8 @@ const Prompt = z.object({
   revise: z.string(),
   critic: z.string(),
   review: z.string(),
+  /** The line that gives the writer the child's profile, with `{profile}` (REQ-8280). */
+  profile: z.string(),
 });
 
 const promptOf = (lang: Lang): z.infer<typeof Prompt> =>
@@ -96,6 +98,8 @@ export interface ScenarioAsk {
   /** What the player can do and is learning, as facts without numbers (REQ-8408). */
   readonly facts?: SkillFacts;
   readonly report?: Report;
+  /** The child's profile, which the writer reads with the brief (REQ-8280). */
+  readonly profile?: string;
 }
 
 export interface WrittenScenario {
@@ -131,7 +135,16 @@ export async function writeScenario(
 
 async function runScenario(
   gateway: Gateway,
-  { bucket, lang, brief, minChecks, practise, facts, report }: ScenarioAsk,
+  {
+    bucket,
+    lang,
+    brief,
+    minChecks,
+    practise,
+    facts,
+    report,
+    profile,
+  }: ScenarioAsk,
 ): Promise<WrittenScenario | null> {
   const prompt = promptOf(lang);
   const system = `${prompt.system}\n\n${worldOf(lang)}`;
@@ -141,6 +154,7 @@ async function runScenario(
       .replace("{min}", String(MIN_ENCOUNTERS))
       .replace("{max}", String(MAX_ENCOUNTERS))
       .replace("{checks}", String(minChecks)),
+    ...(profile ? [prompt.profile.replace("{profile}", profile)] : []),
     ...(facts && facts.can.length > 0
       ? [skillTexts(lang).can.replace("{list}", facts.can.join("; "))]
       : []),
@@ -241,7 +255,7 @@ export type PlanOnly = z.infer<typeof Plan>;
  */
 export async function writePlan(
   gateway: Gateway,
-  { bucket, lang, brief, minChecks, report }: ScenarioAsk,
+  { bucket, lang, brief, minChecks, report, profile }: ScenarioAsk,
 ): Promise<PlanOnly | null> {
   const prompt = promptOf(lang);
   const system = `${prompt.system}\n\n${worldOf(lang)}`;
@@ -251,6 +265,7 @@ export async function writePlan(
       .replace("{min}", String(MIN_ENCOUNTERS))
       .replace("{max}", String(MAX_ENCOUNTERS))
       .replace("{checks}", String(minChecks)),
+    ...(profile ? [prompt.profile.replace("{profile}", profile)] : []),
   ].join("\n");
   report?.step("plan", 0);
   const reply = await gateway.call({

@@ -287,6 +287,14 @@ export interface StringParams {
   "ui.parentSettings.hideRankFalls": NoParams;
   "ui.parentSettings.hideRankFalls.no": NoParams;
   "ui.parentSettings.hideRankFalls.yes": NoParams;
+  "ui.parentSettings.profile": NoParams;
+  "ui.parentSettings.profile.help": NoParams;
+  "ui.parentSettings.profile.save": NoParams;
+  "ui.parentSettings.profile.name": { held: string | number };
+  "ui.parentSettings.profile.tooLong": {
+    held: string | number;
+    max: string | number;
+  };
   "ui.parentFalls.title": NoParams;
   "ui.parentFalls.none": NoParams;
   "ui.parentFalls.skill": {

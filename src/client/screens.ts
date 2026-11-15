@@ -45,6 +45,7 @@ import {
   skills,
   revoke,
   saveParentSettings,
+  saveProfile,
   storeInterface,
   type ParentReply,
   type Tried,
@@ -455,6 +456,7 @@ const parentSettingsScreen: Screen = {
     const creepiness = el("fieldset", {});
     const gender = el("fieldset", {});
     const hideFalls = el("fieldset", {});
+    const profileBox = el("div", { className: "profile" });
     const falls = el("ul", { className: "falls" });
     const resetBox = el("fieldset", {});
     const nav = el("nav", { className: "actions" });
@@ -466,6 +468,7 @@ const parentSettingsScreen: Screen = {
       creepiness,
       gender,
       hideFalls,
+      profileBox,
       limits,
       heading("ui.parentFalls.title"),
       falls,
@@ -560,6 +563,43 @@ const parentSettingsScreen: Screen = {
             },
           ),
         ),
+      );
+      // The child's profile: one text for the whole campaign, which the writer and the Master read (REQ-8280).
+      const profile = el("textarea", {
+        id: "profile",
+        rows: 6,
+        value: current.profile,
+      });
+      profile.dataset["action"] = "profile";
+      profile.addEventListener("input", () => act("profile"));
+      const profileFault = el("p", { className: "fault" });
+      profileFault.dataset["fault"] = "profile";
+      profileFault.setAttribute("role", "alert");
+      profileBox.append(
+        el("label", { htmlFor: "profile" }, t("ui.parentSettings.profile")),
+        el("p", {}, t("ui.parentSettings.profile.help")),
+        profile,
+        profileFault,
+        button("ui.parentSettings.profile.save", "profile-save", async () => {
+          profileFault.textContent = "";
+          note.textContent = "";
+          const done = await saveProfile(
+            (profile as HTMLTextAreaElement).value,
+          );
+          if (done.ok) {
+            note.textContent = t("ui.settings.saved");
+            return;
+          }
+          profileFault.textContent =
+            done.reason === "name"
+              ? t("ui.parentSettings.profile.name", { held: done.held })
+              : done.reason === "too_long"
+                ? t("ui.parentSettings.profile.tooLong", {
+                    held: done.held,
+                    max: "2000",
+                  })
+                : t("ui.devices.failed");
+        }),
       );
       const listed = await asParent(section, note, parentFalls);
       if (listed && listed.length === 0)

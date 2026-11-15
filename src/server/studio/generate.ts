@@ -29,6 +29,8 @@ export interface GenerateAsk {
   /** `level` reworks the adventure's own texts with a plan; `inside` writes the whole scenario (REQ-8310). */
   readonly scope: Scope;
   readonly report: Report;
+  /** The child's profile, where the parent wrote one (REQ-8280). */
+  readonly profile?: string;
 }
 
 export type Scope = "level" | "inside";
@@ -161,6 +163,7 @@ export async function startGeneration(
   write: AdventureWriter,
   lang: Lang,
   scope: Scope = "level",
+  profile = "",
 ): Promise<{ job: Job; done: Promise<void> }> {
   const job = await startJob(db, now(), "generate", node.id);
   let cause: Cause | null = null;
@@ -208,6 +211,7 @@ export async function startGeneration(
         minChecks: DEFAULT_MIN_CHECKS,
         scope,
         report,
+        ...(profile ? { profile } : {}),
       });
       if (!written) return await fail(cause ?? "check_failed");
       const waiting = await proposeVersion(

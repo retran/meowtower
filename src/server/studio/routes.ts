@@ -405,6 +405,7 @@ export function mountStudio(
       generator,
       (await parentSettings(db)).language,
       body.data.scope,
+      (await parentSettings(db)).profile,
     );
     return c.json({ job: started.job }, 202);
   });
@@ -627,6 +628,7 @@ export function mountStudio(
         encounter: body.data.encounterId,
         said: body.data.said,
         ...(outcome ? { checkResult: ladder(outcome) } : {}),
+        profile: (await parentSettings(db)).profile,
         lang,
         blockedText: translator(lang).t("story.master.blocked"),
       });

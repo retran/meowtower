@@ -142,6 +142,8 @@ export interface ParentSettings {
   gender: "f" | "m";
   language: string;
   hideRankFalls: boolean;
+  /** The child's profile, which the writer and the Master read (REQ-8280). */
+  profile: string;
 }
 
 /** One fall the Parent Room lists (REQ-8006). */
@@ -174,6 +176,23 @@ export async function saveParentSettings(
     body: JSON.stringify(settings),
   });
   return parentReply(status, body, () => body as unknown as ParentSettings);
+}
+
+/** Saves the child's profile; a refusal names what is wrong with it (REQ-8282). */
+export async function saveProfile(
+  profile: string,
+): Promise<{ ok: true } | { ok: false; reason: string; held: string }> {
+  const { status, body } = await call("/api/parent/settings", {
+    method: "PUT",
+    body: JSON.stringify({ profile }),
+  });
+  return status === 200
+    ? { ok: true }
+    : {
+        ok: false,
+        reason: String(body["reason"] ?? body["error"]),
+        held: String(body["held"] ?? ""),
+      };
 }
 
 /** The statistics reset; the server wants `confirm` and refuses without it (REQ-8386). */
