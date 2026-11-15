@@ -494,6 +494,14 @@ export interface StringParams {
   "ui.studio.emptyAdd": NoParams;
   "ui.studio.refusal.notEdited": { status: string | number };
   "ui.studio.refusal.title": NoParams;
+  "ui.studio.refusal.archived": NoParams;
+  "ui.studio.archive": NoParams;
+  "ui.studio.archived.show": NoParams;
+  "ui.studio.archived.title": NoParams;
+  "ui.studio.archived.none": NoParams;
+  "ui.studio.archived.bringBack": { title: string | number };
+  "ui.studio.archived.done": NoParams;
+  "ui.studio.archived.back": NoParams;
   "ui.studio.lf.logline": NoParams;
   "ui.studio.lf.theme": NoParams;
   "ui.studio.lf.closingQuestion": NoParams;

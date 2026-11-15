@@ -596,4 +596,53 @@ onlyOnPostgres("a turn of the Master in the sandbox", () => {
     expect(listed.turns[0]?.check).toEqual(asked.check);
     expect(listed.turns[1]?.check).toBeNull();
   });
+  it("REQ-8634: play and the Master leave out an archived encounter", async () => {
+    const campaign = await node("campaign", null, "c11");
+    const arc = await node("arc", campaign, "a11");
+    const adventure = await node("adventure", arc, "Dock");
+    const open = await node("encounter", adventure, "Pier", {
+      situation: "A pier.",
+      exits: [],
+    });
+    const hidden = await node("encounter", adventure, "Cellar", {
+      situation: "A SECRET CELLAR",
+    });
+    await studio("PUT", `/nodes/${open}`, {
+      body: {
+        situation: "A pier.",
+        exits: [{ when: "she goes down", next: hidden }],
+      },
+    });
+    await studio("POST", `/nodes/${hidden}/archive`);
+    await studio("POST", "/sandbox/reset", { from: "empty" });
+
+    const listed = (await (
+      await studio("GET", `/sandbox/play/adventures/${adventure}/encounters`)
+    ).json()) as { encounters: { id: string }[] };
+    expect(listed.encounters.map((e) => e.id)).toEqual([open]);
+
+    const refused = await studio("POST", "/sandbox/play/start", {
+      adventureId: adventure,
+      encounterId: hidden,
+    });
+    expect(refused.status).toBe(400);
+
+    const started = (await (
+      await studio("POST", "/sandbox/play/start", {
+        adventureId: adventure,
+        encounterId: open,
+      })
+    ).json()) as { scene: { branches: unknown[] } };
+    expect(started.scene.branches).toEqual([]);
+
+    seen.length = 0;
+    next = () => Promise.resolve({ text: "Boards creak.", calls: [] });
+    await studio("POST", "/sandbox/play/turn", {
+      adventureId: adventure,
+      encounterId: open,
+      said: "I look",
+    });
+    expect(seen[0]?.system).toContain("A pier.");
+    expect(seen[0]?.system).not.toContain("A SECRET CELLAR");
+  });
 });

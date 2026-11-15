@@ -38,7 +38,12 @@ const text = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
  * its place, situation and goal (its title where it has none) and one option for each exit that
  * says something and names the next encounter. A draft with a bare body still shows.
  */
-export function sceneOf(sceneId: string, title: string, body: unknown): Scene {
+export function sceneOf(
+  sceneId: string,
+  title: string,
+  body: unknown,
+  hidden: ReadonlySet<string> = new Set(),
+): Scene {
   const b = (typeof body === "object" && body !== null ? body : {}) as Record<
     string,
     unknown
@@ -55,7 +60,10 @@ export function sceneOf(sceneId: string, title: string, body: unknown): Scene {
     >;
     const when = text(x["when"]);
     const next = text(x["next"]);
-    return when && next ? [{ choiceId: next, text: when }] : [];
+    // A choice that leads to an archived encounter is not offered (ADR-3390).
+    return when && next && !hidden.has(next)
+      ? [{ choiceId: next, text: when }]
+      : [];
   });
   return {
     sceneId,
@@ -93,8 +101,14 @@ export async function enterEncounter(
   const node = await getNode(studio, encounterId);
   if (node?.level !== "encounter" || node.parentId !== adventureId)
     throw new StudioRefused("encounter_not_in_adventure");
+  if (node.archivedAt !== null) throw new StudioRefused("encounter_archived");
   const body = await currentBodyOf(studio, encounterId);
-  return sceneOf(encounterId, node.title, body);
+  const hidden = new Set(
+    (await childrenOf(studio, adventureId, { archived: true })).map(
+      (n) => n.id,
+    ),
+  );
+  return sceneOf(encounterId, node.title, body, hidden);
 }
 
 /** The sandbox as it is open for play: its database and the child's routes mounted on it. */

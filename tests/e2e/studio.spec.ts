@@ -41,6 +41,10 @@ const decided: string[] = [];
 const generated: object[] = [];
 let jobFlow: { state: string; progress: number; message: string }[] = [];
 
+/** The nodes the studio was asked to archive and to bring back, in order. */
+const archivedLog: string[] = [];
+const hidden = new Set<string>();
+
 /** The versions the studio was asked to restore, in order. */
 const restored: number[] = [];
 
@@ -113,9 +117,20 @@ async function stub(page: Page): Promise<Fake[]> {
       route.fulfill({ status, json: body });
     if (path === "/nodes" && method === "GET") {
       const parent = url.searchParams.get("parent");
+      const archived = url.searchParams.get("archived") === "1";
       return json(200, {
-        nodes: nodes.filter((n) => n.parentId === (parent ?? null)),
+        nodes: nodes.filter(
+          (n) =>
+            n.parentId === (parent ?? null) && hidden.has(n.id) === archived,
+        ),
       });
+    }
+    const archive = /^\/nodes\/([^/]+)\/(archive|unarchive)$/.exec(path);
+    if (archive && method === "POST") {
+      archivedLog.push(`${archive[2] ?? ""} ${archive[1] ?? ""}`);
+      if (archive[2] === "archive") hidden.add(archive[1] ?? "");
+      else hidden.delete(archive[1] ?? "");
+      return json(200, nodes.find((x) => x.id === archive[1]) ?? {});
     }
     if (path === "/nodes" && method === "POST") {
       const b = route.request().postDataJSON() as {
@@ -904,4 +919,24 @@ test("REQ-8258: an arc is linked to the arcs beside it from its form", async ({
   await page.locator('[data-action="level-save"]').click();
   await expect.poll(() => saved.length).toBe(1);
   expect(saved[0]).toEqual({ id: "a1", body: { links: ["a2"] } });
+});
+
+test("REQ-8634, REQ-8638, REQ-8640: a node is archived from its panel, listed with the archived ones and brought back", async ({
+  page,
+}) => {
+  archivedLog.length = 0;
+  hidden.clear();
+  await openGate(page);
+  await page.locator('[data-action="studio-archive"]').click();
+  await expect.poll(() => archivedLog).toEqual(["archive e1"]);
+  // The node leaves the graph of its level.
+  await expect(page.locator('button[data-node="e1"]')).toHaveCount(0);
+  await expect(page.locator('button[data-node="e2"]')).toBeVisible();
+  // The archived ones are listed on request, with a way back.
+  await page.locator('[data-action="studio-archived"]').click();
+  const back = page.locator('[data-action="studio-unarchive-e1"]');
+  await expect(back).toBeVisible();
+  await back.click();
+  await expect.poll(() => archivedLog).toEqual(["archive e1", "unarchive e1"]);
+  await expect(page.locator('button[data-node="e1"]')).toBeVisible();
 });

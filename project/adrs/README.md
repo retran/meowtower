@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-73 decisions in all: 56 approved, 17 done.
+74 decisions in all: 57 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -79,5 +79,6 @@
 | [ADR-3360](ADR-3360-the-parent-assembles-an-adventure-in-forms-and-a-generated-version-waits-until-she-keeps-it.md) | The parent assembles an adventure in forms beside the graph, and a generated version waits until she keeps it                                                                                                                                                                                                                                     | done     |
 | [ADR-3370](ADR-3370-the-studio-shows-a-generations-cost-in-dollars-and-says-what-it-rests-on.md)                    | The studio shows a generation's cost in dollars and says what the figure rests on                                                                                                                                                                                                                                                                 | approved |
 | [ADR-3380](ADR-3380-the-studio-runs-no-simulated-player-and-tests-a-scenario-in-the-sandbox.md)                     | The studio runs no simulated player, and the parent tests a scenario in the sandbox                                                                                                                                                                                                                                                               | approved |
+| [ADR-3390](ADR-3390-a-node-is-archived-and-never-deleted-and-the-parent-can-bring-it-back.md)                       | A node is archived and never deleted, and the parent can bring it back                                                                                                                                                                                                                                                                            | approved |
 
 <!-- /meow-flow index -->

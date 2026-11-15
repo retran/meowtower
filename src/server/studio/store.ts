@@ -52,6 +52,8 @@ export interface StoryNode {
   readonly version: number;
   /** The newest version the parent discarded, or 0 where none was. */
   readonly discardedTo: number;
+  /** When the node was archived, or null where it is shown (ADR-3390). */
+  readonly archivedAt: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -79,6 +81,7 @@ interface NodeRow {
   status: Status;
   current_version: number;
   discarded_to: number;
+  archived_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -91,6 +94,7 @@ const nodeOfRow = (r: NodeRow): StoryNode => ({
   status: r.status,
   version: Number(r.current_version),
   discardedTo: Number(r.discarded_to),
+  archivedAt: r.archived_at ?? null,
   createdAt: r.created_at,
   updatedAt: r.updated_at,
 });
@@ -108,16 +112,20 @@ export async function getNode(db: Db, id: string): Promise<StoryNode | null> {
 export async function childrenOf(
   db: Db,
   parentId: string | null,
+  options: { archived?: boolean } = {},
 ): Promise<StoryNode[]> {
+  const mark = options.archived
+    ? "archived_at IS NOT NULL"
+    : "archived_at IS NULL";
   const rows = (await (parentId === null
     ? db
         .prepare(
-          "SELECT * FROM story_nodes WHERE parent_id IS NULL ORDER BY created_at, id",
+          `SELECT * FROM story_nodes WHERE parent_id IS NULL AND ${mark} ORDER BY created_at, id`,
         )
         .all()
     : db
         .prepare(
-          "SELECT * FROM story_nodes WHERE parent_id = ? ORDER BY created_at, id",
+          `SELECT * FROM story_nodes WHERE parent_id = ? AND ${mark} ORDER BY created_at, id`,
         )
         .all(parentId))) as NodeRow[];
   return rows.map(nodeOfRow);
@@ -176,6 +184,41 @@ export async function createNode(
  * An edit: a new version beside the old ones, which stay readable (REQ-8264). A node that was
  * approved goes back to draft, because the approval was of the text before this one.
  */
+/** Archives a node: it leaves its level and play, and every version stays (ADR-3390, REQ-8634). */
+export async function archiveNode(
+  db: Db,
+  now: number,
+  id: string,
+): Promise<StoryNode> {
+  const node = await getNode(db, id);
+  if (!node) throw new StudioRefused("no such node");
+  if (node.archivedAt !== null)
+    throw new StudioRefused("it is archived already");
+  await db
+    .prepare(
+      "UPDATE story_nodes SET archived_at = ?, updated_at = ? WHERE id = ?",
+    )
+    .run(stamp(now), stamp(now), id);
+  return (await getNode(db, id)) as StoryNode;
+}
+
+/** Brings an archived node back to its level, as it was (REQ-8640). */
+export async function unarchiveNode(
+  db: Db,
+  now: number,
+  id: string,
+): Promise<StoryNode> {
+  const node = await getNode(db, id);
+  if (!node) throw new StudioRefused("no such node");
+  if (node.archivedAt === null) throw new StudioRefused("it is not archived");
+  await db
+    .prepare(
+      "UPDATE story_nodes SET archived_at = NULL, updated_at = ? WHERE id = ?",
+    )
+    .run(stamp(now), id);
+  return (await getNode(db, id)) as StoryNode;
+}
+
 export async function editNode(
   db: Db,
   now: number,
@@ -189,6 +232,8 @@ export async function editNode(
 ): Promise<StoryNode> {
   const node = await getNode(db, id);
   if (!node) throw new StudioRefused("no such node");
+  if (node.archivedAt !== null)
+    throw new StudioRefused("an archived node is not edited");
   if (node.status === "playing" || node.status === "played")
     throw new StudioRefused(`a ${node.status} node is not edited`);
   const title = (options.title ?? node.title).trim();
@@ -278,6 +323,8 @@ export async function proposeVersion(
 ): Promise<{ version: number }> {
   const node = await getNode(db, id);
   if (!node) throw new StudioRefused("no such node");
+  if (node.archivedAt !== null)
+    throw new StudioRefused("an archived node is not edited");
   if (node.status === "playing" || node.status === "played")
     throw new StudioRefused(`a ${node.status} node is not edited`);
   if ((await pendingOf(db, id)) !== null)
