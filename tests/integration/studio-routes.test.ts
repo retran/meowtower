@@ -1120,3 +1120,115 @@ it("REQ-8258: the links an arc is saved with are the edges of its level, and a l
       .status,
   ).toBe(400);
 });
+
+describe("archiving a node", () => {
+  const make = async (level: string, parentId: string | null, title: string) =>
+    (await (
+      await call("POST", "/nodes", { level, parentId, title, body: {} })
+    ).json()) as { id: string };
+  const adventureOf = async (name: string) => {
+    const campaign = await make("campaign", null, `${name} c`);
+    const arc = await make("arc", campaign.id, `${name} a`);
+    return (await make("adventure", arc.id, `${name} adventure`)).id;
+  };
+  const titles = async (parent: string, query = "") =>
+    (
+      (await (await call("GET", `/nodes?parent=${parent}${query}`)).json()) as {
+        nodes: { title: string; links: string[]; id: string }[];
+      }
+    ).nodes;
+
+  it("REQ-8634, REQ-8636, REQ-8640: hides a node from its level, keeps its versions and brings it back as it was", async () => {
+    const adventure = await adventureOf("hide");
+    const gate = await make("encounter", adventure, "Gate");
+    const bridge = await make("encounter", adventure, "Bridge");
+    await call("PUT", `/nodes/${gate.id}`, {
+      body: {
+        situation: "A gate.",
+        exits: [{ when: "she crosses", next: bridge.id }],
+      },
+    });
+    expect((await titles(adventure)).map((n) => n.title)).toEqual([
+      "Gate",
+      "Bridge",
+    ]);
+
+    const archived = await call("POST", `/nodes/${bridge.id}/archive`);
+    expect(archived.status).toBe(200);
+    const shown = await titles(adventure);
+    expect(shown.map((n) => n.title)).toEqual(["Gate"]);
+    // The link to a node that is hidden is not an edge, and it stays in the body.
+    expect(shown[0]?.links).toEqual([]);
+    const body = (await (await call("GET", `/nodes/${gate.id}`)).json()) as {
+      body: { exits: { next: string }[] };
+    };
+    expect(body.body.exits[0]?.next).toBe(bridge.id);
+    // The versions stay.
+    const versions = (await (
+      await call("GET", `/nodes/${bridge.id}/versions`)
+    ).json()) as { versions: unknown[] };
+    expect(versions.versions.length).toBe(1);
+
+    // The archived nodes are listed, and a second archive is refused.
+    expect(
+      (await titles(adventure, "&archived=1")).map((n) => n.title),
+    ).toEqual(["Bridge"]);
+    const again = await call("POST", `/nodes/${bridge.id}/archive`);
+    expect(again.status).toBe(400);
+    expect(((await again.json()) as { reason: string }).reason).toBe(
+      "it is archived already",
+    );
+
+    const back = await call("POST", `/nodes/${bridge.id}/unarchive`);
+    expect(back.status).toBe(200);
+    expect((await titles(adventure)).map((n) => n.title)).toEqual([
+      "Gate",
+      "Bridge",
+    ]);
+    expect((await titles(adventure))[0]?.links).toEqual([bridge.id]);
+    expect((await titles(adventure, "&archived=1")).length).toBe(0);
+    const notArchived = await call("POST", `/nodes/${bridge.id}/unarchive`);
+    expect(notArchived.status).toBe(400);
+  });
+
+  it("REQ-8634: does not edit an archived node, and hides what sits inside one with it", async () => {
+    const adventure = await adventureOf("frozen");
+    const gate = await make("encounter", adventure, "Gate");
+    await call("POST", `/nodes/${gate.id}/archive`);
+    const edit = await call("PUT", `/nodes/${gate.id}`, {
+      body: { goal: "x" },
+    });
+    expect(edit.status).toBe(400);
+    expect(((await edit.json()) as { reason: string }).reason).toBe(
+      "an archived node is not edited",
+    );
+    // Archiving the adventure hides it from its arc; its encounters stay as they are.
+    const arc = (await (await call("GET", `/nodes/${adventure}`)).json()) as {
+      node: { parentId: string };
+    };
+    await call("POST", `/nodes/${adventure}/archive`);
+    expect((await titles(arc.node.parentId)).length).toBe(0);
+    await call("POST", `/nodes/${adventure}/unarchive`);
+    expect((await titles(arc.node.parentId)).length).toBe(1);
+    expect(
+      (await titles(adventure, "&archived=1")).map((n) => n.title),
+    ).toEqual(["Gate"]);
+  });
+
+  it("answers 404 for an unknown node, and needs the parent's session", async () => {
+    expect((await call("POST", "/nodes/nope/archive")).status).toBe(404);
+    expect((await call("POST", "/nodes/nope/unarchive")).status).toBe(404);
+    const adventure = await adventureOf("auth");
+    for (const action of ["archive", "unarchive"])
+      expect(
+        (
+          await call(
+            "POST",
+            `/nodes/${adventure}/${action}`,
+            undefined,
+            deviceCookie,
+          )
+        ).status,
+      ).toBe(401);
+  });
+});
