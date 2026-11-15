@@ -120,8 +120,9 @@ export async function materializeScenario(
 ): Promise<number> {
   const body = objectOf(await currentBodyOf(db, adventureId));
   const planned = planEncounters(body?.["scenario"], randomUUID);
-  for (const p of planned)
-    await createNode(db, now, {
+  // One millisecond apart, so the list of children, ordered by when each was made, keeps the plan's order.
+  for (const [i, p] of planned.entries())
+    await createNode(db, now + i, {
       id: p.id,
       level: "encounter",
       parentId: adventureId,
