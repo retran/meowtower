@@ -141,7 +141,7 @@ describe("BUG-0020: no schema the code sends holds an empty schema", () => {
 
   it("names each tool of the Master and its input, one entry for each", () => {
     const calls = (
-      MASTER_REPLY_SCHEMA as {
+      MASTER_REPLY_SCHEMA as unknown as {
         properties: {
           calls: {
             items: {
