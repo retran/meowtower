@@ -7,6 +7,7 @@ import {
   type TemplateRow,
   studioChecklist,
   studioArchive,
+  studioReviewed,
   studioCreate,
   studioEncounters,
   studioForce,
@@ -1267,6 +1268,16 @@ const studioScreen: Screen = {
         );
       if (node.level === "encounter") panel.append(playPanel(node, note, node));
       loadForm();
+      if (node.needsReview)
+        panel.append(
+          button("ui.studio.review.mark", "studio-reviewed", async () => {
+            const done = await studioReviewed(node.id);
+            if (done.ok) {
+              note.textContent = t("ui.studio.review.done");
+              void show();
+            } else note.textContent = refusalText(done.error);
+          }),
+        );
       panel.append(
         button("ui.studio.archive", "studio-archive", async () => {
           const done = await studioArchive(node.id, "archive");
@@ -1359,12 +1370,16 @@ const studioScreen: Screen = {
           { type: "button", className: "control node" },
           el("strong", {}, n.title),
           el("small", {}, t(`ui.studio.status.${n.status}` as UiKey)),
+          ...(n.needsReview
+            ? [el("small", {}, t("ui.studio.review.needed"))]
+            : []),
           ...(reached.encounters.has(n.id)
             ? [el("small", {}, t("ui.studio.reached"))]
             : reached.known
               ? [el("small", {}, t("ui.studio.unreached"))]
               : []),
         );
+        if (n.needsReview) b.dataset["needsReview"] = "1";
         if (reached.encounters.has(n.id)) b.dataset["reached"] = "1";
         else if (reached.known) b.dataset["reached"] = "0";
         b.dataset["action"] = `node-${n.id}`;

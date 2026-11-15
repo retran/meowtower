@@ -475,6 +475,8 @@ export interface StudioNode {
   version: number;
   /** The ids of the sibling nodes this one leads to. */
   links: string[];
+  /** True for an approved node that a change above it has left unreviewed (REQ-8270). */
+  needsReview?: boolean;
 }
 
 export async function studioNodes(
@@ -658,6 +660,19 @@ export async function studioArchive(
 ): Promise<ParentReply<StudioNode>> {
   const { status, body } = await call(
     `/api/parent/studio/nodes/${encodeURIComponent(id)}/${action}`,
+    { method: "POST", body: "{}" },
+  );
+  return status === 200
+    ? { ok: true, value: body as unknown as StudioNode }
+    : { ok: false, error: String(body["reason"] ?? body["error"]) };
+}
+
+/** Says an approved node still stands as it is, after a change above it (REQ-8270). */
+export async function studioReviewed(
+  id: string,
+): Promise<ParentReply<StudioNode>> {
+  const { status, body } = await call(
+    `/api/parent/studio/nodes/${encodeURIComponent(id)}/reviewed`,
     { method: "POST", body: "{}" },
   );
   return status === 200

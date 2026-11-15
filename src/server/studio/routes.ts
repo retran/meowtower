@@ -63,6 +63,7 @@ import {
   getJob,
   getNode,
   archiveNode,
+  markReviewed,
   unarchiveNode,
   jobsOf,
   keepPending,
@@ -193,6 +194,7 @@ export function mountStudio(
         return refused(c, err);
       }
     };
+  app.post(`${base}/nodes/:id/reviewed`, archiving(markReviewed));
   app.post(`${base}/nodes/:id/archive`, archiving(archiveNode));
   app.post(`${base}/nodes/:id/unarchive`, archiving(unarchiveNode));
 

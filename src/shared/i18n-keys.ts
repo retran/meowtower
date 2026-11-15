@@ -562,6 +562,9 @@ export interface StringParams {
   "ui.studio.review.clean": NoParams;
   "ui.studio.review.major": { n: string | number };
   "ui.studio.review.minor": { n: string | number };
+  "ui.studio.review.needed": NoParams;
+  "ui.studio.review.mark": NoParams;
+  "ui.studio.review.done": NoParams;
   "ui.studio.playHere": NoParams;
   "ui.studio.refusal.alreadyCurrent": NoParams;
   "ui.studio.logs": NoParams;

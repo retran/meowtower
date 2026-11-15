@@ -54,6 +54,8 @@ export interface StoryNode {
   readonly discardedTo: number;
   /** When the node was archived, or null where it is shown (ADR-3390). */
   readonly archivedAt: string | null;
+  /** True for an approved node that a change above it has left unreviewed (REQ-8270). */
+  readonly needsReview: boolean;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -82,6 +84,7 @@ interface NodeRow {
   current_version: number;
   discarded_to: number;
   archived_at: string | null;
+  needs_review: number;
   created_at: string;
   updated_at: string;
 }
@@ -95,6 +98,7 @@ const nodeOfRow = (r: NodeRow): StoryNode => ({
   version: Number(r.current_version),
   discardedTo: Number(r.discarded_to),
   archivedAt: r.archived_at ?? null,
+  needsReview: Number(r.needs_review) === 1,
   createdAt: r.created_at,
   updatedAt: r.updated_at,
 });
@@ -184,6 +188,54 @@ export async function createNode(
  * An edit: a new version beside the old ones, which stay readable (REQ-8264). A node that was
  * approved goes back to draft, because the approval was of the text before this one.
  */
+/** Every node below one, at any depth, archived or not. */
+async function below(db: Db, id: string): Promise<StoryNode[]> {
+  const found: StoryNode[] = [];
+  let level = [id];
+  while (level.length > 0) {
+    const next: StoryNode[] = [];
+    for (const parent of level) {
+      const rows = (await db
+        .prepare("SELECT * FROM story_nodes WHERE parent_id = ?")
+        .all(parent)) as NodeRow[];
+      next.push(...rows.map(nodeOfRow));
+    }
+    found.push(...next);
+    level = next.map((n) => n.id);
+  }
+  return found;
+}
+
+/**
+ * A change to a node marks the approved work below it for review (REQ-8270): the nodes that were
+ * approved against what stood above them, which has changed. A draft has nothing to review, and an
+ * encounter has no status of its own, so only the levels with a status are marked.
+ */
+async function markBelow(db: Db, id: string): Promise<void> {
+  for (const n of await below(db, id))
+    if (n.status === "approved" && n.level !== "encounter")
+      await db
+        .prepare("UPDATE story_nodes SET needs_review = 1 WHERE id = ?")
+        .run(n.id);
+}
+
+/** The parent says an approved node still stands as it is after a change above it (REQ-8270). */
+export async function markReviewed(
+  db: Db,
+  now: number,
+  id: string,
+): Promise<StoryNode> {
+  const node = await getNode(db, id);
+  if (!node) throw new StudioRefused("no such node");
+  if (!node.needsReview) throw new StudioRefused("nothing to review");
+  await db
+    .prepare(
+      "UPDATE story_nodes SET needs_review = 0, updated_at = ? WHERE id = ?",
+    )
+    .run(stamp(now), id);
+  return (await getNode(db, id)) as StoryNode;
+}
+
 /** Archives a node: it leaves its level and play, and every version stays (ADR-3390, REQ-8634). */
 export async function archiveNode(
   db: Db,
@@ -260,6 +312,7 @@ export async function editNode(
       )
       .run(version, title, at, id);
   })();
+  await markBelow(db, id);
   return (await getNode(db, id)) as StoryNode;
 }
 
@@ -351,6 +404,7 @@ export async function keepPending(
       "UPDATE story_nodes SET current_version = ?, status = 'draft', updated_at = ? WHERE id = ?",
     )
     .run(waiting, stamp(now), id);
+  await markBelow(db, id);
   return (await getNode(db, id)) as StoryNode;
 }
 
@@ -467,7 +521,9 @@ export async function setStatus(
   if (node.level === "encounter")
     throw new StudioRefused("an encounter has no status of its own");
   await db
-    .prepare("UPDATE story_nodes SET status = ?, updated_at = ? WHERE id = ?")
+    .prepare(
+      "UPDATE story_nodes SET status = ?, needs_review = 0, updated_at = ? WHERE id = ?",
+    )
     .run(next, stamp(now), id);
   return (await getNode(db, id)) as StoryNode;
 }

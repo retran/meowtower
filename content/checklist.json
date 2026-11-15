@@ -89,6 +89,10 @@
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
     {
+      "id": "api:POST /nodes/:id/reviewed",
+      "tests": ["tests/integration/studio-routes.test.ts"]
+    },
+    {
       "id": "api:POST /nodes/:id/archive",
       "tests": ["tests/integration/studio-routes.test.ts"]
     },
