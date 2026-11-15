@@ -58,6 +58,7 @@ import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
 import { encounterForm, refusalText, versionsPanel } from "./studio-form.js";
 import { generatePanel } from "./studio-generate.js";
+import { levelForm } from "./studio-level-form.js";
 import { clock, t, uiKey, type UiKey } from "./strings.js";
 
 export interface Shell {
@@ -1242,8 +1243,11 @@ const studioScreen: Screen = {
       // The form sits in its own slot, so a restore can load the restored body into it.
       const formSlot = el("div", {});
       const loadForm = (): void => {
-        if (node.level !== "encounter") return;
-        void encounterForm(node, shown, note).then((form) => {
+        const made =
+          node.level === "encounter"
+            ? encounterForm(node, shown, note)
+            : levelForm(node, note);
+        void made.then((form) => {
           if (selected?.id === node.id) formSlot.replaceChildren(form);
         });
       };

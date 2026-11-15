@@ -38,7 +38,15 @@ export function refusalText(reason: string): string {
   return t("ui.studio.refused", { reason });
 }
 
-const labelOf = (field: string): string => {
+/** The label of a field of a campaign, an arc or an adventure, or null where the field is not one of them. */
+const levelLabel = (field: string): string | null =>
+  /^(logline|theme|closingQuestion|premise|question|kind|conflict\.(wants|against|stakes))$/.test(
+    field,
+  )
+    ? t(uiKey(`ui.studio.lf.${field.replace(".", "_")}`))
+    : null;
+
+export const labelOf = (field: string): string => {
   const row = /^(people|exits)\.(\d+)\.(\w+)$/.exec(field);
   if (row) {
     const [, list, n, part] = row;
@@ -56,7 +64,11 @@ const labelOf = (field: string): string => {
       part: t(uiKey(`ui.studio.field.${partKey}`)),
     });
   }
-  return t(uiKey(`ui.studio.field.${field}`));
+  const level = levelLabel(field);
+  if (level) return level;
+  return field === "json" || field === "body"
+    ? field
+    : t(uiKey(`ui.studio.field.${field}`));
 };
 
 /** A fault in the parent's language: the field, what it holds and what it needs. */

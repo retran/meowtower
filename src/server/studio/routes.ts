@@ -21,6 +21,7 @@ import {
 import type { Db } from "../db/index.js";
 import { DEVICE_COOKIE } from "../devices.js";
 import { checkEncounterBody } from "./body-check.js";
+import { checkLevelBody } from "./level-check.js";
 import { materializeScenario } from "./materialize.js";
 import {
   type AdventureWriter,
@@ -191,6 +192,14 @@ export function mountStudio(
     try {
       // An encounter's body passes the code's check before it is stored (REQ-8306, REQ-8600).
       const target = await getNode(db, c.req.param("id"));
+      if (target && target.level !== "encounter") {
+        const found = checkLevelBody(
+          target.level,
+          body.data.body,
+          await currentBodyOf(db, target.id),
+        );
+        if (found) return c.json({ error: "edit_refused", fault: found }, 400);
+      }
       if (target?.level === "encounter") {
         const siblings = target.parentId
           ? (await childrenOf(db, target.parentId)).map((n) => n.id)
