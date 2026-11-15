@@ -263,6 +263,7 @@ async function stub(page: Page): Promise<Fake[]> {
             said: "I step onto the bridge",
             reply: "The bridge sways.",
             changes: [{ kind: "place", name: "bridge", note: "it sways" }],
+            check: { node: "N1", subtype: "a", purpose: "review" },
           },
         ],
         modelCalls: [
@@ -491,6 +492,11 @@ test("REQ-8168, REQ-8292: a turn is taken at the encounter that was started, and
     "I step onto the bridge",
   );
   await expect(page.locator("ol.turns")).toContainText("bridge: it sways");
+  // The Director's task for the check the turn asked for, with its node, subtype and purpose (REQ-8292).
+  const director = page.locator('ol.turns [data-check="review"]');
+  await expect(director).toBeVisible();
+  await expect(director).toContainText("N1");
+  await expect(director).toContainText("a");
   await expect(page.locator("ul.model-calls li")).toContainText("0.0123");
   await expect(page.locator("ul.model-calls li")).toContainText("RESP-TEXT");
 });

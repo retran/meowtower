@@ -269,6 +269,8 @@ export interface TurnView {
   readonly reply: string;
   /** The world changes the turn made, in order. */
   readonly changes: { kind: string; name: string; note: string }[];
+  /** The task the Director chose for the check this turn asked for, or null (REQ-8292). */
+  check: { node: string; subtype: string; purpose: string } | null;
 }
 
 export interface ModelCallView {
@@ -287,7 +289,11 @@ export async function turnsIn(
   db: Db,
 ): Promise<{ turns: TurnView[]; modelCalls: ModelCallView[] }> {
   const turns: TurnView[] = [];
-  for (const e of await eventsOfTypes(db, ["turn_taken", "world_changed"])) {
+  for (const e of await eventsOfTypes(db, [
+    "turn_taken",
+    "world_changed",
+    "check_task_chosen",
+  ])) {
     const p = e.payload as Record<string, string>;
     if (e.type === "turn_taken")
       turns.push({
@@ -295,8 +301,17 @@ export async function turnsIn(
         said: p["said"] ?? "",
         reply: p["reply"] ?? "",
         changes: [],
+        check: null,
       });
-    else
+    else if (e.type === "check_task_chosen") {
+      const last = turns.at(-1);
+      if (last)
+        last.check = {
+          node: p["node"] ?? "",
+          subtype: p["subtype"] ?? "",
+          purpose: p["purpose"] ?? "",
+        };
+    } else
       turns.at(-1)?.changes.push({
         kind: p["kind"] ?? "",
         name: p["name"] ?? "",

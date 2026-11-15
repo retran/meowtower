@@ -44,6 +44,8 @@ export const test = base.extend<{ leaks: string[] }>({
             const parentLab = [
               "/api/parent/studio/tasks",
               "/api/parent/studio/nodes/",
+              // The turn inspector shows the Director's task for a check to the parent alone (REQ-8292).
+              "/api/parent/studio/sandbox/play/turns",
             ].some((path) => new URL(res.url()).pathname.startsWith(path));
             if (!parentLab)
               for (const field of forbiddenFields(json))
