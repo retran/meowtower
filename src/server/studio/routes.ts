@@ -198,6 +198,7 @@ export function mountStudio(
         const found = checkEncounterBody(body.data.body, {
           self: target.id,
           siblings,
+          stored: await currentBodyOf(db, target.id),
         });
         if (found) return c.json({ error: "edit_refused", fault: found }, 400);
       }
