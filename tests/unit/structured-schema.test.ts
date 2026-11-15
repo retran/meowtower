@@ -8,6 +8,9 @@ import {
   anthropicRoute,
   forStructuredOutput,
 } from "../../src/server/gateway/routes.js";
+import { FRAME_SCHEMA } from "../../src/server/frames/request.js";
+import { MASTER_REPLY_SCHEMA } from "../../src/story/master-gateway.js";
+import { MASTER_TOOL_NAMES } from "../../src/story/master-tools.js";
 import { Scenario } from "../../src/story/scenario.js";
 
 /** Every keyword of the schema, at any depth, so a test can say a limit is nowhere in it. */
@@ -91,5 +94,65 @@ describe("BUG-0010: the schema the provider gets", () => {
     for (const word of REFUSED) expect(sent.has(word), word).toBe(false);
     // The schema still names the fields, so the reply keeps its shape.
     expect(sent.has("encounters")).toBe(true);
+  });
+});
+
+/** Whether a schema holds an empty schema where a schema is expected, which the provider refuses (BUG-0020). */
+const holdsEmptySchema = (node: unknown): boolean => {
+  if (Array.isArray(node)) return node.some(holdsEmptySchema);
+  if (typeof node !== "object" || node === null) return false;
+  const isEmpty = (v: unknown): boolean =>
+    typeof v === "object" &&
+    v !== null &&
+    !Array.isArray(v) &&
+    Object.keys(v).length === 0;
+  return Object.entries(node).some(([key, value]) => {
+    if (
+      ["properties", "$defs", "definitions", "patternProperties"].includes(key)
+    )
+      return Object.values(value as object).some(
+        (v) => isEmpty(v) || holdsEmptySchema(v),
+      );
+    if (["anyOf", "oneOf", "allOf"].includes(key))
+      return (value as unknown[]).some(
+        (v) => isEmpty(v) || holdsEmptySchema(v),
+      );
+    if (
+      ["items", "additionalProperties"].includes(key) &&
+      typeof value === "object"
+    )
+      return isEmpty(value) || holdsEmptySchema(value);
+    return holdsEmptySchema(value);
+  });
+};
+
+describe("BUG-0020: no schema the code sends holds an empty schema", () => {
+  it("catches one that does", () => {
+    expect(holdsEmptySchema({ properties: { input: {} } })).toBe(true);
+    expect(holdsEmptySchema({ items: { anyOf: [{}] } })).toBe(true);
+    expect(holdsEmptySchema({ properties: {}, type: "object" })).toBe(false);
+  });
+
+  it("holds for the Master's reply, a scenario and a frame", () => {
+    expect(holdsEmptySchema(MASTER_REPLY_SCHEMA)).toBe(false);
+    expect(holdsEmptySchema(z.toJSONSchema(Scenario))).toBe(false);
+    expect(holdsEmptySchema(FRAME_SCHEMA)).toBe(false);
+  });
+
+  it("names each tool of the Master and its input, one entry for each", () => {
+    const calls = (
+      MASTER_REPLY_SCHEMA as {
+        properties: {
+          calls: {
+            items: {
+              anyOf: { properties: { tool: { enum: string[] } } }[];
+            };
+          };
+        };
+      }
+    ).properties.calls.items.anyOf;
+    expect(calls.map((c) => c.properties.tool.enum[0])).toEqual([
+      ...MASTER_TOOL_NAMES,
+    ]);
   });
 });

@@ -11,7 +11,11 @@ import type {
   GatewayRequest,
   GatewayResult,
 } from "../../src/server/gateway/gateway.js";
-import { gatewayMaster, MasterFailed } from "../../src/story/master-gateway.js";
+import {
+  gatewayMaster,
+  MASTER_REPLY_SCHEMA,
+  MasterFailed,
+} from "../../src/story/master-gateway.js";
 
 const base = {
   TASK_TEXT_MODEL: "anthropic:claude-haiku-5-5",
@@ -106,5 +110,51 @@ describe("the gateway as the Master's model", () => {
       expect(failed, reason).toBeInstanceOf(MasterFailed);
       expect((failed as MasterFailed).reason).toBe(reason);
     }
+  });
+});
+
+describe("BUG-0020: the schema the Master asks the provider for", () => {
+  it("is the one that names each tool and its input", async () => {
+    const seen: GatewayRequest[] = [];
+    const gateway: Gateway = {
+      call: (request) => {
+        seen.push(request);
+        return Promise.resolve({
+          ok: true,
+          text: JSON.stringify({ text: "x", calls: [] }),
+        } as GatewayResult);
+      },
+    };
+    await gatewayMaster(
+      gateway,
+      "b",
+    )({
+      system: "s",
+      said: "w",
+      encounter: "e",
+    });
+    expect(seen[0]?.schema).toEqual(MASTER_REPLY_SCHEMA);
+  });
+
+  it("still reads a reply that names a tool the Master does not have, so the turn can refuse it", async () => {
+    const gateway: Gateway = {
+      call: () =>
+        Promise.resolve({
+          ok: true,
+          text: JSON.stringify({
+            text: "x",
+            calls: [{ tool: "set_level", input: { level: 9 } }],
+          }),
+        } as GatewayResult),
+    };
+    const reply = await gatewayMaster(
+      gateway,
+      "b",
+    )({
+      system: "s",
+      said: "w",
+      encounter: "e",
+    });
+    expect(reply.calls).toEqual([{ tool: "set_level", input: { level: 9 } }]);
   });
 });
