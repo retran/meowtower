@@ -828,7 +828,7 @@ describe("generating a version of an adventure", () => {
     expect(first).toMatchObject({
       calls: { min: 4, max: 17 },
       spentUsd: 0,
-      estimateUsd: { min: 0.2, max: 0.85 },
+      estimateUsd: { min: 0.28, max: 1.19 },
       basis: "default",
       measuredCalls: 0,
     });
