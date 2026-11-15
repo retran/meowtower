@@ -163,6 +163,70 @@ export async function parentFalls(): Promise<ParentReply<ParentFall[]>> {
   return parentReply(status, body, () => body["falls"] as ParentFall[]);
 }
 
+/** The overview's figures and the parent's notices (ADR-3470). */
+export interface ParentOverview {
+  tasks: number;
+  answered: number;
+  correct: number;
+  live: number;
+  calls: number;
+  failed: number;
+  monthUsd: number;
+  notices: string[];
+}
+
+export async function parentOverview(): Promise<ParentReply<ParentOverview>> {
+  const { status, body } = await call("/api/parent/overview");
+  return parentReply(status, body, () => body as unknown as ParentOverview);
+}
+
+/** A task as it was played, for the logs (REQ-7660). */
+export interface PlayedRow {
+  at: string;
+  templateId: string;
+  node: string;
+  source: string;
+  text: string;
+  correctAnswer: string;
+  answer: string | null;
+  verdict: string | null;
+  hints: number;
+}
+
+export async function parentPlayed(): Promise<ParentReply<PlayedRow[]>> {
+  const { status, body } = await call("/api/parent/audit/play");
+  return parentReply(status, body, () => body as unknown as PlayedRow[]);
+}
+
+/** A model call in full, for the logs (REQ-7650). */
+export interface CallRow {
+  id: number;
+  at: string;
+  role: string;
+  route: string;
+  model: string;
+  input_tokens: number;
+  output_tokens: number;
+  cost_usd: number;
+  latency_ms: number;
+  outcome: string;
+  request: string;
+  response: string;
+}
+
+export async function parentCalls(): Promise<ParentReply<CallRow[]>> {
+  const { status, body } = await call("/api/parent/audit/llm");
+  return parentReply(status, body, () => body as unknown as CallRow[]);
+}
+
+/** Ends play for the rest of the game day (REQ-0360). */
+export async function finishToday(): Promise<ParentReply<null>> {
+  const { status, body } = await call("/api/parent/finish-today", {
+    method: "POST",
+  });
+  return parentReply(status, body, () => null);
+}
+
 export async function parentSettings(): Promise<ParentReply<ParentSettings>> {
   const { status, body } = await call("/api/parent/settings");
   return parentReply(status, body, () => body as unknown as ParentSettings);

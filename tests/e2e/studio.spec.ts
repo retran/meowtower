@@ -4,10 +4,10 @@
 import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures.js";
 
-async function ready(page: Page): Promise<void> {
+async function ready(page: Page, route = "/studio"): Promise<void> {
   await page.goto("about:blank");
-  await page.goto("/#/studio");
-  await expect(page.locator("body")).toHaveAttribute("data-screen", "/studio");
+  await page.goto(`/#${route}`);
+  await expect(page.locator("body")).toHaveAttribute("data-screen", route);
   await expect(page.locator("[data-busy]")).toHaveCount(0);
 }
 
@@ -401,7 +401,9 @@ test("REQ-8276: the logs of the played adventures are listed and one can be read
   page,
 }) => {
   await stub(page);
-  await ready(page);
+  // The logs of played adventures sit on the room's logs screen (REQ-7682).
+  await ready(page, "/parent/logs");
+  await page.locator('[data-action="log-tab-adventures"]').click();
   await expect(page.getByText("3 событий")).toBeVisible();
   await page.locator('[data-action="log-adv-1"]').click();
   await expect(page.locator("ol.log li")).toHaveCount(2);
@@ -455,7 +457,8 @@ test("REQ-8288: a state is picked, filled in and set in the sandbox", async ({
 }) => {
   levers.length = 0;
   await stub(page);
-  await ready(page);
+  // The sandbox's tools sit on the testing screen (REQ-7686).
+  await ready(page, "/studio/checklist");
   await page.locator("#lever-kind").selectOption("friendship");
   await page.locator("#lever-familiarId").fill("f1");
   await page.locator("#lever-points").fill("12");
@@ -477,7 +480,7 @@ test("REQ-8290: the next outcome is chosen and forced in the sandbox", async ({
 }) => {
   forces.length = 0;
   await stub(page);
-  await ready(page);
+  await ready(page, "/studio/checklist");
   await page.locator("#force-next").selectOption("partial");
   await page.locator('[data-action="force-set"]').click();
   await expect(page.getByText("Задано в песочнице.")).toBeVisible();

@@ -46,13 +46,17 @@ export const test = base.extend<{ leaks: string[] }>({
               "/api/parent/studio/nodes/",
               // The turn inspector shows the Director's task for a check to the parent alone (REQ-8292).
               "/api/parent/studio/sandbox/play/turns",
+              // The logs show each task played with its right answer, to the parent alone (REQ-7660).
+              "/api/parent/audit/",
             ].some((path) => new URL(res.url()).pathname.startsWith(path));
             if (!parentLab)
               for (const field of forbiddenFields(json))
                 leaks.push(`${res.url()}: ${field}`);
+            const path = new URL(res.url()).pathname;
             if (
               body.includes("correctAnswer") &&
-              !new URL(res.url()).pathname.endsWith("/answer")
+              !path.endsWith("/answer") &&
+              !path.startsWith("/api/parent/audit/")
             )
               leaks.push(`${res.url()}: correctAnswer outside an answer reply`);
           })(),

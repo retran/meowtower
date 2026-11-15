@@ -32,6 +32,13 @@ test("REQ-2520: a device the parent revokes shows that it needs pairing", async 
   await ready(page, "/parent");
   await page.locator("#parent-pin").fill(PIN);
   await page.locator('[data-action="parent-login"]').click();
+  // The PIN opens the overview (REQ-7676).
+  await expect(page.locator("body")).toHaveAttribute(
+    "data-screen",
+    "/parent/home",
+  );
+  // The menu reaches every screen of the room (REQ-7672).
+  await page.locator('[data-action="open-parent-devices"]').click();
   await expect(page.locator("body")).toHaveAttribute(
     "data-screen",
     "/parent/devices",
@@ -110,9 +117,10 @@ test("REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps
   await ready(page, "/parent");
   await page.locator("#parent-pin").fill(PIN);
   await page.locator('[data-action="parent-login"]').click();
+  // The PIN opens the overview (REQ-7676).
   await expect(page.locator("body")).toHaveAttribute(
     "data-screen",
-    "/parent/devices",
+    "/parent/home",
   );
 
   // The e2e server is shared, so an earlier run may have changed the limit;
@@ -166,6 +174,9 @@ test("REQ-2440, REQ-0234: an expired session asks for the PIN in place and keeps
     page.locator('[data-action="hide-rank-falls-yes"]'),
   ).toBeChecked();
   await page.locator('[data-action="hide-rank-falls-no"]').check();
+  // The falls are a result of play, so the overview lists them (REQ-7678).
+  await page.locator('[data-action="open-overview"]').click();
+  await expect(page.locator("[data-busy]")).toHaveCount(0);
   await expect(page.locator("ul.falls li")).toHaveCount(1);
   await expect(page.locator("ul.falls")).toContainText("Падений пока не было.");
 });

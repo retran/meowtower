@@ -2,6 +2,7 @@
 // log alone (REQ-2200), the seven service tables stay as they were (REQ-2242),
 // appends go on during it, a stored row that differs is reported, a failure
 // leaves the old projections in place, and a large log raises its notice.
+import { noticeLines } from "../../src/server/notices.js";
 import { createHash } from "node:crypto";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -20,7 +21,6 @@ import { readNotices } from "../../src/server/backups.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
 import { registerDevice } from "../../src/server/devices.js";
 import { checkLogSize, runRecompute } from "../../src/server/recompute.js";
-import { createParentApp } from "../../src/server/parent.js";
 import { writeSyntheticLog } from "../helpers/synthetic-log.js";
 import { webp } from "../helpers/webp.js";
 import { onPostgres } from "../helpers/backend.js";
@@ -258,10 +258,9 @@ describe("recompute_failed", () => {
       version: versionLabel(),
       reason: "disk full",
     });
-    const page = await (
-      await createParentApp({ db: w.db, snapshots: w.dir }).request("/")
-    ).text();
-    expect(page).toContain("Пересчёт не удался (2026-09-27T21:00:00.000Z");
+    expect(noticeLines(w.dir).join("\n")).toContain(
+      "Пересчёт не удался (2026-09-27T21:00:00.000Z",
+    );
     // The next good recompute clears it.
     await runRecompute(w.db, { dir: w.dir, now: Date.now });
     expect(readNotices(w.dir).recompute_failed).toBeNull();

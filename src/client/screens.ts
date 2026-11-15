@@ -40,6 +40,11 @@ import {
   parentDevices,
   parentLogin,
   parentFalls,
+  parentOverview,
+  parentPlayed,
+  parentCalls,
+  finishToday,
+  type ParentFall,
   parentSettings,
   resetStats,
   skills,
@@ -64,6 +69,7 @@ import {
 import { layoutGraph, DEFAULT_SIZE } from "./graph-layout.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
+import { card } from "./room.js";
 import { encounterForm, refusalText, versionsPanel } from "./studio-form.js";
 import { generatePanel } from "./studio-generate.js";
 import { levelForm } from "./studio-level-form.js";
@@ -322,10 +328,7 @@ async function asParent<T>(
 /** The links a Parent Room page shows when no parent session is open. */
 function loginNeeded(note: HTMLElement, nav: HTMLElement): void {
   note.textContent = t("ui.devices.loginNeeded");
-  nav.append(
-    link("ui.nav.parent", "open-parent", "/parent"),
-    link("ui.nav.back", "back", "/"),
-  );
+  nav.append(link("ui.nav.parent", "open-parent", "/parent"));
 }
 
 const parentLoginScreen: Screen = {
@@ -333,7 +336,7 @@ const parentLoginScreen: Screen = {
   render() {
     const note = status();
     const form = pinForm(note, () => {
-      location.hash = "#/parent/devices";
+      location.hash = "#/parent/home";
     });
     return el(
       "section",
@@ -352,12 +355,12 @@ const parentDevicesScreen: Screen = {
     const note = status();
     const list = el("ul", { className: "devices" });
     const code = el("p", { className: "code" });
-    const nav = el("nav", { className: "actions" });
+    const nav = el("nav", { className: "actions room-actions" });
     const section = el(
       "section",
       {},
       heading("ui.devices.title"),
-      list,
+      card(null, list),
       code,
       note,
       nav,
@@ -425,13 +428,6 @@ const parentDevicesScreen: Screen = {
               })
             : t("ui.devices.failed");
         }),
-        link(
-          "ui.parentSettings.title",
-          "open-parent-settings",
-          "/parent/settings",
-        ),
-        link("ui.nav.studio", "open-studio", "/studio"),
-        link("ui.nav.back", "back", "/"),
       );
       delete section.dataset["busy"];
     };
@@ -457,22 +453,15 @@ const parentSettingsScreen: Screen = {
     const gender = el("fieldset", {});
     const hideFalls = el("fieldset", {});
     const profileBox = el("div", { className: "profile" });
-    const falls = el("ul", { className: "falls" });
     const resetBox = el("fieldset", {});
-    const nav = el("nav", { className: "actions" });
+    const nav = el("nav", { className: "actions room-actions" });
     const section = el(
       "section",
       {},
       heading("ui.parentSettings.title"),
-      languages,
-      creepiness,
-      gender,
-      hideFalls,
-      profileBox,
-      limits,
-      heading("ui.parentFalls.title"),
-      falls,
-      resetBox,
+      card(null, languages, creepiness, gender, hideFalls, limits),
+      card(null, profileBox),
+      card(null, resetBox),
       note,
       nav,
     );
@@ -601,29 +590,6 @@ const parentSettingsScreen: Screen = {
                 : t("ui.devices.failed");
         }),
       );
-      const listed = await asParent(section, note, parentFalls);
-      if (listed && listed.length === 0)
-        falls.append(el("li", {}, t("ui.parentFalls.none")));
-      for (const f of listed ?? [])
-        falls.append(
-          el(
-            "li",
-            {},
-            f.kind === "rank"
-              ? t("ui.parentFalls.rank", {
-                  from: f.from,
-                  to: f.to,
-                  day: f.day,
-                })
-              : t("ui.parentFalls.skill", {
-                  skill: t(uiKey(`ui.skills.${f.skill}.name`)),
-                  node: f.node,
-                  from: f.from,
-                  to: f.to,
-                  when: f.at.slice(0, 10),
-                }),
-          ),
-        );
       limits.append(
         el("legend", {}, t("ui.parentSettings.threeDay")),
         ...THREE_DAY_LIMITS.map((limit) => {
@@ -666,10 +632,6 @@ const parentSettingsScreen: Screen = {
         el("legend", {}, t("ui.parentSettings.resetTitle")),
         reset,
       );
-      nav.append(
-        link("ui.devices.title", "open-parent-devices", "/parent/devices"),
-        link("ui.nav.back", "back", "/"),
-      );
       delete section.dataset["busy"];
     };
     void fill();
@@ -711,9 +673,8 @@ const accountScreen: Screen = {
       "section",
       {},
       heading("ui.account.title"),
-      body,
+      card(null, body),
       note,
-      el("nav", { className: "actions" }, link("ui.nav.back", "back", "/")),
     );
     section.dataset["busy"] = "1";
 
@@ -1177,24 +1138,46 @@ const studioScreen: Screen = {
     const graph = el("div", { className: "graph" });
     graph.setAttribute("aria-label", t("ui.studio.graph"));
     const panel = el("div", { className: "panel" });
-    const logs = el("div", { className: "logs" });
     /** The archived nodes of the level that shows, listed on request with a way back (REQ-8638). */
     const archivedBox = el("div", { className: "archived" });
-    const nav = el("nav", { className: "actions" });
+    /** Adding a node at the level that shows, in the toolbar beside the breadcrumb (REQ-7686). */
+    const addBox = el("div", { className: "studio-add" });
+    const nav = el("nav", { className: "actions room-actions" });
+    const inspector = el(
+      "div",
+      { className: "card inspector-panel" },
+      el(
+        "div",
+        { className: "card-header" },
+        el("h3", { className: "card-title" }, t("ui.studio.inspector")),
+      ),
+      el("div", { className: "card-body" }, panel, note),
+    );
     const section = el(
       "section",
       {},
       heading("ui.studio.title"),
-      crumbs,
-      leftLine,
-      graph,
-      panel,
-      note,
-      leverPanel(note),
-      forcePanel(note),
-      archivedBox,
-      logs,
-      nav,
+      el(
+        "div",
+        { className: "card room-bare" },
+        el(
+          "div",
+          { className: "card-body py-2 studio-toolbar" },
+          el("div", { className: "studio-where" }, crumbs, leftLine),
+          addBox,
+        ),
+      ),
+      el(
+        "div",
+        { className: "editor" },
+        el(
+          "div",
+          { className: "card" },
+          el("div", { className: "card-body canvas" }, graph),
+        ),
+        inspector,
+      ),
+      card(null, archivedBox),
     );
     section.dataset["busy"] = "1";
     /** The nodes opened so far, from the first campaign to the one whose graph shows. */
@@ -1269,12 +1252,15 @@ const studioScreen: Screen = {
       add.textContent = t("ui.studio.add", {
         level: t(`ui.studio.level.${level}` as UiKey),
       });
-      panel.append(
+      addBox.replaceChildren(
         el("label", { htmlFor: "studio-title" }, t("ui.studio.addTitle")),
         title,
         add,
       );
-      if (!selected) return;
+      if (!selected) {
+        panel.append(status(t("ui.studio.inspectorEmpty")));
+        return;
+      }
       const node = selected;
       panel.append(
         status(t("ui.studio.selected", { title: node.title })),
@@ -1526,52 +1512,8 @@ const studioScreen: Screen = {
       delete section.dataset["busy"];
     };
 
-    const showLogs = async (): Promise<void> => {
-      const list = await asParent(section, note, studioLogs);
-      logs.replaceChildren(el("h2", {}, t("ui.studio.logs")));
-      if (!list || list.length === 0) {
-        logs.append(status(t("ui.studio.noLogs")));
-        return;
-      }
-      const items = el("ul", {});
-      for (const a of list) {
-        const detail = el("ol", { className: "log" });
-        const open = button(
-          "ui.studio.logOpen",
-          `log-${a.adventureId}`,
-          async () => {
-            const events = await asParent(section, note, () =>
-              studioLog(a.adventureId),
-            );
-            detail.replaceChildren(
-              ...(events ?? []).map((e) =>
-                el("li", {}, `${String(e.seq)} ${e.type}`),
-              ),
-            );
-          },
-        );
-        items.append(
-          el(
-            "li",
-            {},
-            status(t("ui.studio.logEvents", { n: String(a.events) })),
-            open,
-            detail,
-          ),
-        );
-      }
-      logs.append(items);
-    };
-
-    nav.append(
-      link("ui.studio.navTasks", "open-task-lab", "/studio/tasks"),
-      link("ui.lab.nav", "open-prompt-lab", "/studio/prompts"),
-      link("ui.studio.navScreens", "open-screen-lab", "/studio/screens"),
-      link("ui.studio.navChecklist", "open-checklist", "/studio/checklist"),
-      link("ui.nav.parent", "open-parent", "/parent"),
-      link("ui.nav.back", "back", "/"),
-    );
-    void show().then(showLogs);
+    section.append(nav);
+    void show();
     return section;
   },
 };
@@ -1586,7 +1528,7 @@ const taskLabScreen: Screen = {
   path: "/studio/tasks",
   render() {
     const note = status();
-    const nav = el("nav", { className: "actions" });
+    const nav = el("nav", { className: "actions room-actions" });
     const filter = el("input", { id: "task-filter", type: "text" });
     filter.dataset["action"] = "task-filter";
     filter.addEventListener("input", () => act("task-filter"));
@@ -1732,10 +1674,6 @@ const taskLabScreen: Screen = {
     };
     filter.addEventListener("input", drawList);
 
-    nav.append(
-      link("ui.studio.title", "open-studio", "/studio"),
-      link("ui.nav.back", "back", "/"),
-    );
     void (async () => {
       const rows = await asParent(section, note, studioTemplates);
       if (!rows) loginNeeded(note, nav);
@@ -1800,12 +1738,6 @@ const screenLabScreen: Screen = {
       status(t("ui.screens.intro")),
       buttons,
       stage,
-      el(
-        "nav",
-        { className: "actions" },
-        link("ui.studio.title", "open-studio", "/studio"),
-        link("ui.nav.back", "back", "/"),
-      ),
     );
   },
 };
@@ -1881,19 +1813,30 @@ const checklistScreen: Screen = {
         ),
       );
     });
+    // The sandbox's levers and forced outcome sit beside what is left to test (REQ-7686).
+    const tools = status();
     return el(
       "section",
       {},
       heading("ui.checklist.title"),
-      status(t("ui.checklist.intro")),
-      show,
-      note,
-      list,
       el(
-        "nav",
-        { className: "actions" },
-        link("ui.nav.studio", "open-studio", "/studio"),
-        link("ui.nav.back", "back", "/"),
+        "div",
+        { className: "row row-cards" },
+        el(
+          "div",
+          { className: "col-lg-7" },
+          card(null, status(t("ui.checklist.intro")), show, note, list),
+        ),
+        el(
+          "div",
+          { className: "col-lg-5 d-flex flex-column gap-3" },
+          card(
+            t("ui.testing.tools"),
+            leverPanel(tools),
+            forcePanel(tools),
+            tools,
+          ),
+        ),
       ),
     );
   },
@@ -1907,7 +1850,7 @@ const promptLabScreen: Screen = {
   path: "/studio/prompts",
   render() {
     const note = status();
-    const nav = el("nav", { className: "actions" });
+    const nav = el("nav", { className: "actions room-actions" });
     const list = el("ul", { className: "prompts" });
     const select = (id: string): HTMLSelectElement => {
       const s = el("select", { id });
@@ -2050,10 +1993,6 @@ const promptLabScreen: Screen = {
     });
     section.insertBefore(run, fault);
 
-    nav.append(
-      link("ui.nav.studio", "open-studio", "/studio"),
-      link("ui.nav.back", "back", "/"),
-    );
     void (async () => {
       const prompts = await asParent(section, note, studioPrompts);
       const templates = await asParent(section, note, studioTemplates);
@@ -2088,12 +2027,368 @@ const promptLabScreen: Screen = {
   },
 };
 
+/** A fall of rank or of a skill as the parent reads it (REQ-8004). */
+function fallLine(f: ParentFall): string {
+  return f.kind === "rank"
+    ? t("ui.parentFalls.rank", { from: f.from, to: f.to, day: f.day })
+    : t("ui.parentFalls.skill", {
+        skill: t(uiKey(`ui.skills.${f.skill}.name`)),
+        node: f.node,
+        from: f.from,
+        to: f.to,
+        when: f.at.slice(0, 10),
+      });
+}
+
+/**
+ * The overview (ADR-3470, REQ-7678): the figures of play and spend as stat tiles, the parent's
+ * notices, the falls, and the control that finishes play for today.
+ */
+const overviewScreen: Screen = {
+  path: "/parent/home",
+  render() {
+    const note = status();
+    const nav = el("nav", { className: "actions room-actions" });
+    const tiles = el("div", { className: "row row-cards" });
+    const notices = el("div", { className: "d-flex flex-column gap-2" });
+    const falls = el("ul", { className: "falls list-unstyled m-0" });
+    const section = el(
+      "section",
+      {},
+      heading("ui.room.overview"),
+      tiles,
+      el(
+        "div",
+        { className: "row row-cards" },
+        el(
+          "div",
+          { className: "col-lg-6" },
+          card(t("ui.overview.notices"), notices),
+        ),
+        el(
+          "div",
+          { className: "col-lg-6" },
+          card(t("ui.parentFalls.title"), falls),
+        ),
+      ),
+      note,
+      nav,
+    );
+    section.dataset["busy"] = "1";
+    const fill = async (): Promise<void> => {
+      const got = await asParent(section, note, parentOverview);
+      if (!got) {
+        loginNeeded(note, nav);
+        delete section.dataset["busy"];
+        return;
+      }
+      const share =
+        got.answered === 0
+          ? "-"
+          : `${String(Math.round((got.correct / got.answered) * 100))} %`;
+      const figures: readonly (readonly [string, UiKey, string])[] = [
+        ["tasks", "ui.overview.tasks", String(got.tasks)],
+        ["correct", "ui.overview.correct", share],
+        ["live", "ui.overview.live", String(got.live)],
+        ["calls", "ui.overview.calls", String(got.calls)],
+        ["failed", "ui.overview.failed", String(got.failed)],
+        ["month", "ui.overview.month", `$${got.monthUsd.toFixed(2)}`],
+      ];
+      tiles.replaceChildren(
+        ...figures.map(([name, key, value]) => {
+          const tile = el(
+            "div",
+            { className: "card kpi" },
+            el(
+              "div",
+              { className: "card-body" },
+              el("div", { className: "subheader" }, t(key)),
+              el("div", { className: "h1 mt-2" }, value),
+            ),
+          );
+          tile.dataset["kpi"] = name;
+          return el("div", { className: "col-6 col-md-4 col-xl-2" }, tile);
+        }),
+      );
+      notices.replaceChildren(
+        ...(got.notices.length === 0
+          ? [status(t("ui.overview.noNotices"))]
+          : got.notices.map((line) => {
+              const alert = el(
+                "div",
+                { className: "alert alert-warning m-0" },
+                line,
+              );
+              alert.setAttribute("role", "alert");
+              return alert;
+            })),
+      );
+      const listed = await asParent(section, note, parentFalls);
+      falls.replaceChildren(
+        ...(listed && listed.length > 0
+          ? listed.map((f) => el("li", { className: "py-1" }, fallLine(f)))
+          : [
+              el(
+                "li",
+                { className: "text-secondary" },
+                t("ui.parentFalls.none"),
+              ),
+            ]),
+      );
+      // The first press asks again, because the rest of the game day plays no task after it.
+      const finish = button("ui.overview.finish", "finish-today", async () => {
+        if (finish.dataset["asked"] !== "1") {
+          finish.dataset["asked"] = "1";
+          note.textContent = t("ui.overview.finishAsk");
+          return;
+        }
+        finish.dataset["asked"] = "0";
+        const done = await asParent(section, note, finishToday);
+        note.textContent = t(
+          done === null ? "ui.devices.failed" : "ui.overview.finishDone",
+        );
+      });
+      nav.replaceChildren(finish);
+      delete section.dataset["busy"];
+    };
+    void fill();
+    return section;
+  },
+};
+
+/** A table whose header row stays in view while its rows scroll (REQ-7688). */
+function table(
+  heads: readonly UiKey[],
+  rows: readonly (readonly (Node | string)[])[],
+): HTMLElement {
+  return el(
+    "div",
+    { className: "table-scroll" },
+    el(
+      "table",
+      { className: "table table-vcenter table-sm card-table" },
+      el(
+        "thead",
+        {},
+        el("tr", {}, ...heads.map((h) => el("th", { scope: "col" }, t(h)))),
+      ),
+      el(
+        "tbody",
+        {},
+        ...rows.map((r) => el("tr", {}, ...r.map((c) => el("td", {}, c)))),
+      ),
+    ),
+  );
+}
+
+function badge(text: string, good: boolean): HTMLSpanElement {
+  return el(
+    "span",
+    { className: `badge ${good ? "bg-success-lt" : "bg-danger-lt"}` },
+    text,
+  );
+}
+
+const LOG_TABS = [
+  ["tasks", "ui.logs.tabTasks"],
+  ["calls", "ui.logs.tabCalls"],
+  ["adventures", "ui.logs.tabAdventures"],
+] as const;
+
+/**
+ * The logs (ADR-3470, REQ-7682): each task played, each model call in full with its cost, and the
+ * events of each played adventure, on three tabs behind the PIN.
+ */
+const logsScreen: Screen = {
+  path: "/parent/logs",
+  render() {
+    const note = status();
+    const nav = el("nav", { className: "actions room-actions" });
+    const body = el("div", { className: "card-body p-0" });
+    const tabs = el("ul", { className: "nav nav-tabs card-header-tabs" });
+    const section = el(
+      "section",
+      {},
+      heading("ui.room.logs"),
+      el(
+        "div",
+        { className: "card" },
+        el("div", { className: "card-header" }, tabs),
+        body,
+      ),
+      note,
+      nav,
+    );
+    const empty = (): HTMLElement =>
+      el("p", { className: "text-secondary p-3 m-0" }, t("ui.logs.empty"));
+
+    const showTasks = async (): Promise<boolean> => {
+      const rows = await asParent(section, note, parentPlayed);
+      if (!rows) return false;
+      body.replaceChildren(
+        rows.length === 0
+          ? empty()
+          : table(
+              [
+                "ui.logs.at",
+                "ui.logs.template",
+                "ui.logs.text",
+                "ui.logs.answer",
+                "ui.logs.right",
+                "ui.logs.verdict",
+                "ui.logs.hints",
+              ],
+              rows.map((r) => [
+                r.at.slice(0, 16).replace("T", " "),
+                r.templateId,
+                r.text,
+                r.answer ?? "",
+                r.correctAnswer,
+                r.verdict === null
+                  ? ""
+                  : badge(r.verdict, r.verdict === "correct"),
+                String(r.hints),
+              ]),
+            ),
+      );
+      return true;
+    };
+
+    const showCalls = async (): Promise<boolean> => {
+      const rows = await asParent(section, note, parentCalls);
+      if (!rows) return false;
+      body.replaceChildren(
+        rows.length === 0
+          ? empty()
+          : table(
+              [
+                "ui.logs.at",
+                "ui.logs.role",
+                "ui.logs.model",
+                "ui.logs.outcome",
+                "ui.logs.tokens",
+                "ui.logs.cost",
+                "ui.logs.latency",
+                "ui.logs.open",
+              ],
+              rows.map((r) => [
+                r.at.slice(0, 16).replace("T", " "),
+                r.role,
+                `${r.route}:${r.model}`,
+                badge(r.outcome, r.outcome === "ok"),
+                `${String(r.input_tokens)} / ${String(r.output_tokens)}`,
+                r.cost_usd.toFixed(5),
+                String(r.latency_ms),
+                el(
+                  "details",
+                  {},
+                  el("summary", {}, t("ui.logs.open")),
+                  el("pre", {}, r.request),
+                  el("pre", {}, r.response),
+                ),
+              ]),
+            ),
+      );
+      return true;
+    };
+
+    const showAdventures = async (): Promise<boolean> => {
+      const list = await asParent(section, note, studioLogs);
+      if (!list) return false;
+      if (list.length === 0) {
+        body.replaceChildren(
+          el(
+            "p",
+            { className: "text-secondary p-3 m-0" },
+            t("ui.studio.noLogs"),
+          ),
+        );
+        return true;
+      }
+      const items = el("ul", { className: "list-group list-group-flush" });
+      for (const a of list) {
+        const detail = el("ol", { className: "log small mb-0" });
+        const open = button(
+          "ui.studio.logOpen",
+          `log-${a.adventureId}`,
+          async () => {
+            const events = await asParent(section, note, () =>
+              studioLog(a.adventureId),
+            );
+            detail.replaceChildren(
+              ...(events ?? []).map((e) =>
+                el("li", {}, `${String(e.seq)} ${e.type}`),
+              ),
+            );
+          },
+        );
+        items.append(
+          el(
+            "li",
+            { className: "list-group-item d-flex flex-column gap-2" },
+            el(
+              "div",
+              { className: "d-flex align-items-center gap-3" },
+              el(
+                "span",
+                { className: "flex-fill" },
+                t("ui.studio.logEvents", { n: String(a.events) }),
+              ),
+              open,
+            ),
+            detail,
+          ),
+        );
+      }
+      body.replaceChildren(items);
+      return true;
+    };
+
+    const shows = {
+      tasks: showTasks,
+      calls: showCalls,
+      adventures: showAdventures,
+    };
+    const pick = async (name: keyof typeof shows): Promise<void> => {
+      section.dataset["busy"] = "1";
+      for (const a of tabs.querySelectorAll("a")) {
+        const on = a.dataset["tab"] === name;
+        a.classList.toggle("active", on);
+        a.setAttribute("aria-selected", String(on));
+      }
+      if (!(await shows[name]())) loginNeeded(note, nav);
+      delete section.dataset["busy"];
+    };
+    for (const [name, key] of LOG_TABS) {
+      const a = el(
+        "a",
+        { className: "nav-link", href: "#/parent/logs" },
+        t(key),
+      );
+      a.dataset["tab"] = name;
+      a.dataset["action"] = `log-tab-${name}`;
+      a.setAttribute("role", "tab");
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        act(`log-tab-${name}`);
+        void pick(name);
+      });
+      tabs.append(el("li", { className: "nav-item" }, a));
+    }
+    tabs.setAttribute("role", "tablist");
+    void pick("tasks");
+    return section;
+  },
+};
+
 export const SCREENS: readonly Screen[] = [
   home,
   settings,
   sheet,
   pairing,
   parentLoginScreen,
+  overviewScreen,
+  logsScreen,
   parentDevicesScreen,
   parentSettingsScreen,
   accountScreen,

@@ -6,8 +6,7 @@ import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import { baseSeed } from "../../src/math/rng.js";
 import { openDatabase, type Db } from "../../src/server/database.js";
-import { adminPage } from "../../src/server/admin.js";
-import { llmAudit } from "../../src/server/audit.js";
+import { dashboard, llmAudit } from "../../src/server/audit.js";
 import { codeFault, scoreOf } from "../../src/server/frames/check.js";
 import { present, presentFramed } from "../../src/server/task-source.js";
 import { textGate } from "../../src/shared/voice/gate.js";
@@ -400,8 +399,8 @@ describe("the forbidden lists", () => {
   });
 });
 
-describe("the admin page", () => {
-  it("shows the figures and the whole of a model call", async () => {
+describe("the parent's figures and model audit", () => {
+  it("hold the month's spend and the whole of a model call", async () => {
     const db = await database();
     await db
       .prepare(
@@ -411,10 +410,12 @@ describe("the admin page", () => {
       )
       .run();
     expect(await llmAudit(db, 10)).toHaveLength(1);
-    const page = await adminPage(db, new Date("2026-10-31T12:00:00Z"), []);
-    expect(page).toContain("$0.50");
-    expect(page).toContain("&lt;x&gt;");
-    expect(page).toContain("reply");
+    expect(
+      (await dashboard(db, new Date("2026-10-31T12:00:00Z"))).monthUsd,
+    ).toBe(0.5);
+    const [row] = await llmAudit(db, 10);
+    expect(row?.request).toBe('{"q":"<x>"}');
+    expect(row?.response).toBe("reply");
   });
 });
 

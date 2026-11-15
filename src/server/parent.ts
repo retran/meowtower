@@ -1,12 +1,8 @@
-import { adminPage } from "./admin.js";
-import { llmAudit, playAudit } from "./audit.js";
 import { Hono } from "hono";
-import { t } from "../shared/i18n.js";
 import type { Db } from "./database.js";
 import { issuePairingCode } from "./devices.js";
 import { PIN_PATTERN, setPin } from "./parent-access.js";
 import { takeSnapshot } from "./snapshots.js";
-import { readNotices } from "./backups.js";
 import { runRecompute } from "./recompute.js";
 import { ModelParamsInvalid } from "../engine/model/params.js";
 import { type ActivationContext, activateModel } from "./model-activate.js";
@@ -15,11 +11,6 @@ import { snapshotProfile } from "./pg-backup.js";
 import { readFileSync } from "node:fs";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-
-const limitOf = (raw: string | undefined): number => {
-  const n = Number(raw ?? 1000);
-  return Number.isInteger(n) && n > 0 ? n : 1000;
-};
 
 // The Parent Room's listener, published on the Mac's loopback only (REQ-2510).
 // ADR-0180 fills the room; ADR-0020's export routes mount here and nowhere else.
@@ -128,43 +119,5 @@ export function createParentApp({
       return c.json({ error: "backup_failed" }, 500);
     }
   });
-  // The parent's notices (SPC-0010): a failed backup until the next good
-  // one, and the storage ceiling once data/ passes it.
-  app.get("/", async (c) => {
-    const notices = snapshots ? readNotices(snapshots) : null;
-    const lines = [
-      notices?.backup_failed
-        ? t("parent.notice.backupFailed", { at: notices.backup_failed.at })
-        : null,
-      notices?.storage_ceiling
-        ? t("parent.notice.storageCeiling", {
-            gb: String(notices.storage_ceiling.gb),
-          })
-        : null,
-      notices?.recompute_failed
-        ? t("parent.notice.recomputeFailed", {
-            at: notices.recompute_failed.at,
-            version: notices.recompute_failed.version,
-          })
-        : null,
-      notices?.recompute_slow
-        ? t("parent.notice.recomputeSlow", {
-            seconds: String(Math.round(notices.recompute_slow.ms / 1000)),
-          })
-        : null,
-      notices?.log_large ? t("parent.notice.logLarge") : null,
-      notices?.log_write_failed
-        ? t("parent.notice.logWriteFailed", { at: notices.log_write_failed.at })
-        : null,
-    ].filter((l): l is string => l !== null);
-    return await c.html(await adminPage(db, new Date(now()), lines));
-  });
-  // The two audits as data (ADR-3100), for anything the page doesn't show.
-  app.get("/audit/llm", async (c) =>
-    c.json(await llmAudit(db, limitOf(c.req.query("limit")))),
-  );
-  app.get("/audit/play", async (c) =>
-    c.json(await playAudit(db, limitOf(c.req.query("limit")))),
-  );
   return app;
 }

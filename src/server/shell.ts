@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Hono } from "hono";
@@ -37,8 +38,22 @@ const CLIENT = process.env["MEOWTOWER_CLIENT"]
   ? pathToFileURL(`${resolve(process.env["MEOWTOWER_CLIENT"])}/`)
   : new URL("../client/", import.meta.url);
 
+// The Parent Room's widget library (ADR-3470), served from the server's own packages, so the room
+// needs no connection beyond the home network.
+const TABLER = createRequire(import.meta.url).resolve(
+  "@tabler/core/dist/css/tabler.min.css",
+);
+
 export function mountShell(app: Hono): void {
   const icon = iconPng(512);
+  let tabler: string | null = null;
+  app.get("/vendor/tabler.min.css", (c) => {
+    tabler ??= readFileSync(TABLER, "utf8");
+    return c.body(tabler, 200, {
+      "content-type": "text/css; charset=utf-8",
+      "cache-control": "max-age=86400",
+    });
+  });
   app.get("/client/:file", (c) => {
     const file = c.req.param("file");
     if (!/^[a-z-]+\.js$/.test(file)) return c.notFound();

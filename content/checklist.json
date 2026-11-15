@@ -25,6 +25,14 @@
       "tests": ["tests/e2e/parent.spec.ts"]
     },
     {
+      "id": "screen:/parent/home",
+      "tests": ["tests/e2e/parent-room.spec.ts"]
+    },
+    {
+      "id": "screen:/parent/logs",
+      "tests": ["tests/e2e/parent-room.spec.ts"]
+    },
+    {
       "id": "screen:/parent/settings",
       "tests": ["tests/e2e/parent.spec.ts"]
     },
@@ -397,6 +405,18 @@
       ]
     },
     {
+      "id": "api:GET /api/parent/overview",
+      "tests": ["tests/unit/parent-listener.test.ts"]
+    },
+    {
+      "id": "api:GET /api/parent/audit/play",
+      "tests": ["tests/unit/parent-listener.test.ts"]
+    },
+    {
+      "id": "api:GET /api/parent/audit/llm",
+      "tests": ["tests/unit/parent-listener.test.ts"]
+    },
+    {
       "id": "api:PUT /api/parent/settings",
       "tests": [
         "tests/integration/parent-room.test.ts",
@@ -512,20 +532,6 @@
         "tests/integration/backups.test.ts",
         "tests/unit/snapshots.test.ts"
       ]
-    },
-    {
-      "id": "parent-app:GET /",
-      "tests": ["tests/unit/parent-listener.test.ts"]
-    },
-    {
-      "id": "parent-app:GET /audit/llm",
-      "tests": [],
-      "untested": "No test names the route; the model call log of the parent app is read by hand."
-    },
-    {
-      "id": "parent-app:GET /audit/play",
-      "tests": [],
-      "untested": "No test names the route; the audit pages of the parent app are read by hand."
     }
   ]
 }
