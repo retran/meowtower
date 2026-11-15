@@ -65,9 +65,10 @@ the parent sets dates for. (from RES-0010, high; RES-4080, high)
 
 ## What it will not do
 
-- Grade the player: no words «неправильно» ("wrong"), «ошибка» ("mistake")
-  or «промах» ("miss"), no dead ends and nothing taken away. (from RES-0010,
-  high)
+- Judge the player: no word that blames her or praises her cleverness, no
+  dead ends and nothing taken away that she holds. A result says plainly
+  whether her action worked, because she is old enough to take a failure.
+  (from RES-0010, high; RES-4321, high)
 - Show clocks: no timers, countdowns or times of day on her screens, and no
   screen opens or closes by the hour. (from RES-0010, high; RES-4000, high)
 - Sum her up: the ability profile keeps its eight dimensions apart, adds them

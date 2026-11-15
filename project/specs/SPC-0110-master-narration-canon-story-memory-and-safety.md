@@ -2,8 +2,8 @@
 id: SPC-0110
 artifact: spec
 status: live
-revised: 2026-11-01
-states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1506, REQ-1508, REQ-1512, REQ-7850, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-7830, REQ-7840, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-8154, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1818, REQ-1820, REQ-1822, REQ-1826, REQ-1828, REQ-1830, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032, REQ-8230]
+revised: 2026-11-15
+states: [REQ-0105, REQ-0107, REQ-1500, REQ-1502, REQ-1504, REQ-1508, REQ-1512, REQ-7850, REQ-1516, REQ-1518, REQ-1520, REQ-1522, REQ-7830, REQ-7840, REQ-1526, REQ-1528, REQ-1530, REQ-1532, REQ-1534, REQ-1536, REQ-1538, REQ-1540, REQ-1542, REQ-1544, REQ-1548, REQ-1550, REQ-1552, REQ-1554, REQ-1556, REQ-1558, REQ-1560, REQ-1562, REQ-1564, REQ-1566, REQ-1568, REQ-1570, REQ-1572, REQ-1574, REQ-1600, REQ-1602, REQ-1604, REQ-1608, REQ-1610, REQ-1612, REQ-1614, REQ-1618, REQ-1620, REQ-1622, REQ-1624, REQ-1632, REQ-1634, REQ-1636, REQ-1638, REQ-8154, REQ-1658, REQ-1660, REQ-1662, REQ-1664, REQ-1666, REQ-1668, REQ-1670, REQ-1672, REQ-1674, REQ-1676, REQ-1678, REQ-1680, REQ-1684, REQ-1802, REQ-1804, REQ-1806, REQ-1808, REQ-1810, REQ-1812, REQ-1814, REQ-1818, REQ-1820, REQ-1822, REQ-1826, REQ-1828, REQ-1830, REQ-1838, REQ-1840, REQ-2610, REQ-3316, REQ-3320, REQ-3330, REQ-5030, REQ-5032, REQ-8230, REQ-7378]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -111,7 +111,7 @@ The forbidden-content checklist is the always-forbidden list below and these ite
 - it tells a trial outcome as a verdict on the heroine and not as an event in the world (REQ-1806);
 - it claims to be human (REQ-1810);
 - it discusses the heroine's abilities (REQ-2610);
-- it shows a Guardian defeated (REQ-1506);
+- it shows a Guardian beaten after a failure, or holding its ground after a success (REQ-7378);
 - it brings in a look-alike of the heroine other than the Reverse One (REQ-1570);
 - the Reverse One wants the heroine's place, name, home, family, room, familiars or friends (REQ-1562), or poses as her (REQ-1568);
 - a System line in it isn't short, formal and in the present tense (REQ-3300);

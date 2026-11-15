@@ -2,8 +2,8 @@
 id: SPC-0080
 artifact: spec
 status: live
-revised: 2026-10-31
-states: [REQ-0106, REQ-0110, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552, REQ-5100, REQ-5102, REQ-5104, REQ-5106, REQ-5108, REQ-5110, REQ-5112, REQ-5114, REQ-5116, REQ-5118, REQ-5120, REQ-5122, REQ-5124, REQ-5126, REQ-5128, REQ-5132, REQ-5134, REQ-5158, REQ-5160, REQ-5162, REQ-5164, REQ-5166, REQ-5300, REQ-5302, REQ-5306, REQ-5308, REQ-5310, REQ-5312, REQ-5314, REQ-5316, REQ-5324, REQ-5326, REQ-5328, REQ-5330, REQ-5332, REQ-5334, REQ-5336, REQ-5338, REQ-5340, REQ-5342, REQ-5344, REQ-5346, REQ-5348, REQ-5350, REQ-5352, REQ-5370, REQ-6408, REQ-6410, REQ-7164, REQ-8024]
+revised: 2026-11-15
+states: [REQ-0106, REQ-0112, REQ-0400, REQ-0402, REQ-0404, REQ-0406, REQ-0408, REQ-0410, REQ-0412, REQ-0420, REQ-0422, REQ-0426, REQ-0428, REQ-0430, REQ-0432, REQ-0502, REQ-0504, REQ-0506, REQ-0508, REQ-0510, REQ-0512, REQ-0514, REQ-0516, REQ-0518, REQ-0520, REQ-0522, REQ-0524, REQ-0528, REQ-0530, REQ-0536, REQ-0544, REQ-0546, REQ-0550, REQ-0552, REQ-5100, REQ-5102, REQ-5104, REQ-5106, REQ-5108, REQ-5110, REQ-5112, REQ-5114, REQ-5116, REQ-5118, REQ-5120, REQ-5122, REQ-5124, REQ-5126, REQ-5128, REQ-5132, REQ-5134, REQ-5158, REQ-5160, REQ-5162, REQ-5164, REQ-5166, REQ-5300, REQ-5302, REQ-5306, REQ-5308, REQ-5310, REQ-5312, REQ-5314, REQ-5316, REQ-5324, REQ-5326, REQ-5328, REQ-5330, REQ-5332, REQ-5334, REQ-5336, REQ-5338, REQ-5340, REQ-5342, REQ-5344, REQ-5346, REQ-5348, REQ-5350, REQ-5352, REQ-5370, REQ-6408, REQ-6410, REQ-7164, REQ-8024, REQ-7294, REQ-8702]
 ---
 
 <!-- Written to the writing standard meow-prose ships: lead with the answer, give each rule its reason in the same sentence, and show the failing case. -->
@@ -83,7 +83,7 @@ The dependencies run one way. `src/engine/` imports only `src/shared/` and does 
 
 Every adventure task, scored or not, runs one attempt flow, which the server owns as a state machine per task, and the game has no measurement mode apart from it: the API has no route or flag for one (REQ-0400). The flow runs inside the task window, a flat panel separate from System windows (REQ-0106), and the short solution and the second attempt stay inside that window (REQ-0426).
 
-The window holds only the task, the answer field or options, the keypad, «Не знаю», the guiding thread button and «Готово» (Done), with no sprite, effect or story text. A task's form adds its own texts and controls: a shown rung with the familiar's portrait and framing line, the short solution and a fluent fact's strategy line after the answer, the estimate's four options, and «Проверить нить» (Check the thread) with its check field and match signal. The other forms' controls, which REQ-5120 lists, belong to their own decisions (REQ-5120). The window never shows «верно» (correct), «неверно» (incorrect), «ошибка» (mistake), a tick or a cross (REQ-0110), and ADR-0160's forbidden-word list checks its strings.
+The window holds only the task, the answer field or options, the keypad, «Не знаю», the guiding thread button and «Готово» (Done), with no sprite, effect or story text. A task's form adds its own texts and controls: a shown rung with the familiar's portrait and framing line, the short solution and a fluent fact's strategy line after the answer, the estimate's four options, and «Проверить нить» (Check the thread) with its check field and match signal. The other forms' controls, which REQ-5120 lists, belong to their own decisions (REQ-5120). After an attempt the window marks the answer with a tick and «Верно» or a cross and «Неверно» (REQ-7294), and ADR-0160's forbidden-word list checks its strings, which never call the answer «ошибка» (mistake).
 
 ### The states
 
@@ -215,7 +215,7 @@ On an item with an estimate, `open` begins with the estimate step. The window sh
 
 When she taps an option, the client locks the pick and opens the answer field, and nothing goes to the server until «Готово». `AnswerIn` then carries the pick as `estimate` beside the exact answer, and the server judges both in one request, so no verdict on the estimate leaves the server before the exact answer (REQ-5306). A resume before «Готово» shows the estimate step again. An `AnswerIn` for an item with an estimate, with no pick, no «Не знаю» and no `insufficient`, gets `422 estimate_missing`, logs nothing, and the client shows the estimate step again.
 
-`AnswerOut` for the first attempt carries `estimate: { picked, correct }` beside `feedback.correctAnswer`, and the review shows the estimate's verdict together with the exact answer's (REQ-5308). Her pick is outlined and the correct option carries ADR-0150's selected state, with no word or sign REQ-0110 forbids. The second attempt has no estimate step.
+`AnswerOut` for the first attempt carries `estimate: { picked, correct }` beside `feedback.correctAnswer`, and the review shows the estimate's verdict together with the exact answer's (REQ-5308). Her pick is outlined and the correct option carries ADR-0150's selected state, and the window marks the exact answer with a tick and «Верно» or a cross and «Неверно» (REQ-7294). The second attempt has no estimate step.
 
 #### What the estimate changes
 
@@ -258,6 +258,11 @@ A check never makes an attempt assisted (REQ-5350). The server logs the prelimin
 ### Time
 
 The fluency test and the rapid-guess test read no time spent in the estimate step or the check field (REQ-5334). An attempt on an item with an estimate counts for accuracy, and its whole time counts in no measure, so nothing subtracts the estimate step. Such an attempt is never `fast`, never enters a block's median time or the fluency estimate, and is never tested for a rapid guess (ADR-0370). On every attempt on an item without an estimate the client measures `checkMs`, the time the check field is open, and sends it in `AnswerIn`'s timings. The measures read the time from the task's appearance to «Готово», without pauses and without `checkMs`. Time spent correcting her answer after a check stays in (ADR-0240).
+
+
+### Marks and tool perks
+
+After each attempt the task window marks the answer with a tick and «Верно» (Right) when it is right and with a cross and «Неверно» (Not right) when it is wrong (REQ-7294). A tool perk the heroine carries, such as a free hint rung, a number line, the inverse check, a plan card or a second look, shows as a control in the window while it has uses left. Each use appends `perk_used` with the item or pet, the perk and the item's id, and the attempt counts as assisted in every estimate, as a hint rung does (REQ-8702).
 
 ## Failure paths
 
