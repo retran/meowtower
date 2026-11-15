@@ -557,6 +557,11 @@ export interface StringParams {
   "ui.studio.compare.removed": NoParams;
   "ui.studio.compare.changed": NoParams;
   "ui.studio.compare.same": NoParams;
+  "ui.studio.review.title": NoParams;
+  "ui.studio.review.revisions": { n: string | number };
+  "ui.studio.review.clean": NoParams;
+  "ui.studio.review.major": { n: string | number };
+  "ui.studio.review.minor": { n: string | number };
   "ui.studio.playHere": NoParams;
   "ui.studio.refusal.alreadyCurrent": NoParams;
   "ui.studio.logs": NoParams;
