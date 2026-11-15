@@ -86,6 +86,7 @@ import { DEVICE_COOKIE, deviceForToken, deviceInterface } from "./devices.js";
 import { createRateCap } from "./rate.js";
 import { send } from "./send.js";
 import { skillsRead } from "./skills.js";
+import type { MasterGame } from "./master-game.js";
 import type { Forced } from "./sandbox/force.js";
 import { moveLevel } from "./sandbox/levers.js";
 import { mountStream, type Stream } from "./stream.js";
@@ -143,6 +144,8 @@ export interface PlayOptions {
   forced?: () => Forced | null;
   /** The task the Director chose for a check, waiting to be drawn; the sandbox has one, the game none (REQ-8174). */
   directed?: () => Promise<Directed | null>;
+  /** Plays a new adventure from an approved scenario with the Master (REQ-8266); without it the game plays plain tasks. */
+  masterGame?: MasterGame;
 }
 
 /** A task the Director chose: the template, the seed it draws at and why the slot was filled. */
@@ -339,6 +342,7 @@ export function mountPlay(
     frames,
     forced,
     directed: directedOf,
+    masterGame,
   }: PlayOptions,
 ): void {
   const allowed = createRateCap(now);
@@ -576,9 +580,11 @@ export function mountPlay(
     // none is open (REQ-0226). Session 0 belongs to no adventure.
     const events: NewEvent[] = [];
     let adventureId: string | undefined;
+    let planned = false;
     if (mode === "daily") {
       adventureId = (await openAdventure(db))?.adventureId;
       if (!adventureId) {
+        planned = true;
         adventureId = randomUUID();
         events.push({
           type: "adventure_planned",
@@ -606,6 +612,7 @@ export function mountPlay(
       ...(adventureId ? { adventureId } : {}),
     });
     const written = await appendEvents(db, keyed(events, key));
+    if (planned && adventureId) await masterGame?.begin(adventureId, sessionId);
     tick = now();
     lease = { deviceId, sessionId, beatAt: tick };
     const taken = written[written.length - 1];
@@ -829,6 +836,17 @@ export function mountPlay(
         Room,
         roomFor(open, await sessionEvents(db, sessionId), played),
       );
+    }
+    // An adventure with a scenario goes on with the Master: a turn she owes is taken, and a scene shows
+    // before the task its check asked for, so she reads what happened first (REQ-8268).
+    if (masterGame && session.adventureId) {
+      const phase = await masterGame.advance(session.adventureId, sessionId);
+      if (phase === "ended") return await send(c, End, { kind: "end" });
+      if (phase === "scene") {
+        if (lifecycle.length) await appendEvents(db, lifecycle);
+        const shown = resumeFromLog(await playLog(sessionId))?.scene;
+        if (shown) return await send(c, Scene, { kind: "scene", ...shown });
+      }
     }
     // A scene prepared for the session and not yet answered shows before the next task, in the
     // registry's flow too: the sandbox starts play at an encounter this way (REQ-8286). A task the

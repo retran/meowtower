@@ -562,5 +562,7 @@
   "ui.screens.screen.settings": "Настройки устройства",
   "ui.screens.open": "Показать: {screen} на языке {lang}",
   "ui.screens.frame": "Экран ребёнка",
-  "story.master.blocked": "Туман сгущается, и на миг всё вокруг меркнет."
+  "ui.scene.starters": "Что можно написать",
+  "story.master.blocked": "Туман сгущается, и на миг всё вокруг меркнет.",
+  "story.master.continue": "Продолжить"
 }

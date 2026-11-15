@@ -639,7 +639,9 @@ export interface StringParams {
   "ui.screens.screen.settings": NoParams;
   "ui.screens.open": { lang: string | number; screen: string | number };
   "ui.screens.frame": NoParams;
+  "ui.scene.starters": NoParams;
   "story.master.blocked": NoParams;
+  "story.master.continue": NoParams;
 }
 
 export type Key = keyof StringParams;

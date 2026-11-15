@@ -562,5 +562,7 @@
   "ui.screens.screen.settings": "Apparaatinstellingen",
   "ui.screens.open": "Toon: {screen} in het {lang}",
   "ui.screens.frame": "Het scherm van het kind",
-  "story.master.blocked": "De mist wordt dikker en het tafereel vervaagt even."
+  "ui.scene.starters": "Ideeën om te schrijven",
+  "story.master.blocked": "De mist wordt dikker en het tafereel vervaagt even.",
+  "story.master.continue": "Verder"
 }

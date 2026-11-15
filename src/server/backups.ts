@@ -35,6 +35,8 @@ export interface Notices {
   graph_invalid?: { at: string; reason: string } | null;
   graph_versions_many?: { at: string; reason: string } | null;
   not_generatable?: { at: string; reason: string } | null;
+  // The studio holds no approved adventure, so the game plays plain tasks (REQ-8272).
+  no_approved_scenario?: { at: string; reason: string } | null;
 }
 
 const NOTICES = "notices.json";

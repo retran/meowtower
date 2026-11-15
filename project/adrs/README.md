@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-77 decisions in all: 60 approved, 17 done.
+78 decisions in all: 61 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -83,5 +83,6 @@
 | [ADR-3400](ADR-3400-a-generated-version-carries-the-critics-remaining-findings.md)                                  | A generated version carries the critic's remaining findings, and the page shows them beside the comparison                                                                                                                                                                                                                                        | approved |
 | [ADR-3410](ADR-3410-the-default-price-of-a-model-call-is-seven-cents-from-a-live-run.md)                            | The default price of a model call is seven cents, from a live run                                                                                                                                                                                                                                                                                 | approved |
 | [ADR-3420](ADR-3420-the-showrunner-and-the-master-read-the-childs-profile-in-the-player-tier.md)                    | The showrunner and the Master read the child's profile, and both run in the player tier                                                                                                                                                                                                                                                           | approved |
+| [ADR-3430](ADR-3430-the-childs-game-plays-approved-adventures-with-the-master.md)                                   | The child's game plays approved adventures with the Master, and the log carries every step                                                                                                                                                                                                                                                        | approved |
 
 <!-- /meow-flow index -->

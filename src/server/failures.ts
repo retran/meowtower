@@ -18,12 +18,14 @@ type ParentState =
   | "log_write_failed"
   | "graph_invalid"
   | "graph_versions_many"
-  | "not_generatable";
+  | "not_generatable"
+  | "no_approved_scenario";
 const PARENT_STATES = new Set<string>([
   "log_write_failed",
   "graph_invalid",
   "graph_versions_many",
   "not_generatable",
+  "no_approved_scenario",
 ]);
 
 /** The folder the parent's notices live in, or null before the server names it. */

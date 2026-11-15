@@ -13,6 +13,7 @@ const Reply = z
     calls: z
       .array(z.object({ tool: z.string(), input: z.unknown() }))
       .default([]),
+    starters: z.array(z.string().trim().min(1).max(80)).max(3).default([]),
   })
   .strict();
 
@@ -30,7 +31,13 @@ const SentCall = z.union(
   ) as unknown as [z.ZodType, z.ZodType, ...z.ZodType[]],
 );
 export const MASTER_REPLY_SCHEMA = z.toJSONSchema(
-  z.object({ text: z.string(), calls: z.array(SentCall) }).strict(),
+  z
+    .object({
+      text: z.string(),
+      calls: z.array(SentCall),
+      starters: z.array(z.string()),
+    })
+    .strict(),
 );
 
 export class MasterFailed extends Error {
