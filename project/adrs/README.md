@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-80 decisions in all: 63 approved, 17 done.
+81 decisions in all: 64 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -86,5 +86,6 @@
 | [ADR-3430](ADR-3430-the-childs-game-plays-approved-adventures-with-the-master.md)                                   | The child's game plays approved adventures with the Master, and the log carries every step                                                                                                                                                                                                                                                        | approved |
 | [ADR-3440](ADR-3440-rewards-pets-and-results-succeed-or-fail-by-how-she-solves-and-equipment-gives-perks.md)        | Rewards, pets and results succeed or fail by how she solves, and equipment and pets give perks that are maths tools or story                                                                                                                                                                                                                      | approved |
 | [ADR-3450](ADR-3450-every-check-is-a-maths-task-battles-are-runs-of-checks-and-no-one-dies.md)                      | Every check is a maths task, a battle is a run of checks, and no one dies                                                                                                                                                                                                                                                                         | approved |
+| [ADR-3460](ADR-3460-battles-enter-the-first-version-and-a-harder-check-holds-more-tasks.md)                         | Battles enter the first version, and a harder check holds more tasks                                                                                                                                                                                                                                                                              | approved |
 
 <!-- /meow-flow index -->
