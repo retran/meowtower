@@ -293,11 +293,11 @@ if [[ -z ${MEOWTOWER_PARENT_PORT:-} && -f .env ]]; then
 fi
 PARENT_PORT="${MEOWTOWER_PARENT_PORT:-8080}"
 
-# The Parent Room's loopback port must be free, or it would silently not bind.
+# The operator's loopback port must be free, or it would silently not bind.
 check_parent_port() {
   if compose ps --format '{{.Name}}' 2>/dev/null | grep -q meowtower-meowtower; then return; fi
   if lsof -nP -iTCP:"$PARENT_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
-    echo "port_in_use: port $PARENT_PORT is taken, so the Parent Room can't listen there."
+    echo "port_in_use: port $PARENT_PORT is taken, so the operator's listener can't listen there."
     echo "Nothing started. Set MEOWTOWER_PARENT_PORT to a free port, for example in .env."
     exit 1
   fi
@@ -315,7 +315,7 @@ cmd_pair() {
 }
 
 # The Parent Room PIN, 4 to 8 digits, read twice without echo and sent over
-# the Parent Room's listener, which only this Mac can reach (SPC-0010).
+# the operator's listener, which only this Mac can reach (SPC-0010).
 cmd_set_pin() {
   local pin again status
   read -rs -p "New Parent Room PIN (4 to 8 digits): " pin; echo
@@ -430,7 +430,7 @@ cmd_up() {
   fi
   load_watch
   local url="https://$(host_name)"
-  echo "Meowtower is up at $url; the Parent Room is at http://localhost:$PARENT_PORT on this Mac"
+  echo "Meowtower is up at $url; the Parent Room is at $url/#/parent"
   if command -v qrencode >/dev/null; then qrencode -t ansiutf8 "$url"; fi
 }
 
