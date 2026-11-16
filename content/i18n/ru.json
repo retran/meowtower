@@ -613,5 +613,11 @@
   "ui.logs.empty": "Пока пусто.",
   "ui.studio.inspector": "Узел",
   "ui.studio.inspectorEmpty": "Выберите узел на графе, чтобы открыть его здесь.",
-  "ui.testing.tools": "Инструменты песочницы"
+  "ui.testing.tools": "Инструменты песочницы",
+  "ui.room.theme": "Тема Комнаты родителя",
+  "ui.room.theme.auto": "Как на устройстве",
+  "ui.room.theme.light": "Светлая",
+  "ui.room.theme.dark": "Тёмная",
+  "ui.room.toDark": "Тёмная тема",
+  "ui.room.toLight": "Светлая тема"
 }

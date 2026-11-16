@@ -69,7 +69,7 @@ import {
 import { layoutGraph, DEFAULT_SIZE } from "./graph-layout.js";
 import { applyInterface, type Interface } from "./interface.js";
 import { playScreen } from "./play.js";
-import { card } from "./room.js";
+import { card, setRoomTheme } from "./room.js";
 import { encounterForm, refusalText, versionsPanel } from "./studio-form.js";
 import { generatePanel } from "./studio-generate.js";
 import { levelForm } from "./studio-level-form.js";
@@ -452,6 +452,7 @@ const parentSettingsScreen: Screen = {
     const creepiness = el("fieldset", {});
     const gender = el("fieldset", {});
     const hideFalls = el("fieldset", {});
+    const roomTheme = el("fieldset", {});
     const profileBox = el("div", { className: "profile" });
     const resetBox = el("fieldset", {});
     const nav = el("nav", { className: "actions room-actions" });
@@ -461,6 +462,7 @@ const parentSettingsScreen: Screen = {
       heading("ui.parentSettings.title"),
       card(null, languages, creepiness, gender, hideFalls, limits),
       card(null, profileBox),
+      card(null, roomTheme),
       card(null, resetBox),
       note,
       nav,
@@ -545,6 +547,28 @@ const parentSettingsScreen: Screen = {
               note.textContent = "";
               const saved = await asParent(section, note, () =>
                 saveParentSettings({ hideRankFalls: value === "yes" }),
+              );
+              note.textContent = t(
+                saved ? "ui.settings.saved" : "ui.devices.failed",
+              );
+            },
+          ),
+        ),
+      );
+      // The room's own theme, which saves at once and shows at once (REQ-7692).
+      roomTheme.append(
+        el("legend", {}, t("ui.room.theme")),
+        ...(["auto", "light", "dark"] as const).map((value) =>
+          choice(
+            "room-theme",
+            value,
+            uiKey(`ui.room.theme.${value}`),
+            value === current.roomTheme,
+            async () => {
+              note.textContent = "";
+              setRoomTheme(value);
+              const saved = await asParent(section, note, () =>
+                saveParentSettings({ roomTheme: value }),
               );
               note.textContent = t(
                 saved ? "ui.settings.saved" : "ui.devices.failed",

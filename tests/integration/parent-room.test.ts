@@ -394,6 +394,7 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
       creepiness: 2,
       gender: "f",
       hideRankFalls: false,
+      roomTheme: "auto",
       profile: "",
     });
     expect((await save(5)).status).toBe(200);
@@ -403,6 +404,7 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
       creepiness: 2,
       gender: "f",
       hideRankFalls: false,
+      roomTheme: "auto",
       profile: "",
     });
     expect((await save(null)).status).toBe(200);
@@ -412,6 +414,7 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
       creepiness: 2,
       gender: "f",
       hideRankFalls: false,
+      roomTheme: "auto",
       profile: "",
     });
     expect(await logged()).toEqual([
@@ -430,5 +433,34 @@ describe("REQ-0234: the parent sets the three-day limit", () => {
         })
       ).status,
     ).toBe(401);
+  });
+});
+
+describe("REQ-7692: the parent picks the room's theme", () => {
+  it("follows the device by default, keeps a light or dark choice and refuses any other", async () => {
+    const w = await world();
+    await w.setPin(PIN);
+    const parent = await w.device();
+    const session = w.cookieOf(await w.login(parent, PIN), "meowtower_parent");
+    const cookie = `${parent}; ${session}`;
+    const read = async () =>
+      (
+        (await (
+          await w.app.request("/api/parent/settings", { headers: { cookie } })
+        ).json()) as { roomTheme: string }
+      ).roomTheme;
+    const save = (roomTheme: unknown) =>
+      w.app.request("/api/parent/settings", {
+        method: "PUT",
+        headers: { "content-type": "application/json", cookie },
+        body: JSON.stringify({ roomTheme }),
+      });
+    expect(await read()).toBe("auto");
+    expect((await save("dark")).status).toBe(200);
+    expect(await read()).toBe("dark");
+    expect((await save("light")).status).toBe(200);
+    expect(await read()).toBe("light");
+    expect((await save("pink")).status).toBe(400);
+    expect(await read()).toBe("light");
   });
 });

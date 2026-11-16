@@ -613,5 +613,11 @@
   "ui.logs.empty": "Nothing yet.",
   "ui.studio.inspector": "Node",
   "ui.studio.inspectorEmpty": "Select a node on the graph to open it here.",
-  "ui.testing.tools": "Sandbox tools"
+  "ui.testing.tools": "Sandbox tools",
+  "ui.room.theme": "Parent Room theme",
+  "ui.room.theme.auto": "As on the device",
+  "ui.room.theme.light": "Light",
+  "ui.room.theme.dark": "Dark",
+  "ui.room.toDark": "Dark theme",
+  "ui.room.toLight": "Light theme"
 }

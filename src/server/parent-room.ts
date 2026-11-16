@@ -45,6 +45,9 @@ const LoginIn = z.object({ pin: z.string() }).strict();
  */
 export const THREE_DAY_DEFAULT = 3;
 
+/** The Parent Room's themes; `auto` follows the device's light or dark setting (REQ-7692). */
+export const ROOM_THEMES = ["auto", "light", "dark"] as const;
+
 /** The highest level until the parent chooses another (REQ-7850). */
 export const CREEPINESS_DEFAULT = 2;
 
@@ -57,6 +60,8 @@ const SettingsIn = z
     creepiness: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
     gender: z.enum(["f", "m"]).optional(),
     hideRankFalls: z.boolean().optional(),
+    /** The Parent Room's theme: the device's, or the one the parent chose (REQ-7692). */
+    roomTheme: z.enum(ROOM_THEMES).optional(),
     /** The child's profile; its length and its names are checked below (REQ-8280, REQ-8282). */
     profile: z.string().optional(),
   })
@@ -69,6 +74,7 @@ export async function parentSettings(db: Db): Promise<{
   creepiness: 0 | 1 | 2;
   gender: "f" | "m";
   hideRankFalls: boolean;
+  roomTheme: (typeof ROOM_THEMES)[number];
   profile: string;
 }> {
   const stored = async (key: string): Promise<{ value: string } | undefined> =>
@@ -82,6 +88,7 @@ export async function parentSettings(db: Db): Promise<{
   const creepiness = await stored("creepiness");
   const gender = await stored("gender");
   const hideRankFalls = await stored("hideRankFalls");
+  const roomTheme = await stored("roomTheme");
   const profile = await stored("profile");
   return {
     threeDayLimit: limit
@@ -97,6 +104,10 @@ export async function parentSettings(db: Db): Promise<{
     hideRankFalls: hideRankFalls
       ? (JSON.parse(hideRankFalls.value) as boolean)
       : false,
+    // The room follows the device until the parent picks a theme.
+    roomTheme: roomTheme
+      ? (JSON.parse(roomTheme.value) as (typeof ROOM_THEMES)[number])
+      : "auto",
     // The child's profile, which the writer and the Master read; none until the parent writes one.
     profile: profile ? (JSON.parse(profile.value) as string) : "",
   };

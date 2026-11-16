@@ -2,7 +2,7 @@
 
 <!-- meow-flow index -->
 
-82 decisions in all: 65 approved, 17 done.
+83 decisions in all: 66 approved, 17 done.
 
 | Identifier                                                                                                          | What it concluded                                                                                                                                                                                                                                                                                                                                 | Status   |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -88,5 +88,6 @@
 | [ADR-3450](ADR-3450-every-check-is-a-maths-task-battles-are-runs-of-checks-and-no-one-dies.md)                      | Every check is a maths task, a battle is a run of checks, and no one dies                                                                                                                                                                                                                                                                         | approved |
 | [ADR-3460](ADR-3460-battles-enter-the-first-version-and-a-harder-check-holds-more-tasks.md)                         | Battles enter the first version, and a harder check holds more tasks                                                                                                                                                                                                                                                                              | approved |
 | [ADR-3470](ADR-3470-the-parent-room-is-one-admin-frame-whose-menu-follows-the-parents-jobs.md)                      | The Parent Room is one admin frame whose menu follows the parent's jobs, and the Mac's admin page moves into it                                                                                                                                                                                                                                   | approved |
+| [ADR-3480](ADR-3480-the-parent-room-has-a-light-and-a-dark-theme-the-parent-picks.md)                               | The Parent Room has a light and a dark theme, the device's until the parent picks one                                                                                                                                                                                                                                                             | approved |
 
 <!-- /meow-flow index -->

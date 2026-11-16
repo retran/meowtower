@@ -172,3 +172,45 @@ test("REQ-7688: under 768 px the menu is a bar above the screen", async ({
     page.locator('.room-menu [data-action="open-account"]'),
   ).toBeAttached();
 });
+
+test("REQ-7692: the room follows the device's theme until the parent picks light or dark, and keeps the choice", async ({
+  page,
+}) => {
+  await enter(page);
+  const root = page.locator("html");
+  await page.locator('[data-action="open-parent-settings"]').click();
+  await expect(page.locator("[data-busy]")).toHaveCount(0);
+  // The device's own setting rules while the choice is the device's.
+  await page.locator('[data-action="room-theme-auto"]').check();
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(root).toHaveAttribute("data-bs-theme", "dark");
+  await page.emulateMedia({ colorScheme: "light" });
+  await expect(root).toHaveAttribute("data-bs-theme", "light");
+  // The menu's switch picks the other theme and the server keeps it across a reload.
+  await page.locator('[data-action="room-theme"]').click();
+  await expect(root).toHaveAttribute("data-bs-theme", "dark");
+  await expect
+    .poll(async () =>
+      page.evaluate(async () => {
+        const res = await fetch("/api/parent/settings");
+        return ((await res.json()) as { roomTheme: string }).roomTheme;
+      }),
+    )
+    .toBe("dark");
+  await page.reload();
+  await expect(page.locator("[data-busy]")).toHaveCount(0);
+  await expect(root).toHaveAttribute("data-bs-theme", "dark");
+  // The game keeps its own look.
+  await page.locator('.room-menu [data-action="back"]').click();
+  await expect(page.locator("body")).toHaveAttribute("data-screen", "/");
+  await expect(root).not.toHaveAttribute("data-bs-theme", /./);
+  // Back to the device's, so the shared server leaves the other tests as they were.
+  await page.evaluate(async () => {
+    const res = await fetch("/api/parent/settings", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ roomTheme: "auto" }),
+    });
+    await res.json();
+  });
+});
