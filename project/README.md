@@ -8,13 +8,14 @@ The generated indexes live in [specs](specs/README.md) and [defects](bugs/README
 
 <!-- meow-flow index -->
 
-3 defects in all: 3 done.
+4 defects in all: 4 done.
 
-| Identifier                                                                                          | What it concluded                                                                           | Status |
-| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------ |
-| [BUG-0010](bugs/BUG-0010-a-scenario-reply-is-refused-by-the-direct-route-for-its-number-limits.md)  | The direct route refuses the schema of a scenario reply, so no scenario can be written      | done   |
-| [BUG-0020](bugs/BUG-0020-the-master-reply-schema-holds-an-empty-schema-the-direct-route-refuses.md) | The direct route refuses the schema of the Master's reply, so no turn of the Master can run | done   |
-| [BUG-0030](bugs/BUG-0030-macos-27-hides-the-routers-hardware-address-so-the-server-never-starts.md) | macOS 27 hides the router's hardware address, so `./meowtower up` never starts the server   | done   |
+| Identifier                                                                                                  | What it concluded                                                                            | Status |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------ |
+| [BUG-0010](bugs/BUG-0010-a-scenario-reply-is-refused-by-the-direct-route-for-its-number-limits.md)          | The direct route refuses the schema of a scenario reply, so no scenario can be written       | done   |
+| [BUG-0020](bugs/BUG-0020-the-master-reply-schema-holds-an-empty-schema-the-direct-route-refuses.md)         | The direct route refuses the schema of the Master's reply, so no turn of the Master can run  | done   |
+| [BUG-0030](bugs/BUG-0030-macos-27-hides-the-routers-hardware-address-so-the-server-never-starts.md)         | macOS 27 hides the router's hardware address, so `./meowtower up` never starts the server    | done   |
+| [BUG-0040](bugs/BUG-0040-the-test-database-runs-out-of-connections-so-the-postgres-pass-fails-at-random.md) | The test database runs out of connections, so the Postgres pass of the tests fails at random | done   |
 
 <!-- /meow-flow index -->
 
