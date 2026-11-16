@@ -691,6 +691,12 @@ export interface StringParams {
   "ui.studio.inspector": NoParams;
   "ui.studio.inspectorEmpty": NoParams;
   "ui.testing.tools": NoParams;
+  "ui.room.theme": NoParams;
+  "ui.room.theme.auto": NoParams;
+  "ui.room.theme.light": NoParams;
+  "ui.room.theme.dark": NoParams;
+  "ui.room.toDark": NoParams;
+  "ui.room.toLight": NoParams;
 }
 
 export type Key = keyof StringParams;

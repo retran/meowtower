@@ -1,6 +1,7 @@
 // The Parent Room's frame (ADR-3470): a left-hand menu of the parent's jobs, a header row with the
 // screen's title, and the screen in Tabler's widgets. The room is the parent's admin and not the
 // game, so it wears Tabler's look and the game's own sheet is switched off while it shows.
+import { parentSettings, saveParentSettings } from "./api.js";
 import { act, el } from "./controls.js";
 import { ICONS, type IconName } from "./room-icons.js";
 import { t, type UiKey } from "./strings.js";
@@ -86,9 +87,7 @@ export const inRoom = (path: string): boolean =>
   MENU.some((item) => item.path === path);
 
 function icon(name: IconName): HTMLSpanElement {
-  const span = el("span", {
-    className: "nav-link-icon d-md-none d-lg-inline-block",
-  });
+  const span = el("span", { className: "nav-link-icon" });
   span.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
   return span;
 }
@@ -125,6 +124,7 @@ function menu(path: string): HTMLElement {
   const exit = el(
     "ul",
     { className: "navbar-nav room-exit" },
+    el("li", { className: "nav-item" }, themeToggle()),
     menuLink(
       { path: "/", key: "ui.room.exit", icon: "logout", action: "back" },
       false,
@@ -329,6 +329,59 @@ export function roomFrame(path: string, screen: HTMLElement): HTMLElement {
   return page;
 }
 
+type Theme = "auto" | "light" | "dark";
+
+/** The parent's choice once the server has answered; `auto` follows the device (REQ-7692). */
+let chosen: Theme = "auto";
+let known = false;
+const deviceDark = matchMedia("(prefers-color-scheme: dark)");
+const resolved = (): "light" | "dark" =>
+  chosen === "auto" ? (deviceDark.matches ? "dark" : "light") : chosen;
+let toggle: HTMLButtonElement | null = null;
+
+/** Tabler's theme attribute on the root while the room shows, and none in the game. */
+function paint(): void {
+  const on = document.body.classList.contains("room-body");
+  if (on) document.documentElement.dataset["bsTheme"] = resolved();
+  else delete document.documentElement.dataset["bsTheme"];
+  if (toggle) drawToggle(toggle);
+}
+deviceDark.addEventListener("change", paint);
+
+/** Sets the room's theme for this page; the caller saves it on the server. */
+export function setRoomTheme(theme: Theme): void {
+  chosen = theme;
+  known = true;
+  paint();
+}
+
+/** The menu's switch to the other theme: a moon in the light one, a sun in the dark one. */
+function drawToggle(b: HTMLButtonElement): void {
+  const dark = resolved() === "dark";
+  b.replaceChildren(
+    icon(dark ? "sun" : "moon"),
+    el(
+      "span",
+      { className: "nav-link-title" },
+      t(dark ? "ui.room.toLight" : "ui.room.toDark"),
+    ),
+  );
+}
+
+function themeToggle(): HTMLButtonElement {
+  const b = el("button", { type: "button", className: "nav-link room-theme" });
+  b.dataset["action"] = "room-theme";
+  b.addEventListener("click", () => {
+    act("room-theme");
+    const next = resolved() === "dark" ? "light" : "dark";
+    setRoomTheme(next);
+    void saveParentSettings({ roomTheme: next });
+  });
+  drawToggle(b);
+  toggle = b;
+  return b;
+}
+
 let tabler: HTMLLinkElement | null = null;
 
 /**
@@ -347,7 +400,14 @@ export function useRoomLook(on: boolean, game: HTMLStyleElement): void {
   if (!on) {
     watcher?.disconnect();
     watcher = null;
+    toggle = null;
   }
+  paint();
+  // The parent's choice comes once a parent session can read it; until then the device's holds.
+  if (on && !known)
+    void parentSettings().then((got) => {
+      if (got.ok && !known) setRoomTheme(got.value.roomTheme);
+    });
 }
 
 /** What the room adds to Tabler: the menu's groups, the narrow bar and the studio's editor. */
@@ -360,6 +420,7 @@ room.textContent = `
 .room-group { padding: 1rem 0.75rem 0.25rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tblr-secondary); }
 .room-menu { flex-direction: column; align-items: stretch; }
 .room-exit { margin-top: auto; padding-bottom: 1rem; }
+.room .room-theme { background: none; border: 0; width: 100%; text-align: left; }
 .room .nav-link.active { background: var(--tblr-primary-lt); color: var(--tblr-primary); font-weight: 600; border-radius: var(--tblr-border-radius); }
 .room-screen { display: flex; flex-direction: column; gap: 1rem; }
 .room-screen > h1:first-child { display: none; }

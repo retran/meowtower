@@ -142,6 +142,8 @@ export interface ParentSettings {
   gender: "f" | "m";
   language: string;
   hideRankFalls: boolean;
+  /** The Parent Room's theme; `auto` follows the device (REQ-7692). */
+  roomTheme: "auto" | "light" | "dark";
   /** The child's profile, which the writer and the Master read (REQ-8280). */
   profile: string;
 }

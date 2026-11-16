@@ -613,5 +613,11 @@
   "ui.logs.empty": "Nog leeg.",
   "ui.studio.inspector": "Knoop",
   "ui.studio.inspectorEmpty": "Kies een knoop in de graaf om hem hier te openen.",
-  "ui.testing.tools": "Zandbakgereedschap"
+  "ui.testing.tools": "Zandbakgereedschap",
+  "ui.room.theme": "Thema van de ouderkamer",
+  "ui.room.theme.auto": "Zoals op het apparaat",
+  "ui.room.theme.light": "Licht",
+  "ui.room.theme.dark": "Donker",
+  "ui.room.toDark": "Donker thema",
+  "ui.room.toLight": "Licht thema"
 }
