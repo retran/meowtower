@@ -35,6 +35,9 @@ services:
   postgres-test:
     profiles: [test]
     image: postgres:18-alpine
+    # The test files run in parallel, each opening pools of up to 8 connections, which the default
+    # limit of 100 can't hold (BUG-0040).
+    command: ["postgres", "-c", "max_connections=400"]
     tmpfs: ["/var/lib/postgresql"]
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
